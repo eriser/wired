@@ -371,6 +371,7 @@ void					Sequencer::Stop()
 {
   list<RackTrack *>::iterator		RacksTrack;
   list<Plugin *>::iterator		Plug;
+  vector<Track *>::iterator		T;
 
   SeqMutex.Lock();
 
@@ -379,6 +380,13 @@ void					Sequencer::Stop()
     for (Plug = (*RacksTrack)->Racks.begin(); Plug != (*RacksTrack)->Racks.end();
 	 Plug++)
       (*Plug)->Stop();
+
+  for (T = Tracks.begin(); T != Tracks.end(); T++)
+    if ((*T)->IsMidiTrack())
+      {	
+	(*T)->TrackOpt->VuValue = 0;
+	TracksToRefresh.push_back(*T);
+      }  
 
   Playing = false;
 
@@ -390,7 +398,8 @@ void					Sequencer::Stop()
 
       SeqMutex.Lock(); 
     }
-  Recording = false;  
+  Recording = false;    
+
   SeqMutex.Unlock();
 }
 

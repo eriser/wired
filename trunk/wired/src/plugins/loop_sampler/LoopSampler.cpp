@@ -696,16 +696,31 @@ void LoopSampler::ProcessEvent(WiredEvent &event)
 	  if (Notes.size() < PolyphonyCount)	    
 	    {
 	      list<Slice *>::iterator i;
+	      list<LoopNote *>::iterator j;
 
 	      for (i = Slices.begin(); i != Slices.end(); i++)
 		{
 		  if ((*i)->AffectMidi == event.MidiData[1])
 		    {
-		      LoopNote *n = new LoopNote(event.MidiData[1], event.MidiData[2] / 100.f,
+		      /*** Temporary fix for not making it possible to play 2 times the same 
+			   note. We need to create new SoundTouch objects for each note, not 
+			   slice ***/
+		      for (j = Notes.begin(); j != Notes.end(); j++)
+			if ((*j)->Note == event.MidiData[1])
+			  {
+			    Workshop.SetFreeBuffer((*j)->Buffer);
+			    delete *j;	 
+			    Notes.erase(j);
+			    break;
+			  }  
+
+		      LoopNote *n = new LoopNote(event.MidiData[1], 
+						 event.MidiData[2] / 100.f,
 						 *i, event.DeltaFrames, 
 						 Workshop.GetFreeBuffer(), event.NoteLength);
 		      Notes.push_back(n);
 		      printf("[LOOPSAMPLER] Note added: %2x\n", n->Note);
+
 		      break;
 		    }		
 		}			       

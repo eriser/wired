@@ -9,30 +9,33 @@
 #include "WaveFile.h"
 #include "Polyphony.h"
 #include "FaderCtrl.h"
-#include "HoldButton.h"
+#include "CycleKnob.h"
 #include "ASSampleList.h"
 #include "ASKeygroupList.h"
 
-#define IMG_SP_BMP	    "plugins/akaisampler/AkaiSampler.bmp"
-#define IMG_SP_OPEN_UP      "plugins/akaisampler/open_up.png"
-#define IMG_SP_OPEN_DOWN    "plugins/akaisampler/open_down.png"
-#define IMG_SP_SAVE_UP      "plugins/akaisampler/save_up.png"
-#define IMG_SP_SAVE_DOWN    "plugins/akaisampler/save_down.png"
-#define IMG_SP_UPUP         "plugins/akaisampler/up_up.png"
-#define IMG_SP_UPDO         "plugins/akaisampler/up_up.png"
-#define IMG_SP_DOWNUP       "plugins/akaisampler/down_up.png"
-#define IMG_SP_DOWNDO       "plugins/akaisampler/down_up.png"
-#define IMG_SP_LED_OFF      "plugins/akaisampler/led_off.png"
-#define IMG_SP_LED_ON       "plugins/akaisampler/led_on.png"
-#define IMG_SP_FADER_BG     "plugins/akaisampler/fader_bg.png"
-#define IMG_SP_FADER_FG     "plugins/akaisampler/fader_fg.png"
+#define IMG_SP_BMP	    "plugins/akaisampler/WiredSampler.bmp"
+#define IMG_SP_BG	    "plugins/akaisampler/sampler_bg.png"
+#define IMG_SP_OPEN_UP      "plugins/akaisampler/sampler_open_up.png"
+#define IMG_SP_OPEN_DOWN    "plugins/akaisampler/sampler_open_down.png"
+#define IMG_SP_SAVE_UP      "plugins/akaisampler/sampler_save_up.png"
+#define IMG_SP_SAVE_DOWN    "plugins/akaisampler/sampler_save_down.png"
 
-#define IMG_SP_SAMPLE_UP    "plugins/akaisampler/sample_up.png"
-#define IMG_SP_SAMPLE_DOWN  "plugins/akaisampler/sample_down.png"
-#define IMG_SP_KGROUP_UP    "plugins/akaisampler/kg_up.png"
-#define IMG_SP_KGROUP_DOWN  "plugins/akaisampler/kg_down.png"
-#define IMG_SP_EFFECT_UP    "plugins/akaisampler/effect_up.png"
-#define IMG_SP_EFFECT_DOWN  "plugins/akaisampler/effect_down.png"
+#define IMG_SP_POLY_1       "plugins/akaisampler/sampler_polyknob_1.png"
+#define IMG_SP_POLY_2       "plugins/akaisampler/sampler_polyknob_2.png"
+#define IMG_SP_POLY_3       "plugins/akaisampler/sampler_polyknob_3.png"
+
+#define IMG_SP_LED_OFF      "plugins/akaisampler/sampler_midi_off.png"
+#define IMG_SP_LED_ON       "plugins/akaisampler/sampler_midi_on.png"
+
+#define IMG_SP_FADER_BG     "plugins/akaisampler/sampler_fader_bg.png"
+#define IMG_SP_FADER_FG     "plugins/akaisampler/sampler_fader_button.png"
+
+#define IMG_SP_SAMPLE_UP    "plugins/akaisampler/sampler_samples_up.png"
+#define IMG_SP_SAMPLE_DOWN  "plugins/akaisampler/sampler_samples_down.png"
+#define IMG_SP_KGROUP_UP    "plugins/akaisampler/sampler_keygr_up.png"
+#define IMG_SP_KGROUP_DOWN  "plugins/akaisampler/sampler_keygr_down.png"
+#define IMG_SP_EFFECT_UP    "plugins/akaisampler/sampler_effects_up.png"
+#define IMG_SP_EFFECT_DOWN  "plugins/akaisampler/sampler_effects_down.png"
 
 using namespace std;
 
@@ -74,9 +77,12 @@ class AkaiSampler : public Plugin
     void   SetSamplingRate(double rate);
 
 
-    void  Process(float **input, float **output, long sample_length);
+    void   Process(float **input, float **output, long sample_length);
     void   ProcessEvent(WiredEvent &event);
-    void  OnScroll(wxScrollEvent &e);
+    void   OnScroll(wxScrollEvent &e);
+
+    void   Update();
+
     bool   IsInstrument(); 
     bool   IsAudio();
     bool   IsMidi();
@@ -106,24 +112,22 @@ class AkaiSampler : public Plugin
     void LoadProgram();
     void DeleteProgram();
 
+    /* Graphic controls */
+
     wxScrolledWindow      *swg;
     wxScrollBar           *sbh;
-    ASClavier       *clavier;
-    //wxBitmap *GetBitmap();
-    wxBitmap *TpBmp;
+    ASClavier		  *clavier;
 
-    /* Graphic controls */
+    wxBitmap *BgBmp;
     wxBitmap *bmp;
+    wxBitmap *LedOff;
+    wxBitmap *LedOn; 
 
     wxImage *sp_bg;
     wxImage *open_up;
     wxImage *open_down;
     wxImage *save_up;
     wxImage *save_down;
-    wxImage *up_up;
-    wxImage *up_down;
-    wxImage *down_up;
-    wxImage *down_down;
 
     wxImage *fader_bg;
     wxImage *fader_fg;
@@ -135,11 +139,7 @@ class AkaiSampler : public Plugin
 
     FaderCtrl *VolumeFader;
 
-    HoldButton *PolyUpBtn;
-    HoldButton *PolyDownBtn;
-    wxBitmap   *LedOff;
-    wxBitmap   *LedOn; 
-    wxBitmap   *BgBmp;
+    CycleKnob *PolyKnob;
 
     ASamplerSample *ass;
 
@@ -151,6 +151,14 @@ class AkaiSampler : public Plugin
     DownButton *btkgroup;
     DownButton *bteffect;
 
+    int		MidiVolume[2];
+
+    bool	MidiInOn;
+    bool	UpdateMidi;
+    bool	UpdateVolume;
+
+    void ProcessMidiControls(WiredEvent &event);
+    
     void OnSampleButton(wxCommandEvent &event);
     void OnKgroupButton(wxCommandEvent &event);
     void OnEffectButton(wxCommandEvent &event);
@@ -159,12 +167,9 @@ class AkaiSampler : public Plugin
 
     void OnOpenFile(wxCommandEvent &event);
     void OnSaveFile(wxCommandEvent &event);
-    void OnPolyUp(wxCommandEvent &event);
-    void OnPolyDown(wxCommandEvent &event);
     //void OnPianoClickDown(wxCommandEvent &event);
     //void OnPianoClickUp(wxCommandEvent &event);
-    void OnKeyUp(wxMouseEvent &event);
-    void OnKeyDown(wxMouseEvent &event);
+    void OnPolyphony(wxCommandEvent &event);
     void OnVolume(wxScrollEvent &event);
     //void OnPaint(wxPaintEvent &event);
     //void LoadProgram();
@@ -176,8 +181,7 @@ class AkaiSampler : public Plugin
 
 enum
 {
-  Sampler_PolyUp = 1,
-  Sampler_PolyDown,
+  Sampler_Poly,
   Sampler_ShowOpt,
   Sampler_Play,
   Sampler_ToSeqTrack,
