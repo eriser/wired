@@ -89,6 +89,7 @@ class Sequencer : public wxThread
   double				SamplesPerMeasure;
   list<Pattern *>			PatternsToResize;
   list<MidiPattern *>			PatternsToRefresh;
+  list<Track *>				TracksToRefresh;
 
  protected:
 

@@ -38,6 +38,7 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   DeviceId = -1;
   Record = false;
   Mute = false;
+  VuValue = 0;
 
   SetBackgroundColour(CL_RULER_BACKGROUND);
   
@@ -360,6 +361,11 @@ void					SeqTrack::OnMuteClick(wxCommandEvent &WXUNUSED(event))
 void					SeqTrack::SetVuValue(long value)
 {
   Vu->SetValue(value);
+}
+
+void					SeqTrack::SetVuValue()
+{
+  Vu->SetValue(VuValue);
 }
 
 void					SeqTrack::SetRecording(bool rec)

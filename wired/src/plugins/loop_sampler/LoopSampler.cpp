@@ -275,7 +275,23 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   MidiSliceInvert[0] = -1;
   MidiSliceInvert[1] = -1;
 
+  MidiLed = false;
+
+  UpdateMidiLed = false;
+  UpdateVolume = false;
+  UpdateAttack = false;
+  UpdateDecay = false;
+  UpdateSustain = false;
+  UpdateRelease = false;
   UpdateOctave = false;
+  UpdatePitch = false;
+  UpdateTempo = false;
+  UpdateInvert = false;
+  UpdateSliceNote = false;
+  UpdateSlicePitch = false;
+  UpdateSliceVol = false;
+  UpdateSliceAffect = false;
+  UpdateSliceInvert = false;
 }
 
 LoopSampler::~LoopSampler()
@@ -660,15 +676,22 @@ void LoopSampler::ProcessEvent(WiredEvent &event)
 		  break;
 		}
 	    }	  
-	  Mutex.Unlock();
 
-	  MidiInBmp->SetBitmap(*LedOff);
+	  UpdateMidiLed = true;
+	  MidiLed = false;
+	  AskUpdate();
+	  //	  MidiInBmp->SetBitmap(*LedOff);
+
+	  Mutex.Unlock();
 	}
       else
 	{
-	  MidiInBmp->SetBitmap(*LedOn);
-
 	  Mutex.Lock();
+
+	  UpdateMidiLed = true;
+	  MidiLed = true;
+	  AskUpdate();
+	  //MidiInBmp->SetBitmap(*LedOn);	  
 
 	  if (Notes.size() < PolyphonyCount)	    
 	    {
@@ -693,7 +716,8 @@ void LoopSampler::ProcessEvent(WiredEvent &event)
 	  Mutex.Unlock();
 	}
     }
-  ProcessMidiControls(event.MidiData);
+  else
+    ProcessMidiControls(event.MidiData);
 //  printf("[LOOPSAMPLER] Got midi in : %2x %2x %2x\n", event.MidiData[0], event.MidiData[1], event.MidiData[2]);
 }
 
@@ -706,30 +730,43 @@ void LoopSampler::ProcessMidiControls(int MidiData[3])
   if ((MidiVolume[0] == MidiData[0]) && (MidiVolume[1] == MidiData[1]))
     {
       Volume = MidiData[2] / 100.f;
-      VolumeFader->SetValue(MidiData[2]);
+      UpdateVolume = true;
+      AskUpdate();
+      //VolumeFader->SetValue(MidiData[2]);
       Workshop.SetVolume(Volume);
     }
   else if ((MidiAttack[0] == MidiData[0]) && (MidiAttack[1] == MidiData[1]))
     {
       AttackCoef = MidiData[2] / 100.f;
-      AttackFader->SetValue(MidiData[2] * 10);
+      UpdateAttack = true;
+      AskUpdate();
+      //AttackFader->SetValue(MidiData[2] * 10);
     }
   else if ((MidiOctave[0] == MidiData[0]) && (MidiOctave[1] == MidiData[1]))
     {
       //OctaveKnob->SetValue(MidiData[2] / 10 - 1);
-      Octave = MidiData[2] / 10 - 1 - 4;
-
-      list<Slice *>::iterator k;
-      for (k = Slices.begin(); k != Slices.end(); k++)  
-	(*k)->SetOctave(Octave);     
-
-      UpdateOctave =  true;
-      AskUpdate();
+      float oct = (MidiData[2] / 15) - 4;
+      if (oct != Octave)
+	{
+	  Octave = oct;
+	  cout << "Octave: " << Octave << endl;
+	  
+	  list<Slice *>::iterator k;
+	  for (k = Slices.begin(); k != Slices.end(); k++)  
+	    (*k)->SetOctave(Octave);     
+	  
+	  UpdateOctave =  true;
+	  AskUpdate();
+	}
     }
   else if ((MidiPitch[0] == MidiData[0]) && (MidiPitch[1] == MidiData[1]))
     {
-      PitchKnob->SetValue((int)(MidiData[2] * 1.574f)); // 1.574 = 200 / 127
-      Pitch = PitchKnob->GetValue() / 100.f;
+      Pitch = (MidiData[2] * 1.574f) / 100.f; // 1.574 = 200 / 127
+
+      UpdatePitch = true;
+      AskUpdate();
+      //PitchKnob->SetValue((int)(MidiData[2] * 1.574f));
+      //Pitch = PitchKnob->GetValue() / 100.f;
     }
   else if ((MidiTempo[0] == MidiData[0]) && (MidiTempo[1] == MidiData[1]))
     {
@@ -755,14 +792,38 @@ void LoopSampler::ProcessMidiControls(int MidiData[3])
 
 void	LoopSampler::Update()
 {
-  if (UpdateOctave)
-    {
-      Mutex.Lock();
-      UpdateOctave = false;
-      Mutex.Unlock();
+  Mutex.Lock();
 
+  if (UpdateMidiLed)
+    {
+      UpdateMidiLed = false;      
+      if (MidiLed)
+	MidiInBmp->SetBitmap(*LedOn);
+      else
+	MidiInBmp->SetBitmap(*LedOff);
+    }
+  else if (UpdateVolume)
+    {
+      UpdateVolume = false;
+      VolumeFader->SetValue((int)(Volume * 100));
+    }
+  else if (UpdateAttack)
+    {
+      UpdateAttack = false;
+      AttackFader->SetValue((int)(Attack * 1000));
+    }
+  else if (UpdateOctave)
+    {
+      UpdateOctave = false;
       OctaveKnob->SetValue((int)(Octave) + 4);
     }
+  else if (UpdatePitch)
+    {
+      UpdatePitch = false;
+      PitchKnob->SetValue((int)(Pitch * 100));
+    }
+
+  Mutex.Unlock();
 }
 
 wxWindow *LoopSampler::CreateView(wxWindow *zone, wxPoint &pos, wxSize &size)
