@@ -138,12 +138,186 @@ bool AkaiSampler::IsMidi()
 
 void AkaiSampler::Load(int fd, long size)
 {
+  int i;
 
+
+  /**** DEBUG ONLY ****/
+  /**/
+  char *buffer = (char *)malloc(size);
+  long count = read(fd, buffer, size);
+  printf("[WiredSampler] -- SAVE FILE DUMP --\n");
+  for (i = 0; i < count ; i++)
+  {
+    if (!(i & 15))
+      printf("[WiredSampler] %08X   ", i);
+    printf(" %02X ", buffer[i] & 0xFF);
+    if (!((i + 1) & 15))
+    {
+      printf("   ");
+      for (int j = i & 15; j >= 0; j--)
+        if ((buffer[i - j] >= 32) && (buffer[i - j] < 127))
+          printf("%c", buffer[i - j]);
+        else
+          printf(".");
+      printf("\n");
+    }
+  }
+  if (i & 15)
+  {
+    for (int j = i; j & 15; j++)
+      printf("    ");
+    printf("   ");
+    for (int j = i & 15; j > 0; j--)
+      if ((buffer[count - j] >= 32) && (buffer[count - j] < 127))
+        printf("%c", buffer[count - j]);
+      else
+        printf(".");
+    printf("\n");
+  }
+  printf("[WiredSampler] -- END OF DUMP --\n");
+  free(buffer);
+  lseek(fd, -count, SEEK_CUR);
+  /**/
+  /**** END OF DEBUG ****/
+
+
+  long nbent;
+  count = 0;
+  count += read(fd, &nbent, sizeof(nbent));
+  cerr << "[WiredSampler] Loading " << nbent << " samples..." << endl;
+  for (int i = 0; i < nbent; i++)
+  {
+    long len;
+    char *str;
+
+    count += read(fd, &len, sizeof(len));
+    str = (char *)malloc(len + 1);
+    count += read(fd, str, len);
+    str[len] = 0;
+    wxString smpname(_T(str));
+    free(str);
+    cerr << "[WiredSampler] Loaded sample " << smpname << endl;
+    unsigned long id;
+    count += read(fd, &id, sizeof(id));
+    cerr << "[WiredSampler] Loaded ID " << id << endl;
+    count += read(fd, &len, sizeof(len));
+    str = (char *)malloc(len + 1);
+    count += read(fd, str, len);
+    str[len] = 0;
+    WaveFile *w = new WaveFile(string(str));
+    cerr << "[WiredSampler] Loaded wav " << wxString(_T(str)) << endl;
+    free(str);
+    ASamplerSample *ass = new ASamplerSample(w, id);
+    Samples->List->AddEntry(smpname, (void *)ass);
+  }
+  count += read(fd, &nbent, sizeof(nbent));
+  cerr << "[WiredSampler] Loading " << nbent << " keygroups..." << endl;
+  for (int i = 0; i < nbent; i++)
+  {
+    long len;
+    char *str;
+
+    count += read(fd, &len, sizeof(len));
+    str = (char *)malloc(len + 1);
+    count += read(fd, str, len);
+    str[len] = 0;
+    wxString kgname(_T(str));
+    free(str);
+    cerr << "[WiredSampler] Loaded keygroup " << kgname << endl;
+    unsigned long id;
+    count += read(fd, &id, sizeof(id));
+    cerr << "[WiredSampler] Loaded ID " << id << endl;
+    long lokey;
+    count += read(fd, &lokey, sizeof(lokey));
+    cerr << "[WiredSampler] Loaded low key " << lokey << endl;
+    long hikey;
+    count += read(fd, &hikey, sizeof(hikey));
+    cerr << "[WiredSampler] Loaded high key " << hikey << endl;
+    ASamplerKeygroup *askg = new ASamplerKeygroup(lokey, hikey, id);
+    Keygroups->List->AddEntry(kgname, (void *)askg);
+    count += read(fd, &len, sizeof(len));
+    if (len)
+    {
+      cerr << "[WiredSampler] Need to associate with sample " << len << endl;
+      vector<ASListEntry *> v = Samples->List->GetEntries();
+      for (vector<ASListEntry *>::iterator i = v.begin(); i != v.end(); i++)
+      {
+        ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
+        if (ass->GetID() == len)
+        {
+          cerr << "[WiredSampler] Sample found, associating..." << endl;
+          ass->SetKeygroup(askg);
+          askg->SetSample(ass);
+          break;
+        }
+      }
+    }
+  }
+  cerr << "[WiredSampler] Config loaded, total " << count << " bytes read (of " << size << ")." << endl;
 }
 
 long AkaiSampler::Save(int fd)
 {
-  return (Plugin::Save(fd));
+  long count = 0;
+
+  vector<ASListEntry *> entries = Samples->List->GetEntries();
+  long nbent = entries.size();
+  count += write(fd, &nbent, sizeof(nbent));
+  cerr << "[WiredSampler] Saving " << nbent << " samples..." << endl;
+  for (vector<ASListEntry *>::iterator i = entries.begin(); i != entries.end(); i++)
+  {
+    long len;
+    char *str;
+
+    cerr << "[WiredSampler] Saving sample " << (*i)->GetName() << endl;
+    ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
+    str = (char *)(*i)->GetName().c_str();
+    len = strlen(str);
+    count += write(fd, &len, sizeof(len));
+    count += write(fd, str, len);
+    len = ass->GetID();
+    count += write(fd, &len, sizeof(len));
+    cerr << "[WiredSampler] Saving ID " << len << endl;
+    str = (char *)ass->GetSample()->Filename.c_str();
+    len = strlen(str);
+    cerr << "[WiredSampler] Saving wavefile " << ass->GetSample()->Filename << endl;
+    count += write(fd, &len, sizeof(len));
+    count += write(fd, str, len);
+  }
+  entries = Keygroups->List->GetEntries();
+  nbent = entries.size();
+  count += write(fd, &nbent, sizeof(nbent));
+  cerr << "[WiredSampler] Saving " << nbent << " keygroups..." << endl;
+  for (vector<ASListEntry *>::iterator i = entries.begin(); i != entries.end(); i++)
+  {
+    long len;
+    char *str;
+
+    cerr << "[WiredSampler] Saving keygroup " << (*i)->GetName() << endl;
+    ASamplerKeygroup *askg = (ASamplerKeygroup *)(*i)->GetEntry();
+    str = (char *)(*i)->GetName().c_str();
+    len = strlen(str);
+    count += write(fd, &len, sizeof(len));
+    count += write(fd, str, len);
+    cerr << "[WiredSampler] Saving ID " << len << endl;
+    len = askg->GetID();
+    count += write(fd, &len, sizeof(len));
+    len = askg->GetLowKey();
+    cerr << "[WiredSampler] Saving lokey " << len << endl;
+    count += write(fd, &len, sizeof(len));
+    len = askg->GetHighKey();
+    cerr << "[WiredSampler] Saving hikey " << len << endl;
+    count += write(fd, &len, sizeof(len));
+    ASamplerSample *smp = askg->GetSample();
+    if (!smp)
+      len = 0;
+    else
+      len = smp->GetID();
+    cerr << "[WiredSampler] Saving associated sample " << len << endl;
+    count += write(fd, &len, sizeof(len));
+  }
+  cerr << "[WiredSampler] Config saved, total " << count << " bytes written." << endl;
+  return count;
 }
 
 void AkaiSampler::LoadProgram()
@@ -163,7 +337,9 @@ void AkaiSampler::LoadProgram()
       wxString groupname = "AkaiKeygroup #";
       groupname << group->num;
       ASamplerSample *ass = new ASamplerSample(group->zone_sample[0]);
+      Samples->List->AddEntry(group->zone_sample[0]->name, (void *)ass);
       ASamplerKeygroup *askg = new ASamplerKeygroup(group->lowkey, group->highkey);
+      Keygroups->List->AddEntry(groupname, (void *)askg);
       ass->SetKeygroup(askg);
       askg->SetSample(ass);
     }

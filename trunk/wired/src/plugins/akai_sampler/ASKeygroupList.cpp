@@ -7,6 +7,8 @@ BEGIN_EVENT_TABLE(ASKeygroupList, wxWindow)
   EVT_SIZE(ASKeygroupList::OnResize)
 END_EVENT_TABLE()
 
+unsigned long keygroupid = 1;
+
 ASKeygroupList *Keygroups = NULL;
 
 ASKeygroupList::ASKeygroupList(wxString Name) :
