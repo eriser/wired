@@ -20,13 +20,18 @@
 
 class WiredBeatBox;
 class BeatBoxChannel;
+class BeatBoxView;
 
-class BeatTrack
+class BeatTrack : public wxWindow
 {
  public:
-  BeatTrack(BeatBoxChannel* channel) { Channel = channel; }
+  //BeatTrack(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, BeatBoxChannel* channel);
+  BeatTrack(BeatBoxChannel* channel);
   ~BeatTrack();
   BeatBoxChannel* Channel;
+  //void OnPaint(wxPaintEvent& event);
+ protected:
+  //DECLARE_EVENT_TABLE()
 };
 
 class Ruler : public wxWindow
@@ -43,16 +48,20 @@ DECLARE_EVENT_TABLE()
 class BeatBoxTrackView : public wxWindow
 {
  public:
+  
   BeatBoxTrackView(wxWindow *parent, wxWindowID id, 
-	       const wxPoint &pos, const wxSize &size);
+		   const wxPoint &pos, const wxSize &size,
+		   BeatBoxView* view_ptr);
+  
+
   ~BeatBoxTrackView();  
   virtual void OnPaint(wxPaintEvent& event);
+  vector<BeatTrack*>	BeatTracks;
  protected:
-
+  BeatBoxView* ViewPtr;
 DECLARE_EVENT_TABLE()
 };
 
-class BeatBoxView;
 
 class BeatBoxScrollView : public wxScrolledWindow
 {
@@ -82,7 +91,7 @@ class BeatBoxView : public wxPanel
   void OnVScroll(wxScrollEvent& event);
   void OnSize(wxSizeEvent& event);
   
-  vector<BeatTrack*>	BeatTracks;
+  //vector<BeatTrack*>	BeatTracks;
   
   WiredBeatBox*		DRM31;
   // protected:
