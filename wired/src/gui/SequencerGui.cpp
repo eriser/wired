@@ -624,12 +624,7 @@ void					SequencerGui::SelectItem(Pattern *p, bool shift)
 {
   vector<Pattern *>::iterator		i;
 
-  if (!p)
-    {
-      cout << "RED ALERT JUNK POINTER !!! " << endl;
-      return;
-    }
-  if (!shift)
+  if (!shift || !p)
     {
       for (i = SelectedItems.begin(); i != SelectedItems.end(); i++)
 	if ((*i)->IsSelected())
