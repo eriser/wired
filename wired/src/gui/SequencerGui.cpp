@@ -232,8 +232,6 @@ void					SequencerView::DrawMeasures()
     }
 }
 
-/*** DEBUTE SequencerGui ***/
-
 SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size)
   : wxPanel(parent, -1, pos, size, wxSIMPLE_BORDER | wxWS_EX_PROCESS_IDLE)
 {
@@ -274,7 +272,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
 			      wxSize(-1, -1), wxSB_VERTICAL);
   s = VertScrollBar->GetSize();
   VertScrollBar->Move(wxPoint(size.x - s.x, 0));
-  cout << "PUTTING SEQVIEW AT POS " << (TRACK_WIDTH) << " " << (RULER_HEIGHT + TOOLS_HEIGHT) << " SIZE " << (size.x - TRACK_WIDTH - s.x) << " " << (size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT)) << " " << endl;
   SeqView = new SequencerView(this, wxPoint(TRACK_WIDTH, RULER_HEIGHT + TOOLS_HEIGHT), 
 			      wxSize(size.x - TRACK_WIDTH - s.x, size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT)));
   HorizScrollBar = new wxScrollBar(this, ID_SEQ_SCROLLING, 
@@ -288,10 +285,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   HoriZoomSlider = new wxSlider(this, ID_SEQ_HSLIDER, 100, 25, 400, 
 				wxPoint(0, SeqView->GetClientSize().y + RULER_HEIGHT + TOOLS_HEIGHT),
 				wxSize(TRACK_WIDTH, RULER_HEIGHT));
-  cout << "youpi youpla " << size.x << endl;
-  cout << "bada_boom " << size.y << endl;
-  cout << "MAIS !! " << (size.x - TRACK_WIDTH - s.x) << " grr " << endl;
-  cout << "ET !! " << (size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT)) << " grr " << endl;
   RulerPanel = new Ruler(this, ID_SEQ_RULER, wxPoint(TRACK_WIDTH, TOOLS_HEIGHT), 
 			 wxSize(size.x - TRACK_WIDTH - s.x, RULER_HEIGHT));
   ColorDialogBox = new wxColourDialog(this, 0);
@@ -302,62 +295,23 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
   /* Sizers */
   zer_5 = new wxBoxSizer(wxVERTICAL);
-  zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND, 0);
+  zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
   zer_5->Add(SeqView, 1, wxALL | wxEXPAND, 0);
-  zer_5->Add(HorizScrollBar, 0, wxALL | wxEXPAND, 0);
+  zer_5->Add(HorizScrollBar, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
   zer_4 = new wxBoxSizer(wxVERTICAL);
-  zer_4->Add(VertZoomSlider, 0, wxALL, 0);
+  zer_4->Add(VertZoomSlider, 0, wxALL | wxFIXED_MINSIZE, 0);
   zer_4->Add(TrackView, 1, wxALL | wxEXPAND, 0);
-  zer_4->Add(HoriZoomSlider, 0, wxALL, 0);
+  zer_4->Add(HoriZoomSlider, 0, wxALL | wxFIXED_MINSIZE, 0);
   zer_3 = new wxBoxSizer(wxHORIZONTAL);
   zer_3->Add(zer_4, 0, wxEXPAND | wxALL, 0);
   zer_3->Add(zer_5, 1, wxEXPAND | wxALL, 0);
   zer_2 = new wxBoxSizer(wxVERTICAL);
-  zer_2->Add(Toolbar, 0, wxALL | wxEXPAND, 0);
+  zer_2->Add(Toolbar, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
   zer_2->Add(zer_3, 1, wxEXPAND | wxALL, 0);
   zer_1 = new wxBoxSizer(wxHORIZONTAL);
   zer_1->Add(zer_2, 1, wxEXPAND | wxALL, 0);
-  zer_1->Add(VertScrollBar, 0, wxALL | wxEXPAND , 0);
+  zer_1->Add(VertScrollBar, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
   SetSizer(zer_1);
-
-  if (RulerPanel->GetSize().y > RULER_HEIGHT)
-    {
-      cout << "GTK BUGFIX NEEDED " << endl;
-      RulerPanel->SetSize(RulerPanel->GetSize().x, RULER_HEIGHT);
-      cout << " moving seqview from " << SeqView->GetPosition().x << " " <<  SeqView->GetPosition().y << " to the right place ..." << endl;
-      SeqView->Move(TRACK_WIDTH, RULER_HEIGHT + TOOLS_HEIGHT);
-      SeqView->SetSize(size.x - TRACK_WIDTH - s.x, size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT));
-      zer_5->SetMinSize(zer_5->GetMinSize().x, RULER_HEIGHT * 2 + SeqView->GetSize().y);
-    }
-  /*
-  row_1 = new wxBoxSizer(wxHORIZONTAL);
-  row_1->Add(Toolbar, 1, wxALL, 0); 
-  row_2 = new wxBoxSizer(wxHORIZONTAL);
-  row_2->Add(VertZoomSlider, 0, wxALL, 0); 
-  row_2->Add(RulerPanel, 1, wxALL, 0); 
-
-  row_3 = new wxBoxSizer(wxHORIZONTAL);
-  row_3->Add(TrackView, 0, wxALL | wxEXPAND, 0); 
-  row_3->Add(SeqView, 1, wxALL | wxEXPAND, 0);
-
-  row_4 = new wxBoxSizer(wxHORIZONTAL);
-  row_4->Add(HoriZoomSlider, 0, wxALL, 0); 
-  row_4->Add(HorizScrollBar, 1, wxALL, 0);  
-
-  col_1 = new wxBoxSizer(wxVERTICAL);
-  col_1->Add(row_1, 0, wxEXPAND | wxALL, 0);
-  col_1->Add(row_2, 0, wxEXPAND | wxALL, 0);
-  col_1->Add(row_3, 1, wxEXPAND | wxALL, 0);
-  col_1->Add(row_4, 0, wxEXPAND | wxALL, 0);
-
-  globz = new wxBoxSizer(wxHORIZONTAL);
-  globz->Add(col_1, 1, wxALL | wxEXPAND , 0); 
-  globz->Add(VertScrollBar, 0, wxALL | wxEXPAND , 0); 
-
-  SetSizer(globz);
-  */
-
-  SeqView->SetScrollRate(10, 10);
   SeqView->SetBackgroundColour(CL_SEQVIEW_BACKGROUND);
   TrackView->SetScrollRate(10, 10);
   TrackView->SetBackgroundColour(wxColour(204, 199, 219));//*wxLIGHT_GREY);

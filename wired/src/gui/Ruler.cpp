@@ -36,11 +36,6 @@ void		Ruler::OnPaint(wxPaintEvent &event)
 
   PrepareDC(dc);
   size = GetSize();
-  if (size.y > RULER_HEIGHT)
-    {
-      printf("BUFGIFX NEEDED HEIGHT OF %d INSTEAD OF %d\n", size.y, RULER_HEIGHT);
-      //      SetSize(size.x, RULER_HEIGHT);
-    }
   dc.SetPen(wxPen(CL_RULER_BACKGROUND, 1, wxSOLID));
   dc.SetBrush(wxBrush(CL_RULER_BACKGROUND));
   dc.SetTextForeground(CL_RULER_PATTERNNUM);
