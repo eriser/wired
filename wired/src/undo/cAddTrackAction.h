@@ -23,16 +23,16 @@ class cAddTrackAction : public cAction
     {};
   
   virtual void Do ()
-    { /* SeqPanel->AddTrack(mTrackKindFlag); NotifyActionManager(); */};
+    { SeqPanel->AddTrack(mTrackKindFlag); NotifyActionManager(); };
   
   virtual void Redo ()
-    { /* SeqPanel->AddTrack(mTrackKindFlag); */};
+    { SeqPanel->AddTrack(mTrackKindFlag); };
   
   virtual void Undo ()
-    { /* SeqPanel->RemoveTrack(); */};
+    { SeqPanel->RemoveTrack(); };
   
   virtual void Accept (cActionVisitor& visitor)
-    { /*visitor.Visit (*this); */};
+    { visitor.Visit (*this); };
 };
 
 #endif

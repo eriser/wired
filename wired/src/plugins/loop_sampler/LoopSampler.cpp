@@ -437,10 +437,25 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 
 	  if (((*i)->Bar >= MesCur) && ((*i)->Bar < MesBufCur))
 	    {	      
-	      LoopNote *n = new LoopNote((*i)->AffectMidi, (*i)->Volume, *i, 
-					 (long)(((*i)->Bar - MesCur) * GetSamplesPerBar()),
-					 Workshop.GetFreeBuffer(), 0);
-	      Notes.push_back(n);
+	      LoopNote *note = new LoopNote((*i)->AffectMidi, (*i)->Volume, *i, 
+					    (long)(((*i)->Bar - MesCur) * GetSamplesPerBar()),
+					    Workshop.GetFreeBuffer(), 0, true);
+
+	      list<LoopNote *>::iterator n;
+	      // Delete the old played note
+	      for (n = Notes.begin(); n != Notes.end();)
+		{  
+		  if ((*n)->PlayMode)
+		    {
+		      Workshop.SetFreeBuffer((*n)->Buffer);
+		      delete *n;	 
+		      n = Notes.erase(n);
+		      break;
+		    }
+		  else
+		    n++;
+		}
+	      Notes.push_back(note);
 	    }
 	}
     }
@@ -536,22 +551,23 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 	  if (n->Start)
 	    {
 	      n->Start = false;
-	      cout << "start slice: " << n << endl;
 	      float f;
-	      for (chan = 0; chan < 2; chan++)	    
-		for (idx = 0, f = 0.f; idx < length; idx++, f += 1.f / (float)length)
-		  n->Buffer[chan][idx] *= f;  
-	      cout << "f: " << f << endl;
-	    }
+	      float inc = 1.f / (float)length;
 
+	      for (chan = 0; chan < 2; chan++)	    
+		for (idx = 0, f = 0.f; idx < length; idx++, f += inc)
+		  n->Buffer[chan][idx] *= f;  
+	    }
+ 
 	  end = (long)((n->SliceNote->EndPosition - n->Position) / n->SliceNote->Pitch);
 
 	  if (end <= length)
 	    {
-	      cout << "end slice: " << n << endl;
 	      float f;
+	      float inc = 1.f / (float)length;
+
 	      for (chan = 0; chan < 2; chan++)	    
-		for (idx = 0, f = 1.f; idx < length; idx++, f -= 1.f / (float)length)
+		for (idx = 0, f = 1.f; idx < length; idx++, f -= inc)
 		  n->Buffer[chan][idx] *= f;  
 	    }	  
 	  
