@@ -103,7 +103,7 @@ void ASLoop::OnMouseMove(wxMouseEvent &e)
       if (e.GetX() > x)
       {
         x = (e.GetX() * ass->GetSample()->GetNumberOfFrames()) / GetSize().GetWidth();
-        if (x + ass->GetLoopStart() <= ass->GetSample()->GetNumberOfFrames())
+        if (x <= ass->GetSample()->GetNumberOfFrames())
         {
           ass->SetLoopEnd(x - ass->GetLoopStart());
           Refresh();
@@ -140,7 +140,7 @@ void ASLoop::OnRightDown(wxMouseEvent &e)
     if (e.GetX() > x)
     {
       x = (e.GetX() * ass->GetSample()->GetNumberOfFrames()) / GetSize().GetWidth();
-      if (x + ass->GetLoopStart() <= ass->GetSample()->GetNumberOfFrames())
+      if (x <= ass->GetSample()->GetNumberOfFrames())
       {
         ass->SetLoopEnd(x - ass->GetLoopStart());
         Refresh();

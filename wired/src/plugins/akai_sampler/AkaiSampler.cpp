@@ -235,10 +235,11 @@ void AkaiSampler::Load(int fd, long size)
       wxString path = s2; //.SubString(10, s2.size() - 10);
       int pos = path.Find('/');
       int part = path.SubString(0, pos).c_str()[0] - 64;
-      path = path.SubString(pos, path.size() - pos);
-      int opos = path.Find('/', true);
+      path = path.SubString(pos + 1, path.size() - pos);
+      //int opos = path.Find('/', true);
+      int opos = path.Find('/');
       wxString name = path.SubString(opos + 1, path.Len());
-      path = path.SubString(1, opos - 1);
+      path = path.SubString(0, opos - 1);
       AkaiPrefix = "[AKAI]";
       AkaiPrefix += dev.c_str();
       AkaiPrefix += ':';
@@ -248,15 +249,36 @@ void AkaiSampler::Load(int fd, long size)
       AkaiPrefix += '/';
       cerr << "device: " << dev << "; part: " << part << "; path: " << path << "; filename: " << name << endl;
       cerr << "AkaiPrefix: " << AkaiPrefix << endl;
-      t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
-      if (sample)
+      if ((opos = name.Find('/')) != -1)
       {
-        ass = new ASamplerSample(this, sample, AkaiPrefix, id);
-        free(sample);
-        ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + name);
-        p->SetSample(ass);
-        ass->AddEffect(p);
-        PlugPanel->AddPlug(p);
+        cout << "Dual akai Sample found, getting the 2 samples and mixing it..." << endl;
+        wxString smp1 = name.SubString(0, opos - 1);
+        wxString smp2 = name.SubString(opos + 1, name.Len());
+        t_akaiSample *sampleL = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)smp1.c_str());
+        t_akaiSample *sampleR = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)smp2.c_str());
+        if (sampleL && sampleR)
+        {
+          ass = new ASamplerSample(this, sampleL, sampleR, AkaiPrefix, id);
+          free(sampleL);
+          free(sampleR);
+          ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + name);
+          p->SetSample(ass);
+          ass->AddEffect(p);
+          PlugPanel->AddPlug(p);
+        }
+      }
+      else
+      {
+        t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
+        if (sample)
+        {
+          ass = new ASamplerSample(this, sample, NULL, AkaiPrefix, id);
+          free(sample);
+          ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + name);
+          p->SetSample(ass);
+          ass->AddEffect(p);
+          PlugPanel->AddPlug(p);
+        }
       }
     }
     else
@@ -405,8 +427,11 @@ void AkaiSampler::LoadProgram()
     cout << "Num: " << group->num << endl;
     if (group->zone_sample[0])
     {
-      ASamplerSample *ass = new ASamplerSample(this, group->zone_sample[0], AkaiPrefix);
-      Samples->List->AddEntry(group->zone_sample[0]->name, (void *)ass);
+      wxString name = group->zone_sample[0]->name;
+      if (group->zone_sample[1])
+        name << "/" << group->zone_sample[1]->name;
+      ASamplerSample *ass = new ASamplerSample(this, group->zone_sample[0], group->zone_sample[1], AkaiPrefix);
+      Samples->List->AddEntry(name, (void *)ass);
       ASamplerKeygroup *askg = new ASamplerKeygroup(this, group->lowkey, group->highkey);
       Keygroups.push_back(askg);
       ass->SetKeygroup(askg);

@@ -18,7 +18,7 @@ class ASamplerSample
 {
   public:
     ASamplerSample(class AkaiSampler *as, WaveFile *w, unsigned long id = 0);
-    ASamplerSample(class AkaiSampler *as, t_akaiSample *smp, wxString AkaiPrefix, unsigned long id = 0);
+    ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akaiSample *smpR, wxString AkaiPrefix, unsigned long id = 0);
     ~ASamplerSample();
     void SetKeygroup(ASamplerKeygroup *askg) { this->askg = askg; }
     ASamplerKeygroup *GetKeygroup() { return askg; }
