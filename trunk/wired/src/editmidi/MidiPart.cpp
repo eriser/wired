@@ -7,6 +7,7 @@
 #include "EditNote.h"
 #include "../gui/MidiPattern.h"
 #include "../midi/MidiFile.h"
+#include "../gui/SequencerGui.h"
 
 MidiPart::MidiPart(wxWindow *parent, wxWindowID id, const wxPoint& pos,
 		   const wxSize& size, long style, EditMidi *editmidi) :
@@ -254,6 +255,7 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 	      selected = new EditNote(this, -1, wxPoint(b.x, b.y), 
 				      wxSize(b.width, b.height), *i);
 	      selected->SetZoomX(ZoomX);
+	      
 	      return ;
 	      break;
 	    case ID_TOOL_EDIT_MIDIPART:
@@ -269,6 +271,8 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 		      Refresh(true);
 		      em->ma->SetNotes(Notes);
 		      em->ma->Refresh(true);
+
+		      SeqPanel->UpdateMidiPattern(em->midi_pattern);
 		    }
 		}	
 	      return ;
@@ -279,6 +283,8 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 	      Refresh(true);
 	      em->ma->SetNotes(Notes);
 	      em->ma->Refresh(true);
+
+	      SeqPanel->UpdateMidiPattern(em->midi_pattern);
 	      return ;
 	      break;
 	    }
@@ -313,6 +319,8 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 	Refresh(true);
 	em->ma->SetNotes(Notes);
 	em->ma->Refresh(true);
+
+	SeqPanel->UpdateMidiPattern(em->midi_pattern);
       }
 }
 

@@ -69,6 +69,10 @@ Plugin *RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin *co
   plug->SetSamplingRate(Audio->SampleRate);
   plug->Init();
   plug->SetHelpMode(HelpWin->IsShown());
+
+  if (Seq->Playing)
+    plug->Play();
+
   char str[128];
   sprintf(str, "%d", ++RackCount);
   plug->Name = plug->DefaultName() + " " + str;
