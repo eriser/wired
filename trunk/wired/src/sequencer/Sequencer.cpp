@@ -247,7 +247,9 @@ void					*Sequencer::Entry()
 	      (*RacksTrack)->CurrentBuffer = 0x0;  
 	    } 
 	}
-      SeqMutex.Unlock();
+      
+      //SeqMutex.Unlock();
+
       delta = Audio->SamplesPerBuffer;
       /* Jouer fichier du FileLoader si besoin */
       if (PlayWave)
@@ -297,7 +299,9 @@ void					*Sequencer::Entry()
 	}
       else
 	Mix->MixOutput(true);
-      //SeqMutex.Unlock();
+      
+      SeqMutex.Unlock();
+      
       if (!Audio->StreamIsStarted)
 	wxUsleep(1);      
       /* Cleanage des channels et buffers extra */

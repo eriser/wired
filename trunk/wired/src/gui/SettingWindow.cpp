@@ -114,9 +114,9 @@ SettingWindow::SettingWindow()
 		   wxPoint(8, 8));
   MidiInList = new wxCheckListBox(MidiPanel, Setting_MidiIn, wxPoint(8, 30), wxSize(368, 200), 0);
 
-  AudioPanel->SetBackgroundColour(CL_SEQ_BACKGROUND);
-  MidiPanel->SetBackgroundColour(CL_SEQ_BACKGROUND);
-  GeneralPanel->SetBackgroundColour(CL_SEQ_BACKGROUND);
+  AudioPanel->SetBackgroundColour(CL_SEQ_FOREGROUND);
+  MidiPanel->SetBackgroundColour(CL_SEQ_FOREGROUND);
+  GeneralPanel->SetBackgroundColour(CL_SEQ_FOREGROUND);
 
   AudioPanel->Show(false);
   MidiPanel->Show(false);

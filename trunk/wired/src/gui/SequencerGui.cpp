@@ -285,7 +285,10 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
   /* Sizers */
   zer_5 = new wxBoxSizer(wxVERTICAL);
-  zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
+  if (wxCHECK_VERSION(2, 5, 3))
+    zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
+  else
+    zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND, 0);
   zer_5->Add(SeqView, 1, wxALL | wxEXPAND, 0);
   zer_5->Add(HorizScrollBar, 0, wxALL | wxEXPAND, 0);
   zer_4 = new wxBoxSizer(wxVERTICAL);
