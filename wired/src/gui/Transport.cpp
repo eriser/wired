@@ -84,7 +84,7 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 			    up_up, up_down);
   BpmUpBtn = new HoldButton(this, Transport_BpmDown, wxPoint(112, 30), wxSize(11, 8), 
 			    down_up, down_down);
-  BpmLabel = new StaticLabel(this, Transport_BpmClick, "096.00", wxPoint(48, 20), wxSize(-1, 12));
+  BpmLabel = new StaticLabel(this, Transport_BpmClick, "096.00", wxPoint(49, 20), wxSize(-1, 12));
   BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));
   BpmLabel->SetLabel("096.00");
 
@@ -97,11 +97,11 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   SigDenDownBtn = new HoldButton(this, Transport_SigDenDown, wxPoint(95, 57), wxSize(11, 8), 
 				 down_up, down_down);
 
-  SigNumLabel = new wxStaticText(this, -1, "4", wxPoint(60, 48), wxSize(-1, 12));
+  SigNumLabel = new wxStaticText(this, -1, "4", wxPoint(59, 48), wxSize(-1, 12));
   SigNumLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigNumLabel->SetLabel("4");
 
-  SigDenLabel = new wxStaticText(this, -1, "4", wxPoint(82, 48), wxSize(-1, 12));
+  SigDenLabel = new wxStaticText(this, -1, "4", wxPoint(81, 48), wxSize(-1, 12));
   SigDenLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigDenLabel->SetLabel("4");
 
@@ -112,15 +112,15 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   StopBtn->SetBackgroundColour(wxColour(204, 199, 219));
   RecordBtn->SetBackgroundColour(wxColour(204, 199, 219));
 
-  MesLabel = new wxStaticText(this, -1, "1", wxPoint(186, 30), wxSize(32, 32));
+  MesLabel = new wxStaticText(this, -1, "1", wxPoint(182, 34), wxSize(32, 32));
   MesLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   MesLabel->SetForegroundColour(*wxWHITE);
 
-  SigLabel = new wxStaticText(this, -1, "1", wxPoint(215, 30), wxSize(30, 32));
+  SigLabel = new wxStaticText(this, -1, "1", wxPoint(215, 34), wxSize(30, 32));
   SigLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigLabel->SetForegroundColour(*wxWHITE);
 
-  MilliSigLabel = new wxStaticText(this, -1, "000", wxPoint(237, 30), wxSize(32, 32));
+  MilliSigLabel = new wxStaticText(this, -1, "000", wxPoint(237, 34), wxSize(32, 32));
   MilliSigLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   MilliSigLabel->SetForegroundColour(*wxWHITE);
 

@@ -15,19 +15,19 @@ Ruler::Ruler(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &
 //   T1 = new ColoredLine(this, -1, wxPoint(42, RULER_HEIGHT - RULER_XMARK_HEIGHT), wxSize(1, RULER_XMARK_HEIGHT    ), CL_RULER_XMARK);
 //   T2 = new ColoredLine(this, -1, wxPoint(43, RULER_HEIGHT - RULER_XMARK_HEIGHT), wxSize(1, RULER_XMARK_HEIGHT - 1), CL_RULER_XMARK);
 //   T3 = new ColoredLine(this, -1, wxPoint(44, RULER_HEIGHT - RULER_XMARK_HEIGHT), wxSize(1, RULER_XMARK_HEIGHT    ), CL_RULER_XMARK);
-  T1 = new ColoredLine(this, -1, wxPoint(42, 0), wxSize(8, RULER_XMARK_HEIGHT    ), CL_RULER_XMARK);
+/*  T1 = new ColoredLine(this, -1, wxPoint(42, 0), wxSize(8, RULER_XMARK_HEIGHT    ), CL_RULER_XMARK);
   T2 = new ColoredLine(this, -1, wxPoint(43, 0), wxSize(16, RULER_XMARK_HEIGHT - 1), CL_RULER_XMARK);
   T3 = new ColoredLine(this, -1, wxPoint(44, 0), wxSize(24, RULER_XMARK_HEIGHT    ), CL_RULER_XMARK);
   T1->Show(true);
   T2->Show(true);
-  T3->Show(true);
+  T3->Show(true);*/
 }
 
 Ruler::~Ruler()
 {
-  delete (T1);
+  /*  delete (T1);
   delete (T2);
-  delete (T3);
+  delete (T3);*/
 }
 
 /*
