@@ -60,7 +60,7 @@ libWiredWidgets_la_LIBADD =
 am_libWiredWidgets_la_OBJECTS = ChoiceButton.lo DownButton.lo \
 	FaderCtrl.lo HoldButton.lo IdButton.lo KnobCtrl.lo \
 	StaticBitmap.lo VUMCtrl.lo Hint.lo HintedFader.lo \
-	HintedKnob.lo
+	HintedKnob.lo StaticPosKnob.lo CycleKnob.lo
 libWiredWidgets_la_OBJECTS = $(am_libWiredWidgets_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/src/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -205,7 +205,11 @@ libWiredWidgets_la_SOURCES = \
 		HintedFader.cpp		\
 		HintedFader.h		\
 		HintedKnob.cpp		\
-		HintedKnob.h
+		HintedKnob.h		\
+		StaticPosKnob.cpp	\
+		StaticPosKnob.h		\
+		CycleKnob.cpp		\
+		CycleKnob.h
 
 all: all-am
 
@@ -277,6 +281,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChoiceButton.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CycleKnob.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DownButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FaderCtrl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Hint.Plo@am__quote@
@@ -286,6 +291,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/IdButton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KnobCtrl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StaticBitmap.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StaticPosKnob.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VUMCtrl.Plo@am__quote@
 
 .cpp.o:
