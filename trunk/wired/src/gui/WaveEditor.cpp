@@ -43,7 +43,7 @@ void WaveEditor::OnPaint(wxPaintEvent &event)
       // Set back the initial background and border colour
       // and paint the wave background
       memDC.SetPen(GetPenColor());
-      memDC.SetBrush(CL_SEQ_BACKGROUND);
+      memDC.SetBrush(CL_WAVEEDITOR_BACKGROUND);
       memDC.DrawRectangle(0, 0, width, height);
       // Draw the selection region
       memDC.SetBrush(selectedBrush);

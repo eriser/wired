@@ -55,9 +55,9 @@ void					CursorH::OnPaint(wxPaintEvent &e)
 {
   wxPaintDC				dc(this);
   
-  dc.SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
+  dc.SetFont(wxFont(CURSOR_NAME_HEIGHT, wxDEFAULT, wxNORMAL, wxNORMAL));
   dc.SetTextForeground(CL_CURSORZ_HEAD_NAME);
-  dc.DrawText(Name, 3, 0);
+  dc.DrawText(Name, CURSOR_NAME_XOFFSET, CURSOR_NAME_YOFFSET);
 }
 
 void					CursorH::OnMouseEvent(wxMouseEvent &e)
@@ -113,11 +113,13 @@ Cursor::Cursor(char name, int id, double initpos, Ruler *R, SequencerGui *S,
 	       wxColour cH, wxColour cL)
 {
   wxSize				s;
+  long					h;
 
   SeqGUI = S;
   pos = initpos;
   s = S->GetSize();
-  H = new CursorH(R, id, wxPoint(0, RULER_HEIGHT - CURSOR_HEIGHT), wxSize(CURSOR_WIDTH, CURSOR_HEIGHT), this, name);
+  h = R->GetClientSize().y;
+  H = new CursorH(R, id, wxPoint(0, h - CURSOR_HEIGHT), wxSize(CURSOR_WIDTH, CURSOR_HEIGHT), this, name);
   H->SetBackgroundColour(cH);
   L = new ColoredLine(SeqGUI->SeqView, id, wxPoint(0, 0), wxSize(1, s.y), cL);
   SetPos(0.0);
@@ -132,12 +134,14 @@ Cursor::~Cursor()
 void					Cursor::SetPos(double newpos)
 {
   long					x;
+  long					h;
 
   if (newpos < 0)
     newpos = 0;
   x = (long) floor((pos = newpos) * MEASURE_WIDTH * SeqGUI->HoriZoomFactor) - SeqGUI->SeqView->GetXScroll();
+  h = SeqGUI->RulerPanel->GetClientSize().y;
+  H->Move(x  - (CURSOR_WIDTH / 2) + 1, h - CURSOR_HEIGHT);
   L->Move(x, 0);
-  H->Move(x  - (CURSOR_WIDTH / 2) + 1, RULER_HEIGHT - CURSOR_HEIGHT - 4);
 }
 
 double					Cursor::GetPos()
