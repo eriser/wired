@@ -7,6 +7,7 @@
 #include "midi.h"
 
 extern wxMutex MidiMutex;
+extern wxMutex MidiDeviceMutex;
 
 class MidiThread : public wxThread
 {

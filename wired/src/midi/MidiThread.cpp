@@ -3,6 +3,8 @@
 #include "Settings.h"
 
 wxMutex MidiMutex;
+wxMutex MidiDeviceMutex;
+
 MidiThread *MidiEngine;
 
 MidiThread::MidiThread()
@@ -84,6 +86,7 @@ void MidiThread::RemoveDevice(int id)
   for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
     if ((*i)->id == id)
       {
+	delete *i;
 	MidiInDev.erase(i);
 	break;
       }
@@ -110,12 +113,13 @@ MidiDeviceList *MidiThread::ListDevices()
 void *MidiThread::Entry()
 {
   vector<MidiInDevice *>:: iterator i;
-  long k;
 
   cout << "[MIDITHREAD] Thread started !" << endl;    
   while (1)
     {
-      for (i = MidiInDev.begin(); i != MidiInDev.end(); i++, k++)
+      MidiDeviceMutex.Lock();
+
+      for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
 	{
 	  if ((*i)->Poll())
 	    {
@@ -123,6 +127,8 @@ void *MidiThread::Entry()
 	      AnalyzeMidi((*i)->id);
 	    }
 	}
+      MidiDeviceMutex.Unlock();
+
       wxUsleep(1);
     }
   return (0x0);

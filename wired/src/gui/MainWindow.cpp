@@ -889,20 +889,33 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 
       if (!Audio->CloseStream())
 	{
-	  cout << "Could not close stream" << endl;
+	  cout << "{MAINWIN] Could not close audio stream" << endl;
 	  //Audio->Restart();
 	}
-      else
-	cout << "stream closed" << endl;
-
       try 
 	{ 
 	  Audio->GetDeviceSettings();
       	  Mix->InitOutputBuffers();
+	  
+	  // Refill tracks connections
 	  if (s.AudioLoaded || s.MidiLoaded)
 	    for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
 	      (*i)->TrackOpt->FillChoices();      
 	  Audio->IsOk = true;
+
+	  // Sends sample rate and buffer size modifications to plugins
+	  if (s.AudioLoaded)
+	    {
+	      list<RackTrack *>::iterator k;
+	      list<Plugin *>::iterator j;
+
+	      for (k = RackPanel->RackTracks.begin(); k != RackPanel->RackTracks.end(); k++)  
+		for (j = (*k)->Racks.begin(); j != (*k)->Racks.end(); j++)
+		  {
+		    (*j)->SetBufferSize(Audio->SamplesPerBuffer);
+		    (*j)->SetSamplingRate(Audio->SampleRate);
+		  }
+	    }
 	}
       catch (Error::NoDevice)
 	{
@@ -924,6 +937,16 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 	  Audio->StartStream();
 	}
       SeqMutex.Unlock();
+
+      if (s.MidiLoaded)
+	{
+	  MidiDeviceMutex.Lock();
+	  // Reopen midi devices
+	  MidiEngine->OpenDefaultDevices(); 
+	  MidiDeviceMutex.Unlock();	  
+	}
+
+      
     }
   else
     {

@@ -31,7 +31,8 @@ Sequencer::Sequencer()
 
 Sequencer::~Sequencer()
 {
-  
+  if (ClickWave)
+    delete ClickWave;
 }
 
 void					*Sequencer::Entry()
