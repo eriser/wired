@@ -145,6 +145,23 @@ void Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
   SetScrolling();
 }
 
+void Rack::AddTrack(Plugin *p)
+{
+  RackTrack *t;
+
+  t = new RackTrack(this, RackTracks.size());
+
+  t->Units = p->InitInfo->UnitsX;
+ 
+  SeqMutex.Lock(); 
+
+  t->Racks.insert(t->Racks.begin(),p);
+  RackTracks.push_back(t);
+
+  SeqMutex.Unlock();      
+
+  SetScrolling();
+}
 void Rack::RemoveTrack()
 {
   SeqMutex.Lock();
@@ -387,13 +404,17 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
     {
       new_x = (event->GetPosition().x + plug->GetPosition().x);
       new_y = (event->GetPosition().y + plug->GetPosition().y);
-      DndGetDest(k, l, new_x, new_y, plug);
+      if(!DndGetDest(k, l, new_x, new_y, plug)){
+	  DeleteRack(plug);
+	  AddTrack(plug);
+      }
+	//cout << "false" << endl;
       ResizeTracks();
       WasDragging = false;
     }      
 }
 
-void Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y, Plugin *plug)
+bool Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y, Plugin *plug)
 {
   int pos_x = 0;
   int pos_y = 0;
@@ -407,15 +428,16 @@ void Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator 
 	  if(((pos_y - ((*l)->InitInfo->UnitsY * UNIT_H)) < new_y) && (new_y < pos_y))
 	    {
 	      if((*l) == plug)
-		break;
+		return true;
 	      DeleteRack(plug);
 	      DndInsert(k, l, plug);
-	      break;
+	      return true;
 	    }
 	}
 	break;
       }
   }
+   return false;
 }
 
 void Rack::DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug)
