@@ -11,11 +11,6 @@ using namespace std;
 #include <wx/wx.h>
 #include <wx/statline.h>
 
-#include "Track.h"
-#include "Ruler.h"
-#include "SelectionZone.h"
-#include "Cursor.h"
-#include "ColoredBox.h"
 #include <wx/toolbar.h>
 #include <wx/colordlg.h>
 
@@ -29,7 +24,6 @@ using namespace std;
 
 #define TRACK_HEIGHT			(80)
 #define TRACK_WIDTH			(120)
-#define RULER_HEIGHT			(20)
 #define TOOLS_HEIGHT			(46)
 
 #define HSCROLL_THUMB_WIDTH		(42)
@@ -39,6 +33,7 @@ using namespace std;
 #define WHEEL_HSCROLL_UNIT		(42)
 
 #define MAGNETISM			(3)
+#define MEASURE_WIDTH			(80)
 
 #define CURSOR_MASK			(0x1)
 #define CURSOR_MAGNETISM		(MAGNETISM & CURSOR_MASK)
@@ -84,6 +79,41 @@ typedef struct				s_combo_choice
 
 extern const struct s_combo_choice	ComboChoices[NB_COMBO_CHOICES + 1];
 
+enum
+  {
+    ID_POPUP_CUT = 24242,
+    ID_POPUP_COPY,
+    ID_POPUP_PASTE,
+    ID_POPUP_DELETE,
+    ID_POPUP_MOVE_TO_CURSOR,
+    ID_POPUP_SELECT_ALL,
+    ID_SEQ_HSLIDER,
+    ID_SEQ_VSLIDER,
+    ID_SEQ_RULER,
+    ID_SEQ_SCROLLING,
+    ID_CURSOR_PLAY,
+    ID_CURSOR_BEGIN,
+    ID_CURSOR_REPEAT,
+    ID_CURSOR_END,
+    ID_TRACK_VIEW,
+    ID_SEQ_MOVE,
+    ID_SEQ_EDIT,
+    ID_SEQ_DEL,
+    ID_SEQ_SPLIT,
+    ID_SEQ_MAGNET,
+    ID_SEQ_COMBO_MAGNET,
+    ID_SEQ_COLOR,
+    ID_SEQ_COLORBOX
+  };
+
+class Ruler;
+class Cursor;
+class SelectionZone;
+class ColoredBox;
+class Track;
+class Plugin;
+class Pattern;
+
 class SequencerView: public wxScrolledWindow
 {
   friend class			SequencerGui;
@@ -122,33 +152,6 @@ class SequencerView: public wxScrolledWindow
 
   DECLARE_EVENT_TABLE()
 };
-
-enum
-  {
-    ID_POPUP_CUT = 24242,
-    ID_POPUP_COPY,
-    ID_POPUP_PASTE,
-    ID_POPUP_DELETE,
-    ID_POPUP_MOVE_TO_CURSOR,
-    ID_POPUP_SELECT_ALL,
-    ID_SEQ_HSLIDER,
-    ID_SEQ_VSLIDER,
-    ID_SEQ_RULER,
-    ID_SEQ_SCROLLING,
-    ID_CURSOR_PLAY,
-    ID_CURSOR_BEGIN,
-    ID_CURSOR_REPEAT,
-    ID_CURSOR_END,
-    ID_TRACK_VIEW,
-    ID_SEQ_MOVE,
-    ID_SEQ_EDIT,
-    ID_SEQ_DEL,
-    ID_SEQ_SPLIT,
-    ID_SEQ_MAGNET,
-    ID_SEQ_COMBO_MAGNET,
-    ID_SEQ_COLOR,
-    ID_SEQ_COLORBOX
-  };
 
 class CursorEvent: public wxEvent
 {

@@ -1,12 +1,13 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License
 
-#include "Pattern.h"
 #include "Colour.h"
 #include "SequencerGui.h"
 #include "OptionPanel.h"
 #include <math.h>
 #include <wx/font.h>
+#include "Cursor.h"
+#include "Pattern.h"
 
 Pattern::Pattern(double pos, double endpos, long trackindex) :
   wxWindow(SeqPanel->SeqView, -1, wxPoint(0, 0), wxSize(0, 0))

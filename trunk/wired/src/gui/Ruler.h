@@ -6,7 +6,7 @@
 
 #include <wx/wx.h>
 
-#define MEASURE_WIDTH	(80)
+#define RULER_HEIGHT			(20)
 
 class Ruler : public wxWindow
 {
