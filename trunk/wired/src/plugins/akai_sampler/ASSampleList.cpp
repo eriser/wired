@@ -71,7 +71,8 @@ void  ASSampleList::OnDelSample(wxCommandEvent &e)
   ent = List->GetSelected();
   if (ent)
   {
+    ASamplerSample *ass = (ASamplerSample *)ent->GetEntry();
     List->DelEntry(ent->GetEntry());
-    delete (ASamplerSample *)ent->GetEntry();
+    delete ass;
   }
 }
