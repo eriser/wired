@@ -140,6 +140,8 @@ class AkaiSampler : public Plugin
     void OnPolyDown(wxCommandEvent &event);
     //void OnPianoClickDown(wxCommandEvent &event);
     //void OnPianoClickUp(wxCommandEvent &event);
+    void OnKeyUp(wxMouseEvent &event);
+    void OnKeyDown(wxMouseEvent &event);
     void OnVolume(wxScrollEvent &event);
     //void OnPaint(wxPaintEvent &event);
     //void LoadProgram();

@@ -51,11 +51,9 @@ void	ASKey::OnLeftDown(wxMouseEvent &event)
 {
 	if (event.LeftIsDown())
 	{
-		selected = true;
+		selected = !selected;
 		wxSize s = GetSize();
 		wxRect rect(0, 0, s.GetWidth(), s.GetHeight());
-		printf("click on %s\n", note.c_str());
-		printf("MIDINOTE: 0x%02X\n", code);
 		Refresh(&rect);
 
 		wxMouseEvent evt(wxEVT_LEFT_DOWN);
@@ -66,7 +64,7 @@ void	ASKey::OnLeftDown(wxMouseEvent &event)
 
 void	ASKey::OnLeftUp(wxMouseEvent	&event)
 {
-	selected = false;
+	selected = !selected;
 	wxSize s = GetSize();
 	wxRect rect(0, 0, s.GetWidth(), s.GetHeight());
 	Refresh(&rect);
