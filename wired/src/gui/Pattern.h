@@ -59,6 +59,7 @@ class Pattern : public wxWindow
   void					SetName(string n) { Name = n; }
   long					GetTrackIndex() { return (TrackIndex); }
   void					SetTrackIndex(long t) { TrackIndex = t; }
+  void					SetDrawColour(wxColour c) { PenColor = c; }
 };
 
 #endif

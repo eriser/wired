@@ -23,7 +23,7 @@ class MidiPattern: public Pattern
   void			SetSelected(bool sel);
   unsigned short	GetPPQN() { return ppqn; }
   void			SetPPQN(unsigned short p) { ppqn = p; }
-
+  void			SetDrawColour(wxColour c);
   Pattern		*CreateCopy(double pos);
   void			DrawMidi();
   
@@ -41,7 +41,6 @@ class MidiPattern: public Pattern
   void			OnMoveToCursorClick(wxCommandEvent &e);
   void			OnPaint(wxPaintEvent &e);
   
-  wxColour		DrawColour;	// Colour used for drawing
   wxColour		Colour;		// Keeps original pattern color
   wxBitmap		*Bmp;
   wxMemoryDC		memDC;

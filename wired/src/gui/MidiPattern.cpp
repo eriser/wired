@@ -48,8 +48,8 @@ void				MidiPattern::Init()
   wxString	s;
 
   s.Printf("Midi Pattern %d", midi_pattern_count++);
-  DrawColour = CL_MIDI_DRAW;
-  Colour = DrawColour;
+  PenColor = CL_MIDI_DRAW;
+  Colour = PenColor;
   Name = s.c_str();
   ppqn = 1;
   Bmp = 0x0;
@@ -77,9 +77,9 @@ void				MidiPattern::SetSelected(bool sel)
 {
   Pattern::SetSelected(sel);
   if (sel)
-    DrawColour = CL_PATTERN_SEL;
+    PenColor = CL_PATTERN_SEL;
   else
-    DrawColour = Colour;
+    PenColor = Colour;
 
   DrawMidi();
   wxWindow::Refresh(true);
@@ -95,6 +95,14 @@ Pattern				*MidiPattern::CreateCopy(double pos)
   return (p);
 }
 
+void				MidiPattern::SetDrawColour(wxColour c)
+{
+  Colour = c;
+  PenColor = c;
+  DrawMidi();
+  Refresh();
+}
+
 void				MidiPattern::OnClick(wxMouseEvent &e)
 {
   Pattern::OnClick(e);
@@ -104,11 +112,7 @@ void				MidiPattern::OnClick(wxMouseEvent &e)
     }
   else if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
       {
-	Colour = SeqPanel->ColorBox->GetColor();
-	DrawColour = Colour;
-
-	DrawMidi();
-	Refresh();
+	SetDrawColour(SeqPanel->ColorBox->GetColor());
       }
 
 }
@@ -220,11 +224,11 @@ void				MidiPattern::DrawMidi()
   Bmp = new wxBitmap(size_x, size_y);
   memDC.SelectObject(*Bmp);
 
-  memDC.SetPen(DrawColour);
+  memDC.SetPen(PenColor);
   memDC.SetBrush(CL_SEQ_BACKGROUND);
   memDC.DrawRectangle(0, 0, size_x, size_y);
 
-  //memDC.SetPen(DrawColour);
+  //memDC.SetPen(PenColor);
 
   inc = size_y / 127.f;
 
@@ -242,7 +246,7 @@ void				MidiPattern::OnPaint(wxPaintEvent &e)
   wxSize			s = wxWindow::GetSize();
   wxRegionIterator		region;
  
-  dc.SetPen(DrawColour);
+  dc.SetPen(PenColor);
   if (Bmp)
     {
       for(region = GetUpdateRegion(); region; region++)
