@@ -3,11 +3,37 @@
 
 #include "Settings.h"
 #include <wx/filename.h>
+#include <wx/msgdlg.h>
 #include <iostream>
 
 #include "config.h"
 
 Settings *WiredSettings;
+
+#define FIRST_START_MSG \
+"Welcome to version 0.11 of Wired.\n\
+Wired is currently a beta software, some of its features may not work completly yet.\n\
+We recommend to do not use the following features at this time :\n\
+- Undo/Redo\n\
+- Drag and drop of plugins\n\
+\n\
+The next step is to configure your soundcard settings in Wired Settings dialog.\
+Select 32 bits float for sample format, 44100hz for sample rate (or whatever \
+you prefer) and choose a latency which your soundcard is capable of. You \
+can try different values (the lower the most realtime Wired will perform) \
+and see which one is the best for your soundcard. Setting the latency too low will \
+cause drops and glitch to appear in the sound output.\n\
+\n\
+You will find in the Help menu, a \"Show integrated help\" item which will \
+display an interactive help window on the bottom right corner of Wired. \
+If you move your mouse over a control in Wired or in a plugin, it will \
+show you the help associated with this item. \
+\n\
+If you find any bugs in Wired, please make a bug report at :\n\
+http://bloodshed.net/wired/bugs\n\
+\n\
+If you need help or want to discuss about Wired, pleast visit :\n\
+http://bloodshed.net/wired/forums"
 
 Settings::Settings() :
   QuickWaveRender(false), dbWaveRender(false), OutputDev(-1), InputDev(-1), OutputLatency(-1),
@@ -42,8 +68,6 @@ Settings::Settings() :
   DataDir = INSTALL_PREFIX;
   DataDir += WIRED_DATADIR;
   
-  cout << "[SETTINGS] DataDir=" << DataDir << endl;
-  
   f.Assign(DataDir.c_str());
   if (!f.DirExists()) // if not found try /usr
     {
@@ -60,13 +84,19 @@ Settings::Settings() :
 	    }
 	}
     }
-  cout << "[SETTINGS] DataDir=" << DataDir << endl;
 
   f.AssignHomeDir();
   f.AppendDir(WIRED_DIRECTORY);
   
   if (f.Mkdir(0755, wxPATH_MKDIR_FULL))
     {
+      f.SetName("wired.conf");  
+      if (!f.FileExists())
+	{
+	  wxMessageDialog msg(0x0, FIRST_START_MSG, "Wired", wxOK | wxICON_INFORMATION | 
+			      wxCENTRE);
+	  msg.ShowModal();
+	}
       conf = new wxConfig("Wired", "P31", WIRED_CONF, WIRED_CONF, wxCONFIG_USE_LOCAL_FILE);  
       Load();
     }
@@ -76,8 +106,6 @@ Settings::Settings() :
 	   << endl;
       throw; // FIXME add a decent object to throw
     }
-  cout << "[SETTINGS] DataDir=" << DataDir << endl;
-
 }
 
 Settings::~Settings()
@@ -89,8 +117,6 @@ void Settings::Load()
 {
   int l, val;
   wxString s;
-
-  cout << "[SETTINGS] Saving settings..."<< endl;
 
   conf->SetPath("/");
   conf->Read("QuickWaveRender", &QuickWaveRender, false);
