@@ -11,15 +11,14 @@ BEGIN_EVENT_TABLE(ASKeygroupList, wxWindow)
   EVT_SIZE(ASKeygroupList::OnResize)
 END_EVENT_TABLE()
 
-unsigned long keygroupid = 1;
 
-ASKeygroupList *Keygroups = NULL;
+//ASKeygroupList *Keygroups = NULL;
+vector<ASamplerKeygroup *> Keygroups;
 
 ASKeygroupList::ASKeygroupList(wxString Name) :
   ASPlugin(Name)
 {
   List = NULL;
-  List = new ASList(this, -1, wxPoint(0, 0), GetSize());
 }
 
 ASKeygroupList::~ASKeygroupList()
@@ -35,6 +34,7 @@ void ASKeygroupList::OnResize(wxSizeEvent &e)
 wxWindow *ASKeygroupList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
 {
   Reparent(panel);
+  List = new ASList(this, -1, wxPoint(0, 0), GetSize());
   SetSize(sz);
   Move(pt);
   List->SetSize(sz);
@@ -46,7 +46,8 @@ wxWindow *ASKeygroupList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
   wxImage *btassign = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_EDIT_KEYGROUP)).c_str(), wxBITMAP_TYPE_PNG);
   List->AddControl(new wxBitmapButton(List, ASKeygroupList_EditKeygroup, wxBitmap(btassign)));
   */
-  Show(true);
+  //Show(true);
+  Show(false);
   return this;
 }
 

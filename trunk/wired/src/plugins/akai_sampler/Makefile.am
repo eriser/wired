@@ -11,12 +11,9 @@ libWiredSampler_la_SOURCES =					\
 			ASEnvel.cpp      		\
 			ASWaveView.cpp      		\
 			ASKey.cpp 			\
-		        Solver.cpp			\
 			ASList.cpp			\
-		        Splines.cpp			\
 			ASPlugPanel.cpp			\
 			ASSampleList.cpp		\
-			ASKeygroupList.cpp		\
 			ASKeygroupEditor.cpp		\
 			ASLoop.cpp			\
 			AkaiSampler.h			\
@@ -25,9 +22,9 @@ libWiredSampler_la_SOURCES =					\
 			ASEnvel.h      			\
 			AkaiSampler.h			\
 			ASKey.h 			\
-		        Solver.h			\
+		  Solver.h			\
 			ASList.h			\
-		        Splines.h			\
+		  Splines.h			\
 			ASPlugPanel.h			\
 			ASSampleList.h			\
 			ASWaveView.h			\

@@ -17,10 +17,12 @@ static wxString EFFECTSNAMES[NB_EFFECTS] = {
 };
 // FIN DES EFFETS
 
+vector <ASamplerKeygroup *> Keygroups;
+unsigned long keygroupid = 1;
 
 static PlugInitInfo info;
 
-  BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
+BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
   EVT_PAINT(AkaiSampler::OnPaint)
   EVT_BUTTON(Sampler_Open, AkaiSampler::OnOpenFile)
   EVT_BUTTON(Sampler_Save, AkaiSampler::OnSaveFile)
@@ -43,17 +45,18 @@ END_EVENT_TABLE()
   if (tr_bg)
     TpBmp = new wxBitmap(tr_bg);
 
+
+  PlugPanel = new ASPlugPanel(this, wxPoint(150, 0), wxSize(GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), wxTHICK_FRAME, this);
+
+  //Keygroups = new ASKeygroupList("Keygroups");
+  Samples = new ASSampleList("Samples");
+
   clavier = new ASClavier(this, -1, wxPoint(GetSize().GetWidth() - ASCLAVIER_WIDTH, GetSize().GetHeight() - ASCLAVIER_HEIGHT),
       wxSize(ASCLAVIER_WIDTH, ASCLAVIER_HEIGHT),
       wxSIMPLE_BORDER, this);
 
-  PlugPanel = new ASPlugPanel(this, wxPoint(150, 0), wxSize(GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), wxTHICK_FRAME, this);
-
-  Samples = new ASSampleList("Samples");
-  Keygroups = new ASKeygroupList("Keygroups");
-
   PlugPanel->AddPlug(Samples);
-//  PlugPanel->AddPlug(Keygroups);
+  //PlugPanel->AddPlug(Keygroups);
   PlugPanel->ShowPlugin(Samples);
 
   //memset(Keys, 0x0, sizeof(ASamplerKey *) * 127);
@@ -233,36 +236,63 @@ void AkaiSampler::Load(int fd, long size)
     ASamplerSample *ass = NULL; 
     if (s.StartsWith("[AKAI]", &s2))
     {
-      wxString dev(s2.SubString(0, s2.Find(':')));
-      s2 = s2.SubString(s2.Find(':') + 1, s2.size() - s2.Find(':'));
-      wxString path = s2.SubString(10, s2.size() - 10);
+      wxString dev(s2.SubString(0, s2.Find(':') - 1));
+      s2 = s2.SubString(s2.Find(':') + 1, s2.Len());
+      wxString path = s2; //.SubString(10, s2.size() - 10);
       int pos = path.Find('/');
       int part = path.SubString(0, pos).c_str()[0] - 64;
       path = path.SubString(pos, path.size() - pos);
       int opos = path.Find('/', true);
-      wxString name = path.SubString(opos, path.size() - opos);
-      path = path.SubString(1, opos - 2);
-      wxString prefix = s.SubString(6, opos);
-      cout << "device: " << dev << "; part: " << part << "; path: " << path << "; filename: " << name << endl;
-      cout << "AkaiPrefix: " << AkaiPrefix << endl;
+      wxString name = path.SubString(opos + 1, path.Len());
+      path = path.SubString(1, opos - 1);
+      AkaiPrefix = "[AKAI]";
+      AkaiPrefix += dev.c_str();
+      AkaiPrefix += ':';
+      AkaiPrefix += ((char)part + 64);
+      AkaiPrefix += '/';
+      AkaiPrefix += path.c_str();
+      AkaiPrefix += '/';
+      cerr << "device: " << dev << "; part: " << part << "; path: " << path << "; filename: " << name << endl;
+      cerr << "AkaiPrefix: " << AkaiPrefix << endl;
       t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
-      ass = new ASamplerSample(sample, prefix, id);
-      free(sample);
+      if (sample)
+      {
+        ass = new ASamplerSample(sample, AkaiPrefix, id);
+        free(sample);
+        ASPlugin *p = new ASLoop(ASLoop::GetFXName() + " #0 for " + name);
+        p->SetSample(ass);
+        ass->AddEffect(p);
+        PlugPanel->AddPlug(p);
+      }
     }
     else
-      ass = new ASamplerSample(new WaveFile(string(str)), id);
-    cerr << "[WiredSampler] Loaded wav " << wxString(_T(str)) << endl;
-    Samples->List->AddEntry(smpname, (void *)ass);
+      ass = new ASamplerSample(new WaveFile(string(str), true), id);
+    if (ass)
+    {
+      cerr << "[WiredSampler] Loaded wav " << wxString(_T(str)) << endl;
+      Samples->List->AddEntry(smpname, (void *)ass);
+    }
+    else
+      cerr << "[WiredSampler] Wavefile " << wxString(_T(str)) << " can't be loaded skipping..." << endl;
     free(str);
     count += read(fd, &len, sizeof(len));
-    cout << "[WiredSampler] Setting loop_count to " << len << endl;
-    ass->SetLoopCount(len);
+    if (ass)
+    {
+      cerr << "[WiredSampler] Setting loop_count to " << len << endl;
+      ass->SetLoopCount(len);
+    }
     count += read(fd, &len, sizeof(len));
-    cout << "[WiredSampler] Setting loop_start to " << len << endl;
-    ass->SetLoopStart(len);
+    if (ass)
+    {
+      cerr << "[WiredSampler] Setting loop_start to " << len << endl;
+      ass->SetLoopStart(len);
+    }
     count += read(fd, &len, sizeof(len));
-    cout << "[WiredSampler] Setting loop_end to " << len << endl;
-    ass->SetLoopEnd(len);
+    if (ass)
+    {
+      cerr << "[WiredSampler] Setting loop_end to " << len << endl;
+      ass->SetLoopEnd(len);
+    }
   }
   count += read(fd, &nbent, sizeof(nbent));
   cerr << "[WiredSampler] Loading " << nbent << " keygroups..." << endl;
@@ -271,13 +301,6 @@ void AkaiSampler::Load(int fd, long size)
     long len;
     char *str;
 
-    count += read(fd, &len, sizeof(len));
-    str = (char *)malloc(len + 1);
-    count += read(fd, str, len);
-    str[len] = 0;
-    wxString kgname(_T(str));
-    free(str);
-    cerr << "[WiredSampler] Loaded keygroup " << kgname << endl;
     unsigned long id;
     count += read(fd, &id, sizeof(id));
     cerr << "[WiredSampler] Loaded ID " << id << endl;
@@ -288,7 +311,7 @@ void AkaiSampler::Load(int fd, long size)
     count += read(fd, &hikey, sizeof(hikey));
     cerr << "[WiredSampler] Loaded high key " << hikey << endl;
     ASamplerKeygroup *askg = new ASamplerKeygroup(lokey, hikey, id);
-    Keygroups->List->AddEntry(kgname, (void *)askg);
+    Keygroups.push_back(askg);
     count += read(fd, &len, sizeof(len));
     if (len)
     {
@@ -347,31 +370,24 @@ long AkaiSampler::Save(int fd)
     cerr << "[WiredSampler] Saving loop_end " << len << endl;
     count += write(fd, &len, sizeof(len));
   }
-  entries = Keygroups->List->GetEntries();
-  nbent = entries.size();
+  nbent = Keygroups.size();
   count += write(fd, &nbent, sizeof(nbent));
   cerr << "[WiredSampler] Saving " << nbent << " keygroups..." << endl;
-  for (vector<ASListEntry *>::iterator i = entries.begin(); i != entries.end(); i++)
+  for (vector<ASamplerKeygroup*>::iterator i = Keygroups.begin(); i != Keygroups.end(); i++)
   {
     long len;
     char *str;
 
-    cerr << "[WiredSampler] Saving keygroup " << (*i)->GetName() << endl;
-    ASamplerKeygroup *askg = (ASamplerKeygroup *)(*i)->GetEntry();
-    str = (char *)(*i)->GetName().c_str();
-    len = strlen(str);
-    count += write(fd, &len, sizeof(len));
-    count += write(fd, str, len);
-    len = askg->GetID();
+    len = (*i)->GetID();
     cerr << "[WiredSampler] Saving ID " << len << endl;
     count += write(fd, &len, sizeof(len));
-    len = askg->GetLowKey();
+    len = (*i)->GetLowKey();
     cerr << "[WiredSampler] Saving lokey " << len << endl;
     count += write(fd, &len, sizeof(len));
-    len = askg->GetHighKey();
+    len = (*i)->GetHighKey();
     cerr << "[WiredSampler] Saving hikey " << len << endl;
     count += write(fd, &len, sizeof(len));
-    ASamplerSample *smp = askg->GetSample();
+    ASamplerSample *smp = (*i)->GetSample();
     if (!smp)
       len = 0;
     else
@@ -395,16 +411,16 @@ void AkaiSampler::LoadProgram()
     cout << "Num: " << group->num << endl;
     if (group->zone_sample[0])
     {
-      wxString samplename = "AkaiSample #";
-      samplename << group->num;
-      wxString groupname = "AkaiKeygroup #";
-      groupname << group->num;
       ASamplerSample *ass = new ASamplerSample(group->zone_sample[0], AkaiPrefix);
       Samples->List->AddEntry(group->zone_sample[0]->name, (void *)ass);
       ASamplerKeygroup *askg = new ASamplerKeygroup(group->lowkey, group->highkey);
-      Keygroups->List->AddEntry(groupname, (void *)askg);
+      Keygroups.push_back(askg);
       ass->SetKeygroup(askg);
       askg->SetSample(ass);
+      ASPlugin *p = new ASLoop(ASLoop::GetFXName() + " #0 for " + group->zone_sample[0]->name);
+      p->SetSample(ass);
+      ass->AddEffect(p);
+      PlugPanel->AddPlug(p);
     }
   }
 }
@@ -441,6 +457,8 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
 {
   //long i;
   //int chan;
+  
+  cerr << "Process start" << endl;
   Mutex.Lock();
 
   /*  if (!AkaiProgram)
@@ -453,17 +471,18 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
   ASamplerNote *n;
   long length, end, idx, chan;
 
+  cerr << "Process note" << endl;
   // Processing des notes
   for (i = Notes.begin(); i != Notes.end(); i++)
   {
     n = *i;
     long endtotest;
-    if (n->Key->looping)
+    endtotest = n->Key->ass->GetSample()->GetNumberOfFrames();
+    if ((n->Key->looping) && (n->Key->ass->GetLoopEnd() < endtotest))
       endtotest = n->Key->ass->GetLoopEnd();
-    else
-      endtotest = n->Key->ass->GetSample()->GetNumberOfFrames();
     if (n->Position < endtotest)
     {
+  cerr << "pos < endtotest" << endl;
       length = sample_length - n->Delta;
       end = (long)(endtotest / n->Key->Pitch);
       if (end < (length))
@@ -472,52 +491,64 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
         end = 0;
       n->Key->ass->GetSample()->SetPitch(n->Key->Pitch);
       long pos = n->Position;
+  cerr << "read" << endl;
       n->Key->ass->GetSample()->Read(n->Buffer, n->Position, length, n->Delta, &(n->Position));
-      ASPlugin *p = n->Key->ass->GetEffect();
-      if (p)
-        p->Process(n->Buffer, 2, pos, length);
 
+  cerr << "vol" << endl;
       if (n->Volume != 1.f)
         for (chan = 0; chan < 2; chan++)
           for (idx = n->Delta; idx < length; idx++)
             n->Buffer[chan][idx] *= n->Volume;
 
+  cerr << "plugs" << endl;
+      vector<ASPlugin *> p = n->Key->ass->GetEffects();
+      for (vector<ASPlugin*>::iterator i = p.begin(); i != p.end(); i++)
+        (*i)->Process(n->Buffer, 2, pos, length);
+  cerr << "ok c fini" << endl;
       if (n->Delta)
         n->Delta = 0;
     }
   }
 
+  cerr << "on mixe" << endl;
   Workshop.GetMix(output);
 
+  cerr << "deletion" << endl;
   // Suppression des notes termin~Aées
   for (i = Notes.begin(); i != Notes.end();)
   {
     long endtotest;
-    if ((*i)->Key->looping)
+    endtotest = (*i)->Key->ass->GetSample()->GetNumberOfFrames();
+    if (((*i)->Key->looping) && ((*i)->Key->ass->GetLoopEnd() < endtotest))
       endtotest = (*i)->Key->ass->GetLoopEnd();
-    else
-      endtotest = (*i)->Key->ass->GetSample()->GetNumberOfFrames();
     if ((*i)->Position >= endtotest)
     {
+  cerr << "haha pos > end" << endl;
       if (((*i)->Key->ass->GetLoopCount() > (*i)->Key->loops) || ((*i)->Key->ass->GetLoopCount() == -1))
       {
+  cerr << "je loop" << endl;
         (*i)->Position = (*i)->Key->ass->GetLoopStart();
         (*i)->Key->looping = true;
         (*i)->Key->loops++;
+        i++;
       }
       else
       {
+  cerr << "je delete " << endl;
         Workshop.SetFreeBuffer((*i)->Buffer);
-        delete (*i)->Key;
         delete *i;
         i = Notes.erase(i);
       }
     }
     else
+    {
       i++;
+  cerr << "c good on delete pas a po fini " << endl;
+    }
   }
-
+  cerr << "mutex bientot unlock" << endl;
   Mutex.Unlock();
+  cerr << "THE END" << endl;
 
 }
 
@@ -573,7 +604,10 @@ void AkaiSampler::ProcessEvent(WiredEvent &event)
       {
         if ((event.MidiData[1] >= 0) && (event.MidiData[1] <= 127))
         {
-          ASamplerKeygroup *askg = Keygroups->FindKeygroup(event.MidiData[1]);
+          ASamplerKeygroup *askg = NULL;
+          for (vector <ASamplerKeygroup *>::iterator i = Keygroups.begin(); (!askg) && (i != Keygroups.end()); i++)
+            if ((*i)->HasKey(event.MidiData[1]))
+              askg = (*i);
           if (askg)
           {
             printf("FindKeyGroup: %p\n", askg);
@@ -639,9 +673,9 @@ void AkaiSampler::OnOpenFile(wxCommandEvent &event)
       AkaiPrefix += ':';
       AkaiPrefix += ((char)mPart + 64);
       AkaiPrefix += '/';
-      AkaiPrefix += mName.c_str();
+      AkaiPrefix += mFilename.c_str();
       AkaiPrefix += '/';
-      cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; filename: " << mFilename << endl;
+      cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; path: " << mFilename << endl;
       cout << "AkaiPrefix: " << AkaiPrefix << endl;
       Progress->Update(20);
       if (!(AkaiProgram = akaiLoadProgram((char *)mDevice.c_str(), mPart,
@@ -731,22 +765,49 @@ void AkaiSampler::OnKgroupButton(wxCommandEvent &event)
   }
 }
 
-void AkaiSampler::OnSelectEffect(wxCommandEvent &event)
+void AkaiSampler::OnAddEffect(wxCommandEvent &event)
 {
   ASListEntry *e = Samples->List->GetSelected();
   if (e)
   {
     ASamplerSample *ass = (ASamplerSample *)(e->GetEntry());
     ASPlugin *p;
+    vector <ASPlugin *> plugs = ass->GetEffects();
+    int count = 0;
+    wxString s;
     switch (event.GetId())
     {
       case 1:
         // Enveloppe
-        p = new ASEnvel(EFFECTSNAMES[0] + " for " + e->GetName());
+        for (vector<ASPlugin *>::iterator i = plugs.begin(); i != plugs.end(); i++)
+        {
+          cout << "Cmp " << EFFECTSNAMES[0] << " with " << (*i)->Name.Left(EFFECTSNAMES[0].Len()) << endl;
+          if ((*i)->Name.Left(EFFECTSNAMES[0].Len()) == EFFECTSNAMES[0])
+            count++;
+        }
+        printf("Count = %d\n", count);
+        s << EFFECTSNAMES[0];
+        s << " #";
+        s << count;
+        s << " for " ;
+        s << e->GetName();
+        p = new ASEnvel(s);
         break;
       case 2:
         // Looping
-        p = new ASLoop(EFFECTSNAMES[1] + " for " + e->GetName());
+        for (vector<ASPlugin *>::iterator i = plugs.begin(); i != plugs.end(); i++)
+        {
+          cout << "Cmp " << EFFECTSNAMES[1] << " with " << (*i)->Name.Left(EFFECTSNAMES[1].Len()) << endl;
+          if ((*i)->Name.Left(EFFECTSNAMES[1].Len()) == EFFECTSNAMES[1])
+            count++;
+        }
+        printf("Count = %d\n", count);
+        s << EFFECTSNAMES[1];
+        s << " #";
+        s << count;
+        s << " for " ;
+        s << e->GetName();
+        p = new ASLoop(s);
         break;
       default:
         p = NULL;
@@ -754,10 +815,21 @@ void AkaiSampler::OnSelectEffect(wxCommandEvent &event)
     if (p)
     {
       p->SetSample(ass);
-      ass->SetEffect(p);
+      ass->AddEffect(p);
       PlugPanel->AddPlug(p);
       PlugPanel->ShowPlugin(p);
     }
+  }
+}
+
+void AkaiSampler::OnSelectEffect(wxCommandEvent &event)
+{
+  ASListEntry *e = Samples->List->GetSelected();
+  if (e)
+  {
+    ASamplerSample *ass = (ASamplerSample *)(e->GetEntry());
+    vector <ASPlugin *> p = ass->GetEffects();
+    PlugPanel->ShowPlugin(p[event.GetId() - NB_EFFECTS - 2]);
   }
 }
 
@@ -767,22 +839,27 @@ void AkaiSampler::OnEffectButton(wxCommandEvent &event)
   if (e)
   {
     ASamplerSample *ass = (ASamplerSample *)(e->GetEntry());
-    ASPlugin *p = ass->GetEffect();
-    if (!p)
+    vector <ASPlugin *> p = ass->GetEffects();
+    wxMenu *menu = new wxMenu();
+    wxMenu *newplug = new wxMenu();
+    for (int k = 1; k <= NB_EFFECTS; k++)
     {
-      wxMenu *menu = new wxMenu();
-      for (int k = 1; k <= NB_EFFECTS; k++)
-      {
-        menu->Append(k, EFFECTSNAMES[k - 1]);
-        Connect(k, wxEVT_COMMAND_MENU_SELECTED,
-            (wxObjectEventFunction)(wxEventFunction)
-            (wxCommandEventFunction)&AkaiSampler::OnSelectEffect);
-      }
-      wxPoint pt(((wxWindow *)event.GetEventObject())->GetPosition());
-      PopupMenu(menu, pt.x, pt.y);
+      newplug->Append(k, EFFECTSNAMES[k - 1]);
+      Connect(k, wxEVT_COMMAND_MENU_SELECTED,
+          (wxObjectEventFunction)(wxEventFunction)
+          (wxCommandEventFunction)&AkaiSampler::OnAddEffect);
     }
-    if (p)
-      PlugPanel->ShowPlugin(p);
+    int num = NB_EFFECTS + 1;
+    menu->Append(num++, "New effect", newplug);
+    for (vector<ASPlugin *>::iterator i = p.begin(); i != p.end(); i++)
+    {
+      menu->Append(num, (*i)->Name);
+      Connect(num++, wxEVT_COMMAND_MENU_SELECTED,
+          (wxObjectEventFunction)(wxEventFunction)
+          (wxCommandEventFunction)&AkaiSampler::OnSelectEffect);
+    }
+    wxPoint pt(((wxWindow *)event.GetEventObject())->GetPosition());
+    PopupMenu(menu, pt.x, pt.y);
   }
 }
 

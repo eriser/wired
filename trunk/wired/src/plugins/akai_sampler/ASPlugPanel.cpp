@@ -109,7 +109,11 @@ void				ASPlugPanel::AddPlug(ASPlugin *p)
   tool = new ASPlug(p->Name, ID_TOOL_OTHER_OPTIONPANEL, m);
   tool->Plugin = p;
   PlugsList.push_back(tool);
-  ShowPlug(tool);
+  tool->Panel->Show(false);
+  if (!CurrentPlug)
+    CurrentPlug = tool;
+  ShowPlug(CurrentPlug);
+  //ShowPlug(tool);
 }
 
 void				ASPlugPanel::ShowPlug(ASPlug *t)
