@@ -7,6 +7,7 @@
 #include "AudioEngine.h"
 #include "OptionPanel.h"
 #include "MixerGui.h"
+#include "MainWindow.h"
 #include "../sequencer/Sequencer.h"
 #include "../mixer/Mixer.h"
 #include "../redist/Plugin.h"
@@ -342,7 +343,7 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
   if (event->GetEventType() == wxEVT_MOUSEWHEEL)
     {
       int x, y, y1, y2, y3;
-
+     
       GetVirtualSize(0x0, &y1);
       GetSize(0x0, &y2);
       GetViewStart(&x, &y3);
@@ -357,38 +358,13 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
     }
   else if (event->Dragging() && event->LeftIsDown())
     {
-      plug->Move(wxPoint(event->GetPosition().x + plug->GetPosition().x - OldX, event->GetPosition().y + plug->GetPosition().y - OldY));      
+      plug->Move(wxPoint(event->GetPosition().x + plug->GetPosition().x - OldX, event->GetPosition().y + plug->GetPosition().y - OldY));
       WasDragging = true;
     }
   //  SeqMutex.Unlock();
-  /*if(event->RightDown())
-  {  
-    if (menu)
-      delete menu;
-    menu = new wxMenu();  
-    menu->Append(10000, "Cut");
-    menu->Append(10001, "Copy");
-    menu->Append(10002, "Paste");
-    menu->AppendSeparator();
-    menu->Append(10003, "Delete");*/
-    
-    /*Connect(10000, wxEVT_COMMAND_MENU_SELECTED, 
-	  (wxObjectEventFunction)(wxEventFunction)
-	  (wxCommandEventFunction)&Rack::OnCutClick);
-    Connect(10001, wxEVT_COMMAND_MENU_SELECTED, 
-	  (wxObjectEventFunction)(wxEventFunction)
-	  (wxCommandEventFunction)&Rack::OnCopyClick);
-    Connect(10002, wxEVT_COMMAND_MENU_SELECTED, 
-	  (wxObjectEventFunction)(wxEventFunction)
-	  (wxCommandEventFunction)&Rack::OnPasteClick);
-    Connect(NONE_SELECTED_ID, wxEVT_COMMAND_MENU_SELECTED, 
-	  (wxObjectEventFunction)(wxEventFunction)
-	  (wxCommandEventFunction)&Rack::OnDeleteClick);*/
- 
-  /*   wxPoint p(event->GetPosition());
-    PopupMenu(menu, p.x, p.y);
-  }
-  */
+
+  
+  
    if(event->LeftDown())
      {
        OldX = event->GetPosition().x;
@@ -403,6 +379,40 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
        new_y = (event->GetPosition().y + plug->GetPosition().y);
     }
     
+   if(event->RightDown())
+     {
+       SetSelected(plug);
+       menu = new wxMenu();
+       submenu = new wxMenu();
+       instr_menu = new wxMenu();
+       effects_menu  = new wxMenu();
+       AddPlugToMenu();
+       menu->Append(ID_MENU_ADD, _T("Add"), submenu);
+       submenu->Append(ID_INSTR_MENU, _T("&Instruments"), instr_menu);
+       submenu->Append(ID_EFFECTS_MENU, _T("&Effects"), effects_menu);
+       menu->Append(ID_MENU_CUT, _T("Cut"));
+       menu->Append(ID_MENU_COPY, _T("Copy"));
+       menu->Append(ID_MENU_PASTE, _T("Paste"));
+       menu->AppendSeparator();
+       menu->Append(ID_MENU_DELETE, _T("Delete"));
+       
+       /*Connect(10000, wxEVT_COMMAND_MENU_SELECTED, 
+	 (wxObjectEventFunction)(wxEventFunction)
+	 (wxCommandEventFunction)&Rack::OnCutClick);
+	 Connect(10001, wxEVT_COMMAND_MENU_SELECTED, 
+	 (wxObjectEventFunction)(wxEventFunction)
+	 (wxCommandEventFunction)&Rack::OnCopyClick);
+    Connect(10002, wxEVT_COMMAND_MENU_SELECTED, 
+    (wxObjectEventFunction)(wxEventFunction)
+    (wxCommandEventFunction)&Rack::OnPasteClick);*/
+  
+       Connect(ID_MENU_DELETE, wxEVT_COMMAND_MENU_SELECTED, 
+	       (wxObjectEventFunction)(wxEventFunction)
+	       (wxCommandEventFunction)&Rack::OnDeleteClick);
+       
+       wxPoint p(event->GetPosition().x + plug->GetPosition().x, event->GetPosition().y + plug->GetPosition().y);
+       PopupMenu(menu, p.x, p.y);
+     }   
   else if(event->LeftUp() && WasDragging)
     {
       new_x = (event->GetPosition().x + plug->GetPosition().x);
@@ -411,12 +421,35 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
 	  DeleteRack(plug);
 	  AddTrack(plug);
       }
-	//cout << "false" << endl;
       ResizeTracks();
       WasDragging = false;
-    }      
+    }   
 }
 
+void Rack::AddPlugToMenu()
+{
+  vector<PluginLoader *>::iterator i;
+  int Id = 20100;
+  for(i = LoadedPluginsList.begin(); i != LoadedPluginsList.end() ; i++)
+    {
+      if ((*i)->InitInfo.Type == PLUG_IS_INSTR)
+	{
+	  Id++;
+	  instr_menu->Append((*i)->Id, ((*i)->InitInfo.Name).c_str());
+	  /*Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED, 
+		      (wxObjectEventFunction)(wxEventFunction) 
+		      (wxCommandEventFunction)&Rack::OnCreateRackClick);*/
+	}
+      else
+	{
+	  Id++;
+	  effects_menu->Append((*i)->Id, ((*i)->InitInfo.Name).c_str());
+	  /*Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED, 
+		  (wxObjectEventFunction)(wxEventFunction) 
+		  (wxCommandEventFunction)&Rack::OnCreateEffectClick);*/
+	}
+    }
+}
 void Rack::HandlePaintEvent(Plugin *plug, wxPaintEvent *event)
 {
   if (selectedPlugin == 0x0)
@@ -462,6 +495,28 @@ void Rack::DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &
   list<Plugin *>::iterator debug; 
   debug = (*k)->Racks.insert(l,plug);
   cout << (*debug)->Name << endl;
+}
+
+void Rack::OnDeleteClick()
+{
+  vector<RackTrack *>::iterator		i;
+  vector<Plugin *>::iterator		j;
+  vector<PluginLoader *>::iterator	k;
+  
+  wxMutexLocker m(SeqMutex);
+  if (selectedPlugin)
+    {
+      for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
+	if (COMPARE_IDS((*k)->InitInfo.UniqueId, selectedPlugin->InitInfo->UniqueId))
+	  {
+	    cout << "[MAINWIN] Destroying plugin: " 
+		 << selectedPlugin->Name << endl;
+	    RemoveChild(selectedPlugin);
+	    (*k)->Destroy(selectedPlugin);
+	    break;
+	  }
+       DeleteRack(selectedPlugin);
+    }
 }
 
 void Rack::HandleKeyEvent(Plugin *plug, wxKeyEvent *event)

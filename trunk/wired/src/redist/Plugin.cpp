@@ -20,6 +20,8 @@ Plugin::Plugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
           &Plugin::OnMouseEvent);
   Connect(wxID_ANY, wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)
 	 &Plugin::OnMouseEvent);
+  Connect(wxID_ANY, wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction)
+	 &Plugin::OnMouseEvent);
   //  Connect(wxID_ANY, wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)
   //	 &Plugin::OnPaintEvent);
 }
