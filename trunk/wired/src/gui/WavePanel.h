@@ -78,8 +78,6 @@ class WavePanel : public wxPanel
   wxScrollBar		        *sbh;
   wxToolBar			*Toolbar;
   WaveEditor                    *w;
-//  wxMenu			*PopMenu;
-//  wxMenu			*SubMenuEffect;
 
 
  private:  

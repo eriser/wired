@@ -15,7 +15,7 @@ class PluginEffect
 
   void		Process(WaveFile &input, WaveFile &output, float gain, int channel, int effet);
   void 		Gain(WaveFile &input, WaveFile &output, float gain, int channel);
-  void 		Normalize(WaveFile &input, WaveFile &output, int channel);
+  void 		Normalize(WaveFile &input, WaveFile &output, float norma, int channel);
 };
 
 #endif

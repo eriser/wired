@@ -92,7 +92,7 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
   
   //	Toolbar->ToggleTool(ID_TOOL_UNDO_WAVEEDITOR, NULL);
   //	Toolbar->ToggleTool(ID_TOOL_REDO_WAVEEDITOR, NULL);
-  
+
   Refresh();
   
 }
