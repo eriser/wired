@@ -123,7 +123,7 @@ class BeatBoxChannel : public wxWindow
   void		OnSoloHelp(wxMouseEvent& event);
   void		OnPlayHelp(wxMouseEvent& event);
   void		OnLevHelp(wxMouseEvent& event);
-  void		OnBalHelp(wxMouseEvent& event);
+  void		OnPanHelp(wxMouseEvent& event);
   void		OnStaHelp(wxMouseEvent& event);
   void		OnEndHelp(wxMouseEvent& event);
   void		OnPitHelp(wxMouseEvent& event);
@@ -138,7 +138,7 @@ class BeatBoxChannel : public wxWindow
   void		OnSolo(wxCommandEvent& event);
   
   void		OnLevChange(wxScrollEvent& event);
-  void		OnBalChange(wxScrollEvent& event);
+  void		OnPanChange(wxScrollEvent& event);
   void		OnStartChange(wxScrollEvent& event);
   void		OnEndChange(wxScrollEvent& event);
   void		OnPitchChange(wxScrollEvent& event);
@@ -170,8 +170,9 @@ class BeatBoxChannel : public wxWindow
   bool		Reversed;
   float		Lev, Pitch, Vel;
   float		Start, End;
-  
-  list<BeatNote*>*
+  float		Pan[2];
+
+  list<BeatNote*>**
     Rythms;
   /*
   list<BeatNote*>
@@ -189,7 +190,7 @@ class BeatBoxChannel : public wxWindow
   DownButton*	OpenFile;
   DownButton*	SelectionButton;
   HintedKnob*	KnobLev;
-  HintedKnob*	KnobBal;
+  HintedKnob*	KnobPan;
   HintedKnob*	KnobStart;
   HintedKnob*	KnobEnd;
   HintedKnob*	KnobPitch;
@@ -207,7 +208,7 @@ enum
     BC_Solo,
     BC_PlaySound,
     BC_Lev,
-    BC_Bal,
+    BC_Pan,
     BC_Sta,
     BC_End,
     BC_Pit,
