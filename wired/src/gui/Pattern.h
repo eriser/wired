@@ -19,6 +19,7 @@ using namespace				std;
 #define PATTERN_MOVE_BOX_SIZE		(4)
 #define PATTERN_MASK_SELECTED		(1)
 #define PATTERN_MASK_DRAGGED		(2)
+#define PATTERN_MASK_TOGGLED		(4)
 
 class					WaveFile;
 class					MidiEvent;
@@ -59,16 +60,13 @@ class Pattern : public wxWindow
   virtual void				SetDrawColour(wxColour c) { PenColor = c; }
   virtual WaveFile			*GetWave() {}
   virtual vector<MidiEvent *>	        *GetEvents() { return (0); }
-  
   virtual Pattern			*CreateCopy(double pos) = 0x0;
-
   wxPoint				GetMPosition() { return (m_pos); }
   void					SetMPosition(wxPoint p) { m_pos = p; }
   wxPoint				SetPos(double newpos, long track);
   wxSize				GetSize() { return (m_size); }
   void					SetSize(wxSize s) { m_size = s; }
   int					GetXPos(double pos);
-  
   bool					IsSelected() { return (StateMask & PATTERN_MASK_SELECTED); }
   double				SetPosition(double p) { Position = p; }
   double				GetPosition() { return (Position); }
