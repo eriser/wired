@@ -71,6 +71,11 @@ class					MainWindow: public wxFrame
 
   void					OnUndo(wxCommandEvent &event);
   void					OnRedo(wxCommandEvent &event);
+  void					OnCut(wxCommandEvent &event);
+  void					OnCopy(wxCommandEvent &event);
+  void					OnPaste(wxCommandEvent &event);
+  void					OnDelete(wxCommandEvent &event);
+  void					OnSelectAll(wxCommandEvent &event);
 
   void					OnSpaceKey();
   void					SwitchRackOptView();

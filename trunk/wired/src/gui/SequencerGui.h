@@ -217,6 +217,7 @@ class SequencerGui: public wxPanel
   void				OnDrawMidi(wxCommandEvent &event);
   void				OnDeleteClick(wxCommandEvent &event);
   void				OnMoveToCursorClick(wxCommandEvent &event);
+  void				OnSelectAll(wxCommandEvent &event);
   void				OnPlayCursorMove(wxCommandEvent &event);
   void				OnBeginLCursorMove(wxCommandEvent &event);
   void				OnEndLCursorMove(wxCommandEvent &event);
