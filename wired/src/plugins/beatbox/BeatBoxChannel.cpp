@@ -42,7 +42,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   Data[0] = num; /* Channel number 0-11 */
   Data[1] = 0;
   
-  DataDir = drm31->GetDataDir();//datadir;
+  DataDir = drm31->GetDataDir();
   PatternMutex = drm31->GetMutexPtr();
   DRM31 = drm31;
   
@@ -270,6 +270,20 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&BeatBoxChannel::OnPolHelp);
   
+  // Gui updating relatives
+  AskUpdateChannel	= false;
+  AskUpdatePlay		= false;
+  AskUpdateMute		= false;
+  AskUpdateSolo		= false;
+  AskUpdateLevel	= false;
+  AskUpdatePan		= false;
+  AskUpdateVel		= false;
+  AskUpdatePitch	= false;
+  AskUpdateStart	= false;
+  AskUpdateEnd		= false;
+  
+  
+
   // Midi controls
   
   MidiVolume[0] = -1;
@@ -612,13 +626,8 @@ void BeatBoxChannel::OnMute(wxCommandEvent& WXUNUSED(e))
 void BeatBoxChannel::OnSolo(wxCommandEvent& WXUNUSED(e))
 {
   PatternMutex->Lock();
-  //bool IsSolo is used by BeatBox::Process
-  if (IsSolo)
-    {
-      UnSolo();
-      PatternMutex->Unlock();
-      return;
-    }
+  //bool IsSolo is no more used by BeatBox::Process
+  IsSolo = !IsSolo;
   PatternMutex->Unlock();
   
   wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
@@ -689,14 +698,77 @@ void BeatBoxChannel::OnPolyphonyChange(wxCommandEvent& WXUNUSED(e))
   PatternMutex->Unlock();
 }
 
+void BeatBoxChannel::SetMute()
+{
+  //PatternMutex->Lock();
+  Muted = true;
+  //PatternMutex->Unlock();
+  
+  AskUpdateChannel = true;
+  AskUpdateMute = true;
+  DRM31->AskUpdate();
+}
+
+void BeatBoxChannel::SetUnMute()
+{
+  //PatternMutex->Lock();
+  Muted = false;
+  //PatternMutex->Unlock();
+  
+  AskUpdateChannel = true;
+  AskUpdateMute = true;
+  DRM31->AskUpdate();
+}
+
+
+void BeatBoxChannel::SetPlay()
+{
+  AskUpdateChannel = true;
+  AskUpdatePlay = true;
+  DRM31->AskUpdate();
+}
+
+void BeatBoxChannel::SetSolo()
+{
+  PatternMutex->Lock();
+  IsSolo != IsSolo;
+  if (!IsSolo)
+    for (int i = 0; i < NB_CHAN; i++)
+      DRM31->Channels[i]->SetUnMute();
+  else 
+    {
+      for (int i = 0; i < NB_CHAN; i++)
+	DRM31->Channels[i]->SetMute();
+      SetUnMute();
+    }
+  PatternMutex->Unlock();
+  
+  
+  /*
+  wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+  Data[1] = ACT_SOLO;
+  event.SetClientData((void*)Data);
+  event.SetEventObject(this);
+  wxPostEvent(GetParent(), event);
+  */
+  AskUpdateChannel = true;
+  AskUpdateSolo = true;
+  DRM31->AskUpdate();
+}
+
 void BeatBoxChannel::SetLev(int lev)
 {
   float mlevel = lev / 100.0f;
   PatternMutex->Lock();
   Params[LEV] = mlevel;
-  //Lev = mlevel;
   PatternMutex->Unlock();
-  KnobLev->SetValue(lev);
+  MidiVolume[2] = lev;
+  
+  AskUpdateChannel = true;
+  AskUpdateLevel = true;
+  DRM31->AskUpdate();
+  
+  //KnobLev->SetValue(lev);
 }
 
 void BeatBoxChannel::SetPan(int pan)
@@ -705,7 +777,12 @@ void BeatBoxChannel::SetPan(int pan)
   PatternMutex->Lock();
   Params[PAN] = fpan;
   PatternMutex->Unlock();
-  KnobPan->SetValue(pan);
+  
+  AskUpdateChannel = true;
+  AskUpdatePan = true;
+  DRM31->AskUpdate();
+
+  //KnobPan->SetValue(pan);
 }
 
 void BeatBoxChannel::SetStart(int start)
@@ -714,7 +791,12 @@ void BeatBoxChannel::SetStart(int start)
   PatternMutex->Lock();
   Params[STA] = s;
   PatternMutex->Unlock();
-  KnobStart->SetValue(start);
+  
+  AskUpdateChannel = true;
+  AskUpdateStart = true;
+  DRM31->AskUpdate();
+  
+  //KnobStart->SetValue(start);
 }
 
 
@@ -724,7 +806,11 @@ void BeatBoxChannel::SetEnd(int end)
   PatternMutex->Lock();
   Params[END] = e;
   PatternMutex->Unlock();
-  KnobEnd->SetValue(end);
+  
+  AskUpdateChannel = true;
+  AskUpdateEnd = true;
+  DRM31->AskUpdate();
+  //KnobEnd->SetValue(end);
 }
 
 void BeatBoxChannel::SetPitch(int pitch)
@@ -733,7 +819,12 @@ void BeatBoxChannel::SetPitch(int pitch)
   PatternMutex->Lock();
   Params[PIT] = p;
   PatternMutex->Unlock();
-  KnobPitch->SetValue(pitch);
+  
+  AskUpdateChannel = true;
+  AskUpdatePitch = true;
+  DRM31->AskUpdate();
+
+  //KnobPitch->SetValue(pitch);
 }
 
 void BeatBoxChannel::SetVel(int vel)
@@ -742,7 +833,12 @@ void BeatBoxChannel::SetVel(int vel)
   PatternMutex->Lock();
   Params[VEL] = v;
   PatternMutex->Unlock();
-  KnobVel->SetValue(vel);
+  
+  AskUpdateChannel = true;
+  AskUpdateVel = true;
+  DRM31->AskUpdate();
+
+  //KnobVel->SetValue(vel);
 }
 
 void BeatBoxChannel::SetPolyphony(int voices)
@@ -779,6 +875,54 @@ void BeatBoxChannel::Reset(void)
   if (Wave)
     delete Wave;
   Wave = 0x0;
+}
+
+void BeatBoxChannel::Update()
+{
+  AskUpdateChannel = false;
+  
+  if (AskUpdatePlay)
+    ;
+  if (AskUpdateMute)
+    {
+      AskUpdateMute = false;
+      if (Muted)
+	MuteButton->SetOn();
+      else
+	MuteButton->SetOff();
+    }
+  if (AskUpdateSolo)
+    {
+      AskUpdateSolo = false;
+      if (IsSolo)
+	SoloButton->SetOn();
+      else
+	SoloButton->SetOff();
+    }
+  if (AskUpdateLevel)
+    {
+      KnobLev->SetValue(MidiVolume[2]);
+    }
+  if (AskUpdatePan)
+    {
+      KnobPan->SetValue(MidiPan[2]);
+    }
+  if (AskUpdateVel)
+    {
+      KnobVel->SetValue(MidiVel[2]);
+    }
+  if (AskUpdatePitch)
+    {
+      KnobPitch->SetValue(MidiPitch[2]);
+    }
+  if (AskUpdateStart)
+    {
+      KnobStart->SetValue(MidiStart[2]);
+    }
+  if (AskUpdateEnd)
+    {
+      KnobEnd->SetValue(MidiEnd[2]);
+    }
 }
 
 void BeatBoxChannel::OnMouseEvent(wxMouseEvent& event)

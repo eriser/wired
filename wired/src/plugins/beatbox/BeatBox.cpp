@@ -39,6 +39,9 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   OnLoading = false;
   
   AskUpdateSteps = false;
+  AskUpdatePattern = false;
+  AskUpdateBank = false;
+  AskUpdateLevel = false;
   
   /* Master Volume */
   wxImage* mini_bmp = 
@@ -169,6 +172,7 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   wxStaticText* PatchLabel =
     new wxStaticText(this, -1, _T("p31kit"), wxPoint(24,190), wxSize(30, 10), 
 		     wxALIGN_RIGHT);
+  
   PatchLabel->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
   PatchLabel->SetForegroundColour(*wxBLACK);
   PatchLabel->Show();
@@ -474,11 +478,14 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   MidiVolume[1] = 0x7;
   MidiSteps[0] = M_CONTROL;
   MidiSteps[1] = -1;
-  MidiBank[0] = M_CONTROL;
+  /*
+  int note
+  for (int b = 0; b < NUM_BANKS; b++)
+    ChanMidiBanks[b] = ;
   MidiBank[1] = -1;
   MidiTrack[0] = M_CONTROL;
   MidiTrack[1] = -1;
-  
+  */ 
   Connect(BB_OnMasterChange, wxEVT_RIGHT_DOWN,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&WiredBeatBox::OnVolumeController);
@@ -725,10 +732,11 @@ void WiredBeatBox::Process(float** WXUNUSED(input),
       
       //RefreshPosLeds(bar_pos);
       bool isend = false;
-      if (SelectedChannel->IsSolo && !SelectedChannel->Muted)
+      /*
+	if (!SelectedChannel->Muted)
 	GetNotesFromChannel(SelectedChannel, bar_pos, bar_end, 
 			    new_bar_pos, new_bar_end, &isend);
-      else
+			    else*/
 	for (int i = 0; i < NB_CHAN; i++)
 	  if ( (Channels[i]->Wave != 0x0) && !Channels[i]->Muted )
 	    GetNotesFromChannel(Channels[i], bar_pos, bar_end, 
@@ -945,18 +953,22 @@ inline void WiredBeatBox::ProcessMidiControls(int data[3])
   if ((MidiVolume[0] == data[0]) && (MidiVolume[1] == data[1]))
     {
       float tmp = data[2] / 100.0f;
-      //cout << tmp << endl;
       MLevel = tmp;
+      MidiVolume[2] = data[2];
+      
       PatternMutex.Lock();
       Pool->SetVolume(MLevel);
       PatternMutex.Unlock();
-      MVol->SetValue(data[2]);
+      
+      AskUpdateLevel = true;
+      AskUpdate();
     }
   else if ((MidiSteps[0] == data[0]) && (MidiSteps[1] == data[1]))
     {
       PatternMutex.Lock();
       UpdateStepsDeps(data[2]/2);
       PatternMutex.Unlock();
+      
       AskUpdateSteps = true;
       AskUpdate();
     }
@@ -1282,18 +1294,23 @@ void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)
       */
       break;
     case ACT_SOLO:
-      for (unsigned char i = 0; i < NB_CHAN; i++)
-	{
-	  Channels[i]->DeSelect();
-	  Channels[i]->UnSolo();
-	}
-      tmp->Select();
-      
       PatternMutex.Lock();
-      tmp->Solo();
+      if (tmp->IsSolo)
+	for (unsigned char i = 0; i < NB_CHAN; i++)
+	  {
+	    Channels[i]->DeSelect();
+	    Channels[i]->Mute();
+	  }
+      else
+	for (unsigned char i = 0; i < NB_CHAN; i++)
+	  {
+	    Channels[i]->DeSelect();
+	    Channels[i]->UnMute();
+	  }
+      tmp->Select();
+      tmp->UnMute();
       SelectedChannel = tmp;
       PatternMutex.Unlock();
-      
       SetPatternList();
       break;
     case ACT_PLAY:
@@ -1627,11 +1644,9 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
       for (int chan = 0; chan < NB_CHAN; chan++)
 	Channels[chan]->Reset();
       
-      
-      cout << "OnLoadPatch: open( " << selfile << " ) fd: " << fd << endl;
       struct stat st;
       fstat(fd, &st);
-      cout << "file length: " << st.st_size << endl;
+      cout << "[DRM31] load patch: file size: " << endl;
       
       wxProgressDialog *Progress = 
 	new wxProgressDialog("Loading patch file", "Please wait...", 
@@ -1640,159 +1655,27 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
       Progress->Update(1);
       Progress->Update(55);
       
-      //Load(fd, st.st_size);
-      //      {
-      
-	int res;
-	long len;
-	int bank,  ps;
-	unsigned int state = 0;
-	double pos = 0;
-	BeatNote* note;
-	WaveFile* w;
-	long size = st.st_size;
-	int sig_index, steps = 0;
-  
-	cout << "reading steps/signatures params" << endl;
-	for (bank = 0; bank < 5; bank++)
-	  for (ps = 0; ps < 8; ps++)
-	    {
-	      /*cout << "load: reading params begin for bank: " 
-		<< bank << " " << ps << endl;
-	      */
-	      cout << "size to read " << size << endl;
-	      if ((res = read(fd, &sig_index, sizeof (int))) < 0)
-		{
-		  cout << errno << endl;
-		  switch (errno)
-		    {
-		    case EINTR:
-		      cout << "1"<< endl;
-		break;
-		    case EAGAIN:
-		      cout << "2"<< endl;
-		      break;
-		    case EIO:
-		      cout << "3"<< endl;
-		      break;
-		    case EISDIR:
-		      cout << "4"<< endl;
-		break;
-	      case EBADF:
-		cout << "5"<< endl;
-		break;
-	      case EINVAL:
-		cout << "6"<< endl;
-		break;
-	      case EFAULT:
-		cout << "7"<< endl;
-		break;
-	      default:
-		cout << "default" << endl;
-		break;
-	      }
-		}
-	      else
-		size -= res;
-	      cout << "size to read " << size << endl;
-	      size -= read(fd, &steps, sizeof (int));
-	      cout << "size to read " << size << endl;
-	      cout << sig_index << " " << steps << endl;
-	      Steps[bank][ps] = steps;
-	      SigIndex[bank][ps] = sig_index;
-	      SignatureDen[bank][ps] = SigDen[sig_index];
-	      Signature[bank][ps] = Signatures[sig_index];
-	    }
-	cout << "reading channels" << endl;
-	for (int i = 0; i < NB_CHAN; i++)
-	  {
-	    size -= read(fd, &len, sizeof(len));
-	    cout << "load: channels["<< i << "] loads wavename len "<< len << endl;
-	    if (len > 0 && len < 255)
-	      {
-		char wave[len+1];
-		size -= read(fd, &wave, len*sizeof(char));
-		wave[len] = '\0';
-		cout << "load: " << wave << endl;
-		try 
-		  {
-		    w = new WaveFile(string(wave), true);
-		  }
-		catch (...)
-		  {
-		    cout << "[DRM31] Could not load WaveFile: " << wave << endl;
-		  }
-		Channels[i]->SetWaveFile(w);
-	      }
-	    
-	    
-	    cout << "load: reading channel parameters" << endl;
-	    int p;
-	    for (p = 0; p < NB_PARAMS; p++)
-	      size -= read(fd, &(Channels[i]->Params[p]), sizeof(float));
-      
-	    
-	    cout << "load: reading notes" << endl;
-	    for (bank = 0; bank < 5; bank++)
-	      for (ps = 0; ps < 8; ps++)
-		{
-		  size -= read(fd, &len, sizeof(len));
-		  if (len)
-	      cout << "reading "<< len << " notes for rythm["<< bank 
-		   << "][" << ps << "]" 
-		   << endl;
-		  
-	    while (len)
-	      {
-		size -= read(fd, &state, sizeof(unsigned int));
-		size -= read(fd, &pos, sizeof(double));
-		//printf("note pos=%f; state=%d\n", pos,state);
-		
-		note = 
-		  new BeatNote(i, pos, state, 
-			       0.0);
-		for (p = 0; p < NB_PARAMS; p++ )
-		  size -=
-		    read(fd, &(note->Params[p]), sizeof (float));
-		size -=
-		  read(fd, &p, sizeof (int));
-		note->Reversed = p ? true : false;
-		
-		Channels[i]->Rythms[bank][ps].push_back(note);
-		len--;
-	      }
-	    
-	    
-	  }
+      Load(fd, st.st_size);
+      Progress->Update(75);
+      Progress->Update(100);
+      close(fd);
+      delete Progress;
     }
+  else
+    cout << "[DRM31] Could not load file" << endl;
+  cout << "OnLoadPatch: end" << endl;
   
+  EditedPattern = SelectedPattern = EditedBank = SelectedBank = 0;
   
   SelectedChannel = Channels[0];
   ReCalcStepsSigCoef();
   UpdateSteps(0,0);
   SetPatternList();
   
-  printf("size:%d\n", size);
-
-  //  }
-
-
-
-
-      Progress->Update(75);
-      Progress->Update(100);
-      
-      close(fd);
-      
-      PatternMutex.Lock();
-      OnLoading = false;
-      PatternMutex.Unlock();
-      
-      delete Progress;
-    }
-  else
-    cout << "[DRM31] Could not load file" << endl;
-  cout << "OnLoadPatch: end" << endl;
+  PatternMutex.Lock();
+  OnLoading = false;
+  PatternMutex.Unlock();
+  
 }
 
 long WiredBeatBox::Save(int fd)
@@ -1890,14 +1773,14 @@ void WiredBeatBox::Load(int fd, long size)
   
   int sig_index, steps = 0;
   
-  cout << "Load fd " << fd  << endl;
+  //cout << "Load fd " << fd  << endl;
   
   PatternMutex.Lock();
   OnLoading = true;
   PatternMutex.Unlock();
   
   
-  cout << "reading steps/signatures params" << endl;
+  //cout << "reading steps/signatures params" << endl;
   
   for (bank = 0; bank < 5; bank++)
     for (ps = 0; ps < 8; ps++)
@@ -1905,7 +1788,7 @@ void WiredBeatBox::Load(int fd, long size)
 	/*cout << "load: reading params begin for bank: " 
 	  << bank << " " << ps << endl;
 	*/
-	cout << "size to read " << size << endl;
+	//cout << "size to read " << size << endl;
 	if ((res = read(fd, &sig_index, sizeof (int))) < 0)
 	  {
 	    cout << errno << endl;
@@ -1936,29 +1819,29 @@ void WiredBeatBox::Load(int fd, long size)
 		cout << "default" << endl;
 		break;
 	      }
+	    cout << "[DRM31] Load file aborted: read() error" << endl;
+	    return;
 	  }
 	else
 	  size -= res;
-	cout << "size to read " << size << endl;
 	size -= read(fd, &steps, sizeof (int));
-	cout << "size to read " << size << endl;
-	cout << sig_index << " " << steps << endl;
 	Steps[bank][ps] = steps;
 	SigIndex[bank][ps] = sig_index;
 	SignatureDen[bank][ps] = SigDen[sig_index];
 	Signature[bank][ps] = Signatures[sig_index];
       }
-  cout << "reading channels" << endl;
+  //cout << "reading channels" << endl;
   for (int i = 0; i < NB_CHAN; i++)
     {
       size -= read(fd, &len, sizeof(len));
-      cout << "load: channels["<< i << "] loads wavename len "<< len << endl;
+      cout << "[DRM31] load: channels["<< i << "] loads wavename len "
+	   << len << endl;
       if (len > 0 && len < 255)
 	{
 	  char wave[len+1];
 	  size -= read(fd, &wave, len*sizeof(char));
 	  wave[len] = '\0';
-	  cout << "load: " << wave << endl;
+	  //cout << "load: " << wave << endl;
 	  try 
 	    {
 	      w = new WaveFile(string(wave), true);
@@ -1971,13 +1854,13 @@ void WiredBeatBox::Load(int fd, long size)
 	}
       
       
-      cout << "load: reading channel parameters" << endl;
+      //cout << "load: reading channel parameters" << endl;
       int p;
       for (p = 0; p < NB_PARAMS; p++)
 	size -= read(fd, &(Channels[i]->Params[p]), sizeof(float));
       
       
-      cout << "load: reading notes" << endl;
+      //cout << "load: reading notes" << endl;
       for (bank = 0; bank < 5; bank++)
 	for (ps = 0; ps < 8; ps++)
 	  {
@@ -2021,7 +1904,7 @@ void WiredBeatBox::Load(int fd, long size)
   OnLoading = false;
   PatternMutex.Unlock();
   
-  printf("size:%d\n", size);
+  printf("[DRM31] Load remaining size:%d\n", size);
 }
 
 void WiredBeatBox::OnEditButton(wxCommandEvent& WXUNUSED(e))
@@ -2273,6 +2156,17 @@ void WiredBeatBox::Update()
       if (View)
 	View->Refresh();
     }
+  if (AskUpdateLevel)
+    {
+      AskUpdateLevel = false;
+      MVol->SetValue(MidiVolume[2]);
+    }
+  for (int i = 0; i < NB_CHAN; i++)
+    if (Channels[i]->AskUpdateChannel)
+      {
+	Channels[i]->Update();
+	Channels[i]->AskUpdateChannel = false;
+      }
 }
 
 /******** Main and mandatory library functions *********/
