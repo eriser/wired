@@ -366,7 +366,7 @@ void	FileLoader::ListDirectories(wxTreeItemId root)
     {
 	    string p = path->GetPath();
 	    p += de->d_name;
-	lstat(p.c_str(), &st);
+	stat(p.c_str(), &st);
 	if((strcmp(de->d_name, ".")) && (strcmp(de->d_name, ".."))
 		&& (S_ISDIR(st.st_mode)))
 		v.insert(v.begin(), de->d_name);
@@ -577,7 +577,7 @@ void	FileLoader::ListFiles(string path)
 	    {
 		string fp = path;
 		fp += de->d_name;
-		lstat(fp.c_str(), &st);
+		stat(fp.c_str(), &st);
 	        if ((!S_ISDIR(st.st_mode)) && (ExtMatch(de->d_name, exts)))
 			v.insert(v.begin(), de->d_name);
             }
@@ -588,7 +588,7 @@ void	FileLoader::ListFiles(string path)
 	{
 		string fp = path;
 		fp += v[i];
-		lstat(fp.c_str(), &st);
+		stat(fp.c_str(), &st);
 		long item = files->InsertItem(i, v[i].c_str());
 		files->SetItem(item, 1, FormatSize(st.st_size));
 		files->SetItem(item, 2, ctime(&st.st_mtime));

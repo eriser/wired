@@ -8,7 +8,7 @@
 using namespace std;
 
 #define ITEMHEIGHT 15
-#define TITLEHEIGHT 15
+#define BUTTONSHEIGHT 15
 
 class ASListEntry : public wxPanel
 {
@@ -21,13 +21,23 @@ class ASListEntry : public wxPanel
     ~ASListEntry();
     void OnPaint(wxPaintEvent &e);
     void OnClick(wxMouseEvent &e);
+    void OnRename(wxMouseEvent &e);
     void Rename(const wxString name) { this->name = name; }
     void SetSelected(bool selected) { this->selected = selected; }
     void InvertSelection() { selected = !selected; }
     bool IsSelected() { return selected; }
     wxString GetName() { return name; }
     void *GetEntry() { return entry; }
-    // ...etc
+  DECLARE_EVENT_TABLE()
+};
+
+class ASTextCtrl : public wxTextCtrl
+{
+  private:
+    ASListEntry *ale;
+  public:
+    ASTextCtrl(wxWindow *, int, wxString, wxPoint, wxSize, ASListEntry *);
+    void KillControl(wxFocusEvent &);
   DECLARE_EVENT_TABLE()
 };
 
@@ -35,17 +45,23 @@ class ASList: public wxPanel
 {
   public:
   ASList(wxWindow *parent, wxWindowID id, const wxPoint& pos,
-      const wxSize& size, wxString title);
+      const wxSize& size);
   ~ASList();
   void OnPaint(wxPaintEvent &e);
-  void AddEntry(wxString name, void *entry);
+  void OnResize(wxSizeEvent &e);
+  ASListEntry *AddEntry(wxString name, void *entry);
   void DelEntry(void *entry);
+  void AddControl(wxControl *);  
+  vector<ASListEntry *> GetSelected();
+  int size() { return entries.size(); }
+  vector<ASListEntry *> GetEntries() { return entries; }
   private:
   void Repos();
   vector<ASListEntry *> entries;
   wxPanel *list;
+  wxPanel *buttons;
   wxScrolledWindow *sw;
-  wxString title;
+  wxPoint bpos;
 
   DECLARE_EVENT_TABLE()
 };

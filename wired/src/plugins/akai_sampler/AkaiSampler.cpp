@@ -9,7 +9,7 @@
 
 static PlugInitInfo info;
 
-BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
+  BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
   EVT_PAINT(AkaiSampler::OnPaint)
   EVT_BUTTON(Sampler_Open, AkaiSampler::OnOpenFile)
   EVT_BUTTON(Sampler_Save, AkaiSampler::OnSaveFile)
@@ -23,27 +23,33 @@ END_EVENT_TABLE()
 {
   wxImage *tr_bg =
     new wxImage(string(GetDataDir() + string(IMG_SP_BMP)).c_str(), 
-		wxBITMAP_TYPE_BMP);
+        wxBITMAP_TYPE_BMP);
   if (tr_bg)
     TpBmp = new wxBitmap(tr_bg);
 
   clavier = new ASClavier(this, -1, wxPoint(GetSize().GetWidth() - ASCLAVIER_WIDTH, GetSize().GetHeight() - ASCLAVIER_HEIGHT),
       wxSize(ASCLAVIER_WIDTH, ASCLAVIER_HEIGHT),
       wxSIMPLE_BORDER, this);
-/*
-  PlugPanel = new ASPlugPanel(this, wxPoint(150, 0), wxSize(GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), wxTHICK_FRAME);
 
-  ASEnvel *envel = new ASEnvel(wxString("Envelope"));
-  PlugPanel->AddPlug(envel);
-  */
-  test = new ASList(this, -1, wxPoint(150, 0), wxSize(110, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), "Samples");
+  PlugPanel = new ASPlugPanel(this, wxPoint(150, 0), wxSize(GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), wxTHICK_FRAME, this);
 
-  memset(Keys, 0x0, sizeof(ASamplerKey *) * 127);
+  Samples = new ASSampleList("Samples");
+  Keygroups = new ASKeygroupList("Keygroups");
+
+  PlugPanel->AddPlug(Samples);
+  PlugPanel->AddPlug(Keygroups);
+
+  //ASEnvel *envel = new ASEnvel("Envelope");
+  //PlugPanel->AddPlug(envel);
+
+  PlugPanel->ShowPlugin(Samples);
+
+  //memset(Keys, 0x0, sizeof(ASamplerKey *) * 127);
 
   /* Graphic control initialization */
 
   open_up = new wxImage(string(GetDataDir() + string(IMG_SP_OPEN_UP)).c_str(),
-			wxBITMAP_TYPE_PNG);
+      wxBITMAP_TYPE_PNG);
   open_down = new wxImage(string(GetDataDir() + string(IMG_SP_OPEN_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
   save_up = new wxImage(string(GetDataDir() + string(IMG_SP_SAVE_UP)).c_str(), wxBITMAP_TYPE_PNG);
   save_down = new wxImage(string(GetDataDir() + string(IMG_SP_SAVE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
@@ -110,9 +116,9 @@ AkaiSampler::~AkaiSampler()
 
 void AkaiSampler::Stop()
 {
-    // arreter les notes en cours
+  // arreter les notes en cours
 }
-    
+
 
 bool AkaiSampler::IsInstrument()
 {
@@ -150,15 +156,17 @@ void AkaiSampler::LoadProgram()
   {
     group = elt(elem, t_akaiKeygrp *);
     cout << "Num: " << group->num << endl;
-    wxString s = "Sample #";
-    s << group->num;
-    test->AddEntry(s, group);
     if (group->zone_sample[0])
-      for (i = group->lowkey; i <= group->highkey; i++)
-      {
-        Keys[i] = new ASamplerKey(group->zone_sample[0], powf(2.f, static_cast<float>(i - group->lowkey) / 12.f));
-        cout << "creating key: " << i << endl;
-      }
+    {
+      wxString samplename = "AkaiSample #";
+      samplename << group->num;
+      wxString groupname = "AkaiKeygroup #";
+      groupname << group->num;
+      ASamplerSample *ass = new ASamplerSample(group->zone_sample[0]);
+      ASamplerKeygroup *askg = new ASamplerKeygroup(group->lowkey, group->highkey);
+      ass->SetKeygroup(askg);
+      askg->SetSample(ass);
+    }
   }
 }
 
@@ -167,11 +175,6 @@ void AkaiSampler::DeleteProgram()
 {
   if (AkaiProgram)
   {
-    for (int i = 0; i < 127; i++)
-    {
-      if (Keys[i])
-        delete Keys[i];
-    }
     //delete 
     free(AkaiProgram);
     AkaiProgram = 0x0;
@@ -200,11 +203,12 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
   //int chan;
   Mutex.Lock();
 
-  if (!AkaiProgram)
-  {
-    Mutex.Unlock();
-    return;
-  }
+  /*  if (!AkaiProgram)
+      {
+      Mutex.Unlock();
+      return;
+      }
+      */
   list<ASamplerNote *>::iterator i;
   ASamplerNote *n;
   long length, end, idx, chan;
@@ -257,16 +261,16 @@ void AkaiSampler::OnPaint(wxPaintEvent &event)
 {
   wxMemoryDC memDC;
   wxPaintDC dc(this);
-/*
-  memDC.SelectObject(*TpBmp);
-  wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
-  while (upd)
-  {
-    dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(),
-        wxCOPY, FALSE);
-    upd++;
-  }
-  */
+  /*
+     memDC.SelectObject(*TpBmp);
+     wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
+     while (upd)
+     {
+     dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(),
+     wxCOPY, FALSE);
+     upd++;
+     }
+     */
 }
 
 void AkaiSampler::ProcessEvent(WiredEvent &event)
@@ -303,16 +307,22 @@ void AkaiSampler::ProcessEvent(WiredEvent &event)
       {
         if ((event.MidiData[1] >= 0) && (event.MidiData[1] <= 127))
         {
-          if (Keys[event.MidiData[1]])
+          ASamplerKeygroup *askg = Keygroups->FindKeygroup(event.MidiData[1]);
+          if (askg)
           {
-            ASamplerNote *n = new ASamplerNote(event.MidiData[1],
-                event.MidiData[2] / 100.f,
-                Keys[event.MidiData[1]],
-                event.DeltaFrames,
-                Workshop.GetFreeBuffer(),
-                event.NoteLength);
-            Notes.push_back(n);
-            printf("[SAMPLER] Note added: %d\n", n->Note);
+            printf("FindKeyGroup: %p\n", askg);
+            ASamplerKey *key = askg->GetKey(event.MidiData[1]);
+            if (key)
+            {
+              ASamplerNote *n = new ASamplerNote(event.MidiData[1],
+                  event.MidiData[2] / 100.f,
+                  key,
+                  event.DeltaFrames,
+                  Workshop.GetFreeBuffer(),
+                  event.NoteLength);
+              Notes.push_back(n);
+              printf("[SAMPLER] Note added: %d\n", n->Note);
+            }
           }
         }
       }
@@ -436,7 +446,7 @@ extern "C"
 {
   PlugInitInfo init()
   {
-    WIRED_MAKE_STR(info.UniqueId, "PLAS");
+    WIRED_MAKE_STR(info.UniqueId, "PLWS");
     info.Name = PLUGIN_NAME;
     info.Type = PLUG_IS_INSTR;
     info.UnitsX = 4;

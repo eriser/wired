@@ -14,6 +14,8 @@ libWiredSampler_la_SOURCES =					\
 			ASList.cpp			\
 		        Splines.cpp			\
 			ASPlugPanel.cpp			\
+			ASSampleList.cpp		\
+			ASKeygroupList.cpp		\
 			AkaiSampler.h			\
 			ASClavier.h    			\
 			ASPlugin.h			\
@@ -24,6 +26,8 @@ libWiredSampler_la_SOURCES =					\
 			ASList.h			\
 		        Splines.h			\
 			ASPlugPanel.h			\
+			ASSampleList.h			\
+			ASKeygroupList.h		\
 			../../redist/Polyphony.cpp	\
 			../../redist/Plugin.cpp		\
 			../../engine/Settings.cpp	\

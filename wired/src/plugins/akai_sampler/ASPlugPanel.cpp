@@ -48,9 +48,10 @@ void				ASPlug::Detach()
   Plugin->OnDetach(Frame);
 }
 
-ASPlugPanel::ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style)
+ASPlugPanel::ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, Plugin *p)
   : wxPanel(parent, -1, pos, size, style)
 {
+  this->p = p;
   SetBackgroundColour(CL_RULER_BACKGROUND);//wxColour(204, 199, 219));//*wxLIGHT_GREY);
   ToolbarPanel = new wxPanel(this, -1, wxPoint(0, 0), wxSize(GetSize().x, OPT_TOOLBAR_HEIGHT),
 			     wxSIMPLE_BORDER);
@@ -59,12 +60,12 @@ ASPlugPanel::ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
 			   wxSize(-1, OPT_TOOLBAR_HEIGHT));
   //Title->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   Title->SetForegroundColour(*wxWHITE);
-  wxImage *list_up = new wxImage(OPT_LIST_TOOL_UP, wxBITMAP_TYPE_PNG);
-  wxImage *list_down = new wxImage(OPT_LIST_TOOL_DOWN, wxBITMAP_TYPE_PNG);
-  wxImage *detach_up = new wxImage(OPT_DETACH_TOOL_UP, wxBITMAP_TYPE_PNG);
-  wxImage *detach_down = new wxImage(OPT_DETACH_TOOL_DOWN, wxBITMAP_TYPE_PNG);
-  wxImage *close_up = new wxImage(OPT_CLOSE_TOOL_UP, wxBITMAP_TYPE_PNG);
-  wxImage *close_down = new wxImage(OPT_CLOSE_TOOL_DOWN, wxBITMAP_TYPE_PNG);
+  wxImage *list_up = new wxImage(string(p->GetDataDir() + string(OPT_LIST_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *list_down = new wxImage(string(p->GetDataDir() + string(OPT_LIST_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *detach_up = new wxImage(string(p->GetDataDir() + string(OPT_DETACH_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *detach_down = new wxImage(string(p->GetDataDir() + string(OPT_DETACH_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *close_up = new wxImage(string(p->GetDataDir() + string(OPT_CLOSE_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *close_down = new wxImage(string(p->GetDataDir() + string(OPT_CLOSE_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
   ListPlugBtn = new DownButton(this, ID_TOOL_LIST_OPTIONPANEL, wxPoint(GetSize().x - 48, 2), wxSize(14, 12), 
 			       list_up, list_down, true);
   DetachPlugBtn = new DownButton(this, ID_TOOL_DETACH_OPTIONPANEL, wxPoint(GetSize().x - 32, 2), wxSize(14, 12), 
@@ -97,8 +98,9 @@ void				ASPlugPanel::AddPlug(ASPlugin *p)
   wxPoint			pt(0, OPT_TOOLBAR_HEIGHT);
   wxSize			sz(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT);
   
+  p->SetPlugin(this->p);
   m = p->CreateView(this, pt, sz);
-  tool = new ASPlug(p->Name, ID_TOOL_OTHER_OPTIONPANEL, m);  
+  tool = new ASPlug(p->Name, ID_TOOL_OTHER_OPTIONPANEL, m);
   tool->Plugin = p;
   PlugsList.push_back(tool);
   ShowPlug(tool);

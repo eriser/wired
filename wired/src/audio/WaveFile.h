@@ -38,6 +38,23 @@ public:
   WaveFile(short *buffer, unsigned int size, int channels, long rate);
   ~WaveFile();
 
+  WaveFile *Clone()
+  {
+    WaveFile *w;
+    w = new WaveFile(*this);
+    if (LoadedInMem)
+    {
+      w->Data = new float *[sfinfo.channels];
+      for (int i = 0; i < sfinfo.channels; i++)
+      {
+        w->Data[i] = new float[NumberOfFrames];
+        for (int j = 0; j < NumberOfFrames; j++)
+          w->Data[i][j] = Data[i][j];
+      }
+      return w;
+    }
+  }
+
   long GetNumberOfChannels() { return sfinfo.channels; }
   long GetNumberOfFrames()   { return NumberOfFrames; }
   
