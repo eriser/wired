@@ -88,6 +88,11 @@ class BeatBoxChannel : public wxWindow
   void		OnVelChange(wxScrollEvent& event);
   void		OnPolyphonyChange(wxCommandEvent& e);
   
+  void		SetPlay();
+  void		SetSolo();
+  void		SetMute();
+  void		SetUnMute();
+  
   void		SetLev(int lev);
   void		SetPan(int pan);
   void		SetStart(int start);
@@ -121,12 +126,7 @@ class BeatBoxChannel : public wxWindow
   bool		Reversed;
   
   float		Params[NB_PARAMS];
-  
-  /*
-    float		Lev, Pitch, Vel;
-  float		Start, End;
-  float		Pan[2];
-  */
+    
   list<BeatNote*>**
     Rythms;
   
@@ -150,6 +150,19 @@ class BeatBoxChannel : public wxWindow
   void OnVelController(wxMouseEvent& event);
   void OnPolyController(wxMouseEvent& event);
   
+  bool AskUpdateChannel;
+  
+  bool AskUpdatePlay;
+  bool AskUpdateMute;
+  bool AskUpdateSolo;
+  bool AskUpdateLevel;
+  bool AskUpdatePan;
+  bool AskUpdateVel;
+  bool AskUpdatePitch;
+  bool AskUpdateStart;
+  bool AskUpdateEnd;
+  
+  void Update();
  protected:
   WiredBeatBox*	DRM31;
   string        DataDir;

@@ -68,7 +68,6 @@ void Ruler::OnPaint(wxPaintEvent& event)
   
   long x = 0 - ViewPtr->XScroll;
   
-
   for (int cpt = 0; x < size.x; 
 x = static_cast<long>(ceil(static_cast<double>(cpt * res))) - ViewPtr->XScroll)
     {

@@ -313,6 +313,9 @@ class WiredBeatBox : public Plugin
   /* graphical updates relatives */
   void			Update();
   bool			AskUpdateSteps;
+  bool			AskUpdatePattern;
+  bool			AskUpdateBank;
+  bool			AskUpdateLevel;
   
   
 DECLARE_EVENT_TABLE()
