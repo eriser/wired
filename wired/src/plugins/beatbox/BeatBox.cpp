@@ -556,7 +556,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	  len = end - (*bn)->OffSet;
 	  if (len <= 0)
 	    {
-	      cout << " len < 0 !! " << endl;
+	      //cout << " len < 0 !! " << endl;
 	      continue;
 	    }
 	}
@@ -990,8 +990,8 @@ inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c, double bar_pos,
       PatternMutex.Lock();
       c->Rythms[NewSelectedPattern].push_back(note);
       PatternMutex.Unlock();
-      cout << "note added real pos: " << rel_pos 
-	   << ", bar pos: " << bar_pos << endl;
+      //cout << "note added real pos: " << rel_pos 
+      //<< ", bar pos: " << bar_pos << endl;
       return;
     }
   if ( bar_pos > c->Rythms[NewSelectedPattern].back()->BarPos ) 
@@ -1002,8 +1002,8 @@ inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c, double bar_pos,
       PatternMutex.Lock();
       c->Rythms[NewSelectedPattern].push_back(note);
       PatternMutex.Unlock();
-      cout << "note added real pos: " << rel_pos 
-	   << ", bar pos: " << bar_pos << endl;
+      //cout << "note added real pos: " << rel_pos 
+      //<< ", bar pos: " << bar_pos << endl;
       return;
     }
   for ( list<BeatNote*>::iterator b = c->Rythms[NewSelectedPattern].begin();
@@ -1017,14 +1017,14 @@ inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c, double bar_pos,
 	      delete *b;
 	      c->Rythms[NewSelectedPattern].erase(b);
 	      PatternMutex.Unlock();
-	      cout << "note removed real pos: " << rel_pos 
-		   << ", bar pos: " << bar_pos << endl;
+	      //cout << "note removed real pos: " << rel_pos 
+	      //<< ", bar pos: " << bar_pos << endl;
 	      //break;
 	    }
 	  else
 	    {
-	      cout << "note velocity changed real pos: " << rel_pos 
-		   << ", bar pos: " << bar_pos << endl;
+	      //cout << "note velocity changed real pos: " << rel_pos 
+	      //<< ", bar pos: " << bar_pos << endl;
 	      (*b)->Vel = 1.f * static_cast<float>(state / 4.f);
 	    }
 	  return;
@@ -1037,8 +1037,8 @@ inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c, double bar_pos,
 	  PatternMutex.Lock();
 	  c->Rythms[NewSelectedPattern].insert(b, note);
 	  PatternMutex.Unlock();
-	  cout << "note added real pos: " << rel_pos 
-	       << ", bar pos: " << bar_pos << endl;
+	  //cout << "note added real pos: " << rel_pos 
+	  //<< ", bar pos: " << bar_pos << endl;
 	  return;
 	}
     }
