@@ -132,9 +132,10 @@ void				AudioPattern::SetSelected(bool sel)
 {
   Pattern::SetSelected(sel);
   if (sel)
-    WaveDrawer::PenColor = CL_PATTERN_SEL;
+    WaveDrawer::BrushColor = CL_WAVEDRAWER_BRUSH_SEL;
   else
-    WaveDrawer::PenColor = Pattern::PenColor;
+    WaveDrawer::BrushColor = CL_WAVEDRAWER_BRUSH;
+  WaveDrawer::PenColor = Pattern::PenColor;
   WaveDrawer::RedrawBitmap(GetSize());
   Refresh();
 }

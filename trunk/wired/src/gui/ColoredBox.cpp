@@ -33,7 +33,17 @@ void					ColoredBox::OnPaint(wxPaintEvent &e)
   dc.DrawRectangle(0, 0, GetSize().x, GetSize().y);
 }
 
+
+void					ColoredBox::OnClick(wxMouseEvent &e)
+{
+  wxScrollEvent				ev(wxEVT_SCROLL_TOP, GetId());
+  ev.SetEventObject(this);
+  GetEventHandler()->ProcessEvent(ev);
+}
+
+
 BEGIN_EVENT_TABLE(ColoredBox, wxWindow)
   EVT_PAINT(ColoredBox::OnPaint)
+  EVT_LEFT_UP(ColoredBox::OnClick)
 END_EVENT_TABLE()
 

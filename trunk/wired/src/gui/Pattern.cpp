@@ -119,7 +119,6 @@ void					Pattern::OnClick(wxMouseEvent &e)
 #ifdef __DEBUG__
       printf("clik at (x = %d) (y = %d)\n", m_click.x, m_click.y);
 #endif
-      //      OldMousePosX = event.m_x;    
       SeqPanel->SelectItem(this, e.ShiftDown());
     }
   else

@@ -175,6 +175,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   ColorBox = new ColoredBox(this, ID_SEQ_COLORBOX, wxPoint(Toolbar->GetSize().x + COLORBOX_MARGINS, COLORBOX_MARGINS),
 			    wxSize(TOOLS_HEIGHT - 2 * COLORBOX_MARGINS, TOOLS_HEIGHT - 2 * COLORBOX_MARGINS),
 			    CL_DEFAULT_SEQ_BRUSH, CL_DEFAULT_SEQ_PEN);
+  Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
   /* Sizers */
   row_1 = new wxBoxSizer(wxHORIZONTAL);
   row_1->Add(Toolbar, 1, wxALL, 0); 
@@ -610,10 +611,11 @@ void					SequencerGui::SelectItem(Pattern *p, bool shift)
       SelectedItems.clear();
     }
   if (p)
-    {
-      p->SetSelected(true);
-      SelectedItems.push_back(p);
-    }
+    if (!p->IsSelected())
+      {
+	p->SetSelected(true);
+	SelectedItems.push_back(p);
+      }
 }
 
 void					SequencerGui::CopySelectedItems()
@@ -854,12 +856,25 @@ void					SequencerGui::OnMagnetismChange(wxCommandEvent &event)
   /*  cout << "Magnetism change " << MagnetQuant->GetValue() << " and " << ComboChoices[c].value << " " << endl;*/
 }
 
-void					SequencerGui::OnColorBoxClick(wxCommandEvent &event)
+void					SequencerGui::OnColorButtonClick(wxCommandEvent &event)
 {
-  Tool = ID_TOOL_PAINT_SEQUENCER;
+  vector<Pattern *>::iterator		p;
+
+  //  Tool = ID_TOOL_PAINT_SEQUENCER;
+  //  ChangeMouseCursor(wxCursor(wxCURSOR_PAINT_BRUSH));
+  PenColor = ColorBox->GetColor();
+  for (p = SelectedItems.begin(); p != SelectedItems.end(); p++)
+    if ((*p)->IsSelected())
+      {
+	(*p)->SetDrawColour(PenColor);
+	(*p)->Refresh();
+      }
+}
+
+void					SequencerGui::OnColoredBoxClick(wxCommandEvent &event)
+{
   if (ColorDialogBox->ShowModal() == wxID_OK)
-    ColorBox->SetColor(BrushColor = ColorDialogBox->GetColourData().GetColour());
-  ChangeMouseCursor(wxCursor(wxCURSOR_PAINT_BRUSH));
+    ColorBox->SetColor(PenColor = ColorDialogBox->GetColourData().GetColour());
 }
 
 void					SequencerGui::SetBeginLoopPos(double pos)
@@ -877,9 +892,21 @@ void					SequencerGui::SetEndPos(double pos)
   EndCursor->SetPos(pos);
 }
 
+/*
+
+TODO :
+
+Learn how to declare custom event types with wx,
+it's quite weird tbh ...
+
+this is the beginning :)
+
 DEFINE_EVENT_TYPE(wxSetCursorPos)
 DEFINE_EVENT_TYPE(wxResizePattern)
 DEFINE_EVENT_TYPE(wxDrawMidi)
+DEFINE_EVENT_TYPE(wxON_COLOREDBOX_CLICK)
+
+*/
 
 BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   EVT_BUTTON(ID_CURSOR_PLAY, SequencerGui::OnPlayCursorMove)
@@ -893,7 +920,7 @@ BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   EVT_TOOL(ID_SEQ_DEL, SequencerGui::OnEraseClick)
   EVT_TOOL(ID_SEQ_SPLIT, SequencerGui::OnSplitClick)
   EVT_TOOL(ID_SEQ_MAGNET, SequencerGui::OnMagnetismToggle)
-  EVT_TOOL(ID_SEQ_COLOR, SequencerGui::OnColorBoxClick)
+  EVT_TOOL(ID_SEQ_COLOR, SequencerGui::OnColorButtonClick)
   EVT_TEXT(ID_SEQ_COMBO_MAGNET, SequencerGui::OnMagnetismChange)
   //EVT_MOTION	    (SequencerGui::OnMouseEvent) 
   //EVT_LEFT_DOWN	    (SequencerGui::OnLeftIsDownEvent)
