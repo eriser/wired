@@ -46,6 +46,7 @@ void				AudioPattern::Init()
 {
   wxString			s;
 
+  Pattern::PenColor = CL_PATTERN_NORM;
   s.Printf("Audio Pattern %d", audio_pattern_count++);
   Name = s.c_str();
   LastBlock = -1;  
@@ -131,10 +132,11 @@ void				AudioPattern::SetSelected(bool sel)
 {
   Pattern::SetSelected(sel);
   if (sel)
-    Pattern::PenColor = CL_PATTERN_SEL;
+    WaveDrawer::PenColor = CL_PATTERN_SEL;
   else
-    Pattern::PenColor = CL_PATTERN_NORM;
-  //  WaveView::Refresh(true);
+    WaveDrawer::PenColor = Pattern::PenColor;
+  WaveDrawer::RedrawBitmap(GetSize());
+  Refresh();
 }
 
 bool				AudioPattern::PrepareRecord(int type)
@@ -278,7 +280,9 @@ void				AudioPattern::OnClick(wxMouseEvent &e)
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
       {
 	Pattern::PenColor = SeqPanel->ColorBox->GetColor();
-	SetDrawing();
+	WaveDrawer::PenColor = Pattern::PenColor;
+	WaveDrawer::RedrawBitmap(GetSize());
+	Refresh();
       }
 }
 

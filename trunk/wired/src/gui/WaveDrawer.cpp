@@ -240,34 +240,40 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	}
 
     }
-  //printf("WaveDrawer::SetDrawing() - STEP 42\n");
 
-  //cout << "[WAVEVIEW] Position after parse: " << i << endl;
-  // Création de la bitmap
-  if (Bmp)
-    delete Bmp;
-  Bmp = new wxBitmap(size_x, size_y);
-  memDC.SelectObject(*Bmp);
-
-  memDC.SetPen(PenColor);
-  memDC.SetBrush(BrushColor);
-  memDC.DrawRectangle(0, 0, size_x, size_y);
-  //printf("WaveDrawer::SetDrawing() - STEP 51\n");
-  for (i = 0; i < size_x; i++)
-    memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
-  //printf("WaveDrawer::SetDrawing() - STEP 69\n");
-
-  //  memDC.SetPen(*wxLIGHT_GREY_PEN);
-  //  memDC.DrawLine(0, coeff, size_x, coeff);
+  RedrawBitmap(s);
 #ifdef __DEBUG__
   printf(" [  END  ] WaveDrawer::SetDrawing()\n");
 #endif
 }
 
+void					WaveDrawer::RedrawBitmap(wxSize s)
+{
+  long coeff;
+
+  coeff = s.y / 2;
+  // Création de la bitmap
+  if (Bmp)
+    delete Bmp;
+  Bmp = new wxBitmap(s.x, s.y);
+  memDC.SelectObject(*Bmp);
+
+  memDC.SetPen(PenColor);
+  memDC.SetBrush(BrushColor);
+  memDC.DrawRectangle(0, 0, s.x, s.y);
+  //printf("WaveDrawer::SetDrawing() - STEP 51\n");
+  for (int i = 0; i < s.x; i++)
+    memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
+  //printf("WaveDrawer::SetDrawing() - STEP 69\n");
+
+  //  memDC.SetPen(*wxLIGHT_GREY_PEN);
+  //  memDC.DrawLine(0, coeff, s.x, coeff);
+}
+
 void					WaveDrawer::SetSize(wxSize s)
 {
 #ifdef __DEBUG__
-  printf("GRRRRR 42 RRRRRRRRR [W = %d] [H = %d]\n", s.x, s.y);
+  printf("SetSize [W = %d] [H = %d]\n", s.x, s.y);
 #endif
   /*  if (s == win->GetSize())
     return;
@@ -292,16 +298,22 @@ void					WaveDrawer::SetSize(int x, int y)
 void					WaveDrawer::OnPaint(wxPaintDC &dc, wxSize s, wxRegionIterator &region)
 {
   dc.SetPen(PenColor);
+  dc.SetBrush(*wxTRANSPARENT_BRUSH);
+  dc.DrawRectangle(0, 0, s.x, s.y);
+
   if ((Data || (Wave && !Wave->LoadedInMem)) && Bmp)
     {
       for(; region; region++)
 	dc.Blit(region.GetX(), region.GetY(),
 		region.GetW(), region.GetH(),
 		&memDC, region.GetX(), region.GetY(), 
-		wxCOPY, FALSE);      
-      dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		wxCOPY , FALSE);      
+      //dc.SetBrush(*wxTRANSPARENT_BRUSH);
     }
-  else
-    dc.SetBrush(BrushColor);
-  dc.DrawRectangle(0, 0, s.x, s.y);
+  //  else
+
+  //  dc.SetLogicalFunction(wxOR);
+
+  //  dc.DrawRectangle(region.GetX(), region.GetY(),
+  //	   region.GetW(), region.GetH());
 }

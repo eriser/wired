@@ -103,9 +103,9 @@ SettingWindow::SettingWindow()
 
   new wxStaticText(AudioPanel, -1, "Select Input channels to use with this sound card:", 
 		   wxPoint(8, 330));
-  InputList = new wxCheckListBox(AudioPanel, Setting_InputChan, wxPoint(8, 352), wxSize(368, 60), 0);
-  wxStaticText* restart = 
-    new wxStaticText(AudioPanel, -1, "Please restart wired to store and apply changes", wxPoint(8, 420));
+  InputList = new wxCheckListBox(AudioPanel, Setting_InputChan, wxPoint(8, 352), wxSize(368, 68), 0);
+  /*  wxStaticText* restart = 
+      new wxStaticText(AudioPanel, -1, "Please restart wired to store and apply changes", wxPoint(8, 420)); That's not true :) */
 
   
   // MIDI panel
@@ -532,7 +532,7 @@ void SettingWindow::UpdateLatency()
 	}
     }
   
-  s.Printf("Latency: %d samples per buffer, %f msec", 
+  s.Printf("Latency: %d samples per buffer, %.2f msec", 
 	   Latencies[LatencySlider->GetValue()], 
 	   static_cast<float>( static_cast<double>(
 	   (Latencies[LatencySlider->GetValue()]/res)*1000.0) ) );
