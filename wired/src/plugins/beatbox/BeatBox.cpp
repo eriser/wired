@@ -403,10 +403,11 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   
   wxImage** imgs_;
-  imgs_ = new wxImage*[2];
+  imgs_ = new wxImage*[3];
   imgs_[0] = new wxImage(_T(string(GetDataDir() + string(STEPS_KNOB1)).c_str()));
   imgs_[1] = new wxImage(_T(string(GetDataDir() + string(STEPS_KNOB2)).c_str()));
-  StepsKnob = new CycleKnob(this, BB_OnStepsChange, 2, imgs_, 10, 1, 64, 16,
+  imgs_[2] = new wxImage(_T(string(GetDataDir() + string(STEPS_KNOB3)).c_str()));
+  StepsKnob = new CycleKnob(this, BB_OnStepsChange, 3, imgs_, 10, 1, 64, 16,
 			    wxPoint(712, 351), wxDefaultSize);
   
 
@@ -429,16 +430,38 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&WiredBeatBox::OnMasterLevHelp);
   
-  /*
-  Connect(BB_OnEditClick, );
-  Connect(BB_OnPatternSelectors);
-  Connect(BB_OnBankChange);
-  Connect(BB_OnStepsChange);
-  Connect(BB_OnSigChoice);
-  Connect(BB_OnPosChoice);
-  Connect(BB_OnLoadPatch);
-  Connect(BB_OnSavePatch);
-  */
+  
+  Connect(BB_OnEditClick, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnEditHelp);
+  
+  Connect(BB_OnPatternSelectors,wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnPatternsSelectionHelp);
+  
+  Connect(BB_OnBankChange,wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnBankHelp);
+  
+  Connect(BB_OnStepsChange, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnStepsHelp);
+  
+  Connect(BB_OnSigChoice, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnSignatureHelp);
+  
+  Connect(BB_OnPosChoice, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnPositionHelp);
+  
+  Connect(BB_OnLoadPatch, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnSaveLoadHelp);
+  
+  Connect(BB_OnSavePatch, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnSaveLoadHelp);
 }
 
 void WiredBeatBox::OnChannelHelp(wxMouseEvent& WXUNUSED(event))
@@ -470,6 +493,45 @@ void WiredBeatBox::OnMasterLevHelp(wxMouseEvent& WXUNUSED(event))
   if (HelpMode)
     SendHelp("This knob sets the master level output of the DRM31 plugin");
 }
+
+void WiredBeatBox::OnPositionHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("These buttons control the position of the 16 strokes represented below");
+}
+
+void WiredBeatBox::OnSignatureHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("These buttons control the signature of the current rythm, note that the greater the denominator is, the faster the rythm will play");
+}
+
+void WiredBeatBox::OnStepsHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("Set the number of steps for the current rythm");
+}
+void WiredBeatBox::OnBankHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("The bank control allows you to choose one of the 5 banks proposed, each bank contains 8 rythms");
+}
+void WiredBeatBox::OnEditHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("This button switches the plugin to edit mode, when activated, you can edit other rythms on an other bank while playing the old selected rythm");
+}
+void WiredBeatBox::OnPatternsSelectionHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("These buttons represent 8 different rythms");
+}
+void WiredBeatBox::OnSaveLoadHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("These buttons are used if you want to import or export a patch apart from the session");
+}
+
 
 WiredBeatBox::~WiredBeatBox()
 {
@@ -1579,7 +1641,11 @@ void WiredBeatBox::Stop()
 
 wxWindow* WiredBeatBox::CreateView(wxWindow* zone, wxPoint& pos, wxSize& size)
 {
-  View = new BeatBoxView(zone, this, pos, size, &PatternMutex);
+  View = new BeatBoxView(zone, ID_VIEW_ACT, this, pos, size, &PatternMutex);
+  Connect(ID_VIEW_ACT, wxEVT_COMMAND_BUTTON_CLICKED,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxCommandEventFunction)&WiredBeatBox::OnViewAction);
+  
   return View;
 }
 
@@ -1587,6 +1653,11 @@ void WiredBeatBox::DestroyView()
 {
   View->Destroy();
   View = 0x0;
+}
+
+void WiredBeatBox::OnViewAction(wxCommandEvent& event)
+{
+  cout << "VIEW ACTION" << endl;
 }
 
 int WiredBeatBox::GetSig()

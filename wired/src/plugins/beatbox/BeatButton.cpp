@@ -7,6 +7,7 @@ BEGIN_EVENT_TABLE(BeatButton, wxWindow)
   EVT_LEAVE_WINDOW(BeatButton::OnLeave)
   EVT_ENTER_WINDOW(BeatButton::OnEnter)
   EVT_LEFT_DOWN(BeatButton::OnMouseEvent)
+  EVT_RIGHT_DOWN(BeatButton::OnRightDownEvent)
   EVT_PAINT(BeatButton::OnPaint)
   EVT_MOTION(BeatButton::OnMotion)
 END_EVENT_TABLE()
@@ -43,6 +44,21 @@ void BeatButton::OnPaint(wxPaintEvent& WXUNUSED(event))
 	      wxCOPY, FALSE);      
       upd++;
     }     
+}
+void BeatButton::OnRightDownEvent(wxMouseEvent& event)
+{
+  if ( (event.m_x > 0) && (event.m_x < BTN_SIZE) && 
+       (event.m_y > 0) && (event.m_y < BTN_SIZE) )
+    {
+      if (Data[ID_STATE] == ID_UNCLICKED)
+	return;
+      Data[ID_STATE] = ID_UNCLICKED;
+      this->Refresh(false);
+      wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+      event.SetClientData((void*)Data);
+      event.SetEventObject(this);
+      GetEventHandler()->ProcessEvent(event);
+    }
 }
 
 void BeatButton::OnMouseEvent(wxMouseEvent &event)

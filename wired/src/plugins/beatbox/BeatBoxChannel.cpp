@@ -609,7 +609,6 @@ void BeatBoxChannel::OnMouseEvent(wxMouseEvent& event)
 
 void BeatBoxChannel::OnEnterWindow(wxMouseEvent& event)
 { 
-  cout << "entering channel" << endl;
   wxPostEvent(GetParent(), event);
 }
 
