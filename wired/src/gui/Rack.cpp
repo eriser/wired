@@ -123,7 +123,7 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
   selectedPlugin = 0x0;
   selectedTrack = 0x0;
   fd_copy = -1;
-
+  is_cut = false;
   menu = new wxMenu();
   submenu = new wxMenu();
   instr_menu = new wxMenu();
@@ -567,7 +567,8 @@ inline void Rack::OnCutClick()
     
   copy_plug = selectedPlugin;
   strcpy(file, "/tmp/.tmpccp");
-  
+  if(fd_copy != -1)
+    close(fd_copy);
   fd_copy = open(file,  O_CREAT | O_TRUNC | O_RDWR, 0644);
   
   if(fd_copy < 0)
@@ -575,8 +576,8 @@ inline void Rack::OnCutClick()
   
   else{
     fd_size = copy_plug->Save(fd_copy);
+    menu->Enable(ID_MENU_PASTE, true);
     is_cut = true;
-    menu->Enable(ID_MENU_PASTE, false);
   }
 
   
@@ -628,7 +629,14 @@ inline void Rack::OnPasteClick()
 	  cout << "[RACKPANEL] plugin pasted" <<endl;
 	}
       }       
- 
+      
+      if(is_cut)
+	{
+	  cout << "CUTTTTTTTTTTTTTTTTTTTTT" << endl; 
+	  RemoveChild(copy_plug);
+	  (*k)->Destroy(copy_plug);
+	  DeleteRack(copy_plug);
+	}
       
     }
 }
