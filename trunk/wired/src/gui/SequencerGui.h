@@ -101,7 +101,7 @@ class SequencerView: public wxScrolledWindow
 
   void				OnClick(wxMouseEvent &e);
   void				OnMotion(wxMouseEvent &e);
-  void				SelectZonePatterns();
+  void				SelectZonePatterns(bool shift);
   void				OnLeftUp(wxMouseEvent &e);
   void				OnRightClick(wxMouseEvent &event);
   void				OnPaint(wxPaintEvent &event);

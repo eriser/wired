@@ -20,9 +20,11 @@ class Pattern : public wxWindow
 {
  protected:
   virtual void				OnClick(wxMouseEvent &e);
+  virtual void				OnLeftUp(wxMouseEvent &e);
   virtual void				OnDoubleClick(wxMouseEvent &e);
   virtual void				OnRightClick(wxMouseEvent &e);
   virtual void				OnMotion(wxMouseEvent &e);
+  void					XMove(double Motion);
   void					DrawName(wxPaintDC &dc, wxSize s);
 
   wxPoint				m_pos;
