@@ -426,11 +426,6 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   dlg->Destroy();
 }
 
-bool					CopyFile(string s1, string s2)
-{
-  return (false);
-}
-
 void					MainWindow::OnImportWave(wxCommandEvent &event)
 {
   //  TransportPanel->OnStop(event);
@@ -469,7 +464,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 	      wxFileName fn(selfile.c_str());
 	      
 	      fn.SetPath(CurrentSession->AudioDir.c_str());		
-	      if (!CopyFile(selfile, fn.GetFullPath().c_str()))
+	      if (!wxCopyFile(selfile.c_str(), fn.GetFullPath().c_str()))
 		{
 		  wxMessageDialog copymsg(this, 
 					  "Could not copy file", "Wired", 
