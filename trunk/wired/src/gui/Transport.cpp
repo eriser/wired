@@ -62,15 +62,15 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
     new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_CLICKDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   
   PlayBtn = 
-    new DownButton(this, Transport_Play, wxPoint(86, 97), wxSize(30, 30), play_up, play_down);
+    new DownButton(this, Transport_Play, wxPoint(138, 95), wxSize(41, 42), play_up, play_down);
   StopBtn = 
-    new DownButton(this, Transport_Stop, wxPoint(123, 97), wxSize(30, 30), stop_up, stop_down, true);
+    new DownButton(this, Transport_Stop, wxPoint(89, 98), wxSize(35, 40), stop_up, stop_down, true);
   RecordBtn = 
-    new DownButton(this, Transport_Record, wxPoint(160, 97), wxSize(30, 30), rec_up, rec_down);
-  BackwardBtn = new HoldButton(this, Transport_Backward, wxPoint(12, 97), wxSize(30, 30), backward_up, backward_down);
-  ForwardBtn = new HoldButton(this, Transport_Forward, wxPoint(49, 97), wxSize(30, 30), forward_up, forward_down);
-  LoopBtn = new DownButton(this, Transport_Loop, wxPoint(212, 108), wxSize(28, 15), loop_up, loop_down);
-  ClickBtn = new DownButton(this, Transport_Click, wxPoint(252, 108), wxSize(28, 15), 
+    new DownButton(this, Transport_Record, wxPoint(189, 95), wxSize(41, 43), rec_up, rec_down);
+  BackwardBtn = new HoldButton(this, Transport_Backward, wxPoint(17, 98), wxSize(35, 39), backward_up, backward_down);
+  ForwardBtn = new HoldButton(this, Transport_Forward, wxPoint(53, 98), wxSize(35, 39), forward_up, forward_down);
+  LoopBtn = new DownButton(this, Transport_Loop, wxPoint(277, 119), wxSize(11, 11), loop_up, loop_down);
+  ClickBtn = new DownButton(this, Transport_Click, wxPoint(254, 119), wxSize(11, 11), 
 			    click_up, click_down);
 
   LoopBtn->Connect(Transport_Loop, wxEVT_ENTER_WINDOW, 
@@ -80,28 +80,28 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 		   (wxObjectEventFunction)(wxEventFunction) 
 		   (wxMouseEventFunction)&Transport::OnClickHelp);
   
-  BpmUpBtn = new HoldButton(this, Transport_BpmUp, wxPoint(100, 21), wxSize(11, 9), 
+  BpmUpBtn = new HoldButton(this, Transport_BpmUp, wxPoint(112, 21), wxSize(11, 8), 
 			    up_up, up_down);
-  BpmUpBtn = new HoldButton(this, Transport_BpmDown, wxPoint(100, 31), wxSize(11, 9), 
+  BpmUpBtn = new HoldButton(this, Transport_BpmDown, wxPoint(112, 30), wxSize(11, 8), 
 			    down_up, down_down);
   BpmLabel = new StaticLabel(this, Transport_BpmClick, "096.00", wxPoint(48, 20), wxSize(-1, 12));
   BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));
   BpmLabel->SetLabel("096.00");
 
-  SigNumUpBtn = new HoldButton(this, Transport_SigNumUp, wxPoint(35, 48), wxSize(11, 9), 
+  SigNumUpBtn = new HoldButton(this, Transport_SigNumUp, wxPoint(42, 48), wxSize(11, 8), 
 			       up_up, up_down);
-  SigNumDownBtn = new HoldButton(this, Transport_SigNumDown, wxPoint(35, 57), wxSize(11, 9), 
+  SigNumDownBtn = new HoldButton(this, Transport_SigNumDown, wxPoint(42, 57), wxSize(11, 8), 
 				 down_up, down_down);
-  SigDenUpBtn = new HoldButton(this, Transport_SigDenUp, wxPoint(84, 48), wxSize(11, 9), 
+  SigDenUpBtn = new HoldButton(this, Transport_SigDenUp, wxPoint(95, 48), wxSize(11, 8), 
 			       up_up, up_down);
-  SigDenDownBtn = new HoldButton(this, Transport_SigDenDown, wxPoint(84, 57), wxSize(11, 9), 
+  SigDenDownBtn = new HoldButton(this, Transport_SigDenDown, wxPoint(95, 57), wxSize(11, 8), 
 				 down_up, down_down);
 
-  SigNumLabel = new wxStaticText(this, -1, "4", wxPoint(50, 48), wxSize(-1, 12));
+  SigNumLabel = new wxStaticText(this, -1, "4", wxPoint(60, 48), wxSize(-1, 12));
   SigNumLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigNumLabel->SetLabel("4");
 
-  SigDenLabel = new wxStaticText(this, -1, "4", wxPoint(72, 48), wxSize(-1, 12));
+  SigDenLabel = new wxStaticText(this, -1, "4", wxPoint(82, 48), wxSize(-1, 12));
   SigDenLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigDenLabel->SetLabel("4");
 
