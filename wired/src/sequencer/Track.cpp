@@ -3,18 +3,23 @@
 
 wxColour PatternColours[MAX_AUTO_COLOURS] = 
   {  
+    // blue
     wxColour( 50, 166, 211),				
     wxColour( 75, 133, 204),
     wxColour( 15,  98, 198),
+    // purple
     wxColour(134, 112, 175),				
     wxColour(133,  96, 204),
     wxColour( 96,  47, 188),
+    // orange
     wxColour(247, 186, 111),				
     wxColour(237, 134,  66),
     wxColour(239, 104,  75),
-    wxColour( 50, 166, 211),				
-    wxColour( 75, 133, 204),
-    wxColour( 15,  98, 198),
+    // green
+    wxColour(182, 226,  99),				
+    wxColour(130, 206,  95),
+    wxColour( 97, 183, 166),
+
     wxColour( 50, 166, 211),				
     wxColour( 75, 133, 204),
     wxColour( 15,  98, 198),
