@@ -42,6 +42,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   if (mini_bmp)
     MiniBmp = new wxBitmap(mini_bmp);
   
+  delete mini_bmp;
+  
   MVol = 
     new KnobCtrl(this, BB_OnMasterChange,
 		 new wxImage(_T(string(GetDataDir() + string(KNOB)).c_str()),
@@ -63,8 +65,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   if (img_bg)
     BgBmp = new wxBitmap(img_bg);
   
+  delete img_bg;
   
-
   Imgs = new wxImage*[MAX_BITMAPS];
   Imgs[ID_UNCLICKED] = 
     new wxImage(_T(string(GetDataDir() + string(BEATBTN_UNCLICKED)).c_str()), 
@@ -713,7 +715,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
   if (Playing)
     { // recuperation des notes a jouer
       
-      RefreshPosLeds(bar_pos);
+      //RefreshPosLeds(bar_pos);
       bool isend = false;
       if (SelectedChannel->IsSolo && !SelectedChannel->Muted)
 	GetNotesFromChannel(SelectedChannel, bar_pos, bar_end, 
@@ -778,6 +780,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	   Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames() ||
 	   (*bn)->OffSet >= (*bn)->SEnd )
 	{
+	  
 	  cout << "[DRM31] " << "note offset: " << (*bn)->OffSet
 	       << " / frames " << (*bn)->SEnd
 	       << " Offset > Wave Frames, maybe normal" <<endl;
@@ -1001,7 +1004,11 @@ inline void WiredBeatBox::SetNoteAttr(BeatNoteToPlay* note, BeatBoxChannel* c)
   note->Params[VEL] = floor(c->Params[VEL] * note->Params[VEL] * 100) / 100;
   note->Params[PIT] = floor(c->Params[PIT] * note->Params[PIT] * 100) / 100;
   note->Params[PAN] = floor(c->Params[PAN] * note->Params[PAN] * 100) / 100;
-  note->Params[STA] = floor(c->Params[STA] * note->Params[STA] * 100) / 100;
+  if (c->Params[STA] && note->Params[STA])
+    note->Params[STA] = floor(c->Params[STA] * note->Params[STA] * 100) / 100;
+  else if (c->Params[STA])
+    note->Params[STA] = c->Params[STA];
+  
   note->Params[END] = floor(c->Params[END] * note->Params[END] * 100) / 100;
   
   CalcPan(note->Params[PAN], note->Pan);
@@ -1013,7 +1020,7 @@ inline void WiredBeatBox::SetNoteAttr(BeatNoteToPlay* note, BeatBoxChannel* c)
   note->SEnd = 
     static_cast<unsigned long>
     (floor(c->Wave->GetNumberOfFrames() * note->Params[END]));
-  cout << "SetNoteAttr: offset && end: " << note->OffSet << " && " << note->SEnd << endl;
+  //cout << "SetNoteAttr: offset && end: " << note->OffSet << " && " << note->SEnd << endl;
   /*
     if (note->OffSet > note->SEnd)
     {
@@ -1660,6 +1667,11 @@ long WiredBeatBox::Save(int fd)
 	  len = 0;
 	  size += write(fd, &len, sizeof(long));
 	}
+      int p;
+      for (p = 0; p < NB_PARAMS; p++)
+	size += write(fd, &(Channels[i]->Params[p]), sizeof(float));
+      
+      
       for (bank = 0; bank < 5; bank++)
 	for (ps = 0; ps < 8; ps++)
 	  {
@@ -1688,7 +1700,11 @@ long WiredBeatBox::Save(int fd)
 		size += write(fd, &((*bn)->State), sizeof(unsigned int));
 		size += 
 		  write(fd, &((*bn)->Position), sizeof (double));
-	      
+		for (p = 0; p < NB_PARAMS; p++ )
+		  size +=
+		    write(fd, &((*bn)->Params[p]), sizeof (float));
+		p = (*bn)->Reversed ? 1 : 0;
+		size += write(fd, &p, sizeof(int));
 	      }
 	  }
     }
@@ -1729,9 +1745,13 @@ void WiredBeatBox::Load(int fd, long size)
 	    }
 	  Channels[i]->SetWaveFile(w);
 	}
-      
+            
       PatternMutex.Lock();
       
+      int p;
+      for (p = 0; p < NB_PARAMS; p++)
+	size -= read(fd, &(Channels[i]->Params[p]), sizeof(float));
+
       for (bank = 0; bank < 5; bank++)
 	for (ps = 0; ps < 8; ps++)
 	  {
@@ -1744,25 +1764,27 @@ void WiredBeatBox::Load(int fd, long size)
 	    Signature[bank][ps] = Signatures[sig_index];
 	    
 	    size -= read(fd, &len, sizeof(long));
-	    /*
-	      cout << "reading "<<len << " notes for rythm["<< bank 
-	      << "][" << ps << "]" 
-	      << endl;
-	    */
+	    if (len)
+	      cout << "reading "<< len << " notes for rythm["<< bank 
+		 << "][" << ps << "]" 
+		 << endl;
+	    
 	    while (len)
 	      {
 		size -= read(fd, &state, sizeof(unsigned int));
 		size -= read(fd, &pos, sizeof(double));
 		//printf("note pos=%f; state=%d\n", pos,state);
+		
 		note = 
 		  new BeatNote(i, pos, state, 
 			       0.0);
-		/*
-		  static_cast<double>
-		  ( pos / 
-		  static_cast<double>
-		  (Steps[bank][ps])));
-		*/
+		for (p = 0; p < NB_PARAMS; p++ )
+		  size -=
+		    read(fd, &(note->Params[p]), sizeof (float));
+		size -=
+		  read(fd, &p, sizeof (int));
+		note->Reversed = p ? true : false;
+		
 		Channels[i]->Rythms[bank][ps].push_back(note);
 		len--;
 	      }

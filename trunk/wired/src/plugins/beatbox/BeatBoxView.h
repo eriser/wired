@@ -7,16 +7,16 @@
 #include "WaveFile.h"
 //#include "WaveEnv.h"
 
-#define DEC		3
+#define DEC		10
 
 #define NB_PARAMS_CHOICES 6
 #define NB_COMBO_CHOICES 8
 #define TOOLBAR_HEIGHT	24
 #define RULER_HEIGHT	16
-#define TRACK_HEIGHT	78//100 - TOOLBAR_HEIGHT
+#define TRACK_HEIGHT	72//100 - TOOLBAR_HEIGHT - BORDER
 #define TRACK_WIDTH	150
 #define BEAT_WITDH	200
-#define BEAT_HEIGHT	87//113 - TOOLBAR_HEIGHT
+#define BEAT_HEIGHT	81//113 - TOOLBAR_HEIGHT - BORDER
 
 #define VIEW_BGCOLOR	*wxBLACK
 #define VIEW_FGCOLOR	*wxWHITE
@@ -118,6 +118,10 @@ class BeatBoxScrollView : public wxScrolledWindow
   bool OnSelecting;
   long ClickPosX, ClickPosY, MotionPosX, MotionPosY;
   BeatBoxView* ViewPtr;
+  float	ParamsLimits[NB_PARAMS][2];
+  
+  long	YValToPixel(float yval);
+  float PixelToYVal(long ypos);
 DECLARE_EVENT_TABLE()
 };
 
