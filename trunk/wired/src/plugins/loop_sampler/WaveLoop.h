@@ -15,13 +15,20 @@ using namespace std;
 
 #include <list>
 
+typedef struct 
+{
+  int	Start;
+  int	End;
+}	LoopPos;
+
 class WaveLoop: public WaveView
 {
  public:
-  WaveLoop(wxMutex *mutex, wxWindow *parent, wxWindowID id, 
+  WaveLoop(wxMutex *mutex, LoopPos *loopinfo, wxWindow *parent, wxWindowID id, 
 	   const wxPoint& pos, const wxSize& size);
   ~WaveLoop();
 
+  void SetWave(WaveFile *w);
   void SetDrawing(bool draw);
   void SetSelect(bool select);
   void SetSlices(list<Slice *> *slices);
@@ -29,6 +36,9 @@ class WaveLoop: public WaveView
   void SetSamplingRate(int rate) { SamplingRate = rate; }
   void AddSlice(int x, int m_x);
   void CreateSlices(int beats, int mescount);
+
+  int  LoopStart;
+  int  LoopEnd;
 
  protected:
   void OnClick(wxMouseEvent &event);
@@ -41,6 +51,7 @@ class WaveLoop: public WaveView
   double BarCoeff;
   int  NoteNumber;
   int SamplingRate;
+  LoopPos *LoopInfo;
 
   bool Drawing;
   bool Select;
@@ -48,8 +59,8 @@ class WaveLoop: public WaveView
 
   wxMutex *Mutex;
   
-  LoopCursor *LoopStart;
-  LoopCursor *LoopEnd;
+  LoopCursor *LoopStartCursor;
+  LoopCursor *LoopEndCursor;
 
   //DECLARE_EVENT_TABLE()
 };

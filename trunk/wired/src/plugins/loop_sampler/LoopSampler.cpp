@@ -61,6 +61,9 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   read_buf = 0x0;
 
+  LoopInfo.Start = 0;
+  LoopInfo.End = 0;
+
   /* Graphic control initialization */
 
   bmp = new wxBitmap(string(GetDataDir() + string(IMG_LS_BMP)).c_str(), wxBITMAP_TYPE_BMP);  
@@ -451,6 +454,15 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
     {
       n = *i;
 
+      if (n->Position > LoopInfo.End)
+	n->End = true;
+      if (n->Position < LoopInfo.Start)
+	{
+	  if (!(n->SliceNote->EndPosition < LoopInfo.Start))
+	    n->Position = LoopInfo.Start;
+	  else
+	    n->End = true;
+	}
       if (!(n->End))
 	{
 	  length = sample_length - n->Delta;
@@ -684,7 +696,7 @@ void LoopSampler::ProcessMidiControls(int MidiData[3])
 
 wxWindow *LoopSampler::CreateView(wxWindow *zone, wxPoint &pos, wxSize &size)
 {
-  View = new LoopSamplerView(&Mutex, zone, pos, size, GetDataDir());
+  View = new LoopSamplerView(&Mutex, zone, pos, size, GetDataDir(), &LoopInfo);
   if (Wave)
     {
       View->SetWaveFile(Wave);
@@ -995,7 +1007,12 @@ void LoopSampler:: SetWaveFile(WaveFile *w)
       Mutex.Unlock();
     }
   Mutex.Lock();
+
   SetBarCoeff();
+
+  LoopInfo.Start = 0;
+  LoopInfo.End = w->GetNumberOfFrames();
+
   Mutex.Unlock();
 }
 

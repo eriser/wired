@@ -111,6 +111,8 @@ protected:
   list<Slice *>		Slices;
   Polyphony		Workshop;
 
+  LoopPos		LoopInfo;
+
   float AttackMs;  // millisecond
   long  AttackLen; // samples
   float AttackCoef; // coef volume
