@@ -25,7 +25,7 @@ Slice::Slice(long pos, double bar, int samplerate)
   LeftTouch->setChannels(1);
   //LeftTouch->setTempo(2.f);
   //LeftTouch->setSetting(SETTING_USE_QUICKSEEK, 1);
-  //  LeftTouch->setPitch(.5f);
+  //LeftTouch->setPitch(.5f);
   
   //LeftTouch->setPitchSemiTones(params->pitchDelta);
 

@@ -48,6 +48,7 @@ BEGIN_EVENT_TABLE(WiredBeatBox, wxWindow)
   EVT_BUTTON(BB_OnPatternSelectors, WiredBeatBox::OnPatternSelectors)
   EVT_BUTTON(BB_OnSigChoice, WiredBeatBox::OnSigChoice)
   EVT_BUTTON(BB_OnPosChoice, WiredBeatBox::OnPositionChoice)
+  EVT_ENTER_WINDOW(WiredBeatBox::OnHelp)
 END_EVENT_TABLE()
   
 
@@ -57,12 +58,11 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   cout << "[WIREDBEATBOX] Host is " << GetHostProductName()
        << " version " << GetHostProductVersion() << endl;
   
-  //count = 0;  
   /* Master Volume */
   MVol = 
     new HintedKnob(this, BB_OnMasterChange, this,
-		   new wxImage(_T(string(GetDataDir() + string(KNOB)).c_str()),
-			       wxBITMAP_TYPE_PNG),
+		 new wxImage(_T(string(GetDataDir() + string(KNOB)).c_str()),
+			     wxBITMAP_TYPE_PNG),
 		   new wxImage(_T(string(GetDataDir() + string(DOT)).c_str()),
 			       wxBITMAP_TYPE_PNG),
 		   0, 127, 100, 1,
@@ -393,6 +393,58 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   StepsKnob = new CycleKnob(this, BB_OnStepsChange, 2, imgs_, 10, 1, 64, 16,
 			    wxPoint(712, 351), wxDefaultSize);
   
+
+  /* Help */
+  HelpMode = false;
+  
+  Connect(BB_OnPlayClick, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnPlayHelp);
+  
+  Connect(BB_PatternClick, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnPatternHelp);
+  
+  Connect(BB_OnMasterChange, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnMasterLevHelp);
+  
+  /*
+  Connect(BB_OnEditClick, );
+  Connect(BB_Channel);
+  Connect(BB_OnPatternSelectors);
+  Connect(BB_OnBankChange);
+  Connect(BB_OnStepsChange);
+  Connect(BB_OnSigChoice);
+  Connect(BB_OnPosChoice);
+  Connect(BB_OnLoadPatch);
+  Connect(BB_OnSavePatch);
+  */
+}
+
+void WiredBeatBox::OnPlayHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("This is the auto play button, when enabled, DRM31 will play selected pattern synchronously with Wired's Sequencer");
+}
+
+void WiredBeatBox::OnPatternHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("This is a tracker edition control, it can be clicked in 5 different places to obtain different velocities");
+}
+
+void WiredBeatBox::OnHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("This is Wired's Beat Box plugin (DRM31). It brings you 11 channels to make up to 40 complex and realistic drum sequences within the traditional tracker or the optional sequencer view attached");
+}
+
+void WiredBeatBox::OnMasterLevHelp(wxMouseEvent& WXUNUSED(event))
+{
+  cout << "MasterLevHelp !!" << endl;
+  if (HelpMode)
+    SendHelp("This knob sets the master level output of the DRM31 plugin");
 }
 
 WiredBeatBox::~WiredBeatBox()
@@ -612,8 +664,6 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	{
 	  
 	  //Channels[(*bn)->NumChan]->PlayButton->SetOff();
-	  //count--;
-	  //cout << "deleting note, count=" << count << endl;
 	  Pool->SetFreeBuffer((*bn)->Buffer);
 	  delete *bn;
 	  bn = NotesToPlay.erase(bn);
@@ -716,15 +766,7 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	    static_cast<unsigned long>
 	    (floor(c->Wave->GetNumberOfFrames() * note->End));
 	  
-	  //count++;
-	  //cout << "[ new note ], count=" << count << endl;
-	  
-	  /*
-	    cout << note->Start << " offset=" << note->OffSet << endl;
-	    cout << note->End << " sample end=" << note->SEnd 
-	    << " <= " << c->Wave->GetNumberOfFrames() << endl;
-	  */
-	  assert(note->SEnd <= c->Wave->GetNumberOfFrames());
+	  //assert(note->SEnd <= c->Wave->GetNumberOfFrames());
 	  NotesToPlay.push_back(note);
 	}
       
@@ -763,14 +805,7 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	  note->SEnd = 
 	    static_cast<unsigned long>(floor(c->Wave->GetNumberOfFrames()*note->End));
 	  
-	  //count++;
-	  //cout << "[ new note ], count=" << count << endl;
-	  /*
-	    cout << note->Start << " offset=" << note->OffSet << endl;
-	    cout << note->End << " sample end=" << note->SEnd 
-	    << " <= " << c->Wave->GetNumberOfFrames() << endl;
-	  */
-	  assert(note->SEnd <= c->Wave->GetNumberOfFrames());
+	  //assert(note->SEnd <= c->Wave->GetNumberOfFrames());
 	  NotesToPlay.push_back(note);
 	}
     }

@@ -391,10 +391,16 @@ void Mixer::MixInput(void)
 {
   long bytes = 0;
   vector<long>::iterator chan = WiredSettings->InputChannels.begin();
+  int cpt = 0;
   for (vector<RingBuffer<float>*>::iterator c = 
 	 Audio->UserData->InFIFOVector.begin();
        c != Audio->UserData->InFIFOVector.end(); c++, chan++)
     {
+      /*
+	cout << "in mixinput chan:" << *chan 
+	   << ", which is connected to FIFO:"
+	   << cpt++ << endl;
+      */
       for ( int i = 0; i < PREBUF_NUM; i++ )
 	{
 	  bytes = (*c)->Read(Input[i], Audio->SamplesPerBuffer);
@@ -406,13 +412,16 @@ void Mixer::MixInput(void)
 	    {
 	      if ( (*chan) == (*mix_chan)->InputNum )
 		{
-
+		  
 		  (*mix_chan)->CurBuf = i;
+		  //cout << "push buffer from input "
+		  //   <<  << endl;
 		  (*mix_chan)->PushBuffer(Input[i], bytes);
 		}
 	    }
 	  if ( i + 1 == PREBUF_NUM )
 	    throw MixerError::InputBuffersFull();
 	}
+      //cout << << endl;
     }
 }
