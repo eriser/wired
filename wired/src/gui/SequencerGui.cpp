@@ -344,9 +344,9 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   long					r;
 
   Tool = ID_TOOL_MOVE_SEQUENCER;
-  CurrentPos = 0.0;
   HoriZoomFactor = 1.0f;
   VertZoomFactor = 1.0f;
+  CurrentPos = 0.0;
   DoCut = false;
   SetBackgroundColour(CL_SEQ_BACKGROUND);
   SetForegroundColour(CL_SEQ_FOREGROUND);
@@ -419,7 +419,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   AdjustHScrolling();
   SeqView->SetTotalWidth(0);
   SeqView->SetTotalHeight(0);
-  
   /* Curseurs */
   BeginLoopCursor = new Cursor('L', ID_CURSOR_BEGIN, 0.0, RulerPanel, this,
 			       CL_CURSORZ_HEAD_RIGHT, CL_CURSORZ_LINE_DARK);
@@ -435,7 +434,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Connect(ID_SEQ_RESIZE, TYPE_SEQ_RESIZE, (wxObjectEventFunction)&SequencerGui::OnResizePattern);
   // evenement draw evenement midi
   Connect(ID_SEQ_DRAWMIDI, TYPE_SEQ_DRAWMIDI, (wxObjectEventFunction)&SequencerGui::OnDrawMidi);
-
   // Création du popup menu
   PopMenu = new wxMenu();  
   PopMenu->Append(ID_POPUP_MOVE_TO_CURSOR, "Move to cursor");
@@ -588,13 +586,11 @@ void					SequencerGui::AdjustHScrolling()
       RulerPanel->ScrollWindow((long) (floor(CurrentXScrollPos) - floor(pos_tmp)), 0, (const wxRect *) NULL);
       RulerPanel->SetXScrollValue((long) ceil(pos_tmp));
       CurrentXScrollPos = pos_tmp;
-      FirstMeasure = pos_tmp / (MEASURE_WIDTH * HoriZoomFactor);
-      LastMeasure = (pos_tmp + SeqView->GetClientSize().x) / (MEASURE_WIDTH * HoriZoomFactor);
     }
+  FirstMeasure = pos_tmp / (MEASURE_WIDTH * HoriZoomFactor);
+  LastMeasure = (pos_tmp + SeqView->GetClientSize().x) / (MEASURE_WIDTH * HoriZoomFactor);
   RulerPanel->Refresh();
   SeqView->Refresh();
-  //  cout << "FIRST VISIBLE MEASURE = " << FirstMeasure << endl;
-  //  cout << "LAST VISIBLE MEASURE = " << LastMeasure << endl;
 }
 
 void					SequencerGui::AdjustVScrolling()
