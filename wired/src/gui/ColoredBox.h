@@ -18,6 +18,7 @@ class			ColoredBox : public wxWindow
   virtual ~ColoredBox();
 
   virtual void			OnPaint(wxPaintEvent &e);
+  virtual void			OnClick(wxMouseEvent &e);
   virtual void			SetColor(wxColour color) { Color = color; }
   virtual void			SetBorderColor(wxColour bordercolor) { BorderColor = bordercolor; }
   virtual void			SetColors(wxColour color, wxColour bordercolor);

@@ -16,6 +16,10 @@
 #define CL_PATTERN_NORM		CL_WAVE_DRAW
 #define CL_PATTERN_SEL		wxColour( 70,  37, 142)//wxColour( 91, 204,  54)
 
+#define CL_WAVEDRAWER_BRUSH	wxColour(251, 252, 253)
+#define CL_WAVEDRAWER_BRUSH_SEL	wxColour(151, 142, 169)
+
+
 /*
 ** Choses et machins utilises par Ruler & co :
 ** !!! use it at your own risk FFS !!!
@@ -32,13 +36,13 @@
 
 #define CL_DEFAULT_BACKGROUND	wxColour(184, 184, 184)
 #define CL_DEFAULT_FOREGROUND	wxColour(242, 242, 242)
-#define CL_SEQVIEW_BACKGROUND	/*wxColour(105, 116, 124)*/wxColour(242, 242, 255)
-#define CL_SEQVIEW_FOREGROUND	wxColour( 59,  65,  70)//wxColour( 42,  42,  42)
-#define CL_SEQVIEW_MES		wxColour(141, 155, 166)//wxColour( 69,  69,  69)
-#define CL_SEQVIEW_BAR		wxColour(184, 204, 242)//wxColour(184, 204, 242)
+#define CL_SEQVIEW_BACKGROUND	wxColour(242, 242, 255)
+#define CL_SEQVIEW_FOREGROUND	wxColour( 59,  65,  70)
+#define CL_SEQVIEW_MES		wxColour(142, 155, 166)
+#define CL_SEQVIEW_BAR		wxColour(184, 204, 242)
 #define CL_TRKVIEW_CONTOUR	wxColour(202, 207, 211)
-#define CL_TRKVIEW_BACKGROUND	wxColour(109, 122, 130)//wxColour(142, 142, 169)
-#define CL_CURSORZ_HEAD_PLAY	CL_WAVE_DRAW //wxColour( 24,  42, 242)
+#define CL_TRKVIEW_BACKGROUND	wxColour(109, 122, 130)
+#define CL_CURSORZ_HEAD_PLAY	CL_WAVE_DRAW
 #define CL_CURSORZ_HEAD_BEGINL	wxColour(182, 184, 200)
 #define CL_CURSORZ_HEAD_ENDL	CL_TRKVIEW_BACKGROUND 
 #define CL_CURSORZ_HEAD_END	CL_SEQVIEW_BAR

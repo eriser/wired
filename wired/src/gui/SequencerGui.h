@@ -198,7 +198,8 @@ class SequencerGui: public wxPanel
   void				OnSplitClick(wxCommandEvent &event);
   void				OnMagnetismToggle(wxCommandEvent &event);
   void				OnMagnetismChange(wxCommandEvent &event);
-  void				OnColorBoxClick(wxCommandEvent &event);
+  void				OnColorButtonClick(wxCommandEvent &event);
+  void				OnColoredBoxClick(wxCommandEvent &event);
 
   bool				DoCut;
   
@@ -244,6 +245,7 @@ class SequencerGui: public wxPanel
   wxComboBox			*MagnetQuant;
   wxColourDialog		*ColorDialogBox;
   wxColour			BrushColor;
+  wxColour			PenColor;
   ColoredBox			*ColorBox;
 	
   double			CurrentXScrollPos;
