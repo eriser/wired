@@ -59,7 +59,8 @@ class Sequencer : public wxThread
   void					AddTrack(Track *t);
   void					RemoveTrack();
   void					AddMidiEvent(int id, MidiType midi_msg[3]);
-  void					AddMidiPattern(list<SeqCreateEvent *> *l, Plugin *plug);
+  void					AddMidiPattern(list<SeqCreateEvent *> *l, 
+						       Plugin *plug);
   void					AddNote(Track *t, MidiEvent &event);
   void					SetBPM(float bpm);
   void					SetSigNumerator(int signum);

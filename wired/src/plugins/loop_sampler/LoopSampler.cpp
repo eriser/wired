@@ -1296,6 +1296,7 @@ void LoopSampler::OnToSeqTrack(wxCommandEvent &event)
       
       for (i = Slices.begin(); i != Slices.end(); i++)
 	{
+	  // Note on
 	  e = new SeqCreateEvent;
 	  e->Position = (*i)->Bar;
 	  e->EndPosition = (*i)->EndPosition * d;
@@ -1303,6 +1304,15 @@ void LoopSampler::OnToSeqTrack(wxCommandEvent &event)
 	  //e->MidiMsg[0] &= 0xF0;
 	  e->MidiMsg[1] = (*i)->AffectMidi;
 	  e->MidiMsg[2] = (int)((*i)->Volume * 100.f);
+	  l.push_back(e);
+
+	  // Note off
+	  e = new SeqCreateEvent;
+	  e->Position = (*i)->EndPosition * d;
+	  e->EndPosition = e->Position;
+	  e->MidiMsg[0] = 0x80;
+	  e->MidiMsg[1] = (*i)->AffectMidi;
+	  e->MidiMsg[2] = 0;
 	  l.push_back(e);
 	}      
       CreateMidiPattern(&l);
