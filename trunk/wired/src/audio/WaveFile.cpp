@@ -86,8 +86,19 @@ WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode)
   if (sffile == NULL )
     {
       Error = true;
-      cout << "Error opening file for << " << open_mode << "  : " << filename << endl;
-      throw Error::File(filename, sf_strerror(0));
+      cout << "[WAVEFILE] Error opening file for << " << open_mode << "  : " << filename
+	   << "; with error : " << sf_strerror(0) << endl;
+
+      // We retry with read only
+      if (open_mode == rwrite)
+	{
+	  cout << "[WAVEFILE] Could not open file for writing, trying read-only..." << endl;
+	  sffile = sf_open (Filename.c_str(), SFM_READ, &sfinfo);
+	  if (sffile == NULL)
+	    throw Error::File(filename, sf_strerror(0));
+	}
+      else
+	throw Error::File(filename, sf_strerror(0));
     }    
   /*  sf_close(sffile);
 
