@@ -277,16 +277,17 @@ void FilterPlugin::SetFilter(int type, float cutoff, float resonance)
       break;
       
     case filter_bp:
-      Reamp = 6;
+      Reamp = 1; //6;
       SetCoeffs(alpha, 0, -alpha, 1 + alpha, - 2 * cs, 1 - alpha);
       break;
 
     case filter_notch:
+      Reamp = 0.1f;//1
       SetCoeffs(1, -2 * cs, 1, 1 + alpha, -2 * cs, 1 - alpha);
       break;
 
     case filter_peq:
-      Reamp = 0.5f;
+      Reamp = 0.1f;//0.5f;
       SetCoeffs(1 + (alpha * A), -2 * cs, 1 - (alpha * A), 1 + (alpha /A), -2 * cs, 
 	       1 - (alpha /A));
       break;

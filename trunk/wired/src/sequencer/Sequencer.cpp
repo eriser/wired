@@ -675,7 +675,7 @@ void					Sequencer::ProcessCurrentMidiEvents(Track *T, MidiPattern *p)
 	  T->TrackOpt->SetVuValue((*i)->Msg[2]);
 	  if (T->TrackOpt->Connected)
 	    {
-	      curevent = new WiredEvent;
+	      curevent = new WiredEvent; //** really needed to dyn alloc ?
 	      curevent->Type = WIRED_MIDI_EVENT;
 	      curevent->DeltaFrames = (long)((p->GetPosition() + (*i)->Position - CurrentPos) 
 					     * SamplesPerMeasure);
@@ -725,13 +725,15 @@ void					Sequencer::SetBufferSize()
   SeqMutex.Unlock();
 }
 
-void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l, Plugin *plug)
+void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l, 
+								  Plugin *plug)
 {
   vector<Track *>::iterator		i;
   list<SeqCreateEvent *>::iterator	j;
   Track					*t = 0x0;
   MidiPattern				*p;
   MidiEvent				*e;
+  double				max_end = 0.0;
 
   for (i = Tracks.begin(); i != Tracks.end(); i++)
     if ((*i)->TrackOpt->GetSelected() && (*i)->IsMidiTrack())
@@ -744,16 +746,19 @@ void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l, Plugin *plug)
       t = SeqPanel->AddTrack(false);
       t->TrackOpt->ConnectTo(plug);
     }
-  p = new MidiPattern(CurrentPos, CurrentPos + 1.0, t->TrackOpt->Index - 1);
+  p = new MidiPattern(CurrentPos, CurrentPos, t->TrackOpt->Index - 1);
   for (j = l->begin(); j != l->end(); j++)
     {
       e = new MidiEvent(0, (*j)->Position, (*j)->MidiMsg);
       e->EndPosition = (*j)->EndPosition;
+      if (max_end < e->EndPosition)
+	max_end = e->EndPosition;
       //      cout << "adding event: " << e->Position << " ; end: " << e->EndPosition << ", midimsg: " << e->Msg << endl;
       p->AddEvent(e);
     }
+  p->Modify(-1, -1, -1, max_end);
+  p->Update();
   t->AddPattern(p);
-  p->DrawMidi();
 }
 
 void					Sequencer::ExportToWave(string filename)
