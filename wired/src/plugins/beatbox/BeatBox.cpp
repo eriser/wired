@@ -805,6 +805,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input),
 	{
 	  //if ((*bn)->Buffer)
 	  //bn = NotesToPlay.erase(bn);
+	  bn++;
 	  continue;
 	}      
       
@@ -1000,10 +1001,10 @@ void WiredBeatBox::ProcessEvent(WiredEvent& event)
 		  {
 		    PatternMutex.Lock();
 		    EditedPattern = NewSelectedPattern = i;
-		    PatternMutex.Unlock();
-		    
 		    AskUpdatePattern = true;
 		    AskUpdate();
+		    PatternMutex.Unlock();
+		    
 		    return;
 		  }
 	    }
