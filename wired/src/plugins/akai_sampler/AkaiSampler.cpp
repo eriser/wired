@@ -165,13 +165,13 @@ bool AkaiSampler::IsMidi()
 
 void AkaiSampler::Load(int fd, long size)
 {
-  int i;
 
-
+  long count;
   /**** DEBUG ONLY ****/
   /**
+  int i;
   char *buffer = (char *)malloc(size);
-  long count = read(fd, buffer, size);
+  count = read(fd, buffer, size);
   printf("[WiredSampler] -- SAVE FILE DUMP --\n");
   for (i = 0; i < count ; i++)
   {
