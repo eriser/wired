@@ -43,6 +43,7 @@ class Pattern : public wxWindow
   virtual void				SetSelected(bool sel);
   virtual Pattern			*CreateCopy(double pos) = 0x0;
   virtual void				OnBpmChange() {}
+  virtual void				SetDrawColour(wxColour c) { PenColor = c; }
 
   wxPoint				GetMPosition() { return (m_pos); }
   void					SetMPosition(wxPoint p) { m_pos = p; }
@@ -59,7 +60,6 @@ class Pattern : public wxWindow
   void					SetName(string n) { Name = n; }
   long					GetTrackIndex() { return (TrackIndex); }
   void					SetTrackIndex(long t) { TrackIndex = t; }
-  void					SetDrawColour(wxColour c) { PenColor = c; }
 };
 
 #endif
