@@ -99,8 +99,8 @@ MidiDeviceList *MidiThread::ListDevices()
   int numdev = Pm_CountDevices();
   
   for (unsigned int i = 0; i < numdev; i++)
-    {    
-      pdi = Pm_GetDeviceInfo(i);	  
+    {
+      pdi = Pm_GetDeviceInfo(i);
       if (pdi->input)
       	{
 	  d = new MidiDeviceInfo(pdi->name, i);
@@ -129,7 +129,7 @@ void *MidiThread::Entry()
 	}
       MidiDeviceMutex.Unlock();
 
-      wxUsleep(1);
+      wxMilliSleep(1);
     }
   return (0x0);
 }
