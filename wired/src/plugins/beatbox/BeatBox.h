@@ -26,11 +26,8 @@ using namespace std;
 
 #define PLUGIN_NAME		"DRM-31"
 
-#define NUM_PATTERNS		8
-#define NUM_BANKS		5
-#define ID_VIEW_ACT		313131
-
 #define BEATBOX_BG		"plugins/beatbox/beatbox_bg.png"
+#define BEATBOX_MINI_BG		"plugins/beatbox/drm31.bmp"
 #define BEATBTN_UNCLICKED	"plugins/beatbox/beatbtn_unclicked.png"
 #define BEATBTN_MEDIUM		"plugins/beatbox/beatbtn_medium.png"
 #define BEATBTN_VLOW		"plugins/beatbox/beatbtn_vlow.png"
@@ -90,6 +87,45 @@ using namespace std;
 #define UP_8			"plugins/beatbox/8_up.png"
 #define DO_8			"plugins/beatbox/8_down.png"
 
+#define NUM_PATTERNS		8
+#define NUM_BANKS		5
+#define ID_VIEW_ACT		313131
+
+#define NB_CHAN 11
+
+#define IS_DENORMAL(f) (((*(unsigned int *)&f)&0x7f800000)==0)
+
+
+#define undenormalise(sample) \
+  if(((*(unsigned int*)&sample)&0x7f800000)==0) sample=0.0f
+
+#define DELETE_RYTHMS(R) {						\
+                          for (unsigned char bank = 0; bank < 5; bank++)\
+			    {						\
+			      for (unsigned char ps = 0; ps < 8; ps++)	\
+			        {					\
+			         for (list<BeatNote*>::iterator		\
+				      bn = R[bank][ps].begin();		\
+				      bn != R[bank][ps].end();)		\
+				   {					\
+				     delete *bn;			\
+				     bn = R[bank][ps].erase(bn);	\
+				   }					\
+			        }					\
+			      delete [] R[bank];			\
+			    }						\
+			  delete [] R;					\
+			 }
+
+
+
+#define CLIP(x)	{							\
+			if (x < 0.f)					\
+			  { x = 0.f; }					\
+			else if (x > 1.f)				\
+			  { x = 1.f }					\
+		}
+
 
 class WiredBeatBox : public Plugin
 {
@@ -138,8 +174,9 @@ class WiredBeatBox : public Plugin
   void		OnBankChange(wxCommandEvent& event);
   
   wxMutex*	GetMutexPtr() { return &PatternMutex; }
-  wxBitmap*	GetBitmap() { return bmp; }
+  wxBitmap*	GetBitmap() { return MiniBmp; }
   
+  void		SetVoices();
   void		AddBeatNote(BeatBoxChannel* c, double rel_pos,
 			    unsigned int state);
   // View interface
@@ -161,9 +198,11 @@ class WiredBeatBox : public Plugin
   
  protected:
   wxMutex		PatternMutex;
-  BeatBoxView*		View;
-  void		OnViewAction(wxCommandEvent& event);
   
+  BeatBoxView*		View;
+  void			OnViewAction(wxCommandEvent& event);
+  int			VoicesCount[NB_CHAN];
+  int			Voices;
   //vars mutexed
   float			MLevel;
   list<BeatNoteToPlay*>	NotesToPlay;
@@ -242,6 +281,7 @@ class WiredBeatBox : public Plugin
   wxBitmap**		Bitmaps;
   wxBitmap*		bmp;
   wxBitmap*		BgBmp;
+  wxBitmap*		MiniBmp;
   
   void			OnHelp(wxMouseEvent& event);
   void			OnPlayHelp(wxMouseEvent& event);

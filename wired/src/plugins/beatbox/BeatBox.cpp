@@ -7,40 +7,6 @@
 #include <math.h>
 #include "midi.h"
 
-#define NB_CHAN 11
-
-#define IS_DENORMAL(f) (((*(unsigned int *)&f)&0x7f800000)==0)
-
-
-#define undenormalise(sample) \
-  if(((*(unsigned int*)&sample)&0x7f800000)==0) sample=0.0f
-
-#define DELETE_RYTHMS(R) {						\
-                          for (unsigned char bank = 0; bank < 5; bank++)\
-			    {						\
-			      for (unsigned char ps = 0; ps < 8; ps++)	\
-			        {					\
-			         for (list<BeatNote*>::iterator		\
-				      bn = R[bank][ps].begin();		\
-				      bn != R[bank][ps].end();)		\
-				   {					\
-				     delete *bn;			\
-				     bn = R[bank][ps].erase(bn);	\
-				   }					\
-			        }					\
-			      delete [] R[bank];			\
-			    }						\
-			  delete [] R;					\
-			 }
-
-
-
-#define CLIP(x)	{							\
-			if (x < 0.f)					\
-			  { x = 0.f; }					\
-			else if (x > 1.f)				\
-			  { x = 1.f }					\
-		}
 
 static PlugInitInfo info;
 
@@ -70,6 +36,12 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
        << " version " << GetHostProductVersion() << endl;
   
   /* Master Volume */
+  wxImage* mini_bmp = 
+    new wxImage(_T(string(GetDataDir() + string(BEATBOX_MINI_BG)).c_str()), 
+		wxBITMAP_TYPE_BMP);  
+  if (mini_bmp)
+    MiniBmp = new wxBitmap(mini_bmp);
+  
   MVol = 
     new HintedKnob(this, BB_OnMasterChange, this,
 		 new wxImage(_T(string(GetDataDir() + string(KNOB)).c_str()),
@@ -366,7 +338,9 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   /* Channels */
   Channels = new BeatBoxChannel*[NB_CHAN];
+    
   int notenum = 0x48; //C3
+  
   for (unsigned int i = 0; i < NB_CHAN; i++)
     {
       ChanMidiNotes[i] = notenum++;
@@ -380,14 +354,19 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 					 wxPoint(i*65 + 74, 13), 
 					 wxSize(50,276),
 					 i, this);
+      
+      VoicesCount[i] = 0;
+      //Channels[i]->Voices = 8;
     }
   SelectedChannel = Channels[0];
   Channels[0]->Select();
   
   /* Polyphony */
+  
   Pool = new Polyphony();
-  Pool->SetPolyphony(64);
-
+  Pool->SetPolyphony(8 * NB_CHAN);
+  Voices = 8 * NB_CHAN;
+  
   /* Tests Knobs */
   
   wxImage** imgs;
@@ -594,8 +573,24 @@ WiredBeatBox::~WiredBeatBox()
 
 void WiredBeatBox::SetBufferSize(long size)
 {
+  PatternMutex.Lock();
   BufferSize = size;
-  Pool->SetBufferSize(size);
+  Pool->SetBufferSize(BufferSize);
+  PatternMutex.Unlock();
+  /*
+    for (int i = 0; i <= NB_CHAN; i++)
+    Channels[i]->Voices->SetBufferSize(size);
+  */
+}
+
+void WiredBeatBox::SetVoices()
+{
+  Voices = 0;
+  for (int i = 0; i < NB_CHAN; i++)
+    {
+      Voices += Channels[i]->Voices;
+    }
+  Pool->SetPolyphony(Voices);
 }
 
 inline void WiredBeatBox::RefreshPosLeds(double bar_pos)
@@ -687,13 +682,36 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
   long len = 0;
   long newoffset = 0;
   float curvel, velstep;
+  float **buf;
+  //int cpt_note = 0;
   for (list<BeatNoteToPlay*>::iterator bn = NotesToPlay.begin(); 
-       bn != NotesToPlay.end();  bn++)
+       bn != NotesToPlay.end(); )
     {
+      if ((*bn)->Buffer == 0x0)
+	{
+	  if ( VoicesCount[(*bn)->NumChan] + 1 >
+	       Channels[(*bn)->NumChan]->Voices )
+	    {
+	      delete *bn;
+	      bn = NotesToPlay.erase(bn);
+	      cout << "[DRM31] not enough voices" << endl;
+	      //cout << "note cpt=" << cpt_note++ << " continuing" << endl;
+	      continue;
+	    }
+	  else
+	    {
+	      VoicesCount[(*bn)->NumChan]++;
+	      buf = Pool->GetFreeBuffer();
+	      if (!buf)
+		cout << "[DRM31] Couldnt Get Free Buffer" << endl;
+	      (*bn)->Buffer = buf;
+	    }
+	}
+      //cout << "note cpt=" << cpt_note++ << " continuing" << endl;
       len = sample_length - (*bn)->Delta;
-      
       if ( !Channels[(*bn)->NumChan]->Wave )
 	{
+	  bn++;
 	  continue;
 	}      
       
@@ -701,8 +719,10 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	   Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames() ||
 	   (*bn)->OffSet >= (*bn)->SEnd )
 	{
+	  cout << "Offset > Wave Frames" <<endl;
 	  //memset((*bn)->Buffer[0], 0, sample_length * sizeof(float));
 	  //memset((*bn)->Buffer[1], 0, sample_length * sizeof(float));
+	  bn++;
 	  continue;
 	}
       
@@ -733,6 +753,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	  if (len <= 0)
 	    {
 	      //cout << " len < 0 !! " << endl;
+	      bn++;
 	      continue;
 	    }
 	}
@@ -772,6 +793,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	  //printf("curvel=%f\n", curvel);
 	  
 	}
+      bn++;
     }
   Pool->GetMix(output);
   /*
@@ -799,10 +821,15 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	{
 	  
 	  //Channels[(*bn)->NumChan]->PlayButton->SetOff();
-	  Pool->SetFreeBuffer((*bn)->Buffer);
+	  VoicesCount[(*bn)->NumChan]--;
+	  if (VoicesCount[(*bn)->NumChan] < 0)
+	    {
+	      cout << "[DRM31] error VoicesCount < 0" <<endl;
+	    }
+	  if ((*bn)->Buffer)
+	    Pool->SetFreeBuffer((*bn)->Buffer);
 	  delete *bn;
 	  bn = NotesToPlay.erase(bn);
-	  
 	}
       else
 	bn++;
@@ -813,49 +840,35 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 
 void WiredBeatBox::ProcessEvent(WiredEvent& event) 
 {
+  //  cout << "process event" << endl;
   if ((event.MidiData[0] == M_NOTEON1) || (event.MidiData[0] == M_NOTEON2))
     {
-      /*  if (!event.MidiData[2]) 
-	{
-	  PatternMutex.Lock();
-	  // Suppression des notes terminées
-	  list<BeatNoteToPlay *>::iterator i;
-	  for (i = NotesToPlay.begin(); i != NotesToPlay.end(); i++)
-	    {  
-	      if ((*i)->NoteNum == event.MidiData[1])      
-		{
-		  Pool->SetFreeBuffer((*i)->Buffer);
-		  delete *i;	 
-		  NotesToPlay.erase(i);
-		  break;
-		}
-	    } 
-	  PatternMutex.Unlock();
-	}
-      else
-      {*/
-      PatternMutex.Lock();
       
-      if ((NotesToPlay.size() + 1 > 
-	   static_cast<unsigned int>(Pool->GetCount())))
-	Pool->SetPolyphony(NotesToPlay.size()+ 32);
       int i;
       for (i = 0; i < NB_CHAN; i++)
-	{
-	  if (ChanMidiNotes[i] == event.MidiData[1])
-	    {
-	      BeatNoteToPlay *n = 
-		new BeatNoteToPlay(event.MidiData[1], 
-				   event.MidiData[2] / 100.f,
-				   event.DeltaFrames, 
-				   Channels[i], Pool->GetFreeBuffer());
-	      //event.NoteLength);
-	      NotesToPlay.push_back(n);
-	      printf("[BEATBOX] Note added: %2x\n", n->NoteNum);
-	      break;
-	    }		
-	}			       
-      PatternMutex.Unlock();
+	if (ChanMidiNotes[i] == event.MidiData[1])
+	  {
+	    /*if ((VoicesCount[i] + 1 <= 
+	      static_cast<unsigned int>
+	      (Channels[i]->Voices->GetCount())))
+	      {*/
+	    BeatNoteToPlay *n = 
+	      new BeatNoteToPlay(event.MidiData[1], 
+				 event.MidiData[2] / 100.f,
+				 event.DeltaFrames, 
+				 Channels[i], 
+				 0x0
+				 /*Channels[i]->GetFreeBuffer()*/
+				 /*Pool->GetFreeBuffer()*/
+				 );
+	    //event.NoteLength);
+	    PatternMutex.Lock();
+	    NotesToPlay.push_back(n);
+	    PatternMutex.Unlock();
+	    printf("[BEATBOX] Note added: %2x\n", n->NoteNum);
+	    break;
+	    //}		
+	  }
     }
 }
 
@@ -911,14 +924,17 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	    {
 	      if ((*bn)->BarPos > lasts)
 		break;
-	      if ( static_cast<unsigned int>(Pool->GetCount())
-		   < NotesToPlay.size()+1 )
+	      /*
+		if ( static_cast<unsigned int>(Pool->GetCount())
+		< NotesToPlay.size()+1 )
 		Pool->SetPolyphony(NotesToPlay.size()+32);
+	      */
+	      //float **tmp = c->
 	      
 	      delta = static_cast<unsigned long>
 		( ((1.0 - new_bar_pos + (*bn)->BarPos) * SamplesPerBar[NewSelectedBank][NewSelectedPattern]) );
 	      note = 
-		new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());	  
+		new BeatNoteToPlay(*bn, c->Id, delta, 0x0/*Pool->GetFreeBuffer()*/);
 	      SetNoteAttr(note, c);
 	      NotesToPlay.push_back(note);
 	    }
@@ -944,7 +960,7 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 
 		  
 		  note = 
-		    new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());
+		    new BeatNoteToPlay(*bn, c->Id, delta, 0x0/*Pool->GetFreeBuffer()*/);
 		  SetNoteAttr(note, c);
 		  NotesToPlay.push_back(note);
 		}
@@ -969,7 +985,7 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	    ( (((*bn)->BarPos - bar_pos) * SamplesPerBar[SelectedBank][SelectedPattern]) );
 	  
 	  note = 
-	    new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());
+	    new BeatNoteToPlay(*bn, c->Id, delta, 0x0/*Pool->GetFreeBuffer()*/);
 	  SetNoteAttr(note, c);
 	  NotesToPlay.push_back(note);
 	}
@@ -1138,17 +1154,19 @@ void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)
     case ACT_PLAY:
       if (!tmp->Wave)
 	{break;}
-      if ( static_cast<unsigned int>(Pool->GetCount())
+      /*
+	if ( static_cast<unsigned int>(Pool->GetCount())
 	   < NotesToPlay.size()+1 )
 	Pool->SetPolyphony(NotesToPlay.size()+32);
-      bn = new BeatNoteToPlay(tmp, Pool->GetFreeBuffer());
+      */
+      bn = new BeatNoteToPlay(tmp, 0x0/*Pool->GetFreeBuffer()*/);
       
       PatternMutex.Lock();
       NotesToPlay.push_back(bn);
       PatternMutex.Unlock();
       break;
     case ACT_SETWAVE:
-      
+      cout << "ACT_SETWAVE" << endl;
       break;
     default:
       break;

@@ -11,6 +11,8 @@
 #include "KnobCtrl.h"
 #include "HintedKnob.h"
 #include "CycleKnob.h"
+#include "Polyphony.h"
+
 //#include "Plugin.h"
 
 #define ACT_SELECT	0
@@ -179,7 +181,7 @@ class BeatBoxChannel : public wxWindow
   unsigned int* Data;
   
   wxStaticText* VoicesLabel;
-  unsigned int	NumVoices;
+  unsigned int	Voices;
 
   DownButton*	PlayButton;
   bool		Muted;
@@ -193,8 +195,7 @@ class BeatBoxChannel : public wxWindow
     Rythms;
   
   WaveFile*	Wave;
-  
-  //  Polyphony	*Voices;
+  //Polyphony	*Voices;
 
  protected:
   WiredBeatBox*	DRM31;

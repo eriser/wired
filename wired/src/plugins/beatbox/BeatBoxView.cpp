@@ -5,23 +5,23 @@ BEGIN_EVENT_TABLE(Ruler, wxWindow)
   EVT_PAINT(Ruler::OnPaint)
 END_EVENT_TABLE()
 
-#define LIGHT_BLUE   wxColour(204,255,255)
-#define DEEP_BLUE    wxColour(0,51,153)
-
-  //#define BEGE         wxColour(255,255,204)
+#define GET_CHAN_ID()		\
+ ViewPtr->TrackView->BeatTracks[ViewPtr->TrackView->SelectedTrack]->Channel->Id
+  
+#define LIGHT_BLUE		wxColour(204,255,255)
+#define DEEP_BLUE		wxColour(0,51,153)
+#define DEEP_GREEN		wxColour(28,162,56)
+#define SELECTED_NOTE_COLOUR	wxColour(1,74,17)
+#define DEFAULT_NOTE_COLOUR	wxColour(110,110,110)
+#define SELECTION_COLOUR	wxColour(111,226,122)
 
 Ruler::Ruler(wxWindow *parent, wxWindowID id, 
 	     const wxPoint &pos, const wxSize &size,
 	     BeatBoxView* view_ptr)
   : wxWindow(parent, id, pos, size)
 {
-  SetBackgroundColour(DEEP_BLUE);
+  SetBackgroundColour(DEEP_GREEN);
   ViewPtr = view_ptr;
-  /*
-    wxStaticText* text = 
-    new wxStaticText(this, -1, _T("This is the ruler view"), wxPoint(0,0), 
-		     wxDefaultSize);
-  */
 }
 
 Ruler::~Ruler()
@@ -36,8 +36,7 @@ void Ruler::OnPaint(wxPaintEvent& event)
   PrepareDC(dc);
   size = GetSize();
   dc.SetPen(wxPen(LIGHT_BLUE, 1, wxSOLID));
-  //dc.SetPen(*wxMEDIUM_GREY_PEN);
-  dc.SetBrush(wxBrush(DEEP_BLUE));
+  dc.SetBrush(wxBrush(DEEP_GREEN));
   dc.SetTextForeground(*wxWHITE);
   dc.DrawRoundedRectangle(0, 0, size.x, size.y, 3);
   dc.SetPen(wxPen(*wxBLACK, 1, wxSOLID));
@@ -128,12 +127,12 @@ void BeatBoxTrackView::OnPaint(wxPaintEvent& event)
     {
       if (tr == SelectedTrack)
 	{
-	  dc.SetBrush(wxBrush(LIGHT_BLUE, wxSOLID));
+	  dc.SetBrush(wxBrush(DEEP_GREEN, wxSOLID));
 	  dc.DrawRoundedRectangle(0, y, TRACK_WIDTH, ViewPtr->TrackHeight, 3);
 	  dc.SetBrush(wxBrush(*wxLIGHT_GREY, wxSOLID));
 	}
       else 
-	 dc.DrawRoundedRectangle(0, y, TRACK_WIDTH, ViewPtr->TrackHeight, 3);
+	dc.DrawRoundedRectangle(0, y, TRACK_WIDTH, ViewPtr->TrackHeight, 3);
 
       //s = (*bt)->Channel->WaveLabel->GetLabel();
       //s.Printf("%d", (*bt)->Channel->Wave->);
@@ -193,6 +192,8 @@ BEGIN_EVENT_TABLE(BeatBoxScrollView, wxScrolledWindow)
   EVT_LEFT_UP(BeatBoxScrollView::OnLeftUp)
   EVT_MOTION(BeatBoxScrollView::OnMotion)
   EVT_RIGHT_DOWN(BeatBoxScrollView::OnRightDown)
+  EVT_KEY_DOWN(BeatBoxScrollView::OnKeyDown)
+  EVT_KEY_UP(BeatBoxScrollView::OnKeyUp)
 END_EVENT_TABLE()
 
 BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
@@ -201,6 +202,7 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
   : wxScrolledWindow(parent, id, pos, size)
 {
   SetBackgroundColour(*wxWHITE);
+  SetForegroundColour(*wxWHITE);
   ViewPtr = view_ptr;
   OnSelecting = false;
   ClickPosX = ClickPosY = MotionPosX = MotionPosY = 0;
@@ -222,22 +224,22 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
   
   Connect(ID_PopNew, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-	  &BeatBoxScrollView::NewNote);
+	  &BeatBoxScrollView::OnNewNote);
   Connect(ID_PopDelete, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-	  &BeatBoxScrollView::DeleteNotes);
+	  &BeatBoxScrollView::OnDeleteNotes);
   Connect(ID_PopCut, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-	  &BeatBoxScrollView::CutNotes);
+	  &BeatBoxScrollView::OnCutNotes);
   Connect(ID_PopCopy, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-	  &BeatBoxScrollView::CopyNotes);
+	  &BeatBoxScrollView::OnCopyNotes);
   Connect(ID_PopPaste, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-	  &BeatBoxScrollView::PasteNotes);
+	  &BeatBoxScrollView::OnPasteNotes);
  Connect(ID_PopSelect, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-	  &BeatBoxScrollView::SelectAllNotes);
+	  &BeatBoxScrollView::OnSelectAllNotes);
   
 
 /*
@@ -251,10 +253,45 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
 BeatBoxScrollView::~BeatBoxScrollView()
 {}
 
-void BeatBoxScrollView::NewNote(wxCommandEvent& WXUNUSED(event))
+void BeatBoxScrollView::OnKeyDown(wxKeyEvent& event)
+{
+  switch (event.GetKeyCode())
+    {
+    case WXK_CONTROL:
+      //cout << "ctrl pressed" << endl;
+      break;
+    case 'C':
+      //cout << "c clicked" << endl;
+      if (event.ControlDown())
+	{
+	  //cout << "ctrl + c" << endl;
+	  CopyNotes();
+	}
+      break;
+    case 'V':
+      if (event.m_controlDown)
+	{
+	  PasteNotes();
+	}
+      break;
+    case 'X':
+      if (event.m_controlDown)
+	{
+	  
+	}
+      break;
+    default :
+      break;
+    }
+}
+
+void BeatBoxScrollView::OnKeyUp(wxKeyEvent& event)
 {}
 
-void BeatBoxScrollView::DeleteNotes(wxCommandEvent& WXUNUSED(event))
+void BeatBoxScrollView::OnNewNote(wxCommandEvent& WXUNUSED(event))
+{}
+
+void BeatBoxScrollView::OnDeleteNotes(wxCommandEvent& WXUNUSED(event))
 {
   for (list<BeatNote*>::iterator note = SelectedNotes.begin();
        note != SelectedNotes.end(); note++)
@@ -268,13 +305,24 @@ void BeatBoxScrollView::DeleteNotes(wxCommandEvent& WXUNUSED(event))
   SelectedNotes.clear();
 }
 
-void BeatBoxScrollView::CutNotes(wxCommandEvent& WXUNUSED(event))
+void BeatBoxScrollView::OnCutNotes(wxCommandEvent& WXUNUSED(event))
 {
   
 }
 
-void BeatBoxScrollView::CopyNotes(wxCommandEvent& WXUNUSED(event))
+void BeatBoxScrollView::OnCopyNotes(wxCommandEvent& WXUNUSED(event))
 {
+  CopyNotes();
+}
+
+inline void BeatBoxScrollView::CopyNotes()
+{
+  for (list<BeatNote*>::iterator note = TmpNotes.begin();
+       note != TmpNotes.end(); note++)
+    {
+      delete *note;
+    }
+  TmpNotes.clear();
   for (list<BeatNote*>::iterator note = SelectedNotes.begin();
        note != SelectedNotes.end(); note++)
     {
@@ -296,8 +344,34 @@ void BeatBoxScrollView::CopyNotes(wxCommandEvent& WXUNUSED(event))
   */
 }
 
-void BeatBoxScrollView::PasteNotes(wxCommandEvent& WXUNUSED(event))
+void BeatBoxScrollView::OnPasteNotes(wxCommandEvent& WXUNUSED(event))
 {
+  PasteNotes();
+}
+
+inline void BeatBoxScrollView::PasteNotes()
+{
+  BeatNote* n;
+  int chan = GET_CHAN_ID();
+  list<BeatNote*> new_selection;
+  
+  for (list<BeatNote*>::iterator note = TmpNotes.begin();
+       note != TmpNotes.end(); note++)
+    {
+      (*note)->Position += 0.5; 
+      n = new BeatNote(*note);
+      n->NumChan = chan;
+      //n->Selected = true;
+      ViewPtr->DRM31->AddBeatNote(n,
+				  ViewPtr->DRM31->Channels[chan],
+				  ViewPtr->DRM31->EditedBank,
+				  ViewPtr->DRM31->EditedPattern);
+      new_selection.push_back(n);
+    }
+  ClearSelected();
+  SelectedNotes = new_selection;
+  Refresh();
+  
   /*
   BeatNote* bn;
   for (list<BeatNote*>::iterator note = TmpNotes.begin();
@@ -310,7 +384,7 @@ void BeatBoxScrollView::PasteNotes(wxCommandEvent& WXUNUSED(event))
   */
 }
 
-void BeatBoxScrollView::SelectAllNotes(wxCommandEvent& WXUNUSED(event))
+void BeatBoxScrollView::OnSelectAllNotes(wxCommandEvent& WXUNUSED(event))
 {
   ClearSelected();
   for (list<BeatNote*>::iterator note = 
@@ -346,6 +420,15 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
   dc.SetTextForeground(*wxBLACK);
   ////
   
+  if (OnSelecting)
+    {
+      dc.SetPen(*wxBLACK_PEN);
+      //dc.SetBrush(wxBrush(wxColour(28,162,56), wxTRANSPARENT));
+      dc.SetBrush(wxBrush(SELECTION_COLOUR, wxSOLID));
+      dc.DrawRectangle(ClickPosX, ClickPosY, 
+		       MotionPosX - ClickPosX, MotionPosY - ClickPosY);
+    }
+    
   
   
   int steps = ViewPtr->DRM31->GetSteps();
@@ -412,9 +495,9 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
 	       << " yn "<< yn << endl;
 	  */
 	  if ((*note)->Selected)
-	    dc.SetBrush(*wxRED_BRUSH);
+	    dc.SetBrush(SELECTED_NOTE_COLOUR);
 	  else
-	    dc.SetBrush(*wxBLACK_BRUSH);
+	    dc.SetBrush(DEFAULT_NOTE_COLOUR);
 	  
 	  dc.DrawCircle(wxPoint(xn, yn), 3);
 	}
@@ -433,12 +516,14 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
 	  (((1.27 - 1.0) / 1.30) * (ViewPtr->TrackHeight - DEC)))
 	- ViewPtr->YScroll;
       */
-      yn = (ViewPtr->TrackHeight * cpt) 
+      
+      /*
+	yn = (ViewPtr->TrackHeight * cpt) 
 	+ DEC + static_cast<long> 
 	( floor
 	  (((1.27 - 1.0)) / 1.27 * (ViewPtr->TrackHeight - DEC)))
 	- ViewPtr->YScroll;
-      
+      */
       /*
 
       (yn - (ViewPtr->TrackHeight * cpt) - 3) 
@@ -447,15 +532,17 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
 	((1.27 - 1.0) / 1.30);
       */
       
-      dc.SetPen(wxPen(*wxRED, 1, wxSOLID));
+      /*
+	dc.SetPen(wxPen(*wxRED, 1, wxSOLID));
       dc.DrawLine(0, yn, GetClientSize().x, yn);
+      
       yn = (ViewPtr->TrackHeight * cpt) 
 	+ DEC + static_cast<long> 
 	( floor
 	  (((1.27 - 1.27)) / 1.27 * (ViewPtr->TrackHeight - DEC)))
 	- ViewPtr->YScroll;
       dc.DrawLine(0, yn, GetClientSize().x, yn);
-      
+      */
       //yn = y+3+ static_cast<long>(floor(ViewPtr->TrackHeight * (1.27/1.30)));
       /*
  yn = (ViewPtr->TrackHeight * cpt) 
@@ -477,13 +564,6 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
       //dc.DrawRoundedRectangle(0, yn, GetClientSize().x, y - yn, 3);
     }
   
-  if (OnSelecting)
-    {
-      dc.SetPen(*wxBLACK_PEN);
-      dc.SetBrush(*wxTRANSPARENT_BRUSH);
-      dc.DrawRectangle(ClickPosX, ClickPosY, 
-		       MotionPosX - ClickPosX, MotionPosY - ClickPosY);
-    }
 }
 
 void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
@@ -515,15 +595,16 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
   double vel = floor(static_cast<double>(((ViewPtr->TrackHeight - ypos) 
 					  / ViewPtr->TrackHeight) * 1.30) 
 		     * 100) / 100;
-  
+  //cout << "motion vel " << vel << endl;
   /*
-if (vel < 0.0)
+    if (vel < 0.0)
     vel = 0;
   else if (vel > 1.27)
     vel = 1.27;
-  */  
+  */
   if (SelectedNote)
     {
+      int n = 0;
   for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
        note != SelectedNotes.end(); note++)
     {
@@ -541,17 +622,29 @@ if (vel < 0.0)
       //cout << "note removed" << endl;
 
     }
-  
+  //cout << "SelectedNote pos: " << SelectedNote->Position << endl;
   double delta_x =  xpos - SelectedNote->Position;
   float delta_y = vel - SelectedNote->Vel;
+  //cout << "delta vel: " << delta_y << endl;
   for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
        note != SelectedNotes.end(); note++)
     {
+      n++;
       (*note)->Position += delta_x;
-      //cout << (*note)->Position << " modulus " << ViewPtr->DRM31->GetSteps();
-      (*note)->Position = fmod((*note)->Position, 
-			       static_cast<double>(ViewPtr->DRM31->GetSteps())
-			       );
+      if ((*note)->Position >= static_cast<double>(ViewPtr->DRM31->GetSteps()))
+	{
+	  (*note)->Position = (*note)->Position 
+	    - static_cast<double>(ViewPtr->DRM31->GetSteps());
+	}
+      else if ((*note)->Position < 0.00)
+	{
+	  (*note)->Position = static_cast<double>(ViewPtr->DRM31->GetSteps()) 
+	    + (*note)->Position;
+	}
+      /*
+	(*note)->Position = fmod((*note)->Position, 
+	static_cast<double>(ViewPtr->DRM31->GetSteps()));
+      */		
       //cout << " : " << (*note)->Position << endl;
       /*
 	if ((*note)->Position < 0.0)
@@ -562,7 +655,16 @@ if (vel < 0.0)
 			       ) * 100) / 100;
       
       (*note)->Vel += delta_y;
-      (*note)->Vel = fmodf((*note)->Vel, 1.27);
+      if ((*note)->Vel > 1.27)
+	(*note)->Vel = (*note)->Vel - 1.27;
+      else if ((*note)->Vel < 0.00)
+	(*note)->Vel = 1.27 + (*note)->Vel;
+      
+
+      //cout << n << " note pos " << (*note)->Position << " vel "
+      //   << (*note)->Vel <<  endl;
+      
+      //(*note)->Vel = fmodf((*note)->Vel, 1.27);
       
       /*
 	if ((*note)->Vel < 0.0)
@@ -577,12 +679,12 @@ if (vel < 0.0)
     {
       //cout << "note added" << endl;
       ViewPtr->DRM31->AddBeatNote(*note,
-				ViewPtr->DRM31->Channels[(*note)->NumChan], 
+				  ViewPtr->DRM31->Channels[(*note)->NumChan], 
 				  ViewPtr->DRM31->EditedBank, 
 				  ViewPtr->DRM31->EditedPattern);
     }
   
-  }
+    }
   
   MotionPosX = event.m_x; 
   MotionPosY = event.m_y; 

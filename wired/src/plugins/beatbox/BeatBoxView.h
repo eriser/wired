@@ -34,6 +34,7 @@ class BeatTrack : public wxWindow
   //BeatTrack(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, BeatBoxChannel* channel);
   BeatTrack(BeatBoxChannel* channel);
   ~BeatTrack();
+  
   BeatBoxChannel* Channel;
   //void OnPaint(wxPaintEvent& event);
  protected:
@@ -86,15 +87,22 @@ class BeatBoxScrollView : public wxScrolledWindow
   void OnRightDown(wxMouseEvent& event);
   void OnMotion(wxMouseEvent& event);
   
+  void OnKeyDown(wxKeyEvent& event);
+  void OnKeyUp(wxKeyEvent& event);
+  
   void ClearSelected(void);
   void SelectNote(BeatNote* note);
-  void NewNote(wxCommandEvent& event);
-  void DeleteNotes(wxCommandEvent& event);
-  void CutNotes(wxCommandEvent& event);
-  void CopyNotes(wxCommandEvent& event);
-  void PasteNotes(wxCommandEvent& event);
-  void SelectAllNotes(wxCommandEvent& event);
+  void OnNewNote(wxCommandEvent& event);
+  void OnDeleteNotes(wxCommandEvent& event);
+  void OnCutNotes(wxCommandEvent& event);
+  void OnCopyNotes(wxCommandEvent& event);
+  void OnPasteNotes(wxCommandEvent& event);
+  void OnSelectAllNotes(wxCommandEvent& event);
   
+  
+  void CopyNotes();
+  void PasteNotes();
+
   long SubDiv;
   
   BeatNote* SelectedNote;
@@ -126,7 +134,7 @@ class BeatBoxView : public wxPanel
   void OnPosChange(wxCommandEvent& event);
   void OnVelChange(wxCommandEvent& event);
   void OnMagnetism(wxCommandEvent& event);
-
+  
   wxToolBar* ToolBar;
   wxComboBox* SubCombo;
   wxTextCtrl* PosTextCtrl;
