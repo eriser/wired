@@ -216,6 +216,7 @@ void ChannelGui::UpdateScreen()
 ( ( (20.f * (float)log10(lrms) + 96.f) / 96.f ) * 100.f) ));
   VumRight->SetValue( (long)(
 ( ( (20.f * (float)log10(rrms) + 96.f) / 96.f ) * 100.f) ));
+  
   if (ConnectedSeqTrack)
     {
       ConnectedSeqTrack->SetVuValue(VumLeft->GetValue());
