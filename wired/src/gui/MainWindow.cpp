@@ -1222,9 +1222,6 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
   if (Seq->Playing)
     {
       SeqPanel->OnSetPosition(e);
-      for (t = Seq->TracksToRefresh.begin(); t != Seq->TracksToRefresh.end(); t++)
-	(*t)->TrackOpt->SetVuValue();
-      Seq->TracksToRefresh.clear();
 
       if (Seq->Recording)
 	{
@@ -1246,6 +1243,10 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
   for (k = UpdatePlugins.begin(); k != UpdatePlugins.end(); k++)
     (*k)->Update();
   UpdatePlugins.clear();
+
+  for (t = Seq->TracksToRefresh.begin(); t != Seq->TracksToRefresh.end(); t++)
+    (*t)->TrackOpt->SetVuValue();
+  Seq->TracksToRefresh.clear();
 
   SeqMutex.Unlock();
 }
