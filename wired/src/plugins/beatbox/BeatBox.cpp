@@ -778,14 +778,30 @@ void WiredBeatBox::ProcessEvent(WiredEvent& event)
     }
 }
 
+inline void WiredBeatBox::SetNoteAttr(BeatNoteToPlay* note, BeatBoxChannel* c)
+{
+  note->Lev *= c->Lev;
+  note->Vel *= c->Vel;
+  note->Pitch *= c->Pitch;
+  note->Start *= c->Start;
+  note->End *= c->End;
+  note->Reversed = c->Reversed;
+  
+  note->OffSet =
+    static_cast<unsigned long>
+    (floor(c->Wave->GetNumberOfFrames() * (note->Start)));
+  note->SEnd = 
+    static_cast<unsigned long>
+    (floor(c->Wave->GetNumberOfFrames() * note->End));
+}
+	      
+
 inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c, 
 					      double bar_pos, 
 					      double bar_end,
 					      double new_bar_pos,
 					      double new_bar_end,
 					      bool* isend)
-					      //double new_bar_pos,
-					      //double new_bar_end)
 {
   BeatNoteToPlay*	note;
   unsigned long		delta;
@@ -808,23 +824,9 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	      
 	      delta = static_cast<unsigned long>
 		( ((1.0 - new_bar_pos + (*bn)->BarPos) * SamplesPerBar[NewSelectedBank][NewSelectedPattern]) );
-	      
-
 	      note = 
 		new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());	  
-	      note->Lev *= c->Lev;
-	      note->Vel *= c->Vel;
-	      note->Pitch *= c->Pitch;
-	      note->Start *= c->Start;
-	      note->End *= c->End;
-	      note->Reversed = c->Reversed;
-	  
-	      note->OffSet =
-		static_cast<unsigned long>
-		(floor(c->Wave->GetNumberOfFrames() * (note->Start)));
-	      note->SEnd = 
-		static_cast<unsigned long>
-		(floor(c->Wave->GetNumberOfFrames() * note->End));
+	      SetNoteAttr(note, c);
 	      NotesToPlay.push_back(note);
 	    }
 	}
@@ -850,19 +852,7 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 		  
 		  note = 
 		    new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());
-		  
-		  note->Lev *= c->Lev;
-		  note->Vel *= c->Vel;
-		  note->Pitch *= c->Pitch;
-		  note->Start *= c->Start;
-		  note->End *= c->End;
-		  note->Reversed |= c->Reversed;
-		  
-		  note->OffSet =
-		    static_cast<unsigned long>
-		    (floor(c->Wave->GetNumberOfFrames() * (note->Start)));
-		  note->SEnd = 
-		    static_cast<unsigned long>(floor(c->Wave->GetNumberOfFrames()*note->End));
+		  SetNoteAttr(note, c);
 		  NotesToPlay.push_back(note);
 		}
 	    }
@@ -887,21 +877,7 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	  
 	  note = 
 	    new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());
-	  
-	  
-	  note->Lev *= c->Lev;
-	  note->Vel *= c->Vel;
-	  note->Pitch *= c->Pitch;
-	  note->Start *= c->Start;
-	  note->End *= c->End;
-	  note->Reversed |= c->Reversed;
-	  
-	  note->OffSet =
-	    static_cast<unsigned long>
-	    (floor(c->Wave->GetNumberOfFrames() * (note->Start)));
-	  note->SEnd = 
-	    static_cast<unsigned long>(floor(c->Wave->GetNumberOfFrames()*note->End));
-	  
+	  SetNoteAttr(note, c);
 	  NotesToPlay.push_back(note);
 	}
     }
