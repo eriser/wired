@@ -12,12 +12,12 @@
 #include "FaderCtrl.h"
 #include "BeatButton.h"
 #include "WaveFile.h"
-#include "FileLoader.h"
+//#include "FileLoader.h"
 #include "BeatBoxChannel.h"
 #include "IdButton.h"
 #include "KnobCtrl.h"
 #include "BeatBoxView.h"
-#include "Settings.h"
+//#include "Settings.h"
 #include "HintedKnob.h"
 
 using namespace std;
@@ -126,15 +126,16 @@ class WiredBeatBox : public Plugin
   void		OnStepsUp(wxCommandEvent& event);
   void		OnStepsDown(wxCommandEvent& event);
   
+  wxMutex*	GetMutexPtr() { return &PatternMutex; }
   wxBitmap*	GetBitmap() { return bmp; }
   
   // View interface
   
   int		GetSig(void);
   
+    
  protected:
   wxMutex		PatternMutex;
-  
   BeatBoxView*		View;
   
   //vars mutexed

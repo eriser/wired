@@ -10,6 +10,7 @@
 #include "DownButton.h"
 #include "KnobCtrl.h"
 #include "HintedKnob.h"
+//#include "Plugin.h"
 
 #define ACT_SELECT	0
 #define ACT_SOLO	1
@@ -93,12 +94,14 @@ class BeatNoteToPlay
   unsigned long SEnd;
 };
 
+class WiredBeatBox;
+
 class BeatBoxChannel : public wxWindow
 {
  public:
   BeatBoxChannel( wxWindow *parent, wxWindowID id, const wxPoint &pos,
-		  const wxSize &size, unsigned int num, string datadir, 
-		  wxMutex* mutex );
+		  const wxSize &size, unsigned int num, WiredBeatBox* drm31);
+  //string datadir,  wxMutex* mutex );
   ~BeatBoxChannel();
  
   void		OnPaint(wxPaintEvent& event);
@@ -149,6 +152,7 @@ class BeatBoxChannel : public wxWindow
   */
   WaveFile*	Wave;
  protected:
+  WiredBeatBox*	DRM31;
   string        DataDir;
   wxStaticText* WaveLabel;
   wxBitmap*	BgBmp;
