@@ -450,6 +450,10 @@ void Rack::AddPlugToMenu()
 }
 void Rack::HandlePaintEvent(Plugin *plug, wxPaintEvent *event)
 {
+  int xx, yy;
+
+  CalcScrolledPosition(0, 0, &xx, &yy);
+  
   if (selectedPlugin == 0x0)
     return;
   if (selectedPlugin == plug)
@@ -458,7 +462,7 @@ void Rack::HandlePaintEvent(Plugin *plug, wxPaintEvent *event)
       PrepareDC(dc);
       dc.SetPen(wxPen(wxColour(255,0,0), 3, wxSOLID));
       dc.SetBrush(*wxTRANSPARENT_BRUSH);
-      dc.DrawRectangle(0,0, selectedPlugin->GetSize().x, selectedPlugin->GetSize().y);
+      dc.DrawRectangle(0 - xx, 0 - yy, selectedPlugin->GetSize().x, selectedPlugin->GetSize().y);
     }
 }
 
@@ -466,14 +470,17 @@ bool Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator 
 {
   int pos_x = 0;
   int pos_y = 0;
+  int xx, yy;
 
-   for (k= RackTracks.begin(); k != RackTracks.end(); k++){
-    pos_x = pos_x + (*k)->Units * UNIT_W ;
-    if(((pos_x - ((*k)->Units * UNIT_W)) < new_x) && (new_x < pos_x) )
+  CalcScrolledPosition(0, 0, &xx, &yy);  
+
+  for (k= RackTracks.begin(); k != RackTracks.end(); k++){
+    pos_x = (pos_x + (*k)->Units * UNIT_W);
+    if((((pos_x + xx)- ((*k)->Units * UNIT_W)) < new_x) && (new_x < (pos_x + xx)) )
       {
 	for(l = (*k)->Racks.begin(); l != (*k)->Racks.end(); l++){
 	  pos_y = pos_y + (*l)->InitInfo->UnitsY * UNIT_H;
-	  if(((pos_y - ((*l)->InitInfo->UnitsY * UNIT_H)) < new_y) && (new_y < pos_y))
+	  if((((pos_y + yy) - ((*l)->InitInfo->UnitsY * UNIT_H)) < new_y) && (new_y < (pos_y + yy)))
 	    {
 	      if((*l) == plug)
 		return true;
