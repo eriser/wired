@@ -56,8 +56,8 @@ class Pattern : public wxWindow
   virtual void				OnBpmChange() {}
   virtual void				SetDrawColour(wxColour c) { PenColor = c; }
   virtual WaveFile			*GetWave() {}
-  virtual vector<MidiEvent *>	        GetEvents() { return (vector<MidiEvent *>::vector()); };
-
+  virtual vector<MidiEvent *>	        *GetEvents() { return (0); }
+  
   virtual Pattern			*CreateCopy(double pos) = 0x0;
 
   wxPoint				GetMPosition() { return (m_pos); }
