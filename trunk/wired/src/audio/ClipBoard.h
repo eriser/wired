@@ -24,6 +24,11 @@ public:
 
 	// Insertion de frames dans un wave
 	void Paste (WaveFile& wave, int to);
+	
+	// Suppression de frames dans un wave
+	void Delete (WaveFile& wave, int from, int size_of_cut);
+
+	long sizec;
 
 private:
 	// Pointer sur l'unique objet de cette classe
