@@ -32,6 +32,7 @@ class				WaveDrawer
   virtual ~WaveDrawer();
   
   virtual void			SetDrawing(wxSize s);
+  void				RedrawBitmap(wxSize s);
   virtual void			SetWave(float **data, unsigned long frame_length, long channel_count, wxSize s);
   virtual void			SetWave(WaveFile *w, wxSize s);
   virtual void			SetSize(wxSize s);

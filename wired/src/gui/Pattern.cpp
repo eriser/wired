@@ -86,6 +86,7 @@ void					Pattern::UpdateMeasure()
 void					Pattern::SetSelected(bool sel)
 {
   Selected = sel;
+  Refresh();
 }
 
 int					Pattern::GetXPos(double pos)
