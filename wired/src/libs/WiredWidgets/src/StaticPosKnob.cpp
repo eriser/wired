@@ -71,7 +71,7 @@ void StaticPosKnob::OnMotionEvent(wxMouseEvent &event)
     return;
   int move = event.GetPosition().y - ClickPos;
   
-  Count -= move;
+  Count += move;
   ClickPos = event.GetPosition().y;
   if (Count > MouseStep && CurVal + 1 <= EndVal)
     {
@@ -124,17 +124,17 @@ void StaticPosKnob::SetValue(int val)
 
 void StaticPosKnob::OnKeyDown(wxKeyEvent& event)
 {
-  if ((event.GetKeyCode() == WXK_UP) && (CurVal < EndVal))
+  if ((event.GetKeyCode() == WXK_UP) && (CurVal > BeginVal))
     {
-      CurVal++;
+      CurVal--;
       Refresh();
       wxCommandEvent e(wxEVT_COMMAND_BUTTON_CLICKED, this->GetId());
       e.SetEventObject(this);
       wxPostEvent(GetParent(), e);
     }
-  else if ((event.GetKeyCode() == WXK_DOWN) && (CurVal > BeginVal))
+  else if ((event.GetKeyCode() == WXK_DOWN) && (CurVal < EndVal))
     {
-      CurVal--;
+      CurVal++;
       Refresh();
       wxCommandEvent e(wxEVT_COMMAND_BUTTON_CLICKED, this->GetId());
       e.SetEventObject(this);
