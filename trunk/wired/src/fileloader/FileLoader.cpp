@@ -83,7 +83,7 @@ END_EVENT_TABLE()
 
 FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai, bool psave, vector<string> *exts) 
   : wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT), 
-	     wxRESIZE_BORDER | wxMAXIMIZE_BOX)
+	     wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX)
 {
   Center();
   SetSizeHints(F_WIDTH, F_HEIGHT);
@@ -101,11 +101,11 @@ FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai
   save = psave;
 
   folder = new wxTreeCtrl(this, FOLDER_ID, wxPoint(4, 34), 
-			  wxSize(F_WIDTH / 3 - 8, F_HEIGHT - 110),
+			  wxSize(F_WIDTH / 2 - 8, F_HEIGHT - 120),
 			  wxTR_HAS_BUTTONS | wxTR_SINGLE | 
 			  wxSUNKEN_BORDER | wxTR_NO_LINES);
-  files = new wxListView(this, FILE_ID, wxPoint(F_WIDTH / 3, 34), 
-			  wxSize(2 * F_WIDTH / 3 - 8, F_HEIGHT - 110), 
+  files = new wxListView(this, FILE_ID, wxPoint(0, 0), 
+			  wxSize(F_WIDTH / 2 - 8, F_HEIGHT - 120), 
 			  wxSUNKEN_BORDER | wxLC_REPORT | 
 			  wxLC_SINGLE_SEL);
 
@@ -225,7 +225,7 @@ FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai
   third_v1_sizer->Add(filename, 1, wxEXPAND | wxALL, 2); 
 
   wxBoxSizer *third_v3_sizer = new wxBoxSizer(wxVERTICAL);
-  third_v3_sizer->Add(third_v1_sizer, 0, wxEXPAND | wxALL, 2); 
+  third_v3_sizer->Add(third_v1_sizer, 1, wxEXPAND | wxALL, 2); 
 
   wxBoxSizer *third_v2_sizer;
   if (!akai)
@@ -233,14 +233,14 @@ FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai
       third_v2_sizer = new wxBoxSizer(wxHORIZONTAL);
       third_v2_sizer->Add(typtext, 0, wxEXPAND | wxALL, 2); 
       third_v2_sizer->Add(type, 1, wxEXPAND | wxALL, 2); 
-      third_v3_sizer->Add(third_v2_sizer, 0, wxEXPAND | wxALL, 2); 
+      third_v3_sizer->Add(third_v2_sizer, 1, wxEXPAND | wxALL, 2); 
     }
 
   wxBoxSizer *third_h1_sizer = new wxBoxSizer(wxHORIZONTAL);
   if (!save)
-    third_h1_sizer->Add(preview, 0, wxEXPAND | wxALL, 2); 
-  third_h1_sizer->Add(btopen, 0, wxEXPAND | wxALL, 2); 
-  third_h1_sizer->Add(cancel, 0, wxEXPAND | wxALL, 2); 
+    third_h1_sizer->Add(preview, 0, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
+  third_h1_sizer->Add(btopen, 0, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
+  third_h1_sizer->Add(cancel, 0, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
 
   third_sizer->Add(-1, 8, wxALL, 2); 
   third_sizer->Add(third_v3_sizer, 0, wxEXPAND | wxALL, 2); 
