@@ -365,7 +365,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   /* Channels */
   Channels = new BeatBoxChannel*[NB_CHAN];
     
-  int notenum = 0x48; //C3
+  int notenum = 0x48; //C3 (maybe C4?)
+  
   for (unsigned int i = 0; i < NB_CHAN; i++)
     {
       ChanMidiNotes[i] = notenum++;
@@ -474,24 +475,28 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 	  (wxMouseEventFunction)&WiredBeatBox::OnSaveLoadHelp);
   
   /* MIDI */
+  
   MidiVolume[0] = M_CONTROL;
   MidiVolume[1] = 0x7;
   MidiSteps[0] = M_CONTROL;
   MidiSteps[1] = -1;
-  /*
-  int note
-  for (int b = 0; b < NUM_BANKS; b++)
-    ChanMidiBanks[b] = ;
-  MidiBank[1] = -1;
-  MidiTrack[0] = M_CONTROL;
-  MidiTrack[1] = -1;
-  */ 
+  
   Connect(BB_OnMasterChange, wxEVT_RIGHT_DOWN,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&WiredBeatBox::OnVolumeController);
   Connect(BB_OnStepsChange, wxEVT_RIGHT_DOWN,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&WiredBeatBox::OnStepsController);
+  
+  // banks and patterns may be changed by receiving midi notes
+  int note = 0x24; // C1 (maybe C2?)
+  for (int b = 0; b < NUM_BANKS; b++)
+    BanksMidiNotes[b] = note++;
+  note = 0x36; // C2 (maybe C3?)
+  for (int b = 0; b < NUM_PATTERNS; b++)
+    PatternsMidiNotes[b] = note++;
+  
+  
 }
 
 void WiredBeatBox::OnChannelHelp(wxMouseEvent& WXUNUSED(event))
@@ -929,19 +934,45 @@ void WiredBeatBox::ProcessEvent(WiredEvent& event)
       if (event.MidiData[2])
 	{
 	  int i;
-	  for (i = 0; i < NB_CHAN; i++)
-	    if (ChanMidiNotes[i] == event.MidiData[1])
-	      {
-		BeatNoteToPlay *n = 
-		  new BeatNoteToPlay( event.MidiData[2] / 100.f,
-				      event.DeltaFrames,
-				      i, Channels[i]->Params );
-		SetMidiNoteAttr(n, Channels[i]);
-		PatternMutex.Lock();
-		NotesToPlay.push_back(n);
-		PatternMutex.Unlock();
-		break;
-	      }
+	  
+	  if (event.MidiData[1] >= BanksMidiNotes[0])
+	    for (i = 0; i < NUM_BANKS; i++)
+	      if (BanksMidiNotes[i] == event.MidiData[1])
+		{
+		  PatternMutex.Lock();
+		  EditedBank = NewSelectedBank = i;
+		  PatternMutex.Unlock();
+		  AskUpdateBank = true;
+		  AskUpdate();
+		  return;
+		}
+	  if (event.MidiData[1] >= PatternsMidiNotes[0])
+	    for (i = 0; i < NUM_PATTERNS; i++)
+	      if (PatternsMidiNotes[i] == event.MidiData[1])
+		{
+		  PatternMutex.Lock();
+		  EditedPattern = NewSelectedPattern = i;
+		  PatternMutex.Unlock();
+
+		  AskUpdatePattern = true;
+		  AskUpdate();
+		  return;
+		}
+	  if (event.MidiData[1] >= ChanMidiNotes[0])
+	    for (i = 0; i < NB_CHAN; i++)
+	      if (ChanMidiNotes[i] == event.MidiData[1])
+		{
+		  BeatNoteToPlay *n = 
+		    new BeatNoteToPlay( event.MidiData[2] / 100.f,
+					event.DeltaFrames,
+					i, Channels[i]->Params );
+		  SetMidiNoteAttr(n, Channels[i]);
+		  PatternMutex.Lock();
+		  NotesToPlay.push_back(n);
+		  PatternMutex.Unlock();
+		  return;//break;
+		}
+	  
 	}
     }
   else
@@ -1334,7 +1365,6 @@ void WiredBeatBox::OnPatternSelectors(wxCommandEvent& e)
 {
   unsigned int *p = (unsigned int*)e.GetClientData();
   
-  //PatternMutex.Lock();
   if (OnEdit && (EditedPattern != *p))
     {
       PatternSelectors[SelectedPattern]->SetOff();
@@ -1343,14 +1373,11 @@ void WiredBeatBox::OnPatternSelectors(wxCommandEvent& e)
       
       PatternMutex.Lock();
       EditedPattern = *p;
-      //PatternMutex.Unlock();
-      
-      PatternSelectors[EditedPattern]->SetOn();
+      PatternMutex.Unlock();
       
       UpdateSteps(EditedBank, EditedPattern);
-      //PatternMutex.Lock();
       SetPatternList();
-      PatternMutex.Unlock();
+      PatternSelectors[EditedPattern]->SetOn();
     }
   else if (!OnEdit && (NewSelectedPattern != *p))
     {
@@ -1359,16 +1386,12 @@ void WiredBeatBox::OnPatternSelectors(wxCommandEvent& e)
       
       PatternMutex.Lock();
       EditedPattern = NewSelectedPattern = *p;
-      //PatternMutex.Unlock();
-      
-      PatternSelectors[NewSelectedPattern]->SetOn();
-      UpdateSteps(NewSelectedBank, NewSelectedPattern);
-      
-      //PatternMutex.Lock();
-      SetPatternList();
       PatternMutex.Unlock();
+      
+      UpdateSteps(NewSelectedBank, NewSelectedPattern);
+      PatternSelectors[NewSelectedPattern]->SetOn();
+      SetPatternList();
     }
-  PatternMutex.Unlock();
   if (View)
     View->Refresh();
 }
@@ -1893,8 +1916,6 @@ void WiredBeatBox::Load(int fd, long size)
 	    
 	  }
     }
-  
-  
   SelectedChannel = Channels[0];
   ReCalcStepsSigCoef();
   UpdateSteps(0,0);
@@ -1947,7 +1968,6 @@ void WiredBeatBox::OnBankChange(wxCommandEvent& WXUNUSED(event))
 
 void WiredBeatBox::OnStepsChange(wxCommandEvent& WXUNUSED(event))
 {
-  
   int steps = StepsKnob->GetValue();
   if (steps > 64)
     steps = 64;
@@ -1973,8 +1993,6 @@ void WiredBeatBox::OnStepsChange(wxCommandEvent& WXUNUSED(event))
   
   PatternMutex.Lock();
   StepsSigCoef[bank][track] = steps_sig_coef;
-  //SamplesPerBar = spb;
-  //BarsPerSample = bps;
   SamplesPerBar[bank][track] = static_cast<long>
     ((static_cast<double>(OldSamplesPerBar * steps_sig_coef )));
   BarsPerSample[bank][track] = 
@@ -1988,21 +2006,17 @@ void WiredBeatBox::OnStepsChange(wxCommandEvent& WXUNUSED(event))
 
 inline void WiredBeatBox::UpdateStepsDeps(unsigned int steps)
 {
-  
+  // this function has to be protected by PatternMutex
   Steps[EditedBank][EditedPattern] = steps;
   double steps_sig_coef = static_cast<double>
     ( steps / static_cast<double>(SignatureDen[EditedBank][EditedPattern]));
-  //PatternMutex.Lock();
+  
   StepsSigCoef[EditedBank][EditedPattern] = steps_sig_coef;
-  //SamplesPerBar = spb;
-  //BarsPerSample = bps;
   SamplesPerBar[EditedBank][EditedPattern] = static_cast<long>
     ((static_cast<double>(OldSamplesPerBar * steps_sig_coef )));
   BarsPerSample[EditedBank][EditedPattern] = 
     OldBarsPerSample / StepsSigCoef[EditedBank][EditedPattern];
   UpdateNotesPositions(EditedBank, EditedPattern);
-  //PatternMutex.Unlock();
-  
 }
 
 void WiredBeatBox::OnPlay(wxCommandEvent& WXUNUSED(e))
@@ -2160,6 +2174,34 @@ void WiredBeatBox::Update()
     {
       AskUpdateLevel = false;
       MVol->SetValue(MidiVolume[2]);
+    }
+  if (AskUpdateBank)
+    {
+      AskUpdateBank = false;
+      PatternMutex.Lock();
+      int bank = NewSelectedBank;
+      int pat = NewSelectedPattern;
+      PatternMutex.Unlock();
+            
+      BankKnob->SetValue(bank + 1);
+      UpdateSteps(bank, pat);
+      SetPatternList();
+
+    }
+  if (AskUpdatePattern)
+    {
+      AskUpdatePattern = false;
+      
+      PatternMutex.Lock();
+      int bank = NewSelectedBank;
+      int pat = NewSelectedPattern;
+      PatternMutex.Unlock();
+      
+      for (int p = 0; p < NUM_PATTERNS; p++)
+	PatternSelectors[p]->SetOff();
+      PatternSelectors[pat]->SetOn();
+      UpdateSteps(bank, pat);
+      SetPatternList();
     }
   for (int i = 0; i < NB_CHAN; i++)
     if (Channels[i]->AskUpdateChannel)
