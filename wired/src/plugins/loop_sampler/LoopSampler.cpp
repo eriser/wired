@@ -310,10 +310,10 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 	    end = 0;
 
 	  if (length <= 0)
-	    {
-	      //cout << "length < 0!!!" << endl;
-	      n->End = true;
-	    }
+	  {
+	    cout << "length < 0!!!" << endl;
+	    n->End = true;
+	  }
 	 
 	  Wave->SetPitch((n->SliceNote->Pitch + Pitch) / 2.f);
 	  Wave->SetInvert(n->SliceNote->Invert);
@@ -338,6 +338,7 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 		}
 	      while ((retTouchL || retTouchR) && ((curL < length) || (curR < length)));
 
+	      cout << "pos: " << n->Position << "; endpos: " << n->SliceNote->EndPosition << endl;
 	      if (n->Position < n->SliceNote->EndPosition)
 		{
 		  Wave->Read(read_buf, n->Position, length, 0, &(n->Position));
@@ -620,8 +621,7 @@ void LoopSampler::Load(int fd, long size)
     {
       TempoBtn->SetOn();
 
-      wxCommandEvent ev;
-      OnTempo(ev);
+      SetTempo();
     }
   else
     TempoBtn->SetOff();
@@ -667,6 +667,49 @@ long LoopSampler::Save(int fd)
 	}
     }
   return (size);
+}
+
+void LoopSampler::SetBPM(float bpm)
+{
+  if (Tempo)
+    SetTempo();
+}
+
+void LoopSampler::SetSignature(int num, int den)
+{
+  SetBarCoeff();
+  if (Tempo)
+    SetTempo();
+}
+
+void LoopSampler::SetTempo()
+{
+  list<Slice *>::iterator i;
+
+  Mutex.Lock();
+  
+  Tempo = TempoBtn->GetOn();
+  if (!Wave)
+    {
+      Mutex.Unlock();
+      return;
+    }
+
+  if (!Tempo)
+    {
+      for (i = Slices.begin(); i != Slices.end(); i++)
+	(*i)->SetTempo(1.f);
+    }
+  else
+    {
+      float f;
+
+      f = (float)(Wave->GetNumberOfFrames() / (GetSamplesPerBar() * BarCount));
+      for (i = Slices.begin(); i != Slices.end(); i++)
+	(*i)->SetTempo(f);
+    }
+  Mutex.Unlock();
+
 }
 
 void LoopSampler::SetBarCoeff()
@@ -820,6 +863,8 @@ void LoopSampler::OnMesDown(wxCommandEvent &event)
       SetBarCoeff();
       if (View)
 	View->SetBeats(GetSigNumerator(), BeatCount);
+      if (Tempo)
+	SetTempo();
 
       Mutex.Unlock();
     }
@@ -838,6 +883,8 @@ void LoopSampler::OnMesUp(wxCommandEvent &event)
       SetBarCoeff();
       if (View)
 	View->SetBeats(GetSigNumerator(), BeatCount);
+      if (Tempo)
+	SetTempo();
 
       Mutex.Unlock();
     }
@@ -949,31 +996,7 @@ void LoopSampler::OnInvert(wxCommandEvent &event)
 
 void LoopSampler::OnTempo(wxCommandEvent &event)
 {
-  list<Slice *>::iterator i;
-
-  Mutex.Lock();
-
-  Tempo = TempoBtn->GetOn();
-  if (!Wave)
-    {
-      Mutex.Unlock();
-      return;
-    }
-
-  if (!Tempo)
-    {
-      for (i = Slices.begin(); i != Slices.end(); i++)
-	(*i)->SetTempo(1.f);
-    }
-  else
-    {
-      float f;
-
-      f = (float)(Wave->GetNumberOfFrames() / (GetSamplesPerBar() * BarCount));
-      for (i = Slices.begin(); i != Slices.end(); i++)
-	(*i)->SetTempo(f);
-    }
-  Mutex.Unlock();
+  SetTempo();
 }
 
 void LoopSampler::OnPaint(wxPaintEvent &event)

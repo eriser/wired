@@ -79,6 +79,8 @@ class LoopSampler: public Plugin
 
   void	 SetBufferSize(long size);
   void	 SetSamplingRate(double rate);
+  void   SetBPM(float bmp);
+  void	 SetSignature(int num, int den);
 
   std::string DefaultName() { return "LoopSampler"; }
 
@@ -226,8 +228,10 @@ protected:
   void OnHelp(wxMouseEvent &event);
   void OnOctaveHelp(wxMouseEvent &event);
 
+  void SetTempo();
+
   DECLARE_EVENT_TABLE()
-    };
+};
 
 enum
   {

@@ -562,12 +562,20 @@ void					Sequencer::SetBPM(float bpm)
 
   BPM = bpm;
   CalcSpeed();
-  // On update la taille des patterns audio
+  // update audio pattern size
   for (i = Tracks.begin(); i != Tracks.end(); i++)
     if ((*i)->IsAudioTrack())
       for (j = (*i)->TrackPattern->Patterns.begin(); j != (*i)->TrackPattern->Patterns.end(); 
 	   j++)
 	(*j)->OnBpmChange();
+  // notify the plugins
+  list<RackTrack *>::iterator		RacksTrack;
+  list<Plugin *>::iterator		Plug;
+
+  for (RacksTrack = RackPanel->RackTracks.begin(); 
+       RacksTrack != RackPanel->RackTracks.end(); RacksTrack++)
+    for (Plug = (*RacksTrack)->Racks.begin(); Plug != (*RacksTrack)->Racks.end(); Plug++)
+      (*Plug)->SetBPM(bpm);
 }
 
 void					Sequencer::SetSigNumerator(int signum)
