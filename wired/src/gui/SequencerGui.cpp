@@ -429,7 +429,8 @@ void					SequencerGui::AdjustHScrolling()
   
   pos_tmp = ((range = HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) ?
     (((double) (SeqView->GetTotalWidth() - SeqView->GetClientSize().x)
-      * (double) (thumb_pos = HorizScrollBar->GetThumbPosition())) /
+      * (double) (thumb_pos = (HorizScrollBar->GetThumbPosition() >= range) ?
+		  range : HorizScrollBar->GetThumbPosition())) /
      (double) range) : 0;
   SeqView->ScrollWindow((long) (floor(CurrentXScrollPos) - floor(pos_tmp)), 0, (const wxRect *) NULL);
   SeqView->SetXScrollValue((long) ceil(pos_tmp));
@@ -450,15 +451,11 @@ void					SequencerGui::AdjustVScrolling()
   long					range;
   double				pos_tmp;
   
-//   pos_tmp = ((range = VertScrollBar->GetRange() - VSCROLL_THUMB_WIDTH)) ?
-//     (((double) (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)
-//       * (double) (thumb_pos = VertScrollBar->GetThumbPosition())) /
-//      (double) range) : 0;
   pos_tmp = ((range = VertScrollBar->GetRange() - VSCROLL_THUMB_WIDTH)) ?
     (((double) (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)
-      * (double) (thumb_pos = ((double) VertScrollBar->GetThumbPosition() >= range) ?
-		  (double) range : (double) VertScrollBar->GetThumbPosition())) /
-     (double) range) : 0;
+      * (double) (thumb_pos = (VertScrollBar->GetThumbPosition() >= range) ?
+		  range : VertScrollBar->GetThumbPosition())) /
+     (double) range) : (double) 0;
   SeqView->ScrollWindow(0, (long) (floor(CurrentYScrollPos - floor(pos_tmp))), (const wxRect *) NULL);
   TrackView->ScrollWindow(0, (long) (floor(CurrentYScrollPos - floor(pos_tmp))), (const wxRect *) NULL);
   SeqView->SetYScrollValue((long) ceil(pos_tmp));
@@ -500,7 +497,7 @@ void					SequencerGui::UpdateTracks()
 void					SequencerGui::OnVertSliderUpdate(wxCommandEvent &event)
 {
   VertScrollBar->SetThumbPosition(0);
-  VertZoomFactor = VertZoomSlider->GetValue() / 100.f;
+  VertZoomFactor = VertZoomSlider->GetValue() / 100.0;
   UpdateTracks();
   SetScrolling();
   AdjustVScrolling();
@@ -511,7 +508,7 @@ void					SequencerGui::OnVertSliderUpdate(wxCommandEvent &event)
 void					SequencerGui::OnHoriSliderUpdate(wxCommandEvent &event)
 {
   HorizScrollBar->SetThumbPosition(0);
-  HoriZoomFactor = HoriZoomSlider->GetValue() / 100.f;
+  HoriZoomFactor = HoriZoomSlider->GetValue() / 100.0;
   UpdateMeasures();
   SetScrolling();
   AdjustHScrolling();
@@ -618,12 +615,18 @@ void					SequencerGui::DeleteSelectedTrack()
   UpdateTracks();
   SeqMutex.Unlock();
   SetScrolling();
+  AdjustVScrolling();
 }
 
 void					SequencerGui::SelectItem(Pattern *p, bool shift)
 {
   vector<Pattern *>::iterator		i;
 
+  if (!p)
+    {
+      cout << "RED ALERT JUNK POINTER !!! " << endl;
+      return;
+    }
   if (!shift)
     {
       for (i = SelectedItems.begin(); i != SelectedItems.end(); i++)
@@ -715,6 +718,18 @@ void					SequencerGui::MoveToCursor()
      (*i)->Modify(Seq->CurrentPos);
      (*i)->Update();
    }
+}
+
+void					SequencerGui::OnWheelMove(wxMouseEvent &e)
+{
+  if (e.GetWheelRotation() > 0)
+    VertScrollBar->SetThumbPosition((VertScrollBar->GetThumbPosition() > WHEEL_VSCROLL_UNIT) ?
+				    VertScrollBar->GetThumbPosition() - WHEEL_VSCROLL_UNIT : 0);
+  else
+    VertScrollBar->SetThumbPosition(((VertScrollBar->GetThumbPosition() + WHEEL_VSCROLL_UNIT) < SeqView->GetTotalHeight()) ?
+				    VertScrollBar->GetThumbPosition() + WHEEL_VSCROLL_UNIT : SeqView->GetTotalHeight());
+  SetScrolling();
+  AdjustVScrolling();
 }
 
 void					SequencerGui::OnCopy(wxCommandEvent &event)
@@ -954,6 +969,7 @@ BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   //EVT_MOTION	    (SequencerGui::OnMouseEvent) 
   //EVT_LEFT_DOWN	    (SequencerGui::OnLeftIsDownEvent)
   EVT_SIZE(SequencerGui::OnSize)
+  EVT_MOUSEWHEEL(SequencerGui::OnWheelMove)
 END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(SequencerView, wxScrolledWindow)

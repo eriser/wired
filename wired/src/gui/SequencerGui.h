@@ -34,6 +34,9 @@ using namespace std;
 #define HSCROLL_THUMB_WIDTH		(42)
 #define VSCROLL_THUMB_WIDTH		(42)
 
+#define WHEEL_VSCROLL_UNIT		(42)
+#define WHEEL_HSCROLL_UNIT		(42)
+
 #define MAGNETISM			(3)
 
 #define CURSOR_MASK			(0x1)
@@ -187,6 +190,7 @@ class SequencerGui: public wxPanel
   void				ChangeMouseCursor(wxCursor c);
 
   void				OnScroll(wxScrollEvent &event);
+  void				OnWheelMove(wxMouseEvent &e);
   void				OnVertSliderUpdate(wxCommandEvent &event);
   void				OnHoriSliderUpdate(wxCommandEvent &event);
   void				OnPaint(wxPaintEvent &event);
