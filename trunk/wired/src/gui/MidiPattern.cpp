@@ -61,7 +61,20 @@ void				MidiPattern::Init()
 	  &MidiPattern::OnRightClick);
   Connect(GetId(), wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &MidiPattern::OnDoubleClick);
+ Connect(GetId(), wxEVT_ENTER_WINDOW, (wxObjectEventFunction)(wxEventFunction)
+	  (wxMouseEventFunction) &MidiPattern::OnHelp);
+
+
   SeqPanel->PutCursorsOnTop();
+}
+
+void				MidiPattern::OnHelp(wxMouseEvent &event)
+{
+  if (HelpWin->IsShown())
+    {
+      wxString s("This is a MIDI pattern. Double-click on it to open the MIDI editor.");
+      HelpWin->SetText(s);
+    }
 }
 
 void				MidiPattern::Update()

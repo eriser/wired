@@ -19,6 +19,7 @@ class KnobCtrl : public wxWindow
   ~KnobCtrl();
   virtual void OnPaint(wxPaintEvent &event);
   virtual void OnMouseEvent(wxMouseEvent &event);
+  virtual void OnEnterWindow(wxMouseEvent &event);
   virtual void OnKeyDown(wxKeyEvent& event);
   int GetValue();
   void SetValue(int val);

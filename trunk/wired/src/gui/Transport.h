@@ -62,6 +62,9 @@ class Transport : public wxPanel
   void OnSigDenUp(wxCommandEvent &event);
   void OnSigDenDown(wxCommandEvent &event);
 
+  void OnLoopHelp(wxMouseEvent &event);
+  void OnClickHelp(wxMouseEvent &event);
+
   void OnPaint(wxPaintEvent &event);
 
  protected:

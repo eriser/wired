@@ -41,6 +41,7 @@ class DownButton : public wxWindow
   virtual void OnMouseEvent(wxMouseEvent &event);
   virtual void OnLeftUp(wxMouseEvent &event);
   virtual void OnLeave(wxMouseEvent &event);
+  virtual void OnEnterWindow(wxMouseEvent &event);
 
  protected:
   wxBitmap *Up;

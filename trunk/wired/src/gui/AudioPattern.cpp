@@ -63,7 +63,19 @@ void				AudioPattern::Init()
 	  &AudioPattern::OnPaint);
   Connect(GetId(), wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &AudioPattern::OnSize);
+  Connect(GetId(), wxEVT_ENTER_WINDOW, (wxObjectEventFunction)(wxEventFunction)
+	  (wxMouseEventFunction) &AudioPattern::OnHelp);
+
   SeqPanel->PutCursorsOnTop();
+}
+
+void				AudioPattern::OnHelp(wxMouseEvent &event)
+{
+  if (HelpWin->IsShown())
+    {
+      wxString s("This is an Audio pattern. Double-click on it to open the Audio editor.");
+      HelpWin->SetText(s);
+    }
 }
 
 void				AudioPattern::Update()

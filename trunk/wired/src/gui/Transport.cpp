@@ -6,6 +6,7 @@
 #include "SequencerGui.h"
 #include "Colour.h"
 #include "WiredSession.h"
+#include "HelpPanel.h"
 #include <wx/filename.h>
 
 extern WiredSession	*CurrentSession;
@@ -83,6 +84,15 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   BackwardBtn = new HoldButton(this, Transport_Backward, wxPoint(12, 97), wxSize(30, 30), backward_up, backward_down);
   ForwardBtn = new HoldButton(this, Transport_Forward, wxPoint(49, 97), wxSize(30, 30), forward_up, forward_down);
   LoopBtn = new DownButton(this, Transport_Loop, wxPoint(212, 108), wxSize(28, 15), loop_up, loop_down);
+  ClickBtn = new DownButton(this, Transport_Click, wxPoint(252, 108), wxSize(28, 15), 
+			    click_up, click_down);
+
+  LoopBtn->Connect(Transport_Loop, wxEVT_ENTER_WINDOW, 
+		   (wxObjectEventFunction)(wxEventFunction) 
+		   (wxMouseEventFunction)&Transport::OnLoopHelp);
+  ClickBtn->Connect(Transport_Click, wxEVT_ENTER_WINDOW, 
+		   (wxObjectEventFunction)(wxEventFunction) 
+		   (wxMouseEventFunction)&Transport::OnClickHelp);
   
   BpmUpBtn = new HoldButton(this, Transport_BpmUp, wxPoint(100, 21), wxSize(11, 9), 
 			    up_up, up_down);
@@ -109,9 +119,6 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   SigDenLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigDenLabel->SetLabel("4");
 
-  ClickBtn = new DownButton(this, Transport_Click, wxPoint(252, 108), wxSize(28, 15), 
-			    click_up, click_down);
-  
   // Test VUMeter
   //vum = new VUMCtrl(this, -1, 10, wxPoint(80,50), wxSize(50,80));
   
@@ -130,11 +137,31 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   MilliSigLabel = new wxStaticText(this, -1, "000", wxPoint(237, 30), wxSize(32, 32));
   MilliSigLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   MilliSigLabel->SetForegroundColour(*wxWHITE);
+
+  
 }
 
 Transport::~Transport()
 {
 
+}
+
+void Transport::OnLoopHelp(wxMouseEvent &event)
+{
+  if (HelpWin->IsShown())
+    {
+      wxString s("Turns On or Off Loop mode. If On, the sequencer will loop between the L and R marker in the sequencer.");
+      HelpWin->SetText(s);
+    }
+}
+
+void Transport::OnClickHelp(wxMouseEvent &event)
+{
+  if (HelpWin->IsShown())
+    {
+      wxString s("Turns On or Off Click mode. If On, a click will be played over each beat per bar.");
+      HelpWin->SetText(s);
+    }
 }
 
 void Transport::OnPlay(wxCommandEvent &WXUNUSED(event))
