@@ -195,7 +195,6 @@ class				SequencerGui: public wxPanel
 
   float				HoriZoomFactor;
   float				VertZoomFactor;
-  double			CurrentPos;
   int				Tool;
   double			CurrentXScrollPos;
   double			CurrentYScrollPos;
@@ -233,7 +232,7 @@ class				SequencerGui: public wxPanel
  public:
   SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size);
   ~SequencerGui();
-  
+
   Track				*AddTrack(bool is_audio = true);
   void				RemoveTrack();
   void				UnselectTracks();
@@ -258,6 +257,9 @@ class				SequencerGui: public wxPanel
   void				DeleteAllTracks();
   void				DeleteSelectedPatterns();
   void				DeletePattern(Pattern *p);
+
+  void				UpdateAudioPatterns(WaveFile *w);
+  void				UpdateMidiPattern(MidiPattern *m);
 
   void				MoveToCursor();
   void				SelectItem(Pattern *p, bool shift);
@@ -292,6 +294,8 @@ class				SequencerGui: public wxPanel
   void				OnMagnetismChange(wxCommandEvent &event);
   void				OnColorButtonClick(wxCommandEvent &event);
   void				OnColoredBoxClick(wxCommandEvent &event);
+
+  double			CurrentPos;
 
  protected:
   void				UpdateTracks();

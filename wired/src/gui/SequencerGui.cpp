@@ -684,6 +684,33 @@ void					SequencerGui::UpdateMeasures()
     }  
 }
 
+void					SequencerGui::UpdateAudioPatterns(WaveFile *w)
+{
+  vector<Track *>::iterator		i;
+  vector<Pattern *>::iterator		p;
+  AudioPattern				*a;
+
+  for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
+    {
+      if ((*i)->IsAudioTrack())
+	{
+	  for (p = (*i)->TrackPattern->Patterns.begin(); 
+	       p != (*i)->TrackPattern->Patterns.end(); p++)
+	    {
+	      a = (AudioPattern *)(*p);
+	      if (a->GetWaveFile() == w)
+		a->SetDrawing();
+	    }
+	}
+    }  
+}
+
+void					SequencerGui::UpdateMidiPattern(MidiPattern *m)
+{
+  m->Update();
+  m->Refresh();
+}
+
 void					SequencerGui::OnPaint(wxPaintEvent &event)
 {
   wxPaintDC				dc(this);
