@@ -18,6 +18,7 @@ class IdButton : public wxWindow
   
   void OnPaint(wxPaintEvent &event);
   void OnMouseEvent(wxMouseEvent &event);
+  void OnEnter(wxMouseEvent &event);
   
   void SetOn(void);
   void SetOff(void);

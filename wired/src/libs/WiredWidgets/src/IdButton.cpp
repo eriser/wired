@@ -5,6 +5,7 @@ using namespace std;
 BEGIN_EVENT_TABLE(IdButton, wxWindow)
   EVT_LEFT_DOWN(IdButton::OnMouseEvent) 
   EVT_PAINT(IdButton::OnPaint)
+  EVT_ENTER_WINDOW(IdButton::OnEnter)
 END_EVENT_TABLE()
   
 IdButton::IdButton(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
@@ -75,4 +76,9 @@ void IdButton::OnMouseEvent(wxMouseEvent &event)
 	    }
 	}
     }
+}
+
+void IdButton::OnEnter(wxMouseEvent& event)
+{
+  wxPostEvent(GetParent(), event);
 }

@@ -6,6 +6,7 @@ BEGIN_EVENT_TABLE(StaticPosKnob, wxWindow)
   EVT_LEFT_DOWN(StaticPosKnob::OnLeftDown)
   EVT_LEFT_UP(StaticPosKnob::OnLeftUp)
   EVT_KEY_DOWN(StaticPosKnob::OnKeyDown)
+  EVT_ENTER_WINDOW(StaticPosKnob::OnEnter)
 END_EVENT_TABLE()
 
 StaticPosKnob::StaticPosKnob(wxWindow *parent, wxWindowID id, 
@@ -140,4 +141,9 @@ void StaticPosKnob::OnKeyDown(wxKeyEvent& event)
       e.SetEventObject(this);
       wxPostEvent(GetParent(), e);
     }
+}
+
+void StaticPosKnob::OnEnter(wxMouseEvent &event)
+{
+  wxPostEvent(GetParent(), event);
 }
