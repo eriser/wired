@@ -71,6 +71,7 @@ class				Rack: public wxScrolledWindow
   void				OnPasteClick();
   bool 				DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y , Plugin *plug);
   void				DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug);
+  void				UpdateUnitXSize();
   void				AddPlugToMenu();
   //  bool ProcessEvent(wxEvent& event);  
 
