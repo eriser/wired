@@ -9,6 +9,7 @@
 #include 			<list>
 #include 			"WaveEditorDrawer.h"
 #include 			"WaveFile.h"
+#include 			"PluginEffect.h"
 
 #define 			SCROLLH_THUMB_WIDTH	(80)
 #define 			SCROLLV_THUMB_WIDTH	(80)
@@ -23,22 +24,10 @@ enum
     ID_POPUP_COPY_WAVEEDITOR, 
     ID_POPUP_PASTE_WAVEEDITOR,
     ID_POPUP_DEL_WAVEEDITOR,
-    //ID_POPUP_GAIN_WAVEEDITOR,
     ID_SEBMENU_EFFECTS_WAVEEDITOR,
     ID_SUBMENU_GAIN_WAVEEDITOR,
     ID_SUBMENU_NORMA_WAVEEDITOR
-/*     ID_TOOL_SAVE_WAVEEDITOR, */
-/*     ID_TOOL_COPY_WAVEEDITOR,  */
-/*     ID_TOOL_PASTE_WAVEEDITOR, */
-/*     ID_TOOL_CUT_WAVEEDITOR, */
-/*     ID_TOOL_DEL_WAVEEDITOR, */
-/*     ID_TOOLBAR_WAVEEDITOR, */
-/*     ID_TOOL_UNDO_WAVEEDITOR, */
-/*     ID_TOOL_REDO_WAVEEDITOR, */
-/*     ID_TOOL_COMBO */
 };
-
-
 
 class WaveEditor : public wxPanel, public WaveEditorDrawer 
 {
