@@ -11,6 +11,7 @@
 #include "HelpPanel.h"
 #include "AudioPattern.h"
 #include "MidiPattern.h"
+#include "WavePanel.h"
 #include "../editmidi/MidiPart.h"
 #include "../redist/Plugin.h"
 #include "../engine/Settings.h"
@@ -81,6 +82,8 @@ void				WiredTool::Detach()
   Panel->Reparent(Frame);
   if (Type == ID_TOOL_MIDI_OPTIONPANEL)
     ((EditMidi *)Panel)->OnDetach(Frame);
+  if (Type == ID_TOOL_AUDIO_OPTIONPANEL)
+    ((WavePanel *)Panel)->OnDetach(Frame);
   Frame->Show();
 }
 
@@ -139,15 +142,20 @@ OptionPanel::~OptionPanel()
 
 void				OptionPanel::AddAudioTool(AudioPattern *p)
 {
-  WaveEditor			*w;
   WiredTool			*tool;
+  WavePanel         *Panel;
 
-  w = new WaveEditor(this, -1, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
-		     wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT), true);
-  tool = new WiredTool(p->GetName(), ID_TOOL_AUDIO_OPTIONPANEL, w);  
+
+  Panel = new WavePanel(this, -1, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
+		     wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT));
+  
+  // w = new WaveEditor(Panel, -1, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
+// 		     wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT), true);
+  tool = new WiredTool(p->GetName(), ID_TOOL_AUDIO_OPTIONPANEL, Panel);  
   tool->Data = p;
   ToolsList.push_back(tool);
-  w->SetWave(p->GetWaveFile());
+  Panel->w->SetWave(p->GetWaveFile());
+  Panel->AdjustScrollbar();
   ShowTool(tool);
 }
 
