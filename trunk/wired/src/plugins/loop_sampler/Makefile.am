@@ -11,6 +11,8 @@ libWiredLoopSampler_la_SOURCES =			\
 			RulerLoop.cpp			\
 			Slice.cpp			\
 			SliceGui.cpp			\
+			BeatDialog.cpp			\
+			LoopCursor.cpp			\
 			../../redist/Polyphony.cpp	\
 			../../redist/Plugin.cpp		\
 			../../gui/WaveView.cpp		\

@@ -55,7 +55,7 @@ void		RulerLoop::OnPaint(wxPaintEvent &event)
 	  s.Printf("%d", (long) (m / Beats));
 	  dc.DrawText(s, (int) floor(x) + 3, -2);
 	}
-      dc.DrawLine((int) floor(x), (m++ % Beats) ? RULER_HEIGHT - 8 : 0,
+      dc.DrawLine((int) floor(x), (m++ % Beats) ? RULER_HEIGHT - 4 : 0,
 		  (int) floor(x), RULER_HEIGHT);
     }
 }
