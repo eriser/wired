@@ -255,11 +255,11 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   imgs_[2] = new wxImage(_T(string(DataDir + string(CH_POLY3)).c_str()));
   
 
-  //  Voices = new Polyphony(99);
-  NumVoices = 99;
-  PolyKnob = new CycleKnob(this, BC_Pol, 3, imgs_, 10, 1, 99, 99,
+  //Voices = new Polyphony();
+  Voices = 8;
+  PolyKnob = new CycleKnob(this, BC_Pol, 3, imgs_, 10, 1, 99, 8,
 			   wxPoint(4, 175), wxDefaultSize);
-  VoicesLabel = new wxStaticText(this, -1, "99", 
+  VoicesLabel = new wxStaticText(this, -1, "8", 
 				 wxPoint(25,180), wxSize(16,8), wxALIGN_RIGHT);
   VoicesLabel->SetFont(wxFont(8, wxBOLD, wxBOLD, wxBOLD));
   VoicesLabel->SetForegroundColour(*wxWHITE);
@@ -552,9 +552,12 @@ void BeatBoxChannel::SetWaveFile(WaveFile* wave)
   
   
   PatternMutex->Lock();
+  cout <<"SetWaveFile lock" << endl;
+
   tmp = Wave;//delete Wave;
   Wave = wave;
   PatternMutex->Unlock();
+  cout <<"SetWaveFile unlock" << endl;
   if (tmp)
     delete tmp;
 
@@ -572,7 +575,8 @@ void BeatBoxChannel::OnPolyphonyChange(wxCommandEvent& WXUNUSED(e))
   s.Printf("%d", n);
   VoicesLabel->SetLabel(s);
   PatternMutex->Lock();
-  NumVoices = n;
+  Voices = n;
+  DRM31->SetVoices();
   PatternMutex->Unlock();
 }
 
