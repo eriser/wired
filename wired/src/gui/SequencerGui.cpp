@@ -106,7 +106,8 @@ void					SequencerView::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      HelpWin->Help->Load_Text("This is the WiReD sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above to choose one of the sequencer editing tools.");
+      wxString s("This is the Wired sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above to choose one of the sequencer editing tools.");
+      HelpWin->SetText(s);
     }
 }
 

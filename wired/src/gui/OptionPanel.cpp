@@ -239,6 +239,20 @@ void				OptionPanel::ShowPlug(Plugin *p)
   AddPlugTool(p);  
 }
 
+void				OptionPanel::ShowHelp()
+{
+  vector<WiredTool *>::iterator	i;
+  
+  for (i = ToolsList.begin(); i != ToolsList.end(); i++)
+    {
+      if ((*i)->Type == ID_TOOL_HELP_OPTIONPANEL)
+	{
+	  ShowTool(*i);
+	  return;
+	}
+    }
+}
+
 void				OptionPanel::OnListToolClick(wxCommandEvent &event)
 {
   vector<WiredTool *>::iterator	i;

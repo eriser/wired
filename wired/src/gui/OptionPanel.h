@@ -104,6 +104,7 @@ class OptionPanel : public wxPanel
   void				ShowWave(AudioPattern *p);
   void				ShowMidi(MidiPattern *p);
   void				ShowPlug(Plugin *p);
+  void				ShowHelp();
   void				ShowLastTool();
 
   void				ClosePlug(Plugin *p);

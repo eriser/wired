@@ -42,6 +42,7 @@ class AudioPattern: public Pattern, public WaveDrawer
   void					OnPaint(wxPaintEvent &e);  
   void					OnSize(wxSizeEvent &e);  
   void					SetSize(wxSize s);
+  void					OnHelp(wxMouseEvent &event);
   
   WriteWaveFile				*RecordWave;
 //  DECLARE_EVENT_TABLE()

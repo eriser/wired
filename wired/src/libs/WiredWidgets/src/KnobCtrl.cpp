@@ -6,6 +6,7 @@ BEGIN_EVENT_TABLE(KnobCtrl, wxWindow)
   EVT_PAINT(KnobCtrl::OnPaint)
   EVT_LEFT_DOWN(KnobCtrl::OnMouseEvent)
   EVT_LEFT_UP(KnobCtrl::OnMouseEvent)
+  EVT_ENTER_WINDOW(KnobCtrl::OnEnterWindow)
   EVT_KEY_DOWN(KnobCtrl::OnKeyDown)
 END_EVENT_TABLE()
 
@@ -107,4 +108,9 @@ void KnobCtrl::SetValue_(unsigned val)
       fg->Move(wxPoint(x,y));
       OldValue = Value;
     }
+}
+
+void KnobCtrl::OnEnterWindow(wxMouseEvent &event)
+{
+  wxPostEvent(GetParent(), event);
 }

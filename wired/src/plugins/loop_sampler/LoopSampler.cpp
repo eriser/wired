@@ -165,13 +165,35 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   TempoBtn = new DownButton(this, LoopSampler_Tempo, wxPoint(263, 135)/*wxPoint(328, 135)*/, wxSize(28, 28), btn_down, btn_up, false);
 
   /* Help events */
-  /*
-    OctaveKnob->Connect(LoopSampler_Octave, wxEVT_ENTER_WINDOW,
-		      (wxObjectEventFunction)(wxEventFunction) 
-		      (wxMouseEventFunction)&LoopSampler::OnOctaveHelp);  
-  OpenBtn->Connect(LoopSampler_Open, wxEVT_ENTER_WINDOW,
-		   (wxObjectEventFunction)(wxEventFunction) 
-		   (wxMouseEventFunction)&LoopSampler::OnOctaveHelp);  */
+  
+  Connect(LoopSampler_Octave, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnOctaveHelp);  
+  Connect(LoopSampler_Pitch, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnPitchHelp);  
+  Connect(LoopSampler_Tempo, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnAutoStretchHelp);  
+  Connect(LoopSampler_Invert, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnInvertHelp);  
+  Connect(LoopSampler_Play, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnPlayHelp);  
+  Connect(LoopSampler_Open, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnOpenHelp);  
+  Connect(LoopSampler_Save, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnSaveHelp);  
+  Connect(LoopSampler_ToSeqTrack, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnSendSeqHelp);  
+  Connect(LoopSampler_ShowOpt, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnOptViewHelp);  
+
 }
 
 LoopSampler::~LoopSampler()
@@ -217,6 +239,70 @@ LoopSampler::~LoopSampler()
       delete read_buf;
     }
 }
+
+
+void LoopSampler::OnHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("This is Wired's Loop Sampler. It enables you to load loops and modify them, by cutting them into slices for automatic loop scaling, with pitch shifting and time stretching.");
+}
+
+void LoopSampler::OnOctaveHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("This knob sets the octave of the loaded sample. It will use a pitch shifting algorithm to achieve that effect.");
+}
+
+void LoopSampler::OnPitchHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("Changes the pitch (speed) of the whole loaded sample.");
+}
+
+void LoopSampler::OnAutoStretchHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("Stretch the whole sample that it synchronizes with the sequencer BPM");
+}
+
+void LoopSampler::OnInvertHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("Inverts the sample audio data.");
+}
+
+
+void LoopSampler::OnPlayHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("Plays the sample, synchronized with the sequencer.");
+}
+
+void LoopSampler::OnOpenHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("Opens an audio file or Loop Sampler patch.");
+}
+
+void LoopSampler::OnSaveHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("Saves current configuration to a Loop Sampler patch file.");
+}
+
+void LoopSampler::OnSendSeqHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("Send current slices configuration to the selected MIDI tracks, as MIDI notes.");
+}
+
+void LoopSampler::OnOptViewHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("Shows Loop Sampler's optional view.");
+}
+
+
 
 void LoopSampler::SetBufferSize(long size) 
 {
@@ -1037,19 +1123,6 @@ void LoopSampler::OnPaint(wxPaintEvent &event)
 	      wxCOPY, FALSE);      
       upd++;
     }
-}
-
-void LoopSampler::OnHelp(wxMouseEvent &event)
-{
-  if (HelpMode)
-    SendHelp("This is Wired's Loop Sampler. It enables you to load loops and modify them, by cutting them into slices for automatic loop scaling, with pitch shifting and time stretching.");
-}
-
-void LoopSampler::OnOctaveHelp(wxMouseEvent &event)
-{
-  cout << "LoopSampler::octavehelp" << endl;
-  if (HelpMode)
-    SendHelp("This knob sets the octave of the loaded sample");
 }
 
 /******** Main and mandatory library functions *********/

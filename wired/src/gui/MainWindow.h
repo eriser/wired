@@ -61,6 +61,7 @@ class MainWindow: public wxFrame
   void OnFloatRack(wxCommandEvent &event);
   void OnFullScreen(wxCommandEvent &event);
   void OnAbout(wxCommandEvent &event);
+  void OnIntegratedHelp(wxCommandEvent &event);
   void OnTimer(wxTimerEvent &event);
   void OnFileLoaderStart(wxCommandEvent &event);
   void OnFileLoaderStop(wxCommandEvent &event);
@@ -145,7 +146,8 @@ enum
   MainWin_SelectAll,
   MainWin_FullScreen,
   MainWin_SeqTimer,
-  MainWin_FileLoader
+  MainWin_FileLoader,
+  MainWin_IntHelp
 };
 
 extern MainWindow		*MainWin;

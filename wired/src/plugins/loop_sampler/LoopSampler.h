@@ -227,6 +227,14 @@ protected:
 
   void OnHelp(wxMouseEvent &event);
   void OnOctaveHelp(wxMouseEvent &event);
+  void OnPitchHelp(wxMouseEvent &event);
+  void OnAutoStretchHelp(wxMouseEvent &event);
+  void OnInvertHelp(wxMouseEvent &event);
+  void OnPlayHelp(wxMouseEvent &event);
+  void OnOpenHelp(wxMouseEvent &event);
+  void OnSaveHelp(wxMouseEvent &event);
+  void OnSendSeqHelp(wxMouseEvent &event);
+  void OnOptViewHelp(wxMouseEvent &event);
 
   void SetTempo();
 

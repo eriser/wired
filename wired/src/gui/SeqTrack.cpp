@@ -6,6 +6,7 @@
 #include "Colour.h"
 #include "Settings.h"
 #include "ChannelGui.h"
+#include "HelpPanel.h"
 
 extern SequencerGui *SeqPanel;
 
@@ -59,11 +60,19 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
 			   mute_up, mute_down);
   Image = new ChoiceButton(this, SeqTrack_ConnectTo, wxPoint(62, 30), wxSize(24, 16), "");
   
+  Image->Connect(SeqTrack_ConnectTo, wxEVT_ENTER_WINDOW, 
+		 (wxObjectEventFunction)(wxEventFunction) 
+		 (wxMouseEventFunction)&SeqTrack::OnConnectToHelp);
+
   DeviceBox = new wxChoice(this, SeqTrack_DeviceChoice, wxPoint(5, 50), wxSize(TRACK_WIDTH - 38, 22), 
 			   0, 0x0);
   DeviceBox->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
   FillChoices();
   DeviceBox->SetSelection(0);
+
+  DeviceBox->Connect(SeqTrack_DeviceChoice, wxEVT_ENTER_WINDOW, 
+		     (wxObjectEventFunction)(wxEventFunction) 
+		     (wxMouseEventFunction)&SeqTrack::OnDeviceHelp);
 
   wxImage *green = new wxImage(string(WiredSettings->DataDir + string(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *orange = new wxImage(string(WiredSettings->DataDir + string(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
@@ -80,6 +89,25 @@ SeqTrack::~SeqTrack()
   if (menu)
     delete menu;
 }
+
+void SeqTrack::OnConnectToHelp(wxMouseEvent &event)
+{
+  if (HelpWin->IsShown())
+    {
+      wxString s("Click on this button to show the list of instruments and effects you can connect your track to.");
+      HelpWin->SetText(s);
+    }
+}
+
+void SeqTrack::OnDeviceHelp(wxMouseEvent &event)
+{
+  if (HelpWin->IsShown())
+    {
+      wxString s("Click on this box to select the device you would like to record from.");
+      HelpWin->SetText(s);
+    }
+}
+
 
 void SeqTrack::FillChoices()
 {

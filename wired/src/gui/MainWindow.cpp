@@ -58,6 +58,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
   EVT_MENU(MainWin_FullScreen,  MainWindow::OnFullScreen)
   EVT_MENU(MainWin_About, MainWindow::OnAbout)
+  EVT_MENU(MainWin_IntHelp, MainWindow::OnIntegratedHelp)
   EVT_CLOSE(MainWindow::OnClose)
   EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
   EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
@@ -211,6 +212,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   
   RacksMenu->Append(MainWin_DeleteRack, "D&elete Rack");
 
+  HelpMenu->Append(MainWin_IntHelp, "&Show Integrated Help");
   HelpMenu->Append(MainWin_About, "&About...");
   
   WindowMenu->AppendCheckItem(MainWin_FloatTransport, "Floating Transport");
@@ -1068,3 +1070,7 @@ void					MainWindow::OnFileLoaderStop(wxCommandEvent &event)
   Seq->StopFile();
 }
 
+void					MainWindow::OnIntegratedHelp(wxCommandEvent &event)
+{
+  OptPanel->ShowHelp();
+}

@@ -28,8 +28,7 @@ HelpPanel::~HelpPanel()
 
 void HelpPanel::SetText(wxString &s)
 {
-  //  Text->Clear();
-  //Text->AppendText(s);
+  HelpWin->Help->Load_Text(s);
 }
 
 void HelpPanel::OnSize(wxSizeEvent &event)

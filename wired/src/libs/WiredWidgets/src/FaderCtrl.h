@@ -41,6 +41,8 @@ class FaderCtrl : public wxWindow
   virtual void OnPaint(wxPaintEvent &event);
   virtual void OnMouseEvent(wxMouseEvent &event);
   virtual void OnKeyDown(wxKeyEvent& event);
+  virtual void OnEnterWindow(wxMouseEvent &event);
+
   int GetValue();
   void SetValue(int val);
 

@@ -23,6 +23,7 @@ BEGIN_EVENT_TABLE(DownButton, wxWindow)
   EVT_LEFT_UP(DownButton::OnLeftUp) 
   EVT_LEAVE_WINDOW(DownButton::OnLeave) 
   EVT_PAINT(DownButton::OnPaint)
+  EVT_ENTER_WINDOW(DownButton::OnEnterWindow)
 END_EVENT_TABLE()
 
 DownButton::DownButton(wxWindow *parent, wxWindowID id, const wxPoint &pos,
@@ -124,4 +125,9 @@ void DownButton::SetOff()
 bool DownButton::GetOn()
 {
   return (isdown);
+}
+
+void DownButton::OnEnterWindow(wxMouseEvent &event)
+{
+  wxPostEvent(GetParent(), event);
 }

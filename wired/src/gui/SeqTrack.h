@@ -44,6 +44,9 @@ class SeqTrack: public wxControl
   void					FillChoices();
   void					OnRecordClick(wxCommandEvent &event);
   void					OnMuteClick(wxCommandEvent &event);
+  void					OnConnectToHelp(wxMouseEvent &event);
+  void					OnDeviceHelp(wxMouseEvent &event);
+
   void					SetSelected(bool sel);
   bool					GetSelected() { return Selected; }
   void					SetVuValue(long value);

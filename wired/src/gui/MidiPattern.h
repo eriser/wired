@@ -40,6 +40,7 @@ class MidiPattern: public Pattern
   void			OnDeleteClick(wxCommandEvent &e);
   void			OnMoveToCursorClick(wxCommandEvent &e);
   void			OnPaint(wxPaintEvent &e);
+  void			OnHelp(wxMouseEvent &event);
   
   wxColour		Colour;		// Keeps original pattern color
   wxBitmap		*Bmp;
