@@ -365,7 +365,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   /* Channels */
   Channels = new BeatBoxChannel*[NB_CHAN];
     
-  int notenum = 0x48; //C3 (maybe C4?)
+  int notenum = 48; // C4
+  //int notenum = 0x48; //C3 (maybe C4?)
   
   for (unsigned int i = 0; i < NB_CHAN; i++)
     {
@@ -489,10 +490,12 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 	  (wxMouseEventFunction)&WiredBeatBox::OnStepsController);
   
   // banks and patterns may be changed by receiving midi notes
-  int note = 0x24; // C1 (maybe C2?)
+  int note = 24; // C2
+  //int note = 0x24; // C1 (maybe C2?)
   for (int b = 0; b < NUM_BANKS; b++)
     BanksMidiNotes[b] = note++;
-  note = 0x36; // C2 (maybe C3?)
+  note = 36; // C3
+  //note = 0x36; // C2 (maybe C3?)
   for (int b = 0; b < NUM_PATTERNS; b++)
     PatternsMidiNotes[b] = note++;
   
@@ -1088,12 +1091,19 @@ inline void WiredBeatBox::SetMidiNoteAttr(BeatNoteToPlay* note,
 					  BeatBoxChannel* c)
 {
   note->Reversed = c->Reversed;
-  note->OffSet =
-    static_cast<unsigned long>
-    (floor(c->Wave->GetNumberOfFrames() * (note->Params[STA])));
-  note->SEnd = 
-    static_cast<unsigned long>
-    (floor(c->Wave->GetNumberOfFrames() * note->Params[END]));
+  if (c->Wave)
+    {
+      note->OffSet =
+	static_cast<unsigned long>
+	(floor(c->Wave->GetNumberOfFrames() * (note->Params[STA])));
+      note->SEnd = 
+	static_cast<unsigned long>
+	(floor(c->Wave->GetNumberOfFrames() * note->Params[END]));
+    }
+  else
+    {
+      note->OffSet = note->SEnd = 0;
+    }
   /*
   if (note->OffSet > note->SEnd)
     {
