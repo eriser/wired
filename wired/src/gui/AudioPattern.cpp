@@ -28,7 +28,7 @@ AudioPattern::AudioPattern(double pos, double endpos, long trackindex)
 {
   Init();
   Wave = 0;
-  SetWave(0x0);
+  SetWave(0);
 }
 
 AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
@@ -125,7 +125,13 @@ void					AudioPattern::SetWave(WaveFile *w)
       Wave = w;
       FileName = w->Filename; 
     }
-  WaveDrawer::SetWave(w, GetSize());//, StartWavePos, EndWavePos);
+  else
+    {
+      StartWavePos = 0;
+      EndWavePos = 0;
+    }
+  //  WaveDrawer::SetWave(w, GetSize());//, StartWavePos, EndWavePos);
+  WaveDrawer::SetWave(w, GetSize(), StartWavePos, EndWavePos);
 }
 
 void					AudioPattern::SetDrawing()
@@ -300,7 +306,7 @@ void					AudioPattern::OnLeftUp(wxMouseEvent &e)
 void					AudioPattern::Split(double pos)
 {
   AudioPattern				*p;
-
+#define __DEBUG__
 #ifdef __DEBUG__
   cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
   cout << "new pos: " << pos << endl;
