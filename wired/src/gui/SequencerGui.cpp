@@ -662,26 +662,54 @@ void					SequencerGui::DeleteAllTracks()
 void					SequencerGui::DeleteSelectedTrack()
 {
   vector<Track *>::iterator		i;
+  vector<Pattern *>::iterator		p;
   long					j;
-
+  
 #ifdef __DEBUG__
   printf("SequencerGui::DeleteSelectedTrack()\n");
 #endif
+  printf("youpla STEP 1\n");
   for (i = Seq->Tracks.begin(); (i != Seq->Tracks.end()) && !((*i)->TrackOpt->GetSelected()); i++);
-  if (i == Seq->Tracks.begin())
+  printf("youpla STEP 2\n");
+  if (i == Seq->Tracks.end())
     return;
+  printf("youpla STEP 3\n");
   if ((*i)->TrackOpt->Record && Seq->Recording)
     return;
+  printf("youpla STEP 4\n");
   if ((*i)->TrackOpt->ChanGui)
     MixerPanel->RemoveChannel((*i)->TrackOpt->ChanGui);
+  printf("youpla STEP 5\n");
+  printf("youpi patterns to clear on track %d\n", (*i)->Index);
+  printf("youpla STEP 6\n");
+  for (p = SelectedItems.begin(); p != SelectedItems.end(); )
+    if (((*i)->Index == (*p)->GetTrackIndex()) && (*p)->IsSelected())
+      {
+	printf("youpla DELETE PATTERN %s\n", (*p)->GetName().c_str());
+	(*p)->SetSelected(false);
+	SeqMutex.Lock();
+	delete (*p);
+	SeqMutex.Unlock();
+	SelectedItems.erase(p);
+      }
+    else
+      p++;
+  printf("youpi patterns clear\n");
+  printf("youpla STEP 7\n");
   SeqMutex.Lock();
   delete (*i);
+  printf("youpla STEP 8\n");
   Seq->Tracks.erase(i);
+  printf("youpla STEP 9\n");
   for (i = Seq->Tracks.begin(), j = 0; i != Seq->Tracks.end(); i++)
     (*i)->UpdateIndex(j++);
+  printf("youpla STEP A\n");
   UpdateTracks();
+  printf("youpla STEP B\n");
   SeqMutex.Unlock();
+  printf("youpla STEP C\n");
   SetScrolling();
+  printf("youpla STEP D\n");
   AdjustVScrolling();
 }
 
