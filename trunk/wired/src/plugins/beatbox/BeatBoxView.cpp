@@ -1,5 +1,5 @@
 #include "BeatBoxView.h"
-
+#include <math.h>
 #include "BeatBox.h"
 
 BEGIN_EVENT_TABLE(Ruler, wxWindow)
