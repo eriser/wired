@@ -539,10 +539,14 @@ inline long BeatBoxScrollView::YValToPixel(float yval)
 
 inline float BeatBoxScrollView::PixelToYVal(long ypos)
 {
-  float yval = floorf((float)
+  float yval = (float)
+    (((ypos - DEC) * ParamsLimits[Param][1]) / 
+     (float)(ViewPtr->TrackHeight - (2*DEC)));
+  /*
+    float yval = floorf((float)
     (((ypos - DEC) * ParamsLimits[Param][1]) / 
      (float)(ViewPtr->TrackHeight - (2*DEC))) * 100) / 100;
-  
+  */
   //cout << "ypos= " << ypos  << " to yval= " << yval << endl;
   return yval;
 }
@@ -617,7 +621,7 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
 	    (*note)->Params[Param] = ParamsLimits[Param][1] 
 	      + fmodf((*note)->Params[Param], ParamsLimits[Param][1]);
 	  
-	  (*note)->Params[Param] = floorf((*note)->Params[Param] * 100) / 100;
+	  //(*note)->Params[Param] = floorf((*note)->Params[Param] * 100) / 100;
 	}
   
       for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
