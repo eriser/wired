@@ -25,7 +25,7 @@ void HelpCtrl::Load(wxString file)
 void HelpCtrl::Load_Text(wxString text)
 {
   wxString tmp = HTMLTOP;
-  tmp += text += HTMLDOWN;
+  tmp += (text + HTMLDOWN);
   SetPage(tmp);
 }
 HelpCtrl::~HelpCtrl()
