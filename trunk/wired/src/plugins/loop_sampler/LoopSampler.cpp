@@ -23,7 +23,7 @@ BEGIN_EVENT_TABLE(LoopSampler, wxWindow)
   EVT_BUTTON(LoopSampler_PolyDown, LoopSampler::OnPolyDown)
   EVT_BUTTON(LoopSampler_Invert, LoopSampler::OnInvert)
   EVT_BUTTON(LoopSampler_Tempo, LoopSampler::OnTempo)
-  EVT_COMMAND_SCROLL(LoopSampler_Octave, LoopSampler::OnOctave)
+  EVT_BUTTON(LoopSampler_Octave, LoopSampler::OnOctave)
   EVT_COMMAND_SCROLL(LoopSampler_Pitch, LoopSampler::OnPitch)
   EVT_COMMAND_SCROLL(LoopSampler_Volume, LoopSampler::OnVolume)
   EVT_COMMAND_SCROLL(LoopSampler_Attack, LoopSampler::OnAttack)
@@ -119,9 +119,9 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   MesCountLabel = new wxStaticText(this, -1, s, wxPoint(288, 89), wxSize(-1, 12));
   MesCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
 
-  MesUpBtn = new HoldButton(this, LoopSampler_MesUp, wxPoint(269, 90), wxSize(11, 8), 
+  MesUpBtn = new HoldButton(this, LoopSampler_MesUp, wxPoint(268, 86), wxSize(13, 9), 
 			    up_up, up_down);
-  MesDownBtn = new HoldButton(this, LoopSampler_MesDown, wxPoint(269, 97), wxSize(11, 8), 
+  MesDownBtn = new HoldButton(this, LoopSampler_MesDown, wxPoint(268, 96), wxSize(13, 9), 
 			      down_up, down_down);
 
   s.Printf("%d", PolyphonyCount);
@@ -129,9 +129,9 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   PolyCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   PolyCountLabel->SetLabel(s);
 
-  PolyUpBtn = new HoldButton(this, LoopSampler_PolyUp, wxPoint(269, 109), wxSize(11, 8), 
+  PolyUpBtn = new HoldButton(this, LoopSampler_PolyUp, wxPoint(268, 110), wxSize(13, 9), 
 			    up_up, up_down);
-  PolyDownBtn = new HoldButton(this, LoopSampler_PolyDown, wxPoint(269, 116), wxSize(11, 8), 
+  PolyDownBtn = new HoldButton(this, LoopSampler_PolyDown, wxPoint(268, 110), wxSize(13, 9), 
 			      down_up, down_down);
 
   LedOff = new wxBitmap(wxImage(string(GetDataDir() + string(IMG_LS_LED_OFF_IMG)).c_str(), wxBITMAP_TYPE_PNG));
@@ -142,39 +142,49 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   /* Envelope */
 
   VolumeFader = new FaderCtrl(this, LoopSampler_Volume, fader_vol_bg, fader_vol_fg, 0, 127, 100, 
-                             wxPoint(13, 56), wxSize(20, 76));
+                             wxPoint(13, 56), wxSize(23, 132));
 
 
   AttackFader = new FaderCtrl(this, LoopSampler_Attack, fader_bg, fader_fg, 0, 1000, 0, 
-			      wxPoint(51, 56), wxSize(20, 76));
+			      wxPoint(51, 56), wxSize(23, 132));
 
   DecayFader = new FaderCtrl(this, LoopSampler_Decay, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(89, 56), wxSize(20, 76));
+                             wxPoint(89, 56), wxSize(23, 132));
 
   SustainFader = new FaderCtrl(this, LoopSampler_Sustain, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(127, 56), wxSize(20, 76));
+                             wxPoint(127, 56), wxSize(23, 132));
 
 
   ReleaseFader = new FaderCtrl(this, LoopSampler_Release, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(166, 56), wxSize(20, 76));
+                             wxPoint(166, 56), wxSize(23, 132));
 
   /* Global tuning */
 
-  wxImage *imgs[3];
-  imgs[0] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_1)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[1] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_2)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[2] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_3)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *imgs[9];
+  imgs[0] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_D)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[1] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_C)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[2] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_B)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[3] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_A)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[4] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_0)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[5] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_1)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[6] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_2)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[7] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_3)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[8] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_4)).c_str(), wxBITMAP_TYPE_PNG);
+  
+  OctaveKnob = new CycleKnob(this, LoopSampler_Octave, 9, imgs, 30, 0, 8, 4,
+			    wxPoint(228, 131), wxSize(60, 51));//new KnobCtrl(this, LoopSampler_Octave, knob_bg, knob_fg, 0, 8, 4, 1,
 
-  OctaveKnob = new CycleKnob(this, LoopSampler_Octave, 3, imgs, 1, 0, 8, 4,
-			    wxPoint(233, 133), wxSize(23, 23));//new KnobCtrl(this, LoopSampler_Octave, knob_bg, knob_fg, 0, 8, 4, 1,
+  for (int i = 0; i < 9; i++)
+    delete imgs[i];
     //    wxPoint(233, 133), wxSize(23, 23));
+  
   PitchKnob = new KnobCtrl(this, LoopSampler_Pitch, knob_bg, knob_fg, 1, 200, 100, 1,
-			   wxPoint(311, 133), wxSize(23, 23));
+			   wxPoint(311, 134), wxSize(53, 52));
 
   /* Modes */
 
-  InvertBtn = new DownButton(this, LoopSampler_Invert, wxPoint(321, 92), wxSize(19, 15), btn_down, btn_up, false);
-  TempoBtn = new DownButton(this, LoopSampler_Tempo, wxPoint(321, 111), wxSize(19, 15), btn_down, btn_up, false);
+  InvertBtn = new DownButton(this, LoopSampler_Invert, wxPoint(321, 90), wxSize(19, 15), btn_down, btn_up, false);
+  TempoBtn = new DownButton(this, LoopSampler_Tempo, wxPoint(321, 113), wxSize(19, 15), btn_down, btn_up, false);
 
   /* Help events */
 
@@ -479,15 +489,20 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
     {
       n = *i;
 
+      //      cout << "pos: " << n->Position << "; start: " << LoopInfo.Start << "; end: " 
+      //   << LoopInfo.End << endl;
+
       if (n->Position > LoopInfo.End)
 	n->End = true;
       if (n->Position < LoopInfo.Start)
 	{
-	  if (!(n->SliceNote->EndPosition < LoopInfo.Start))
+	  if (!(n->SliceNote->EndPosition < 
+		LoopInfo.Start))
 	    n->Position = LoopInfo.Start;
 	  else
 	    n->End = true;
 	}
+      
       if (!(n->End))
 	{
 	  length = sample_length - n->Delta;
@@ -569,7 +584,7 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 		  n->Buffer[chan][idx] *= f;  
 	    }
  
-	  end = (long)((n->SliceNote->EndPosition - n->Position) / n->SliceNote->Pitch);
+	  /*end = (long)((n->SliceNote->EndPosition - n->Position) / n->SliceNote->Pitch);
 
 	  if (end <= length)
 	    {
@@ -579,7 +594,7 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 	      for (chan = 0; chan < 2; chan++)	    
 		for (idx = 0, f = 1.f; idx < length; idx++, f -= inc)
 		  n->Buffer[chan][idx] *= f;  
-	    }	  
+		  }*/	  
 	  
 	  /*
 	  if ((n->Position - n->BeginPosition) < AttackLen)
@@ -924,7 +939,7 @@ long LoopSampler::Save(int fd)
   size += write(fd, &Decay, sizeof (Decay));
   size += write(fd, &Sustain, sizeof (Sustain));
   size += write(fd, &Release, sizeof (Release));
-  size += write(fd, &Octave, sizeof (Octave));
+  size += write(fd, &Octave - 1, sizeof (Octave));
   size += write(fd, &Pitch, sizeof (Pitch));
   size += write(fd, &Invert, sizeof (Invert));
 
@@ -1121,7 +1136,7 @@ void LoopSampler::OnOpenFile(wxCommandEvent &event)
     }
 }
 
-void LoopSampler::OnOctave(wxScrollEvent &event)
+void LoopSampler::OnOctave(wxCommandEvent &event)
 {
   Mutex.Lock();
 

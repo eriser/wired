@@ -45,11 +45,18 @@ using namespace std;
 #define IMG_LS_FADER_FG  "plugins/loopsampler/loop_fader_button.png"
 #define IMG_LS_FADER_VOL_BG  "plugins/loopsampler/loop_fader_vol_bg.png"
 #define IMG_LS_FADER_VOL_FG  "plugins/loopsampler/loop_fader_vol_button.png"
-#define IMG_LS_KNOB_BG  "plugins/loopsampler/knob_bg.png"
-#define IMG_LS_KNOB_FG  "plugins/loopsampler/knob_fg.png"
-#define IMG_LS_KNOB_1  "plugins/loopsampler/loop_knob_1.png"
-#define IMG_LS_KNOB_2  "plugins/loopsampler/loop_knob_2.png"
-#define IMG_LS_KNOB_3  "plugins/loopsampler/loop_knob_3.png"
+#define IMG_LS_KNOB_BG  "plugins/loopsampler/loop_knob_1.png"
+#define IMG_LS_KNOB_FG  "plugins/loopsampler/loop_knob_dot.png"
+
+#define IMG_LS_KNOB_0   "plugins/loopsampler/loop_knob_octave_0.png"
+#define IMG_LS_KNOB_1   "plugins/loopsampler/loop_knob_octave_1.png"
+#define IMG_LS_KNOB_2   "plugins/loopsampler/loop_knob_octave_2.png"
+#define IMG_LS_KNOB_3   "plugins/loopsampler/loop_knob_octave_3.png"
+#define IMG_LS_KNOB_4   "plugins/loopsampler/loop_knob_octave_4.png"
+#define IMG_LS_KNOB_A   "plugins/loopsampler/loop_knob_octave_a.png"
+#define IMG_LS_KNOB_B   "plugins/loopsampler/loop_knob_octave_b.png"
+#define IMG_LS_KNOB_C   "plugins/loopsampler/loop_knob_octave_c.png"
+#define IMG_LS_KNOB_D   "plugins/loopsampler/loop_knob_octave_d.png"
 
 class LoopNote
 {
@@ -249,7 +256,7 @@ protected:
   void OnPolyDown(wxCommandEvent &event); //locks mutex
   void OnTempo(wxCommandEvent &event); // locks mutex
   void OnInvert(wxCommandEvent &event); //locks mutex
-  void OnOctave(wxScrollEvent &event); //locks mutex
+  void OnOctave(wxCommandEvent &event); //locks mutex
   void OnPitch(wxScrollEvent &event); //locks mutex
   void OnVolume(wxScrollEvent &event); //locks mutex
   void OnAttack(wxScrollEvent &event); //locks mutex
