@@ -1,9 +1,13 @@
 #include  "ASList.h"
+#include  "Colour.h"
 
 enum
 {
-  ASTextCtrl_Rename = 12345
+  ASTextCtrl_Rename = 12345,
+  ID_SCROLLY
 };
+
+#define SBS 16
 
 BEGIN_EVENT_TABLE(ASTextCtrl, wxTextCtrl)
   EVT_KILL_FOCUS(ASTextCtrl::KillControl)
@@ -80,13 +84,13 @@ void ASListEntry::OnClick(wxMouseEvent &e)
 }
 
 BEGIN_EVENT_TABLE(ASList, wxPanel)
-  EVT_PAINT(ASList::OnPaint)
   EVT_SIZE(ASList::OnResize)
+  EVT_COMMAND_SCROLL(ID_SCROLLY, ASList::OnScroll)
 END_EVENT_TABLE()
 
 void ASList::OnResize(wxSizeEvent &e)
 {
-  sw->SetSize(e.GetSize());
+  sw->SetSize(wxSize(e.GetSize().GetWidth() - SBS, e.GetSize().GetHeight() - BUTTONSHEIGHT));
   buttons->SetSize(0, e.GetSize().GetHeight() - BUTTONSHEIGHT, e.GetSize().GetWidth(), BUTTONSHEIGHT);
   Repos();
 }
@@ -94,10 +98,14 @@ void ASList::OnResize(wxSizeEvent &e)
 ASList::ASList(wxWindow *parent, wxWindowID id, const wxPoint &pos,
     const wxSize& size) : wxPanel(parent, id, pos, size)
 {
-  sw = new wxScrolledWindow(this, -1, wxPoint(0, 0), wxSize(size.GetWidth(), size.GetHeight() - BUTTONSHEIGHT));
+  sw = new wxScrolledWindow(this, -1, wxPoint(0, 0), wxSize(size.GetWidth() - SBS, size.GetHeight() - BUTTONSHEIGHT));
   list = new wxPanel(sw, -1, wxPoint(0, 0), wxSize(sw->GetSize().GetWidth(), sw->GetSize().GetHeight()));
   list->SetBackgroundColour(*wxBLACK);
   this->SetBackgroundColour(*wxBLACK);
+  sb = new wxScrollBar(this, ID_SCROLLY, wxPoint(size.GetWidth() - SBS, 0), wxSize(SBS, size.GetHeight() - BUTTONSHEIGHT), wxSB_VERTICAL);
+  sb->SetBackgroundColour(CL_OPTION_TOOLBAR);
+  sb->SetForegroundColour(wxColour(0xFF, 0xFF, 0xFF));
+  sb->SetScrollbar(0, 10, list->GetSize().GetHeight() / 10, 10, false);
   buttons = new wxPanel(this, -1, wxPoint(0, GetSize().GetHeight() - BUTTONSHEIGHT), wxSize(GetSize().GetWidth(), BUTTONSHEIGHT));
   buttons->SetBackgroundColour(wxColor(100, 101, 203));
   bpos.x = 2;
@@ -112,8 +120,13 @@ ASList::~ASList()
   entries.clear();
 }
 
-void ASList::OnPaint(wxPaintEvent &e)
+void ASList::OnScroll(wxScrollEvent &e)
 {
+  static int oposy = 0;
+  int posy = (oposy - sb->GetThumbPosition()) * 10;
+  sw->ScrollWindow(0, posy, NULL);
+  oposy = sb->GetThumbPosition();
+  Refresh();
 }
 
 void ASList::Repos()
@@ -133,7 +146,7 @@ void ASList::Repos()
   list->SetSize((sx > size.GetWidth()) ? sx : size.GetWidth(), (sy > size.GetHeight()) ? sy : size.GetHeight());
   for (i = entries.begin(); i != entries.end(); i++)
     (*i)->SetSize(GetSize().GetWidth(), ITEMHEIGHT);
-  sw->SetScrollbars(10, 10, list->GetSize().GetWidth() / 10 - 2, list->GetSize().GetHeight() / 10, 0, 0, true);
+  sb->SetScrollbar(0, 10, list->GetSize().GetHeight() / 10, 10, true);
 }
 
 void ASList::SetSelected(ASListEntry *sel)

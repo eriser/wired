@@ -10,7 +10,8 @@ class ASKeygroupEditor : public ASPlugin
   public:
     ASKeygroupEditor(class AkaiSampler *as, wxString Name);
     wxWindow *CreateView(wxPanel *, wxPoint &, wxSize &);
-    void OnPaint(wxPaintEvent &);
+    void OnSize(wxSizeEvent &);
+    void OnScroll(wxScrollEvent &);
     void OnKeyUp(wxMouseEvent &ev);
     void OnKeyDown(wxMouseEvent &ev);
     void PaintSelection();
@@ -20,6 +21,9 @@ class ASKeygroupEditor : public ASPlugin
     ASamplerSample *ass;
     ASClavier *clav;
     wxScrolledWindow *sw;
+    wxScrollBar *sb;
+    wxStaticText *lokey;
+    wxStaticText *hikey;
   DECLARE_EVENT_TABLE()
 };
 

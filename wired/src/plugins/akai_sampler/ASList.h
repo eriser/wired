@@ -48,7 +48,7 @@ class ASList: public wxPanel
   ASList(wxWindow *parent, wxWindowID id, const wxPoint& pos,
       const wxSize& size);
   ~ASList();
-  void OnPaint(wxPaintEvent &e);
+  void OnScroll(wxScrollEvent &e);
   void OnResize(wxSizeEvent &e);
   ASListEntry *AddEntry(wxString name, void *entry);
   void DelEntry(void *entry);
@@ -64,6 +64,7 @@ class ASList: public wxPanel
   wxPanel *buttons;
   wxScrolledWindow *sw;
   wxPoint bpos;
+  wxScrollBar *sb;
 
   DECLARE_EVENT_TABLE()
 };

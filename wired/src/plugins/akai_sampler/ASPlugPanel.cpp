@@ -1,4 +1,5 @@
 #include "ASPlugPanel.h"
+#include "AkaiSampler.h"
 #include "Colour.h"
 
 void				ASPlugFrame::OnClose(wxCloseEvent &event)
@@ -49,10 +50,9 @@ void				ASPlug::Detach()
   Plugin->OnDetach(Frame);
 }
 
-ASPlugPanel::ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, Plugin *p)
+ASPlugPanel::ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, AkaiSampler *as)
   : wxPanel(parent, -1, pos, size, style)
 {
-  this->p = p;
   SetBackgroundColour(CL_RULER_BACKGROUND);
   ToolbarPanel = new wxPanel(this, -1, wxPoint(0, 0), wxSize(GetSize().x, OPT_TOOLBAR_HEIGHT),
 			     wxSIMPLE_BORDER);
@@ -60,8 +60,8 @@ ASPlugPanel::ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
   Title = new wxStaticText(ToolbarPanel, -1, "Plugin", wxPoint(18, 0), 
 			   wxSize(-1, OPT_TOOLBAR_HEIGHT));
   Title->SetForegroundColour(*wxWHITE);
-  wxImage *detach_up = new wxImage(string(p->GetDataDir() + string(OPT_DETACH_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *detach_down = new wxImage(string(p->GetDataDir() + string(OPT_DETACH_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *detach_up = new wxImage(string(as->GetDataDir() + string(OPT_DETACH_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *detach_down = new wxImage(string(as->GetDataDir() + string(OPT_DETACH_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
   DetachPlugBtn = new DownButton(this, ID_TOOL_DETACH_OPTIONPANEL, wxPoint(2, 2), wxSize(14, 12), 
 				 detach_up, detach_down, true);
   wxBoxSizer *right_sizer;
@@ -88,7 +88,6 @@ void				ASPlugPanel::AddPlug(ASPlugin *p)
   wxPoint			pt(0, OPT_TOOLBAR_HEIGHT);
   wxSize			sz(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT);
   
-  p->SetPlugin(this->p);
   m = p->CreateView(this, pt, sz);
   tool = new ASPlug(this, p->Name, ID_TOOL_OTHER_OPTIONPANEL, m);
   tool->Plugin = p;

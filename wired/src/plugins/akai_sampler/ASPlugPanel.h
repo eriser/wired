@@ -4,7 +4,6 @@
 #include <wx/wx.h>
 #include "ASPlugin.h"
 #include "DownButton.h"
-#include "Plugin.h"
 #include <vector>
 
 using namespace std;
@@ -79,7 +78,7 @@ class ASPlug
 class ASPlugPanel: public wxPanel
 {
  public:
-  ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, Plugin *p);
+  ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, class AkaiSampler *); 
   ~ASPlugPanel();
 
   void				AddPlug(ASPlugin *p);
@@ -93,7 +92,6 @@ class ASPlugPanel: public wxPanel
  protected:
   wxPanel			*ToolbarPanel;
   wxStaticText			*Title;
-  Plugin      *p;
   wxBoxSizer			*TopSizer;
   DownButton			*DetachPlugBtn;
   vector<ASPlug *>		PlugsList;

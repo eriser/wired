@@ -19,7 +19,7 @@ static wxString EFFECTSNAMES[NB_EFFECTS] = {
 
 static PlugInitInfo info;
 
-BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
+  BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
   EVT_PAINT(AkaiSampler::OnPaint)
   EVT_BUTTON(Sampler_Open, AkaiSampler::OnOpenFile)
   EVT_BUTTON(Sampler_Save, AkaiSampler::OnSaveFile)
@@ -30,30 +30,30 @@ BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
   EVT_COMMAND_SCROLL(Sampler_Volume, AkaiSampler::OnVolume)
 END_EVENT_TABLE()
 
-AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
+  AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 : Plugin(startinfo, initinfo), PolyphonyCount(8), Volume(1.f), AkaiProgram(0x0)
 {
 
   sampleid = 0;
   keygroupid = 0;
   sp_bg = new wxImage(string(GetDataDir() + string(IMG_SP_BG)).c_str(), 
-			    wxBITMAP_TYPE_PNG);
+      wxBITMAP_TYPE_PNG);
   if (sp_bg)
-    {
-      BgBmp = new wxBitmap(sp_bg);
-      delete sp_bg;
-    }
+  {
+    BgBmp = new wxBitmap(sp_bg);
+    delete sp_bg;
+  }
 
   bmp = new wxBitmap(string(GetDataDir() + string(IMG_SP_BMP)).c_str(), wxBITMAP_TYPE_BMP);  
 
   PlugPanel = new ASPlugPanel(this, wxPoint(149, 8), wxSize(642, 120),//GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), 
-			      wxTHICK_FRAME, this);
+            wxTHICK_FRAME , this);
 
   Samples = new ASSampleList(this, "Samples");
 
   clavier = new ASClavier(this, -1, wxPoint(23, 142), //GetSize().GetWidth() - ASCLAVIER_WIDTH, GetSize().GetHeight() - ASCLAVIER_HEIGHT),
-			  wxSize(ASCLAVIER_WIDTH, ASCLAVIER_HEIGHT),
-			  wxSIMPLE_BORDER, this);
+          wxSize(ASCLAVIER_WIDTH, ASCLAVIER_HEIGHT),
+          wxSIMPLE_BORDER, this);
 
   PlugPanel->AddPlug(Samples);
   PlugPanel->ShowPlugin(Samples);
@@ -79,12 +79,12 @@ AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
       wxPoint(63, 45), wxSize(27, 30), save_up, save_down, true);
 
   btsample = new DownButton(this, Sampler_SampleBt, wxPoint(122, 6), wxSize(21, 22), sample_up,
-			    sample_down, false);
+      sample_down, false);
   btsample->SetOn();
   btkgroup = new DownButton(this, Sampler_KgroupBt, wxPoint(122, 28), wxSize(21, 22), 
-			    kg_up, kg_down, false);
+      kg_up, kg_down, false);
   bteffect = new DownButton(this, Sampler_EffectBt, wxPoint(122, 51), wxSize(21, 22), 
-			    effect_up, effect_down, false);
+      effect_up, effect_down, false);
 
   wxString s;
 
@@ -100,7 +100,7 @@ AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   imgs[2] = new wxImage(_T(string(GetDataDir() + string(IMG_SP_POLY_3)).c_str()));
 
   PolyKnob = new CycleKnob(this, Sampler_Poly, 3, imgs, 10, 1, 256, 8,
-			   wxPoint(97, 97), wxDefaultSize);
+      wxPoint(97, 97), wxDefaultSize);
 
   delete imgs[0];
   delete imgs[1];
@@ -173,41 +173,41 @@ void AkaiSampler::Load(int fd, long size)
   long count;
   /**** DEBUG ONLY ****/
   /**
-  int i;
-  char *buffer = (char *)malloc(size);
-  count = read(fd, buffer, size);
-  printf("[WiredSampler] -- SAVE FILE DUMP --\n");
-  for (i = 0; i < count ; i++)
-  {
+    int i;
+    char *buffer = (char *)malloc(size);
+    count = read(fd, buffer, size);
+    printf("[WiredSampler] -- SAVE FILE DUMP --\n");
+    for (i = 0; i < count ; i++)
+    {
     if (!(i & 15))
-      printf("[WiredSampler] %08X   ", i);
+    printf("[WiredSampler] %08X   ", i);
     printf(" %02X ", buffer[i] & 0xFF);
     if (!((i + 1) & 15))
     {
-      printf("   ");
-      for (int j = i & 15; j >= 0; j--)
-        if ((buffer[i - j] >= 32) && (buffer[i - j] < 127))
-          printf("%c", buffer[i - j]);
-        else
-          printf(".");
-      printf("\n");
+    printf("   ");
+    for (int j = i & 15; j >= 0; j--)
+    if ((buffer[i - j] >= 32) && (buffer[i - j] < 127))
+    printf("%c", buffer[i - j]);
+    else
+    printf(".");
+    printf("\n");
     }
-  }
-  if (i & 15)
-  {
+    }
+    if (i & 15)
+    {
     for (int j = i; j & 15; j++)
-      printf("    ");
+    printf("    ");
     printf("   ");
     for (int j = i & 15; j > 0; j--)
-      if ((buffer[count - j] >= 32) && (buffer[count - j] < 127))
-        printf("%c", buffer[count - j]);
-      else
-        printf(".");
+    if ((buffer[count - j] >= 32) && (buffer[count - j] < 127))
+    printf("%c", buffer[count - j]);
+    else
+    printf(".");
     printf("\n");
-  }
-  printf("[WiredSampler] -- END OF DUMP --\n");
-  free(buffer);
-  lseek(fd, -count, SEEK_CUR);
+    }
+    printf("[WiredSampler] -- END OF DUMP --\n");
+    free(buffer);
+    lseek(fd, -count, SEEK_CUR);
   **/
   /**** END OF DEBUG ****/
 
@@ -271,10 +271,6 @@ void AkaiSampler::Load(int fd, long size)
           ass = new ASamplerSample(this, sampleL, sampleR, AkaiPrefix, id);
           free(sampleL);
           free(sampleR);
-          ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + name);
-          p->SetSample(ass);
-          ass->AddEffect(p);
-          PlugPanel->AddPlug(p);
         }
       }
       else
@@ -284,10 +280,6 @@ void AkaiSampler::Load(int fd, long size)
         {
           ass = new ASamplerSample(this, sample, NULL, AkaiPrefix, id);
           free(sample);
-          ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + name);
-          p->SetSample(ass);
-          ass->AddEffect(p);
-          PlugPanel->AddPlug(p);
         }
       }
     }
@@ -319,6 +311,45 @@ void AkaiSampler::Load(int fd, long size)
       cerr << "[WiredSampler] Setting loop_end to " << len << endl;
       ass->SetLoopEnd(len);
     }
+    int nbplug;
+    count += read(fd, &nbplug, sizeof(nbplug));
+    cerr << "[WiredSampler] Loading " << nbplug << " plugins..." << endl;
+    for (int j = 0; j < nbplug ; j++)
+    {
+      count += read(fd, &len, sizeof(len));
+      str = (char *)malloc(len + 1);
+      count += read(fd, str, len);
+      str[len] = 0;
+      wxString type(str);
+      free(str);
+      count += read(fd, &len, sizeof(len));
+      str = (char *)malloc(len + 1);
+      count += read(fd, str, len);
+      str[len] = 0;
+      wxString name(str);
+      free(str);
+      cerr << "[WiredSampler] Creating effect type " << type << " name " << name << endl;
+      ASPlugin *p = NULL;
+      count += read(fd, &len, sizeof(len));
+      count += len;
+      if (type == EFFECTSNAMES[0])
+        p = new ASEnvel(this, name);
+      else if (type == EFFECTSNAMES[1])
+        p = new ASLoop(this, name);
+      if (p)
+      {
+        p->SetSample(ass);
+        ass->AddEffect(p);
+        PlugPanel->AddPlug(p);
+        cerr << "[WiredSampler] Loading " << len << " bytes of data for this plugin" << endl;
+        p->Load(fd, len);
+      }
+      else
+      {
+        cerr << "[WiredSampler] Plugin type unknown, can't load it !" << endl;
+        lseek(fd, len, SEEK_CUR);
+      }
+    }
   }
   count += read(fd, &nbent, sizeof(nbent));
   cerr << "[WiredSampler] Loading " << nbent << " keygroups..." << endl;
@@ -339,20 +370,17 @@ void AkaiSampler::Load(int fd, long size)
     ASamplerKeygroup *askg = new ASamplerKeygroup(this, lokey, hikey, id);
     Keygroups.push_back(askg);
     count += read(fd, &len, sizeof(len));
-    if (len)
+    cerr << "[WiredSampler] Need to associate with sample " << len << endl;
+    vector<ASListEntry *> v = Samples->List->GetEntries();
+    for (vector<ASListEntry *>::iterator i = v.begin(); i != v.end(); i++)
     {
-      cerr << "[WiredSampler] Need to associate with sample " << len << endl;
-      vector<ASListEntry *> v = Samples->List->GetEntries();
-      for (vector<ASListEntry *>::iterator i = v.begin(); i != v.end(); i++)
+      ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
+      if (ass->GetID() == len)
       {
-        ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
-        if (ass->GetID() == len)
-        {
-          cerr << "[WiredSampler] Sample found, associating..." << endl;
-          ass->SetKeygroup(askg);
-          askg->SetSample(ass);
-          break;
-        }
+        cerr << "[WiredSampler] Sample found, associating..." << endl;
+        ass->SetKeygroup(askg);
+        askg->SetSample(ass);
+        break;
       }
     }
   }
@@ -395,6 +423,35 @@ long AkaiSampler::Save(int fd)
     len = ass->GetLoopEnd();
     cerr << "[WiredSampler] Saving loop_end " << len << endl;
     count += write(fd, &len, sizeof(len));
+    cerr << "[WiredSampler] Saving effects..." << endl;
+    vector<ASPlugin *> effects = ass->GetEffects();
+    nbent = effects.size();
+    count += write(fd, &nbent, sizeof(nbent));
+    cerr << "[WiredSampler] Saving " << nbent << " effects..." << endl;
+    for (vector<ASPlugin *>::iterator j = effects.begin(); j != effects.end(); j++)
+    {
+      str = (char *)(*j)->GetType().c_str();
+      len = strlen(str);
+      cerr << "[WiredSampler] Saving plugin type " << str << endl;
+      count += write(fd, &len, sizeof(len));
+      count += write(fd, str, len);
+      str = (char *)(*j)->Name.c_str();
+      len = strlen(str);
+      cerr << "[WiredSampler] Saving plugin name " << str << endl;
+      count += write(fd, &len, sizeof(len));
+      count += write(fd, str, len);
+      unsigned long pos = lseek(fd, 0, SEEK_CUR);
+      count += write(fd, &len, sizeof(len));
+      cerr << "[WiredSampler] Saving plugin data " << endl;
+      len = (*j)->Save(fd);
+      unsigned long pos2 = lseek(fd, 0, SEEK_CUR);
+      lseek(fd, pos, SEEK_SET);
+      cerr << "[WiredSampler] plugin data len " << len << endl;
+      write(fd, &len, sizeof(len));
+      lseek(fd, pos2, SEEK_SET);
+      count += len;
+    }
+    
   }
   nbent = Keygroups.size();
   count += write(fd, &nbent, sizeof(nbent));
@@ -501,14 +558,26 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
     if (n->Position < endtotest)
     {
       length = sample_length - n->Delta;
-      end = (long)(endtotest / n->Key->Pitch);
-      if (end < (length))
-        length = end - n->Delta;
-      else
-        end = 0;
+      if (endtotest <= (n->Position + length))
+        length = endtotest - n->Position;
       n->Key->ass->GetSample()->SetPitch(n->Key->Pitch);
       long pos = n->Position;
       n->Key->ass->GetSample()->Read(n->Buffer, n->Position, length, n->Delta, &(n->Position));
+      if ((length < sample_length) && ((n->Key->ass->GetLoopCount() > n->Key->loops) || (n->Key->ass->GetLoopCount() == -1)))
+      {
+        n->Position = n->Key->ass->GetLoopStart();
+        n->Key->ass->GetSample()->Read(n->Buffer, n->Position, sample_length - length, length, &n->Position);
+        n->Key->looping = true;
+        n->Key->loops++;
+        length = sample_length;
+      }
+      else
+      {
+        for (chan = 0; chan < 2; chan++)
+          for (idx = length; idx < sample_length; idx++)
+            n->Buffer[chan][idx] = 0.f;
+        length = sample_length;
+      }
 
       if (n->Volume != 1.f)
         for (chan = 0; chan < 2; chan++)
@@ -565,11 +634,11 @@ void AkaiSampler::OnPaint(wxPaintEvent &event)
   memDC.SelectObject(*BgBmp);
   wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
   while (upd)
-    {
-      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(),
-	      wxCOPY, FALSE);
-      upd++;
-    }
+  {
+    dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(),
+        wxCOPY, FALSE);
+    upd++;
+  }
 
   Plugin::OnPaintEvent(event);
 }
@@ -577,69 +646,69 @@ void AkaiSampler::OnPaint(wxPaintEvent &event)
 void AkaiSampler::ProcessEvent(WiredEvent &event)
 {
   if ((event.MidiData[0] == M_NOTEON1) || (event.MidiData[0] == M_NOTEON2))
+  {
+    if (!event.MidiData[2])
     {
-      if (!event.MidiData[2])
-	{
-	  Mutex.Lock();
-	  
-	  // Suppression des notes termin~Aées
-	  list<ASamplerNote *>::iterator i;
-	  for (i = Notes.begin(); i != Notes.end(); i++)
-	    {
-	      if ((*i)->Note == event.MidiData[1])
-		{
-		  Workshop.SetFreeBuffer((*i)->Buffer);
-		  delete *i;
-		  Notes.erase(i);
-		  break;
-		}
-	    }
-	  MidiInOn = false;
-	  UpdateMidi = true;
-	  AskUpdate();
-	  
-	  Mutex.Unlock();
-	}
-      else
-	{
-	  Mutex.Lock();
-	  
-	  MidiInOn = true;
-	  UpdateMidi = true;
-	  AskUpdate();
-	  
-	  if (Notes.size() < PolyphonyCount)
-	    {
-	      if ((event.MidiData[1] >= 0) && (event.MidiData[1] <= 127))
-		{
-		  ASamplerKeygroup *askg = NULL;
-		  for (vector <ASamplerKeygroup *>::iterator i = Keygroups.begin(); (!askg) && (i != Keygroups.end()); i++)
-		    if ((*i)->HasKey(event.MidiData[1]))
-		      askg = (*i);
-		  if (askg)
-		    {
-		      printf("FindKeyGroup: %p\n", askg);
-		      ASamplerKey *key = askg->GetKey(event.MidiData[1]);
-		      if (key)
-			{
-			  ASamplerNote *n = new ASamplerNote(event.MidiData[1],
-							     event.MidiData[2] / 100.f,
-							     key,
-							     event.DeltaFrames,
-							     Workshop.GetFreeBuffer(),
-							     event.NoteLength);
-			  Notes.push_back(n);
-			  printf("[SAMPLER] Note added: %d\n", n->Note);
-			}
-		    }
-		}
-	    }
-	  else
-	    printf("[SAMPLER] Max polyphony reached\n");
-	  
-	  Mutex.Unlock();
-	}
+      Mutex.Lock();
+
+      // Suppression des notes termin~Aées
+      list<ASamplerNote *>::iterator i;
+      for (i = Notes.begin(); i != Notes.end(); i++)
+      {
+        if ((*i)->Note == event.MidiData[1])
+        {
+          Workshop.SetFreeBuffer((*i)->Buffer);
+          delete *i;
+          Notes.erase(i);
+          break;
+        }
+      }
+      MidiInOn = false;
+      UpdateMidi = true;
+      AskUpdate();
+
+      Mutex.Unlock();
     }
+    else
+    {
+      Mutex.Lock();
+
+      MidiInOn = true;
+      UpdateMidi = true;
+      AskUpdate();
+
+      if (Notes.size() < PolyphonyCount)
+      {
+        if ((event.MidiData[1] >= 0) && (event.MidiData[1] <= 127))
+        {
+          ASamplerKeygroup *askg = NULL;
+          for (vector <ASamplerKeygroup *>::iterator i = Keygroups.begin(); (!askg) && (i != Keygroups.end()); i++)
+            if ((*i)->HasKey(event.MidiData[1]))
+              askg = (*i);
+          if (askg)
+          {
+            printf("FindKeyGroup: %p\n", askg);
+            ASamplerKey *key = askg->GetKey(event.MidiData[1]);
+            if (key)
+            {
+              ASamplerNote *n = new ASamplerNote(event.MidiData[1],
+                  event.MidiData[2] / 100.f,
+                  key,
+                  event.DeltaFrames,
+                  Workshop.GetFreeBuffer(),
+                  event.NoteLength);
+              Notes.push_back(n);
+              printf("[SAMPLER] Note added: %d\n", n->Note);
+            }
+          }
+        }
+      }
+      else
+        printf("[SAMPLER] Max polyphony reached\n");
+
+      Mutex.Unlock();
+    }
+  }
   else
     ProcessMidiControls(event);
   //  printf("[SAMPLER] Got midi in : %2x %2x %2x\n", event.MidiData[0], event.MidiData[1], event.MidiData[2]);
@@ -650,13 +719,13 @@ void AkaiSampler::ProcessMidiControls(WiredEvent &event)
   Mutex.Lock();
 
   if ((MidiVolume[0] == event.MidiData[0]) && (MidiVolume[1] == event.MidiData[1]))
-    {
-      Volume = event.MidiData[2] / 100.f;
-      Workshop.SetVolume(Volume);
+  {
+    Volume = event.MidiData[2] / 100.f;
+    Workshop.SetVolume(Volume);
 
-      UpdateVolume = true;
-      AskUpdate();
-    }
+    UpdateVolume = true;
+    AskUpdate();
+  }
 
   Mutex.Unlock();
 }
@@ -666,18 +735,18 @@ void AkaiSampler::Update()
   Mutex.Lock();
 
   if (UpdateMidi)
-    {
-      UpdateMidi = false;
-      if (MidiInOn)
-	MidiInBmp->SetBitmap(*LedOn);
-      else
-	MidiInBmp->SetBitmap(*LedOff);
-    }
+  {
+    UpdateMidi = false;
+    if (MidiInOn)
+      MidiInBmp->SetBitmap(*LedOn);
+    else
+      MidiInBmp->SetBitmap(*LedOff);
+  }
   if (UpdateVolume)
-    {
-      UpdateVolume = false;
-      VolumeFader->SetValue((int)(Volume * 100.f)); 
-    }      
+  {
+    UpdateVolume = false;
+    VolumeFader->SetValue((int)(Volume * 100.f)); 
+  }      
 
   Mutex.Unlock();
 }
@@ -780,7 +849,7 @@ void AkaiSampler::OnSampleButton(wxCommandEvent &event)
     bteffect->SetOff();
   if (!btsample->GetOn())
     btsample->SetOn();
-  
+
   PlugPanel->ShowPlugin(Samples);
 }
 
@@ -788,27 +857,25 @@ void AkaiSampler::OnKgroupButton(wxCommandEvent &event)
 {
   ASListEntry *e = Samples->List->GetSelected();
   if (e)
+  {
+    ASamplerSample *ass = (ASamplerSample *)(e->GetEntry());
+    ASKeygroupEditor *aske = ass->GetKgEditor();
+    ASamplerKeygroup *askg = ass->GetKeygroup();
+    if (!aske)
     {
-      ASamplerSample *ass = (ASamplerSample *)(e->GetEntry());
-      ASKeygroupEditor *aske = ass->GetKgEditor();
-      ASamplerKeygroup *askg = ass->GetKeygroup();
-      if (!aske)
-	{
-	  aske = new ASKeygroupEditor(this, wxString(_T("Keygroup editor for ")) + e->GetName());
-	  aske->SetSample(ass);
-	  ass->SetKgEditor(aske);
-	  	  
-	  PlugPanel->AddPlug(aske);
-	}
-      if (btsample->GetOn())
-	btsample->SetOff();
-      if (bteffect->GetOn())
-	bteffect->SetOff();
-      if (!btkgroup->GetOn())
-	btkgroup->SetOn();
-
-      PlugPanel->ShowPlugin(aske);
+      aske = new ASKeygroupEditor(this, wxString(_T("Keygroup editor for ")) + e->GetName());
+      aske->SetSample(ass);
+      ass->SetKgEditor(aske);
+      PlugPanel->AddPlug(aske);
     }
+    if (btsample->GetOn())
+      btsample->SetOff();
+    if (bteffect->GetOn())
+      bteffect->SetOff();
+    if (!btkgroup->GetOn())
+      btkgroup->SetOn();
+    PlugPanel->ShowPlugin(aske);
+  }
   else
     btkgroup->SetOff();
 }
@@ -828,7 +895,7 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
       case 1:
         // Enveloppe
         for (vector<ASPlugin *>::iterator i = plugs.begin(); i != plugs.end(); i++)
-          if ((*i)->Name.Left(EFFECTSNAMES[0].Len()) == EFFECTSNAMES[0])
+          if ((*i)->GetType() == EFFECTSNAMES[0])
             count++;
         s << EFFECTSNAMES[0];
         s << " #";
@@ -840,7 +907,7 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
       case 2:
         // Looping
         for (vector<ASPlugin *>::iterator i = plugs.begin(); i != plugs.end(); i++)
-          if ((*i)->Name.Left(EFFECTSNAMES[1].Len()) == EFFECTSNAMES[1])
+          if ((*i)->GetType() == EFFECTSNAMES[1])
             count++;
         s << EFFECTSNAMES[1];
         s << " #";
@@ -860,9 +927,9 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
 
       bteffect->SetOn();
       if (btkgroup->GetOn())
-	btkgroup->SetOff();
+        btkgroup->SetOff();
       if (btsample->GetOn())
-	btsample->SetOff();
+        btsample->SetOff();
 
       PlugPanel->ShowPlugin(p);
     }
@@ -876,7 +943,7 @@ void AkaiSampler::OnSelectEffect(wxCommandEvent &event)
   {
     ASamplerSample *ass = (ASamplerSample *)(e->GetEntry());
     vector <ASPlugin *> p = ass->GetEffects();
-    
+
     bteffect->SetOn();
     if (btkgroup->GetOn())
       btkgroup->SetOff();

@@ -2,7 +2,6 @@
 #define _ASPLUGIN_H_
 
 #include <wx/wx.h>
-#include "Plugin.h"
 
 class ASPlugin : public wxPanel
 {
@@ -13,14 +12,16 @@ class ASPlugin : public wxPanel
     wxString Name;
     virtual void OnAttach(wxWindow *);
     virtual void OnDetach(wxWindow *);
-    void SetPlugin(Plugin *p) { this->p = p; }
     void SetSample(class ASamplerSample *ass) { this->ass = ass; }
     virtual void Process(float **buf, int nbchan, int pos, long len);
-    static const wxString GetFXName() { return "ASPlugin"; }
+    static wxString GetFXName() { return "ASPlugin"; }
+    wxString GetType() { return type; }
+    virtual long Save(int fd) { return 0; }
+    virtual void Load(int fd, long len) { return ; }
   protected:
-    Plugin *p;
     class ASamplerSample *ass;
     class AkaiSampler *as;
+    wxString type;
 };
 
 #endif
