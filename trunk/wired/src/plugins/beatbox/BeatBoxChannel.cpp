@@ -544,6 +544,7 @@ void BeatBoxChannel::UnMute(void)
 
 void BeatBoxChannel::SetWaveFile(WaveFile* wave)
 {
+  WaveFile* tmp = 0x0;
   wxFileName fn(wave->Filename.c_str());
   wxString st = fn.GetName();
   st.Truncate(5);
@@ -551,11 +552,12 @@ void BeatBoxChannel::SetWaveFile(WaveFile* wave)
   
   
   PatternMutex->Lock();
-  if (Wave)
-    delete Wave;
+  tmp = Wave;//delete Wave;
   Wave = wave;
   PatternMutex->Unlock();
-  
+  if (tmp)
+    delete tmp;
+
   wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
   Data[1] = ACT_SETWAVE;
   event.SetClientData((void*)Data);

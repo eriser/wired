@@ -7,6 +7,7 @@
 #include "WaveFile.h"
 #include "WaveEnv.h"
 
+#define DEC		3
 
 #define RULER_HEIGHT	16
 #define TRACK_HEIGHT	100
@@ -75,6 +76,11 @@ class BeatBoxScrollView : public wxScrolledWindow
   
   void OnPaint(wxPaintEvent& event);
   void OnLeftDown(wxMouseEvent& event);
+  void OnLeftUp(wxMouseEvent& event);
+  void OnMotion(wxMouseEvent& event);
+  
+  void SelectNote(BeatNote* note);
+  list<BeatNote*> SelectedNotes;
  protected:
   BeatBoxView* ViewPtr;
 DECLARE_EVENT_TABLE()
