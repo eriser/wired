@@ -38,7 +38,7 @@ void cClipBoard::Copy (WaveFile& wave, int from, int size_of_copy)
 	    from = from + size_of_copy;
 	    size_of_copy = -size_of_copy;  
 	  }
-	
+	  
 	sizec = size_of_copy;
 
 	// buffer destine a recevoir les donnees a copier
@@ -84,10 +84,10 @@ void cClipBoard::Cut (WaveFile& wave, int from, int size_of_cut)
 	    size_of_cut = -size_of_cut;  
 	  }
    
-
-	// Verifie qu'on est en mode read/write
+  	// Verifie qu'on est en mode read/write
 	if ( wave.GetOpenMode() != rwrite )
 		throw cException ("File opened in read only mode");
+
 
 	// buffer destine a recevoir les donnees a copier
 	float * rw_buffer = new float [wave.GetNumberOfChannels() * WAVE_TEMP_SIZE];
@@ -133,9 +133,8 @@ void cClipBoard::Cut (WaveFile& wave, int from, int size_of_cut)
 void cClipBoard::Paste (WaveFile& wave, int to)
 {
    long		size_paste;
-
-  cout << "[cClipBoard] - Paste" << endl;
-
+   
+	  
   if ( wave.GetOpenMode() != rwrite )
 	throw cException ("File opened in read only mode");
 
@@ -143,7 +142,7 @@ void cClipBoard::Paste (WaveFile& wave, int to)
 	throw cException ("Paste : Nothing to paste");
 	
   size_paste = sizec;
-  cout << "[cClipBoard] - Paste : " << GetNumberOfFrames() << " frames to paste" << endl;
+ // cout << "[cClipBoard] - Paste : " << GetNumberOfFrames() << " frames to paste" << endl;
 	
   int size_of_paste = GetNumberOfFrames();
 
