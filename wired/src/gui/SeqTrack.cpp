@@ -1,6 +1,7 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License
 
+#include <math.h>
 #include "SeqTrack.h"
 #include "MainWindow.h"
 #include "SequencerGui.h"
@@ -261,11 +262,18 @@ void					SeqTrack::OnMotion(wxMouseEvent &e)
 
   if (Selected && e.Dragging())
     {
-//       printf("xstrafe %d ystrafe %d | %d %d | %d %d\n", e.m_x - m_click.x, e.m_y - m_click.y
-// 	     , e.m_x, e.m_y, e.GetPosition().x, e.GetPosition().y);
       z = ((e.m_y - m_click.y) / (long) (TRACK_HEIGHT * SeqPanel->VertZoomFactor));
       if (z != 0)
 	SeqPanel->ChangeSelectedTrackIndex(z);
+      /*
+	if (z < 0)
+	if (GetPosition().y < SeqPanel->SeqView->GetYScroll())
+	SeqPanel->ScrollTrackList(z);
+	else
+	if (z > 0)
+	if (GetPosition().y >= (SeqPanel->SeqView->GetYScroll() + SeqPanel->TrackView->GetClientSize().y - TRACK_HEIGHT))
+	SeqPanel->ScrollTrackList(z);
+      */
     }
 }
 

@@ -18,23 +18,23 @@
 ** et une ligne verticale L dans le sequenceur.
 */
 
-class SequencerGui;
-class Cursor;
-class ColoredLine;
+class					SequencerGui;
+class					Cursor;
+class					ColoredLine;
 
-class CursorH : public wxWindow
+class					CursorH : public wxWindow
 {
-  friend class		Cursor;
-  friend class		ColoredLine;
-  Cursor		*c;
-  wxPoint		m_click;
-  wxString		Name;
+  friend class				Cursor;
+  friend class				ColoredLine;
+  Cursor				*c;
+  wxPoint				m_click;
+  wxString				Name;
 
  protected:
-  virtual void		OnMouseEvent(wxMouseEvent &e);
-  virtual void		OnClick(wxMouseEvent &e);
-  virtual void		OnClickUp(wxMouseEvent &e);
-  virtual void		OnPaint(wxPaintEvent &e);
+  virtual void				OnMouseEvent(wxMouseEvent &e);
+  virtual void				OnClick(wxMouseEvent &e);
+  virtual void				OnClickUp(wxMouseEvent &e);
+  virtual void				OnPaint(wxPaintEvent &e);
   
  public:
   CursorH(wxWindow *parent, wxWindowID id, const wxPoint &pos,
@@ -43,23 +43,22 @@ class CursorH : public wxWindow
   DECLARE_EVENT_TABLE()
 };
 
-class			Cursor
+class					Cursor
 {
-  friend class		CursorH;
-  double		pos;
-  CursorH		*H;
-  ColoredLine		*L;
-  SequencerGui		*SeqGUI;
+  friend class				CursorH;
+  double				pos;
+  CursorH				*H;
+  ColoredLine				*L;
+  SequencerGui				*SeqGUI;
   
  public:
-  
   Cursor(char name, int id, double initpos, Ruler *R, SequencerGui *S, 
 	 wxColour cH, wxColour cL);
   ~Cursor();
-  void			SetPos(double newpos);
-  double		GetPos();
-  void			PutOnTop();
-  void			ReSize();
+  void					SetPos(double newpos);
+  double				GetPos();
+  void					PutOnTop();
+  void					ReSize();
 };
 
 

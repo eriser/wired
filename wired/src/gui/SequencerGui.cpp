@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <iostream>
+#include "AccelCenter.h"
 #include "SequencerGui.h"
 #include "Track.h"
 #include "Sequencer.h"
@@ -48,11 +49,14 @@ SequencerView::SequencerView(wxWindow *parent, const wxPoint &pos,
   : wxScrolledWindow(parent, -1, pos, size, wxSUNKEN_BORDER)
 {
   TheZone = new SelectionZone(this);
+  HAxl = new AccelCenter(ACCEL_TYPE_DEFAULT);
+  VAxl = new AccelCenter(ACCEL_TYPE_DEFAULT);
 }
 
 SequencerView::~SequencerView()
 {
-
+  delete (HAxl);
+  delete (VAxl);
 }
 
 void					SequencerView::OnClick(wxMouseEvent &e)
@@ -138,6 +142,68 @@ void					SequencerView::OnPaint(wxPaintEvent &event)
   DrawMeasures();
 }
 
+void					SequencerView::AutoScroll(double xmove, double ymove)
+{
+  if (xmove)
+    AutoXScroll(xmove);
+  if (ymove)
+    AutoYScroll(ymove);
+}
+
+void					SequencerView::AutoXScroll(double xmove)
+{
+}
+
+void					SequencerView::AutoXScrollBackward(long accel_type)
+{
+  long					x;
+  
+  HAxl->SetAccelType(accel_type);
+  SeqPanel->HorizScrollBar->SetThumbPosition(((x = SeqPanel->HorizScrollBar->GetThumbPosition()
+					       - (long) floor(HAxl->ForwardAccel())) < 0) ? 0 : x);
+  SeqPanel->AdjustHScrolling();
+}
+
+void					SequencerView::AutoXScrollForward(long accel_type)
+{
+  long					x;
+  
+  HAxl->SetAccelType(accel_type);
+  if ((x = (long) floor(HAxl->ForwardAccel()) + SeqPanel->HorizScrollBar->GetThumbPosition())
+      < (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH))
+    SeqPanel->HorizScrollBar->SetThumbPosition(x);
+  else
+    {
+      Seq->EndPos += floor(HAxl->GetValue()) * Seq->EndPos / (double) SeqPanel->HorizScrollBar->GetRange();
+      SeqPanel->EndCursor->SetPos(Seq->EndPos);
+      SeqPanel->SetScrolling();
+      SeqPanel->RedrawTrackLines();
+      SeqPanel->HorizScrollBar->SetThumbPosition(SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH);
+    }
+  SeqPanel->AdjustHScrolling();
+}
+
+void					SequencerView::AutoXScrollReset()
+{
+  HAxl->Reset();
+}
+
+void					SequencerView::AutoYScroll(double ymove)
+{
+}
+
+void					SequencerView::AutoYScrollBackward(long accel_type)
+{
+}
+
+void					SequencerView::AutoYScrollForward(long accel_type)
+{
+}
+
+void					SequencerView::AutoYScrollReset()
+{
+  VAxl->Reset();
+}
 void					SequencerView::SetXScrollValue(long X)
 {
   if (X >= 0)
@@ -377,7 +443,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
 
 SequencerGui::~SequencerGui()
 {
-
 }
 
 Track					*SequencerGui::AddTrack(bool is_audio)
@@ -389,7 +454,7 @@ Track					*SequencerGui::AddTrack(bool is_audio)
 
   yy = SeqView->GetTotalHeight() - (long) floor(CurrentYScrollPos);
   wxPoint p(0, yy);
-  wxSize  s(TRACK_WIDTH, (long)(TRACK_HEIGHT * VertZoomFactor));
+  wxSize  s(TRACK_WIDTH, (long) floor(TRACK_HEIGHT * VertZoomFactor));
   //  printf("adding SEQTRACK %d with Y=%d\n", Seq->Tracks.size() + 1, yy);
   n1 = new SeqTrack(Seq->Tracks.size() + 1, TrackView, p, s, is_audio);
   //  printf("adding SEQTRACK PATTERN\n");
@@ -474,13 +539,6 @@ void					SequencerGui::RedrawEditedPatterns(vector<MidiEvent *> *e)
 	(*p)->Update();
 }
 
-/*
-void					SequencerGui::RedrawEditedMidiPatterns()
-{
-  
-}
-*/
-
 void					SequencerGui::SetScrolling()
 {
   long					z;
@@ -490,17 +548,17 @@ void					SequencerGui::SetScrolling()
     SeqView->SetTotalHeight(z);
   if ((z = (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)) > 0)
     VertScrollBar->SetScrollbar((VertScrollBar->GetThumbPosition() >= z)
-				? z : VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, z + VSCROLL_THUMB_WIDTH, 1, true);
+				? z : VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, z + VSCROLL_THUMB_WIDTH, 42, true);
   else
-    VertScrollBar->SetScrollbar(0, VSCROLL_THUMB_WIDTH, VSCROLL_THUMB_WIDTH, 1, true);
+    VertScrollBar->SetScrollbar(0, VSCROLL_THUMB_WIDTH, VSCROLL_THUMB_WIDTH, 42, true);
   SeqView->SetTotalWidth((unsigned long) (z = (long) floor(Seq->EndPos * MEASURE_WIDTH * HoriZoomFactor)));
   if (z < (SeqView->GetXScroll() + SeqView->GetClientSize().x))
     SeqView->SetTotalWidth(z);
   if ((z = (SeqView->GetTotalWidth() - SeqView->GetClientSize().x)) > 0)
     HorizScrollBar->SetScrollbar((HorizScrollBar->GetThumbPosition() >= z)
-				 ? z : HorizScrollBar->GetThumbPosition(), HSCROLL_THUMB_WIDTH, z + HSCROLL_THUMB_WIDTH, 1, true);
+				 ? z : HorizScrollBar->GetThumbPosition(), HSCROLL_THUMB_WIDTH, z + HSCROLL_THUMB_WIDTH, 42, true);
   else
-    HorizScrollBar->SetScrollbar(0, HSCROLL_THUMB_WIDTH, HSCROLL_THUMB_WIDTH, 1, true);
+    HorizScrollBar->SetScrollbar(0, HSCROLL_THUMB_WIDTH, HSCROLL_THUMB_WIDTH, 42, true);
 }
 
 void					SequencerGui::AdjustHScrolling()
@@ -688,6 +746,26 @@ void					SequencerGui::ChangeSelectedTrackIndex(long trackindexdelta)
     (*i)->UpdateIndex(z++);
   UpdateTracks();
   SeqMutex.Unlock();
+}
+
+void					SequencerGui::ScrollTrackList(long track_delta)
+{
+  long					z;
+  long					h;
+  
+  z = SeqView->GetYScroll() + track_delta * (h = (long) floor(TRACK_HEIGHT * VertZoomFactor));
+  printf("TRACK DELTA %d Z %d YS %d TH %d CH %d TTH %d\n", track_delta, z, SeqView->GetYScroll(), h, SeqView->GetClientSize().y, SeqView->GetTotalHeight());
+  if (track_delta > 0)
+    //    VertScrollBar->SetThumbPosition((z > SeqView->GetTotalHeight() - h) ? SeqView->GetTotalHeight() : z + h);
+    {
+      z += SeqView->GetClientSize().y;
+      printf("THUMBPOS %d\n", VertScrollBar->GetThumbPosition());
+      VertScrollBar->SetThumbPosition((z > SeqView->GetTotalHeight() - h) ? SeqView->GetTotalHeight() :
+				      VertScrollBar->GetThumbPosition() + z);
+    }
+  else
+    if (track_delta < 0)
+      VertScrollBar->SetThumbPosition((z > VertScrollBar->GetThumbPosition()) ? 0 : VertScrollBar->GetThumbPosition() + z);
   SetScrolling();
   AdjustVScrolling();
 }
@@ -972,21 +1050,21 @@ void					SequencerGui::OnPlayCursorMove(wxCommandEvent &event)
 
 void					SequencerGui::OnBeginLCursorMove(wxCommandEvent &event)
 {
-  wxMutexLocker m(SeqMutex);
+  wxMutexLocker				m(SeqMutex);
 
   Seq->BeginLoopPos = BeginLoopCursor->GetPos();
 }
 
 void					SequencerGui::OnEndLCursorMove(wxCommandEvent &event)
 {
-  wxMutexLocker m(SeqMutex);
+  wxMutexLocker				m(SeqMutex);
 
   Seq->EndLoopPos = EndLoopCursor->GetPos();
 }
 
 void					SequencerGui::OnEndCursorMove(wxCommandEvent &event)
 {
-  wxMutexLocker m(SeqMutex);
+  wxMutexLocker				m(SeqMutex);
 
   Seq->EndPos = EndCursor->GetPos();
 }
