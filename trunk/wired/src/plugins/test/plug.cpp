@@ -165,7 +165,7 @@ bool TestPlugin::IsInstrument()
 
 bool TestPlugin::IsAudio()
 {
-  return (true);
+  return (false);
 }
 
 bool TestPlugin::IsMidi()

@@ -128,12 +128,12 @@ bool AkaiSampler::IsInstrument()
 
 bool AkaiSampler::IsAudio()
 {
-  return TRUE;
+  return false;
 }
 
 bool AkaiSampler::IsMidi()
 {
-  return TRUE;
+  return true;
 }
 
 void AkaiSampler::Load(int fd, long size)
