@@ -97,7 +97,7 @@ SeqTrack::~SeqTrack()
     delete menu;
 }
 
-void SeqTrack::OnConnectToHelp(wxMouseEvent &event)
+void					SeqTrack::OnConnectToHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
@@ -106,7 +106,7 @@ void SeqTrack::OnConnectToHelp(wxMouseEvent &event)
     }
 }
 
-void SeqTrack::OnDeviceHelp(wxMouseEvent &event)
+void					SeqTrack::OnDeviceHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
@@ -116,10 +116,10 @@ void SeqTrack::OnDeviceHelp(wxMouseEvent &event)
 }
 
 
-void SeqTrack::FillChoices()
+void					SeqTrack::FillChoices()
 {
-  wxString s;
-  vector<long>::iterator i;
+  wxString				s;
+  vector<long>::iterator		i;
 
   DeviceBox->Clear();
   DeviceBox->Append(wxString("None"));
@@ -142,7 +142,7 @@ void SeqTrack::FillChoices()
     }
 }
 
-void SeqTrack::OnConnectTo(wxCommandEvent &event)
+void					SeqTrack::OnConnectTo(wxCommandEvent &event)
 {
   OnClick(event);
   if (RackPanel->RackTracks.size() <= 0)
@@ -155,9 +155,9 @@ void SeqTrack::OnConnectTo(wxCommandEvent &event)
 	  (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&SeqTrack::OnConnectSelected);
 
-  list<RackTrack *>::iterator i;
-  list<Plugin *>::iterator j;
-  long k = 1000;
+  list<RackTrack *>::iterator		i;
+  list<Plugin *>::iterator		j;
+  long					k = 1000;
 
   for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)
     for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++, k++)
@@ -175,7 +175,7 @@ void SeqTrack::OnConnectTo(wxCommandEvent &event)
   PopupMenu(menu, p.x, p.y);
 }
 
-void SeqTrack::ConnectTo(Plugin *plug)
+void					SeqTrack::ConnectTo(Plugin *plug)
 {
   if (!plug)
     {
@@ -197,11 +197,11 @@ void SeqTrack::ConnectTo(Plugin *plug)
   Image->Refresh();
 }
 
-void SeqTrack::OnConnectSelected(wxCommandEvent &event)
+void					SeqTrack::OnConnectSelected(wxCommandEvent &event)
 {
-  list<RackTrack *>::iterator i;
-  list<Plugin *>::iterator j;
-  long k = 1000;
+  list<RackTrack *>::iterator		i;
+  list<Plugin *>::iterator		j;
+  long					k = 1000;
 
   wxMutexLocker m(SeqMutex);
   if (event.GetId() == NONE_SELECTED_ID)
@@ -220,11 +220,11 @@ void SeqTrack::OnConnectSelected(wxCommandEvent &event)
       }
 }
 
-void SeqTrack::OnPaint(wxPaintEvent &WXUNUSED(event))
+void					SeqTrack::OnPaint(wxPaintEvent &WXUNUSED(event))
 {
-  wxPaintDC dc(this);
-  wxSize s;
-#define BORDER 3
+  wxPaintDC				dc(this);
+  wxSize s;	
+#define BORDER				(3)
 
   PrepareDC(dc);
   s = GetSize();
@@ -240,45 +240,62 @@ void SeqTrack::OnPaint(wxPaintEvent &WXUNUSED(event))
   dc.DrawRoundedRectangle(1, 1, s.x - 3 - BORDER, s.y - 2, 3);
 }
 
-void SeqTrack::OnClick(wxCommandEvent &WXUNUSED(event))
+void					SeqTrack::OnClick(wxCommandEvent &WXUNUSED(event))
 {
+  printf("what 4 funciton ?\n");
   SeqPanel->UnselectTracks();
   SetSelected(true);
 }
 
-void SeqTrack::OnMouseClick(wxMouseEvent &WXUNUSED(event))
+void					SeqTrack::OnMouseClick(wxMouseEvent &e)
 {
+  m_click.x = e.m_x;
+  m_click.y = e.m_y;
   SeqPanel->UnselectTracks();
   SetSelected(true);
 }
 
-void SeqTrack::SetSelected(bool sel)
+void					SeqTrack::OnMotion(wxMouseEvent &e)
+{
+  long					z;
+
+  if (Selected && e.Dragging())
+    {
+//       printf("xstrafe %d ystrafe %d | %d %d | %d %d\n", e.m_x - m_click.x, e.m_y - m_click.y
+// 	     , e.m_x, e.m_y, e.GetPosition().x, e.GetPosition().y);
+      z = ((e.m_y - m_click.y) / (long) (TRACK_HEIGHT * SeqPanel->VertZoomFactor));
+      if (z != 0)
+	SeqPanel->ChangeSelectedTrackIndex(z);
+    }
+}
+
+void					SeqTrack::SetSelected(bool sel)
 {
   Selected = sel;
 
   Refresh();
 }
 
-void SeqTrack::OnNameChange(wxCommandEvent& event)
+void					SeqTrack::OnNameChange(wxCommandEvent& event)
 {
   if (ChanGui)
     ChanGui->SetLabel(Text->GetValue());
 }
 
-void SeqTrack::SetName(const wxString& name)
+void					SeqTrack::SetName(const wxString& name)
 {
   Text->SetValue(name);
   if (ChanGui)
     ChanGui->SetLabel(name);
 }
 
-void SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
+void					SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
 {
-  int k = 0;
+  int					k = 0;
 
   if (IsAudio)
     {
-      vector<long>::iterator i;
+      vector<long>::iterator		i;
 
       for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end(); 
 	   i++, k++)
@@ -290,7 +307,7 @@ void SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
     }
   else
     {
-      vector<MidiInDevice *>::iterator i;
+      vector<MidiInDevice *>::iterator	i;
 
       for (i = MidiEngine->MidiInDev.begin(); i != MidiEngine->MidiInDev.end(); i++, k++)
 	if (k == DeviceBox->GetSelection() - 1)
@@ -301,7 +318,7 @@ void SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void SeqTrack::OnRecordClick(wxCommandEvent &WXUNUSED(event))
+void					SeqTrack::OnRecordClick(wxCommandEvent &WXUNUSED(event))
 {
   if (RecBtn->GetOn())
     {
@@ -317,7 +334,7 @@ void SeqTrack::OnRecordClick(wxCommandEvent &WXUNUSED(event))
     Record = false;
 }
 
-void SeqTrack::OnMuteClick(wxCommandEvent &WXUNUSED(event))
+void					SeqTrack::OnMuteClick(wxCommandEvent &WXUNUSED(event))
 {
   if (MuteBtn->GetOn())
     Mute = true;
@@ -325,12 +342,12 @@ void SeqTrack::OnMuteClick(wxCommandEvent &WXUNUSED(event))
     Mute = false;
 }
  
-void SeqTrack::SetVuValue(long value)
+void					SeqTrack::SetVuValue(long value)
 {
   Vu->SetValue(value);
 }
 
-void SeqTrack::SetRecording(bool rec)
+void					SeqTrack::SetRecording(bool rec)
 {
   Record = rec;
   if (rec)
@@ -339,7 +356,7 @@ void SeqTrack::SetRecording(bool rec)
     RecBtn->SetOff();
 }
 
-void SeqTrack::SetMute(bool mut)
+void					SeqTrack::SetMute(bool mut)
 {
   Mute = mut;
   if (mut)
@@ -348,15 +365,14 @@ void SeqTrack::SetMute(bool mut)
     MuteBtn->SetOff();
 }
 
-void SeqTrack::SetDeviceId(long devid)
+void					SeqTrack::SetDeviceId(long devid)
 {
-  int k = 1; // + 1 for the "None" parameter
+  int					k = 1; // + 1 for the "None" parameter
 
   DeviceId = devid; 
-
   if (IsAudio)
     {
-      vector<long>::iterator i;
+      vector<long>::iterator		i;
 
       for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end(); 
 	   i++, k++)
@@ -368,7 +384,7 @@ void SeqTrack::SetDeviceId(long devid)
     }
   else
     {
-      vector<MidiInDevice *>::iterator i;
+      vector<MidiInDevice *>::iterator	i;
 
       for (i = MidiEngine->MidiInDev.begin(); i != MidiEngine->MidiInDev.end(); i++, k++)
 	if ((*i)->id == devid)
@@ -386,6 +402,7 @@ BEGIN_EVENT_TABLE(SeqTrack, wxControl)
   EVT_TEXT_ENTER(SeqTrack_OnNameChange, SeqTrack::OnNameChange)
   EVT_CHOICE(SeqTrack_DeviceChoice, SeqTrack::OnDeviceChoice)
   EVT_PAINT(SeqTrack::OnPaint)
+  EVT_MOTION(SeqTrack::OnMotion)
   EVT_LEFT_DOWN(SeqTrack::OnMouseClick)
   EVT_BUTTON(SeqTrack_Record, SeqTrack::OnRecordClick)
   EVT_BUTTON(SeqTrack_Mute, SeqTrack::OnMuteClick)

@@ -1,18 +1,18 @@
 #ifndef __TRACK_H__
 #define __TRACK_H__
 
-#define IS_MIDI_TRACK			0x0
-#define IS_AUDIO_TRACK		      	0x1
-#define MAX_AUTO_COLOURS		16		
+#define IS_MIDI_TRACK			(0x0)
+#define IS_AUDIO_TRACK		      	(0x1)
+#define MAX_AUTO_COLOURS		(16)		
 
-class WaveFile;
-class MidiTrack;
-class Pattern;
-class AudioPattern;
-class MidiPattern;
-class SeqTrack;
-class SeqTrackPattern;
-class Channel;
+class					WaveFile;
+class					MidiTrack;
+class					Pattern;
+class					AudioPattern;
+class					MidiPattern;
+class					SeqTrack;
+class					SeqTrackPattern;
+class					Channel;
 
 class Track
 {

@@ -38,7 +38,7 @@ class					SeqTrack: public wxControl
   void					ConnectTo(Plugin *plug);
   void					OnPaint(wxPaintEvent &event);
   void					OnClick(wxCommandEvent &event);
-  void					OnMouseClick(wxMouseEvent &event);
+  void					OnMouseClick(wxMouseEvent &e);
   void					OnDeviceChoice(wxCommandEvent &event);
   void					FillChoices();
   void					OnRecordClick(wxCommandEvent &event);
@@ -66,6 +66,8 @@ class					SeqTrack: public wxControl
   RackTrack				*ConnectedRackTrack;
 
  protected:
+  void					OnMotion(wxMouseEvent &e);
+  
   ChoiceButton				*Image;
   wxMenu				*menu;
   DownButton				*RecBtn;
@@ -73,6 +75,7 @@ class					SeqTrack: public wxControl
   wxChoice				*DeviceBox;
   VUMCtrl				*Vu;
   bool					Selected;
+  wxPoint				m_click;
 
   DECLARE_EVENT_TABLE()
 };
