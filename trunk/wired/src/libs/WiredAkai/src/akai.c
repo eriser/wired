@@ -376,7 +376,7 @@ t_akaiSample		*akaiGetSample(int fd, long ofs, long size)
     (((unsigned char)buffer[0x31]) << 8);
   sample->rate = (unsigned char)buffer[0x8a] |
     (((unsigned char)buffer[0x8b]) << 8);
-  sample->buffer = (short*)buffer + 150;
+  sample->buffer = (short*)((char *)buffer + 150);
 #ifdef WORDS_BIGENDIAN
   for (i = 0; i < sample->size; i++) 
     sample->buffer[i] = bswap_16(sample->buffer[i]);

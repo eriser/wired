@@ -21,25 +21,8 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, WaveFile *w, unsigned long
   this->loopend = w->GetNumberOfFrames();
 }
 
-void dumpAkai(t_akaiSample *smp)
-{
-  cout << "Sample name : " << smp->name << endl;
-  cout << "Sample tune : " << smp->tune << endl;
-  cout << "Sample size : " << smp->size << endl;
-  cout << "Sample start : " << smp->start << endl;
-  cout << "Sample end : " << smp->end << endl;
-  cout << "Sample loop_start : " << smp->loop_start << endl;
-  cout << "Sample loop_end : " << smp->loop_len << endl;
-  cout << "Sample loop_times : " << smp->loop_times << endl;
-  cout << "Sample rate : " << smp->rate << endl;
-  cout << "Sample base_note : " << smp->base_note << endl;
-  cout << "Sample channels : " << smp->channels << endl;
-}
-
 ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akaiSample *smpR, wxString AkaiPrefix, unsigned long id)
 {
-  dumpAkai(smpL);
-  dumpAkai(smpR);
   if (smpR != NULL)
   {
     if (smpL->rate != smpR->rate)
@@ -52,17 +35,17 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akai
     this->w = new WaveFile(data, smpL->size + smpR->size, 2, smpL->rate);
     w->Filename = AkaiPrefix + smpL->name + "/" + smpR->name;
     free(data);
-    this->Position = smpL->start / 2;
-    this->loopstart = smpL->loop_len / 2;
-    this->loopend = smpL->loop_start / 2;
+    this->Position = smpL->start;
+    this->loopstart = smpL->loop_len;
+    this->loopend = smpL->loop_start;
   }
   else
   {
-    this->w = new WaveFile(smpL->buffer, smpL->end, 2, smpL->rate);
+    this->w = new WaveFile(smpL->buffer, smpL->size, 2, smpL->rate);
     w->Filename = AkaiPrefix + smpL->name;
-    this->Position = smpL->start / 2;
-    this->loopstart = smpL->loop_len / 2;
-    this->loopend = smpL->loop_start / 2;
+    this->Position = smpL->start;
+    this->loopstart = smpL->loop_len;
+    this->loopend = smpL->loop_start;
   }
   this->askg = NULL;
   this->aske = NULL;
@@ -77,7 +60,6 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akai
     loopcount = -1;
   if (loopend > w->GetNumberOfFrames())
     loopend = w->GetNumberOfFrames();
-  cout << "[WiredSampler] AKAI Sample Loaded, loopcount= " << loopcount << " loopstart= " << loopstart << " loopend= " << loopend << endl;
   this->as = as;
 }
 
