@@ -6,6 +6,14 @@
 
 #include "WaveFile.h"
 
+
+typedef struct
+  {
+	long 			pos;
+	long 			width;
+	WaveFile		*wave;
+  } 				tClipBoard;
+
 class cClipBoard : public WaveFile
 {
 public:
