@@ -5,6 +5,7 @@
 #define __OPTIONPANEL_H__
 
 #include <wx/wx.h>
+#include <wx/string.h>
 #include "WaveFile.h"
 #include "EditMidi.h"
 #include "MixerGui.h"
@@ -71,13 +72,13 @@ class WiredFrame: public wxFrame
 class WiredTool
 {
  public:
-  WiredTool(string name, int type, wxWindow *panel);
+  WiredTool(wxString name, int type, wxWindow *panel);
   ~WiredTool();
 
   void				Attach();
   void				Detach();
 
-  string			Name;
+  wxString			Name;
   int				Type;
   wxWindow			*Panel;
 

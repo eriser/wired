@@ -5,10 +5,11 @@
 #include "EditMidi.h"
 #include "WaveEditor.h"
 #include "Colour.h"
+#include <wx/string.h>
 
 OptionPanel			*OptPanel;
 
-WiredTool::WiredTool(string name, int type, wxWindow *win)
+WiredTool::WiredTool(wxString name, int type, wxWindow *win)
 {
   Name = name;
   Type = type;
@@ -164,7 +165,7 @@ void				OptionPanel::AddPlugTool(Plugin *p)
   wxSize			sz(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT);
   
   m = p->CreateView(this, pt, sz);
-  tool = new WiredTool(p->Name, ID_TOOL_OTHER_OPTIONPANEL, m);  
+  tool = new WiredTool(wxString(p->Name.c_str()), ID_TOOL_OTHER_OPTIONPANEL, m);  
   tool->Data = p;
   ToolsList.push_back(tool);
   ShowTool(tool);

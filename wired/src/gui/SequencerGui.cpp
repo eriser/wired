@@ -106,7 +106,7 @@ void					SequencerView::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      HelpWin->Help->Load_Text("This is the Wired sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above for sequencer editing tools.");
+      HelpWin->Help->Load_Text("This is the WiReD sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above to choose one of the sequencer editing tools.");
     }
 }
 
@@ -523,7 +523,6 @@ void					SequencerGui::OnPaint(wxPaintEvent &event)
 
 void					SequencerGui::OnSize(wxSizeEvent &event)
 {
-  printf("SIZE WIDTH %d HEIGTH %d\n", GetSize().x, GetSize().y);
   Layout();
   SetScrolling();
   AdjustHScrolling();

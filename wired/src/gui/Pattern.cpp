@@ -6,6 +6,7 @@
 #include "SequencerGui.h"
 #include "OptionPanel.h"
 #include <math.h>
+#include <wx/font.h>
 
 Pattern::Pattern(double pos, double endpos, long trackindex) :
   wxWindow(SeqPanel->SeqView, -1, wxPoint(0, 0), wxSize(0, 0))
@@ -210,4 +211,23 @@ void					Pattern::OnMotion(wxMouseEvent &e)
       SeqMutex.Unlock();
     }
   
+}
+
+void					Pattern::DrawName(wxPaintDC &dc, wxSize s)
+{
+  long					x;
+  long					y;
+  long					w;
+  long					h;
+
+  dc.SetPen(PenColor);
+  dc.SetBrush(BrushColor);
+  dc.SetTextForeground(CL_PATTERN_NAME);
+  dc.SetFont(wxFont(PATTERN_NAME_HEIGHT - 2 * PATTERN_NAME_OFFSET, wxDEFAULT, wxNORMAL, wxNORMAL));
+  dc.GetTextExtent(Name, &w, &h);
+  //dc.SetBrush(*wxTRANSPARENT_BRUSH);
+  dc.DrawRectangle((x = s.x - (PATTERN_NAME_MARGINS + w + 4 * PATTERN_NAME_OFFSET)),
+		   (y = s.y - (PATTERN_NAME_MARGINS + h + 2 * PATTERN_NAME_OFFSET)),
+		   w + 4 * PATTERN_NAME_OFFSET, h + 2 * PATTERN_NAME_OFFSET);
+  dc.DrawText(Name, x + 2 * PATTERN_NAME_OFFSET, y + PATTERN_NAME_OFFSET);
 }

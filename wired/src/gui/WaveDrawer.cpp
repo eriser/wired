@@ -215,7 +215,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
 
 void					WaveDrawer::RedrawBitmap(wxSize s)
 {
-  long coeff;
+  long					coeff;
 
   coeff = s.y / 2;
   // Création de la bitmap
@@ -223,14 +223,11 @@ void					WaveDrawer::RedrawBitmap(wxSize s)
     delete Bmp;
   Bmp = new wxBitmap(s.x, s.y);
   memDC.SelectObject(*Bmp);
-
   memDC.SetPen(PenColor);
   memDC.SetBrush(BrushColor);
   memDC.DrawRectangle(0, 0, s.x, s.y);
   for (int i = 0; i < s.x; i++)
     memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
-  //  memDC.SetPen(*wxLIGHT_GREY_PEN);
-  //  memDC.DrawLine(0, coeff, s.x, coeff);
 }
 
 void					WaveDrawer::SetSize(wxSize s)
