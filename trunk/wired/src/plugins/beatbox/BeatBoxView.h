@@ -92,6 +92,7 @@ class BeatBoxScrollView : public wxScrolledWindow
   
   void ClearSelected(void);
   void SelectNote(BeatNote* note);
+  void DeSelectNote(BeatNote* note);
   void OnNewNote(wxCommandEvent& event);
   void OnDeleteNotes(wxCommandEvent& event);
   void OnCutNotes(wxCommandEvent& event);
@@ -110,6 +111,7 @@ class BeatBoxScrollView : public wxScrolledWindow
   list<BeatNote*> TmpNotes;
 
  protected:
+  bool CtrlDown;
   wxMenu* PopMenu;
   bool OnSelecting;
   long ClickPosX, ClickPosY, MotionPosX, MotionPosY;
