@@ -28,6 +28,7 @@ using namespace std;
 
 #define NUM_PATTERNS		8
 #define NUM_BANKS		5
+#define ID_VIEW_ACT		313131
 
 #define BEATBOX_BG		"plugins/beatbox/beatbox_bg.png"
 #define BEATBTN_UNCLICKED	"plugins/beatbox/beatbtn_unclicked.png"
@@ -62,8 +63,9 @@ using namespace std;
 #define BANK4			"plugins/beatbox/bank_knob_4.png"
 #define BANK5			"plugins/beatbox/bank_knob_5.png"
 
-#define STEPS_KNOB1		"plugins/beatbox/steps_knob.png"
+#define STEPS_KNOB1		"plugins/beatbox/steps_knob_3.png"
 #define STEPS_KNOB2		"plugins/beatbox/steps_knob_2.png"
+#define STEPS_KNOB3		"plugins/beatbox/steps_knob_1.png"
 
 #define SELECTOR_UP		SHOWOPT_UP
 #define SELECTOR_DO		SHOWOPT_DOWN
@@ -149,6 +151,7 @@ class WiredBeatBox : public Plugin
  protected:
   wxMutex		PatternMutex;
   BeatBoxView*		View;
+  void		OnViewAction(wxCommandEvent& event);
   
   //vars mutexed
   float			MLevel;
@@ -235,13 +238,21 @@ class WiredBeatBox : public Plugin
   void			OnPatternHelp(wxMouseEvent& event);
   void			OnMasterLevHelp(wxMouseEvent& event);
   void			OnChannelHelp(wxMouseEvent& event);
+  void			OnPositionHelp(wxMouseEvent& event);
+  void			OnSignatureHelp(wxMouseEvent& event);
+  void			OnStepsHelp(wxMouseEvent& event);
+  void			OnBankHelp(wxMouseEvent& event);
+  void			OnEditHelp(wxMouseEvent& event);
+  void			OnPatternsSelectionHelp(wxMouseEvent& event);
+  void			OnSaveLoadHelp(wxMouseEvent& event);
+
 
 DECLARE_EVENT_TABLE()
 };
 
 enum
   {
-    BB_ShowOpt = 1,
+    BB_ShowOpt = 10000,
     BB_OnMasterChange,
     BB_OnSigChoice,
     BB_OnPosChoice,

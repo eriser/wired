@@ -56,7 +56,7 @@ class BeatButton : public wxWindow
   void OnMotion(wxMouseEvent &event);
   void OnEnter(wxMouseEvent &event);
   void OnLeave(wxMouseEvent &event);
-  
+  void OnRightDownEvent(wxMouseEvent &event);
   void SetState(unsigned int state);
   unsigned int GetState() { return Data[ID_STATE]; }
  protected:
