@@ -53,4 +53,6 @@ libgui_a_SOURCES = 			\
 		WaveView.cpp		\
 		WaveView.h		\
 		WaveDrawer.cpp		\
-		WaveDrawer.h		
+		WaveDrawer.h		\
+		WaveEditorDrawer.cpp	\
+		WaveEditorDrawer.h	
