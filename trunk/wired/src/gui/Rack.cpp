@@ -57,7 +57,6 @@ Plugin *RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin *co
 	}
 	}*/
   Parent->CalcScrolledPosition(xpos, ypos, &xx, &yy);
-  yy -= Racks.size();
   startinfo.Pos = wxPoint(xx, yy);  
   startinfo.Size = wxSize(p->InitInfo.UnitsX * UNIT_W, p->InitInfo.UnitsY * UNIT_H); 
   plug = p->CreateRack(startinfo);
@@ -133,7 +132,7 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
   submenu = new wxMenu();
   instr_menu = new wxMenu();
   effects_menu  = new wxMenu();
-  
+
   menu->Append(ID_MENU_ADD, _T("Add"), submenu);
   submenu->Append(ID_INSTR_MENU, _T("&Instruments"), instr_menu);
   submenu->Append(ID_EFFECTS_MENU, _T("&Effects"), effects_menu);
@@ -143,7 +142,9 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
   menu->AppendSeparator();
   menu->Append(ID_MENU_DELETE, _T("Delete"));
   menu->Enable(ID_MENU_PASTE, false);
-  
+
+  AddPlugToMenu();
+
   Connect(ID_MENU_CUT, wxEVT_COMMAND_MENU_SELECTED, 
 	  (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&Rack::OnCutClick);
@@ -153,12 +154,11 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
   Connect(ID_MENU_PASTE, wxEVT_COMMAND_MENU_SELECTED, 
 	  (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&Rack::OnPasteClick);
-  
   Connect(ID_MENU_DELETE, wxEVT_COMMAND_MENU_SELECTED, 
 	  (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&Rack::OnDeleteClick);
   
- }
+}
 
 Rack::~Rack()
 {
@@ -389,7 +389,9 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
   new_y = 0;
   int tmp_x = 0;
   int tmp_y = 0;
-  //SeqMutex.Lock();
+  int x , y = 0;
+  int xx, yy = 0;
+
   if (event->GetEventType() == wxEVT_MOUSEWHEEL)
     {
       int x, y, y1, y2, y3;
@@ -417,9 +419,6 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
       plug->Move(wxPoint(tmp_x, tmp_y));
       WasDragging = true;
     }
-  //  SeqMutex.Unlock();
-
-  
   
    if(event->LeftDown())
      {
@@ -438,7 +437,6 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
    if(event->RightDown())
      {
        SetSelected(plug);
-       AddPlugToMenu();
        wxPoint p(event->GetPosition().x + plug->GetPosition().x, event->GetPosition().y + plug->GetPosition().y);
        PopupMenu(menu, p.x, p.y);
      }   
@@ -556,8 +554,6 @@ void Rack::UpdateUnitXSize()
 
 inline void Rack::OnDeleteClick()
 {
-  vector<RackTrack *>::iterator		i;
-  vector<Plugin *>::iterator		j;
   vector<PluginLoader *>::iterator	k;
   
   wxMutexLocker m(SeqMutex);
@@ -615,7 +611,7 @@ inline void Rack::OnCopyClick()
   fd_copy = open(file,  O_CREAT | O_TRUNC | O_RDWR, 0644);
   
   if(fd_copy < 0)
-     cout << "[RACKPANEL] Error creating tmp file"<< endl;
+     cout << "[RACKPANEL] Error creating tmp file" << endl;
    
   else{
     fd_size = copy_plug->Save(fd_copy);
@@ -625,11 +621,10 @@ inline void Rack::OnCopyClick()
 
 inline void Rack::OnPasteClick()
 {
-  list<RackTrack *>::iterator i;
-  list<Plugin *>::iterator j;
   vector<PluginLoader *>::iterator	k;
   Plugin				*tmp;
   PluginLoader				*p = 0x0;
+  vector<PluginLoader *>::iterator	l;
   
   for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
     if (COMPARE_IDS((*k)->InitInfo.UniqueId, copy_plug->InitInfo->UniqueId))
@@ -647,16 +642,15 @@ inline void Rack::OnPasteClick()
 	  cout << "[RACKPANEL] plugin pasted" <<endl;
 	}
       }       
-      
-      if(is_cut)
-	{
-	  cout << "CUTTTTTTTTTTTTTTTTTTTTT" << endl; 
-	  RemoveChild(copy_plug);
-	  (*k)->Destroy(copy_plug);
-	  DeleteRack(copy_plug);
-	}
-      
     }
+
+   if (is_cut && copy_plug)
+    {
+      //RemoveChild(copy_plug);
+      cout << "CUTTTTTTTTTTT" << endl;
+    }
+  
+
 }
 void Rack::HandleKeyEvent(Plugin *plug, wxKeyEvent *event)
 {
