@@ -123,8 +123,7 @@ void					MidiPattern::OnClick(wxMouseEvent &e)
 {
   Pattern::OnClick(e);
   if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
-    Split((double) ((SeqPanel->CurrentXScrollPos 
-		     + Pattern::GetMPosition().x + e.m_x)
+    Split((double) ((SeqPanel->CurrentXScrollPos + Pattern::GetMPosition().x + e.m_x)
 		    / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor)));
   else
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
@@ -140,60 +139,66 @@ void					MidiPattern::Split(double pos)
 {
   MidiPattern				*p;
   vector<MidiEvent *>::iterator		o;
-
+#define __DEBUG_
+  if ((Position < pos) && (pos < EndPosition))
+    {
+      SeqMutex.Lock();
 #ifdef __DEBUG__
-  cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
-  cout << "new pos: " << pos << endl;
+      cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
+      cout << "new pos: " << pos << endl;
 #endif
-  p = new MidiPattern(pos, EndPosition, TrackIndex);
+      p = new MidiPattern(pos, EndPosition, TrackIndex);
 #ifdef __DEBUG__
-  cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
+      cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
 #endif
-  SeqMutex.Lock();
-  Length = (EndPosition = pos) - Position;
-  SeqMutex.Unlock();
-  for (o = Events.begin(), pos -= Position; o != Events.end(); )
-    if ((*o)->Position >= pos)
-      {
-#ifdef __DEBUG__
-	cout << "Moving event (position " << (*o)->Position << ") to (" << (*o)->Position - pos << ")" << endl;
-#endif
-	if ((*o)->Position == (*o)->EndPosition)
+      Length = (EndPosition = pos) - Position;
+      for (o = Events.begin(), pos -= Position; o != Events.end(); )
+	if ((*o)->Position >= pos)
 	  {
 #ifdef __DEBUG__
-	    cout << "NOTE OFF DETECTED AT POS " << (*o)->Position << endl;
+	    cout << "Moving event (position " << (*o)->Position << ") to (" << (*o)->Position - pos << ")" << endl;
 #endif
-	    (*o)->Position = Length;
-	    (*o)->EndPosition = Length;
+	    if ((*o)->Position == (*o)->EndPosition)
+	      {
+#ifdef __DEBUG__
+		cout << "NOTE OFF DETECTED AT POS " << (*o)->Position << endl;
+#endif
+		(*o)->Position = Length;
+		(*o)->EndPosition = Length;
+	      }
+	    else
+	      {
+		(*o)->Position -= pos;
+		(*o)->EndPosition -= pos;
+		p->Events.push_back(*o);
+		Events.erase(o);
+	      }
 	  }
 	else
 	  {
-	    (*o)->Position -= pos;
-	    (*o)->EndPosition -= pos;
-	    p->Events.push_back(*o);
-	    Events.erase(o);
+	    if (((*o)->Position >= 0) && (*o)->EndPosition >= pos)
+	      (*o)->EndPosition = pos;
+	    o++;
 	  }
-      }
-    else
-      {
-	if (((*o)->Position >= 0) && (*o)->EndPosition >= pos)
-	  (*o)->EndPosition = pos;
-	o++;
-      }
-  p->SetDrawColour(PenColor);
-  p->DrawMidi();
-  if (IsSelected())
-    p->SetSelected(false);
-  p->SetCursor(GetCursor());
-  Update();
-  Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
+      p->SetDrawColour(PenColor);
+      p->DrawMidi();
+      if (IsSelected())
+	p->SetSelected(false);
+      p->SetCursor(GetCursor());
+      p->Update();
+      Update();
+      SeqMutex.Unlock();
+      Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
+    }
+  else
+    cout << "C QUOI CE DELIRE DE POS ?? " << pos << " MAIS mpos.x ? " << Pattern::GetMPosition().x << endl;
 }
 
 void					MidiPattern::OnDoubleClick(wxMouseEvent &e)
 {
-  Pattern::OnDoubleClick(e);
   OnClick(e);
-  OptPanel->ShowMidi(this);
+  if (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER)
+    OptPanel->ShowMidi(this);
 }
 
 void					MidiPattern::OnRightClick(wxMouseEvent &e)
