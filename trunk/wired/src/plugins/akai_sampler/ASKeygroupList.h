@@ -36,6 +36,7 @@ class ASamplerSample
       this->loopcount = -1;
       this->loopstart = 0;
       this->loopend = w->GetNumberOfFrames();
+      this->effect = NULL;
     }
 
     ASamplerSample(t_akaiSample *smp, wxString AkaiPrefix, unsigned long id = 0)
@@ -53,6 +54,7 @@ class ASamplerSample
       this->loopcount = smp->loop_times;
       this->loopstart = smp->loop_start / 2;
       this->loopend = smp->loop_len / 2;
+      this->effect = NULL;
     }
 
     void SetKeygroup(ASamplerKeygroup *askg) { this->askg = askg; }
@@ -66,6 +68,8 @@ class ASamplerSample
     void SetLoopCount(int count) { loopcount = count; }
     void SetLoopStart(long start) { loopstart = start; }
     void SetLoopEnd(long end) { loopend = end; }
+    void SetEffect(ASPlugin *effect) { this->effect = effect; }
+    ASPlugin *GetEffect() { return effect; }
   private:
     WaveFile *w;
     ASamplerKeygroup *askg;
@@ -74,6 +78,7 @@ class ASamplerSample
     long loopstart;
     long loopend;
     int loopcount;
+    ASPlugin *effect;
 };
 
 class ASamplerKey

@@ -23,8 +23,10 @@ ASPlug::ASPlug(wxString name, int type, wxWindow *win)
  
 ASPlug::~ASPlug()
 {
-  Panel->Destroy();
-  Frame->Destroy();
+  if (Panel)
+    Panel->Destroy();
+  if (Frame)
+    Frame->Destroy();
 }
 
 void				ASPlug::Attach()
