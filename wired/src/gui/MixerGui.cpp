@@ -1,0 +1,146 @@
+// Copyright (C) 2004 by Wired Team
+// Under the GNU General Public License
+
+#include <math.h>
+#include "MixerGui.h"
+#include "Colour.h"
+
+MixerGui *MixerPanel;
+
+BEGIN_EVENT_TABLE(MixerGui, wxScrolledWindow)
+END_EVENT_TABLE()
+
+MixerGui::MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size)
+  : wxScrolledWindow(parent, -1, pos, size, wxNO_BORDER)//SUNKEN_BORDER)
+{
+  SetScrollRate(10, 0);
+  
+  SetVirtualSize(300, 131);
+  
+  SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);
+
+  ImgFaderBg = new wxImage(string(WiredSettings->DataDir + string(FADERBG)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgFaderFg = new wxImage(string(WiredSettings->DataDir + string(FADERFG)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgLockUp = new wxImage(string(WiredSettings->DataDir + string(MIXERLOCKUP)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgLockDown = new wxImage(string(WiredSettings->DataDir + string(MIXERLOCKDOWN)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgHpUp = new wxImage(string(WiredSettings->DataDir + string(MIXERHPUP)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgHpDown = new wxImage(string(WiredSettings->DataDir + string(MIXERHPDOWN)).c_str(), wxBITMAP_TYPE_PNG );
+  /*
+    Adding Master Channel directly
+   */
+  
+  Channel *c = new Channel(true);
+  AddMasterChannel(c);
+  
+  // evenement refresh master volume
+  Connect(ID_MIXER_REFRESH, TYPE_MIXER_REFRESH, (wxObjectEventFunction)&MixerGui::OnMasterChange);
+}
+
+MixerGui::~MixerGui()
+{
+  
+}
+
+void MixerGui::OnMasterChange(wxCommandEvent &event)
+{
+  float l, r;
+  
+  MixMutex.Lock();
+  l = MasterLeft;
+  r = MasterRight;
+  MixMutex.Unlock();
+  
+  l = (20.f * static_cast<float>(log10( l )));
+  r =  (20.f * static_cast<float>(log10( r )));
+  
+  l = ((l + 96.f) / 96.f) * 100.f;
+  r = ((r + 96.f) / 96.f) * 100.f;
+  vuMasterLeft->SetValue(static_cast<long>(floor(l)));
+  vuMasterRight->SetValue(static_cast<long>(floor(r)));
+  
+  vector<ChannelGui*>::iterator cg = ChannelGuiVector.begin();
+  for (cg++; cg != ChannelGuiVector.end(); cg++)
+    (*cg)->UpdateScreen();
+}
+
+
+void MixerGui::AddMasterChannel(Channel *channel)
+{
+  channel->Label = "MASTER";
+  MasterChannelGui *gui = new MasterChannelGui(channel, ImgFaderBg,
+					       ImgFaderFg, this, -1, 
+					       wxPoint(0, 0),
+					       wxSize(CHANNELGUI_WIDTH, 
+						      CHANNELGUI_HEIGHT));
+  
+  SetVirtualSize(CHANNELGUI_WIDTH, CHANNELGUI_HEIGHT);
+  ChannelGuiVector.push_back(gui);
+  
+  vuMasterLeft = gui->VumLeft;
+  vuMasterRight = gui->VumRight;
+}
+
+void MixerGui::AddChannel(Channel *channel)
+{
+  int x =/* CHANNELGUI_WIDTH +*/ ChannelGuiVector.size() * CHANNELGUI_WIDTH;
+  ChannelGui *gui = new ChannelGui(channel, ImgFaderBg, ImgFaderFg, 
+				   this, -1, wxPoint(x, 0),
+				   wxSize(CHANNELGUI_WIDTH, 
+					  CHANNELGUI_HEIGHT));
+  
+  
+  ChannelGuiVector.push_back(gui);
+  UpdateChannelsPos();
+}
+
+void MixerGui::RemoveChannel(Channel *channel)
+{
+  for (vector<ChannelGui*>::iterator cg = ChannelGuiVector.begin();
+       cg != ChannelGuiVector.end(); cg++)
+    if ((*cg)->Chan == channel)
+      {
+	delete *cg;
+	ChannelGuiVector.erase(cg);
+	break;
+      }
+  UpdateChannelsPos();
+}
+
+
+
+void MixerGui::UpdateChannelsPos()
+{
+  SetVirtualSize((CHANNELGUI_WIDTH * ChannelGuiVector.size()), 
+		 CHANNELGUI_HEIGHT);
+  int xpos, ypos, x = 0, y = 0;
+  for (vector<ChannelGui*>::iterator cg = ChannelGuiVector.begin();
+       cg != ChannelGuiVector.end(); cg++, x += CHANNELGUI_WIDTH)
+    {
+      CalcScrolledPosition(x, y, &xpos, &ypos);
+      (*cg)->SetPosition(wxPoint(xpos, ypos));
+    }
+
+}
+
+ChannelGui* MixerGui::GetGuiByChan(Channel *c)
+{
+  for (vector<ChannelGui*>::iterator cg = ChannelGuiVector.begin();
+       cg != ChannelGuiVector.end(); cg++)
+    if ((*cg)->Chan == c)
+      return *cg;
+  return (0x0); 
+}
+
+void MixerGui::SetLabelByChan(Channel *channel, const wxString& label)
+{
+  ChannelGui* cg = GetGuiByChan(channel);
+  cg->SetLabel(label);
+}
+
+void MixerGui::SetChanOpt(Track *tr)
+{
+  if (!tr->IsAudioTrack())
+    return;
+  ChannelGui* cg = GetGuiByChan(tr->Output);
+  cg->SetOpt(tr);
+}

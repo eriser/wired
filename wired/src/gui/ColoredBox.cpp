@@ -1,0 +1,39 @@
+// Copyright (C) 2004 by Wired Team
+// Under the GNU General Public License
+
+#include <wx/window.h>
+#include <wx/colour.h>
+#include "ColoredBox.h"
+
+ColoredBox::ColoredBox(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size,
+		       		       const wxColour color, const wxColour bordercolor)
+  : wxWindow(parent, id, pos, size, wxNO_BORDER)
+{
+  Color = color;
+  BorderColor = bordercolor;
+}
+
+ColoredBox::~ColoredBox()
+{
+
+}
+
+void					ColoredBox::SetColors(wxColour color, wxColour bordercolor)
+{
+  Color = color;
+  BorderColor = bordercolor;
+}
+
+void					ColoredBox::OnPaint(wxPaintEvent &e)
+{
+  wxPaintDC				dc(this);
+
+  dc.SetPen(wxPen(BorderColor, 1, wxSOLID)); 
+  dc.SetBrush(wxBrush(Color, wxSOLID)); 
+  dc.DrawRectangle(0, 0, GetSize().x, GetSize().y);
+}
+
+BEGIN_EVENT_TABLE(ColoredBox, wxWindow)
+  EVT_PAINT(ColoredBox::OnPaint)
+END_EVENT_TABLE()
+
