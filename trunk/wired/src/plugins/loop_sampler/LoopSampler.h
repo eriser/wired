@@ -48,9 +48,11 @@ using namespace std;
 class LoopNote
 {
  public:
-  LoopNote(int note, float vol, Slice *sl, long delta, float **f, long length = 0) 
+  LoopNote(int note, float vol, Slice *sl, long delta, float **f, long length = 0, 
+	   bool play_mode = false) 
     : Note(note), Volume(vol), SliceNote(sl), Delta(delta), Position(sl->Position), 
-    BeginPosition(sl->Position), Buffer(f), Length(length), Attack(0.f), End(false), Start(true)
+    BeginPosition(sl->Position), Buffer(f), Length(length), PlayMode(play_mode), 
+    Attack(0.f), End(false), Start(true)
     {}
   ~LoopNote() {}
 
@@ -62,6 +64,7 @@ class LoopNote
   long  BeginPosition;
   float **Buffer;
   long  Length;
+  bool  PlayMode;
   float Attack;
   bool  End;
   bool  Start;
