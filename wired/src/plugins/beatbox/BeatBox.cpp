@@ -9,6 +9,12 @@
 
 #define NB_CHAN 11
 
+#define IS_DENORMAL(f) (((*(unsigned int *)&f)&0x7f800000)==0)
+
+
+#define undenormalise(sample) \
+  if(((*(unsigned int*)&sample)&0x7f800000)==0) sample=0.0f
+
 #define DELETE_RYTHMS(R) {						\
                           for (unsigned char bank = 0; bank < 5; bank++)\
 			    {						\
@@ -768,6 +774,20 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	}
     }
   Pool->GetMix(output);
+  /*
+    for (long i = 0; i < sample_length; i++)
+    {
+      if (IS_DENORMAL(output[0][i]) && output[0][i] != 0.f)
+	{
+	  cout << "Denormal found: L: " << i << endl;
+	}
+      if (IS_DENORMAL(output[1][i]) && output[1][i] != 0.f)
+	{
+	  cout << "Denormal found: R: " << i << endl;
+	}
+    }
+  */
+  PatternMutex.Unlock();
   
   // effacage des notes finies
   for (list<BeatNoteToPlay*>::iterator bn = NotesToPlay.begin(); 
@@ -788,7 +808,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	bn++;
     }
   
-  PatternMutex.Unlock();
+  //PatternMutex.Unlock();
 }
 
 void WiredBeatBox::ProcessEvent(WiredEvent& event) 
