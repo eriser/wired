@@ -40,6 +40,7 @@ class LoopSamplerView : public wxPanel
   void SetSlices(list<Slice *> *slices);
   void SetBarCoeff(double coeff) { if (Wave) Wave->SetBarCoeff(coeff); }
   void SetSamplingRate(int rate) { if (Wave) Wave->SetSamplingRate(rate); }
+  void SetLoopCursors() { if (Wave) Wave->SetLoopCursors(); }
 
  protected:
   wxMutex *Mutex;
