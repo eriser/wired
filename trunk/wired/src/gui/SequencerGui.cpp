@@ -523,11 +523,12 @@ void					SequencerGui::OnPaint(wxPaintEvent &event)
 
 void					SequencerGui::OnSize(wxSizeEvent &event)
 {
+  printf(" FUCK SIZE WIDTH %d HEIGTH %d\n", GetSize().x, GetSize().y);
+  Layout();
   SetScrolling();
   AdjustHScrolling();
   AdjustVScrolling();
   ReSizeCursors();
-  Layout();
 }
 
 void					SequencerGui::UnselectTracks()
@@ -544,12 +545,8 @@ void					SequencerGui::RemoveReferenceTo(Plugin *plug)
   vector<Track *>::iterator		i;
 
   for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
-    {
-      if ((*i)->TrackOpt->Connected == plug)
-	{
-	  (*i)->TrackOpt->ConnectTo(0x0);
-	}
-    }
+    if ((*i)->TrackOpt->Connected == plug)
+      (*i)->TrackOpt->ConnectTo(0);
 }
 
 void					SequencerGui::DeleteAllTracks()
@@ -682,8 +679,8 @@ void					SequencerGui::DeletePattern(Pattern *p)
 void					SequencerGui::MoveToCursor()
 {
  vector<Pattern *>::iterator		i, j;
- 
- wxMutexLocker m(SeqMutex);
+ wxMutexLocker				m(SeqMutex);
+
  for (i = SelectedItems.begin(); i != SelectedItems.end(); i++)
    {
      (*i)->Modify(Seq->CurrentPos);
@@ -874,7 +871,10 @@ void					SequencerGui::OnColorButtonClick(wxCommandEvent &event)
 void					SequencerGui::OnColoredBoxClick(wxCommandEvent &event)
 {
   if (ColorDialogBox->ShowModal() == wxID_OK)
-    ColorBox->SetColor(PenColor = ColorDialogBox->GetColourData().GetColour());
+    {
+      ColorBox->SetColor(PenColor = ColorDialogBox->GetColourData().GetColour());
+      ColorBox->Refresh();
+    }
 }
 
 void					SequencerGui::SetBeginLoopPos(double pos)
