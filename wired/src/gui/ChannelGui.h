@@ -8,11 +8,11 @@
 #include <vector>
 
 #define LABEL_MAXCHAR			(20)
-#define BG				"ihm/mixer/bg.png"
+#define BG				"ihm/mixer/mixer_bg.png"
 #define MIXERLOCKUP			"ihm/mixer/mixer_lock_up.png"
 #define MIXERLOCKDOWN			"ihm/mixer/mixer_lock_down.png"
-#define MIXERHPUP			"ihm/mixer/mixer_hp_up.png"
-#define MIXERHPDOWN			"ihm/mixer/mixer_hp_down.png"
+#define MIXERHPUP			"ihm/mixer/mixer_mute_up.png"
+#define MIXERHPDOWN			"ihm/mixer/mixer_mute_down.png"
 #define VUM_GREEN			"ihm/widgets/vum_green.png"
 #define VUM_ORANGE			"ihm/widgets/vum_orange.png"
 #define VUM_RED				"ihm/widgets/vum_red.png"

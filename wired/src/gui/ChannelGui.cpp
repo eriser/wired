@@ -35,27 +35,27 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
       FaderLeft  = new HintedFader(this, FaderLeftId, this->GetParent(), 
 				   ImgFaderBg, ImgFaderFg,
 				   0, 127, 0, 
-				   wxPoint(5, 15), wxDefaultSize, 
+				   wxPoint(17, 10), wxDefaultSize, 
 				   GetPosition() + wxPoint(5,15));
       //cout << ImgFaderBg->GetWidth() << " " << ImgFaderBg->GetHeight() << endl;
       wxImage *green = new wxImage(string(WiredSettings->DataDir + string(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
       wxImage *orange = new wxImage(string(WiredSettings->DataDir + string(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
       wxImage *red = new wxImage(string(WiredSettings->DataDir + string(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
-      VumLeft  = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(30, 15), wxSize(20, 77));
-      VumRight = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(52, 15), wxSize(20, 77));
+      VumLeft  = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(8, 23), wxSize(4, 65), wxNO_BORDER);
+      VumRight = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(60, 23), wxSize(4, 65), wxNO_BORDER);
       FaderRight = new HintedFader(this, FaderRightId, this->GetParent(), 
 				   ImgFaderBg, ImgFaderFg, 
 				   0, 127, 0,
-				   wxPoint(75, 15), wxDefaultSize, 
+				   wxPoint(69, 10), wxDefaultSize, 
 				   GetPosition() + wxPoint(75,15));
       VolumeLeft = new wxStaticText(this, -1, "100", wxPoint(5, 90));
       VolumeLeft->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));
       VolumeRight = new wxStaticText(this, -1, "100", wxPoint(75, 90));
       VolumeRight->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));
-      Label = new wxStaticText(this, -1, label, wxPoint(20, 0));
-      //Label->SetForegroundColour(*wxWHITE);
-      Label->SetForegroundColour(*wxBLACK);
-      Label->SetFont(wxFont(8, wxBOLD, wxBOLD, wxBOLD));//wxNORMAL, wxNORMAL));
+      Label = new wxStaticText(this, -1, label, wxPoint(22, 0));
+      Label->SetForegroundColour(*wxWHITE);
+      //Label->SetForegroundColour(*wxBLACK);
+      Label->SetFont(wxFont(6, wxBOLD, wxBOLD, wxBOLD));//wxNORMAL, wxNORMAL));
       FaderLeft->SetValue( (int)(Chan->VolumeLeft * 100) );
       FaderRight->SetValue( (int)(Chan->VolumeRight * 100) );
       VumLeft->SetValue( 0 );
@@ -64,12 +64,12 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
       hp_dn = new wxImage(string(WiredSettings->DataDir + string(MIXERHPDOWN)).c_str(), wxBITMAP_TYPE_PNG);
       lock_up = new wxImage(string(WiredSettings->DataDir + string(MIXERLOCKUP)).c_str(), wxBITMAP_TYPE_PNG);
       lock_dn = new wxImage(string(WiredSettings->DataDir + string(MIXERLOCKDOWN)).c_str(), wxBITMAP_TYPE_PNG);
-      MuteLeftButton = 	new DownButton(this, MuteLeftId, wxPoint(5, 97), 
-				       wxSize(24, 23), hp_up, hp_dn, false);
-      MuteRightButton = new DownButton(this, MuteRightId, wxPoint(75, 97), 
-				       wxSize(24, 23), hp_up, hp_dn, false);
-      LockButton = new DownButton(this, LockId, wxPoint(40, 97), 
-				  wxSize(24, 23), lock_up, lock_dn, false);
+      MuteLeftButton = 	new DownButton(this, MuteLeftId, wxPoint(24, 105), 
+				       wxSize(13, 13), hp_up, hp_dn, false);
+      MuteRightButton = new DownButton(this, MuteRightId, wxPoint(63, 105), 
+				       wxSize(13, 13), hp_up, hp_dn, false);
+      LockButton = new DownButton(this, LockId, wxPoint(41, 99), 
+				  wxSize(19, 19), lock_up, lock_dn, false);
       Lock = false;
     }
 }
