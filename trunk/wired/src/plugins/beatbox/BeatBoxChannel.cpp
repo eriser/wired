@@ -338,7 +338,7 @@ BeatBoxChannel::~BeatBoxChannel()
   delete SelectionButton;
   delete [] Data;
   
-  delete Voices;
+  //  delete Voices;
 }
 
 void BeatBoxChannel::OnLevChange(wxScrollEvent& WXUNUSED(event))
