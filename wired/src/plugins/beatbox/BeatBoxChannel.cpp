@@ -15,7 +15,7 @@ BEGIN_EVENT_TABLE(BeatBoxChannel, wxWindow)
   EVT_LEAVE_WINDOW(BeatBoxChannel::OnLeave)
   
   EVT_COMMAND_SCROLL(BC_Lev, BeatBoxChannel::OnLevChange)
-  EVT_COMMAND_SCROLL(BC_Bal, BeatBoxChannel::OnBalChange)
+  EVT_COMMAND_SCROLL(BC_Pan, BeatBoxChannel::OnPanChange)
   EVT_COMMAND_SCROLL(BC_Sta, BeatBoxChannel::OnStartChange)
   EVT_COMMAND_SCROLL(BC_End, BeatBoxChannel::OnEndChange)
   EVT_COMMAND_SCROLL(BC_Pit, BeatBoxChannel::OnPitchChange)
@@ -99,13 +99,19 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   Start = 0.f;
   End = 1.f;
   Lev = Vel = Pitch = 1.0f;
+  Pan[0] = Pan[1] = 1.0f;
   Reversed = false;
   Muted = false;
   IsSolo = false;
   Selected = false;
   Wave = 0x0;
   
-  Rythms = new list<BeatNote*>[8];
+  Rythms = new list<BeatNote*>*[5];
+  Rythms[0] = new list<BeatNote*>[8];
+  Rythms[1] = new list<BeatNote*>[8];
+  Rythms[2] = new list<BeatNote*>[8];
+  Rythms[3] = new list<BeatNote*>[8];
+  Rythms[4] = new list<BeatNote*>[8];
   
   /* Channel Background */
   wxImage* ch_bg = 
@@ -208,8 +214,8 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		     wxBITMAP_TYPE_PNG);
   
   if (bmp1 && bmp2)
-    KnobBal = 
-      new HintedKnob(this, BC_Bal, this->GetParent(), bmp1, bmp2, 
+    KnobPan = 
+      new HintedKnob(this, BC_Pan, this->GetParent(), bmp1, bmp2, 
 		     0, 100, 50, 1,
 		     wxPoint(18,92), wxSize(15,16), 
 		     GetPosition() + wxPoint(40,110));
@@ -223,6 +229,8 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		       0, 100, 0, 1,
 		       wxPoint(8, 138), wxSize(9,9), 
 		       GetPosition() + wxPoint(16,114));
+      KnobStart->SetValue(50); // why?
+      
       KnobEnd = 
 	new HintedKnob(this, BC_End, this->GetParent(), bmp1, bmp2, 
 		       0, 100, 100, 1,
@@ -284,9 +292,9 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   Connect(BC_Lev, wxEVT_ENTER_WINDOW,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&BeatBoxChannel::OnLevHelp);
-  Connect(BC_Bal, wxEVT_ENTER_WINDOW,
+  Connect(BC_Pan, wxEVT_ENTER_WINDOW,
 	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&BeatBoxChannel::OnBalHelp);
+	  (wxMouseEventFunction)&BeatBoxChannel::OnPanHelp);
   Connect(BC_Sta, wxEVT_ENTER_WINDOW,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&BeatBoxChannel::OnStaHelp);
@@ -307,12 +315,16 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 
 BeatBoxChannel::~BeatBoxChannel()
 {
-  for (unsigned char i = 0; i < 8; i++)
+  for (unsigned char p = 5; p < 5; p++)
     {
-      for (list<BeatNote*>::iterator bn = Rythms[i].begin();
-	   bn != Rythms[i].end(); bn = Rythms[i].erase(bn))
-	delete *bn;
-      Rythms[i].clear();
+      for (unsigned char i = 0; i < 8; i++)
+	{
+	  for (list<BeatNote*>::iterator bn = Rythms[p][i].begin();
+	       bn != Rythms[p][i].end(); bn = Rythms[p][i].erase(bn))
+	    delete *bn;
+	  Rythms[p][i].clear();
+	}
+      delete [] Rythms[p];
     }
   delete [] Rythms;
   
@@ -333,14 +345,36 @@ void BeatBoxChannel::OnLevChange(wxScrollEvent& WXUNUSED(event))
   PatternMutex->Unlock();
 }
 
-void BeatBoxChannel::OnBalChange(wxScrollEvent& WXUNUSED(event))
+void BeatBoxChannel::OnPanChange(wxScrollEvent& WXUNUSED(event))
 {
+  int val = KnobPan->GetValue();
+  float panl;
+  float panr;
+  
+  if (val == 50)
+    panl = panr = 1.f;
+  else if (val < 50)
+    {
+      panl = 1.f;
+      panr = val * 2 / 100.f;
+    }
+  else
+    {
+      panr = 1.f;
+      panl = (100 - ((val-50)*2)) / 100.f;
+    }
+    
+  PatternMutex->Lock();
+  Pan[0] = panl;
+  Pan[1] = panr;
+  PatternMutex->Unlock();
 }
 
 
 void BeatBoxChannel::OnStartChange(wxScrollEvent& WXUNUSED(event))
 {
   float start = static_cast<float>(KnobStart->GetValue()/100.0f);
+  long sample_start = 
   PatternMutex->Lock();
   Start = start;
   PatternMutex->Unlock();
@@ -511,6 +545,7 @@ void BeatBoxChannel::SetWaveFile(WaveFile* wave)
   st.Truncate(5);
   WaveLabel->SetLabel(st);
   
+  
   PatternMutex->Lock();
   if (Wave)
     delete Wave;
@@ -549,15 +584,18 @@ void BeatBoxChannel::DeSelect(void)
 
 void BeatBoxChannel::Reset(void)
 {
-  for (unsigned char ps = 0; ps < 8; ps++)
+  for (unsigned char b = 0; b < 5; b++)
     {
-      for (list<BeatNote*>::iterator bn = Rythms[ps].begin(); 
-	   bn != Rythms[ps].end();)
+      for (unsigned char ps = 0; ps < 8; ps++)
 	{
-	  delete *bn;
-	  bn = Rythms[ps].erase(bn);
+	  for (list<BeatNote*>::iterator bn = Rythms[b][ps].begin(); 
+	       bn != Rythms[b][ps].end();)
+	    {
+	      delete *bn;
+	      bn = Rythms[b][ps].erase(bn);
+	    }
+	  Rythms[b][ps].clear();
 	}
-      Rythms[ps].clear();
     }
   if (Wave)
     delete Wave;
@@ -622,7 +660,7 @@ void BeatBoxChannel::OnLevHelp(wxMouseEvent& event)
     DRM31->SendHelp("Set level of the channel");
 }
 
-void BeatBoxChannel::OnBalHelp(wxMouseEvent& event)
+void BeatBoxChannel::OnPanHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
     DRM31->SendHelp("Pan left - right");

@@ -137,8 +137,8 @@ class WiredBeatBox : public Plugin
   
   wxMutex*	GetMutexPtr() { return &PatternMutex; }
   wxBitmap*	GetBitmap() { return bmp; }
-  void		AddBeatNote(BeatBoxChannel* c, double bar_pos, 
-			    double rel_pos, unsigned int state);
+  void		AddBeatNote(BeatBoxChannel* c, double rel_pos,
+			    unsigned int state);
   // View interface
     
   int		GetSig(void);
@@ -151,7 +151,6 @@ class WiredBeatBox : public Plugin
   BeatBoxView*		View;
   
   //vars mutexed
-  int			Steps;
   float			MLevel;
   list<BeatNoteToPlay*>	NotesToPlay;
   Polyphony*		Pool;
@@ -160,12 +159,17 @@ class WiredBeatBox : public Plugin
   bool			AutoPlay;
   HintedKnob*		MVol;
   //KnobCtrl*		MVol;
-  
+  void			UpdateSteps(unsigned int bank, 
+				    unsigned int track);
   void			RefreshPosLeds(double pos);
-  void			UpdateNotesPositions(void);
+  void			UpdateNotesPositions(unsigned int bank,
+					     unsigned int track);
   void			GetNotesFromChannel(BeatBoxChannel* channel,
 					    double bar_pos,
-					    double bars_end);
+					    double bar_end,
+					    double new_bar_pos,
+					    double new_bar_end,
+					    bool* isend);
   void			SetPatternList();
   
   DownButton*		PlayButton;
@@ -177,17 +181,22 @@ class WiredBeatBox : public Plugin
   StaticPosKnob*	BankKnob;    
   CycleKnob*		StepsKnob;
   
-  double		StepsSigCoef;
-  
-  int			SignatureDen;
   float			Signatures[5];
   char			SigDen[5];
   
   long			SamplingRate;
   long			BufferSize;
-  double		Signature;
-  unsigned long		SamplesPerBar;
-    
+  
+  int			Steps[NUM_BANKS][NUM_PATTERNS];
+  double		StepsSigCoef[NUM_BANKS][NUM_PATTERNS];
+  int			SignatureDen[NUM_BANKS][NUM_PATTERNS];
+  double		Signature[NUM_BANKS][NUM_PATTERNS];
+  unsigned long		SamplesPerBar[NUM_BANKS][NUM_PATTERNS];
+  double		OldSamplesPerBar;
+  double		BarsPerSample[NUM_BANKS][NUM_PATTERNS];
+  double		OldBarsPerSample;
+  unsigned int		SigIndex[NUM_BANKS][NUM_PATTERNS];
+  
   BeatBoxChannel**	Channels;
   BeatBoxChannel*	SelectedChannel;
   DownButton*		OptViewBtn;
@@ -196,10 +205,13 @@ class WiredBeatBox : public Plugin
   unsigned int		NewSelectedPattern;
   unsigned int		EditedPattern;
   unsigned int		SelectedBank;
+  unsigned int		NewSelectedBank;
+  unsigned int		EditedBank;
+  
   bool			OnEdit;
   
   unsigned int		PosIndex;
-  unsigned int		SigIndex;
+  
   IdButton**		PatternSelectors;
   IdButton**		SignatureButtons;
   IdButton**		PositionButtons;

@@ -10,18 +10,23 @@
 #define NB_CHAN 11
 
 #define DELETE_RYTHMS(R) {						\
-                           for (unsigned char ps = 0; ps < 8; ps++)	\
-			     {						\
-			       for (list<BeatNote*>::iterator		\
-				      bn = R[ps].begin();		\
-				      bn != R[ps].end();)		\
-				 {					\
-				   delete *bn;				\
-				   bn = R[ps].erase(bn);		\
-				 }					\
-			     }						\
-			   delete [] R;					\
+                          for (unsigned char bank = 0; bank < 5; bank++)\
+			    {						\
+			      for (unsigned char ps = 0; ps < 8; ps++)	\
+			        {					\
+			         for (list<BeatNote*>::iterator		\
+				      bn = R[bank][ps].begin();		\
+				      bn != R[bank][ps].end();)		\
+				   {					\
+				     delete *bn;			\
+				     bn = R[bank][ps].erase(bn);	\
+				   }					\
+			        }					\
+			      delete [] R[bank];			\
+			    }						\
+			  delete [] R;					\
 			 }
+
 
 
 #define CLIP(x)	{							\
@@ -188,19 +193,30 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   SigDen[2] = 16;
   SigDen[3] = 32;
   SigDen[4] = 64;
-  SignatureDen = 16;
-
-  Steps = 16;
-  Signature = (float)((float)1/(float)16);
+    
+  OldSamplesPerBar = GetSamplesPerBar();
+  OldBarsPerSample = GetBarsPerSample();
   
-  StepsSigCoef = static_cast<double>
-    ( Steps / static_cast<double>(SignatureDen) );
-  
-  SamplesPerBar =
+  float default_sig = (float)((float)1/(float)16);
+  double default_stepssig_coef = static_cast<double>
+    ( 16.0 / static_cast<double>(16.0) );
+  long default_spb =
     static_cast<long>
-    ((static_cast<double>(GetSamplesPerBar() * StepsSigCoef )
-      )
-     );
+    ((static_cast<double>(OldSamplesPerBar * default_stepssig_coef)));
+  double default_bps = OldBarsPerSample / default_stepssig_coef;
+  
+  for (int b = 0; b < NUM_BANKS; b++)
+    for (int p = 0; p < NUM_PATTERNS; p++)
+      {
+	SignatureDen[b][p] = 16;
+	Steps[b][p] = 16;
+	Signature[b][p] = default_sig;
+	StepsSigCoef[b][p] = default_stepssig_coef;
+	SamplesPerBar[b][p] = default_spb;
+	BarsPerSample[b][p] = default_bps;
+	SigIndex[b][p] = 2;
+      }
+  
   
   SignatureButtons = new IdButton*[5];
   PositionButtons = new IdButton*[4];
@@ -224,8 +240,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
     SignatureButtons[4] = 
       new IdButton(this, BB_OnSigChoice, wxPoint(557, 310), wxSize(15,12),
 		   posup, posdown, 4);
-    SigIndex = 2;
-    SignatureButtons[SigIndex]->SetOn();
+    
+    SignatureButtons[2]->SetOn();
     
     PositionButtons[0] = 
       new IdButton(this, BB_OnPosChoice, wxPoint(215, 310), wxSize(15,12),
@@ -245,9 +261,9 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
     
   
   /* Pattern Selectors */
-  NewSelectedPattern = SelectedPattern = 0;
-  SelectedBank = 0;
-  EditedPattern = 0;
+  EditedPattern = NewSelectedPattern = SelectedPattern = 0;
+  EditedBank = NewSelectedBank = SelectedBank = 0;
+ 
   OnEdit = false;
 
   PatternSelectors = new IdButton*[8];
@@ -516,7 +532,8 @@ void WiredBeatBox::SetBufferSize(long size)
 
 inline void WiredBeatBox::RefreshPosLeds(double bar_pos)
 {
-  int i = static_cast<int>(floor(bar_pos * Steps));
+  /*
+    int i = static_cast<int>(floor(bar_pos * Steps));
   unsigned int cpt;
   
   for (cpt = 0; cpt < 16; cpt++)
@@ -531,6 +548,8 @@ inline void WiredBeatBox::RefreshPosLeds(double bar_pos)
     {
       PositionLeds[i]->SetBitmap(*PositionOn);
     }
+    
+  */
 }
 
 
@@ -541,34 +560,60 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 {
   PatternMutex.Lock();
   
-
-  // try to do this calculation when GetSamplesPerBar() has changed
-  SamplesPerBar =
-    static_cast<long>
-    ((static_cast<double>(GetSamplesPerBar() * StepsSigCoef )
-      )
-     );
+  if (OldSamplesPerBar != GetSamplesPerBar() ||
+      OldBarsPerSample != GetBarsPerSample())
+    {
+      OldSamplesPerBar = GetSamplesPerBar();
+      OldBarsPerSample = GetBarsPerSample();
+      
+      SamplesPerBar[SelectedBank][SelectedPattern] =
+	static_cast<long>
+	((static_cast<double>(OldSamplesPerBar * StepsSigCoef[SelectedBank][SelectedPattern])));
+      BarsPerSample[SelectedBank][SelectedPattern] = OldBarsPerSample / StepsSigCoef[SelectedBank][SelectedPattern];
+      
+      if (SelectedBank != NewSelectedBank || 
+	  SelectedPattern != NewSelectedPattern)
+	{
+	  SamplesPerBar[NewSelectedBank][NewSelectedPattern] =
+	    static_cast<long>((static_cast<double>(OldSamplesPerBar * StepsSigCoef[NewSelectedBank][NewSelectedPattern])));
+	  BarsPerSample[NewSelectedBank][NewSelectedPattern] =
+	    OldBarsPerSample/StepsSigCoef[NewSelectedBank][NewSelectedPattern];
+	}
+    }
   
+  double bar_pos = fmod( (GetBarPos() / StepsSigCoef[SelectedBank][SelectedPattern]), 1.0 );
+  double bar_end = static_cast<double>(bar_pos + static_cast<double>(sample_length * BarsPerSample[SelectedBank][SelectedPattern]));
   
-  double bar_pos = fmod( (GetBarPos() / StepsSigCoef), 1.0 );
-  
-  double bps = GetBarsPerSample() / StepsSigCoef;
-  
-  double bars_length =
-    static_cast<double>(sample_length * bps);
-  
-  double bars_end = static_cast<double>(bar_pos + bars_length);
+  double new_bar_end, new_bar_pos;
+  if (SelectedBank != NewSelectedBank || 
+      SelectedPattern != NewSelectedPattern)
+    {
+      new_bar_pos = fmod( (GetBarPos() / StepsSigCoef[NewSelectedBank][NewSelectedPattern]), 1.0 );
+      new_bar_end = static_cast<double>(new_bar_pos + static_cast<double>(sample_length * BarsPerSample[NewSelectedBank][NewSelectedPattern]));
+    }
+  else
+    {
+      new_bar_pos = bar_pos;
+      new_bar_end = bar_end;
+    }
   
   if (Playing)
     { // recuperation des notes a jouer
       //RefreshPosLeds(bar_pos);
+      bool isend = false;
       if (SelectedChannel->IsSolo && !SelectedChannel->Muted)
-	GetNotesFromChannel(SelectedChannel, bar_pos, bars_end);
+	GetNotesFromChannel(SelectedChannel, bar_pos, bar_end, 
+			    new_bar_pos, new_bar_end, &isend);
       else
 	for (int i = 0; i < NB_CHAN; i++)
 	  if ( (Channels[i]->Wave != 0x0) && !Channels[i]->Muted )
-	    GetNotesFromChannel(Channels[i], bar_pos, bars_end);
-      
+	    GetNotesFromChannel(Channels[i], bar_pos, bar_end, 
+				new_bar_pos, new_bar_end, &isend);
+      if (isend)
+	{
+	  SelectedPattern = NewSelectedPattern;
+	  SelectedBank = NewSelectedBank;
+	}
     }
   //jouage des notes
   long len = 0;
@@ -610,7 +655,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	( Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames() > (*bn)->SEnd ? 
 	  (*bn)->SEnd : Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames());
       
-      assert(end <= Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames());
+      //assert(end <= Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames());
       
       if ( (*bn)->OffSet + len > end )
 	   //Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames()) 	
@@ -652,8 +697,8 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	    }
 	  //printf("before b0 b1: %f %f\n", (*bn)->Buffer[0][i], (*bn)->Buffer[1][i]);
 	  
-	  (*bn)->Buffer[0][i] *= Channels[(*bn)->NumChan]->Lev * curvel;
-	  (*bn)->Buffer[1][i] *= Channels[(*bn)->NumChan]->Lev * curvel;
+	  (*bn)->Buffer[0][i] *= Channels[(*bn)->NumChan]->Lev * curvel * Channels[(*bn)->NumChan]->Pan[0];
+	  (*bn)->Buffer[1][i] *= Channels[(*bn)->NumChan]->Lev * curvel * Channels[(*bn)->NumChan]->Pan[1];
 	  //printf("after b0 b1: %f %f\n", (*bn)->Buffer[0][i], (*bn)->Buffer[1][i]);
 	  curvel -= velstep;
 	  //printf("curvel=%f\n", curvel);
@@ -735,64 +780,110 @@ void WiredBeatBox::ProcessEvent(WiredEvent& event)
 
 inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c, 
 					      double bar_pos, 
-					      double bars_end)
+					      double bar_end,
+					      double new_bar_pos,
+					      double new_bar_end,
+					      bool* isend)
+					      //double new_bar_pos,
+					      //double new_bar_end)
 {
   BeatNoteToPlay*	note;
   unsigned long		delta;
   double		lasts;
   
-  if (bars_end > 1.0)
+  if (bar_end > 1.0f)
     {
-      lasts = bars_end - 1.0f;
-      SelectedPattern = NewSelectedPattern;
-      for (list<BeatNote*>::iterator bn = c->Rythms[SelectedPattern].begin();
-	   bn != c->Rythms[SelectedPattern].end(); bn++)
+      *isend = true;
+      if (new_bar_end > 1.0f)
 	{
-	  if ((*bn)->BarPos > lasts)
-	    break;
-	  if ( static_cast<unsigned int>(Pool->GetCount())
-	       < NotesToPlay.size()+1 )
-	    Pool->SetPolyphony(NotesToPlay.size()+32);
+	  lasts = new_bar_end - 1.0f;
+	  for (list<BeatNote*>::iterator bn = c->Rythms[NewSelectedBank][NewSelectedPattern].begin();
+	       bn != c->Rythms[NewSelectedBank][NewSelectedPattern].end(); bn++)
+	    {
+	      if ((*bn)->BarPos > lasts)
+		break;
+	      if ( static_cast<unsigned int>(Pool->GetCount())
+		   < NotesToPlay.size()+1 )
+		Pool->SetPolyphony(NotesToPlay.size()+32);
+	      
+	      delta = static_cast<unsigned long>
+		( ((1.0 - new_bar_pos + (*bn)->BarPos) * SamplesPerBar[NewSelectedBank][NewSelectedPattern]) );
+	      
+
+	      note = 
+		new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());	  
+	      note->Lev *= c->Lev;
+	      note->Vel *= c->Vel;
+	      note->Pitch *= c->Pitch;
+	      note->Start *= c->Start;
+	      note->End *= c->End;
+	      note->Reversed = c->Reversed;
 	  
-	  delta = static_cast<unsigned long>
-	    ( ((1.0 - bar_pos + (*bn)->BarPos) * SamplesPerBar) );
-	  
-	  note = 
-	    new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());	  
-	  note->Lev *= c->Lev;
-	  note->Vel *= c->Vel;
-	  note->Pitch *= c->Pitch;
-	  note->Start *= c->Start;
-	  note->End *= c->End;
-	  note->Reversed = c->Reversed;
-	  
-	  note->OffSet =
-	    static_cast<unsigned long>
-	    (floor(c->Wave->GetNumberOfFrames() * (note->Start)));
-	  note->SEnd = 
-	    static_cast<unsigned long>
-	    (floor(c->Wave->GetNumberOfFrames() * note->End));
-	  
-	  //assert(note->SEnd <= c->Wave->GetNumberOfFrames());
-	  NotesToPlay.push_back(note);
+	      note->OffSet =
+		static_cast<unsigned long>
+		(floor(c->Wave->GetNumberOfFrames() * (note->Start)));
+	      note->SEnd = 
+		static_cast<unsigned long>
+		(floor(c->Wave->GetNumberOfFrames() * note->End));
+	      NotesToPlay.push_back(note);
+	    }
 	}
-      
+      else
+	//GetNotesFromChannel(c, new_bar_pos, new_bar_end, new_bar_pos, new_bar_end, isend);
+	{
+	  for (list<BeatNote*>::iterator bn = c->Rythms[NewSelectedBank][NewSelectedPattern].begin();
+	       bn != c->Rythms[NewSelectedBank][NewSelectedPattern].end(); bn++)
+	    {
+	      if ((*bn)->BarPos >= 1.0)
+		{
+		  break;
+		}
+	      else if ((*bn)->BarPos >= new_bar_pos && (*bn)->BarPos < new_bar_end)
+		{
+		  if ( static_cast<unsigned int>(Pool->GetCount())
+		       < NotesToPlay.size()+1 )
+		    Pool->SetPolyphony(NotesToPlay.size()+32);
+		  
+		  delta = static_cast<unsigned long>
+		    ( (((*bn)->BarPos - new_bar_pos) * SamplesPerBar[NewSelectedBank][NewSelectedPattern]) );
+
+		  
+		  note = 
+		    new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());
+		  
+		  note->Lev *= c->Lev;
+		  note->Vel *= c->Vel;
+		  note->Pitch *= c->Pitch;
+		  note->Start *= c->Start;
+		  note->End *= c->End;
+		  note->Reversed |= c->Reversed;
+		  
+		  note->OffSet =
+		    static_cast<unsigned long>
+		    (floor(c->Wave->GetNumberOfFrames() * (note->Start)));
+		  note->SEnd = 
+		    static_cast<unsigned long>(floor(c->Wave->GetNumberOfFrames()*note->End));
+		  NotesToPlay.push_back(note);
+		}
+	    }
+	}
     }
-  for (list<BeatNote*>::iterator bn = c->Rythms[SelectedPattern].begin();
-       bn != c->Rythms[SelectedPattern].end(); bn++)
+  
+  for (list<BeatNote*>::iterator bn = c->Rythms[SelectedBank][SelectedPattern].begin();
+       bn != c->Rythms[SelectedBank][SelectedPattern].end(); bn++)
     {
       if ((*bn)->BarPos >= 1.0)
 	{
 	  break;
 	}
-      else if ((*bn)->BarPos >= bar_pos && (*bn)->BarPos < bars_end)
+      else if ((*bn)->BarPos >= bar_pos && (*bn)->BarPos < bar_end)
 	{
 	  if ( static_cast<unsigned int>(Pool->GetCount())
 	       < NotesToPlay.size()+1 )
 	    Pool->SetPolyphony(NotesToPlay.size()+32);
 	  
 	  delta = static_cast<unsigned long>
-	    ( (((*bn)->BarPos - bar_pos) * SamplesPerBar) );
+	    ( (((*bn)->BarPos - bar_pos) * SamplesPerBar[SelectedBank][SelectedPattern]) );
 	  
 	  note = 
 	    new BeatNoteToPlay(*bn, c->Id, delta, Pool->GetFreeBuffer());
@@ -811,22 +902,34 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	  note->SEnd = 
 	    static_cast<unsigned long>(floor(c->Wave->GetNumberOfFrames()*note->End));
 	  
-	  //assert(note->SEnd <= c->Wave->GetNumberOfFrames());
 	  NotesToPlay.push_back(note);
 	}
     }
 }
 
-inline void WiredBeatBox::UpdateNotesPositions(void)
+inline void WiredBeatBox::UpdateNotesPositions(unsigned int bank, 
+					       unsigned int track)
 {
   for (unsigned char i = 0; i < NB_CHAN; i++)
+    for ( list<BeatNote*>::iterator bn = 
+	    Channels[i]->Rythms[bank][track].begin();
+	  bn != Channels[i]->Rythms[bank][track].end(); 
+	  bn++ )
+      {
+	(*bn)->BarPos = 
+	  static_cast<double>((*bn)->Position / 
+			      static_cast<float>(Steps[bank][track]));
+      }
+  /*
+    for (unsigned char i = 0; i < NB_CHAN; i++)
     for (unsigned char ps = 0; ps < 8; ps++)
-      for ( list<BeatNote*>::iterator bn = Channels[i]->Rythms[ps].begin();
+    for ( list<BeatNote*>::iterator bn = Channels[i]->Rythms[ps].begin();
 	    bn != Channels[i]->Rythms[ps].end(); bn++ )
 	{
 	  (*bn)->BarPos = 
 	    static_cast<double>((*bn)->Position / static_cast<float>(Steps));
 	}
+  */
 }
 
 
@@ -876,16 +979,30 @@ void WiredBeatBox::OnSigChoice(wxCommandEvent& e)
 {
   unsigned int *i = static_cast<unsigned int*>(e.GetClientData());
   
-  SignatureButtons[SigIndex]->SetOff();
-  SignatureButtons[*i]->SetOn();
-  PatternMutex.Lock();
-  SigIndex = *i;
-  SignatureDen = SigDen[*i];
-  Signature = Signatures[*i];
+  //PatternMutex.Lock();
   
-  StepsSigCoef = static_cast<double>
-    ( Steps / static_cast<double>(SignatureDen));
-
+  /////
+  unsigned int bank = (OnEdit ? EditedBank : NewSelectedBank);
+  unsigned int track = (OnEdit ? EditedPattern : NewSelectedPattern);
+  
+  SignatureButtons[SigIndex[bank][track]]->SetOff();
+  SignatureButtons[*i]->SetOn();
+  
+  SigIndex[bank][track] = *i;
+  SignatureDen[bank][track] = SigDen[*i];
+  Signature[bank][track] = Signatures[*i];
+  
+  double steps_sig_coef = static_cast<double>
+    ( Steps[bank][track] / static_cast<double>(SignatureDen[bank][track]) );
+  //////
+  
+  PatternMutex.Lock();
+  StepsSigCoef[bank][track] = steps_sig_coef;
+  SamplesPerBar[bank][track] = static_cast<long>
+    ((static_cast<double>(OldSamplesPerBar * steps_sig_coef )));
+  BarsPerSample[bank][track] = OldBarsPerSample / StepsSigCoef[bank][track];
+  //SamplesPerBar = spb;
+  //BarsPerSample = bps;
   PatternMutex.Unlock();
 }
 
@@ -894,10 +1011,12 @@ void WiredBeatBox::OnPositionChoice(wxCommandEvent& e)
   unsigned int *i = static_cast<unsigned int*>(e.GetClientData());
   PositionButtons[PosIndex]->SetOff();
   PositionButtons[*i]->SetOn();
-  //PatternMutex.Lock();
+  
+
+  PatternMutex.Lock();
   PosIndex = *i;
   SetPatternList();
-  //PatternMutex.Unlock();
+  PatternMutex.Unlock();
 }
 
 void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)  
@@ -966,17 +1085,23 @@ void WiredBeatBox::OnPatternSelectors(wxCommandEvent& e)
 {
   unsigned int *p = (unsigned int*)e.GetClientData();
   
+  //PatternMutex.Lock();
   if (OnEdit && (EditedPattern != *p))
     {
       PatternSelectors[SelectedPattern]->SetOff();
       PatternSelectors[NewSelectedPattern]->SetOff();
       PatternSelectors[EditedPattern]->SetOff();
+      
+      PatternMutex.Lock();
       EditedPattern = *p;
+      //PatternMutex.Unlock();
+      
       PatternSelectors[EditedPattern]->SetOn();
       
+      UpdateSteps(EditedBank, EditedPattern);
       //PatternMutex.Lock();
       SetPatternList();
-      //PatternMutex.Unlock();
+      PatternMutex.Unlock();
     }
   else if (!OnEdit && (NewSelectedPattern != *p))
     {
@@ -985,14 +1110,28 @@ void WiredBeatBox::OnPatternSelectors(wxCommandEvent& e)
       
       PatternMutex.Lock();
       EditedPattern = NewSelectedPattern = *p;
-      PatternMutex.Unlock();
+      //PatternMutex.Unlock();
       
       PatternSelectors[NewSelectedPattern]->SetOn();
+      UpdateSteps(NewSelectedBank, NewSelectedPattern);
       
       //PatternMutex.Lock();
       SetPatternList();
-      //PatternMutex.Unlock();
+      PatternMutex.Unlock();
     }
+  PatternMutex.Unlock();
+}
+
+inline void WiredBeatBox::UpdateSteps(unsigned int bank, unsigned int track)
+{
+  StepsKnob->SetValue(Steps[bank][track]);
+  wxString s;
+  s.Printf("%d", Steps[bank][track]);
+  StepsLabel->SetLabel(s);
+  
+  for (int i = 0; i < 5; i++)
+    SignatureButtons[i]->SetOff();
+  SignatureButtons[SigIndex[bank][track]]->SetOn();
 }
 
 void WiredBeatBox::SetPatternList(void)
@@ -1006,11 +1145,12 @@ void WiredBeatBox::SetPatternList(void)
   i = static_cast<double>(PosIndex * 16);
   j = static_cast<double>(i + 16.0);
   
+  unsigned int bank = (OnEdit ? EditedBank : NewSelectedBank);
   unsigned int cur = (OnEdit ? EditedPattern : NewSelectedPattern);
   
   for (list<BeatNote*>::iterator bn = 
-	 SelectedChannel->Rythms[cur].begin();
-       bn != SelectedChannel->Rythms[cur].end(); bn++)
+	 SelectedChannel->Rythms[bank][cur].begin();
+       bn != SelectedChannel->Rythms[bank][cur].end(); bn++)
     {
       if ( (*bn)->Position > j )
 	break;
@@ -1040,59 +1180,68 @@ void WiredBeatBox::OnPatternMotion(wxCommandEvent& e)
 	    {
 	      Beat[p]->SetState(tmp[ID_STATE]);
 	      double pos = static_cast<double>(i + p);
-	      double bar_pos = 
-		static_cast<double>
-		( pos / static_cast<double>(Steps) );
-	      AddBeatNote(c, bar_pos, pos, tmp[ID_STATE]);
+	      AddBeatNote(c, pos, tmp[ID_STATE]);
 	    }
 	  break;
 	}
     }
 }
 
-inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c, double bar_pos, 
-				  double rel_pos, unsigned int state)
+inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c,
+				      double rel_pos, unsigned int state)
 {
+  //PatternMutex.Lock();
+  unsigned int bank = (OnEdit ? EditedBank : NewSelectedBank);
   unsigned int cur = (OnEdit ? EditedPattern : NewSelectedPattern);
-
-  if (c->Rythms[cur].empty())
+  //PatternMutex.Unlock();
+  
+  double bar_pos = 
+    static_cast<double>( rel_pos / static_cast<double>(Steps[bank][cur]) );
+    
+  if (c->Rythms[bank][cur].empty())
     {
       BeatNote *note = new BeatNote(rel_pos, state, bar_pos);
       note->Vel = 1.0f * static_cast<float>(state / 4.f);
       note->Reversed = false;
       
       PatternMutex.Lock();
-      c->Rythms[cur].push_back(note);
+      c->Rythms[bank][cur].push_back(note);
       PatternMutex.Unlock();
       return;
     }
-  if ( rel_pos > c->Rythms[cur].back()->Position ) 
+  if ( rel_pos > c->Rythms[bank][cur].back()->Position ) 
     {
       BeatNote *note = new BeatNote( rel_pos, state, bar_pos);
       note->Vel = 1.0f * static_cast<float>(state / 4.f);
       note->Reversed = false;
       
       PatternMutex.Lock();
-      c->Rythms[cur].push_back(note);
+      c->Rythms[bank][cur].push_back(note);
       PatternMutex.Unlock();
       return;
     }
-  for ( list<BeatNote*>::iterator b = c->Rythms[cur].begin();
-	b != c->Rythms[cur].end(); b++)
+  
+
+  for ( list<BeatNote*>::iterator b = c->Rythms[bank][cur].begin();
+	b != c->Rythms[bank][cur].end(); b++)
     {  
       if ( (*b)->Position == rel_pos ) 
 	{
 	  if ( state == ID_UNCLICKED )
 	    {
+	      BeatNote* note = *b;
 	      PatternMutex.Lock();
-	      delete *b;
-	      c->Rythms[cur].erase(b);
+	      c->Rythms[bank][cur].erase(b);
 	      PatternMutex.Unlock();
+	      delete note;
+	      
 	    }
 	  else
 	    {
+	      PatternMutex.Lock();
 	      (*b)->State = state;
 	      (*b)->Vel = 1.f * static_cast<float>(state / 4.f);
+	      PatternMutex.Unlock();
 	    }
 	  return;
 	}
@@ -1102,7 +1251,7 @@ inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c, double bar_pos,
 	  note->Vel = 1.0f * static_cast<float>(state / 4.f);
 	  note->Reversed = false;
 	  PatternMutex.Lock();
-	  c->Rythms[cur].insert(b, note);
+	  c->Rythms[bank][cur].insert(b, note);
 	  PatternMutex.Unlock();
 	  return;
 	}
@@ -1118,9 +1267,8 @@ void WiredBeatBox::OnPatternClick(wxCommandEvent &e)
   int i = PosIndex * 16;
   
   double pos = static_cast<double>(tmp[ID_POS] + i);
-  double bar_pos = 
-    static_cast<double>( pos / static_cast<double>(Steps) );
-  AddBeatNote(c, bar_pos, pos, tmp[ID_STATE]);
+  
+  AddBeatNote(c, pos, tmp[ID_STATE]);
 }
 
 void WiredBeatBox::ShowOpt(wxCommandEvent& WXUNUSED(e))
@@ -1222,11 +1370,9 @@ long WiredBeatBox::Save(int fd)
   
   cout << "saving on fd = " << fd << endl;
   
-  int sel = SigIndex;//(SignatureChoice->GetSelection());
-  size += write(fd, &sel, sizeof(int));
-  size += write(fd, &Steps, sizeof(int));
-  
-  cout << "sigindex=" << sel <<" steps=" << Steps << endl;
+  //int sel = SigIndex[][];//(SignatureChoice->GetSelection());
+  //size += write(fd, &sel, sizeof(int));
+  //size += write(fd, &Steps, sizeof(int));
   
   for (int i = 0; i < NB_CHAN; i++)
     {
@@ -1240,25 +1386,27 @@ long WiredBeatBox::Save(int fd)
 	       << " file len: " << len << " name: " 
 	       << Channels[i]->Wave->Filename.c_str() << endl;
 	  
-	  for (int ps = 0; ps < 8; ps++)
-	    {
-	      // size += write(fd, &ps, sizeof(int));
-	      len = Channels[i]->Rythms[ps].size();
-	      size += write(fd, &len, sizeof(long));
-	      cout << "writing "<<len << " notes for rythm["<< ps
-		   << "]" << endl;
-	      for (list<BeatNote*>::iterator bn = 
-		     Channels[i]->Rythms[ps].begin();
-		   bn != Channels[i]->Rythms[ps].end(); bn++)
-		{
-		  //cout << "note pos: " << (*bn)->Position;
-		  printf("note pos=%f; state=%d\n", 
-			 (*bn)->Position,(*bn)->State);
-		  size += write(fd, &((*bn)->State), sizeof(unsigned int));
-		  size += 
-		    write(fd, &((*bn)->Position), sizeof (double));
-		}
-	    }
+	  for (int bank = 0; bank < 5; bank++)
+	    for (int ps = 0; ps < 8; ps++)
+	      {
+		// size += write(fd, &ps, sizeof(int));
+		len = Channels[i]->Rythms[bank][ps].size();
+		size += write(fd, &len, sizeof(long));
+		cout << "writing "<<len << " notes for rythm["<< bank 
+		     << "][" << ps << "]" 
+		     << endl;
+		for (list<BeatNote*>::iterator bn = 
+		       Channels[i]->Rythms[bank][ps].begin();
+		     bn != Channels[i]->Rythms[bank][ps].end(); bn++)
+		  {
+		    //cout << "note pos: " << (*bn)->Position;
+		    printf("note pos=%f; state=%d\n", 
+			   (*bn)->Position,(*bn)->State);
+		    size += write(fd, &((*bn)->State), sizeof(unsigned int));
+		    size += 
+		      write(fd, &((*bn)->Position), sizeof (double));
+		  }
+	      }
 	}
     }
   PatternMutex.Unlock();
@@ -1305,35 +1453,36 @@ void WiredBeatBox::Load(int fd, long size)
 	Channels[ch]->SetWaveFile(w);
       
       PatternMutex.Lock();
-      for (ps = 0; ps < 8; ps++)
-	{
-	  size -= read(fd, &len, sizeof(long));
-	  //printf("list %d, notes: %d\n", ps,len);
-          for (long i = 0; i < len; i++)
-            {
-	      size -= read(fd, &state, sizeof(unsigned int));
-              size -= read(fd, &pos, sizeof(double));
-	      printf("note pos=%f; state=%d\n", 
-		     pos,state);
-	      note = 
-		new BeatNote(pos, state, 
-			     static_cast<double>
-			     ( pos / 
+      for (int bank = 0; bank < 5; bank++)
+	for (ps = 0; ps < 8; ps++)
+	  {
+	    size -= read(fd, &len, sizeof(long));
+	    //printf("list %d, notes: %d\n", ps,len);
+	    for (long i = 0; i < len; i++)
+	      {
+		size -= read(fd, &state, sizeof(unsigned int));
+		size -= read(fd, &pos, sizeof(double));
+		printf("note pos=%f; state=%d\n", 
+		       pos,state);
+		note = 
+		  new BeatNote(pos, state, 
 			       static_cast<double>
-			       (steps)));
-	      Channels[ch]->Rythms[ps].push_back(note);
+			       ( pos / 
+				 static_cast<double>
+				 (steps)));
+		Channels[ch]->Rythms[bank][ps].push_back(note);
 	      
-	      //printf("note %d %d %d\n", state, pos, spos);
-	    }
-	}
-       PatternMutex.Unlock();
+		//printf("note %d %d %d\n", state, pos, spos);
+	      }
+	  }
+      PatternMutex.Unlock();
        
       //WaveFile* w_toerase;
       //w_toerase = Channels[ch]->Wave;
       //Channels[ch]->Reset();
     }
-  
-  Steps = steps;
+  /*
+    Steps = steps;
   SignatureDen = SigDen[sig];
   Signature = Signatures[sig];
   
@@ -1346,6 +1495,7 @@ void WiredBeatBox::Load(int fd, long size)
   SetPatternList();
   //  PatternMutex.Unlock();
   //printf("size:%d\n", size);
+  */
 }
 
 void WiredBeatBox::OnEditButton(wxCommandEvent& WXUNUSED(e))
@@ -1355,6 +1505,7 @@ void WiredBeatBox::OnEditButton(wxCommandEvent& WXUNUSED(e))
     {
       PatternMutex.Lock();
       NewSelectedPattern = EditedPattern;
+      NewSelectedBank = EditedBank;
       PatternMutex.Unlock();
       SetPatternList();
     }
@@ -1364,9 +1515,23 @@ void WiredBeatBox::OnEditButton(wxCommandEvent& WXUNUSED(e))
 void WiredBeatBox::OnBankChange(wxCommandEvent& WXUNUSED(event))
 {
   int bank = BankKnob->GetValue() - 1;
-  PatternMutex.Lock();
-  SelectedBank = bank;
-  PatternMutex.Unlock();
+  
+  if (OnEdit && (EditedBank != bank))
+    {
+      PatternMutex.Lock();
+      EditedBank = bank;
+      PatternMutex.Unlock();
+      UpdateSteps(EditedBank, EditedPattern);
+      SetPatternList();
+    }
+  else if (!OnEdit && (NewSelectedBank != bank))
+    {
+      PatternMutex.Lock();
+      EditedBank = NewSelectedBank = bank;
+      PatternMutex.Unlock();
+      UpdateSteps(NewSelectedBank, NewSelectedPattern);
+      SetPatternList();
+    }
 }
 
 void WiredBeatBox::OnStepsChange(wxCommandEvent& WXUNUSED(event))
@@ -1382,16 +1547,30 @@ void WiredBeatBox::OnStepsChange(wxCommandEvent& WXUNUSED(event))
   s.Printf("%d", steps);
   StepsLabel->SetLabel(s);
   
+  /*
+    long spb = 
+    static_cast<long>
+    ((static_cast<double>(OldSamplesPerBar * steps_sig_coef )));
+    double bps = OldBarsPerSample / StepsSigCoef;
+  */
+  
+  
+  unsigned int bank = (OnEdit ? EditedBank : NewSelectedBank);
+  unsigned int track = (OnEdit ? EditedPattern : NewSelectedPattern);
+  Steps[bank][track] = steps;
+  double steps_sig_coef = static_cast<double>
+    ( steps / static_cast<double>(SignatureDen[bank][track]));
   
   PatternMutex.Lock();
-  
-  Steps = steps;
-  StepsSigCoef = static_cast<double>
-    ( Steps / static_cast<double>(SignatureDen));
-  UpdateNotesPositions();
-  
+  StepsSigCoef[bank][track] = steps_sig_coef;
+  //SamplesPerBar = spb;
+  //BarsPerSample = bps;
+  SamplesPerBar[bank][track] = static_cast<long>
+    ((static_cast<double>(OldSamplesPerBar * steps_sig_coef )));
+  BarsPerSample[bank][track] = 
+    OldBarsPerSample / StepsSigCoef[bank][track];
+  UpdateNotesPositions(bank, track);
   PatternMutex.Unlock();
-  
 }
 
 void WiredBeatBox::OnPlay(wxCommandEvent& WXUNUSED(e))
