@@ -12,6 +12,7 @@ using namespace			std;
 #define UNIT_W			(200)
 #define UNIT_H			(100)
 #define UNIT_S			(2)
+#define SCROLL_PIX		(50)
 
 typedef struct s_PlugStartInfo	PlugStartInfo;
 class				PluginLoader;
@@ -65,13 +66,6 @@ class				Rack: public wxScrolledWindow
   void				RemoveFromSelectedTrack();
   void				RemoveTrack();
 
-  void				OnDeleteClick();
-  void				OnCutClick();
-  void				OnCopyClick();
-  void				OnPasteClick();
-  bool 				DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y , Plugin *plug);
-  void				DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug);
-  void				UpdateUnitXSize();
   void				AddPlugToMenu();
   //  bool ProcessEvent(wxEvent& event);  
 
@@ -103,6 +97,14 @@ class				Rack: public wxScrolledWindow
   virtual void			OnPaint(wxPaintEvent &event);
   void				OnHelp(wxMouseEvent &event);
   void				OnClick(wxMouseEvent &event);
+  void				OnDeleteClick();
+  void				OnCutClick();
+  void				OnCopyClick();
+  void				OnPasteClick();
+  bool 				DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y , Plugin *plug);
+  void				DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug);
+  void				UpdateUnitXSize();
+
 };
 
 // IDS
