@@ -2,12 +2,15 @@
 // Under the GNU General Public License
 
 #include "WaveLoop.h"
+#include "Colour.h"
 #include <iostream>
 #include <math.h>
 
 /*BEGIN_EVENT_TABLE(WaveLoop, WaveView)
   EVT_LEFT_DOWN(WaveLoop::OnClick)
   END_EVENT_TABLE()*/
+
+#define SLICE_ID	3131
 
 WaveLoop::WaveLoop(wxMutex *mutex, wxWindow *parent, wxWindowID id, 
 		   const wxPoint& pos, const wxSize& size)
@@ -27,6 +30,12 @@ WaveLoop::WaveLoop(wxMutex *mutex, wxWindow *parent, wxWindowID id,
   Connect(GetId(), wxEVT_PAINT, 
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxPaintEventFunction)&WaveLoop::OnPaint);
+  Connect(SLICE_ID, TYPE_SLICE_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxCommandEventFunction)&WaveLoop::OnSliceBtnSelected);
+  Connect(SLICE_ID, TYPE_SLICE_MOVE, 
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxCommandEventFunction)&WaveLoop::OnSliceMove);
 }
 
 WaveLoop::~WaveLoop()
@@ -34,17 +43,73 @@ WaveLoop::~WaveLoop()
 
 }
 
+void WaveLoop::OnSliceBtnSelected(wxCommandEvent &event)
+{
+  list<Slice *>::iterator i;
+  SliceGui *g;
+
+  for (i = Slices->begin(); i != Slices->end(); i++)
+    {
+      g = (SliceGui *)((*i)->Data);
+      if ((*i)->Data == event.GetClientData())
+	g->SetSelected(true);
+      else
+	g->SetSelected(false);
+    }
+}
+
+void WaveLoop::OnSliceMove(wxCommandEvent &event)
+{
+  list<Slice *>::iterator i, j;
+  SliceGui *g;
+  Slice *tmp = 0x0;
+
+  for (i = Slices->begin(); i != Slices->end(); i++)
+    {     
+      g = (SliceGui *)((*i)->Data);
+      if ((*i)->Data == event.GetClientData())
+	{
+	  g->SetPosition(wxPoint(event.GetInt() + g->GetPosition().x, 
+				 -1));
+	  for (j = Slices->begin(); j != Slices->end(); j++)
+	    {
+	      if (*j == *i)
+		continue;
+	      if ((*j)->Position > (*i)->Position)
+		{
+		  (*i)->EndPosition = (*j)->Position;
+		  if (tmp)
+		    tmp->EndPosition = (*i)->Position;
+		  break;
+		}
+	      tmp = *i;
+	    }	
+	  tmp = Slices->back();
+	  if (tmp)
+	    tmp->EndPosition = (*i)->Position;
+	  (*i)->EndPosition = EndWavePos;
+	  
+	  break;
+	}
+    }      
+}
+
 void WaveLoop::AddSlice(int x, int m_x)
 {
-  wxStaticLine *l;
+  //wxStaticLine *l;
   list<Slice *>::iterator i;
   Slice *tmp = 0x0;
+  SliceGui *g;
 
   Slice *s = new Slice(x, x * BarCoeff, SamplingRate);
   s->AffectMidi = NoteNumber++;
-  l = new wxStaticLine(this, -1, wxPoint(m_x, 0), wxSize(1, GetSize().y), wxLI_VERTICAL);
-  l->SetBackgroundColour(*wxBLACK);
-  s->Data = (void *)l;
+
+  //l = new wxStaticLine(this, -1, wxPoint(m_x, 0), wxSize(1, GetSize().y), wxLI_VERTICAL);
+  //l->SetBackgroundColour(*wxBLACK);
+
+  g = new SliceGui(this, SLICE_ID, wxPoint(m_x, 0), wxSize(1, GetSize().y));
+  
+  s->Data = (void *)g;
   
   for (i = Slices->begin(); i != Slices->end(); i++)
     {
@@ -111,7 +176,7 @@ void WaveLoop::OnSize(wxSizeEvent &event)
   int size_x;
   GetSize(&size_x, 0x0);
   long inc = (EndWavePos / size_x);
-  wxStaticLine *s;
+  SliceGui *s;
   int x, y;
 
   y = GetSize().y;
@@ -123,10 +188,10 @@ void WaveLoop::OnSize(wxSizeEvent &event)
 
   for (i = Slices->begin(); i != Slices->end(); i++)
     {
-      s = (wxStaticLine *)((*i)->Data);
+      s = (SliceGui *)((*i)->Data);
       x = (int)((1.0 / (double)inc) * (*i)->Position);
       s->SetPosition(wxPoint(x, -1));
-      s->SetSize(-1, y);
+      s->SetSize(wxSize(-1, y));
     }
 
   Mutex->Unlock();
@@ -139,8 +204,8 @@ void WaveLoop::OnPaint(wxPaintEvent &event)
   WaveView::OnPaint(event);
   wxPaintDC dc(this);
 
-  dc.SetLogicalFunction(wxOR);
-  dc.SetBrush(GetPenColor());
+  dc.SetLogicalFunction(wxXOR);
+  dc.SetBrush(CL_PATTERN_SEL);//GetPenColor());
 
   list<Slice *>::iterator i;
   Slice *s = 0x0;
@@ -182,27 +247,28 @@ void WaveLoop::SetSlices(list<Slice *> *slices)
   if (slices->empty())
     {
       Slice *s = new Slice(0, 0.0, SamplingRate);
-      wxStaticLine *l;
+      SliceGui *g;
 
       s->AffectMidi = NoteNumber++;
       s->EndPosition = EndWavePos;
-      l = new wxStaticLine(this, -1, wxPoint(0, 0), wxSize(1, GetSize().y), wxLI_VERTICAL);
-      l->SetBackgroundColour(*wxBLACK);
-      s->Data = (void *)l;
+  
+      g = new SliceGui(this, SLICE_ID, wxPoint(0, 0), wxSize(1, GetSize().y));
+    
+      s->Data = (void *)g;
       Slices->push_back(s);
     }
   else
     {
       list<Slice *>::iterator i;
       long inc = (EndWavePos / GetSize().x);
-      wxStaticLine *l;
+      SliceGui *g;
 	  
       for (i = Slices->begin(); i != Slices->end(); i++)
 	{
-	  l = new wxStaticLine(this, -1, wxPoint((*i)->Position / inc, 0), 
-			       wxSize(1, GetSize().y), wxLI_VERTICAL);
-	  l->SetBackgroundColour(*wxBLACK);
-	  (*i)->Data = (void *)l; 
+	  g = new SliceGui(this, SLICE_ID, wxPoint((*i)->Position / inc, 0), 
+			   wxSize(1, GetSize().y));
+
+	  (*i)->Data = (void *)g; 
 	}
     }
 }

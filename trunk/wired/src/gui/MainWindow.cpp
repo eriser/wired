@@ -347,7 +347,7 @@ bool					MainWindow::NewSession()
 {
   // une session existe déja, demande de confirmation d'enregistrement
 
-  wxMessageDialog			msg(0x0, "Save current session ?", "Wired", 
+  wxMessageDialog			msg(this, "Save current session ?", "Wired", 
 					    wxYES_NO | wxCANCEL | wxICON_QUESTION);
   int				res;
   

@@ -4,12 +4,13 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 lib_LTLIBRARIES = libWiredLoopSampler.la
 
-libWiredLoopSampler_la_SOURCES =				\
+libWiredLoopSampler_la_SOURCES =			\
 			LoopSampler.cpp			\
 			LoopSamplerView.cpp		\
 			WaveLoop.cpp			\
 			RulerLoop.cpp			\
 			Slice.cpp			\
+			SliceGui.cpp			\
 			../../redist/Polyphony.cpp	\
 			../../redist/Plugin.cpp		\
 			../../gui/WaveView.cpp		\

@@ -220,6 +220,8 @@ LoopSampler::~LoopSampler()
 
 void LoopSampler::SetBufferSize(long size) 
 {
+  Mutex.Lock();
+
   cout << "[LOOPSAMPLER] Buffer size is now: " << size << endl;
   Workshop.SetBufferSize(size);
   Workshop.SetPolyphony(PolyphonyCount);
@@ -234,10 +236,14 @@ void LoopSampler::SetBufferSize(long size)
   read_buf = new float *[2];
   read_buf[0] = new float[size];
   read_buf[1] = new float[size];
+
+  Mutex.Unlock();
 } 
 
 void LoopSampler::SetSamplingRate(double rate) 
 { 
+  Mutex.Lock();
+
   cout << "[LOOPSAMPLER] Sampling rate is now: " << rate << endl;
 
   SamplingRate = rate; 
@@ -256,6 +262,8 @@ void LoopSampler::SetSamplingRate(double rate)
       (*k)->LeftTouch->setSampleRate((int)SamplingRate);
       (*k)->RightTouch->setSampleRate((int)SamplingRate);
     }
+
+  Mutex.Unlock();
 }
 
 void LoopSampler::Process(float **input, float **output, long sample_length)
@@ -303,17 +311,18 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
       if (!(n->End))
 	{
 	  length = sample_length - n->Delta;
-	  end = (long)((n->SliceNote->EndPosition - n->Position) / n->SliceNote->Pitch);
+
+	  /*end = (long)((n->SliceNote->EndPosition - n->Position) / n->SliceNote->Pitch);
 	  if (end < (length))
 	    length = end - n->Delta;
 	  else
-	    end = 0;
+	  end = 0;*/
 
-	  if (length <= 0)
+	  /*if (length <= 0)
 	  {
 	    cout << "length < 0!!!" << endl;
 	    n->End = true;
-	  }
+	    }*/
 	 
 	  Wave->SetPitch((n->SliceNote->Pitch + Pitch) / 2.f);
 	  Wave->SetInvert(n->SliceNote->Invert);
@@ -338,7 +347,6 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 		}
 	      while ((retTouchL || retTouchR) && ((curL < length) || (curR < length)));
 
-	      cout << "pos: " << n->Position << "; endpos: " << n->SliceNote->EndPosition << endl;
 	      if (n->Position < n->SliceNote->EndPosition)
 		{
 		  Wave->Read(read_buf, n->Position, length, 0, &(n->Position));
@@ -350,7 +358,6 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 		{
 		  if ((retTouchL == 0/* < sample_length*/) && (retTouchR == 0/*< sample_length*/))
 		    {
-		      cout << "ret touchL :" << retTouchL << ", ret touchR: "<< retTouchR << endl;
 		      n->End = true;
 		      n->SliceNote->LeftTouch->clear();
 		      n->SliceNote->RightTouch->clear();
@@ -549,6 +556,8 @@ void LoopSampler::Load(int fd, long size)
 {
   long len;
 
+  Mutex.Lock();
+
   read(fd, &len, sizeof (len));
   
   char s[len + 1];
@@ -587,12 +596,17 @@ void LoopSampler::Load(int fd, long size)
   try
     {
       w = new WaveFile(s, true);
+
+      Mutex.Unlock();
+
       SetWaveFile(w);
       ShowOptionalView();  
+
+      Mutex.Lock();
     }
   catch (...)
     {
-      cout << "[LOOPSAMPLER] Cannot open wave file !" << endl;
+      cout << "[LOOPSAMPLER] Cannot open wave file !" << endl;      
     }
 
   if (read(fd, &len, sizeof (len)) < sizeof (len))
@@ -628,6 +642,8 @@ void LoopSampler::Load(int fd, long size)
 
   if (View)
     View->SetSlices(&Slices);
+
+  Mutex.Unlock();
 }
 
 long LoopSampler::Save(int fd)
@@ -671,27 +687,32 @@ long LoopSampler::Save(int fd)
 
 void LoopSampler::SetBPM(float bpm)
 {
+  Mutex.Lock();
+
   if (Tempo)
     SetTempo();
+
+  Mutex.Unlock();
 }
 
 void LoopSampler::SetSignature(int num, int den)
 {
+  Mutex.Lock();
+
   SetBarCoeff();
   if (Tempo)
     SetTempo();
+
+  Mutex.Unlock();
 }
 
 void LoopSampler::SetTempo()
 {
   list<Slice *>::iterator i;
 
-  Mutex.Lock();
-  
   Tempo = TempoBtn->GetOn();
   if (!Wave)
     {
-      Mutex.Unlock();
       return;
     }
 
@@ -708,8 +729,6 @@ void LoopSampler::SetTempo()
       for (i = Slices.begin(); i != Slices.end(); i++)
 	(*i)->SetTempo(f);
     }
-  Mutex.Unlock();
-
 }
 
 void LoopSampler::SetBarCoeff()
@@ -732,6 +751,8 @@ void LoopSampler:: SetWaveFile(WaveFile *w)
   WaveFile *tmpw = Wave;
 
   Mutex.Lock();
+
+  Slices.clear();
 
   Wave = w;
 
@@ -996,7 +1017,11 @@ void LoopSampler::OnInvert(wxCommandEvent &event)
 
 void LoopSampler::OnTempo(wxCommandEvent &event)
 {
+  Mutex.Lock();
+
   SetTempo();
+
+  Mutex.Unlock();
 }
 
 void LoopSampler::OnPaint(wxPaintEvent &event)

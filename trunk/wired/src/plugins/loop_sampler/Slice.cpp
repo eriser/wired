@@ -43,6 +43,8 @@ Slice::~Slice()
 {
   delete LeftTouch;
   delete RightTouch;
+  
+  // TODO: delete Data
 }
 
 void Slice::SetNote(int n)
