@@ -148,6 +148,9 @@ class WiredBeatBox : public Plugin
   void		SetHelpMode(bool on) { HelpMode = true; }
   bool		HelpMode;
   
+  BeatBoxChannel**	Channels;
+  BeatBoxChannel*	SelectedChannel;
+  
  protected:
   wxMutex		PatternMutex;
   BeatBoxView*		View;
@@ -162,6 +165,7 @@ class WiredBeatBox : public Plugin
   bool			AutoPlay;
   HintedKnob*		MVol;
   //KnobCtrl*		MVol;
+  void			ReCalcStepsSigCoef(void);
   void			UpdateSteps(unsigned int bank, 
 				    unsigned int track);
   void			RefreshPosLeds(double pos);
@@ -201,8 +205,6 @@ class WiredBeatBox : public Plugin
   double		OldBarsPerSample;
   unsigned int		SigIndex[NUM_BANKS][NUM_PATTERNS];
   
-  BeatBoxChannel**	Channels;
-  BeatBoxChannel*	SelectedChannel;
   DownButton*		OptViewBtn;
   
   unsigned int		SelectedPattern;

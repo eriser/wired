@@ -174,11 +174,11 @@ class BeatBoxChannel : public wxWindow
 
   list<BeatNote*>**
     Rythms;
-  /*
-  list<BeatNote*>
-		Rythm;
-  */
+  
   WaveFile*	Wave;
+  
+  //  Polyphony	*Voices;
+
  protected:
   WiredBeatBox*	DRM31;
   string        DataDir;

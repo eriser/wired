@@ -92,7 +92,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   Data[0] = num; /* Channel number 0-11 */
   Data[1] = 0;
   
-  DataDir = drm31->GetDataDir();//datadir;
+    DataDir = drm31->GetDataDir();//datadir;
   PatternMutex = drm31->GetMutexPtr();
   DRM31 = drm31;
   
@@ -254,6 +254,8 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   imgs_[1] = new wxImage(_T(string(DataDir + string(CH_POLY2)).c_str()));
   imgs_[2] = new wxImage(_T(string(DataDir + string(CH_POLY3)).c_str()));
   
+
+  //  Voices = new Polyphony(99);
   NumVoices = 99;
   PolyKnob = new CycleKnob(this, BC_Pol, 3, imgs_, 10, 1, 99, 99,
 			   wxPoint(4, 175), wxDefaultSize);
@@ -335,6 +337,8 @@ BeatBoxChannel::~BeatBoxChannel()
     delete Wave;
   delete SelectionButton;
   delete [] Data;
+  
+  delete Voices;
 }
 
 void BeatBoxChannel::OnLevChange(wxScrollEvent& WXUNUSED(event))
