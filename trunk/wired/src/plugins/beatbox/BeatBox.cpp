@@ -958,16 +958,6 @@ inline void WiredBeatBox::UpdateNotesPositions(unsigned int bank,
 	  static_cast<double>((*bn)->Position / 
 			      static_cast<float>(Steps[bank][track]));
       }
-  /*
-    for (unsigned char i = 0; i < NB_CHAN; i++)
-    for (unsigned char ps = 0; ps < 8; ps++)
-    for ( list<BeatNote*>::iterator bn = Channels[i]->Rythms[ps].begin();
-	    bn != Channels[i]->Rythms[ps].end(); bn++ )
-	{
-	  (*bn)->BarPos = 
-	    static_cast<double>((*bn)->Position / static_cast<float>(Steps));
-	}
-  */
 }
 
 
@@ -1042,6 +1032,21 @@ void WiredBeatBox::OnSigChoice(wxCommandEvent& e)
   //SamplesPerBar = spb;
   //BarsPerSample = bps;
   PatternMutex.Unlock();
+}
+
+inline void WiredBeatBox::ReCalcStepsSigCoef(void)
+{
+  for (int bank = 0; bank < NUM_BANKS; bank++)
+    for (int track = 0; track < NUM_PATTERNS; track++)
+      {
+	StepsSigCoef[bank][track] = static_cast<double>
+       ( Steps[bank][track] / static_cast<double>(SignatureDen[bank][track]) );
+	SamplesPerBar[bank][track] = static_cast<long>
+	((static_cast<double>(OldSamplesPerBar * StepsSigCoef[bank][track] )));
+	BarsPerSample[bank][track] = 
+	  OldBarsPerSample / StepsSigCoef[bank][track];
+	UpdateNotesPositions(bank, track);
+      }
 }
 
 void WiredBeatBox::OnPositionChoice(wxCommandEvent& e)
@@ -1403,49 +1408,60 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
 long WiredBeatBox::Save(int fd)
 {
   long len, size = 0;
+  int steps, sig_index = 0;
+  int bank, ps;
   
   PatternMutex.Lock();
-  
-  cout << "saving on fd = " << fd << endl;
-  
-  //int sel = SigIndex[][];//(SignatureChoice->GetSelection());
-  //size += write(fd, &sel, sizeof(int));
-  //size += write(fd, &Steps, sizeof(int));
   
   for (int i = 0; i < NB_CHAN; i++)
     {
       if (Channels[i]->Wave)
 	{
-	  size += write(fd, &i, sizeof(int));
 	  len = Channels[i]->Wave->Filename.size();
 	  size += write(fd, &len, sizeof(long));
 	  size += write(fd, Channels[i]->Wave->Filename.c_str(), len);
-	  cout << "writing channel: " << i 
+	  /*
+	    cout << "writing channel: " << i 
 	       << " file len: " << len << " name: " 
 	       << Channels[i]->Wave->Filename.c_str() << endl;
-	  
-	  for (int bank = 0; bank < 5; bank++)
-	    for (int ps = 0; ps < 8; ps++)
-	      {
-		// size += write(fd, &ps, sizeof(int));
-		len = Channels[i]->Rythms[bank][ps].size();
-		size += write(fd, &len, sizeof(long));
-		cout << "writing "<<len << " notes for rythm["<< bank 
-		     << "][" << ps << "]" 
-		     << endl;
-		for (list<BeatNote*>::iterator bn = 
-		       Channels[i]->Rythms[bank][ps].begin();
-		     bn != Channels[i]->Rythms[bank][ps].end(); bn++)
-		  {
-		    //cout << "note pos: " << (*bn)->Position;
-		    printf("note pos=%f; state=%d\n", 
-			   (*bn)->Position,(*bn)->State);
-		    size += write(fd, &((*bn)->State), sizeof(unsigned int));
-		    size += 
-		      write(fd, &((*bn)->Position), sizeof (double));
-		  }
-	      }
+	  */
 	}
+      else
+	{
+	  len = 0;
+	  size += write(fd, &len, sizeof(long));
+	}
+      for (bank = 0; bank < 5; bank++)
+	for (ps = 0; ps < 8; ps++)
+	  {
+	    sig_index = SigIndex[bank][ps];
+	    steps = Steps[bank][ps];
+	    
+	    size += write(fd, &sig_index, sizeof(int));
+	    size += write(fd, &steps, sizeof(int));
+	    
+	    len = Channels[i]->Rythms[bank][ps].size();
+	    size += write(fd, &len, sizeof(long));
+	    /*
+	      cout << "writing "<<len << " notes for rythm["<< bank 
+		 << "][" << ps << "]" 
+		 << endl;
+	    */
+	    for (list<BeatNote*>::iterator bn = 
+		   Channels[i]->Rythms[bank][ps].begin();
+		 bn != Channels[i]->Rythms[bank][ps].end(); bn++)
+	      {
+		//cout << "note pos: " << (*bn)->Position;
+		/*
+		  printf("note pos=%f; state=%d\n", 
+		       (*bn)->Position,(*bn)->State);
+		*/
+		size += write(fd, &((*bn)->State), sizeof(unsigned int));
+		size += 
+		  write(fd, &((*bn)->Position), sizeof (double));
+	      
+	      }
+	  }
     }
   PatternMutex.Unlock();
   cout << "saved size " << size << endl;
@@ -1454,86 +1470,88 @@ long WiredBeatBox::Save(int fd)
 
 void WiredBeatBox::Load(int fd, long size)
 {
-  int ch;
   long len;
-  unsigned char ps;
+  int bank,  ps;
   unsigned int state = 0;
   double pos = 0;
   BeatNote* note;
   WaveFile* w;
   
-  int sig, steps;
+  int sig_index, steps = 0;
   
   
-  if (fd < 0)
-    cout << "loading fd = "<< fd << ", blem, file size: " << size << endl;
-  cout << "loading fd = "<< fd << endl;
-  //  PatternMutex.Lock();
+  //PatternMutex.Lock();
   
-  size -= read(fd, &sig, sizeof(int));
-  size -= read(fd, &steps, sizeof(int));
-  cout << "sig="<<sig<< " steps="<<steps << endl;
-  //PatternMutex.Unlock();
-  
-  while (size)
+  for (int i = 0; i < NB_CHAN; i++)
     {
-      size -= read(fd, &ch, sizeof(int));
-      cout << "load: channel " << ch << endl;
       size -= read(fd, &len, sizeof(long));
-      char wave[len+1];
-      size -= read(fd, wave, len);
-      wave[len] = '\0';
-      printf("file len: %d, name: %s\n", len, wave);
-      w = new WaveFile(string(wave), true);
-      if (!w)
-	cout << "error loading wave"<< endl;
-      else
-	Channels[ch]->SetWaveFile(w);
+      if (len > 0 && len < 255)
+	{
+	  char wave[len+1];
+	  size -= read(fd, &wave, len*sizeof(char));
+	  wave[len] = '\0';
+	  try 
+	    {
+	      w = new WaveFile(string(wave), true);
+	    }
+	  catch (...)
+	    {
+	      cout << "[DRM31] Could not load WaveFile: " << wave << endl;
+	    }
+	  Channels[i]->SetWaveFile(w);
+	}
       
       PatternMutex.Lock();
-      for (int bank = 0; bank < 5; bank++)
+      
+      for (bank = 0; bank < 5; bank++)
 	for (ps = 0; ps < 8; ps++)
 	  {
+	    size -= read(fd, &sig_index, sizeof (int));
+	    size -= read(fd, &steps, sizeof (int));
+	    
+	    Steps[bank][ps] = steps;
+	    SigIndex[bank][ps] = sig_index;
+	    SignatureDen[bank][ps] = SigDen[sig_index];
+	    Signature[bank][ps] = Signatures[sig_index];
+	    
 	    size -= read(fd, &len, sizeof(long));
-	    //printf("list %d, notes: %d\n", ps,len);
-	    for (long i = 0; i < len; i++)
+	    /*
+	      cout << "reading "<<len << " notes for rythm["<< bank 
+	      << "][" << ps << "]" 
+	      << endl;
+	    */
+	    while (len)
 	      {
 		size -= read(fd, &state, sizeof(unsigned int));
 		size -= read(fd, &pos, sizeof(double));
-		printf("note pos=%f; state=%d\n", 
-		       pos,state);
+		//printf("note pos=%f; state=%d\n", pos,state);
 		note = 
 		  new BeatNote(pos, state, 
-			       static_cast<double>
-			       ( pos / 
-				 static_cast<double>
-				 (steps)));
-		Channels[ch]->Rythms[bank][ps].push_back(note);
-	      
-		//printf("note %d %d %d\n", state, pos, spos);
+			       0.0);
+		/*
+		  static_cast<double>
+		  ( pos / 
+		  static_cast<double>
+		  (Steps[bank][ps])));
+		*/
+		Channels[i]->Rythms[bank][ps].push_back(note);
+		len--;
 	      }
+	    
+	    
 	  }
       PatternMutex.Unlock();
-       
-      //WaveFile* w_toerase;
-      //w_toerase = Channels[ch]->Wave;
-      //Channels[ch]->Reset();
     }
-  /*
-    Steps = steps;
-  SignatureDen = SigDen[sig];
-  Signature = Signatures[sig];
   
-  SignatureButtons[SigIndex]->SetOff();
-  SigIndex = sig;
-  SignatureButtons[sig]->SetOn();
-  //SignatureChoice->SetSelection(sig);
+  PatternMutex.Lock();
   
   SelectedChannel = Channels[0];
+  ReCalcStepsSigCoef();
+  UpdateSteps(0,0);
   SetPatternList();
-  //  PatternMutex.Unlock();
-  //printf("size:%d\n", size);
-  */
+  
+  PatternMutex.Unlock();
+  printf("size:%d\n", size);
 }
 
 void WiredBeatBox::OnEditButton(wxCommandEvent& WXUNUSED(e))
