@@ -10,10 +10,10 @@ Ruler::Ruler(wxWindow *parent, wxWindowID id,
   : wxWindow(parent, id, pos, size)
 {
   SetBackgroundColour(*wxBLUE);
-  wxStaticText* text = 
+  /*wxStaticText* text = 
     new wxStaticText(this, -1, _T("This is the ruler view"), wxPoint(0,0), 
 		     wxDefaultSize);
-  
+  */
 }
 
 Ruler::~Ruler()
@@ -28,10 +28,10 @@ BeatBoxTrack::BeatBoxTrack(wxWindow *parent,  wxWindowID id,
   : wxWindow(parent, id, pos, size)
 {
   SetBackgroundColour(*wxGREEN);
-  wxStaticText* text = 
+  /*wxStaticText* text = 
     new wxStaticText(this, -1, _T("This is the track view"), wxPoint(0,0), 
 		     wxDefaultSize);
-
+  */
 }
 BeatBoxTrack::~BeatBoxTrack()
 {}
@@ -44,10 +44,13 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
   : wxScrolledWindow(parent, id, pos, size)
 {
   SetBackgroundColour(*wxRED);
-  wxStaticText* text = 
+  /*
+    wxStaticText* text = 
     new wxStaticText(this, -1, _T("This is the scroll view"), wxPoint(0,0), 
 		     wxDefaultSize);
+  */
 }
+
 BeatBoxScrollView::~BeatBoxScrollView()
 {}
 
@@ -64,14 +67,9 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   Mutex = mutex;
   DRM31 = bb;
   
-  wxBoxSizer *row_1;
-  wxBoxSizer *row_2;
-  wxBoxSizer *row_3;
-  
   wxBoxSizer *col_1;
+  wxBoxSizer *col_2;
   wxBoxSizer *glob;
-  
-  /*
   
   HZoomSlider = new wxSlider(this, ID_HZoom, 100, 25, 400, 
 			     wxPoint(0,0), 
@@ -82,38 +80,48 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   TrackView = new BeatBoxTrack(this, -1, 
 			       wxPoint(0,RULER_HEIGHT), 
 			       wxSize(TRACK_WIDTH, 
-				      100));//GetClientSize().y - 2*RULER_HEIGHT));//, wxSUNKEN_BORDER);
+				      GetClientSize().y));// - 2*RULER_HEIGHT));//, wxSUNKEN_BORDER);
   //GetClientSize().y - 2*RULER_HEIGHT));
   
-  //BeatView = new BeatBoxScrollView(this, -1, wxPoint(TRACK_WIDTH,RULER_HEIGHT),
-  //			   wxSize(-1, -1));//GetClientSize()-wxSize(150,20)));
+  BeatView = new BeatBoxScrollView(this, -1, wxPoint(TRACK_WIDTH,RULER_HEIGHT),
+				   //wxSize(-1, -1));
+				   GetClientSize()-wxSize(150,20));
   
   VZoomSlider = new wxSlider(this, ID_VZoom, 100, 25, 400, 
-			     wxPoint(0,TrackView->GetClientSize().y+RULER_HEIGHT), 
+			     wxPoint(0,GetClientSize().y-RULER_HEIGHT), 
 			     wxSize(TRACK_WIDTH, RULER_HEIGHT));
   
+
+  col_1 = new wxBoxSizer(wxVERTICAL);
+  col_1->Add(HZoomSlider, 0, 0, 0);
+  col_1->Add(TrackView, 1, 0, 0);
+  col_1->Add(VZoomSlider, 0,0,0);
   
+  col_2 = new wxBoxSizer(wxVERTICAL);
+  col_2->Add(RulerView, 0, wxEXPAND, 0);
+  col_2->Add(BeatView, 1, wxEXPAND, 0);
+  
+  /*
   row_1 = new wxBoxSizer(wxHORIZONTAL);
-  row_1->Add(HZoomSlider, 0, wxALL, 0);
-  row_1->Add(RulerView, 1, wxALL, 0);
+  row_1->Add(HZoomSlider, 0, 0, 0);
+  row_1->Add(RulerView, 1, 0, 0);
   
   row_2 = new wxBoxSizer(wxHORIZONTAL);
-  row_2->Add(TrackView, 0, wxALL | wxEXPAND, 0);
-  //row_2->Add(BeatView,  1, wxALL | wxEXPAND, 0);
+  row_2->Add(TrackView, 0, wxEXPAND, 0);
+  //row_2->Add(BeatView,  1, wxEXPAND, 0);
 
   row_3 = new wxBoxSizer(wxHORIZONTAL);
   row_3->Add(VZoomSlider, 0, wxALL, 0);
   
   
   col_1 = new wxBoxSizer(wxVERTICAL);
-  col_1->Add(row_1, 0, wxALL | wxEXPAND, 0);
-  col_1->Add(row_2, 1, wxALL | wxEXPAND, 0);
-  col_1->Add(row_3, 1, wxALL | wxEXPAND, 0);
-  
-  glob = new wxBoxSizer(wxHORIZONTAL);
-  glob->Add(col_1, 1, wxALL | wxEXPAND, 0);
-  
+  col_1->Add(row_1, 0, wxEXPAND, 0);
+  col_1->Add(row_2, 1, wxEXPAND, 0);
+  col_1->Add(row_3, 0, wxEXPAND, 0);
   */
+  glob = new wxBoxSizer(wxHORIZONTAL);
+  glob->Add(col_1, 0, wxEXPAND, 0);
+  glob->Add(col_2, 1, wxEXPAND, 0);
   SetSizer(glob);
 }
 
