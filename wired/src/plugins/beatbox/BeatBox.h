@@ -19,6 +19,8 @@
 #include "BeatBoxView.h"
 //#include "Settings.h"
 #include "HintedKnob.h"
+#include "StaticPosKnob.h"
+#include "CycleKnob.h"
 
 using namespace std;
 
@@ -51,10 +53,14 @@ using namespace std;
 #define KNOB			"plugins/beatbox/knob_center_level.png"
 #define DOT			"plugins/beatbox/level_dot.png"
 
-#define STEP_UP_UP		"plugins/beatbox/step_up.png"
-#define STEP_UP_DO		"plugins/beatbox/step_up_down.png"
-#define STEP_DO_UP		"plugins/beatbox/step_down.png"
-#define STEP_DO_DO		"plugins/beatbox/step_down_down.png"
+#define BANK1			"plugins/beatbox/bank_knob_1.png"
+#define BANK2			"plugins/beatbox/bank_knob_2.png"
+#define BANK3			"plugins/beatbox/bank_knob_3.png"
+#define BANK4			"plugins/beatbox/bank_knob_4.png"
+#define BANK5			"plugins/beatbox/bank_knob_5.png"
+
+#define STEPS_KNOB1		"plugins/beatbox/steps_knob.png"
+#define STEPS_KNOB2		"plugins/beatbox/steps_knob_2.png"
 
 #define SELECTOR_UP		SHOWOPT_UP
 #define SELECTOR_DO		SHOWOPT_DOWN
@@ -113,6 +119,7 @@ class WiredBeatBox : public Plugin
   //void	OnMouseWheelEvent(wxMouseEvent &event);
   void		ShowOpt(wxCommandEvent &event);
   void		OnPatternClick(wxCommandEvent &event);
+  void		OnPatternMotion(wxCommandEvent &event);
   void		OnLoadKit(wxCommandEvent &event) {}
   void		OnToggleChannel(wxCommandEvent &event);
   void		OnPlay(wxCommandEvent& event);
@@ -122,14 +129,17 @@ class WiredBeatBox : public Plugin
   void		OnSavePatch(wxCommandEvent& event);
   void		OnPatternSelectors(wxCommandEvent& event);
   void		OnEdit(wxCommandEvent& event);
-  void		OnStepsUp(wxCommandEvent& event);
-  void		OnStepsDown(wxCommandEvent& event);
+  //void		OnStepsUp(wxCommandEvent& event);
+  //void		OnStepsDown(wxCommandEvent& event);
+  void		OnStepsChange(wxCommandEvent& event);
+  void		OnBankChange(wxCommandEvent& event);
   
   wxMutex*	GetMutexPtr() { return &PatternMutex; }
   wxBitmap*	GetBitmap() { return bmp; }
-  
+  void		AddBeatNote(BeatBoxChannel* c, double bar_pos, 
+			    double rel_pos, unsigned int state);
   // View interface
-  
+    
   int		GetSig(void);
   
   int count;  
@@ -159,6 +169,9 @@ class WiredBeatBox : public Plugin
   
   wxStaticText**	BeatLabels;
   wxStaticText*		StepsLabel;
+  
+  StaticPosKnob*	BankKnob;    
+  CycleKnob*		StepsKnob;
   
   double		StepsSigCoef;
   
@@ -213,8 +226,8 @@ enum
     BB_OnPatternSelectors,
     BB_OnLoadPatch,
     BB_OnSavePatch,
-    BB_OnStepsUp,
-    BB_OnStepsDown
+    BB_OnStepsChange,
+    BB_OnBankChange
   };
 
 #endif//__BEATBOX_H__
