@@ -20,6 +20,7 @@ BeatButton::BeatButton(wxWindow *parent, wxWindowID id, const wxPoint &pos,
   Data[ID_POS] = position;
   Data[ID_STATE] = ID_UNCLICKED;
   Data[ID_X] = 0;
+  Data[ID_COPY] = 0;
   Bitmaps = bitmaps;
 }
 
@@ -47,9 +48,18 @@ void BeatButton::OnPaint(wxPaintEvent& WXUNUSED(event))
 }
 void BeatButton::OnRightDownEvent(wxMouseEvent& event)
 {
-  if ( (event.m_x > 0) && (event.m_x < BTN_SIZE) && 
+  if (event.ShiftDown())
+    {
+      Data[ID_COPY] = 1;
+      wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+      event.SetClientData((void*)Data);
+      event.SetEventObject(this);
+      GetEventHandler()->ProcessEvent(event);
+    }
+  else if ( (event.m_x > 0) && (event.m_x < BTN_SIZE) && 
        (event.m_y > 0) && (event.m_y < BTN_SIZE) )
     {
+      Data[ID_COPY] = 0;
       if (Data[ID_STATE] == ID_UNCLICKED)
 	return;
       Data[ID_STATE] = ID_UNCLICKED;
@@ -66,6 +76,7 @@ void BeatButton::OnMouseEvent(wxMouseEvent &event)
   if ( (event.m_x > 0) && (event.m_x < BTN_SIZE) && 
        (event.m_y > 0) && (event.m_y < BTN_SIZE) )
     {
+      Data[ID_COPY] = 0;
       char tmp_state;
       GET_STATE(tmp_state, event.m_x, event.m_y );
       if (tmp_state == Data[ID_STATE])
@@ -87,6 +98,7 @@ void BeatButton::OnMotion(wxMouseEvent &event)
       if ( ((event.m_x < 0) || (event.m_x > BTN_SIZE))  &&
 	   ((event.m_y > 0) && (event.m_y < BTN_SIZE)) )
 	{
+	  Data[ID_COPY] = 0;
 	  wxCommandEvent e(EVT_MOTION_OUT, BEATBUTTON_ID);
 	  Data[ID_X] = GetPosition().x + event.m_x;
 	  e.SetClientData((void*)Data);
