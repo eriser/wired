@@ -6,6 +6,7 @@ ASPlugin::ASPlugin(wxString Name) :
   wxPanel(PlugPanel, -1, wxPoint(-1, -1), wxSize(-1, -1))
 {
   this->Name = Name;
+  this->ass = NULL;
   Show(false);
 }
 

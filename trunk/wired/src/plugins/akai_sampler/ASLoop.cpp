@@ -14,7 +14,6 @@ ASLoop::ASLoop(wxString Name) :
   ASPlugin(Name)
 {
   wv = NULL;
-  ass = NULL;
 }
 
 ASLoop::~ASLoop()

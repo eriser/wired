@@ -14,8 +14,10 @@ class ASPlugin : public wxPanel
     virtual void OnAttach(wxWindow *);
     virtual void OnDetach(wxWindow *);
     void SetPlugin(Plugin *p) { this->p = p; }
+    void SetSample(class ASamplerSample *ass) { this->ass = ass; }
   protected:
     Plugin *p;
+    class ASamplerSample *ass;
 };
 
 #endif
