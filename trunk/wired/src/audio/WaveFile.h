@@ -29,12 +29,13 @@ public:
 	{
 		read=0,
 		write,
-		rwrite
+		rwrite,
+		tmp
 	} t_opening_mode;
 
  public:
   WaveFile(); 
-  WaveFile(string filename, bool loadmem = true, t_opening_mode open_mode = read);
+  WaveFile(string filename, bool loadmem = false, t_opening_mode open_mode = read);
   WaveFile(short *buffer, unsigned int size, int channels, long rate);
   ~WaveFile();
 
