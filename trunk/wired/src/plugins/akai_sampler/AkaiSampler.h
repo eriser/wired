@@ -35,7 +35,7 @@ class ASamplerNote
 {     
   public:
     ASamplerNote(int note, float vol, ASamplerKey *key, int delta, float **buf, int length)
-      : Note(note), Volume(vol), Key(key), Delta(delta), Buffer(buf), Length(length), Position(key->Position)
+      : Note(note), Volume(vol), Key(key), Delta(delta), Buffer(buf), Length(length), Position(key->ass->GetPosition())
       {
       }
     ~ASamplerNote()

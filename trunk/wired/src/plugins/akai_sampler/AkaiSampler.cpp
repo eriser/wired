@@ -210,33 +210,36 @@ void AkaiSampler::Load(int fd, long size)
     ASamplerSample *ass = NULL; 
     if (s.StartsWith("[AKAI]", &s2))
     {
-	    wxString dev(s2.SubString(0, s2.Find(':')));
-	    s2 = s2.SubString(s2.Find(':') + 1, s2.size() - s2.Find(':'));
-	    wxString path = s2.SubString(10, s2.size() - 10);
-	    int pos = path.Find('/');
-	    int part = path.SubString(0, pos).c_str()[0] - 64;
-	    path = path.SubString(pos, path.size() - pos);
-	    int opos = path.Find('/', true);
-	    wxString name = path.SubString(opos, path.size() - opos);
-	    path = path.SubString(1, opos - 2);
+      wxString dev(s2.SubString(0, s2.Find(':')));
+      s2 = s2.SubString(s2.Find(':') + 1, s2.size() - s2.Find(':'));
+      wxString path = s2.SubString(10, s2.size() - 10);
+      int pos = path.Find('/');
+      int part = path.SubString(0, pos).c_str()[0] - 64;
+      path = path.SubString(pos, path.size() - pos);
+      int opos = path.Find('/', true);
+      wxString name = path.SubString(opos, path.size() - opos);
+      path = path.SubString(1, opos - 2);
       wxString prefix = s.SubString(6, opos);
       cout << "device: " << dev << "; part: " << part << "; path: " << path << "; filename: " << name << endl;
       cout << "AkaiPrefix: " << AkaiPrefix << endl;
-	    t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
-	    if (sample != NULL)
-        ass = new ASamplerSample(sample, prefix, id);
+      t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
+      ass = new ASamplerSample(sample, prefix, id);
       free(sample);
     }
     else
       ass = new ASamplerSample(new WaveFile(string(str)), id);
-    if (ass)
-    {
-      cerr << "[WiredSampler] Loaded wav " << wxString(_T(str)) << endl;
-      Samples->List->AddEntry(smpname, (void *)ass);
-    }
-    else
-      cerr << "[WiredSampler] Error loading wav " << wxString(_T(str)) << endl;
+    cerr << "[WiredSampler] Loaded wav " << wxString(_T(str)) << endl;
+    Samples->List->AddEntry(smpname, (void *)ass);
     free(str);
+    count += read(fd, &len, sizeof(len));
+    cout << "[WiredSampler] Setting loop_count to " << len << endl;
+    ass->SetLoopCount(len);
+    count += read(fd, &len, sizeof(len));
+    cout << "[WiredSampler] Setting loop_start to " << len << endl;
+    ass->SetLoopStart(len);
+    count += read(fd, &len, sizeof(len));
+    cout << "[WiredSampler] Setting loop_end to " << len << endl;
+    ass->SetLoopEnd(len);
   }
   count += read(fd, &nbent, sizeof(nbent));
   cerr << "[WiredSampler] Loading " << nbent << " keygroups..." << endl;
@@ -304,13 +307,22 @@ long AkaiSampler::Save(int fd)
     count += write(fd, &len, sizeof(len));
     count += write(fd, str, len);
     len = ass->GetID();
-    count += write(fd, &len, sizeof(len));
     cerr << "[WiredSampler] Saving ID " << len << endl;
+    count += write(fd, &len, sizeof(len));
     str = (char *)ass->GetSample()->Filename.c_str();
     len = strlen(str);
     cerr << "[WiredSampler] Saving wavefile " << ass->GetSample()->Filename << endl;
     count += write(fd, &len, sizeof(len));
     count += write(fd, str, len);
+    len = ass->GetLoopCount();
+    cerr << "[WiredSampler] Saving loop_count " << len << endl;
+    count += write(fd, &len, sizeof(len));
+    len = ass->GetLoopStart();
+    cerr << "[WiredSampler] Saving loop_start " << len << endl;
+    count += write(fd, &len, sizeof(len));
+    len = ass->GetLoopEnd();
+    cerr << "[WiredSampler] Saving loop_end " << len << endl;
+    count += write(fd, &len, sizeof(len));
   }
   entries = Keygroups->List->GetEntries();
   nbent = entries.size();
@@ -327,8 +339,8 @@ long AkaiSampler::Save(int fd)
     len = strlen(str);
     count += write(fd, &len, sizeof(len));
     count += write(fd, str, len);
-    cerr << "[WiredSampler] Saving ID " << len << endl;
     len = askg->GetID();
+    cerr << "[WiredSampler] Saving ID " << len << endl;
     count += write(fd, &len, sizeof(len));
     len = askg->GetLowKey();
     cerr << "[WiredSampler] Saving lokey " << len << endl;
@@ -422,16 +434,21 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
   for (i = Notes.begin(); i != Notes.end(); i++)
   {
     n = *i;
-    if (n->Position < n->Key->Wave->GetNumberOfFrames())
+    long endtotest;
+    if (n->Key->looping)
+      endtotest = n->Key->ass->GetLoopEnd();
+    else
+      endtotest = n->Key->ass->GetSample()->GetNumberOfFrames();
+    if (n->Position < endtotest)
     {
       length = sample_length - n->Delta;
-      end = (long)((n->Key->Wave->GetNumberOfFrames()) / n->Key->Pitch);
+      end = (long)(endtotest / n->Key->Pitch);
       if (end < (length))
         length = end - n->Delta;
       else
         end = 0;
-      n->Key->Wave->SetPitch(n->Key->Pitch);
-      n->Key->Wave->Read(n->Buffer, n->Position, length, n->Delta, &(n->Position));
+      n->Key->ass->GetSample()->SetPitch(n->Key->Pitch);
+      n->Key->ass->GetSample()->Read(n->Buffer, n->Position, length, n->Delta, &(n->Position));
 
       if (n->Volume != 1.f)
         for (chan = 0; chan < 2; chan++)
@@ -448,11 +465,26 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
   // Suppression des notes termin~Aées
   for (i = Notes.begin(); i != Notes.end();)
   {
-    if ((*i)->Position >= (*i)->Key->Wave->GetNumberOfFrames())
+    long endtotest;
+    if ((*i)->Key->looping)
+      endtotest = (*i)->Key->ass->GetLoopEnd();
+    else
+      endtotest = (*i)->Key->ass->GetSample()->GetNumberOfFrames();
+    if ((*i)->Position >= endtotest)
     {
-      Workshop.SetFreeBuffer((*i)->Buffer);
-      delete *i;
-      i = Notes.erase(i);
+      if (((*i)->Key->ass->GetLoopCount() > (*i)->Key->loops) || ((*i)->Key->ass->GetLoopCount() == -1))
+      {
+        (*i)->Position = (*i)->Key->ass->GetLoopStart();
+        (*i)->Key->looping = true;
+        (*i)->Key->loops++;
+      }
+      else
+      {
+        Workshop.SetFreeBuffer((*i)->Buffer);
+        delete (*i)->Key;
+        delete *i;
+        i = Notes.erase(i);
+      }
     }
     else
       i++;
