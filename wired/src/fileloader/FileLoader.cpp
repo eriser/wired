@@ -160,26 +160,23 @@ FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai
   		  wxSize(320, -1), 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);  
   }
   if (!save)
- {
-	 preview = new wxButton(this, PREVIEW_ID, _T("Preview"), 
-		  	 wxPoint(F_WIDTH - 168, F_HEIGHT - 60),
-			 wxSize(-1, -1));
- }
- if (!save)
- {
- 	btopen = new wxButton(this, OPEN_ID, _T("Open"), 
+    {
+      preview = new wxButton(this, PREVIEW_ID, _T("Preview"), 
+			     wxPoint(F_WIDTH - 168, F_HEIGHT - 60),
+			     wxSize(-1, -1));
+      btopen = new wxButton(this, OPEN_ID, _T("Open"), 
 		  	 wxPoint(F_WIDTH - 84, F_HEIGHT - 60),
-			 wxSize(-1, -1));
- }
- else
-{
- 	btopen = new wxButton(this, OPEN_ID, _T("Save"), 
-		  	 wxPoint(F_WIDTH - 84, F_HEIGHT - 60),
-			 wxSize(-1, -1));
-}
-  	cancel = new wxButton(this, CANCEL_ID, _T("Cancel"), 
-		  	 wxPoint(F_WIDTH - 84, F_HEIGHT - 30),
-			 wxSize(-1, -1));
+			    wxSize(-1, -1));
+    }
+  else
+    {
+      btopen = new wxButton(this, OPEN_ID, _T("Save"), 
+			    wxPoint(F_WIDTH - 84, F_HEIGHT - 60),
+			    wxSize(-1, -1));
+    }
+  cancel = new wxButton(this, CANCEL_ID, _T("Cancel"), 
+			wxPoint(F_WIDTH - 84, F_HEIGHT - 30),
+			wxSize(-1, -1));
   if (!akai)
   {
     favtext = new wxStaticText(this, -1, _T("Favorites"),
@@ -198,20 +195,24 @@ FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai
 		  wxPoint(555, 0));
   }
 
-  wxBoxSizer *first_sizer = new wxBoxSizer(wxHORIZONTAL);
+  wxBoxSizer *first_sizer;
+      
+  if (!akai)
+    {
+      first_sizer = new wxBoxSizer(wxHORIZONTAL);
+      wxBoxSizer *first_1_sizer = new wxBoxSizer(wxHORIZONTAL);
+      first_1_sizer->Add(favtext, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 2); 
+      first_1_sizer->Add(favorites, 1, wxEXPAND | wxALL, 2); 
+      first_1_sizer->Add(favdel, 0, wxEXPAND | wxALL, 2); 
+      
+      wxBoxSizer *first_2_sizer = new wxBoxSizer(wxHORIZONTAL);
+      first_2_sizer->Add(mrutext, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 2); 
+      first_2_sizer->Add(mru, 1, wxEXPAND | wxEXPAND | wxALL, 2); 
+      first_2_sizer->Add(mrudel, 0, wxEXPAND | wxALL, 2); 
 
-  wxBoxSizer *first_1_sizer = new wxBoxSizer(wxHORIZONTAL);
-  first_1_sizer->Add(favtext, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 2); 
-  first_1_sizer->Add(favorites, 1, wxEXPAND | wxALL, 2); 
-  first_1_sizer->Add(favdel, 0, wxEXPAND | wxALL, 2); 
-
-  wxBoxSizer *first_2_sizer = new wxBoxSizer(wxHORIZONTAL);
-  first_2_sizer->Add(mrutext, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 2); 
-  first_2_sizer->Add(mru, 1, wxEXPAND | wxEXPAND | wxALL, 2); 
-  first_2_sizer->Add(mrudel, 0, wxEXPAND | wxALL, 2); 
-
-  first_sizer->Add(first_1_sizer, 1, wxEXPAND | wxALL, 2); 
-  first_sizer->Add(first_2_sizer, 1, wxEXPAND | wxALL, 2); 
+      first_sizer->Add(first_1_sizer, 1, wxEXPAND | wxALL, 2); 
+      first_sizer->Add(first_2_sizer, 1, wxEXPAND | wxALL, 2); 
+    }
 
   wxBoxSizer *second_sizer = new wxBoxSizer(wxHORIZONTAL);
   second_sizer->Add(folder, 1, wxEXPAND | wxALL, 2); 
@@ -223,16 +224,21 @@ FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai
   third_v1_sizer->Add(fntext, 0, wxEXPAND | wxALL, 2); 
   third_v1_sizer->Add(filename, 1, wxEXPAND | wxALL, 2); 
 
-  wxBoxSizer *third_v2_sizer = new wxBoxSizer(wxHORIZONTAL);
-  third_v2_sizer->Add(typtext, 0, wxEXPAND | wxALL, 2); 
-  third_v2_sizer->Add(type, 1, wxEXPAND | wxALL, 2); 
-
   wxBoxSizer *third_v3_sizer = new wxBoxSizer(wxVERTICAL);
   third_v3_sizer->Add(third_v1_sizer, 0, wxEXPAND | wxALL, 2); 
-  third_v3_sizer->Add(third_v2_sizer, 0, wxEXPAND | wxALL, 2); 
+
+  wxBoxSizer *third_v2_sizer;
+  if (!akai)
+    {
+      third_v2_sizer = new wxBoxSizer(wxHORIZONTAL);
+      third_v2_sizer->Add(typtext, 0, wxEXPAND | wxALL, 2); 
+      third_v2_sizer->Add(type, 1, wxEXPAND | wxALL, 2); 
+      third_v3_sizer->Add(third_v2_sizer, 0, wxEXPAND | wxALL, 2); 
+    }
 
   wxBoxSizer *third_h1_sizer = new wxBoxSizer(wxHORIZONTAL);
-  third_h1_sizer->Add(preview, 0, wxEXPAND | wxALL, 2); 
+  if (!save)
+    third_h1_sizer->Add(preview, 0, wxEXPAND | wxALL, 2); 
   third_h1_sizer->Add(btopen, 0, wxEXPAND | wxALL, 2); 
   third_h1_sizer->Add(cancel, 0, wxEXPAND | wxALL, 2); 
 
@@ -241,7 +247,9 @@ FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai
   third_sizer->Add(third_h1_sizer, 0, wxEXPAND | wxALL, 2); 
 
   wxBoxSizer *TopSizer = new wxBoxSizer(wxVERTICAL);
-  TopSizer->Add(first_sizer, 0, wxEXPAND | wxALL, 2); 
+  
+  if (!akai)
+    TopSizer->Add(first_sizer, 0, wxEXPAND | wxALL, 2); 
   TopSizer->Add(second_sizer, 1, wxEXPAND | wxALL, 2); 
   TopSizer->Add(third_sizer, 0, wxEXPAND | wxALL, 2); 
 
