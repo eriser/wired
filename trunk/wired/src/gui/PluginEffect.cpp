@@ -1,8 +1,11 @@
+// Copyright (C) 2004, 2005 by Wired Team
+// Under the GNU General Public License
 
-#include "PluginEffect.h"
 #include <iostream>
+#include <math.h>
+#include "PluginEffect.h"
 
-using namespace std;
+using namespace				std;
 
 /* DO NOT MODIFY THIS FILE FOR MAKING A PLUGIN. JUST DERIVE FROM THAT CLASS */
 
@@ -16,7 +19,7 @@ PluginEffect::~PluginEffect()
 
 }
 
-void		PluginEffect::Process(WaveFile &input, WaveFile &output, float effect, int channel, int ind)
+void					PluginEffect::Process(WaveFile &input, WaveFile &output, float effect, int channel, int ind)
 {
   if (ind == 1)
 	Gain(input, output, effect, channel);
@@ -24,54 +27,49 @@ void		PluginEffect::Process(WaveFile &input, WaveFile &output, float effect, int
 	Normalize(input, output, effect, channel);
 }
 
-void 		PluginEffect::Gain(WaveFile &input, WaveFile &output, 
-							  float gain, int channel)
+void					PluginEffect::Gain(WaveFile &input, WaveFile &output, 
+							   float gain, int channel)
 {
-  wxString 				text;
-  int                   nb_read;
+  wxString				text;
+  int					nb_read;
   
   float * rw_buffer = new float [channel * WAVE_TEMP_SIZE];
   nb_read = input.ReadFloatF(rw_buffer);
-
   for (int i=0; i < nb_read; i++)
 	rw_buffer[i] = rw_buffer[i] * gain;
-
   while (nb_read)
-  {
-    output.WriteFloatF(rw_buffer, nb_read);
-    nb_read = input.ReadFloatF(rw_buffer);
-	for (int i=0; i < nb_read; i++)
-	  rw_buffer[i] = rw_buffer[i] * gain;
-  }
+    {
+      output.WriteFloatF(rw_buffer, nb_read);
+      nb_read = input.ReadFloatF(rw_buffer);
+      for (int i=0; i < nb_read; i++)
+	rw_buffer[i] = rw_buffer[i] * gain;
+    }
 }
 
-void 		PluginEffect::Normalize(WaveFile &input, WaveFile &output, float norma, int channel)
+void					PluginEffect::Normalize(WaveFile &input, WaveFile &output, float norma, int channel)
 {
-  int                   nb_read;
-  
-  float * rw_buffer = new float [channel * WAVE_TEMP_SIZE];
+  int					nb_read;
+  float					*rw_buffer = new float [channel * WAVE_TEMP_SIZE];
+  float					k = 0;
 
   input.SetCurrentPosition(0);
   nb_read = input.ReadFloatF(rw_buffer);
-    
-  float	k = 0;
   while (nb_read)
-  {
-	for (int i=0; i < nb_read; i++)
-	  if (k < rw_buffer[i])
-	    k = rw_buffer[i];
-	nb_read = input.ReadFloatF(rw_buffer);
-  }
-  norma = abs(norma - k); 
+    {
+      for (int i=0; i < nb_read; i++)
+	if (k < rw_buffer[i])
+	  k = rw_buffer[i];
+      nb_read = input.ReadFloatF(rw_buffer);
+    }
+  norma = fabs(norma - k); 
   input.SetCurrentPosition(0);
   nb_read = input.ReadFloatF(rw_buffer);
-  
   while (nb_read)
-  {
-	for (int i=0; i < nb_read; i++)
-		rw_buffer[i] += norma;
-    output.WriteFloatF(rw_buffer, nb_read);
-    nb_read = input.ReadFloatF(rw_buffer);
-  }
+    {
+      for (int i=0; i < nb_read; i++)
+	rw_buffer[i] += norma;
+      output.WriteFloatF(rw_buffer, nb_read);
+      nb_read = input.ReadFloatF(rw_buffer);
+    }
 }
 
