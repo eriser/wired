@@ -174,7 +174,7 @@ void ASList::DelEntry(void *entry)
     if ((*i)->GetEntry() == entry)
     {
       (*i)->Destroy();
-      entries.erase(i);
+      i = entries.erase(i);
       if (GetSelected() == NULL)
         if (entries.size())
           entries[0]->SetSelected(true);

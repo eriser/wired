@@ -87,7 +87,7 @@ class ASPlugPanel: public wxPanel
   void				ShowPlugin(ASPlugin *p);
   void				ShowLastPlug();
 
-  void				ClosePlug(ASPlugin *p);
+  void				RemovePlugin(ASPlugin *p);
   void				DeletePlugs();
 
  protected:

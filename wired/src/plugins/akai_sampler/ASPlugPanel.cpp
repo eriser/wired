@@ -103,6 +103,8 @@ void				ASPlugPanel::ShowPlug(ASPlug *t)
 {
   vector<ASPlug *>::iterator	i;
 
+  if (!t)
+    return;
   CurrentPlug = t;
   if (!CurrentPlug->IsDetached)
     {
@@ -119,8 +121,23 @@ void				ASPlugPanel::ShowPlug(ASPlug *t)
     }
   else
     {
-      CurrentPlug->Frame->Show(false);
-      CurrentPlug->Frame->Show(true);
+      if (CurrentPlug != NULL)
+      {
+        CurrentPlug->Frame->Show(false);
+        CurrentPlug->Frame->Show(true);
+      }
+    }
+}
+
+void        ASPlugPanel::RemovePlugin(ASPlugin *p)
+{
+  vector<ASPlug *>::iterator	i;
+  
+  for (i = PlugsList.begin(); i != PlugsList.end(); i++)
+    if ((*i)->Plugin == p)
+    {
+      i = PlugsList.erase(i);
+      return;
     }
 }
 

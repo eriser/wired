@@ -50,11 +50,17 @@ ASamplerSample::~ASamplerSample()
   if (w)
     delete w;
   if (aske)
+  {
+    as->PlugPanel->RemovePlugin(aske);
     delete aske;
+  }
   if (askg)
     delete askg;
   for (vector<ASPlugin *>::iterator i = effects.begin(); i != effects.end(); i++)
+  {
+    as->PlugPanel->RemovePlugin((*i));
     delete (*i);
+  }
   effects.clear();
 }
 
@@ -79,7 +85,7 @@ ASamplerKeygroup::~ASamplerKeygroup()
   {
     if ((*i) == this)
     {
-      as->Keygroups.erase(i);
+      i = as->Keygroups.erase(i);
       return;
     }
   }
