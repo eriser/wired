@@ -6,6 +6,22 @@
 #include "ASPlugPanel.h"
 #include "Settings.h"
 
+// ICI METTRE TOUS LES EFFETS
+#include "ASEnvel.h"
+#include "ASLoop.h"
+
+#define NB_EFFECTS 2
+static wxString EFFECTSNAMES[NB_EFFECTS] = {
+  ASEnvel::GetFXName(),
+  ASLoop::GetFXName(),
+  /*
+  _T("Enveloppe"),
+  _T("Looping")
+  */
+};
+// FIN DES EFFETS
+
+
 static PlugInitInfo info;
 
   BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
@@ -14,6 +30,9 @@ static PlugInitInfo info;
   EVT_BUTTON(Sampler_Save, AkaiSampler::OnSaveFile)
   EVT_BUTTON(Sampler_PolyUp, AkaiSampler::OnPolyUp)
   EVT_BUTTON(Sampler_PolyDown, AkaiSampler::OnPolyDown)
+  EVT_BUTTON(Sampler_SampleBt, AkaiSampler::OnSampleButton)
+  EVT_BUTTON(Sampler_KgroupBt, AkaiSampler::OnKgroupButton)
+  EVT_BUTTON(Sampler_EffectBt, AkaiSampler::OnEffectButton)
   EVT_LEFT_DOWN(AkaiSampler::OnKeyDown)
   EVT_LEFT_UP(AkaiSampler::OnKeyUp)
   EVT_COMMAND_SCROLL(Sampler_Volume, AkaiSampler::OnVolume)
@@ -35,11 +54,10 @@ END_EVENT_TABLE()
   PlugPanel = new ASPlugPanel(this, wxPoint(150, 0), wxSize(GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), wxTHICK_FRAME, this);
 
   Samples = new ASSampleList("Samples");
-  Samples->SetPlugPanel(PlugPanel);
   Keygroups = new ASKeygroupList("Keygroups");
 
   PlugPanel->AddPlug(Samples);
-  PlugPanel->AddPlug(Keygroups);
+//  PlugPanel->AddPlug(Keygroups);
   PlugPanel->ShowPlugin(Samples);
 
   //memset(Keys, 0x0, sizeof(ASamplerKey *) * 127);
@@ -58,23 +76,34 @@ END_EVENT_TABLE()
   fader_bg = new wxImage(string(GetDataDir() + string(IMG_SP_FADER_BG)).c_str(),wxBITMAP_TYPE_PNG);
   fader_fg = new wxImage(string(GetDataDir() + string(IMG_SP_FADER_FG)).c_str(),wxBITMAP_TYPE_PNG);
 
+  wxImage *sample_up = new wxImage(string(GetDataDir() + string(IMG_SP_SAMPLE_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *sample_down = new wxImage(string(GetDataDir() + string(IMG_SP_SAMPLE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *kg_up = new wxImage(string(GetDataDir() + string(IMG_SP_KGROUP_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *kg_down = new wxImage(string(GetDataDir() + string(IMG_SP_KGROUP_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *effect_up = new wxImage(string(GetDataDir() + string(IMG_SP_EFFECT_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *effect_down = new wxImage(string(GetDataDir() + string(IMG_SP_EFFECT_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+
   OpenBtn = new DownButton(this, Sampler_Open,
       wxPoint(2, 2), wxSize(28, 28), open_up, open_down, true);
   SaveBtn = new DownButton(this, Sampler_Save,
       wxPoint(2, 32), wxSize(28, 28), save_up, save_down, true);
+
+  btsample = new DownButton(this, Sampler_SampleBt, wxPoint(125, 5), wxSize(20, 20), new wxImage(sample_up->Scale(20, 20)), new wxImage(sample_down->Scale(20, 20)), true);
+  btkgroup = new DownButton(this, Sampler_KgroupBt, wxPoint(125, 30), wxSize(20, 20), new wxImage(kg_up->Scale(20, 20)), new wxImage(kg_down->Scale(20, 20)), true);
+  bteffect = new DownButton(this, Sampler_EffectBt, wxPoint(125, 55), wxSize(20, 20), new wxImage(effect_up->Scale(20, 20)), new wxImage(effect_down->Scale(20, 20)), true);
 
   /* Toolbar Haut */
 
   wxString s;
 
   s.Printf("%d", PolyphonyCount);
-  PolyCountLabel = new wxStaticText(this, -1, s, wxPoint(80, 10), wxSize(-1, 12));
+  PolyCountLabel = new wxStaticText(this, -1, s, wxPoint(6, 162), wxSize(-1, 12));
   PolyCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   PolyCountLabel->SetLabel(s);
 
-  PolyUpBtn = new HoldButton(this, Sampler_PolyUp, wxPoint(108, 10), wxSize(11, 8),
+  PolyUpBtn = new HoldButton(this, Sampler_PolyUp, wxPoint(16, 160), wxSize(11, 8),
       up_up, up_down);
-  PolyDownBtn = new HoldButton(this, Sampler_PolyDown, wxPoint(108, 21), wxSize(11, 8),
+  PolyDownBtn = new HoldButton(this, Sampler_PolyDown, wxPoint(16, 170), wxSize(11, 8),
       down_up, down_down);
 
   wxImage *img_led_off = new wxImage(string(GetDataDir() + string(IMG_SP_LED_OFF)).c_str(), wxBITMAP_TYPE_PNG);
@@ -85,7 +114,7 @@ END_EVENT_TABLE()
   if (img_led_on)
     LedOn = new wxBitmap(img_led_on);
 
-  MidiInBmp = new wxStaticBitmap(this, -1, *LedOff, wxPoint(70, 10));
+  MidiInBmp = new wxStaticBitmap(this, -1, *LedOff, wxPoint(12, 145));
 
   /* Envelope */
 
@@ -676,9 +705,50 @@ void AkaiSampler::OnPolyDown(wxCommandEvent &event)
   }
 }
 
+void AkaiSampler::OnSampleButton(wxCommandEvent &event)
+{
+  PlugPanel->ShowPlugin(Samples);
+}
+
+void AkaiSampler::OnKgroupButton(wxCommandEvent &event)
+{
+  ASListEntry *e = Samples->List->GetSelected();
+  if (e)
+  {
+    ASamplerSample *ass = (ASamplerSample *)(e->GetEntry());
+    ASKeygroupEditor *aske = ass->GetKgEditor();
+    ASamplerKeygroup *askg = ass->GetKeygroup();
+    if (!aske)
+    {
+      aske = new ASKeygroupEditor(wxString(_T("Keygroup editor for ")) + e->GetName());
+      aske->SetSample(ass);
+      ass->SetKgEditor(aske);
+      PlugPanel->AddPlug(aske);
+    }
+    PlugPanel->ShowPlugin(aske);
+  }
+}
+
+void AkaiSampler::OnEffectButton(wxCommandEvent &event)
+{
+  ASListEntry *e = Samples->List->GetSelected();
+  if (e)
+  {
+    ASamplerSample *ass = (ASamplerSample *)(e->GetEntry());
+    ASPlugin *p = ass->GetEffect();
+    if (!p)
+    {
+      p = new ASLoop(wxString("Looping for ") + e->GetName());
+      p->SetSample(ass);
+      ass->SetEffect(p);
+      PlugPanel->AddPlug(p);
+    }
+    PlugPanel->ShowPlugin(p);
+  }
+}
+
 void AkaiSampler::OnSaveFile(wxCommandEvent &event)
 {
-
 }
 
 void AkaiSampler::OnKeyUp(wxMouseEvent &event)

@@ -5,12 +5,12 @@
 #include "ASKeygroupList.h"
 #include "ASClavier.h"
 
-class ASKeygroupEditor : public wxDialog
+class ASKeygroupEditor : public ASPlugin
 {
   public:
-    ASKeygroupEditor(wxWindow *, int, wxString, wxPoint, wxSize);
+    ASKeygroupEditor(wxString Name);
+    wxWindow *CreateView(wxPanel *, wxPoint &, wxSize &);
     void OnPaint(wxPaintEvent &);
-    void OnClose(wxCloseEvent &);
     void OnKeyUp(wxMouseEvent &ev);
     void OnKeyDown(wxMouseEvent &ev);
     void PaintSelection();
@@ -19,6 +19,7 @@ class ASKeygroupEditor : public wxDialog
   private:
     ASamplerSample *ass;
     ASClavier *clav;
+    wxScrolledWindow *sw;
   DECLARE_EVENT_TABLE()
 };
 

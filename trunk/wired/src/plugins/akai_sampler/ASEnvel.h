@@ -40,6 +40,7 @@ class ASEnvel : public ASPlugin
     void OnLeftDown(wxMouseEvent &e);
     void OnRightDown(wxMouseEvent &e);
     void OnLeftUp(wxMouseEvent &e);
+    static const wxString GetFXName() { return "ASEnvel"; }
   private:
     void MovePt(wxPoint);
     wxBitmap *Grid;

@@ -12,9 +12,11 @@
 
 using namespace std;
 
+/*
 #define IMAGE_BT_ADD_KEYGROUP     "plugins/akaisampler/add.png"
 #define IMAGE_BT_DEL_KEYGROUP    "plugins/akaisampler/del.png"
 #define IMAGE_BT_EDIT_KEYGROUP    "plugins/akaisampler/assign.png"
+*/
 
 class ASamplerKeygroup;
 
@@ -152,9 +154,9 @@ class ASKeygroupList : public ASPlugin
     ASKeygroupList(wxString Name);
     ~ASKeygroupList();
     wxWindow *CreateView(wxPanel *, wxPoint &, wxSize &);
-    void OnAddKeygroup(wxCommandEvent &);
-    void OnDelKeygroup(wxCommandEvent &);
-    void OnEditKeygroup(wxCommandEvent &);
+//    void OnAddKeygroup(wxCommandEvent &);
+//    void OnDelKeygroup(wxCommandEvent &);
+//    void OnEditKeygroup(wxCommandEvent &);
     void OnResize(wxSizeEvent &);
     ASamplerKeygroup *FindKeygroup(int key);
     vector <ASListEntry *> GetEntries() { return List->GetEntries(); }
@@ -165,11 +167,13 @@ class ASKeygroupList : public ASPlugin
 
 extern ASKeygroupList *Keygroups;
 
+/*
 enum 
 {
   ASKeygroupList_AddKeygroup = 1234,
   ASKeygroupList_DelKeygroup,
   ASKeygroupList_EditKeygroup,
 };
+*/
 
 #endif

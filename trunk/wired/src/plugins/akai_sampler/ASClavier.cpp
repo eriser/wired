@@ -145,7 +145,7 @@ void	ASClavier::OnKeyDown(wxMouseEvent &event)
   {
     wxMouseEvent ev(wxEVT_LEFT_DOWN);
     ev.SetEventObject(event.GetEventObject());
-    GetParent()->ProcessEvent(ev);
+    GetParent()->GetParent()->ProcessEvent(ev);
   }
   else
   {
@@ -168,7 +168,7 @@ void	ASClavier::OnKeyUp(wxMouseEvent &event)
   {
     wxMouseEvent ev(wxEVT_LEFT_UP);
     ev.SetEventObject(event.GetEventObject());
-    GetParent()->ProcessEvent(ev);
+    GetParent()->GetParent()->ProcessEvent(ev);
   }
   else
   {

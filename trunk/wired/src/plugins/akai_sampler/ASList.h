@@ -8,7 +8,7 @@
 using namespace std;
 
 #define ITEMHEIGHT 15
-#define BUTTONSHEIGHT 15
+#define BUTTONSHEIGHT 16
 
 class ASListEntry : public wxPanel
 {
@@ -23,8 +23,8 @@ class ASListEntry : public wxPanel
     void OnClick(wxMouseEvent &e);
     void OnRename(wxMouseEvent &e);
     void Rename(const wxString name) { this->name = name; }
-    void SetSelected(bool selected) { this->selected = selected; }
-    void InvertSelection() { selected = !selected; }
+    void SetSelected(bool selected) { this->selected = selected; Refresh(); }
+    void InvertSelection() { selected = !selected; Refresh();}
     bool IsSelected() { return selected; }
     wxString GetName() { return name; }
     void *GetEntry() { return entry; }
@@ -52,8 +52,9 @@ class ASList: public wxPanel
   void OnResize(wxSizeEvent &e);
   ASListEntry *AddEntry(wxString name, void *entry);
   void DelEntry(void *entry);
-  void AddControl(wxControl *);  
-  vector<ASListEntry *> GetSelected();
+  void AddControl(wxWindow *);  
+  ASListEntry * GetSelected();
+  void SetSelected(ASListEntry *sel);
   int size() { return entries.size(); }
   vector<ASListEntry *> GetEntries() { return entries; }
   private:

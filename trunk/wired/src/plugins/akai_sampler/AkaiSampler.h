@@ -27,6 +27,13 @@
 #define IMG_SP_FADER_BG     "plugins/akaisampler/fader_bg.png"
 #define IMG_SP_FADER_FG     "plugins/akaisampler/fader_fg.png"
 
+#define IMG_SP_SAMPLE_UP    "plugins/akaisampler/sample_up.png"
+#define IMG_SP_SAMPLE_DOWN  "plugins/akaisampler/sample_down.png"
+#define IMG_SP_KGROUP_UP    "plugins/akaisampler/kg_up.png"
+#define IMG_SP_KGROUP_DOWN  "plugins/akaisampler/kg_down.png"
+#define IMG_SP_EFFECT_UP    "plugins/akaisampler/effect_up.png"
+#define IMG_SP_EFFECT_DOWN  "plugins/akaisampler/effect_down.png"
+
 using namespace std;
 
 #define PLUGIN_NAME "WiredSampler"
@@ -134,6 +141,14 @@ class AkaiSampler : public Plugin
 
     wxMutex    Mutex;
 
+    DownButton *btsample;
+    DownButton *btkgroup;
+    DownButton *bteffect;
+
+    void OnSampleButton(wxCommandEvent &event);
+    void OnKgroupButton(wxCommandEvent &event);
+    void OnEffectButton(wxCommandEvent &event);
+
     void OnOpenFile(wxCommandEvent &event);
     void OnSaveFile(wxCommandEvent &event);
     void OnPolyUp(wxCommandEvent &event);
@@ -169,6 +184,9 @@ enum
   Sampler_Decay,
   Sampler_Sustain,
   Sampler_Release,
+  Sampler_SampleBt,
+  Sampler_KgroupBt,
+  Sampler_EffectBt,
 };  
 
 #endif

@@ -21,6 +21,7 @@ class ASLoop : public ASPlugin
     void OnRightDown(wxMouseEvent &e);
     void OnLeftUp(wxMouseEvent &e);
     void SetSample(ASamplerSample *ass);
+    static const wxString GetFXName() { return "ASLoop"; }
   private:
     ASWaveView *wv;
   public:
