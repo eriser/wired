@@ -4,7 +4,6 @@
 #include "LoopSampler.h"
 #include "midi.h"
 #include <stdio.h>
-#include "FileLoader.h"
 #include <wx/progdlg.h>
 #include <math.h>
 
@@ -720,11 +719,12 @@ wxBitmap *LoopSampler::GetBitmap()
 
 void LoopSampler::OnOpenFile(wxCommandEvent &event)
 {  
-  FileLoader *dlg = new FileLoader(this, -1, "Loading sound file", false, false, NULL);
-  if (dlg->ShowModal() == wxID_OK)
+  //FileLoader *dlg = new FileLoader(this, -1, "Loading sound file", false, false, NULL);
+  string s = OpenFileLoader("Loading sound file", 0x0);
+  if (!s.empty())//dlg->ShowModal() == wxID_OK)
     {
-      string selfile = dlg->GetSelectedFile();
-      dlg->Destroy();
+      string selfile = s;//dlg->GetSelectedFile();
+      //      dlg->Destroy();
 
       WaveFile *w;
 
@@ -748,8 +748,8 @@ void LoopSampler::OnOpenFile(wxCommandEvent &event)
 	}
       delete Progress;
     }
-  else
-    dlg->Destroy();
+  //  else
+  //  dlg->Destroy();
 }
 
 void LoopSampler::OnOctave(wxScrollEvent &event)

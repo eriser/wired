@@ -3,6 +3,8 @@
 
 using namespace std;
 
+/* DO NOT MODIFY THIS FILE FOR MAKING A PLUGIN. JUST DERIVE FROM THAT CLASS */
+
 Plugin::Plugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo) 
   : wxWindow(startinfo.Rack, -1, startinfo.Pos, startinfo.Size)
 { 
@@ -115,6 +117,41 @@ void Plugin::ShowOptionalView()
 void Plugin::CloseOptionalView()
 {
   StartInfo.HostCallback(this, wiredCloseOptionalView, 0x0);
+}
+
+std::string Plugin::OpenFileLoader(std::string title, 
+				   std::vector<std::string> *exts,
+				   bool akai)
+{
+  struct
+  {
+    std::string *t;
+    std::vector<std::string> *e;
+    bool ak;
+    std::string result;
+  } w_filel;
+ 
+  w_filel.t = &title;
+  w_filel.e = exts;
+  w_filel.ak = akai;
+  StartInfo.HostCallback(this, wiredOpenFileLoader, (void *)&w_filel);
+  return (w_filel.result);
+}
+
+std::string Plugin::SaveFileLoader(std::string title, 
+				   std::vector<std::string> *exts)
+{
+  struct
+  {
+    std::string *t;
+    std::vector<std::string> *e;
+    std::string result;
+  } w_filel;
+ 
+  w_filel.t = &title;
+  w_filel.e = exts;
+  StartInfo.HostCallback(this, wiredSaveFileLoader, (void *)&w_filel);
+  return (w_filel.result);
 }
 
 // Host info
