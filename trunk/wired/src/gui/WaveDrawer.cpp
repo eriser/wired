@@ -256,8 +256,9 @@ void					WaveDrawer::RedrawBitmap(wxSize s)
   memDC.SetPen(PenColor);
   memDC.SetBrush((!Transparent) ? BrushColor : *wxTRANSPARENT_BRUSH);
   memDC.DrawRectangle(0, 0, s.x, s.y);
-  for (int i = 0; i < s.x; i++)
-    memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
+  if (s.x > 2)
+    for (int i = 0; i < s.x; i++)
+      memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
 }
 
 void					WaveDrawer::SetSize(wxSize s)

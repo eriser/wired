@@ -300,8 +300,7 @@ void					AudioPattern::OnClick(wxMouseEvent &e)
 {
   Pattern::OnClick(e);
   if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
-    Split((double) ((SeqPanel->CurrentXScrollPos 
-		     + Pattern::GetMPosition().x + e.m_x)
+    Split((double) ((SeqPanel->CurrentXScrollPos + Pattern::GetMPosition().x + e.m_x)
 		    / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor)));
   else
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
@@ -316,30 +315,35 @@ void					AudioPattern::OnLeftUp(wxMouseEvent &e)
 void					AudioPattern::Split(double pos)
 {
   AudioPattern				*p;
-
+#define __DEBUG__
+  if ((Position < pos) && (pos < EndPosition))
+    {
+      SeqMutex.Lock();
 #ifdef __DEBUG__
-  cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
-  cout << "new pos: " << pos << endl;
+      cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
+      cout << "new pos: " << pos << endl;
 #endif
-  p = new AudioPattern(pos, EndPosition, TrackIndex);
+      p = new AudioPattern(pos, EndPosition, TrackIndex);
 #ifdef __DEBUG__
-  cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
+      cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
 #endif
-  p->StartWavePos = (long) (StartWavePos + (pos - Position) * Seq->SamplesPerMeasure);
-  p->EndWavePos = (long) (p->StartWavePos + (p->Length) * Seq->SamplesPerMeasure);
-  p->SetDrawColour(WaveDrawer::PenColor);
-  p->SetWave(Wave);
-  p->SetCursor(GetCursor());
-  p->Update();
-  if (IsSelected())
-    p->SetSelected(false);
-  SeqMutex.Lock();
-  EndWavePos = p->StartWavePos;
-  Length = (EndPosition = pos) - Position;
-  SetDrawing();
-  Update();
-  SeqMutex.Unlock();
-  Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
+      p->StartWavePos = StartWavePos + (long) floor((pos - Position) * Seq->SamplesPerMeasure);
+      p->EndWavePos = p->StartWavePos + (long) floor(p->Length * Seq->SamplesPerMeasure);
+      p->SetDrawColour(WaveDrawer::PenColor);
+      p->SetWave(Wave);
+      p->SetCursor(GetCursor());
+      if (IsSelected())
+	p->SetSelected(false);
+      p->Update();
+      EndWavePos = p->StartWavePos;
+      Length = (EndPosition = pos) - Position;
+      SetDrawing();
+      Update();
+      SeqMutex.Unlock();
+      Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
+    }
+  else
+    cout << "C QUOI CE DELIRE DE POS ?? " << pos << endl;
 }
 
 void					AudioPattern::SetDrawColour(wxColour c)
@@ -352,9 +356,9 @@ void					AudioPattern::SetDrawColour(wxColour c)
 
 void					AudioPattern::OnDoubleClick(wxMouseEvent &e)
 {
-  Pattern::OnDoubleClick(e);
   OnClick(e);
-  OptPanel->ShowWave(this);
+  if (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER)
+    OptPanel->ShowWave(this);
   /*printf("audio (%d) me (%d)\n", audio, me);*/
 }
 
