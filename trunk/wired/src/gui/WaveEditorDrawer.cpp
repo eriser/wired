@@ -165,8 +165,7 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
   // Coefficient d'incrémentation
   inc = (long) ceill(len / size_x);  
   
-  cout << "SetDrawing ----- inc = " << inc << endl;
-  //if (inc == 0) inc = 1;
+  if (inc == 0) inc = 1;
   
   if ( EndWavePos > PAINT_WIDTH) 
 	pos_deb =((xsrc*inc) < (EndWavePos - PAINT_WIDTH))? xsrc*inc : (EndWavePos - PAINT_WIDTH);
@@ -174,8 +173,6 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
 	pos_deb = 0;
  
   pos_fin = (len + (xsrc*inc));
-  
-  cout << " pos debut = " << pos_deb << endl;
   
   if (DrawData)
     delete [] DrawData;
@@ -255,13 +252,9 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
 	    delete TempBuf[0];
 	    delete TempBuf[1];
 	    delete TempBuf;
-	    
-	    cout << " EndWavePos = " << EndWavePos << endl;
-	    cout << " inc  = " << inc << endl;
 	  }	  
 	else // Wave loadeé en memoire
 	  {
-	  cout << "etape 4 " << endl;
 	    for (i = 0, pos = pos_deb; (i < size_x) && (pos < pos_fin); i++)
 	      {
 	      
@@ -341,7 +334,7 @@ void					WaveEditorDrawer::SetSize(int x, int y)
 
 void					WaveEditorDrawer::OnPaint(wxPaintDC &dc, wxSize s, wxRegionIterator &region)
 {
-  cout << " WaveEditorDrawer::OnPaint"  << endl ;
+  //cout << " WaveEditorDrawer::OnPaint"  << endl ;
    dc.SetPen(PenColor);
   dc.SetBrush(BrushColor);
   //dc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -353,5 +346,5 @@ void					WaveEditorDrawer::OnPaint(wxPaintDC &dc, wxSize s, wxRegionIterator &re
 			&memDC, region.GetX(), region.GetY(), 
 		  wxCOPY , FALSE);  
   
-  cout << " WaveEditorDrawer::OnPaint End"  << endl ; 
+  //cout << " WaveEditorDrawer::OnPaint End"  << endl ; 
 }
