@@ -618,6 +618,16 @@ void					SequencerGui::SelectItem(Pattern *p, bool shift)
 	p->SetSelected(true);
 	SelectedItems.push_back(p);
       }
+    else
+      {
+	p->SetSelected(false);
+	for (i = SelectedItems.begin(); i != SelectedItems.end(); i++)
+	  if (*i == p)
+	    {
+	      SelectedItems.erase(i);
+	      break;
+	    }
+      }
 }
 
 void					SequencerGui::CopySelectedItems()
@@ -647,7 +657,8 @@ void					SequencerGui::PasteItems()
 
 void					SequencerGui::DeleteSelectedPatterns()
 {
-  vector<Pattern *>::iterator		i, j;
+  vector<Pattern *>::iterator		i;
+  vector<Pattern *>::iterator		j;
   
   for (i = SelectedItems.begin(); i != SelectedItems.end(); i++)
     {

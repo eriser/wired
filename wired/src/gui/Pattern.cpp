@@ -226,8 +226,15 @@ void					Pattern::DrawName(wxPaintDC &dc, wxSize s)
   dc.SetFont(wxFont(PATTERN_NAME_HEIGHT - 2 * PATTERN_NAME_OFFSET, wxDEFAULT, wxNORMAL, wxNORMAL));
   dc.GetTextExtent(Name, &w, &h);
   //dc.SetBrush(*wxTRANSPARENT_BRUSH);
-  dc.DrawRectangle((x = s.x - (PATTERN_NAME_MARGINS + w + 4 * PATTERN_NAME_OFFSET)),
-		   (y = s.y - (PATTERN_NAME_MARGINS + h + 2 * PATTERN_NAME_OFFSET)),
-		   w + 4 * PATTERN_NAME_OFFSET, h + 2 * PATTERN_NAME_OFFSET);
-  dc.DrawText(Name, x + 2 * PATTERN_NAME_OFFSET, y + PATTERN_NAME_OFFSET);
+//   dc.DrawRectangle((x = s.x - (PATTERN_NAME_MARGINS + w + 4 * PATTERN_NAME_OFFSET)),
+// 		   (y = s.y - (PATTERN_NAME_MARGINS + h + 2 * PATTERN_NAME_OFFSET)),
+// 		   w + 4 * PATTERN_NAME_OFFSET, h + 2 * PATTERN_NAME_OFFSET);
+//   dc.DrawText(Name, x + 2 * PATTERN_NAME_OFFSET, y + PATTERN_NAME_OFFSET);
+  if ((((x = w + 4 * PATTERN_NAME_OFFSET) + 2 * PATTERN_NAME_MARGINS) <= s.x) && (h <= s.y))
+    {
+      dc.DrawRectangle(PATTERN_NAME_MARGINS,
+		       (y = s.y - (PATTERN_NAME_MARGINS + h + 2 * PATTERN_NAME_OFFSET)),
+		       x, h + 2 * PATTERN_NAME_OFFSET);
+      dc.DrawText(Name, PATTERN_NAME_MARGINS + 2 * PATTERN_NAME_OFFSET, y + PATTERN_NAME_OFFSET);
+    }
 }
