@@ -569,13 +569,13 @@ s,@INSTALL_DATA@,${INSTALL} -m 644,;t t
 s,@CYGPATH_W@,echo,;t t
 s,@PACKAGE@,wired,;t t
 s,@VERSION@,0.11,;t t
-s,@ACLOCAL@,${SHELL} /home/diodio/wired/missing --run aclocal-1.8,;t t
-s,@AUTOCONF@,${SHELL} /home/diodio/wired/missing --run autoconf,;t t
-s,@AUTOMAKE@,${SHELL} /home/diodio/wired/missing --run automake-1.8,;t t
-s,@AUTOHEADER@,${SHELL} /home/diodio/wired/missing --run autoheader,;t t
-s,@MAKEINFO@,${SHELL} /home/diodio/wired/missing --run makeinfo,;t t
-s,@AMTAR@,${SHELL} /home/diodio/wired/missing --run tar,;t t
-s,@install_sh@,/home/diodio/wired/install-sh,;t t
+s,@ACLOCAL@,${SHELL} /home/hehe2/wired/wired/missing --run aclocal-1.8,;t t
+s,@AUTOCONF@,${SHELL} /home/hehe2/wired/wired/missing --run autoconf,;t t
+s,@AUTOMAKE@,${SHELL} /home/hehe2/wired/wired/missing --run automake-1.8,;t t
+s,@AUTOHEADER@,${SHELL} /home/hehe2/wired/wired/missing --run autoheader,;t t
+s,@MAKEINFO@,${SHELL} /home/hehe2/wired/wired/missing --run makeinfo,;t t
+s,@AMTAR@,${SHELL} /home/hehe2/wired/wired/missing --run tar,;t t
+s,@install_sh@,/home/hehe2/wired/wired/install-sh,;t t
 s,@INSTALL_STRIP_PROGRAM@,${SHELL} $(install_sh) -c -s,;t t
 s,@mkdir_p@,mkdir -p -- .,;t t
 s,@AWK@,gawk,;t t
@@ -928,6 +928,7 @@ ${ac_dA}HAVE_NETINET_IN_H${ac_dB}HAVE_NETINET_IN_H${ac_dC}1${ac_dD}
 ${ac_dA}HAVE_STDLIB_H${ac_dB}HAVE_STDLIB_H${ac_dC}1${ac_dD}
 ${ac_dA}HAVE_STRING_H${ac_dB}HAVE_STRING_H${ac_dC}1${ac_dD}
 ${ac_dA}HAVE_UNISTD_H${ac_dB}HAVE_UNISTD_H${ac_dC}1${ac_dD}
+${ac_dA}HAVE_STDBOOL_H${ac_dB}HAVE_STDBOOL_H${ac_dC}1${ac_dD}
 ${ac_dA}TIME_WITH_SYS_TIME${ac_dB}TIME_WITH_SYS_TIME${ac_dC}1${ac_dD}
 ${ac_dA}LSTAT_FOLLOWS_SLASHED_SYMLINK${ac_dB}LSTAT_FOLLOWS_SLASHED_SYMLINK${ac_dC}1${ac_dD}
 ${ac_dA}HAVE_STDLIB_H${ac_dB}HAVE_STDLIB_H${ac_dC}1${ac_dD}
@@ -940,7 +941,6 @@ ${ac_dA}SELECT_TYPE_ARG5${ac_dB}SELECT_TYPE_ARG5${ac_dC}(struct timeval *)${ac_d
 ${ac_dA}HAVE_FLOOR${ac_dB}HAVE_FLOOR${ac_dC}1${ac_dD}
 ${ac_dA}HAVE_FTIME${ac_dB}HAVE_FTIME${ac_dC}1${ac_dD}
 ${ac_dA}HAVE_GETCWD${ac_dB}HAVE_GETCWD${ac_dC}1${ac_dD}
-${ac_dA}HAVE_MEMMOVE${ac_dB}HAVE_MEMMOVE${ac_dC}1${ac_dD}
 CEOF
   sed -f $tmp/defines.sed $tmp/in >$tmp/out
   rm -f $tmp/in
@@ -950,6 +950,7 @@ CEOF
 /^[	 ]*#[	 ]*define/!b
 t clr
 : clr
+${ac_dA}HAVE_MEMMOVE${ac_dB}HAVE_MEMMOVE${ac_dC}1${ac_dD}
 ${ac_dA}HAVE_MEMSET${ac_dB}HAVE_MEMSET${ac_dC}1${ac_dD}
 ${ac_dA}HAVE_POW${ac_dB}HAVE_POW${ac_dC}1${ac_dD}
 ${ac_dA}HAVE_SELECT${ac_dB}HAVE_SELECT${ac_dC}1${ac_dD}
@@ -993,6 +994,7 @@ ${ac_uA}HAVE_NETINET_IN_H${ac_uB}HAVE_NETINET_IN_H${ac_uC}1${ac_uD}
 ${ac_uA}HAVE_STDLIB_H${ac_uB}HAVE_STDLIB_H${ac_uC}1${ac_uD}
 ${ac_uA}HAVE_STRING_H${ac_uB}HAVE_STRING_H${ac_uC}1${ac_uD}
 ${ac_uA}HAVE_UNISTD_H${ac_uB}HAVE_UNISTD_H${ac_uC}1${ac_uD}
+${ac_uA}HAVE_STDBOOL_H${ac_uB}HAVE_STDBOOL_H${ac_uC}1${ac_uD}
 ${ac_uA}TIME_WITH_SYS_TIME${ac_uB}TIME_WITH_SYS_TIME${ac_uC}1${ac_uD}
 ${ac_uA}LSTAT_FOLLOWS_SLASHED_SYMLINK${ac_uB}LSTAT_FOLLOWS_SLASHED_SYMLINK${ac_uC}1${ac_uD}
 ${ac_uA}HAVE_STDLIB_H${ac_uB}HAVE_STDLIB_H${ac_uC}1${ac_uD}
@@ -1005,7 +1007,6 @@ ${ac_uA}SELECT_TYPE_ARG5${ac_uB}SELECT_TYPE_ARG5${ac_uC}(struct timeval *)${ac_u
 ${ac_uA}HAVE_FLOOR${ac_uB}HAVE_FLOOR${ac_uC}1${ac_uD}
 ${ac_uA}HAVE_FTIME${ac_uB}HAVE_FTIME${ac_uC}1${ac_uD}
 ${ac_uA}HAVE_GETCWD${ac_uB}HAVE_GETCWD${ac_uC}1${ac_uD}
-${ac_uA}HAVE_MEMMOVE${ac_uB}HAVE_MEMMOVE${ac_uC}1${ac_uD}
 CEOF
   sed -f $tmp/undefs.sed $tmp/in >$tmp/out
   rm -f $tmp/in
@@ -1015,6 +1016,7 @@ CEOF
 /^[	 ]*#[	 ]*undef/!b
 t clr
 : clr
+${ac_uA}HAVE_MEMMOVE${ac_uB}HAVE_MEMMOVE${ac_uC}1${ac_uD}
 ${ac_uA}HAVE_MEMSET${ac_uB}HAVE_MEMSET${ac_uC}1${ac_uD}
 ${ac_uA}HAVE_POW${ac_uB}HAVE_POW${ac_uC}1${ac_uD}
 ${ac_uA}HAVE_SELECT${ac_uB}HAVE_SELECT${ac_uC}1${ac_uD}

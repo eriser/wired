@@ -652,6 +652,46 @@ void					SequencerGui::UnselectTracks()
       (*i)->TrackOpt->SetSelected(false);
 }
 
+void					SequencerGui::ChangeSelectedTrackIndex(long trackindexdelta)
+{
+  vector<Track *>::iterator		i;
+  vector<Track *>::iterator		j;
+  long					z;
+  Track					*t;
+
+#ifdef __DEBUG__
+  printf("SequencerGui::ChangeSelectedTrackIndex(%d)\n", trackindexdelta);
+#endif
+  for (i = Seq->Tracks.begin(); (i != Seq->Tracks.end()) && !((*i)->TrackOpt->GetSelected()); i++);
+  if (i == Seq->Tracks.end())
+    return;
+  if ((trackindexdelta + (*i)->Index) < 0)
+    return;
+  SeqMutex.Lock();
+  if ((z = trackindexdelta) > 0)
+    for (j = i++; (z > 0) && (i != Seq->Tracks.end()); z--)
+      {
+	t = *i;
+	*(i++) = *j;
+	*(j++) = t;	  
+      }
+  else
+    for (j = i--; z < 0; z++)
+      {
+	if (i == Seq->Tracks.begin())
+	  z = 0;
+	t = *i;
+	*(i--) = *j;
+	*(j--) = t;
+      }
+  for (i = Seq->Tracks.begin(), z = 0; i != Seq->Tracks.end(); i++)
+    (*i)->UpdateIndex(z++);
+  UpdateTracks();
+  SeqMutex.Unlock();
+  SetScrolling();
+  AdjustVScrolling();
+}
+
 void					SequencerGui::RemoveReferenceTo(Plugin *plug)
 {
   vector<Track *>::iterator		i;
