@@ -82,8 +82,8 @@ class MasterChannelGui : public ChannelGui
 {
  public:
   MasterChannelGui( Channel *channel, wxImage* img_bg, wxImage* img_fg,
-	      wxWindow* parent, wxWindowID id,
-	      const wxPoint& pos, const wxSize& size );
+		    wxWindow* parent, wxWindowID id,
+		    const wxPoint& pos, const wxSize& size );
   ~MasterChannelGui();
   
   void OnFaderLeft(wxScrollEvent &e);

@@ -81,7 +81,8 @@ void MixerGui::AddMasterChannel(Channel *channel)
 
 ChannelGui* MixerGui::AddChannel(Channel *channel, const wxString& label)
 {
-  int x =/* CHANNELGUI_WIDTH +*/ ChannelGuiVector.size() * CHANNELGUI_WIDTH;
+  int x = /* CHANNELGUI_WIDTH +*/ 
+    ChannelGuiVector.size() * CHANNELGUI_WIDTH;
   ChannelGui *gui = new ChannelGui(channel, ImgFaderBg, ImgFaderFg, 
 				   this, -1, wxPoint(x, 0),
 				   wxSize(CHANNELGUI_WIDTH, 
@@ -150,11 +151,11 @@ void MixerGui::SetLabelByChan(Channel *channel, const wxString& label)
 }
 
 /*
-void MixerGui::SetChanOpt(Track *tr)
-{
+  void MixerGui::SetChanOpt(Track *tr)
+  {
   if (!tr->IsAudioTrack())
-    return;
+  return;
   ChannelGui* cg = GetGuiByChan(tr->Output);
   cg->SetOpt(tr);
-}
+  }
 */
