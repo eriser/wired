@@ -881,6 +881,7 @@ void LoopSampler::Load(int fd, long size)
       read(fd, &(s->Invert), sizeof (s->Invert));
 
       s->SetNote(s->Note);
+      cout << "Slice note: " << s->Note << endl;
       s->SetOctave(Octave);
 
       Slices.push_back(s);
@@ -1290,7 +1291,7 @@ void LoopSampler::OnToSeqTrack(wxCommandEvent &event)
   if (Wave)
     {
       list<SeqCreateEvent *> l;
-      SeqCreateEvent *e;
+      SeqCreateEvent *e, *f;
       list<Slice *>::iterator i;
       list<SeqCreateEvent *>::iterator j;
 
@@ -1309,17 +1310,20 @@ void LoopSampler::OnToSeqTrack(wxCommandEvent &event)
 	  l.push_back(e);
 
 	  // Note off
-	  e = new SeqCreateEvent;
-	  e->Position = (*i)->EndPosition * d;
-	  e->EndPosition = e->Position;
-	  e->MidiMsg[0] = 0x80;
-	  e->MidiMsg[1] = (*i)->AffectMidi;
-	  e->MidiMsg[2] = 0;
-	  l.push_back(e);
+	  f = new SeqCreateEvent;
+	  f->Position = e->EndPosition;
+	  f->EndPosition = f->Position;
+	  f->MidiMsg[0] = 0x80;
+	  f->MidiMsg[1] = e->MidiMsg[1];
+	  f->MidiMsg[2] = 0;
+	  l.push_back(f);
 	  i++;
-	  //cout << "Barcount : " << BarCount << endl;
+
 	  if ((i == Slices.end()) && Tempo)
-	    e->EndPosition = BarCount;
+	    {
+	      e->EndPosition = BarCount;
+	      f->EndPosition = BarCount;
+	    }
 	}      
       CreateMidiPattern(&l);
       for (j = l.begin(); j != l.end(); j++)

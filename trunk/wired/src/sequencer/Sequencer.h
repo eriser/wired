@@ -97,7 +97,10 @@ class Sequencer : public wxThread
   void					CalcSpeed();
   void					PrepareRecording();
   void					FinishRecording();
-  Pattern				*GetCurrentPattern(Track *t);
+
+  AudioPattern				*GetCurrentAudioPattern(Track *t);
+  list<MidiPattern *>			GetCurrentMidiPatterns(Track *t);
+
   float					**GetCurrentAudioBuffer(AudioPattern *p);
   void					ProcessCurrentMidiEvents(Track *T, MidiPattern *p);
   void					WriteExport();
