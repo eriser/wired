@@ -252,6 +252,7 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
 	    delete TempBuf[0];
 	    delete TempBuf[1];
 	    delete TempBuf;
+	    cout << "end etape 3 " << endl;
 	  }	  
 	else // Wave loadeé en memoire
 	  {

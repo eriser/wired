@@ -10,9 +10,8 @@
 using namespace std;
 
 #include        <sndfile.h>
-
-#include <wx/toolbar.h>
-#include <wx/wx.h>
+#include        <wx/toolbar.h>
+#include        <wx/wx.h>
 
 #define		WAVE_TEMP_SIZE		4096
 
@@ -24,38 +23,38 @@ using namespace std;
 
 class WaveFile
 {
-public:
-	typedef enum 
-	{
-		read=0,
-		write,
-		rwrite,
-		tmp
-	} t_opening_mode;
-
+ public:
+  typedef enum 
+    {
+      read=0,
+      write,
+      rwrite,
+      tmp
+    } t_opening_mode;
+  
  public:
   WaveFile(); 
   WaveFile(string filename, bool loadmem = true, t_opening_mode open_mode = read);
   WaveFile(short *buffer, unsigned int size, int channels, long rate);
   ~WaveFile();
-
+  
   WaveFile *Clone()
-  {
-    WaveFile *w;
-    w = new WaveFile(*this);
-    if (LoadedInMem)
     {
-      w->Data = new float *[sfinfo.channels];
-      for (int i = 0; i < sfinfo.channels; i++)
-      {
-        w->Data[i] = new float[NumberOfFrames];
-        for (int j = 0; j < NumberOfFrames; j++)
-          w->Data[i][j] = Data[i][j];
-      }
-      return w;
+      WaveFile *w;
+      w = new WaveFile(*this);
+      if (LoadedInMem)
+	{
+	  w->Data = new float *[sfinfo.channels];
+	  for (int i = 0; i < sfinfo.channels; i++)
+	    {
+	      w->Data[i] = new float[NumberOfFrames];
+	      for (int j = 0; j < NumberOfFrames; j++)
+		w->Data[i][j] = Data[i][j];
+	    }
+	  return w;
+	}
     }
-  }
-
+  
   long GetNumberOfChannels() { return sfinfo.channels; }
   long GetNumberOfFrames()   { return NumberOfFrames; }
   
@@ -75,10 +74,10 @@ public:
 
   void SetNumberOfFrames( int frames_nbr )
   { 
-	sfinfo.frames = frames_nbr; 
-	NumberOfFrames = sfinfo.frames;
+    sfinfo.frames = frames_nbr; 
+    NumberOfFrames = sfinfo.frames;
   };
-
+  
   int GetFormat() const
   { return sfinfo.format; };
 
@@ -99,8 +98,6 @@ public:
   string   Filename;
   bool	   LoadedInMem;
   bool	   Error;
-  
-  
 
  protected:
   int m_open_mode; 
