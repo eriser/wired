@@ -18,7 +18,7 @@ class				MidiEvent
   int				Id;		// Id du controlleur MIDI
   // Les positions sont relatives a celles du MidiPattern
   double			Position;	// position dans la mesure de l'evenement
-  double			EndPosition;	// Longueur de la note
+  double			EndPosition;	// position de fin
   int				Msg[3];		// data midi
 };
 

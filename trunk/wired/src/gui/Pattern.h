@@ -11,7 +11,7 @@
 
 using namespace				std;
 
-#define PATTERN_DRAG_SCROLL_UNIT	(2 * MEASURE_WIDTH + 1)
+#define PATTERN_DRAG_SCROLL_UNIT	(MEASURE_WIDTH + 1)
 #define PATTERN_NAME_WIDTH		(42)
 #define PATTERN_NAME_HEIGHT		(10)
 #define PATTERN_NAME_MARGINS		(3)
@@ -24,8 +24,11 @@ using namespace				std;
 class					WaveFile;
 class					MidiEvent;
 
-class Pattern : public wxWindow
+class					Pattern : public wxWindow
 {
+  double				xdrag;			/* sill unused, will serve to avoid wrong way scroll */
+  double				ydrag;			/* during a pattern dragging */
+
  protected:
   virtual void				OnClick(wxMouseEvent &e);
   virtual void				OnLeftUp(wxMouseEvent &e);
@@ -33,7 +36,7 @@ class Pattern : public wxWindow
   virtual void				OnRightClick(wxMouseEvent &e);
   virtual void				OnMotion(wxMouseEvent &e);
   void					XMove(double Motion);
-  void					DrawName(wxPaintDC &dc, wxSize s);
+  void					DrawName(wxPaintDC &dc, const wxSize &s);
 
   double				Position;
   double				EndPosition;
@@ -58,8 +61,6 @@ class Pattern : public wxWindow
   virtual void				SetSelected(bool sel);
   virtual void				OnBpmChange() {}
   virtual void				SetDrawColour(wxColour c) { PenColor = c; }
-  virtual WaveFile			*GetWave() {}
-  virtual vector<MidiEvent *>	        *GetEvents() { return (0); }
   virtual Pattern			*CreateCopy(double pos) = 0x0;
   wxPoint				GetMPosition() { return (m_pos); }
   void					SetMPosition(wxPoint p) { m_pos = p; }

@@ -38,6 +38,10 @@ SelectionZone::SelectionZone(const unsigned long x, const unsigned long y,
 
 SelectionZone::~SelectionZone()
 {
+  delete (T);
+  delete (B);
+  delete (L);
+  delete (R);
 }
 
 void				SelectionZone::SetZone(const unsigned long x, const unsigned long y,

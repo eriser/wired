@@ -8,9 +8,9 @@ SeqTrackPattern::SeqTrackPattern(SequencerView *parent, SeqTrack *n, long length
 { 
   TrackOpt = n;
   Parent = parent;
-  Horiz = new wxStaticLine(Parent, -1, 
-			   wxPoint(0, n->GetPosition().y + n->GetSize().y),
-			   wxSize(length, 1), wxLI_HORIZONTAL);
+//   Horiz = new wxStaticLine(Parent, -1, 
+// 			   wxPoint(0, n->GetPosition().y + n->GetSize().y),
+// 			   wxSize(length, 1), wxLI_HORIZONTAL);
 }
 
 SeqTrackPattern::~SeqTrackPattern()
@@ -19,11 +19,11 @@ SeqTrackPattern::~SeqTrackPattern()
 
   for (k = Patterns.begin(); k != Patterns.end(); k++)
     delete *k;
-  Horiz->Destroy();
+//   Horiz->Destroy();
 }
 
 void					SeqTrackPattern::Update()
 {
-  Horiz->SetSize(-Parent->GetXScroll(), TrackOpt->GetPosition().y + TrackOpt->GetSize().y,
-		 Parent->GetTotalWidth(), 1, wxSIZE_USE_EXISTING);
+//   Horiz->SetSize(-Parent->GetXScroll(), TrackOpt->GetPosition().y + TrackOpt->GetSize().y,
+// 		 Parent->GetTotalWidth(), 1, wxSIZE_USE_EXISTING);
 }

@@ -14,13 +14,13 @@
 ** with the mouse.
 */
 
-class SequencerView;
-class ColoredLine;
-
 #define STATE_VISIBLE			(0x1)
 #define STATE_X_REVERSED		(0x2)
 #define STATE_Y_REVERSED		(0x4)
 #define ZONE_MARGIN			(0xA)		/* still unused */
+
+class					SequencerView;
+class					ColoredLine;
 
 class SelectionZone
 {

@@ -28,7 +28,7 @@ MidiPattern::MidiPattern(double pos, double endpos, long trackindex)
 }
 
 MidiPattern::MidiPattern(double pos, MidiTrack *t, long trackindex)
-  : Pattern(pos, ((double)t->GetMaxPos()) / (Seq->SigNumerator * t->GetPPQN()), trackindex)
+  : Pattern(pos, ((double) t->GetMaxPos()) / (Seq->SigNumerator * t->GetPPQN()), trackindex)
 {
   vector<MidiFileEvent *>		me;
   unsigned long				i;
@@ -60,6 +60,8 @@ void					MidiPattern::Init()
 	  &MidiPattern::OnMotion);
   Connect(GetId(), wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &MidiPattern::OnClick);
+  Connect(GetId(), wxEVT_LEFT_UP, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
+	  &MidiPattern::OnLeftUp);
   Connect(GetId(), wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &MidiPattern::OnRightClick);
   Connect(GetId(), wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
@@ -100,9 +102,12 @@ void					MidiPattern::SetSelected(bool sel)
 Pattern					*MidiPattern::CreateCopy(double pos)
 {
   MidiPattern				*p;
+  vector<MidiEvent *>::iterator		o;
 
-  p = new MidiPattern(pos, EndPosition, TrackIndex);
-  p->Events = Events;
+  p = new MidiPattern(pos, pos + Length, TrackIndex);
+  for (o = Events.begin(); o != Events.end(); o++)
+    p->Events.push_back(*o);
+  p->ppqn = ppqn;
   Seq->Tracks[TrackIndex]->AddPattern(p);
   return (p);
 }
@@ -116,48 +121,11 @@ void					MidiPattern::SetDrawColour(wxColour c)
 
 void					MidiPattern::OnClick(wxMouseEvent &e)
 {
-  MidiPattern				*p;
-  double				d;
-  vector<MidiEvent *>::iterator		o;
-
   Pattern::OnClick(e);
   if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
-    {
-      d = (double) ((SeqPanel->CurrentXScrollPos 
+    Split((double) ((SeqPanel->CurrentXScrollPos 
 		     + Pattern::GetMPosition().x + e.m_x)
-		    / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor));
-#ifdef __DEBUG__
-      cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
-      cout << "new pos: " << d << endl;
-#endif
-      p = new MidiPattern(d, EndPosition, TrackIndex);
-#ifdef __DEBUG__
-      cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
-#endif
-      for (o = Events.begin(); o != Events.end(); )
-	if ((*o)->Position >= d)
-	  {
-#ifdef __DEBUG__
-	    printf("Moving event (position %d) \n", (*o)->Position);
-#endif
-	    (*o)->Position -= d;
-	    p->Events.push_back(*o);
-	    Events.erase(o);
-	  }
-	else
-	  {
-	    if (((*o)->Position >= 0) && (*o)->EndPosition >= d)
-	      (*o)->EndPosition = d;
-	    o++;
-	  }
-      p->DrawMidi();
-      SeqMutex.Lock();
-      Length = (EndPosition = d) - Position;
-      Update();
-      SeqMutex.Unlock();
-      Seq->Tracks[TrackIndex]->AddPattern(p);
-      Refresh();
-    }
+		    / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor)));
   else
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
       SetDrawColour(SeqPanel->ColorBox->GetColor());
@@ -166,6 +134,59 @@ void					MidiPattern::OnClick(wxMouseEvent &e)
 void					MidiPattern::OnLeftUp(wxMouseEvent &e)
 {
   Pattern::OnLeftUp(e);
+}
+
+void					MidiPattern::Split(double pos)
+{
+  MidiPattern				*p;
+  vector<MidiEvent *>::iterator		o;
+
+#ifdef __DEBUG__
+  cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
+  cout << "new pos: " << pos << endl;
+#endif
+  p = new MidiPattern(pos, EndPosition, TrackIndex);
+#ifdef __DEBUG__
+  cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
+#endif
+  SeqMutex.Lock();
+  Length = (EndPosition = pos) - Position;
+  SeqMutex.Unlock();
+  for (o = Events.begin(), pos -= Position; o != Events.end(); )
+    if ((*o)->Position >= pos)
+      {
+#ifdef __DEBUG__
+	cout << "Moving event (position " << (*o)->Position << ") to (" << (*o)->Position - pos << ")" << endl;
+#endif
+	if ((*o)->Position == (*o)->EndPosition)
+	  {
+#ifdef __DEBUG__
+	    cout << "NOTE OFF DETECTED AT POS " << (*o)->Position << endl;
+#endif
+	    (*o)->Position = Length;
+	    (*o)->EndPosition = Length;
+	  }
+	else
+	  {
+	    (*o)->Position -= pos;
+	    (*o)->EndPosition -= pos;
+	    p->Events.push_back(*o);
+	    Events.erase(o);
+	  }
+      }
+    else
+      {
+	if (((*o)->Position >= 0) && (*o)->EndPosition >= pos)
+	  (*o)->EndPosition = pos;
+	o++;
+      }
+  p->DrawMidi();
+  if (IsSelected())
+    p->SetSelected(false);
+  p->SetCursor(GetCursor());
+  Update();
+  Seq->Tracks[TrackIndex]->AddPattern(p);
+  Refresh();
 }
 
 void					MidiPattern::OnDoubleClick(wxMouseEvent &e)
@@ -283,12 +304,13 @@ void					MidiPattern::DrawMidi()
   memDC.DrawRectangle(0, 0, size_x, size_y);
   inc = size_y / 127.0;
   for (j = Events.begin(); j != Events.end(); j++)
-    if ((*j)->EndPosition >= 0.0)
+    if (((*j)->Position >= 0.0) && ((*j)->EndPosition > (*j)->Position))
       {
 	z = size_y - (long) floor((*j)->Msg[1] * inc);
 	memDC.DrawLine(GetXPos((*j)->Position), z, GetXPos((*j)->EndPosition), z);
       }
 }
+
 
 void					MidiPattern::OnPaint(wxPaintEvent &e)
 {

@@ -18,7 +18,7 @@
 */
 
 CursorH::CursorH(wxWindow *parent, wxWindowID id, const wxPoint &pos,
-		 const wxSize &size, Cursor *C, char name)
+		 const wxSize &size, Cursor *C, const char name)
   : wxWindow(parent, id, pos, size, wxNO_BORDER)
 {
   Name = wxString(name);
@@ -97,20 +97,20 @@ void					CursorH::OnMouseEvent(wxMouseEvent &e)
     }
 }
 
-Cursor::Cursor(char name, int id, double initpos, Ruler *R, SequencerGui *S,
-	       wxColour cH, wxColour cL)
+Cursor::Cursor(const char name, const int id, const double initpos, Ruler *R, SequencerGui *S,
+	       const wxColour &cH, const wxColour &cL)
 {
   wxSize				s;
   long					h;
 
-  SeqGUI = S;
   pos = initpos;
+  SeqGUI = S;
   s = S->GetSize();
   h = R->GetClientSize().y;
   L = new ColoredLine(SeqGUI->SeqView, id, wxPoint(0, 0), wxSize(1, s.y), cL);
   H = new CursorH(R, id, wxPoint(0, h - CURSOR_HEIGHT), wxSize(CURSOR_WIDTH, CURSOR_HEIGHT), this, name);
   H->SetBackgroundColour(cH);
-  SetPos(0.0);
+  SetPos(initpos);
 }
 
 Cursor::~Cursor()
@@ -122,14 +122,12 @@ Cursor::~Cursor()
 void					Cursor::SetPos(double newpos)
 {
   long					x;
-  long					h;
 
   if (newpos < 0)
     newpos = 0;
   x = (long) floor((pos = newpos) * MEASURE_WIDTH * SeqGUI->HoriZoomFactor) - SeqGUI->SeqView->GetXScroll();
-  h = SeqGUI->RulerPanel->GetClientSize().y;
-  H->Move(x  - (CURSOR_WIDTH / 2) + 1, h - CURSOR_HEIGHT);
-  L->Move(x, -SeqGUI->SeqView->GetYScroll());
+  H->SetSize(x  - (CURSOR_WIDTH / 2) + 1, -1, -1, -1);
+  L->SetSize(x, -1, -1, -1);
 }
 
 double					Cursor::GetPos()
