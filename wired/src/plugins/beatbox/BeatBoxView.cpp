@@ -2,13 +2,16 @@
 #include "BeatBox.h"
 
 BEGIN_EVENT_TABLE(Ruler, wxWindow)
+  EVT_PAINT(Ruler::OnPaint)
 END_EVENT_TABLE()
 
 Ruler::Ruler(wxWindow *parent, wxWindowID id, 
-	const wxPoint &pos, const wxSize &size)
+	     const wxPoint &pos, const wxSize &size,
+	     BeatBoxView* view_ptr)
   : wxWindow(parent, id, pos, size)
 {
   SetBackgroundColour(*wxBLUE);
+  ViewPtr = view_ptr;
   /*wxStaticText* text = 
     new wxStaticText(this, -1, _T("This is the ruler view"), wxPoint(0,0), 
 		     wxDefaultSize);
@@ -18,6 +21,41 @@ Ruler::Ruler(wxWindow *parent, wxWindowID id,
 Ruler::~Ruler()
 {}
 
+void Ruler::OnPaint(wxPaintEvent& event)
+{ 
+  wxPaintDC	dc(this);
+  wxSize	size;
+  wxString	s;
+
+  PrepareDC(dc);
+  size = GetSize();
+  dc.SetPen(wxPen(*wxBLUE, 1, wxSOLID));
+  dc.SetBrush(wxBrush(*wxBLUE));
+  dc.SetTextForeground(*wxWHITE);
+  //dc.DrawRectangle(0, 0, size.x, size.y);
+  dc.SetPen(wxPen(*wxBLACK, 1, wxSOLID));
+  
+  int steps = ViewPtr->DRM31->GetSteps();
+  
+  double res = 
+    static_cast<double>
+    ( ViewPtr->XSize / static_cast<double>(steps) );
+  
+  long x = 0 - ViewPtr->XScroll;
+  
+
+  for (int cpt = 0; x < size.x; 
+x = static_cast<long>(ceil(static_cast<double>(cpt * res))) - ViewPtr->XScroll)
+    {
+      if (cpt < steps)
+	{
+	  s.Printf("%d", cpt+1);
+	  dc.DrawText(s, x+1, 0);
+	}
+      dc.DrawLine(x, 0, x, RULER_HEIGHT);
+      cpt++;
+    }
+}
 
 BEGIN_EVENT_TABLE(BeatBoxTrackView, wxWindow)
   EVT_PAINT(BeatBoxTrackView::OnPaint)
@@ -141,17 +179,36 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
 {
   wxPaintDC dc(this);
   wxSize size;
-  double x;
-  double u;
   long	 m;
   long y = 0 - ViewPtr->YScroll;
-  
+  long x = 0 - ViewPtr->XScroll;
+  wxString s;
+
   PrepareDC(dc);
   size = GetClientSize();
   
   dc.SetPen(wxPen(VIEW_BGCOLOR, 1, wxSOLID));
   dc.SetBrush(wxBrush(VIEW_BGCOLOR));
-  dc.SetTextForeground(VIEW_FGCOLOR);
+  //dc.SetTextForeground(VIEW_FGCOLOR);
+  dc.SetTextForeground(*wxBLACK);
+  ////
+  
+  int steps = ViewPtr->DRM31->GetSteps();
+  double res = 
+    static_cast<double>
+    ( ViewPtr->XSize / static_cast<double>(steps) );
+  for (int cpt = 0; x < size.x; 
+x = static_cast<long>(ceil(static_cast<double>(cpt * res))) - ViewPtr->XScroll)
+    {
+      /*if (cpt < steps)
+	{
+	  s.Printf("%d", cpt+1);
+	  dc.DrawText(s, x+1, 0);
+	}
+      */
+      dc.DrawLine(x, 0, x, size.y);
+      cpt++;
+    }
   
   for (vector<BeatTrack*>::iterator bt = ViewPtr->TrackView->BeatTracks.begin();
        bt != ViewPtr->TrackView->BeatTracks.end(); 
@@ -180,20 +237,21 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   Mutex = mutex;
   DRM31 = bb;
   
-  
   HZoom = VZoom = 1.0;
   XScroll = YScroll = 0;
   TrackHeight = BEAT_HEIGHT;
+  XScrollCoef = YScrollCoef = 0.0;
   
   wxBoxSizer *col_1;
   wxBoxSizer *col_2;
   wxBoxSizer *glob;
   
-  HZoomSlider = new wxSlider(this, ID_HZoom, 100, 100, 400, 
+  HZoomSlider = new wxSlider(this, ID_HZoom, 100, 100, 800, 
 			     wxPoint(0,0), 
 			     wxSize(TRACK_WIDTH,RULER_HEIGHT)); 
   RulerView = new Ruler(this, -1, wxPoint(TRACK_WIDTH,0), 
-			wxSize(GetClientSize().x - TRACK_WIDTH, RULER_HEIGHT));
+			wxSize(GetClientSize().x - TRACK_WIDTH, RULER_HEIGHT),
+			this);
   
   TrackView = new BeatBoxTrackView(this, -1, wxPoint(0,RULER_HEIGHT), 
 				   wxSize(TRACK_WIDTH, GetClientSize().y),
@@ -272,6 +330,15 @@ void BeatBoxView::OnHZoom(wxCommandEvent& event)
 {
   HZoom = static_cast<double>(HZoomSlider->GetValue() / 100.0);
   XSize = static_cast<long>(floor(BeatView->GetClientSize().x * HZoom));
+  
+  //XScrollCoef = ;
+  //XScroll = static_cast<long>(floor(static_cast<double>(XScrollCoef * XSize)));
+  XScroll = 
+    static_cast<long>
+    ( floor((1.0 - 1.0/HZoom) * (XScrollCoef * XSize)) );
+  
+  //cout << XScroll << endl;
+  
   AdjustHScrolling();
   RulerView->Refresh();
   BeatView->Refresh();
@@ -284,6 +351,10 @@ void BeatBoxView::OnVZoom(wxCommandEvent& event)
   
   YSize =  TrackHeight * TrackView->BeatTracks.size();
   
+
+  YScroll = static_cast<long>
+    ( floor((1.0 - 1.0/VZoom) * (YScrollCoef * YSize)) );
+    //static_cast<long>(floor(static_cast<double>(YScrollCoef * YSize)));
   
   AdjustVScrolling();
   BeatView->Refresh();
@@ -300,14 +371,28 @@ void BeatBoxView::OnVZoom(wxCommandEvent& event)
 
 void BeatBoxView::OnHScroll(wxScrollEvent& event)
 {
-  XScroll = HScrollBar->GetThumbPosition();
+  long xscroll = HScrollBar->GetThumbPosition();
   
+  XScrollCoef = 
+    static_cast<double>(xscroll /
+			static_cast<double>(XSize));
+  
+  
+  BeatView->ScrollWindow( XScroll - xscroll, 0,(const wxRect *) NULL);
+  
+  XScroll = xscroll;
+  RulerView->Refresh();
+  BeatView->Refresh();
 }
 
 void BeatBoxView::OnVScroll(wxScrollEvent& event)
 {
   long yscroll = VScrollBar->GetThumbPosition();
-
+  
+  YScrollCoef = 
+    static_cast<double>(yscroll /
+			static_cast<double>(YSize));
+  
   BeatView->ScrollWindow( 0, YScroll - yscroll, (const wxRect *) NULL);
   TrackView->ScrollWindow( 0, YScroll - yscroll, (const wxRect *) NULL);
   
@@ -326,13 +411,15 @@ void BeatBoxView::OnSize(wxSizeEvent& event)
 
 inline void BeatBoxView::AdjustHScrolling(void)
 {
+  //cout << "SetScrollbar: scroll:" << XScroll << "\tthumb size:" << BeatView->GetClientSize().x << "\trange:"<< XSize << endl;
   HScrollBar->SetScrollbar(XScroll, BeatView->GetClientSize().x, 
 			   XSize, 1, true);
+  
 }
 
 inline void BeatBoxView::AdjustVScrolling(void)
 {
-  VScrollBar->SetScrollbar(XScroll, BeatView->GetClientSize().y, 
+  VScrollBar->SetScrollbar(YScroll, BeatView->GetClientSize().y, 
 			   YSize, TrackHeight, true);
 }
 

@@ -38,9 +38,11 @@ class Ruler : public wxWindow
 {
  public:
   Ruler(wxWindow *parent, wxWindowID id, 
-	const wxPoint &pos, const wxSize &size);
-  ~Ruler();  
+	const wxPoint &pos, const wxSize &size, BeatBoxView* view_ptr);
+  ~Ruler();
+  void OnPaint(wxPaintEvent& event);
  protected:
+  BeatBoxView* ViewPtr;
 
 DECLARE_EVENT_TABLE()
 };
@@ -95,6 +97,7 @@ class BeatBoxView : public wxPanel
   
   WiredBeatBox*		DRM31;
   // protected:
+  double XScrollCoef, YScrollCoef;
   long XScroll;
   long YScroll;
   long XSize;
