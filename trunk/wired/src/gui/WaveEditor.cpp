@@ -13,14 +13,14 @@
 using namespace std;
 
 
-const struct s_choice		Choice[NB_CHOICE + 1] =
-{
-  { "ZOOM"	,	1	},
-  { "1/25"	,	2	},
-  { "1/50"	,	3	},
-  { "1/75"	,	4	},
-  { "1/100"	,	5	}
-};
+// const struct s_choice		Choice[NB_CHOICE + 1] =
+// {
+//   { "ZOOM"	,	1	},
+//   { "1/25"	,	2	},
+//   { "1/50"	,	3	},
+//   { "1/75"	,	4	},
+//   { "1/100"	,	5	}
+// };
 
 WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, 
 					  long style, bool fulldraw, bool use_settings) 
@@ -28,12 +28,8 @@ WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
 {
   cout << "[WaveEditor] - Constructor" << endl;
   
-	wxBoxSizer				*row_1;
-	wxBoxSizer				*row_2;
-	wxBoxSizer				*row_3;
-	wxBoxSizer				*row_4;
-	wxBoxSizer				*col;
-	wxString				combochoice[NB_CHOICE];
+  //wxBoxSizer				*row;
+	//wxString				combochoice[NB_CHOICE];
 	long					c;
   
 	xsrc = 0;
@@ -42,61 +38,42 @@ WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
 	if (GetSize().x == 0)
 	  WaveEditorDrawer::SetSize(1, GetSize().y);
 	
-	sbh = new wxScrollBar(this, ID_SCROLLH, wxPoint(0, size.GetHeight() - SCROLLH), 
-			      wxSize(size.GetWidth(), SCROLLH), wxSB_HORIZONTAL);
+	// sbh = new wxScrollBar(this, ID_SCROLLH, wxPoint(0, size.GetHeight() - SCROLLH), 
+// 			      wxSize(size.GetWidth(), SCROLLH), wxSB_HORIZONTAL);
 	
-	//	sbv = new wxScrollBar(this, ID_SCROLLV, wxPoint(size.GetWidth() - SCROLLV, 30), 
-//			      wxSize(SCROLLV, size.GetHeight() - SCROLLV), wxSB_VERTICAL);
-//	
-//	sbv->SetScrollbar(0, 1, 50, 1, true);
+
+// 	Toolbar = new wxToolBar(this, ID_TOOLBAR_WAVEEDITOR, wxPoint(0, 0), wxSize(size.GetWidth(), 30), wxTB_FLAT | wxTB_DOCKABLE);
+// 	Toolbar->AddTool(ID_TOOL_SAVE_WAVEEDITOR, "Save", wxBitmap("data/toolbar/save_up.bmp", wxBITMAP_TYPE_BMP), 
+// 	wxBitmap("data/toolbar/save_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Save", "Save File", NULL);
+// 	Toolbar->AddTool(ID_TOOL_COPY_WAVEEDITOR, "Copy", wxBitmap("data/toolbar/copy_up.bmp", wxBITMAP_TYPE_BMP), 
+// 	wxBitmap("data/toolbar/copy_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Copy", "Copy wave", NULL);
+// 	Toolbar->AddTool(ID_TOOL_PASTE_WAVEEDITOR, "Paste", wxBitmap("data/toolbar/paste_up.bmp", wxBITMAP_TYPE_BMP), 
+// 	wxBitmap("data/toolbar/paste_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Paste", "Paste wave", NULL);
+//   	Toolbar->AddTool(ID_TOOL_CUT_WAVEEDITOR, "Cut", wxBitmap("data/toolbar/cut_up.bmp", wxBITMAP_TYPE_BMP), 
+//   	wxBitmap("data/toolbar/cut_down.bmp", wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Cut", "Cut wave", NULL);
+//   	Toolbar->AddTool(ID_TOOL_DEL_WAVEEDITOR, "Delete", wxBitmap("data/toolbar/delete.png", wxBITMAP_TYPE_PNG), 
+//   	wxBitmap("data/toolbar/delete.png", wxBITMAP_TYPE_PNG), wxITEM_NORMAL, "Delete", "Delete", NULL);
+// 	Toolbar->AddSeparator();
+// 	Toolbar->AddTool(ID_TOOL_UNDO_WAVEEDITOR, "Undo", wxBitmap("data/toolbar/undo.bmp", wxBITMAP_TYPE_BMP), 
+// 	wxBitmap("data/toolbar/undo.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Undo", "Undo last action", NULL);
+// 	Toolbar->AddTool(ID_TOOL_REDO_WAVEEDITOR, "Redo", wxBitmap("data/toolbar/redo.bmp", wxBITMAP_TYPE_BMP), 
+// 	wxBitmap("data/toolbar/redo.bmp", wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Redo", "Redo", NULL);
+// 	Toolbar->AddSeparator();
 	
-//	frame = new wxFrame(this, -1, "", wxPoint(0,0),wxSize(size.GetWidth(), 30),wxDEFAULT_FRAME_STYLE);
-	Toolbar = new wxToolBar(this, ID_TOOLBAR_WAVEEDITOR, wxPoint(0, 0), wxSize(size.GetWidth(), 30), wxTB_FLAT | wxTB_DOCKABLE);
-	//	Toolbar = frame->CreateToolBar(wxNO_BORDER | wxTB_HORIZONTAL, ID_TOOLBAR_WAVEEDITOR);  
-	Toolbar->AddTool(ID_TOOL_SAVE_WAVEEDITOR, "Save", wxBitmap("data/toolbar/save_up.bmp", wxBITMAP_TYPE_BMP), 
-	wxBitmap("data/toolbar/save_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Save", "Save File", NULL);
-	Toolbar->AddTool(ID_TOOL_COPY_WAVEEDITOR, "Copy", wxBitmap("data/toolbar/copy_up.bmp", wxBITMAP_TYPE_BMP), 
-	wxBitmap("data/toolbar/copy_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Copy", "Copy wave", NULL);
-	Toolbar->AddTool(ID_TOOL_PASTE_WAVEEDITOR, "Paste", wxBitmap("data/toolbar/paste_up.bmp", wxBITMAP_TYPE_BMP), 
-	wxBitmap("data/toolbar/paste_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Paste", "Paste wave", NULL);
-  	Toolbar->AddTool(ID_TOOL_CUT_WAVEEDITOR, "Cut", wxBitmap("data/toolbar/cut_up.bmp", wxBITMAP_TYPE_BMP), 
-  	wxBitmap("data/toolbar/cut_down.bmp", wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Cut", "Cut wave", NULL);
-  	Toolbar->AddTool(ID_TOOL_DEL_WAVEEDITOR, "Delete", wxBitmap("data/toolbar/delete.png", wxBITMAP_TYPE_PNG), 
-  	wxBitmap("data/toolbar/delete.png", wxBITMAP_TYPE_PNG), wxITEM_NORMAL, "Delete", "Delete", NULL);
-	Toolbar->AddSeparator();
-	Toolbar->AddTool(ID_TOOL_UNDO_WAVEEDITOR, "Undo", wxBitmap("data/toolbar/undo.bmp", wxBITMAP_TYPE_BMP), 
-	wxBitmap("data/toolbar/undo.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Undo", "Undo last action", NULL);
-	Toolbar->AddTool(ID_TOOL_REDO_WAVEEDITOR, "Redo", wxBitmap("data/toolbar/redo.bmp", wxBITMAP_TYPE_BMP), 
-	wxBitmap("data/toolbar/redo.bmp", wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Redo", "Redo", NULL);
-	Toolbar->AddSeparator();
-	
-	for (c = 0; c < NB_CHOICE; c++)
-	  combochoice[c] = Choice[c].s;
-	combobox = new wxComboBox(Toolbar, ID_TOOL_COMBO, "ZOOM", 
-			       wxPoint(-1, -1), wxSize(68, -1), 5, combochoice, wxCB_DROPDOWN);
+// 	for (c = 0; c < NB_CHOICE; c++)
+// 	  combochoice[c] = Choice[c].s;
+// 	combobox = new wxComboBox(Toolbar, ID_TOOL_COMBO, "ZOOM", 
+// 			       wxPoint(-1, -1), wxSize(68, -1), 5, combochoice, wxCB_DROPDOWN);
   
-	Toolbar->AddControl(combobox);
-  	Toolbar->Realize();
-	//	frame->Show(TRUE);
+// 	Toolbar->AddControl(combobox);
+//   	Toolbar->Realize();
 	
-	row_1 = new wxBoxSizer(wxVERTICAL);
-	row_1->Add(Toolbar, 0, wxALL | wxEXPAND, 0);
-	row_1->Add(this, 1, wxALL, 0);
-	row_1->Add(sbh, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
-// 	row_2 = new wxBoxSizer(wxHORIZONTAL);
-// 	row_2->Add(sbh, 1, wxALL, 0);
-// 	row_3 = new wxBoxSizer(wxHORIZONTAL);
-// 	row_3->Add(frame, 1, wxALL | wxBOTTOM, 0);
-// 	row_4 = new wxBoxSizer(wxVERTICAL);
-// 	row_4->Add(row_3, 1, wxEXPAND | wxALL, 0);
-//   	row_4->Add(row_1, 1, wxEXPAND | wxALL, 0);
-// 	row_4->Add(row_2, 1, wxEXPAND | wxALL, 0);
-//	col = new wxBoxSizer(wxHORIZONTAL);
-//	col->Add(row_4, 1, wxALL | wxEXPAND, 20);
-//	col->Add(sbv, 1, wxALL | wxEXPAND, 5);
+// 	row = new wxBoxSizer(wxVERTICAL);
+// 	row->Add(Toolbar, 0, wxALL | wxEXPAND, 0);
+// 	row->Add(this, 1, wxALL, 0);
+// 	row->Add(sbh, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
 	
-//	SetSizer(col);
-//	SetSizer(row_1);
+//	SetSizer(row);
 	
 	PopMenu = new wxMenu();  
  
@@ -118,6 +95,7 @@ WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	&WaveEditor::OnDelete);
 	flag = 0;
+  
 //	Toolbar->ToggleTool(ID_TOOL_UNDO_WAVEEDITOR, NULL);
 //	Toolbar->ToggleTool(ID_TOOL_REDO_WAVEEDITOR, NULL);
 	Refresh();
@@ -129,20 +107,17 @@ WaveEditor::~WaveEditor()
 {
   cout << "WaveEditor::~WaveEditor" << endl;
 
-  if (flag == 1)
-  {
-	int					res;
-  
-	wxMessageDialog msg(this, "Save File ?", "Wired", 
-		      wxYES_NO | wxICON_QUESTION | wxCENTRE);
-	res = msg.ShowModal();
-	wxCommandEvent evt;
-	if (res == wxID_YES)
-		OnSave(evt);
-  }
-  //delete PopMenu;
-  //delete sbh;
-  //delete frame;
+//  if (flag == 1)
+//  {
+//	int					res;
+//  
+//	wxMessageDialog msg(this, "Save File ?", "Wired", 
+//		      wxYES_NO | wxICON_QUESTION | wxCENTRE);
+//	res = msg.ShowModal();
+//	wxCommandEvent evt;
+//	if (res == wxID_YES)
+//		OnSave(evt);
+//  }
 }
 
 
@@ -150,17 +125,16 @@ void WaveEditor::OnPaint(wxPaintEvent &event)
 {
   wxPaintDC					dc(this);
   wxRegionIterator			region(GetUpdateRegion());
- // wxSize					s	=	GetSize();
+  wxSize					s	=	GetSize();
   
-  cout << "WaveEditor::OnPaint " << endl;
   PrepareDC( dc );
-  /* Wave = 0x0 */
-  //if ((Data || !Wave->LoadedInMem) && Bmp)
   if ((Data || (Wave && !Wave->LoadedInMem)) && Bmp)
     {
       // Get the panel width and heigth 
       int width, height;
-      GetSize(&width, &height);
+      width = s.GetWidth();
+      height = s.GetHeight();
+      //GetSize(&width, &height);
       mSelectedRegion.height = height;
       // Create the selection background
       wxBrush selectedBrush;
@@ -177,24 +151,17 @@ void WaveEditor::OnPaint(wxPaintEvent &event)
       memDC.SetBrush(selectedBrush);
       memDC.SetPen(selectedPen);
       if (mSelectedRegion.width != 0)
-	{
-	  // cout << "\nDS - "<< mSelectedRegion.x << "; " << mSelectedRegion.y
-	  // 	  << "; " << mSelectedRegion.width << "; " << mSelectedRegion.height << endl;
-	  memDC.DrawRectangle(mSelectedRegion);  
-	}
+		memDC.DrawRectangle(mSelectedRegion);  
       else
-	{
-	  memDC.DrawLine(mSelectedRegion.x, 0, mSelectedRegion.x, height);
-	}
+		memDC.DrawLine(mSelectedRegion.x, 0, mSelectedRegion.x, height);
       // Repaint the wave form
       memDC.SetPen(CL_WAVE_DRAW);
       long coeff = height / 2;
       for (int i = 0; i < width; i++)
-	memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
+		memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
     }
   // Appel de la methode paint de la classe mere
-	WaveEditorDrawer::OnPaint(dc, GetSize(), region); 
-	cout << " WaveEditor -- End OnPaint" << endl;
+	WaveEditorDrawer::OnPaint(dc, s, region); 
 }
 
 
@@ -202,28 +169,27 @@ void WaveEditor::OnSize(wxSizeEvent &event)
 {
   wxSize				s = GetSize();
   
-  /*
-  cout << " WaveEditor -- Onsize" << endl;
-  if (Data || (Wave && !Wave->LoadedInMem))
-    {
-      sbh->SetSize(0, s.y - 20, s.x, 20);
-	  //sbv->SetSize(s.x - 20, 30, 20, s.y - 20);
-	  Toolbar->SetSize(0, 0, size.GetWidth(), 30);
-	  SetDrawing();
-	  Refresh();
-    }  		
-  cout << " WaveEditor -- End Onsize" << endl;
-  */
+  
+//  cout << " WaveEditor -- Onsize" << endl;
+//  if (Data || (Wave && !Wave->LoadedInMem))
+//    {
+//      sbh->SetSize(0, s.y - 20, s.x, 20);
+//	  //sbv->SetSize(s.x - 20, 30, 20, s.y - 20);
+//	  Toolbar->SetSize(0, 0, size.GetWidth(), 30);
+//	  SetDrawing();
+//	  Refresh();
+//    }  		
+//  cout << " WaveEditor -- End Onsize" << endl;
+  
 }
 
 
 void					WaveEditor::SetWave(float **data, unsigned long frame_length, long channel_count)
 {
   wxSize				s = GetSize();
-  cout << " WaveEditor -- Setwave" << endl;
   WaveEditorDrawer::SetWave(data, frame_length, channel_count, GetSize());
 
-  AdjustScrollbar(s);
+  //AdjustScrollbar(s);
   SetDrawing();
   Refresh();
 }
@@ -232,10 +198,8 @@ void					WaveEditor::SetWave(WaveFile *w)
 {
   wxSize				s = GetSize();
   
-  cout << " WaveEditor -- SetDrawing" << endl;
   WaveEditorDrawer::SetWave(w, GetSize());
-  cout << "setwave ----- EndWavePos = " << EndWavePos << endl;
-  AdjustScrollbar(s);
+  //AdjustScrollbar(s);
   SetDrawing();
   Refresh();
 }
@@ -243,7 +207,7 @@ void					WaveEditor::SetWave(WaveFile *w)
 void					WaveEditor::SetDrawing()
 {
   wxSize				s = GetSize();
-  cout << " WaveEditor -- SetDrawing" << endl;
+  //cout << " WaveEditor -- SetDrawing" << endl;
   WaveEditorDrawer::SetDrawing(GetSize(), xsrc);
 }
 
@@ -257,16 +221,14 @@ void					WaveEditor::SetSize(wxSize s)
   if (Data || (Wave && !Wave->LoadedInMem))
     {
       SetDrawing();
-      AdjustScrollbar(s);
+      //AdjustScrollbar(s);
       Refresh();
     }  
-    
-  cout << " WaveEditor -- end Setsize" << endl;
 }
 
-void					WaveEditor::AdjustScrollbar(wxSize s)
+void					WaveEditor::AdjustScrollbar(wxScrollBar *sbh, wxSize s)
 {
-  cout << " WaveEditor -- AdjustScrollbar" << endl;
+  //cout << " WaveEditor -- AdjustScrollbar--- xsrc  " << xsrc << endl;
   if ( PAINT_WIDTH < EndWavePos)
     { 
 	  thumbwidth = (long) ceill(s.x / (EndWavePos / PAINT_WIDTH));
@@ -282,9 +244,9 @@ void					WaveEditor::AdjustScrollbar(wxSize s)
 }
 
 
-void 					WaveEditor::OnScroll(wxScrollEvent &event)
+void 					WaveEditor::OnScroll(wxScrollBar *sbh)
 {
-   cout << "[WaveEditor] - OnScroll \n" ;
+  // cout << "[WaveEditor] - OnScroll \n" ;
   
   wxSize 	s = GetSize();
   long		inc;
@@ -294,8 +256,6 @@ void 					WaveEditor::OnScroll(wxScrollEvent &event)
 	  inc = (long) ceill(PAINT_WIDTH / s.x);
   else
 	  inc = (long) ceill(EndWavePos / s.x);
-  
-  //cout << "OnScroll ----- inc = " << inc << endl;
   
   if ( PAINT_WIDTH >= EndWavePos)
 	 sbh->SetScrollbar(0, s.x, s.x, 1, true);
@@ -326,12 +286,9 @@ void 					WaveEditor::OnMouseEvent(wxMouseEvent& event)
 	inc = (PAINT_WIDTH / width);
   else
 	inc = (EndWavePos / width);
-	
-  //cout << "OnMouseEvent ----- inc = " << inc << endl;
+
   mSelectedRegion.height = height;
   
-  //if (event.ButtonDown(1))
-  //cout << "pos = " << event.m_x*inc << endl;
   if (event.ButtonDown(1) && (mIsSelecting == false))
     {
       mIsSelecting = true;
@@ -352,7 +309,7 @@ void 					WaveEditor::OnMouseEvent(wxMouseEvent& event)
 }
 
 
-void					WaveEditor::OnZoom(wxCommandEvent &event)
+void					WaveEditor::OnZoom(wxComboBox *combobox)
 {
 	wxString				item;
 	wxSize 					s = GetSize();
@@ -374,7 +331,7 @@ void					WaveEditor::OnZoom(wxCommandEvent &event)
 	  PAINT_WIDTH = zoomx;
 	  //zoomy = 1;
 		
-	AdjustScrollbar(s);
+	//AdjustScrollbar(s);
 	SetDrawing();
 	Refresh();
 }
@@ -411,6 +368,15 @@ void					WaveEditor::OnCut(wxCommandEvent &event)
 	from = (mSelectedRegion.x+xsrc)*inc;
 	width = mSelectedRegion.width*inc;
 	sizePaste = mSelectedRegion.width*inc;
+	
+//	if ( Wave->GetOpenMode() != WaveFile::rwrite )
+//	{
+//	  wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+//		      wxOK | wxCENTRE);
+//	  int res = msg.ShowModal();
+//	  if (res == wxOK)
+//		return;
+//	}
 	cCutAction 	*action = new cCutAction(Wave, from, width);
 	action->Do();
 	//cClipBoard::Global().Cut(*Wave, (mSelectedRegion.x+xsrc)*inc, (mSelectedRegion.width*inc));
@@ -433,18 +399,20 @@ void					WaveEditor::OnPaste(wxCommandEvent &event)
 	else
 	  inc = (EndWavePos / s.x);
 	  
-	cout << "OnPaste ----- inc = " << inc << endl;
-	
 	to = (mPosition+xsrc)*inc;
 	width = mSelectedRegion.width*inc;
-	cout << "avant paste ----- EndWavePos = " << EndWavePos << endl;
-	cPasteAction 	*action = new cPasteAction(Wave, to, sizePaste);
+//	if ( Wave->GetOpenMode() != WaveFile::rwrite )
+//	{
+//	  wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+//		      wxOK | wxCENTRE);
+//	  int res = msg.ShowModal();
+//	  if (res == wxOK)
+//		return;
+//	}
+  	cPasteAction 	*action = new cPasteAction(Wave, to, sizePaste);
 	action->Do();
 	//cClipBoard::Global().Paste(*Wave, ((mPosition+xsrc)*inc));
-	flag = 1;
-	cout << "Avant setwave ----- EndWavePos = " << EndWavePos << endl;
 	SetWave(Wave);
-	cout << "Apres setwave----- EndWavePos = " << EndWavePos << endl;
 	Refresh();
 }
 
@@ -458,11 +426,18 @@ void					WaveEditor::OnDelete(wxCommandEvent &event)
 	  inc = (PAINT_WIDTH / s.x);
     else
 	  inc = (EndWavePos / s.x);
-	
-	cout << "OnDelete ----- inc = " << inc << endl;
-	
+
 	from = (mSelectedRegion.x+xsrc)*inc;
 	width = mSelectedRegion.width*inc;
+	
+//	if ( Wave->GetOpenMode() != WaveFile::rwrite )
+//	{
+//	  wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+//		      wxOK | wxCENTRE);
+//	  int res = msg.ShowModal();
+//	  if (res == wxOK)
+//		return;
+//	}
 
 	cClipBoard::Global().Delete(*Wave, (mSelectedRegion.x+xsrc)*inc, (mSelectedRegion.width*inc));
 	flag = 1;
@@ -472,12 +447,6 @@ void					WaveEditor::OnDelete(wxCommandEvent &event)
 	Refresh();
 }
 
-void					WaveEditor::OnSave(wxCommandEvent &event)
-{
-	cout << "WaveEditor :: OnSave" << endl;
-  
-	flag = 0;
-}
 
 void					WaveEditor::OnUndo(wxCommandEvent &event)
 {
@@ -514,7 +483,7 @@ void				cCutAction::Redo()
 
 void				cCutAction::Undo()
 {  
- cout << "cCutAction::UnoDo - begin --- from = " << from << endl;
+ //cout << "cCutAction::UnoDo - begin --- from = " << from << endl;
   if (wave)
 	cClipBoard::Global().Paste(*wave, (int)from);
 }
@@ -546,14 +515,5 @@ BEGIN_EVENT_TABLE(WaveEditor, wxPanel)
   EVT_MOUSE_EVENTS(WaveEditor::OnMouseEvent)
   EVT_PAINT(WaveEditor::OnPaint)
   EVT_SIZE(WaveEditor::OnSize)
-  EVT_COMMAND_SCROLL(ID_SCROLLH, WaveEditor::OnScroll)
-  EVT_TOOL(ID_TOOL_SAVE_WAVEEDITOR, WaveEditor::OnSave)
-  EVT_TOOL(ID_TOOL_COPY_WAVEEDITOR, WaveEditor::OnCopy)
-  EVT_TOOL(ID_TOOL_PASTE_WAVEEDITOR, WaveEditor::OnPaste)
-  EVT_TOOL(ID_TOOL_CUT_WAVEEDITOR, WaveEditor::OnCut)
-  EVT_TOOL(ID_TOOL_DEL_WAVEEDITOR, WaveEditor::OnDelete)
-  EVT_TOOL(ID_TOOL_UNDO_WAVEEDITOR, WaveEditor::OnUndo)
-  EVT_TOOL(ID_TOOL_REDO_WAVEEDITOR, WaveEditor::OnRedo)
-  EVT_COMBOBOX(ID_TOOL_COMBO, WaveEditor::OnZoom)
 END_EVENT_TABLE()
 
