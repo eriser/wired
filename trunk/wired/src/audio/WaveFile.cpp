@@ -42,8 +42,8 @@ WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode)
   unsigned long i;
   long k;
 
-  loadmem = false;
-  LoadedInMem = false;
+//  loadmem = false;
+//  LoadedInMem = false;
   // Initialise le header de fichier
   memset (&sfinfo, 0, sizeof(sfinfo) );
 
