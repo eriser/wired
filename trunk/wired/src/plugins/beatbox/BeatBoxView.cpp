@@ -66,7 +66,7 @@ BeatBoxTrackView::BeatBoxTrackView(wxWindow *parent,  wxWindowID id,
 				     BeatBoxView* view_ptr)
   : wxWindow(parent, id, pos, size)
 {
-  SetBackgroundColour(*wxGREEN);
+  SetBackgroundColour(*wxBLACK);
   /*wxStaticText* text = 
     new wxStaticText(this, -1, _T("This is the track view"), wxPoint(0,0), 
 		     wxDefaultSize);
@@ -109,7 +109,7 @@ void BeatBoxTrackView::OnPaint(wxPaintEvent& event)
   
   dc.SetPen(*wxMEDIUM_GREY_PEN); 
   
-  dc.SetBrush(wxBrush(*wxBLACK, wxTRANSPARENT));//*wxLIGHT_GREY_BRUSH); 
+  dc.SetBrush(wxBrush(*wxLIGHT_GREY, wxSOLID));
   
   for (vector<BeatTrack*>::iterator bt = BeatTracks.begin(); 
        bt != BeatTracks.end(); bt++)
@@ -187,7 +187,7 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
   PrepareDC(dc);
   size = GetClientSize();
   
-  dc.SetPen(wxPen(VIEW_BGCOLOR, 1, wxSOLID));
+  dc.SetPen(wxPen(*wxLIGHT_GREY, 1, wxSOLID));
   dc.SetBrush(wxBrush(VIEW_BGCOLOR));
   //dc.SetTextForeground(VIEW_FGCOLOR);
   dc.SetTextForeground(*wxBLACK);
@@ -200,20 +200,42 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
   for (int cpt = 0; x < size.x; 
 x = static_cast<long>(ceil(static_cast<double>(cpt * res))) - ViewPtr->XScroll)
     {
-      /*if (cpt < steps)
-	{
-	  s.Printf("%d", cpt+1);
-	  dc.DrawText(s, x+1, 0);
-	}
-      */
       dc.DrawLine(x, 0, x, size.y);
       cpt++;
     }
   
-  for (vector<BeatTrack*>::iterator bt = ViewPtr->TrackView->BeatTracks.begin();
+  dc.SetPen(wxPen(VIEW_BGCOLOR, 1, wxSOLID));
+  
+  long xn, yn, cpt = 0;
+  double pos;
+  for (vector<BeatTrack*>::iterator bt = 
+	 ViewPtr->TrackView->BeatTracks.begin();
        bt != ViewPtr->TrackView->BeatTracks.end(); 
        bt++)
     {
+      for (list<BeatNote*>::iterator note = 
+	     (*bt)->Channel->Rythms[ViewPtr->DRM31->EditedBank]
+	     [ViewPtr->DRM31->EditedPattern].begin();
+	   note != (*bt)->Channel->Rythms[ViewPtr->DRM31->EditedBank]
+	     [ViewPtr->DRM31->EditedPattern].end();
+	   note++)
+	{
+	  pos = 
+	    (*note)->Position 
+	    / static_cast<double>(ViewPtr->DRM31->GetSteps())
+	    * ViewPtr->XSize;
+	  xn = 
+	    static_cast<long>(floor(pos))
+	    - ViewPtr->XScroll;
+	  yn = (ViewPtr->TrackHeight * cpt) 
+	    + static_cast<long> 
+	    ( floor
+	      (((1.27 - (*note)->Vel) / 1.27) * ViewPtr->TrackHeight))
+	    - ViewPtr->YScroll;
+	  cout << "note  xn " << xn << " yn "<< yn << endl;
+	  dc.DrawCircle(wxPoint(xn, yn), 3);
+	}
+      cpt++;
       y += ViewPtr->TrackHeight;
       dc.DrawLine(0, y, GetClientSize().x, y);
     }

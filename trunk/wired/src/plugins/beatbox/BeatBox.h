@@ -151,7 +151,9 @@ class WiredBeatBox : public Plugin
   
   BeatBoxChannel**	Channels;
   BeatBoxChannel*	SelectedChannel;
-  
+  unsigned int		EditedPattern;
+  unsigned int		EditedBank;
+
  protected:
   wxMutex		PatternMutex;
   BeatBoxView*		View;
@@ -210,10 +212,10 @@ class WiredBeatBox : public Plugin
   
   unsigned int		SelectedPattern;
   unsigned int		NewSelectedPattern;
-  unsigned int		EditedPattern;
   unsigned int		SelectedBank;
   unsigned int		NewSelectedBank;
-  unsigned int		EditedBank;
+  //unsigned int		EditedPattern;
+  //unsigned int		EditedBank;
   
   bool			OnEdit;
   
