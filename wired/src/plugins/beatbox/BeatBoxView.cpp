@@ -200,8 +200,21 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
 {
   //SetBackgroundColour(*wxWHITE);
   SetBackgroundColour(BGVIEW_COLOUR);
-  
   SetForegroundColour(BAR_COLOUR);
+  
+  ParamsLimits[LEV][0] = 0.f;
+  ParamsLimits[LEV][1] = 1.27f;
+  ParamsLimits[VEL][0] = 0.f;
+  ParamsLimits[VEL][1] = 1.27f;
+  ParamsLimits[PIT][0] = 0.f;
+  ParamsLimits[PIT][1] = 1.27f;
+  ParamsLimits[PAN][0] = 0.f;
+  ParamsLimits[PAN][1] = 1.f;
+  ParamsLimits[STA][0] = 0.f;
+  ParamsLimits[STA][1] = 1.f;
+  ParamsLimits[END][0] = 0.f;
+  ParamsLimits[END][1] = 1.f;
+  
   CtrlDown = false;
   ViewPtr = view_ptr;
   OnSelecting = false;
@@ -209,7 +222,7 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
   SelectedNote = 0x0;
   SubDiv = 0;
   Param = 0;
-
+  
   PopMenu = new wxMenu();
   //PopMenu->Append(ID_POPUP_MOVE_TO_CURSOR, "Move to cursor");
   PopMenu->Append(ID_PopNew, "Add");
@@ -387,8 +400,6 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
   PrepareDC(dc);
   size = GetClientSize();
   
-  
-  
   dc.SetBrush(wxBrush(BGVIEW_COLOUR));
   dc.SetTextForeground(*wxBLACK);
     
@@ -445,11 +456,14 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
 	  xn = 
 	    static_cast<long>(ceil(pos))
 	    - ViewPtr->XScroll;
-	  yn = (ViewPtr->TrackHeight * cpt) 
-	    + DEC + static_cast<long> 
-	    ( floor
-	      ((1.27 - (*note)->Params[Param]) / 1.27 * (ViewPtr->TrackHeight - DEC)))
-	    - ViewPtr->YScroll;
+	  
+	  /*
+	    cout << "Drawn @ " << YValToPixel((*note)->Params[Param]) 
+	       << " param: " << (*note)->Params[Param] << endl;
+	  */
+	  yn = (ViewPtr->TrackHeight * (cpt+1)) -
+	    YValToPixel((*note)->Params[Param]) -
+	    ViewPtr->YScroll;
 	  
 	  if ((*note)->Selected)
 	    dc.SetBrush(SELECTED_NOTE_COLOUR);
@@ -468,17 +482,23 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
   
 }
 
-/*
-inline void CalcXPos(double* xpos, int x)
+inline long BeatBoxScrollView::YValToPixel(float yval)
 {
-  *xpos = floor( (static_cast<double>
-		  (x + static_cast<double>
-		   (ViewPtr->XScroll)) 
-		  / static_cast<double>(ViewPtr->XSize) 
-		  *  ViewPtr->DRM31->GetSteps()) 
-		 * 100) / 100;
+  long ypos = (long)
+    floor((yval/ParamsLimits[Param][1]) * (ViewPtr->TrackHeight - (2*DEC)))
+    + DEC;
+  return ypos;
 }
-*/
+
+inline float BeatBoxScrollView::PixelToYVal(long ypos)
+{
+  float yval = floorf((float)
+    (((ypos - DEC) * ParamsLimits[Param][1]) / 
+     (float)(ViewPtr->TrackHeight - (2*DEC))) * 100) / 100;
+  
+  //cout << "ypos= " << ypos  << " to yval= " << yval << endl;
+  return yval;
+}
 
 void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
 {
@@ -503,17 +523,10 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
     }
   
   long track = (event.m_y + ViewPtr->YScroll) / ViewPtr->TrackHeight;
-  double ypos = (event.m_y + ViewPtr->YScroll) % ViewPtr->TrackHeight;
-  double vel = floor(static_cast<double>(((ViewPtr->TrackHeight - ypos) 
-					  / ViewPtr->TrackHeight) * 1.30) 
-		     * 100) / 100;
-  /*
-    if (vel < 0.0)
-    vel = 0;
-  else if (vel > 1.27)
-    vel = 1.27;
-  */
+  long ypos = (event.m_y + ViewPtr->YScroll) % ViewPtr->TrackHeight;
   
+  float vel = PixelToYVal(ViewPtr->TrackHeight - ypos);
+    
   if (SelectedNote)
     {
       float yparam = SelectedNote->Params[Param];
@@ -521,66 +534,53 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
 	   note != SelectedNotes.end(); note++)
 	{
 	  ViewPtr->DRM31->RemBeatNote(*note, 
-				      ViewPtr->DRM31->Channels[(*note)->NumChan], 
+				   ViewPtr->DRM31->Channels[(*note)->NumChan],
+				      ViewPtr->DRM31->EditedBank,
+				      ViewPtr->DRM31->EditedPattern);
+	}
+      double delta_x = xpos - SelectedNote->Position;
+      float delta_y = vel - yparam;
+      
+      int n = 0;
+      for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
+	   note != SelectedNotes.end(); note++)
+	{
+	  n++;
+	  (*note)->Position += delta_x;
+	  if ((*note)->Position >= (double)(ViewPtr->DRM31->GetSteps()))
+	    {
+	      (*note)->Position = 
+		fmod((*note)->Position,
+		     static_cast<double>(ViewPtr->DRM31->GetSteps()));
+	    }
+	  else if ((*note)->Position < 0.00)
+	    {
+	      (*note)->Position = (double)(ViewPtr->DRM31->GetSteps()) 
+		+ fmod((*note)->Position, 
+		       (double)(ViewPtr->DRM31->GetSteps()));
+	    }
+	  (*note)->BarPos = floor(((*note)->Position / 
+				   (double)(ViewPtr->DRM31->GetSteps())
+				   ) * 100) / 100;
+	  (*note)->Params[Param] += delta_y;
+	  if ((*note)->Params[Param] > ParamsLimits[Param][1])
+	    (*note)->Params[Param] = fmodf((*note)->Params[Param], 
+					   ParamsLimits[Param][1]);
+	  else if ((*note)->Params[Param] < ParamsLimits[Param][0])
+	    (*note)->Params[Param] = ParamsLimits[Param][1] 
+	      + fmodf((*note)->Params[Param], ParamsLimits[Param][1]);
+	  
+	  (*note)->Params[Param] = floorf((*note)->Params[Param] * 100) / 100;
+	}
+  
+      for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
+	   note != SelectedNotes.end(); note++)
+	{
+	  ViewPtr->DRM31->AddBeatNote(*note,
+				    ViewPtr->DRM31->Channels[(*note)->NumChan],
 				      ViewPtr->DRM31->EditedBank, 
 				      ViewPtr->DRM31->EditedPattern);
 	}
-      cout << "cur x pos: " << xpos << " Selected note pos: " 
-	   << SelectedNote->Position << endl;
-      
-      double delta_x = xpos - SelectedNote->Position;
-      //double delta_x = xpos - SelectedNote->Position;
-      cout << "delta X: " << delta_x << endl;
-      //printf("delta x: %f\n", delta_x);
-      float delta_y = vel - yparam;//SelectedNote->Params[Param];
-      
-  int n = 0;
-  for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
-       note != SelectedNotes.end(); note++)
-    {
-      n++;
-      cout << n << " old position: " << (*note)->Position;
-      (*note)->Position += delta_x;
-      cout << " new one: " << (*note)->Position;
-      if ((*note)->Position >= static_cast<double>(ViewPtr->DRM31->GetSteps()))
-	{
-      cout << " modulus " << static_cast<double>(ViewPtr->DRM31->GetSteps());
-
-	  (*note)->Position = 
-	    fmod((*note)->Position,
-		 static_cast<double>(ViewPtr->DRM31->GetSteps()));
-	}
-      else if ((*note)->Position < 0.00)
-	{
-	  (*note)->Position = static_cast<double>(ViewPtr->DRM31->GetSteps()) 
-	    + fmod((*note)->Position, 
-		   static_cast<double>(ViewPtr->DRM31->GetSteps()));
-	}
-      cout << " intermediate: " ;//<< (*note)->Position << endl;
-      printf("%f\n",(*note)->Position);
-      //(*note)->Position = floor((*note)->Position * 100) / 100;
-      //cout << " floored: " << (*note)->Position << endl;
-      (*note)->BarPos = floor(((*note)->Position / 
-			       static_cast<double>(ViewPtr->DRM31->GetSteps())
-			       ) * 100) / 100;
-      (*note)->Params[Param] += delta_y;
-      if ((*note)->Params[Param] > 1.27)
-	(*note)->Params[Param] = fmodf((*note)->Params[Param], 1.27);
-      else if ((*note)->Params[Param] < 0.00)
-	(*note)->Params[Param] = 1.27 + fmodf((*note)->Params[Param], 1.27);
-      
-      (*note)->Params[Param] = floor((*note)->Params[Param] * 100) / 100;
-    }
-  
-  for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
-       note != SelectedNotes.end(); note++)
-    {
-      ViewPtr->DRM31->AddBeatNote(*note,
-				  ViewPtr->DRM31->Channels[(*note)->NumChan], 
-				  ViewPtr->DRM31->EditedBank, 
-				  ViewPtr->DRM31->EditedPattern);
-    }
-  
     }
   
   MotionPosX = event.m_x; 
@@ -623,10 +623,8 @@ void BeatBoxScrollView::OnLeftUp(wxMouseEvent& event)
      + static_cast<double>
      (ViewPtr->XScroll)) 
     / static_cast<double>(ViewPtr->XSize) *  ViewPtr->DRM31->GetSteps();
-  double ypos = (ClickPosY + ViewPtr->YScroll) % ViewPtr->TrackHeight;
-  double vel = 
-    floor(static_cast<double>(((ViewPtr->TrackHeight - ypos) / 
-			       ViewPtr->TrackHeight) * 1.30) * 100) / 100;
+  long ypos = (ClickPosY + ViewPtr->YScroll) % ViewPtr->TrackHeight;
+  float vel = PixelToYVal(ViewPtr->TrackHeight - ypos);
   
   //to
   double to_xpos = static_cast<double>
@@ -636,32 +634,28 @@ void BeatBoxScrollView::OnLeftUp(wxMouseEvent& event)
     / static_cast<double>(ViewPtr->XSize) *  ViewPtr->DRM31->GetSteps();
   
   long to_track = (MotionPosY + ViewPtr->YScroll) / ViewPtr->TrackHeight;
-  double to_vel;
+  float to_vel;
   if ( to_track > track )
     {
-      ypos = ViewPtr->TrackHeight;
-      to_vel = 0.0;
+      to_vel = ParamsLimits[Param][0];
     }
   else if ( to_track < track )
     {
-      ypos = 0;
-      to_vel = 1.27;
+      to_vel = ParamsLimits[Param][1];
     }
   else
     {
       ypos = (MotionPosY + ViewPtr->YScroll) % ViewPtr->TrackHeight;
-      to_vel = 
-	floor(static_cast<double>(((ViewPtr->TrackHeight - ypos) / 
-				   ViewPtr->TrackHeight) * 1.30) * 100) / 100;
+      to_vel = PixelToYVal(ViewPtr->TrackHeight - ypos);
     }
-  if (vel > 1.27)
-    vel = 1.27;
-  if (vel < 0)
-    vel = 0.0;
-  if (to_vel > 1.27)
-    to_vel = 1.27;
-  if (to_vel < 0)
-    to_vel = 0.0;
+  if (vel > ParamsLimits[Param][1])
+    vel = ParamsLimits[Param][1];
+  if (vel < ParamsLimits[Param][0])
+    vel = ParamsLimits[Param][0];
+  if (to_vel > ParamsLimits[Param][1])
+    to_vel = ParamsLimits[Param][1];
+  if (to_vel < ParamsLimits[Param][0])
+    to_vel = ParamsLimits[Param][0];
 
   if (!SelectedNote)
     {
@@ -672,8 +666,10 @@ void BeatBoxScrollView::OnLeftUp(wxMouseEvent& event)
 	{
 	  if ( (((*note)->Position > xpos && (*note)->Position < to_xpos)
 	       || ((*note)->Position < xpos && (*note)->Position > to_xpos))
-	       && (((*note)->Params[Param] >= vel && (*note)->Params[Param] <= to_vel) 
-		   || ((*note)->Params[Param] <= vel && (*note)->Params[Param] >= to_vel)) )
+	       && (((*note)->Params[Param] >= vel 
+		    && (*note)->Params[Param] <= to_vel) 
+		   || ((*note)->Params[Param] <= vel 
+		       && (*note)->Params[Param] >= to_vel)) )
 	    {
 	      if ((*note)->Selected)
 		{
@@ -707,11 +703,11 @@ void BeatBoxScrollView::OnLeftDown(wxMouseEvent& event)
   ViewPtr->TrackView->Refresh();
   
 
-  double ypos = (event.m_y + ViewPtr->YScroll) % ViewPtr->TrackHeight;
+  long ypos = (event.m_y + ViewPtr->YScroll) % ViewPtr->TrackHeight;
   
-  double vel = floor(static_cast<double>(((ViewPtr->TrackHeight - ypos) / ViewPtr->TrackHeight) * 1.30) * 100) / 100;
+  float vel = PixelToYVal(ViewPtr->TrackHeight - ypos);
   
-  double min, max;
+  float min, max;
   min = vel - 0.05;
   max = vel + 0.05;
   double inf, sup;
@@ -725,8 +721,10 @@ void BeatBoxScrollView::OnLeftDown(wxMouseEvent& event)
   bool already = false;
   BeatTrack* bt = ViewPtr->TrackView->BeatTracks[track];
   for (list<BeatNote*>::iterator note = 
-	 bt->Channel->Rythms[ViewPtr->DRM31->EditedBank][ViewPtr->DRM31->EditedPattern].begin(); 
-       note != bt->Channel->Rythms[ViewPtr->DRM31->EditedBank][ViewPtr->DRM31->EditedPattern].end(); 
+	 bt->Channel->Rythms[ViewPtr->DRM31->EditedBank]
+	 [ViewPtr->DRM31->EditedPattern].begin(); 
+       note != bt->Channel->Rythms[ViewPtr->DRM31->EditedBank]
+	 [ViewPtr->DRM31->EditedPattern].end(); 
        note++)
     {
       
@@ -889,7 +887,7 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   
   SubCombo = new wxComboBox(ToolBar, ID_SubCombo, _T("1/1"), 
 			    wxPoint(-1, -1), wxSize(64, -1), 
-			    NB_COMBO_CHOICES, choices);
+			    NB_COMBO_CHOICES, choices, wxCB_READONLY);
   
     
   //PosTextCtrl = new wxTextCtrl(ToolBar, ID_PosTextCtrl, _T("pos"),
@@ -917,7 +915,7 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   //ParamsCombo = new wxComboBox(ToolBar, ID_ParamsCombo, _T("level"), 
   ParamsCombo = new wxComboBox(ToolBar, ID_ParamsCombo, _T("LEVEL"), 
 			       wxPoint(-1, -1), wxSize(96, -1), 
-			       NB_PARAMS_CHOICES, params);
+			       NB_PARAMS_CHOICES, params, wxCB_READONLY);
     
   
   ToolBar->AddControl(SubCombo);

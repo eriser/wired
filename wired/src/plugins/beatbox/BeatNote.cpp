@@ -64,6 +64,7 @@ BeatNoteToPlay::BeatNoteToPlay(BeatBoxChannel* chan)
   Buffer = 0x0;
   OffSet = 0;
   SEnd = 0;
+  Delta = 0;
   
   if (chan->Wave)
     {
@@ -71,7 +72,6 @@ BeatNoteToPlay::BeatNoteToPlay(BeatBoxChannel* chan)
 	(floor(chan->Wave->GetNumberOfFrames() * Params[STA]));
       SEnd = static_cast<unsigned long>
 	(floor(chan->Wave->GetNumberOfFrames() * Params[END]));
-      cout << "offset && end: " << OffSet << " && " << SEnd << endl;
     }
   
 }
