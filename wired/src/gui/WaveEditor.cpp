@@ -169,18 +169,13 @@ void WaveEditor::OnSize(wxSizeEvent &event)
 {
   wxSize				s = GetSize();
   
-  
-//  cout << " WaveEditor -- Onsize" << endl;
-//  if (Data || (Wave && !Wave->LoadedInMem))
-//    {
-//      sbh->SetSize(0, s.y - 20, s.x, 20);
-//	  //sbv->SetSize(s.x - 20, 30, 20, s.y - 20);
-//	  Toolbar->SetSize(0, 0, size.GetWidth(), 30);
-//	  SetDrawing();
-//	  Refresh();
-//    }  		
-//  cout << " WaveEditor -- End Onsize" << endl;
-  
+  cout << " WaveEditor -- Onsize" << endl;
+  if (Data || (Wave && !Wave->LoadedInMem))
+    {
+      SetDrawing();
+      Refresh();
+    }  		
+  cout << " WaveEditor -- End Onsize" << endl;  
 }
 
 

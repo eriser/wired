@@ -15,7 +15,7 @@
 #define 			SCROLLV_THUMB_WIDTH	(80)
 #define 			SCROLLH			(20)
 #define 			SCROLLV			(20)
-#define 			WAVE_TOOLBAR_HEIGHT	(17)
+#define 			WAVE_TOOLBAR_HEIGHT	(32)
 enum
 {
     ID_HSCROLL,
