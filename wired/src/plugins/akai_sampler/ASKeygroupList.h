@@ -33,6 +33,9 @@ class ASamplerSample
         if (id > sampleid)
           sampleid = id + 1;
       this->id = id;
+      this->loopcount = -1;
+      this->loopstart = 0;
+      this->loopend = w->GetNumberOfFrames();
     }
 
     ASamplerSample(t_akaiSample *smp, wxString AkaiPrefix, unsigned long id = 0)
@@ -47,6 +50,9 @@ class ASamplerSample
         if (id > sampleid)
           sampleid = id + 1;
       this->id = id;
+      this->loopcount = smp->loop_times;
+      this->loopstart = smp->loop_start / 2;
+      this->loopend = smp->loop_len / 2;
     }
 
     void SetKeygroup(ASamplerKeygroup *askg) { this->askg = askg; }
@@ -54,31 +60,41 @@ class ASamplerSample
     WaveFile *GetSample() { return w; }
     long GetPosition() { return Position; }
     unsigned long GetID() { return id; }
+    int GetLoopCount() { return loopcount; }
+    long GetLoopStart() { return loopstart; }
+    long GetLoopEnd() { return loopend; }
+    void SetLoopCount(int count) { loopcount = count; }
+    void SetLoopStart(long start) { loopstart = start; }
+    void SetLoopEnd(long end) { loopend = end; }
   private:
     WaveFile *w;
     ASamplerKeygroup *askg;
     long Position;
     unsigned long id;
+    long loopstart;
+    long loopend;
+    int loopcount;
 };
 
 class ASamplerKey
 {
   public:
-    ASamplerKey(WaveFile *w, long pos = 0, float pitch = 1.f) :
+    ASamplerKey(ASamplerSample *ass, float pitch = 1.f) :
       Pitch(pitch)
     {
-      Wave = w;
-      Position = pos;
+      this->ass = ass;
+      loops = 0;
+      looping = false;
     }
 
     ~ASamplerKey()
     {
     }
 
-    WaveFile  *Wave;
+    ASamplerSample *ass;
     float   Pitch;
-    long Position;
-
+    int loops;
+    bool looping;
   protected:
 };
 
@@ -105,7 +121,7 @@ class ASamplerKeygroup
     {
       if (!smp)
         return NULL;
-      return new ASamplerKey(smp->GetSample(), smp->GetPosition(), powf(2.f, static_cast<float>(num - lokey) / 12.f)); 
+      return new ASamplerKey(smp, powf(2.f, static_cast<float>(num - lokey) / 12.f)); 
     }
     int GetLowKey() { return lokey; }
     int GetHighKey() { return hikey; }
