@@ -60,6 +60,7 @@ FilterPlugin::FilterPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   LpBtn = new DownButton(this, Filter_LP, wxPoint(70, 43),
 			 wxSize(lp_off->GetWidth(), lp_off->GetHeight()),
 			 lp_off, lp_on);
+  LpBtn->SetOn();
   BpBtn = new DownButton(this, Filter_BP, wxPoint(81, 47),
 			 wxSize(bp_off->GetWidth(), bp_off->GetHeight()),
 			 bp_off, bp_on);
@@ -189,13 +190,10 @@ void FilterPlugin::Load(int fd, long size)
   CutoffFader->SetValue((int)Cutoff);
   ResFader->SetValue(int(Res * 100));
 
-  memset(Coefs, 0, sizeof (float) * FILTER_SIZE);  
-  memset(History[0], 0, sizeof (float) * FILTER_SIZE);  
-  memset(History[1], 0, sizeof (float) * FILTER_SIZE);  
-
-  SetFilter(filter, Cutoff, Res);
-
   Mutex.Unlock();
+
+  wxCommandEvent e;
+  OnSelect(e);
 }
  
 long FilterPlugin::Save(int fd)
