@@ -316,14 +316,14 @@ void					SequencerView::DrawTrackLines()
 	if ((h = (*i)->TrackOpt->GetPosition().y + (*i)->TrackOpt->GetSize().y) > 0)
 	  {
 	    dc.SetPen(wxPen(CL_SEQVIEW_TRACK_LINE_TOP, 1, wxSOLID));
-	    dc.DrawLine(-XScroll, h - 1, TotalWidth, h - 1);
+	    dc.DrawLine(0, h - 1, GetClientSize().x + 1, h - 1);
 	  }
 	dc.SetPen(wxPen(CL_SEQVIEW_TRACK_LINE, 1, wxSOLID));
-	dc.DrawLine(-XScroll, h, TotalWidth, h);
+	dc.DrawLine(0, h, GetClientSize().x + 1, h);
 	if (h < TotalHeight - 1)
 	  {
 	    dc.SetPen(wxPen(CL_SEQVIEW_TRACK_LINE_BOTTOM, 1, wxSOLID));
-	    dc.DrawLine(-XScroll, h + 1, TotalWidth, h + 1);
+	    dc.DrawLine(0, h + 1, GetClientSize().x + 1, h + 1);
 	  }
       }
 }
