@@ -336,8 +336,8 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
   list<RackTrack *>::iterator k;
   list<Plugin *>::iterator j;
   list<Plugin *>::iterator l;
-  int new_x = 0;
-  int new_y = 0;
+  new_x = 0;
+  new_y = 0;
 
   //SeqMutex.Lock();
   if (event->GetEventType() == wxEVT_MOUSEWHEEL)
@@ -396,15 +396,15 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
        menu->AppendSeparator();
        menu->Append(ID_MENU_DELETE, _T("Delete"));
        
-       /*Connect(10000, wxEVT_COMMAND_MENU_SELECTED, 
-	 (wxObjectEventFunction)(wxEventFunction)
-	 (wxCommandEventFunction)&Rack::OnCutClick);
-	 Connect(10001, wxEVT_COMMAND_MENU_SELECTED, 
-	 (wxObjectEventFunction)(wxEventFunction)
-	 (wxCommandEventFunction)&Rack::OnCopyClick);
-    Connect(10002, wxEVT_COMMAND_MENU_SELECTED, 
-    (wxObjectEventFunction)(wxEventFunction)
-    (wxCommandEventFunction)&Rack::OnPasteClick);*/
+       Connect(ID_MENU_CUT, wxEVT_COMMAND_MENU_SELECTED, 
+	       (wxObjectEventFunction)(wxEventFunction)
+	       (wxCommandEventFunction)&Rack::OnCutClick);
+       Connect(ID_MENU_COPY, wxEVT_COMMAND_MENU_SELECTED, 
+	       (wxObjectEventFunction)(wxEventFunction)
+	       (wxCommandEventFunction)&Rack::OnCopyClick);
+       Connect(ID_MENU_PASTE, wxEVT_COMMAND_MENU_SELECTED, 
+	       (wxObjectEventFunction)(wxEventFunction)
+	       (wxCommandEventFunction)&Rack::OnPasteClick);
   
        Connect(ID_MENU_DELETE, wxEVT_COMMAND_MENU_SELECTED, 
 	       (wxObjectEventFunction)(wxEventFunction)
@@ -519,6 +519,54 @@ void Rack::OnDeleteClick()
     }
 }
 
+void Rack::OnCutClick()
+{
+  int fd;
+  char file[12] ;
+  
+  if(selectedPlugin == 0x0)
+    return;
+  
+  strcpy(file, "wiredXXXXXX");
+  
+  fd = mkstemp(file);
+  
+  if(fd < 0)
+    cout << "echec"<< endl;
+  
+  else{
+    cout << "creation du fichier ok"<< endl;
+    selectedPlugin->Save(fd);
+  }
+
+  
+}
+
+void Rack::OnCopyClick()
+{
+  int fd;
+  char file[12] ;
+
+  if(selectedPlugin == 0x0)
+    return;
+  
+  strcpy(file, "wiredXXXXXX");
+  
+  fd = mkstemp(file);
+  
+  if(fd < 0)
+    cout << "echec"<< endl;
+  
+  else{
+    cout << "creation du fichier ok"<< endl;
+    selectedPlugin->Save(fd);
+  }  
+}
+
+void Rack::OnPasteClick()
+{
+  cout << OldX << endl;
+}
 void Rack::HandleKeyEvent(Plugin *plug, wxKeyEvent *event)
 {
   if (event->GetKeyCode() == WXK_DOWN)

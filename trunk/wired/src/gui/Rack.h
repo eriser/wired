@@ -66,6 +66,9 @@ class				Rack: public wxScrolledWindow
   void				RemoveTrack();
 
   void				OnDeleteClick();
+  void				OnCutClick();
+  void				OnCopyClick();
+  void				OnPasteClick();
   bool 				DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y , Plugin *plug);
   void				DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug);
   void				AddPlugToMenu();
@@ -85,6 +88,8 @@ class				Rack: public wxScrolledWindow
  
   int				OldX;
   int				OldY;
+  int				new_x;
+  int				new_y;		
   wxMenu			*menu;
   wxMenu			*submenu;
   wxMenu			*instr_menu;
