@@ -127,10 +127,14 @@ void SeqTrack::OnConnectTo(wxCommandEvent &event)
   for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)
     for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++, k++)
       {
-	menu->Append(k, (*j)->Name.c_str());
-	Connect(k, wxEVT_COMMAND_MENU_SELECTED, 
-		(wxObjectEventFunction)(wxEventFunction)
-		(wxCommandEventFunction)&SeqTrack::OnConnectSelected);
+	if ((IsAudio && (*j)->IsAudio()) ||
+	    (!IsAudio && (*j)->IsMidi()))
+	  {
+	    menu->Append(k, (*j)->Name.c_str());
+	    Connect(k, wxEVT_COMMAND_MENU_SELECTED, 
+		    (wxObjectEventFunction)(wxEventFunction)
+		    (wxCommandEventFunction)&SeqTrack::OnConnectSelected);
+	  }
       }
   wxPoint p(Image->GetPosition());
   PopupMenu(menu, p.x, p.y);

@@ -110,7 +110,7 @@ class WiredBeatBox : public Plugin
   wxWindow*	CreateView(wxWindow *zone, wxPoint &pos, wxSize &size);
   void		DestroyView();
   
-  bool		IsAudio()	{ return true; }
+  bool		IsAudio()	{ return false; }
   bool		IsMidi()	{ return true; }
   
   string	GetHelpString() { return "No help provided for this plugin"; }

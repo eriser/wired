@@ -544,7 +544,7 @@ bool LoopSampler::IsInstrument()
 
 bool LoopSampler::IsAudio()
 {
-  return (true);
+  return (false);
 }
 
 bool LoopSampler::IsMidi()
