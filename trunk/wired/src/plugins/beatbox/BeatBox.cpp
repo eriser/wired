@@ -43,13 +43,14 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
     MiniBmp = new wxBitmap(mini_bmp);
   
   MVol = 
-    new HintedKnob(this, BB_OnMasterChange, this,
+    new KnobCtrl(this, BB_OnMasterChange,
 		 new wxImage(_T(string(GetDataDir() + string(KNOB)).c_str()),
 			     wxBITMAP_TYPE_PNG),
-		   new wxImage(_T(string(GetDataDir() + string(DOT)).c_str()),
-			       wxBITMAP_TYPE_PNG),
-		   0, 127, 100, 1,
-		   wxPoint(27,103), wxSize(29,30), wxPoint(52,128));
+		 new wxImage(_T(string(GetDataDir() + string(DOT)).c_str()),
+			     wxBITMAP_TYPE_PNG),
+		 0, 127, 100, 1,
+		 wxPoint(27,103), wxSize(29,30),
+		 this, wxPoint(0,0));
   MVol->SetValue(100);
   MLevel = 1.0f;
   View = 0x0;
@@ -340,7 +341,6 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Channels = new BeatBoxChannel*[NB_CHAN];
     
   int notenum = 0x48; //C3
-  
   for (unsigned int i = 0; i < NB_CHAN; i++)
     {
       ChanMidiNotes[i] = notenum++;
@@ -447,6 +447,14 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Connect(BB_OnSavePatch, wxEVT_ENTER_WINDOW,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&WiredBeatBox::OnSaveLoadHelp);
+  
+  /* MIDI */
+  MidiVolume[0] = M_CONTROL;
+  MidiVolume[1] = 0x7;
+  
+  Connect(BB_OnMasterChange, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnVolumeController);
 }
 
 void WiredBeatBox::OnChannelHelp(wxMouseEvent& WXUNUSED(event))
@@ -840,35 +848,95 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 
 void WiredBeatBox::ProcessEvent(WiredEvent& event) 
 {
-  //  cout << "process event" << endl;
-  if ((event.MidiData[0] == M_NOTEON1) || (event.MidiData[0] == M_NOTEON2))
+  //cout << "[DRM31] process event" << endl;
+  
+  if (((event.MidiData[0] == M_NOTEON1) || (event.MidiData[0] == M_NOTEON2)) 
+      )//&& event.MidiData[2])
     {
-      
-      int i;
-      for (i = 0; i < NB_CHAN; i++)
-	if (ChanMidiNotes[i] == event.MidiData[1])
-	  {
-	    /*if ((VoicesCount[i] + 1 <= 
+      if (event.MidiData[2])
+	{
+	  //cout << "MIDIDATA2!!!! " << event.MidiData[2] << endl;
+	  int i;
+	  for (i = 0; i < NB_CHAN; i++)
+	    if (ChanMidiNotes[i] == event.MidiData[1])
+	      {
+		//cout << "[DRM31] Midi !!" << endl;
+		/*if ((VoicesCount[i] + 1 <= 
 	      static_cast<unsigned int>
 	      (Channels[i]->Voices->GetCount())))
 	      {*/
-	    BeatNoteToPlay *n = 
-	      new BeatNoteToPlay(event.MidiData[1], 
-				 event.MidiData[2] / 100.f,
-				 event.DeltaFrames, 
-				 Channels[i], 
-				 0x0
-				 /*Channels[i]->GetFreeBuffer()*/
-				 /*Pool->GetFreeBuffer()*/
-				 );
-	    //event.NoteLength);
-	    PatternMutex.Lock();
-	    NotesToPlay.push_back(n);
-	    PatternMutex.Unlock();
-	    printf("[BEATBOX] Note added: %2x\n", n->NoteNum);
-	    break;
-	    //}		
-	  }
+		BeatNoteToPlay *n = 
+		  new BeatNoteToPlay(event.MidiData[1], 
+				     event.MidiData[2] / 100.f,
+				     event.DeltaFrames, 
+				     Channels[i], 
+				     0x0
+				     /*Channels[i]->GetFreeBuffer()*/
+				     /*Pool->GetFreeBuffer()*/
+				     );
+		//event.NoteLength);
+		PatternMutex.Lock();
+		NotesToPlay.push_back(n);
+		PatternMutex.Unlock();
+		//printf("[BEATBOX] Note added: %2x\n", n->NoteNum);
+		break;
+		//}		
+	      }
+	}
+    }
+}
+
+inline void WiredBeatBox::ProcessMidiControls(int data[3])
+{
+  if ((MidiVolume[0] == data[0]) && (MidiVolume[1] == data[1]))
+    {
+      float tmp = data[2] / 100.0f;
+      PatternMutex.Lock();
+      MLevel = tmp;
+      PatternMutex.Unlock();
+      MVol->SetValue(data[2]);
+    }
+  else 
+    {
+      for (int i = 0; i < NB_CHAN; i++)
+	{
+	  if ((Channels[i]->MidiVolume[0] == data[0]) && 
+	      (Channels[i]->MidiVolume[1] == data[1]))
+	    {
+	      Channels[i]->MidiVolume[2] = data[2];
+	      Channels[i]->SetLev(data[2]);
+	    }
+	  else if ((Channels[i]->MidiPan[0] == data[0]) && 
+		   (Channels[i]->MidiPan[1] == data[1]))
+	    {
+	      Channels[i]->MidiPan[2] = data[2];
+	    }
+	  else if ((Channels[i]->MidiPitch[0] == data[0]) && 
+	      (Channels[i]->MidiPitch[1] == data[1]))
+	    {
+	      Channels[i]->MidiPitch[2] = data[2];
+	    }
+	  else if ((Channels[i]->MidiVel[0] == data[0]) && 
+	      (Channels[i]->MidiVel[1] == data[1]))
+	    {
+	      Channels[i]->MidiVel[2] = data[2];
+	    }
+	  else if ((Channels[i]->MidiStart[0] == data[0]) && 
+	      (Channels[i]->MidiStart[1] == data[1]))
+	    {
+	      Channels[i]->MidiStart[2] = data[2];
+	    }
+	  else if ((Channels[i]->MidiEnd[0] == data[0]) && 
+	      (Channels[i]->MidiEnd[1] == data[1]))
+	    {
+	      Channels[i]->MidiEnd[2] = data[2];
+	    }
+	  else if ((Channels[i]->MidiPoly[0] == data[0]) && 
+		   (Channels[i]->MidiPoly[1] == data[1]))
+	    {
+	      Channels[i]->MidiPoly[2] = data[2];
+	    }
+	}
     }
 }
 
@@ -1788,7 +1856,7 @@ void WiredBeatBox::DestroyView()
 
 void WiredBeatBox::OnViewAction(wxCommandEvent& event)
 {
-  cout << "VIEW ACTION" << endl;
+  //cout << "VIEW ACTION" << endl;
 }
 
 int WiredBeatBox::GetSteps(void)
@@ -1796,13 +1864,76 @@ int WiredBeatBox::GetSteps(void)
   return Steps[EditedBank][EditedPattern];
 }
 
-int WiredBeatBox::GetSig()
+void WiredBeatBox::CheckExistingControllerData(int data[3])
 {
-  int s;
-  PatternMutex.Lock();
-  //  s = 
-  PatternMutex.Unlock();
-  return s;
+  if ((MidiVolume[0] == data[0]) && (MidiVolume[1] == data[1]))
+    {
+      MidiVolume[0] = -1;
+      return;
+    }
+  for (int i = 0; i < NB_CHAN; i++)
+    {
+      if ((Channels[i]->MidiVolume[0] == data[0]) && 
+	  (Channels[i]->MidiVolume[1] == data[1]))
+	{
+	  Channels[i]->MidiVolume[0] = -1;
+	  return;
+	}
+      if ((Channels[i]->MidiPan[0] == data[0]) && 
+	  (Channels[i]->MidiPan[1] == data[1]))
+	{
+	  Channels[i]->MidiPan[0] = -1;
+	  return;
+	}
+      if ((Channels[i]->MidiPitch[0] == data[0]) && 
+	  (Channels[i]->MidiPitch[1] == data[1]))
+	{
+	  Channels[i]->MidiPitch[0] = -1;
+	  return;
+	}
+      if ((Channels[i]->MidiVel[0] == data[0]) && 
+	  (Channels[i]->MidiVel[1] == data[1]))
+	{
+	  Channels[i]->MidiVel[0] = -1;
+	  return;
+	}
+      if ((Channels[i]->MidiStart[0] == data[0]) && 
+	  (Channels[i]->MidiStart[1] == data[1]))
+	{
+	  Channels[i]->MidiStart[0] = -1;
+	  return;
+	}
+      if ((Channels[i]->MidiEnd[0] == data[0]) && 
+	  (Channels[i]->MidiEnd[1] == data[1]))
+	{
+	  Channels[i]->MidiEnd[0] = -1;
+	  return;
+	}
+      
+      if ((Channels[i]->MidiPoly[0] == data[0]) && 
+	  (Channels[i]->MidiPoly[1] == data[1]))
+	{
+	  Channels[i]->MidiPoly[0] = -1;
+	  return;
+	}
+    }
+}
+
+void WiredBeatBox::OnVolumeController(wxMouseEvent& WXUNUSED(event))
+{
+  int *midi_data;
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      //Mutex.Lock();
+
+      //CheckExistingControllerData(midi_data);      
+      MidiVolume[0] = midi_data[0];
+      MidiVolume[1] = midi_data[1];
+
+      //Mutex.Unlock();
+    }
+  delete midi_data;
 }
 
 /******** Main and mandatory library functions *********/
