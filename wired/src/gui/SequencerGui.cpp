@@ -906,6 +906,11 @@ void					SequencerGui::OnDeleteClick(wxCommandEvent &event)
   DeleteSelectedPatterns();
 }
 
+void					SequencerGui::OnSelectAll(wxCommandEvent &event)
+{
+  cout << "[SEQUENCERGUI] TODO: Select all" << endl;
+}
+
 void					SequencerGui::OnMoveToCursorClick(wxCommandEvent &event)
 {
   MoveToCursor();

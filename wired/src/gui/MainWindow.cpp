@@ -178,8 +178,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   EditMenu->Append(MainWin_Redo, "&Redo\tShift+Ctrl+Z");
 
   EditMenu->AppendSeparator();
-  EditMenu->Append(MainWin_Copy, "&Copy\tCtrl+C");
   EditMenu->Append(MainWin_Cut, "C&ut\tCtrl+X");
+  EditMenu->Append(MainWin_Copy, "&Copy\tCtrl+C");
   EditMenu->Append(MainWin_Paste, "&Paste\tCtrl+V");
   EditMenu->AppendSeparator();
   EditMenu->Append(MainWin_Delete, "&Delete\tDel");
@@ -1076,6 +1076,31 @@ void					MainWindow::OnRedo(wxCommandEvent &event)
   cActionManager::Global().Redo();
 }
 
+void					MainWindow::OnCut(wxCommandEvent &event)
+{
+  SeqPanel->OnCut(event);
+}
+
+void					MainWindow::OnCopy(wxCommandEvent &event)
+{
+  SeqPanel->OnCopy(event);
+}
+
+void					MainWindow::OnPaste(wxCommandEvent &event)
+{
+  SeqPanel->OnPaste(event);
+}
+
+void					MainWindow::OnDelete(wxCommandEvent &event)
+{
+  SeqPanel->OnDeleteClick(event);
+}
+
+void					MainWindow::OnSelectAll(wxCommandEvent &event)
+{
+  SeqPanel->OnSelectAll(event);
+}
+
 void					MainWindow::OnFullScreen(wxCommandEvent &event)
 {
   ShowFullScreen(!IsFullScreen(), wxFULLSCREEN_NOBORDER|wxFULLSCREEN_NOCAPTION );
@@ -1192,6 +1217,11 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack) 
   EVT_MENU(MainWin_Undo, MainWindow::OnUndo) 
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
+  EVT_MENU(MainWin_Copy, MainWindow::OnCopy)
+  EVT_MENU(MainWin_Cut, MainWindow::OnCut)
+  EVT_MENU(MainWin_Paste, MainWindow::OnPaste)
+  EVT_MENU(MainWin_Delete, MainWindow::OnDelete)
+  EVT_MENU(MainWin_SelectAll, MainWindow::OnSelectAll)
   EVT_MENU(MainWin_SwitchRack,  MainWindow::OnSwitchRackOptViewEvent)
   EVT_MENU(MainWin_SwitchSeq,  MainWindow::OnSwitchSeqOptViewEvent)
   EVT_MENU(MainWin_FullScreen,  MainWindow::OnFullScreen)
