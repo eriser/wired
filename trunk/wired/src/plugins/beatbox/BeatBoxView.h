@@ -9,15 +9,18 @@
 
 #define DEC		3
 
+#define NB_COMBO_CHOICES 8
+#define TOOLBAR_HEIGHT	24
 #define RULER_HEIGHT	16
-#define TRACK_HEIGHT	100
+#define TRACK_HEIGHT	78//100 - TOOLBAR_HEIGHT
 #define TRACK_WIDTH	150
 #define BEAT_WITDH	200
-#define BEAT_HEIGHT	113
+#define BEAT_HEIGHT	87//113 - TOOLBAR_HEIGHT
 
 #define VIEW_BGCOLOR	*wxBLACK
 #define VIEW_FGCOLOR	*wxWHITE
 #define VIEW_BARCOLOR	*wxBLUE
+
 
 class WiredBeatBox;
 class BeatBoxChannel;
@@ -55,11 +58,12 @@ class BeatBoxTrackView : public wxWindow
   BeatBoxTrackView(wxWindow *parent, wxWindowID id, 
 		   const wxPoint &pos, const wxSize &size,
 		   BeatBoxView* view_ptr);
-  
-
   ~BeatBoxTrackView();  
   virtual void OnPaint(wxPaintEvent& event);
+  void OnLeftDown(wxMouseEvent& event);
+  
   vector<BeatTrack*>	BeatTracks;
+  long SelectedTrack;
  protected:
   BeatBoxView* ViewPtr;
 DECLARE_EVENT_TABLE()
@@ -77,11 +81,28 @@ class BeatBoxScrollView : public wxScrolledWindow
   void OnPaint(wxPaintEvent& event);
   void OnLeftDown(wxMouseEvent& event);
   void OnLeftUp(wxMouseEvent& event);
+  void OnRightDown(wxMouseEvent& event);
   void OnMotion(wxMouseEvent& event);
   
+  void ClearSelected(void);
   void SelectNote(BeatNote* note);
+  void NewNote(wxCommandEvent& event);
+  void DeleteNotes(wxCommandEvent& event);
+  void CutNotes(wxCommandEvent& event);
+  void CopyNotes(wxCommandEvent& event);
+  void PasteNotes(wxCommandEvent& event);
+  void SelectAllNotes(wxCommandEvent& event);
+  
+  long SubDiv;
+  
+  BeatNote* SelectedNote;
   list<BeatNote*> SelectedNotes;
+  list<BeatNote*> TmpNotes;
+
  protected:
+  wxMenu* PopMenu;
+  bool OnSelecting;
+  long ClickPosX, ClickPosY, MotionPosX, MotionPosY;
   BeatBoxView* ViewPtr;
 DECLARE_EVENT_TABLE()
 };
@@ -99,12 +120,21 @@ class BeatBoxView : public wxPanel
   void OnHScroll(wxScrollEvent& event);
   void OnVScroll(wxScrollEvent& event);
   void OnSize(wxSizeEvent& event);
+  void OnSubdivChange(wxCommandEvent& event);
+  void OnPosChange(wxCommandEvent& event);
+  void OnVelChange(wxCommandEvent& event);
   
+  wxToolBar* ToolBar;
+  wxComboBox* SubCombo;
+  wxTextCtrl* PosTextCtrl;
+  wxTextCtrl* VelTextCtrl;
+  void UpdateToolBar(void);
   //vector<BeatTrack*>	BeatTracks;
   
   WiredBeatBox*		DRM31;
   // protected:
   double XScrollCoef, YScrollCoef;
+  long SelectedTrack;
   long XScroll;
   long YScroll;
   long XSize;
@@ -135,7 +165,16 @@ enum
     ID_HZoom,
     ID_VZoom,
     ID_HScroll,
-    ID_VScroll
+    ID_VScroll,
+    ID_PopNew,
+    ID_PopDelete,
+    ID_PopCut,
+    ID_PopCopy,
+    ID_PopPaste,
+    ID_PopSelect,
+    ID_SubCombo,
+    ID_PosTextCtrl,
+    ID_VelTextCtrl
   };
 
 #endif//__BEATBOXVIEW_H__

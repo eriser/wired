@@ -49,14 +49,29 @@ class BeatNote
  public:
   BeatNote(unsigned int numchan, double pos, unsigned int state, double bpos)
     { 
+      Selected = false;
       NumChan = numchan;
       State = state;
       Position = pos;
       BarPos = bpos;
       Start = End = Pitch = Vel = Lev = 1.0f;
     }
+  BeatNote(BeatNote* note)
+    {
+      Selected = note->Selected;
+      NumChan = note->NumChan;
+      State = note->State;
+      Position = note->Position;
+      BarPos = note->BarPos;
+      Start = note->Start;
+      End = note->End;
+      Pitch = note->Pitch;
+      Vel = note->Vel;
+      Lev = note->Lev;
+    }
   ~BeatNote() {}
   
+  bool		Selected;
   unsigned int	NumChan;
   double	Position;
   double	BarPos;
