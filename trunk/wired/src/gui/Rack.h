@@ -52,6 +52,7 @@ class				Rack: public wxScrolledWindow
   ~Rack();
   
   void				AddTrack(PlugStartInfo &startinfo, PluginLoader *p);
+  void				AddTrack(Plugin *p);  
   RackTrack			*AddTrack();
   void				AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p);
   void				DeleteRack(Plugin *plug);
@@ -65,7 +66,7 @@ class				Rack: public wxScrolledWindow
   void				RemoveTrack();
 
   
-  void 				DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y , Plugin *plug);
+  bool 				DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y , Plugin *plug);
   void				DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug);
 
   //  bool ProcessEvent(wxEvent& event);  
