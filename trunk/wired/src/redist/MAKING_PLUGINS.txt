@@ -1,0 +1,5 @@
+* This directory contains redistribuable files under the LGPL (with no 
+restictions on having it built into a shared library) which permits to create 
+Wired plugins. Basically a plugin just need to heritate from the Plugin class 
+in Plugin.h.
+More information on building plugins will be available soon.

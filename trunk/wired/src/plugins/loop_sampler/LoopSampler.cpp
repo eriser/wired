@@ -1,0 +1,1034 @@
+// Copyright (C) 2004 by Wired Team
+// Under the GNU General Public License
+
+#include "LoopSampler.h"
+#include "midi.h"
+#include <stdio.h>
+#include "FileLoader.h"
+#include <wx/progdlg.h>
+#include <math.h>
+
+static PlugInitInfo info;
+
+BEGIN_EVENT_TABLE(LoopSampler, wxWindow)
+  EVT_PAINT(LoopSampler::OnPaint)
+  EVT_BUTTON(LoopSampler_ShowOpt, LoopSampler::OnShowView)
+  EVT_BUTTON(LoopSampler_Open, LoopSampler::OnOpenFile)
+  EVT_BUTTON(LoopSampler_Save, LoopSampler::OnSaveFile)
+  EVT_BUTTON(LoopSampler_ToSeqTrack, LoopSampler::OnToSeqTrack)
+  EVT_BUTTON(LoopSampler_Play, LoopSampler::OnPlay)
+  EVT_BUTTON(LoopSampler_MesUp, LoopSampler::OnMesUp)
+  EVT_BUTTON(LoopSampler_MesDown, LoopSampler::OnMesDown)
+  EVT_BUTTON(LoopSampler_PolyUp, LoopSampler::OnPolyUp)
+  EVT_BUTTON(LoopSampler_PolyDown, LoopSampler::OnPolyDown)
+  EVT_BUTTON(LoopSampler_Invert, LoopSampler::OnInvert)
+  EVT_BUTTON(LoopSampler_Tempo, LoopSampler::OnTempo)
+  EVT_COMMAND_SCROLL(LoopSampler_Octave, LoopSampler::OnOctave)
+  EVT_COMMAND_SCROLL(LoopSampler_Pitch, LoopSampler::OnPitch)
+  EVT_COMMAND_SCROLL(LoopSampler_Volume, LoopSampler::OnVolume)
+  EVT_COMMAND_SCROLL(LoopSampler_Attack, LoopSampler::OnAttack)
+  EVT_ENTER_WINDOW(LoopSampler::OnHelp)
+END_EVENT_TABLE()
+
+
+LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
+  : Plugin(startinfo, initinfo)    
+{
+  HelpMode = false;
+  BeatCount = GetSigNumerator();
+  BarCount = (long)((double)BeatCount / (double)GetSigNumerator());
+  PolyphonyCount = 7;
+  Playing = false;
+  AutoPlaying = false;
+  View = 0x0;
+  Wave = 0x0;
+  Octave = 1.f;
+  Pitch = 1.f;  
+  Invert = false;
+  Tempo = false;
+  Volume = 1.f;
+  Attack = 1.f;
+  Decay = 1.f;
+  Sustain = 1.f;
+  Release = 1.f;
+
+  AttackMs = 0.f;
+  AttackCoef = 0.f;
+  AttackLen = 0;
+
+  ReleaseCoef = expf(logf(0.01f) / (0.1 * 44100.f * 0.001f));
+  Envelope = 0.0f;
+
+  read_buf = 0x0;
+
+  /* Graphic control initialization */
+
+  bmp = new wxBitmap(string(GetDataDir() + string(IMG_LS_BMP)).c_str(), wxBITMAP_TYPE_BMP);  
+  SetBackgroundColour(wxColour(200, 200, 200));
+
+  ls_bg = new wxImage(string(GetDataDir() + string(IMG_LS_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  if (ls_bg)
+    BgBmp = new wxBitmap(ls_bg);
+
+  play_up = new wxImage(string(GetDataDir() + string(IMG_LS_PLAY_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  play_down = new wxImage(string(GetDataDir() + string(IMG_LS_PLAY_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  open_up = new wxImage(string(GetDataDir() + string(IMG_LS_OPEN_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  open_down = new wxImage(string(GetDataDir() + string(IMG_LS_OPEN_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  save_up = new wxImage(string(GetDataDir() + string(IMG_LS_SAVE_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  save_down = new wxImage(string(GetDataDir() + string(IMG_LS_SAVE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  seq_up =  new wxImage(string(GetDataDir() + string(IMG_LS_SEQ_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  seq_down =  new wxImage(string(GetDataDir() + string(IMG_LS_SEQ_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  opt_up =  new wxImage(string(GetDataDir() + string(IMG_LS_OPT_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  opt_down =  new wxImage(string(GetDataDir() + string(IMG_LS_OPT_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  up_up = new wxImage(string(GetDataDir() + string(IMG_LS_UPUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+  up_down = new wxImage(string(GetDataDir() + string(IMG_LS_UPDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+  down_up = new wxImage(string(GetDataDir() + string(IMG_LS_DOWNUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+  down_down = new wxImage(string(GetDataDir() + string(IMG_LS_DOWNDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+  btn_up = new wxImage(string(GetDataDir() + string(IMG_LS_BTN_ON_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+  btn_down = new wxImage(string(GetDataDir() + string(IMG_LS_BTN_DOWN_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+  fader_bg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  fader_fg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
+  knob_bg = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  knob_fg = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_FG)).c_str(), wxBITMAP_TYPE_PNG);
+  
+  /* Toolbar Gauche */
+    
+  ShowOptBtn = new DownButton(this, LoopSampler_ShowOpt, 
+			      wxPoint(138, 28), wxSize(28, 28), opt_up, opt_down, true);
+  PlayBtn = new DownButton(this, LoopSampler_Play, 
+			   wxPoint(14, 28), wxSize(28, 28), play_up, play_down, false);
+  ToSeqTrackBtn = new DownButton(this, LoopSampler_ToSeqTrack, 
+				 wxPoint(108, 28), wxSize(28, 28), seq_up, seq_down, true);
+  SaveBtn = new DownButton(this, LoopSampler_Save, 
+			   wxPoint(76, 28), wxSize(28, 28), save_up, save_down, true);
+  OpenBtn = new DownButton(this, LoopSampler_Open, 
+			   wxPoint(46, 28), wxSize(28, 28), open_up, open_down, true);
+
+  /* Toolbar Haut */
+  
+
+  wxString s;
+
+  s.Printf("%d", BeatCount);
+
+  MesCountLabel = new wxStaticText(this, -1, s, wxPoint(229, 34), wxSize(-1, 12));
+  MesCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
+
+  MesUpBtn = new HoldButton(this, LoopSampler_MesUp, wxPoint(260, 31), wxSize(11, 8), 
+			    up_up, up_down);
+  MesDownBtn = new HoldButton(this, LoopSampler_MesDown, wxPoint(260, 41), wxSize(11, 8), 
+			      down_up, down_down);
+
+  s.Printf("%d", PolyphonyCount);
+  PolyCountLabel = new wxStaticText(this, -1, s, wxPoint(344, 34), wxSize(-1, 12));
+  PolyCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
+  PolyCountLabel->SetLabel(s);
+
+  PolyUpBtn = new HoldButton(this, LoopSampler_PolyUp, wxPoint(372, 32), wxSize(11, 8), 
+			    up_up, up_down);
+  PolyDownBtn = new HoldButton(this, LoopSampler_PolyDown, wxPoint(372, 41), wxSize(11, 8), 
+			      down_up, down_down);
+
+  LedOff = new wxBitmap(wxImage(string(GetDataDir() + string(IMG_LS_LED_OFF_IMG)).c_str(), wxBITMAP_TYPE_PNG));
+  LedOn = new wxBitmap(wxImage(string(GetDataDir() + string(IMG_LS_LED_ON_IMG)).c_str(), wxBITMAP_TYPE_PNG));
+
+  MidiInBmp = new wxStaticBitmap(this, -1, *LedOff, wxPoint(372, 10));
+
+  /* Envelope */
+
+  VolumeFader = new FaderCtrl(this, LoopSampler_Volume, fader_bg, fader_fg, 0, 127, 100, 
+                             wxPoint(28, 100), wxSize(20, 76));
+
+
+  AttackFader = new FaderCtrl(this, LoopSampler_Attack, fader_bg, fader_fg, 0, 1000, 0, 
+			      wxPoint(70, 100), wxSize(20, 76));
+
+  DecayFader = new FaderCtrl(this, LoopSampler_Decay, fader_bg, fader_fg, 0, 127, 100, 
+                             wxPoint(110, 100), wxSize(20, 76));
+
+  SustainFader = new FaderCtrl(this, LoopSampler_Sustain, fader_bg, fader_fg, 0, 127, 100, 
+                             wxPoint(152, 100), wxSize(20, 76));
+
+
+  ReleaseFader = new FaderCtrl(this, LoopSampler_Release, fader_bg, fader_fg, 0, 127, 100, 
+                             wxPoint(195, 100), wxSize(20, 76));
+
+  /* Global tuning */
+
+  OctaveKnob = new KnobCtrl(this, LoopSampler_Octave, knob_bg, knob_fg, 0, 8, 4, 1,
+			    wxPoint(270, 82), wxSize(23, 23));
+  PitchKnob = new KnobCtrl(this, LoopSampler_Pitch, knob_bg, knob_fg, 1, 200, 100, 1,
+			   wxPoint(330, 82), wxSize(23, 23));
+
+  /* Modes */
+
+  InvertBtn = new DownButton(this, LoopSampler_Invert, wxPoint(328, 135), wxSize(28, 28), btn_down, btn_up, false);
+  TempoBtn = new DownButton(this, LoopSampler_Tempo, wxPoint(263, 135)/*wxPoint(328, 135)*/, wxSize(28, 28), btn_down, btn_up, false);
+
+  /* Help events */
+  /*
+    OctaveKnob->Connect(LoopSampler_Octave, wxEVT_ENTER_WINDOW,
+		      (wxObjectEventFunction)(wxEventFunction) 
+		      (wxMouseEventFunction)&LoopSampler::OnOctaveHelp);  
+  OpenBtn->Connect(LoopSampler_Open, wxEVT_ENTER_WINDOW,
+		   (wxObjectEventFunction)(wxEventFunction) 
+		   (wxMouseEventFunction)&LoopSampler::OnOctaveHelp);  */
+}
+
+LoopSampler::~LoopSampler()
+{
+  delete BgBmp;
+  delete bmp;  
+  delete ls_bg;
+  delete play_up;
+  delete play_down;
+  delete open_up;
+  delete open_down;
+  delete save_up;
+  delete save_down;
+  delete seq_up;
+  delete seq_down;
+  delete opt_up;
+  delete opt_down;
+  delete up_up;
+  delete up_down;
+  delete down_up;
+  delete down_down;
+  delete fader_bg;
+  delete fader_fg;
+  delete knob_bg;
+  delete knob_fg;
+
+  list<Slice *>::iterator k;
+  for (k = Slices.begin(); k != Slices.end(); k++)
+    delete *k;
+
+  //  if (View)
+  // View->Destroy();
+  if (Wave)
+    delete Wave;
+  list<LoopNote *>::iterator i;
+  for (i = Notes.begin(); i != Notes.end(); i++)
+    delete *i;
+
+  if (read_buf)
+    {
+      delete read_buf[0];
+      delete read_buf[1];
+      delete read_buf;
+    }
+}
+
+void LoopSampler::SetBufferSize(long size) 
+{ 
+  Workshop.SetBufferSize(size);
+  Workshop.SetPolyphony(PolyphonyCount);
+
+  if (read_buf)
+    {
+      delete read_buf[0];
+      delete read_buf[1];
+      delete read_buf;
+    }
+
+  read_buf = new float *[2];
+  read_buf[0] = new float[size];
+  read_buf[1] = new float[size];
+} 
+
+void LoopSampler::SetSamplingRate(double rate) 
+{ 
+  SamplingRate = rate; 
+  if (AttackMs)
+    {
+      AttackLen = long(AttackMs * SamplingRate);
+      AttackCoef = 1.f / (float)AttackLen;
+    }
+
+  if (View)
+    View->SetSamplingRate((int)rate);
+
+  list<Slice *>::iterator k;
+  for (k = Slices.begin(); k != Slices.end(); k++)  
+    {
+      (*k)->LeftTouch->setSampleRate((int)SamplingRate);
+      (*k)->RightTouch->setSampleRate((int)SamplingRate);
+    }
+}
+
+void LoopSampler::Process(float **input, float **output, long sample_length)
+{
+  Mutex.Lock();
+  if (!Wave)
+    {
+      Mutex.Unlock();
+      return;
+    }
+  if (Playing)
+    {      
+      double MesCur, MesBufCur;
+      list<Slice *>::iterator i;
+
+      MesCur = fmod(GetBarPos(), BarCount);
+      MesBufCur = fmod(MesCur + sample_length * GetBarsPerSample(), BarCount);
+
+      if (MesBufCur < MesCur)
+	MesCur = 0.0;
+      for (i = Slices.begin(); i != Slices.end(); i++)
+	{
+	  if (Notes.size() >= PolyphonyCount)
+	    break;
+
+	  if (((*i)->Bar >= MesCur) && ((*i)->Bar < MesBufCur))
+	    {	      
+	      LoopNote *n = new LoopNote((*i)->AffectMidi, (*i)->Volume, *i, 
+					 (long)(((*i)->Bar - MesCur) * GetSamplesPerBar()),
+					 Workshop.GetFreeBuffer(), 0);
+	      Notes.push_back(n);
+	    }
+	}
+    }
+
+  list<LoopNote *>::iterator i;
+  LoopNote *n;
+  long length, end, idx, chan; 
+
+  // Processing des notes
+  for (i = Notes.begin(); i != Notes.end(); i++)
+    {
+      n = *i;
+
+      if (!(n->End))
+	{
+	  length = sample_length - n->Delta;
+	  end = (long)((n->SliceNote->EndPosition - n->Position) / n->SliceNote->Pitch);
+	  if (end < (length))
+	    length = end - n->Delta;
+	  else
+	    end = 0;
+
+	  if (length <= 0)
+	    n->End = true;
+	 
+	  Wave->SetPitch((n->SliceNote->Pitch + Pitch) / 2.f);
+	  Wave->SetInvert(n->SliceNote->Invert);
+
+	  curL = 0;
+	  curR = 0;
+	  retTouchL = 0;
+	  retTouchR = 0;
+
+	  while (!(n->End) && ((curL < length) || (curR < length)))
+	    {
+	      do
+		{
+		  retTouchL = n->SliceNote->LeftTouch->receiveSamples(n->Buffer[0] + curL +
+								      n->Delta, 
+								      length - curL);
+		  retTouchR = n->SliceNote->RightTouch->receiveSamples(n->Buffer[1] + curR 
+								       + n->Delta, 
+								       length - curR);
+		  curL += retTouchL;
+		  curR += retTouchR;
+		}
+	      while ((retTouchL || retTouchR) && ((curL < length) || (curR < length)));
+
+	      if (n->Position < n->SliceNote->EndPosition)
+		{
+		  Wave->Read(read_buf, n->Position, length, 0, &(n->Position));
+		  n->SliceNote->LeftTouch->putSamples(read_buf[0], length);
+		  n->SliceNote->RightTouch->putSamples(read_buf[1], length);
+		}
+	      // "else" doesn't work here, very strange, probably a compiler optimisation bug
+	      if (n->Position >= n->SliceNote->EndPosition) 
+		{
+		  if ((retTouchL < sample_length) && (retTouchR < sample_length))
+		    {
+		      n->End = true;
+		      n->SliceNote->LeftTouch->clear();
+		      n->SliceNote->RightTouch->clear();
+		      break;
+		    }
+		}
+	    }
+
+	  if (n->Volume != 1.f)
+	    for (chan = 0; chan < 2; chan++)	    
+	      for (idx = n->Delta; idx < length; idx++)
+		n->Buffer[chan][idx] *= n->Volume;
+	  
+	  /*
+	    if (end)
+	    {
+	      if (length - 500 > 0)
+		{
+		  float f;
+		  for (chan = 0; chan < 2; chan++)	    
+		    for (idx = length - 500, f = 1.f; idx < length; idx++, f -= 0.002f)
+		      n->Buffer[chan][idx] *= f;  
+		}
+	    }
+	  */
+
+	  /*
+	  if ((n->Position - n->BeginPosition) < AttackLen)
+	    {	      
+	      float f;
+	      f = n->Attack;
+
+	      if (length > (AttackLen - (n->Position - n->BeginPosition)))
+		end = AttackLen - (n->Position - n->BeginPosition);
+	      else
+		end = length;
+	      for (chan = 0; chan < 2; chan++)
+		for (idx = n->Delta, n->Attack = f; idx < end; 
+		     idx++, n->Attack += AttackCoef)
+		  {   
+		    n->Buffer[chan][idx] *= n->Attack;
+		  }
+	    }
+	  */
+
+	  if (n->Delta)
+	    n->Delta = 0;
+	}
+    }
+
+  //memset(output[0], 0, sample_length * sizeof(float));
+  //memset(output[1], 0, sample_length * sizeof(float));
+
+  Workshop.GetMix(output);
+
+  //for (int o = 0; o < sample_length; o++)
+  //cout << output[0][o] << endl;
+
+  // Suppression des notes terminées
+  for (i = Notes.begin(); i != Notes.end();)
+    {  
+      //if ((*i)->Position >= (*i)->SliceNote->EndPosition)      
+      if ((*i)->End)
+	{
+	  Workshop.SetFreeBuffer((*i)->Buffer);
+	  delete *i;	 
+	  i = Notes.erase(i);
+	}
+      else
+	i++;
+    }
+  Mutex.Unlock();
+ }
+
+void LoopSampler::ProcessEvent(WiredEvent &event)
+{
+  if ((event.MidiData[0] == M_NOTEON1) || (event.MidiData[0] == M_NOTEON2))
+    {
+      if (!event.MidiData[2]) 
+	{
+	  Mutex.Lock();
+
+	  // Suppression des notes terminées
+	  list<LoopNote *>::iterator i;
+	  for (i = Notes.begin(); i != Notes.end(); i++)
+	    {  
+	      if ((*i)->Note == event.MidiData[1])      
+		{
+		  Workshop.SetFreeBuffer((*i)->Buffer);
+		  delete *i;	 
+		  Notes.erase(i);
+		  break;
+		}
+	    }	  
+	  Mutex.Unlock();
+
+	  MidiInBmp->SetBitmap(*LedOff);
+	}
+      else
+	{
+	  MidiInBmp->SetBitmap(*LedOn);
+
+	  Mutex.Lock();
+
+	  if (Notes.size() < PolyphonyCount)	    
+	    {
+	      list<Slice *>::iterator i;
+
+	      for (i = Slices.begin(); i != Slices.end(); i++)
+		{
+		  if ((*i)->AffectMidi == event.MidiData[1])
+		    {
+		      LoopNote *n = new LoopNote(event.MidiData[1], event.MidiData[2] / 100.f,
+						 *i, event.DeltaFrames, 
+						 Workshop.GetFreeBuffer(), event.NoteLength);
+		      Notes.push_back(n);
+		      printf("[LOOPSAMPLER] Note added: %2x\n", n->Note);
+		      break;
+		    }		
+		}			       
+	    }
+	  else
+	    printf("[LOOPSAMPLER] Max polyphony reached\n");
+	  
+	  Mutex.Unlock();
+	}
+    }  
+  else if (event.MidiData[0] == M_CONTROL)
+    {
+      if (event.MidiData[1] == 0x7) // main volume
+	{
+	  Volume = event.MidiData[2] / 100.f;
+	  VolumeFader->SetValue(event.MidiData[2]);
+	  Workshop.SetVolume(Volume);
+	}	
+    }
+//  printf("[LOOPSAMPLER] Got midi in : %2x %2x %2x\n", event.MidiData[0], event.MidiData[1], event.MidiData[2]);
+}
+
+wxWindow *LoopSampler::CreateView(wxWindow *zone, wxPoint &pos, wxSize &size)
+{
+  View = new LoopSamplerView(&Mutex, zone, pos, size, GetDataDir());
+  if (Wave)
+    {
+      View->SetWaveFile(Wave);
+      View->SetSlices(&Slices);
+      SetBarCoeff();
+    }
+  return (View);
+}
+
+void LoopSampler::Play()
+{
+  Mutex.Lock();
+
+  SeqPlaying = true;
+  if (AutoPlaying)
+    Playing = true;
+
+  Mutex.Unlock();
+}
+
+void LoopSampler::Stop()
+{
+  Mutex.Lock();
+
+  SeqPlaying = false;
+  Playing = false;
+  //PlayBtn->SetOff();
+
+  Mutex.Unlock();
+}
+
+void LoopSampler::DestroyView()
+{
+  View->Destroy();
+  View = 0x0;
+}
+
+bool LoopSampler::IsInstrument()
+{
+  return (true);
+}
+
+bool LoopSampler::IsAudio()
+{
+  return (true);
+}
+
+bool LoopSampler::IsMidi()
+{
+  return (true);
+}
+
+void LoopSampler::Load(int fd, long size)
+{
+  long len;
+
+  read(fd, &len, sizeof (len));
+  
+  char s[len + 1];
+  read(fd, s, len);
+  s[len] = 0;
+  read(fd, &BarCount, sizeof (BarCount));//??
+  read(fd, &BeatCount, sizeof (BeatCount));
+  read(fd, &Volume, sizeof (Volume));
+  read(fd, &Attack, sizeof (Attack));
+  read(fd, &Decay, sizeof (Decay));
+  read(fd, &Sustain, sizeof (Sustain));
+  read(fd, &Release, sizeof (Release));
+  read(fd, &Octave, sizeof (Octave));
+  read(fd, &Pitch, sizeof (Pitch));
+  read(fd, &Invert, sizeof (Invert));
+  read(fd, &Tempo, sizeof (Tempo));
+  //  read(fd, &len, sizeof (len));
+
+  wxString str;
+
+  str.Printf("%d", BeatCount);
+  MesCountLabel->SetLabel(str);
+  VolumeFader->SetValue((long)(Volume * 100.f));
+  AttackFader->SetValue((long)(Attack * 100.f));
+  DecayFader->SetValue((long)(Decay * 100.f));
+  SustainFader->SetValue((long)(Sustain * 100.f));
+  ReleaseFader->SetValue((long)(Release * 100.f));
+  OctaveKnob->SetValue((long)(Octave + 4));
+  PitchKnob->SetValue((long)(Pitch * 100.f));
+  if (Invert)
+    InvertBtn->SetOn();
+  else
+    InvertBtn->SetOff();
+  
+  WaveFile *w;
+  try
+    {
+      w = new WaveFile(s, true);
+      SetWaveFile(w);
+      ShowOptionalView();  
+    }
+  catch (...)
+    {
+      cout << "[LOOPSAMPLER] Cannot open wave file !" << endl;
+    }
+
+  if (read(fd, &len, sizeof (len)) < sizeof (len))
+    return;
+  
+  Slices.clear();
+  for (int i = 0; i < len; i++)
+    {      
+      Slice *s = new Slice(0, 0.0, (int)SamplingRate);
+      read(fd, &(s->Position), sizeof (s->Position));
+      read(fd, &(s->EndPosition), sizeof (s->EndPosition));
+      read(fd, &(s->Bar), sizeof (s->Bar));
+      read(fd, &(s->Note), sizeof (s->Note));
+      read(fd, &(s->Pitch), sizeof (s->Pitch));
+      read(fd, &(s->Volume), sizeof (s->Volume));
+      read(fd, &(s->AffectMidi), sizeof (s->AffectMidi));
+      read(fd, &(s->Invert), sizeof (s->Invert));
+
+      s->SetNote(s->Note);
+      s->SetOctave(Octave);
+
+      Slices.push_back(s);
+    }  
+
+  if (Tempo)
+    {
+      TempoBtn->SetOn();
+
+      wxCommandEvent ev;
+      OnTempo(ev);
+    }
+  else
+    TempoBtn->SetOff();
+
+  if (View)
+    View->SetSlices(&Slices);
+}
+
+long LoopSampler::Save(int fd)
+{
+  long len, size = 0;
+
+  if (Wave)
+    {
+      len = Wave->Filename.size();
+      size = write(fd, &len, sizeof (len));
+      size += write(fd, Wave->Filename.c_str(), len);
+      size += write(fd, &BarCount, sizeof (BarCount));
+      size += write(fd, &BeatCount, sizeof (BeatCount));
+      size += write(fd, &Volume, sizeof (Volume));
+      size += write(fd, &Attack, sizeof (Attack));
+      size += write(fd, &Decay, sizeof (Decay));
+      size += write(fd, &Sustain, sizeof (Sustain));
+      size += write(fd, &Release, sizeof (Release));
+      size += write(fd, &Octave, sizeof (Octave));
+      size += write(fd, &Pitch, sizeof (Pitch));
+      size += write(fd, &Invert, sizeof (Invert));
+      size += write(fd, &Tempo, sizeof (Tempo));
+      
+      len = Slices.size();
+      size += write(fd, &len, sizeof (len));
+      list<Slice *>::iterator i;
+      for (i = Slices.begin(); i != Slices.end(); i++)
+	{
+	  size += write(fd, &(*i)->Position, sizeof ((*i)->Position));
+	  size += write(fd, &(*i)->EndPosition, sizeof ((*i)->EndPosition));
+	  size += write(fd, &(*i)->Bar, sizeof ((*i)->Bar));
+	  size += write(fd, &(*i)->Note, sizeof ((*i)->Note));
+	  size += write(fd, &(*i)->Pitch, sizeof ((*i)->Pitch));
+	  size += write(fd, &(*i)->Volume, sizeof ((*i)->Volume));
+	  size += write(fd, &(*i)->AffectMidi, sizeof ((*i)->AffectMidi));
+	  size += write(fd, &(*i)->Invert, sizeof ((*i)->Invert));
+	}
+    }
+  return (size);
+}
+
+void LoopSampler::SetBarCoeff()
+{
+  double coeff;
+  list<Slice *>::iterator i;
+
+  if (!Wave)
+    return;
+  BarCount = (long)((double)BeatCount / (double)GetSigNumerator());
+  coeff = BarCount / (double)Wave->GetNumberOfFrames();
+  for (i = Slices.begin(); i != Slices.end(); i++)
+    (*i)->Bar = (*i)->Position * coeff;
+  if (View)    
+    View->SetBarCoeff(coeff);    
+}
+
+void LoopSampler:: SetWaveFile(WaveFile *w)
+{
+  WaveFile *tmpw = Wave;
+
+  Mutex.Lock();
+
+  Wave = w;
+
+  Mutex.Unlock();
+
+  if (tmpw)
+    {
+      delete tmpw;
+      /*
+      delete tmpl;
+      delete tmpr;
+      */
+    }
+
+  if (View)
+    {
+      View->SetWaveFile(w);
+      View->SetSamplingRate((int)SamplingRate);
+
+      Mutex.Lock();
+
+      View->SetSlices(&Slices);	      
+
+      Mutex.Unlock();
+    }
+  Mutex.Lock();
+  SetBarCoeff();
+  Mutex.Unlock();
+}
+
+wxBitmap *LoopSampler::GetBitmap()
+{
+  return (bmp);
+}
+
+void LoopSampler::OnOpenFile(wxCommandEvent &event)
+{  
+  FileLoader *dlg = new FileLoader(this, -1, "Loading sound file", false, false, NULL);
+  if (dlg->ShowModal() == wxID_OK)
+    {
+      string selfile = dlg->GetSelectedFile();
+      dlg->Destroy();
+
+      WaveFile *w;
+
+      wxProgressDialog *Progress = new wxProgressDialog("Loading wave file", "Please wait...", 
+							100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
+                                                        | wxPD_REMAINING_TIME);
+      Progress->Update(1);
+      try
+	{
+	  w = new WaveFile(selfile, true);
+	  if (View)
+	    CloseOptionalView();
+          Progress->Update(60);
+          SetWaveFile(w);
+          Progress->Update(99);
+	  ShowOptionalView();
+	}
+      catch (...)
+	{
+	  cout << "[LOOPSAMPLER] Cannot open wave file !" << endl;
+	}
+      delete Progress;
+    }
+  else
+    dlg->Destroy();
+}
+
+void LoopSampler::OnOctave(wxScrollEvent &event)
+{
+  Mutex.Lock();
+
+  Octave = OctaveKnob->GetValue() - 4;//powf(2, OctaveKnob->GetValue() - 4);
+
+  list<Slice *>::iterator k;
+  for (k = Slices.begin(); k != Slices.end(); k++)  
+    (*k)->SetOctave(Octave);      
+
+  Mutex.Unlock();
+}
+
+void LoopSampler::OnPitch(wxScrollEvent &event)
+{
+  Mutex.Lock();
+
+  Pitch = PitchKnob->GetValue() / 100.f;
+
+  Mutex.Unlock();
+}
+
+void LoopSampler::OnVolume(wxScrollEvent &event)
+{
+  Mutex.Lock();
+
+  Volume = VolumeFader->GetValue() / 100.f;
+  Workshop.SetVolume(Volume);
+
+  Mutex.Unlock();
+}
+
+void LoopSampler::OnAttack(wxScrollEvent &event)
+{
+  Mutex.Lock();
+
+  AttackMs = AttackFader->GetValue() / 1000.f;
+
+  if (AttackMs)
+    {
+      AttackLen = (long)(AttackMs * SamplingRate);
+      AttackCoef = 1.f / (float)AttackLen;
+    }
+  //  cout << "ms: " << AttackMs << "; len: " << AttackLen << "; coef: " << AttackCoef << endl;
+
+  Mutex.Unlock();
+}
+
+void LoopSampler::OnMesDown(wxCommandEvent &event)
+{
+  if (BeatCount > 1)
+    {
+      Mutex.Lock();
+
+      BeatCount--;
+      wxString s;      
+      s.Printf("%d", BeatCount);
+      MesCountLabel->SetLabel(s);
+      SetBarCoeff();
+      if (View)
+	View->SetBeats(GetSigNumerator(), BeatCount);
+
+      Mutex.Unlock();
+    }
+}
+
+void LoopSampler::OnMesUp(wxCommandEvent &event)
+{
+  if (BeatCount < 100)
+    {
+      Mutex.Lock();
+
+      BeatCount++;
+      wxString s;      
+      s.Printf("%d", BeatCount);
+      MesCountLabel->SetLabel(s);
+      SetBarCoeff();
+      if (View)
+	View->SetBeats(GetSigNumerator(), BeatCount);
+
+      Mutex.Unlock();
+    }
+}
+
+void LoopSampler::OnPolyUp(wxCommandEvent &event)
+{
+  wxString s;      
+
+  if (PolyphonyCount < 256)
+    {
+      Mutex.Lock();
+
+      PolyphonyCount++;
+      Workshop.SetPolyphony(PolyphonyCount);
+      s.Printf("%d", PolyphonyCount);
+      PolyCountLabel->SetLabel(s);      
+
+      Mutex.Unlock();  
+    }
+}
+
+void LoopSampler::OnPolyDown(wxCommandEvent &event)
+{
+  wxString s;      
+
+  if (PolyphonyCount > 1)
+    {
+      Mutex.Lock();
+
+      PolyphonyCount--;
+      Workshop.SetPolyphony(PolyphonyCount);
+      s.Printf("%d", PolyphonyCount);
+      PolyCountLabel->SetLabel(s);      
+
+      Mutex.Unlock();
+    }
+}
+
+void LoopSampler::OnSaveFile(wxCommandEvent &event)
+{
+
+}
+
+void LoopSampler::OnPlay(wxCommandEvent &event)
+{
+  Mutex.Lock();
+
+  if (PlayBtn->GetOn())
+    {
+      AutoPlaying = true;
+      if (SeqPlaying)
+	Playing = true;
+    }
+  else
+    {
+      AutoPlaying = false;
+      if (SeqPlaying)
+	Playing = false;
+    }
+
+  Mutex.Unlock();
+}
+
+void LoopSampler::OnToSeqTrack(wxCommandEvent &event)
+{
+  if (Wave)
+    {
+      list<SeqCreateEvent *> l;
+      SeqCreateEvent *e;
+      list<Slice *>::iterator i;
+      list<SeqCreateEvent *>::iterator j;
+
+      double d = GetBarsPerSample();
+      
+      for (i = Slices.begin(); i != Slices.end(); i++)
+	{
+	  e = new SeqCreateEvent;
+	  e->Position = (*i)->Bar;
+	  e->EndPosition = (*i)->EndPosition * d;
+	  e->MidiMsg[0] = 0x90;
+	  //e->MidiMsg[0] &= 0xF0;
+	  e->MidiMsg[1] = (*i)->AffectMidi;
+	  e->MidiMsg[2] = (int)((*i)->Volume * 100.f);
+	  l.push_back(e);
+	}      
+      CreateMidiPattern(&l);
+      for (j = l.begin(); j != l.end(); j++)
+	delete *j;
+    }
+}
+
+void LoopSampler::OnShowView(wxCommandEvent &event)
+{
+  ShowOptionalView();
+}
+
+void LoopSampler::OnInvert(wxCommandEvent &event)
+{
+  list<Slice *>::iterator i;
+
+  Mutex.Lock();
+
+  for (i = Slices.begin(); i != Slices.end(); i++)
+    (*i)->Invert = !(*i)->Invert;
+
+  Mutex.Unlock();
+}
+
+void LoopSampler::OnTempo(wxCommandEvent &event)
+{
+  list<Slice *>::iterator i;
+
+  Mutex.Lock();
+
+  Tempo = TempoBtn->GetOn();
+  if (!Wave)
+    {
+      Mutex.Unlock();
+      return;
+    }
+
+  if (!Tempo)
+    {
+      for (i = Slices.begin(); i != Slices.end(); i++)
+	(*i)->SetTempo(1.f);
+    }
+  else
+    {
+      float f;
+
+      f = (float)(Wave->GetNumberOfFrames() / (GetSamplesPerBar() * BarCount));
+      for (i = Slices.begin(); i != Slices.end(); i++)
+	(*i)->SetTempo(f);
+    }
+  Mutex.Unlock();
+}
+
+void LoopSampler::OnPaint(wxPaintEvent &event)
+{
+  wxMemoryDC memDC;
+  wxPaintDC dc(this);
+  
+  memDC.SelectObject(*BgBmp);    
+  wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
+  while (upd)
+    {    
+      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), 
+	      wxCOPY, FALSE);      
+      upd++;
+    }
+}
+
+void LoopSampler::OnHelp(wxMouseEvent &event)
+{
+  if (HelpMode)
+    SendHelp("This is Wired's Loop Sampler. It enables you to load loops and modify them, by cutting them into slices for automatic loop scaling, with pitch shifting and time stretching.");
+}
+
+void LoopSampler::OnOctaveHelp(wxMouseEvent &event)
+{
+  cout << "LoopSampler::octavehelp" << endl;
+  if (HelpMode)
+    SendHelp("This knob sets the octave of the loaded sample");
+}
+
+/******** Main and mandatory library functions *********/
+
+extern "C"
+{
+
+  PlugInitInfo init()
+  {  
+    WIRED_MAKE_STR(info.UniqueId, "PLLS");
+    info.Name = PLUGIN_NAME;
+    info.Type = PLUG_IS_INSTR;  
+    info.UnitsX = 2;
+    info.UnitsY = 2;
+    return (info);
+  }
+
+  Plugin *create(PlugStartInfo *startinfo)
+  {
+    Plugin *p = new LoopSampler(*startinfo, &info);
+    return (p);
+  }
+
+  void destroy(Plugin *p)
+  {
+    delete p;
+  }
+
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,63 @@
+* Wired installation notes*
+
+You need to follow some important notes before being able to compile Wired.
+Please read them below :
+
+--- Wired requires several libraries you need to install before compiling it:
+
+  - ALSA support in your kernel and alsalib installed 
+	* Kernels 2.6.x have integrated ALSA support
+	* You can download alsalib and latest card drivers at :
+	http://www.alsa-project.org
+
+  - GTK 2 : http://www.gtk.org
+
+  - wxGTK 2.5.x (recommended 2.5.0 or 2.5.3) : www.wxwidgets.org
+	* When compiling wxWidgets, be sure you are using GTK2 support by 
+	passing to configure script: --enable-gtk2
+
+  - Latest CVS snapshot of PortAudio v19 
+	* You should be able to download it from:
+	http://portaudio.com/archives/pa_snapshot_v19.tar.gz
+	* We recommend to compile with ALSA support (--with-alsa) and without 
+	JACK since jack support hasn't been really tested.
+
+- SoundTouch: http://sky.prohosting.com/oparviai/soundtouch/
+	* /!\ VERY IMPORTANT /!\
+	You need to modify a SoundTouch header before compiling and installing,
+	in order to use float samples instead of integers:
+	  - open the file SoundTouch/include/STTypes.h
+	  - find line "#define INTEGER_SAMPLES" and COMMENT it
+	  - find line "#define FLOAT_SAMPLES" and UNCOMMENT it
+	  - now you can compile and install SoundTouch
+
+- libsndfile : http://www.mega-nerd.com/libsndfile/
+
+--- To compile Wired:
+
+	- type "./configure"
+	- type "make"
+	- login as root and type "make install"
+	
+--- To run wired:
+	- type "wired" in a console
+
+--- Most known compilation problems
+  	
+	- Error in AudioEngine, such as : 
+./engine/AudioEngine.h:87: error: `PaDeviceIndex' was not declared in this scope 
+	* You have an old PortAudio v18 version installed. 
+	Wired requires latest v19
+
+	- Error in LoopSampler, such as :
+error: no matching function for call to `SoundTouch::receiveSamples(float*, long int)' 
+	* You didn't made the modifications needed to SoundTouch header, please read
+	section above about required libraries.
+
+	- Error in a wxWidgets statement :
+	* Some problems have been reported with some systems, but the following 
+	configurations have been tested to work :
+	  - wxGTK 2.5.0 with GTK 2.2 and GCC 3.3.x
+	  - wxGTK 2.5.3 with GTK 2.4 and GCC 3.4.x
+
+	- Please check the Wired discussion and help forums if you run into troubles: http://sourceforge.net/forum/?group_id=120022

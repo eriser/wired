@@ -1,0 +1,45 @@
+#ifndef __MIDIDEVICE_H__
+#define __MIDIDEVICE_H__
+
+#include "midi.h"
+#include <vector>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+class MidiDeviceInfo
+{
+ public:
+  MidiDeviceInfo(string n, int i) : Name(n), Id(i) {}
+  ~MidiDeviceInfo() {}
+
+  string Name;
+  int	 Id;
+};
+
+typedef vector<MidiDeviceInfo *> MidiDeviceList;
+
+class MidiDevice
+{
+ public:
+  MidiDevice() { id = -1; }
+  virtual ~MidiDevice() { CloseDevice(); DeleteDevices(); };
+  
+  virtual int OpenDevice(int _id) = 0;
+  virtual void CloseDevice();
+  virtual MidiDeviceList *ListDevices(void) = 0;
+  int	  GetDeviceIDFromName(string s);
+
+  int id;
+ 
+ protected:
+
+  MidiDeviceList devices;
+  PmStream   *stream;
+  
+  void DeleteDevices();
+
+};
+
+#endif
