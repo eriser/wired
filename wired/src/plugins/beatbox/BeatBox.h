@@ -195,11 +195,15 @@ class WiredBeatBox : public Plugin
   unsigned int		EditedBank;
   
   void			OnVolumeController(wxMouseEvent& event);
+  void			OnStepsController(wxMouseEvent& event);
   int			ChanMidiNotes[NB_CHAN];
   void			ProcessMidiControls(int data[3]);
   void			CheckExistingControllerData(int data[3]);
   int			MidiVolume[3];
-  
+  int			MidiSteps[3];
+  int			MidiBank[3];
+  int			MidiTrack[3];
+
  protected:
   wxMutex		PatternMutex;
   wxMutex		MidiMutex;
@@ -219,10 +223,13 @@ class WiredBeatBox : public Plugin
   void			ReCalcStepsSigCoef(void);
   void			UpdateSteps(unsigned int bank, 
 				    unsigned int track);
+  void			UpdateStepsDeps(unsigned int steps);
   void			RefreshPosLeds(double pos);
   void			UpdateNotesPositions(unsigned int bank,
 					     unsigned int track);
   void			SetNoteAttr(BeatNoteToPlay* note, BeatBoxChannel* c);
+  void			SetMidiNoteAttr(BeatNoteToPlay* note, 
+					BeatBoxChannel* c);
   void			GetNotesFromChannel(BeatBoxChannel* channel,
 					    double bar_pos,
 					    double bar_end,
@@ -273,7 +280,8 @@ class WiredBeatBox : public Plugin
   IdButton**		SignatureButtons;
   IdButton**		PositionButtons;
   
-  wxStaticBitmap**	PositionLeds;
+  StaticBitmap**	PositionLeds;
+  bool			LedsOn[16];
   BeatButton**		Beat;
   DownButton*		LoadKit;
   

@@ -5,10 +5,11 @@
 #include <wx/slider.h>
 #include <vector>
 #include "WaveFile.h"
-#include "WaveEnv.h"
+//#include "WaveEnv.h"
 
 #define DEC		3
 
+#define NB_PARAMS_CHOICES 6
 #define NB_COMBO_CHOICES 8
 #define TOOLBAR_HEIGHT	24
 #define RULER_HEIGHT	16
@@ -28,7 +29,7 @@ class WiredBeatBox;
 class BeatBoxChannel;
 class BeatBoxView;
 
-class BeatTrack : public wxWindow
+class BeatTrack// : public wxWindow
 {
  public:
   //BeatTrack(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, BeatBoxChannel* channel);
@@ -104,7 +105,8 @@ class BeatBoxScrollView : public wxScrolledWindow
   void CopyNotes();
   void PasteNotes();
 
-  long SubDiv;
+  int SubDiv;
+  int Param;
   
   BeatNote* SelectedNote;
   list<BeatNote*> SelectedNotes;
@@ -133,17 +135,19 @@ class BeatBoxView : public wxPanel
   void OnVScroll(wxScrollEvent& event);
   void OnSize(wxSizeEvent& event);
   void OnSubdivChange(wxCommandEvent& event);
+  void OnParamChange(wxCommandEvent& event);
   void OnPosChange(wxCommandEvent& event);
   void OnVelChange(wxCommandEvent& event);
   void OnMagnetism(wxCommandEvent& event);
   
   wxToolBar* ToolBar;
   wxComboBox* SubCombo;
+  wxComboBox* ParamsCombo;
   wxTextCtrl* PosTextCtrl;
   wxTextCtrl* VelTextCtrl;
-  void UpdateToolBar(void);
-  //vector<BeatTrack*>	BeatTracks;
   
+  void UpdateToolBar(void);
+    
   WiredBeatBox*		DRM31;
   // protected:
   
@@ -188,6 +192,7 @@ enum
     ID_PopPaste,
     ID_PopSelect,
     ID_SubCombo,
+    ID_ParamsCombo,
     ID_PosTextCtrl,
     ID_VelTextCtrl,
     ID_Magnet

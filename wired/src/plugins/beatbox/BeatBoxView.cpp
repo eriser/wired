@@ -155,40 +155,18 @@ void BeatBoxTrackView::OnPaint(wxPaintEvent& event)
     }
 }
 
-//BEGIN_EVENT_TABLE(BeatTrack, wxWindow)
-  //EVT_PAINT(BeatTrack::OnPaint)
-//END_EVENT_TABLE()
-
-//BeatTrack::BeatTrack(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, BeatBoxChannel* channel)
 BeatTrack::BeatTrack(BeatBoxChannel* channel)
-  //  : wxWindow(parent, id, pos, size)
 {
   Channel = channel;
   /*
     wxStaticText* text = 
     new wxStaticText(this, -1, _T("channel"), wxPoint(0,0), 
-		     wxDefaultSize);
+    wxDefaultSize);
   */
 }
 
 BeatTrack::~BeatTrack()
 {}
-
-/*
-void BeatTrack::OnPaint(wxPaintEvent& event)
-{
-wxPaintDC dc(this);
-  wxSize s;
-  
-  PrepareDC(dc);
-  s = GetSize();
-  dc.SetPen(*wxMEDIUM_GREY_PEN); 
-  
-  dc.SetBrush(wxBrush(*wxBLACK, wxTRANSPARENT));//*wxLIGHT_GREY_BRUSH); 
-  dc.DrawRoundedRectangle(0, 0, s.x, s.y, 3);
-  
-}
-*/
 
 BEGIN_EVENT_TABLE(BeatBoxScrollView, wxScrolledWindow)
   EVT_PAINT(BeatBoxScrollView::OnPaint)
@@ -213,7 +191,8 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
   ClickPosX = ClickPosY = MotionPosX = MotionPosY = 0;
   SelectedNote = 0x0;
   SubDiv = 0;
-  
+  Param = 0;
+
   PopMenu = new wxMenu();
   //PopMenu->Append(ID_POPUP_MOVE_TO_CURSOR, "Move to cursor");
   PopMenu->Append(ID_PopNew, "Add");
@@ -403,8 +382,6 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
       dc.DrawRectangle(ClickPosX, ClickPosY, 
 		       MotionPosX - ClickPosX, MotionPosY - ClickPosY);
     }
-    
-  
   
   int steps = ViewPtr->DRM31->GetSteps();
   double res = 
@@ -454,7 +431,7 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
 	  yn = (ViewPtr->TrackHeight * cpt) 
 	    + DEC + static_cast<long> 
 	    ( floor
-	      ((1.27 - (*note)->Vel) / 1.27 * (ViewPtr->TrackHeight - DEC)))
+	      ((1.27 - (*note)->Params[Param]) / 1.27 * (ViewPtr->TrackHeight - DEC)))
 	    - ViewPtr->YScroll;
 	  
 	  if ((*note)->Selected)
@@ -473,6 +450,18 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
     }
   
 }
+
+/*
+inline void CalcXPos(double* xpos, int x)
+{
+  *xpos = floor( (static_cast<double>
+		  (x + static_cast<double>
+		   (ViewPtr->XScroll)) 
+		  / static_cast<double>(ViewPtr->XSize) 
+		  *  ViewPtr->DRM31->GetSteps()) 
+		 * 100) / 100;
+}
+*/
 
 void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
 {
@@ -507,31 +496,42 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
   else if (vel > 1.27)
     vel = 1.27;
   */
+  
   if (SelectedNote)
     {
-      int n = 0;
-  for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
-       note != SelectedNotes.end(); note++)
-    {
-      ViewPtr->DRM31->RemBeatNote(*note, 
-       			  ViewPtr->DRM31->Channels[(*note)->NumChan], 
-				  ViewPtr->DRM31->EditedBank, 
-				  ViewPtr->DRM31->EditedPattern);
+      float yparam = SelectedNote->Params[Param];
+      for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
+	   note != SelectedNotes.end(); note++)
+	{
+	  ViewPtr->DRM31->RemBeatNote(*note, 
+				      ViewPtr->DRM31->Channels[(*note)->NumChan], 
+				      ViewPtr->DRM31->EditedBank, 
+				      ViewPtr->DRM31->EditedPattern);
+	}
+      cout << "cur x pos: " << xpos << " Selected note pos: " 
+	   << SelectedNote->Position << endl;
       
-    }
-  double delta_x = xpos - SelectedNote->Position;
-  float delta_y = vel - SelectedNote->Vel;
+      double delta_x = xpos - SelectedNote->Position;
+      //double delta_x = xpos - SelectedNote->Position;
+      cout << "delta X: " << delta_x << endl;
+      //printf("delta x: %f\n", delta_x);
+      float delta_y = vel - yparam;//SelectedNote->Params[Param];
+      
+  int n = 0;
   for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
        note != SelectedNotes.end(); note++)
     {
       n++;
+      cout << n << " old position: " << (*note)->Position;
       (*note)->Position += delta_x;
+      cout << " new one: " << (*note)->Position;
       if ((*note)->Position >= static_cast<double>(ViewPtr->DRM31->GetSteps()))
 	{
+      cout << " modulus " << static_cast<double>(ViewPtr->DRM31->GetSteps());
+
 	  (*note)->Position = 
-	    fmod((*note)->Position, 
+	    fmod((*note)->Position,
 		 static_cast<double>(ViewPtr->DRM31->GetSteps()));
-	    //- static_cast<double>(ViewPtr->DRM31->GetSteps());
 	}
       else if ((*note)->Position < 0.00)
 	{
@@ -539,17 +539,20 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
 	    + fmod((*note)->Position, 
 		   static_cast<double>(ViewPtr->DRM31->GetSteps()));
 	}
-      (*note)->Position = floor((*note)->Position * 100) / 100;
+      cout << " intermediate: " ;//<< (*note)->Position << endl;
+      printf("%f\n",(*note)->Position);
+      //(*note)->Position = floor((*note)->Position * 100) / 100;
+      //cout << " floored: " << (*note)->Position << endl;
       (*note)->BarPos = floor(((*note)->Position / 
 			       static_cast<double>(ViewPtr->DRM31->GetSteps())
 			       ) * 100) / 100;
-      (*note)->Vel += delta_y;
-      if ((*note)->Vel > 1.27)
-	(*note)->Vel = fmodf((*note)->Vel, 1.27);
-      else if ((*note)->Vel < 0.00)
-	(*note)->Vel = 1.27 + fmodf((*note)->Vel, 1.27);
+      (*note)->Params[Param] += delta_y;
+      if ((*note)->Params[Param] > 1.27)
+	(*note)->Params[Param] = fmodf((*note)->Params[Param], 1.27);
+      else if ((*note)->Params[Param] < 0.00)
+	(*note)->Params[Param] = 1.27 + fmodf((*note)->Params[Param], 1.27);
       
-      (*note)->Vel = floor((*note)->Vel * 100) / 100;
+      (*note)->Params[Param] = floor((*note)->Params[Param] * 100) / 100;
     }
   
   for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
@@ -652,8 +655,8 @@ void BeatBoxScrollView::OnLeftUp(wxMouseEvent& event)
 	{
 	  if ( (((*note)->Position > xpos && (*note)->Position < to_xpos)
 	       || ((*note)->Position < xpos && (*note)->Position > to_xpos))
-	       && (((*note)->Vel >= vel && (*note)->Vel <= to_vel) 
-		   || ((*note)->Vel <= vel && (*note)->Vel >= to_vel)) )
+	       && (((*note)->Params[Param] >= vel && (*note)->Params[Param] <= to_vel) 
+		   || ((*note)->Params[Param] <= vel && (*note)->Params[Param] >= to_vel)) )
 	    {
 	      if ((*note)->Selected)
 		{
@@ -709,8 +712,9 @@ void BeatBoxScrollView::OnLeftDown(wxMouseEvent& event)
        note != bt->Channel->Rythms[ViewPtr->DRM31->EditedBank][ViewPtr->DRM31->EditedPattern].end(); 
        note++)
     {
+      
       if ( (*note)->Position > inf && (*note)->Position < sup 
-	   && (*note)->Vel >= min && (*note)->Vel <= max )
+	   && (*note)->Params[Param] >= min && (*note)->Params[Param] <= max )
 	{
 	  none = false;
 	  for (list<BeatNote*>::iterator sel = SelectedNotes.begin();
@@ -798,6 +802,7 @@ BEGIN_EVENT_TABLE(BeatBoxView, wxPanel)
   EVT_TEXT_ENTER(ID_PosTextCtrl, BeatBoxView::OnPosChange)
   EVT_TEXT_ENTER(ID_VelTextCtrl, BeatBoxView::OnVelChange)
   EVT_COMBOBOX(ID_SubCombo, BeatBoxView::OnSubdivChange)
+  EVT_COMBOBOX(ID_ParamsCombo, BeatBoxView::OnParamChange)
   EVT_TOOL(ID_Magnet, BeatBoxView::OnMagnetism)
 END_EVENT_TABLE()
 
@@ -814,7 +819,6 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   XScroll = YScroll = 0;
   TrackHeight = BEAT_HEIGHT;
   XScrollCoef = YScrollCoef = 0.0;
-  
     
   HZoomSlider = new wxSlider(this, ID_HZoom, 100, 100, 800, 
 			     wxPoint(0,0), 
@@ -843,7 +847,7 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   VScrollBar = new wxScrollBar(this, ID_VScroll, wxDefaultPosition, 
 			       wxSize(RULER_HEIGHT, -1), wxSB_VERTICAL);
   
-  
+  /* ToolBar */
   
   ToolBar->AddCheckTool(ID_Magnet, "Magnet", 
 			wxBitmap(_T(string(DRM31->GetDataDir()
@@ -854,25 +858,40 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
 				 wxBITMAP_TYPE_PNG), 
 			"Activate magnetism", "Deactivate magnetism", NULL);
   
-  wxString choices[NB_COMBO_CHOICES];
   
+  wxString choices[NB_COMBO_CHOICES];
   for (int i = 0; i < NB_COMBO_CHOICES; i++)
-    {
       choices[i].Printf("1/%d", i+1);
-    }
+  
   SubCombo = new wxComboBox(ToolBar, ID_SubCombo, _T("1/1"), 
 			    wxPoint(-1, -1), wxSize(64, -1), 
 			    NB_COMBO_CHOICES, choices);
+  
+    
+  PosTextCtrl = new wxTextCtrl(ToolBar, ID_PosTextCtrl, _T("pos"),
+			       wxPoint(-1,-1), wxSize(48, -1));
+  VelTextCtrl = new wxTextCtrl(ToolBar, ID_VelTextCtrl, _T("----"),
+				  wxPoint(-1,-1), wxSize(48, -1));
+  
+  wxString params[NB_PARAMS_CHOICES];
+  params[0].Printf("level");
+  params[1].Printf("velocity");
+  params[2].Printf("pitch");
+  params[3].Printf("pan");
+  params[4].Printf("start");
+  params[5].Printf("end");
+  ParamsCombo = new wxComboBox(ToolBar, ID_ParamsCombo, _T("level"), 
+			       wxPoint(-1, -1), wxSize(96, -1), 
+			       NB_PARAMS_CHOICES, params);
+    
+  
   ToolBar->AddControl(SubCombo);
   ToolBar->AddSeparator();
-  
-  PosTextCtrl = new wxTextCtrl(ToolBar, ID_PosTextCtrl, _T("pos"),
-				  wxPoint(-1,-1), wxSize(32, -1));
-  VelTextCtrl = new wxTextCtrl(ToolBar, ID_VelTextCtrl, _T("vel"),
-				  wxPoint(-1,-1), wxSize(32, -1));
   ToolBar->AddControl(PosTextCtrl);
+  ToolBar->AddSeparator();
+  ToolBar->AddControl(ParamsCombo);
   ToolBar->AddControl(VelTextCtrl);
-  //Connect()
+  
   
   wxBoxSizer *col_1;
   wxBoxSizer *col_2;
@@ -1009,6 +1028,13 @@ void BeatBoxView::OnSubdivChange(wxCommandEvent& WXUNUSED(event))
   BeatView->Refresh();
 }
 
+void BeatBoxView::OnParamChange(wxCommandEvent& WXUNUSED(event))
+{
+  int i = ParamsCombo->GetSelection();
+  BeatView->Param = i;
+  BeatView->Refresh();
+}
+
 void BeatBoxView::OnPosChange(wxCommandEvent& WXUNUSED(event))
 {
   if (!BeatView->SelectedNote)
@@ -1036,14 +1062,29 @@ void BeatBoxView::UpdateToolBar(void)
   if (!BeatView->SelectedNote)
     {
       PosTextCtrl->SetValue(_T("pos"));
-      VelTextCtrl->SetValue(_T("vel"));
+      VelTextCtrl->SetValue(_T("----"));
       return;
     }
   wxString s;
   s.Printf("%f", BeatView->SelectedNote->Position + 1.0);
   s.Truncate(4);
   PosTextCtrl->SetValue(s);
-  s.Printf("%f", BeatView->SelectedNote->Vel);
+  
+  s.Printf("%f", BeatView->SelectedNote->Params[BeatView->Param]);
+  /*
+  if (BeatView->Param == 0)
+    s.Printf("%f", BeatView->SelectedNote->Lev);
+  else if (BeatView->Param == 1)
+    s.Printf("%f", BeatView->SelectedNote->Vel);
+  else if (BeatView->Param == 2)
+    s.Printf("%f", BeatView->SelectedNote->Pitch);
+  else if (BeatView->Param == 3)
+    s.Printf("%f", BeatView->SelectedNote->Pan);
+  else if (BeatView->Param == 4)
+    s.Printf("%f", BeatView->SelectedNote->Start);
+  else if (BeatView->Param == 5)
+    s.Printf("%f", BeatView->SelectedNote->End);
+  */  
   s.Truncate(4);
   VelTextCtrl->SetValue(s);
 }

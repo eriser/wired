@@ -6,6 +6,7 @@
 #include <wx/wx.h>
 
 //#include "BeatBox.h"
+#include "BeatNote.h"
 #include "WaveFile.h"
 #include "DownButton.h"
 #include "KnobCtrl.h"
@@ -42,82 +43,6 @@
 #define CH_POLY1	"plugins/beatbox/channel_knob_poly3.png"
 #define CH_POLY2	"plugins/beatbox/channel_knob_poly2.png"
 #define CH_POLY3	"plugins/beatbox/channel_knob_poly1.png"
-
-class BeatBoxChannel;
-
-class BeatNote
-{
- public:
-  BeatNote(unsigned int numchan, double pos, unsigned int state, double bpos)
-    { 
-      Selected = false;
-      NumChan = numchan;
-      State = state;
-      Position = pos;
-      BarPos = bpos;
-      Start = End = Pitch = Vel = Lev = 1.0f;
-    }
-  BeatNote(BeatNote* note)
-    {
-      Selected = note->Selected;
-      NumChan = note->NumChan;
-      State = note->State;
-      Position = note->Position;
-      BarPos = note->BarPos;
-      Start = note->Start;
-      End = note->End;
-      Pitch = note->Pitch;
-      Vel = note->Vel;
-      Lev = note->Lev;
-    }
-  ~BeatNote() {}
-  
-  bool		Selected;
-  unsigned int	NumChan;
-  double	Position;
-  double	BarPos;
-  bool		Reversed;
-  float		Start, End;
-  float		Vel, Pitch, Lev;
-  unsigned int  State;
-};
-
-class BeatNoteToPlay
-{
- public:
-  BeatNoteToPlay(int notenum, float vel, unsigned long delta, 
-		 BeatBoxChannel* c, float** b);
-  BeatNoteToPlay(BeatNote* bn, unsigned int numchan, unsigned long delta, 
-		 float** buf)
-    {
-      NumChan = numchan;
-      NoteNum = 0;
-      
-      Pitch = bn->Pitch;
-      Vel = bn->Vel;
-      Lev = bn->Lev;
-      Start = bn->Start;
-      End = bn->End;
-      Reversed = bn->Reversed;
-      Delta = delta;
-      OffSet = 0;
-      Buffer = buf;
-    }
-  BeatNoteToPlay(BeatBoxChannel* c, float** buffer);
-  ~BeatNoteToPlay() 
-    {
-    }
-  
-  int		NoteNum;
-  unsigned int	NumChan;
-  long		OffSet;
-  float		Start, End;
-  float		Vel, Pitch, Lev;
-  bool		Reversed;
-  float**	Buffer;
-  unsigned long Delta;
-  unsigned long SEnd;
-};
 
 class WiredBeatBox;
 
@@ -194,6 +119,9 @@ class BeatBoxChannel : public wxWindow
   bool		Muted;
   bool		Selected;
   bool		Reversed;
+  
+  float		Params[NB_PARAMS];
+  
   float		Lev, Pitch, Vel;
   float		Start, End;
   float		Pan[2];
