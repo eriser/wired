@@ -82,6 +82,8 @@ class FileLoader: public wxDialog
 
   void OnDeleteRecent(wxCommandEvent &e);
 
+  void OnKeyDown(wxKeyEvent &e);
+
   void ListDirectories(wxTreeItemId);
   void ListFiles(string);
   void ListAkaiCD(wxTreeItemId);

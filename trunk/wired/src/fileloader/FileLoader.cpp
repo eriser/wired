@@ -33,8 +33,8 @@ using namespace std;
 #include "audio.xpm"
 #include "delete.xpm"
 
-#define F_WIDTH		640
-#define F_HEIGHT	480
+#define F_WIDTH			670
+#define F_HEIGHT		510
 
 #define FOLDER_ID		2001
 #define FILE_ID			2002
@@ -78,13 +78,15 @@ BEGIN_EVENT_TABLE(FileLoader, wxDialog)
   EVT_BUTTON(DELFAVORITES_ID, FileLoader::OnDeleteFavorite)
 
   EVT_BUTTON(DELMRU_ID, FileLoader::OnDeleteRecent)
+  EVT_KEY_DOWN(FileLoader::OnKeyDown)
 END_EVENT_TABLE()
 
-FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai, bool psave, vector<string> *exts) :
-   
-wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT))
+FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai, bool psave, vector<string> *exts) 
+  : wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT), 
+	     wxRESIZE_BORDER | wxMAXIMIZE_BOX)
 {
   Center();
+  SetSizeHints(F_WIDTH, F_HEIGHT);
   
   wxFileName f;
 
@@ -97,6 +99,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 
   akai = pakai;
   save = psave;
+
   folder = new wxTreeCtrl(this, FOLDER_ID, wxPoint(4, 34), 
 			  wxSize(F_WIDTH / 3 - 8, F_HEIGHT - 110),
 			  wxTR_HAS_BUTTONS | wxTR_SINGLE | 
@@ -194,6 +197,56 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 		  wxBitmap(delete_xpm).ConvertToImage(),
 		  wxPoint(555, 0));
   }
+
+  wxBoxSizer *first_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+  wxBoxSizer *first_1_sizer = new wxBoxSizer(wxHORIZONTAL);
+  first_1_sizer->Add(favtext, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 2); 
+  first_1_sizer->Add(favorites, 1, wxEXPAND | wxALL, 2); 
+  first_1_sizer->Add(favdel, 0, wxEXPAND | wxALL, 2); 
+
+  wxBoxSizer *first_2_sizer = new wxBoxSizer(wxHORIZONTAL);
+  first_2_sizer->Add(mrutext, 0, wxEXPAND | wxALIGN_CENTER | wxALL, 2); 
+  first_2_sizer->Add(mru, 1, wxEXPAND | wxEXPAND | wxALL, 2); 
+  first_2_sizer->Add(mrudel, 0, wxEXPAND | wxALL, 2); 
+
+  first_sizer->Add(first_1_sizer, 1, wxEXPAND | wxALL, 2); 
+  first_sizer->Add(first_2_sizer, 1, wxEXPAND | wxALL, 2); 
+
+  wxBoxSizer *second_sizer = new wxBoxSizer(wxHORIZONTAL);
+  second_sizer->Add(folder, 1, wxEXPAND | wxALL, 2); 
+  second_sizer->Add(files, 1, wxEXPAND | wxALL, 2); 
+
+  wxBoxSizer *third_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+  wxBoxSizer *third_v1_sizer = new wxBoxSizer(wxHORIZONTAL);
+  third_v1_sizer->Add(fntext, 0, wxEXPAND | wxALL, 2); 
+  third_v1_sizer->Add(filename, 1, wxEXPAND | wxALL, 2); 
+
+  wxBoxSizer *third_v2_sizer = new wxBoxSizer(wxHORIZONTAL);
+  third_v2_sizer->Add(typtext, 0, wxEXPAND | wxALL, 2); 
+  third_v2_sizer->Add(type, 1, wxEXPAND | wxALL, 2); 
+
+  wxBoxSizer *third_v3_sizer = new wxBoxSizer(wxVERTICAL);
+  third_v3_sizer->Add(third_v1_sizer, 0, wxEXPAND | wxALL, 2); 
+  third_v3_sizer->Add(third_v2_sizer, 0, wxEXPAND | wxALL, 2); 
+
+  wxBoxSizer *third_h1_sizer = new wxBoxSizer(wxHORIZONTAL);
+  third_h1_sizer->Add(preview, 0, wxEXPAND | wxALL, 2); 
+  third_h1_sizer->Add(btopen, 0, wxEXPAND | wxALL, 2); 
+  third_h1_sizer->Add(cancel, 0, wxEXPAND | wxALL, 2); 
+
+  third_sizer->Add(-1, 8, wxALL, 2); 
+  third_sizer->Add(third_v3_sizer, 0, wxEXPAND | wxALL, 2); 
+  third_sizer->Add(third_h1_sizer, 0, wxEXPAND | wxALL, 2); 
+
+  wxBoxSizer *TopSizer = new wxBoxSizer(wxVERTICAL);
+  TopSizer->Add(first_sizer, 0, wxEXPAND | wxALL, 2); 
+  TopSizer->Add(second_sizer, 1, wxEXPAND | wxALL, 2); 
+  TopSizer->Add(third_sizer, 0, wxEXPAND | wxALL, 2); 
+
+  SetSizer(TopSizer);
+  
   if (!save)
   {
   	preview->Disable();
@@ -1077,4 +1130,13 @@ void FileLoader::OnDeleteRecent(wxCommandEvent &e)
 		mru->SetValue("");
 		mru->SetWindowStyle(mru->GetWindowStyle() | wxCB_READONLY);
 	}
+}
+
+void FileLoader::OnKeyDown(wxKeyEvent &e)
+{
+  if (e.GetKeyCode() == WXK_ESCAPE)
+    {
+      wxCommandEvent event;
+      OnCancel(event);
+    }
 }
