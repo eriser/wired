@@ -13,6 +13,7 @@ using namespace std;
 
 #include <wx/toolbar.h>
 #include <wx/wx.h>
+#include <wx/file.h>
 
 #define		WAVE_TEMP_SIZE		4096
 
@@ -29,12 +30,13 @@ public:
 	{
 		read=0,
 		write,
-		rwrite
+		rwrite,
+		tmp
 	} t_opening_mode;
 
  public:
   WaveFile(); 
-  WaveFile(string filename, bool loadmem = true, t_opening_mode open_mode = read);
+  WaveFile(string filename, bool loadmem = false, t_opening_mode open_mode = read);
   WaveFile(short *buffer, unsigned int size, int channels, long rate);
   ~WaveFile();
 
@@ -90,6 +92,7 @@ public:
   unsigned long	Read(float **buf, long pos, long size, 
 		     long delta = 0, long *new_pos = 0x0);
   bool		Read(float *buf, long pos);
+  bool 		ReadSize(float *buf, long pos, long length);
 
   void		SetPitch(float p) { Pitch = p; }
   void		SetInvert(bool inv) { Invert = inv; }

@@ -29,7 +29,12 @@ cClipBoard& cClipBoard::Global()
 void cClipBoard::Copy (WaveFile& wave, int from, int size_of_copy)
 {
 	cout << "[cClipBoard] - Copy" << endl;
-	cout << "[cClipBoard] - Copy : " << size_of_copy << " frames to copy" << endl;
+
+	if (size_of_copy < 0) 
+	{
+	  from = from + size_of_copy;
+	  size_of_copy = -size_of_copy;  
+	}
 	
 	// buffer destine a recevoir les donnees a copier
 	float * rw_buffer = new float [wave.GetNumberOfChannels() * WAVE_TEMP_SIZE];
@@ -65,9 +70,12 @@ void cClipBoard::Copy (WaveFile& wave, int from, int size_of_copy)
 
 void cClipBoard::Cut (WaveFile& wave, int from, int size_of_cut)
 {
-	cout << "[cClipBoard] - Cut " << endl;
-	cout << "[cClipBoard] - Cut : " << size_of_cut << " frames to cut" << endl;
-
+	if (size_of_cut < 0) 
+	{
+	  from = from + size_of_cut;
+	  size_of_cut = -size_of_cut;  
+	}
+   
 	// Verifie qu'on est en mode read/write
     if ( wave.GetOpenMode() != rwrite )
 		throw cException ("File opened in read only mode");
@@ -135,6 +143,7 @@ void cClipBoard::Paste (WaveFile& wave, int to)
 
   // Copier les frames a droite de la position d'insertion ds le fichier temp
   int frames_nbr = 0;
+  temp.SetCurrentPosition(0);
   wave.SetCurrentPosition(to);
   sf_count_t read_frames = wave.ReadFloatF(rw_buffer);
   while (read_frames > 0)
@@ -160,10 +169,13 @@ void cClipBoard::Paste (WaveFile& wave, int to)
   // Copie des frames 'decales'
   temp.SetCurrentPosition();
   read_frames = temp.ReadFloatF(rw_buffer);
-  while (read_frames > 0)
+  while ((read_frames > 0) && (frames_nbr > 0))
   {
 	wave.WriteFloatF(rw_buffer, read_frames);
+	frames_nbr -= read_frames;
 	read_frames = temp.ReadFloatF(rw_buffer);
+	if (read_frames > frames_nbr)
+	  read_frames = frames_nbr;
   }
 
   // Met a jour le nombre de frames du wave

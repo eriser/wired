@@ -42,11 +42,13 @@ WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode)
   unsigned long i;
   long k;
 
+  LoadedInMem = false;
+  loadmem = false;
   // Initialise le header de fichier
   memset (&sfinfo, 0, sizeof(sfinfo) );
 
-  m_open_mode = read;
-  open_mode = read;
+  //m_open_mode = rwrite;
+  //open_mode = rwrite;
   
   // Si le fichier doit etre ouvert en mode write ou read/write
   // on initialise son sf_info avec des donnees valides
@@ -71,6 +73,12 @@ WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode)
 	  break;
   case rwrite :
 	  sffile = sf_open (Filename.c_str(), SFM_RDWR, &sfinfo);
+	  break;
+  case tmp :
+	  //cout << "Trying to creat a new temporary file " << endl;
+	  //sfinfo.format = SF_ENDIAN_CPU | SF_FORMAT_AU | SF_FORMAT_FLOAT;
+  	  sffile = sf_open_fd (fileno(tmpfile()), SFM_RDWR, &sfinfo, TRUE) ;
+	  //cout << "Temporary file created" << endl;
 	  break;
   default: 
 	  throw cException ("WaveFile : Unknow opening mode!!");
@@ -126,7 +134,7 @@ WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode)
 }
 
 WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
-  : Filename(""), LoadedInMem(true), sffile(0),  TempBuf(0), Pitch(1), Invert(false), 
+  : Filename(""), LoadedInMem(false), sffile(0),  TempBuf(0), Pitch(1), Invert(false), 
     Error(false)
 {
   memset (&sfinfo, 0, sizeof (sfinfo));
@@ -330,6 +338,11 @@ bool WaveFile::Read(float *buf, long pos)
 }
 
 
+bool WaveFile::ReadSize(float *buf, long pos, long length)
+{
+  sf_seek(sffile, pos, SEEK_SET);
+  return (sf_readf_float(sffile, buf, length));  
+}
 int WaveFile::SetCurrentPosition (int position)
 { 
 	if ( position > sfinfo.frames )
