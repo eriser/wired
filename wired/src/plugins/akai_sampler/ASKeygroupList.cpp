@@ -16,37 +16,35 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, WaveFile *w, unsigned long
     if (id > as->sampleid)
       as->sampleid = id + 1;
   this->id = id;
-  this->loopcount = 1;
+  this->loopcount = 0;
   this->loopstart = 0;
   this->loopend = w->GetNumberOfFrames();
 }
 
-ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akaiSample *smpR, wxString AkaiPrefix, unsigned long id)
+ASamplerSample::ASamplerSample(class AkaiSampler *as, akaiSample *smpL, akaiSample *smpR, wxString AkaiPrefix, unsigned long id)
 {
   if (smpR != NULL)
   {
-    if (smpL->rate != smpR->rate)
+    if (smpL->getRate() != smpR->getRate())
       cerr << "[WiredSampler] error mixing sample, stereo tracks have not the same rate !" << endl;
-    short *data = new short[smpL->end + smpR->end];
-    for (int i = 0; i < smpL->end; i++)
-      data[i] = smpL->buffer[i];
-    for (int i = 0; i < smpR->end; i++)
-      data[smpL->size + i] = smpR->buffer[i];
-    this->w = new WaveFile(data, smpL->end + smpR->end, 2, smpL->rate);
-    w->Filename = AkaiPrefix + smpL->name + "/" + smpR->name;
+    short *data = new short[smpL->getSize() + smpR->getSize()];
+    for (int i = 0; i < smpL->getSize(); i++)
+      data[i] = smpL->getSample()[i];
+    for (int i = 0; i < smpR->getSize(); i++)
+      data[smpL->getSize() + i] = smpR->getSample()[i];
+    this->w = new WaveFile(data, smpL->getSize() + smpR->getSize(), 2, smpL->getRate());
+    w->Filename = AkaiPrefix + smpL->getName().c_str() + "/" + smpR->getName().c_str();
     free(data);
-    this->Position = smpL->start;
-    this->loopstart = smpL->loop_start - smpL->loop_len;
-    this->loopend = smpL->loop_start;
   }
   else
   {
-    this->w = new WaveFile(smpL->buffer, smpL->end, 2, smpL->rate);
-    w->Filename = AkaiPrefix + smpL->name;
-    this->Position = smpL->start;
-    this->loopstart = smpL->loop_start - smpL->loop_len;
-    this->loopend = smpL->loop_start;
+    this->w = new WaveFile(smpL->getSample(), smpL->getSize(), 2, smpL->getRate());
+    w->Filename = AkaiPrefix + smpL->getName().c_str();
   }
+  this->Position = smpL->getHeaders()->start;
+  this->loopstart = smpL->getHeaders()->loops[0].loopStart - smpL->getHeaders()->loops[0].loopLen;
+  this->loopend = smpL->getHeaders()->loops[0].loopStart;
+  this->loopcount = smpL->getHeaders()->loops[0].loopTime;
   this->askg = NULL;
   this->aske = NULL;
   if (!id)
@@ -55,7 +53,6 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akai
     if (id > as->sampleid)
       as->sampleid = id + 1;
   this->id = id;
-  this->loopcount = smpL->loop_times;
   if (loopcount == 9999)
     loopcount = -1;
   if (loopend > w->GetNumberOfFrames())

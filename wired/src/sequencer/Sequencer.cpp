@@ -901,10 +901,20 @@ void					Sequencer::PlayFile(string filename, bool isakai)
 	  mName = mFilename.substr(opos, mFilename.size() - opos);
 	  mFilename = mFilename.substr(1, opos - 2);
 	  cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; filename: " << mFilename << endl;
+    /*
 	  t_akaiSample *sample = akaiGetSampleByName((char *)mDevice.c_str(), mPart, 
 						     (char *)mFilename.c_str(), 
 						     (char *)mName.c_str());	  	
-	  WaveFile *w = new WaveFile(sample->buffer, sample->size, 2, sample->rate);
+                 */
+    akaiImage *img = new akaiImage(mDevice);
+    akaiSample *smp = img->getSample(mPart + "/" + mName + "/" + mFilename);
+    WaveFile *w = NULL;
+    if (smp)
+    {
+	    w = new WaveFile(smp->getSample(), smp->getSize(), 2, smp->getRate());
+      delete smp;
+    }
+    delete img;
 
 	  SeqMutex.Lock();
 

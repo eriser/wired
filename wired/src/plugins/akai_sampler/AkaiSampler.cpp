@@ -264,23 +264,41 @@ void AkaiSampler::Load(int fd, long size)
         cout << "Dual akai Sample found, getting the 2 samples and mixing it..." << endl;
         wxString smp1 = name.SubString(0, opos - 1);
         wxString smp2 = name.SubString(opos + 1, name.Len());
-        t_akaiSample *sampleL = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)smp1.c_str());
-        t_akaiSample *sampleR = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)smp2.c_str());
-        if (sampleL && sampleR)
+        akaiImage *img = new akaiImage(dev.c_str());
+        string pref = "" + (char)(part + 64);
+        pref += "/";
+        pref += path.c_str();
+        pref += "/";
+        akaiSample *smpL = img->getSample(pref + smp1.c_str());
+        akaiSample *smpR = img->getSample(pref + smp2.c_str());
+        //t_akaiSample *sampleL = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)smp1.c_str());
+        //t_akaiSample *sampleR = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)smp2.c_str());
+        if (smpL && smpR)
         {
-          ass = new ASamplerSample(this, sampleL, sampleR, AkaiPrefix, id);
-          free(sampleL);
-          free(sampleR);
+          ass = new ASamplerSample(this, smpL, smpR, AkaiPrefix, id);
+          delete smpL;
+          delete smpR;
+          //free(sampleL);
+          //free(sampleR);
         }
+        delete img;
       }
       else
       {
-        t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
-        if (sample)
+        akaiImage *img = new akaiImage(dev.c_str());
+        string pref = "" + (char)(part + 64);
+        pref += "/";
+        pref += path.c_str();
+        pref += "/";
+        akaiSample *smp = img->getSample(pref + name.c_str());
+        //t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
+        if (smp)
         {
-          ass = new ASamplerSample(this, sample, NULL, AkaiPrefix, id);
-          free(sample);
+          ass = new ASamplerSample(this, smp, NULL, AkaiPrefix, id);
+          //free(sample);
+          delete smp;
         }
+        delete img;
       }
     }
     else
@@ -484,26 +502,33 @@ long AkaiSampler::Save(int fd)
 
 void AkaiSampler::LoadProgram()
 {
-  t_akaiKeygrp *group;
-  t_list *elem;
-  int i;
+  //t_akaiKeygrp *group;
+  //t_list *elem;
+  //int i;
+  vector<akaiKeygroup *> groups = AkaiProgram->getKeygroups();
 
-  for (elem = AkaiProgram->keygrp; elem; elem = elem->next)
+  //for (elem = AkaiProgram->keygrp; elem; elem = elem->next)
+  for (vector<akaiKeygroup *>::iterator i = groups.begin(); i != groups.end(); i++)
   {
-    group = elt(elem, t_akaiKeygrp *);
-    cout << "Num: " << group->num << endl;
-    if (group->zone_sample[0])
+    //group = elt(elem, t_akaiKeygrp *);
+    vector <akaiSample *> smps = (*i)->getSamples();
+    if (smps.size())
     {
-      wxString name = group->zone_sample[0]->name;
-      if (group->zone_sample[1])
-        name << "/" << group->zone_sample[1]->name;
-      ASamplerSample *ass = new ASamplerSample(this, group->zone_sample[0], group->zone_sample[1], AkaiPrefix);
+      wxString name = smps[0]->getName().c_str();
+      ASamplerSample *ass;
+      if (smps.size() > 1)
+      {
+        name << "/" << smps[1]->getName().c_str();
+        ass = new ASamplerSample(this, smps[0], smps[1], AkaiPrefix);
+      }
+      else
+        ass = new ASamplerSample(this, smps[0], NULL, AkaiPrefix);
       Samples->List->AddEntry(name, (void *)ass);
-      ASamplerKeygroup *askg = new ASamplerKeygroup(this, group->lowkey, group->highkey);
+      ASamplerKeygroup *askg = new ASamplerKeygroup(this, (*i)->getLowKey(), (*i)->getHighKey());
       Keygroups.push_back(askg);
       ass->SetKeygroup(askg);
       askg->SetSample(ass);
-      ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + group->zone_sample[0]->name);
+      ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + name);
       p->SetSample(ass);
       ass->AddEffect(p);
       PlugPanel->AddPlug(p);
@@ -514,11 +539,11 @@ void AkaiSampler::LoadProgram()
 
 void AkaiSampler::DeleteProgram()
 {
-  if (AkaiProgram)
+  if (AkaiProgram != NULL)
   {
     //delete 
-    free(AkaiProgram);
-    AkaiProgram = 0x0;
+    delete AkaiProgram;
+    AkaiProgram = NULL;
     AkaiPrefix = _T("");
   }
 }
@@ -795,9 +820,10 @@ void AkaiSampler::OnOpenFile(wxCommandEvent &event)
       cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; path: " << mFilename << endl;
       cout << "AkaiPrefix: " << AkaiPrefix << endl;
       Progress->Update(20);
-      if (!(AkaiProgram = akaiLoadProgram((char *)mDevice.c_str(), mPart,
-              (char *)mFilename.c_str(),
-              (char *)mName.c_str())))
+      akaiImage *img = new akaiImage(mDevice);
+      string pref = "" + (char)(mPart + 64);
+      pref += "/" + mName + "/";
+      if (!(AkaiProgram = img->getProgram(pref + mFilename)))
         cout << "[SAMPLER] Cannot open AKAI program !" << endl;
       else
         LoadProgram();
