@@ -57,6 +57,7 @@ Plugin *RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin *co
 	}
 	}*/
   Parent->CalcScrolledPosition(xpos, ypos, &xx, &yy);
+  yy -= Racks.size();
   startinfo.Pos = wxPoint(xx, yy);  
   startinfo.Size = wxSize(p->InitInfo.UnitsX * UNIT_W, p->InitInfo.UnitsY * UNIT_H); 
   plug = p->CreateRack(startinfo);

@@ -130,9 +130,11 @@ void					*Sequencer::Entry()
       SeqMutex.Lock();
       if (Playing)
 	{
-	  SeqMutex.Unlock();
+	  /* moved to end of loop
+	    SeqMutex.Unlock();
 	  SetCurrentPos();
 	  SeqMutex.Lock();
+	  */
 	  /* Bouclage */
 	  if (!Exporting && Loop && (CurrentPos >= EndLoopPos))
 	    SetCurrentPos(BeginLoopPos);
@@ -224,9 +226,11 @@ void					*Sequencer::Entry()
 		    ProcessCurrentMidiEvents(*T, MidiP);
 		}
 	    }
+
+	  SetCurrentPos();
 	}
-      SeqMutex.Unlock();
-      SeqMutex.Lock();
+      //SeqMutex.Unlock();
+      //SeqMutex.Lock();
       /* - Appel des fonctions Process de chaque Plugin de chaque piste de racks */
       for (RacksTrack = RackPanel->RackTracks.begin(); RacksTrack != RackPanel->RackTracks.end(); 
 	   RacksTrack++)
@@ -264,7 +268,9 @@ void					*Sequencer::Entry()
 	      (*RacksTrack)->CurrentBuffer = 0x0;  
 	    } 
 	}
+
       SeqMutex.Unlock();
+
       delta = Audio->SamplesPerBuffer;
       /* Jouer fichier du FileLoader si besoin */
       if (PlayWave)
@@ -422,7 +428,6 @@ void					Sequencer::PrepareRecording()
 
   for (T = Tracks.begin(); T != Tracks.end(); T++)
     {
-      cout << "preparing track: " << *T << endl;
       if ((*T)->TrackOpt->Record)
 	PrepareTrackForRecording(*T);
     }
@@ -625,6 +630,7 @@ void					Sequencer::SetSigDenominator(int dennum)
 Pattern					*Sequencer::GetCurrentPattern(Track *t)
 {
   vector<Pattern *>::iterator		i;
+  vector<Pattern *>::iterator		ret;
   double				delta_mes = MeasurePerSample * Audio->SamplesPerBuffer;
 
   for (i = t->TrackPattern->Patterns.begin(); i != t->TrackPattern->Patterns.end(); i++)
@@ -632,7 +638,17 @@ Pattern					*Sequencer::GetCurrentPattern(Track *t)
       if ((CurrentPos + delta_mes >= (*i)->GetPosition()) && 
 	  (CurrentPos < (*i)->GetEndPosition()))
 	{
-	  return (*i);
+	  ret = i;
+	  
+	  // Check if the next pattern starts when this one finishes
+	  i++;
+	  if (i != t->TrackPattern->Patterns.end())
+	    {
+	      if (((*ret)->GetEndPosition() == (*i)->GetPosition()) &&
+		  ((CurrentPos + delta_mes > (*ret)->GetEndPosition())))
+		return (*i);
+	    }
+	  return (*ret);	  
 	}
     }
   return (0x0);
