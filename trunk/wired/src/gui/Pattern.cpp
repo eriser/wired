@@ -130,7 +130,10 @@ void					Pattern::OnClick(wxMouseEvent &e)
       printf("clik at (x = %d) (y = %d)\n", m_click.x, m_click.y);
 #endif
       if (!e.ShiftDown() || !(StateMask & PATTERN_MASK_SELECTED))
-	SeqPanel->SelectItem(this, e.ShiftDown());
+	{
+	  StateMask |= (unsigned char) PATTERN_MASK_TOGGLED;
+	  SeqPanel->SelectItem(this, e.ShiftDown());
+	}
     }
   else
     if (SeqPanel->Tool == ID_TOOL_DELETE_SEQUENCER)
@@ -146,12 +149,12 @@ void					Pattern::OnLeftUp(wxMouseEvent &e)
 {
   m_click.x = -1;
   m_click.y = -1;
-  if (e.ShiftDown() && !(StateMask & PATTERN_MASK_DRAGGED))
+  if (e.ShiftDown() && !(StateMask & PATTERN_MASK_DRAGGED) && !(StateMask & PATTERN_MASK_TOGGLED))
     {
       StateMask &= PATTERN_MASK_SELECTED;
       SeqPanel->SelectItem(this, true);
     }
-  StateMask &= ~PATTERN_MASK_DRAGGED;
+  StateMask &= ~PATTERN_MASK_DRAGGED & ~PATTERN_MASK_TOGGLED;
 }
 
 void					Pattern::OnDoubleClick(wxMouseEvent &e)
