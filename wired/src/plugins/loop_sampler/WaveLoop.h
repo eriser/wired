@@ -7,6 +7,7 @@
 #include "WaveView.h"
 #include "Slice.h"
 #include "SliceGui.h"
+#include "LoopCursor.h"
 
 #define wxEVT_SLICE_SELECTED	31310031
 
@@ -35,6 +36,7 @@ class WaveLoop: public WaveView
   void OnPaint(wxPaintEvent &event);
   void OnSliceBtnSelected(wxCommandEvent &event);
   void OnSliceMove(wxCommandEvent &event);
+  void OnLoopMove(wxCommandEvent &event);
 
   double BarCoeff;
   int  NoteNumber;
@@ -45,6 +47,9 @@ class WaveLoop: public WaveView
   list<Slice *> *Slices;
 
   wxMutex *Mutex;
+  
+  LoopCursor *LoopStart;
+  LoopCursor *LoopEnd;
 
   //DECLARE_EVENT_TABLE()
 };

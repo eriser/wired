@@ -6,7 +6,7 @@
 
 #include <wx/wx.h>
 
-#define RULER_HEIGHT 14
+#define RULER_HEIGHT 12
 
 class RulerLoop : public wxWindow
 {

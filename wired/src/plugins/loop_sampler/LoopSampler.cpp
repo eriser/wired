@@ -3,6 +3,7 @@
 
 #include "LoopSampler.h"
 #include "midi.h"
+#include "BeatDialog.h"
 #include <stdio.h>
 #include <wx/progdlg.h>
 #include <math.h>
@@ -1027,15 +1028,27 @@ void LoopSampler::OnOpenFile(wxCommandEvent &event)
           SetWaveFile(w);
           Progress->Update(99);
 	  ShowOptionalView();
-	}
+		}
       catch (...)
 	{
 	  cout << "[LOOPSAMPLER] Cannot open wave file !" << endl;
 	}
       delete Progress;
+      BeatDialog *dlg = new BeatDialog(this);
+      if (dlg->ShowModal() == wxID_OK)
+	{
+	  BeatCount = dlg->BeatCtrl->GetValue();
+	  wxString s;      
+	  s.Printf("%d", BeatCount);
+	  MesCountLabel->SetLabel(s);
+	  SetBarCoeff();
+	  if (View)
+	    View->SetBeats(GetSigNumerator(), BeatCount);
+	  if (Tempo)
+	    SetTempo();
+	}
+      dlg->Destroy();
     }
-  //  else
-  //  dlg->Destroy();
 }
 
 void LoopSampler::OnOctave(wxScrollEvent &event)

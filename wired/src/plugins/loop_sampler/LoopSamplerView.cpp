@@ -135,7 +135,7 @@ void LoopSamplerView::SetWaveFile(WaveFile *w)
       Wave->Destroy();
     }
   Wave = new WaveLoop(Mutex, this, LoopSamplerView_Wave, wxPoint(TOOLBAR_HEIGHT, RULER_HEIGHT), 
-		      wxSize(GetSize().x - TOOLBAR_HEIGHT, GetSize().y - RULER_HEIGHT));
+		      wxSize(GetSize().x - TOOLBAR_HEIGHT - 2, GetSize().y - RULER_HEIGHT));
   Wave->SetWave(w);
 
   wxBoxSizer *sizer2 = new wxBoxSizer(wxVERTICAL);

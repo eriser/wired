@@ -14,7 +14,7 @@ SliceBtn::SliceBtn(SliceGui *s, wxWindow *parent, wxWindowID id, const wxPoint &
 		   const wxSize &size, int style)
   : wxWindow(parent, id, pos, size, style), MySlice(s)
 {
-  SetBackgroundColour(*wxLIGHT_GREY);   
+  SetBackgroundColour(wxColour(130, 206,  95));   
 }
 
 SliceBtn::~SliceBtn()
