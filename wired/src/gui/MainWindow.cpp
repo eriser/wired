@@ -335,7 +335,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 
 void					MainWindow::OnQuit(wxCommandEvent &WXUNUSED(event))
 {
-  Close(true);
+  Close(false);
 }
 
 void					MainWindow::OnNew(wxCommandEvent &event)

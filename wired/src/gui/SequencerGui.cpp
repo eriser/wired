@@ -553,7 +553,13 @@ void					SequencerGui::DeleteAllTracks()
   vector<Track *>::iterator		i;
   
   for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)  
-    delete (*i);
+    {
+      if ((*i)->TrackOpt->ChanGui)
+	{
+	  MixerPanel->RemoveChannel((*i)->TrackOpt->ChanGui);
+	}      
+      delete (*i);
+    }
   Seq->Tracks.clear();
   UpdateTracks();
   SetScrolling();

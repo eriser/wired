@@ -28,7 +28,6 @@ MidiPattern::MidiPattern(double pos, MidiTrack *t, long trackindex)
   : Pattern(pos, ((double)t->GetMaxPos()) / (Seq->SigNumerator * t->GetPPQN()), trackindex)//,
      //     wxWindow(SeqPanel->SeqView, -1, Pattern::GetPosition(), Pattern::GetSize())
 {
-  cout << "Endpos: " << EndPosition << endl;
   Init();
   vector<MidiFileEvent *> me;
   me = t->GetMidiEvents();
@@ -182,6 +181,7 @@ void				MidiPattern::AddEvent(MidiFileEvent *event)
 void				MidiPattern::AddEvent(MidiEvent *event)
 {
   list<MidiEvent *>::iterator	j;
+  MidiEvent *e;
   
   if ((event->EndPosition == 0.0) && 
       ((event->Msg[0] == M_NOTEON1) || (event->Msg[0] == M_NOTEON2)))
@@ -197,6 +197,13 @@ void				MidiPattern::AddEvent(MidiEvent *event)
 		//(*j)->EndPosition = (*j)->Position + fabs((*j)->EndPosition);
                 delete event;
                 Events.push_back(*j);
+
+		// adds the note off	       
+		e = new MidiEvent(0, (*j)->EndPosition, (*j)->Msg);
+		e->EndPosition = e->Position;
+		e->Msg[2] = 0;
+		Events.push_back(e);
+
                 cout << "[MIDIPATTERN] Note added with position: " << (*j)->Position 
 		     << "; end position: " << (*j)->EndPosition << endl;
                 RecordingEvents.erase(j);
@@ -233,10 +240,13 @@ void				MidiPattern::DrawMidi()
   inc = size_y / 127.f;
 
   for (j = Events.begin(); j != Events.end(); j++)
-    {      
-      x = GetXPos((*j)->Position);
-      memDC.DrawLine(x, (int)((*j)->Msg[1] * inc), 
-		     x + GetXPos((*j)->EndPosition), (int)((*j)->Msg[1] * inc));
+    { 
+      if ((*j)->EndPosition >= 0.0)
+	{
+	  x = GetXPos((*j)->Position);
+	  memDC.DrawLine(x, size_y - (int)((*j)->Msg[1] * inc), 
+			 GetXPos((*j)->EndPosition), size_y - (int)((*j)->Msg[1] * inc));
+	}
     }
 }
 

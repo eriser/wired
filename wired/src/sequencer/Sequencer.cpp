@@ -658,7 +658,8 @@ void					Sequencer::ProcessCurrentMidiEvents(Track *T, MidiPattern *p)
 	      curevent->Type = WIRED_MIDI_EVENT;
 	      curevent->DeltaFrames = (long)((p->GetPosition() + (*i)->Position - CurrentPos) 
 					     * SamplesPerMeasure);
-	      curevent->NoteLength = (long)((*i)->EndPosition * SamplesPerMeasure);
+	      curevent->NoteLength = (long)(((*i)->EndPosition - (*i)->Position) 
+					    * SamplesPerMeasure);
 	      memcpy(curevent->MidiData, (*i)->Msg, sizeof(int) * 3);
 
 	      // Envoi au plugin connecté
