@@ -517,7 +517,6 @@ void					Sequencer::CalcSpeed()
 
   MeasurePerSample = ((BPM / SigNumerator) / 60.0) / Audio->SampleRate;
   SamplesPerMeasure = 1 / MeasurePerSample;
-  cout << "[SEQ] MeasurePerSample: " << MeasurePerSample << endl;
 }
 
 void					Sequencer::SetCurrentPos(double pos)
@@ -573,8 +572,25 @@ void					Sequencer::SetBPM(float bpm)
 
 void					Sequencer::SetSigNumerator(int signum)
 {
+  list<RackTrack *>::iterator i;
+  list<Plugin *>::iterator j;
+
   SigNumerator = signum;
   CalcSpeed();
+  for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)
+    for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
+      (*j)->SetSignature(SigNumerator, SigDenominator);
+}
+
+void					Sequencer::SetSigDenominator(int dennum)
+{
+  list<RackTrack *>::iterator i;
+  list<Plugin *>::iterator j;
+
+  SigDenominator = dennum;
+  for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)
+    for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
+      (*j)->SetSignature(SigNumerator, SigDenominator);
 }
 
 Pattern					*Sequencer::GetCurrentPattern(Track *t)
@@ -727,7 +743,7 @@ void					Sequencer::ExportToWave(string filename)
     } 
   catch (...)
     {
-      cout << "ERROR EXPORTING" << endl; // FIXME do .. something ?
+      cout << "[SEQUENCER] Could not create export file" << endl; // FIXME error dialog box
     } 
 }
 

@@ -421,9 +421,15 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
       if (!f.HasExt())
 	selfile = selfile + WIRED_FILE_EXT;
       cout << "[MAINWIN] User saves to " << selfile << endl;
+
+      string audiodir;
+      
       if (CurrentSession)
-	delete CurrentSession;
-      CurrentSession = new WiredSession(selfile);
+	{
+	  audiodir = CurrentSession->AudioDir;
+	  delete CurrentSession;
+	}
+      CurrentSession = new WiredSession(selfile, audiodir);
       CurrentSession->Save();
     }
   else

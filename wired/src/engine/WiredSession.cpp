@@ -16,8 +16,11 @@
 extern vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo		StartInfo;
 
-WiredSession::WiredSession(string filename)
-  : FileName(filename), fd(-1) { }
+WiredSession::WiredSession(string filename, string audiodir)
+  : FileName(filename), AudioDir(audiodir), fd(-1) 
+{ 
+
+}
 
 WiredSession::~WiredSession()
 {
@@ -50,7 +53,12 @@ bool WiredSession::Load()
 	}
       char s[header.AudioDirLen + 1];
       read(fd, s, header.AudioDirLen);
-      AudioDir = s;
+      s[header.AudioDirLen] = 0;
+      wxFileName session_dir(FileName.c_str());
+      wxFileName f(s);
+
+      f.MakeAbsolute(session_dir.GetPath());
+      AudioDir = f.GetFullPath();
       cout << "[WIREDSESSION] Audio dir: " << AudioDir << endl;
 
       // RackTrack / Plugin
@@ -242,12 +250,20 @@ bool WiredSession::Save()
       t_MidiPattern	midi_pattern;
       t_MidiEvent	midi_event;
       
+      wxFileName session_dir(FileName.c_str());
+
       // Header
       strcpy(header.Magic, "WIRE");
-      header.AudioDirLen = AudioDir.size();
+
+      // Make audio dir path absolute
+      wxFileName f(AudioDir.c_str());
+
+      f.MakeRelativeTo(session_dir.GetPath());
+
+      header.AudioDirLen = f.GetFullPath().Length();// AudioDir.size();
       header.NumberOfRackTracks = RackPanel->RackTracks.size();
       write(fd, &header, sizeof (header));
-      write(fd, AudioDir.c_str(), header.AudioDirLen);
+      write(fd, f.GetFullPath().c_str(), header.AudioDirLen);
 
       // RackTrack / Plugin
       list<RackTrack *>::iterator i;

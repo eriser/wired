@@ -285,7 +285,8 @@ void Transport::OnSigNumUp(wxCommandEvent &WXUNUSED(event))
       wxMutexLocker m(SeqMutex);
       wxString s;
 
-      Seq->SigNumerator++;
+      Seq->SetSigNumerator(Seq->SigNumerator + 1);
+      
       s.Printf("%d", Seq->SigNumerator);
       SigNumLabel->SetLabel(s); 
       SeqPanel->AdjustHScrolling();
@@ -299,7 +300,8 @@ void Transport::OnSigNumDown(wxCommandEvent &WXUNUSED(event))
       wxMutexLocker m(SeqMutex);
       wxString s;
 
-      Seq->SigNumerator--;
+      Seq->SetSigNumerator(Seq->SigNumerator - 1);
+     
       s.Printf("%d", Seq->SigNumerator);
       SigNumLabel->SetLabel(s); 
       SeqPanel->AdjustHScrolling();
@@ -313,7 +315,8 @@ void Transport::OnSigDenUp(wxCommandEvent &WXUNUSED(event))
       wxMutexLocker m(SeqMutex);
       wxString s;
 
-      Seq->SigDenominator++;
+      Seq->SetSigDenominator(Seq->SigDenominator + 1);
+
       s.Printf("%d", Seq->SigDenominator);
       SigDenLabel->SetLabel(s); 
       SeqPanel->AdjustHScrolling();
@@ -327,7 +330,8 @@ void Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
       wxMutexLocker m(SeqMutex);
       wxString s;
 
-      Seq->SigDenominator--;
+      Seq->SetSigDenominator(Seq->SigDenominator - 1);
+    
       s.Printf("%d", Seq->SigDenominator);
       SigDenLabel->SetLabel(s); 
       SeqPanel->AdjustHScrolling();
@@ -337,7 +341,8 @@ void Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
 void Transport::OnBpmClick(wxCommandEvent &WXUNUSED(event))
 {
   BpmText = new wxTextCtrl(this, Transport_BpmEnter, BpmLabel->GetLabel(), 
-			   BpmLabel->GetPosition(), BpmLabel->GetSize(), wxTE_PROCESS_ENTER);
+			   BpmLabel->GetPosition(), wxSize(50, BpmLabel->GetSize().y), 
+			   wxTE_PROCESS_ENTER);
   Connect(Transport_BpmEnter, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)(wxEventFunction) 
 	  (wxCommandEventFunction)&Transport::OnBpmEnter);
 }
