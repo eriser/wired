@@ -2,6 +2,7 @@
 #define _ASKEYGROUPLIST_H_
 
 #include <wx/wx.h>
+#include <math.h>
 #include "ASPlugin.h"
 #include "Plugin.h"
 #include "ASList.h"

@@ -7,12 +7,18 @@ enum
 
 BEGIN_EVENT_TABLE(ASTextCtrl, wxTextCtrl)
   EVT_KILL_FOCUS(ASTextCtrl::KillControl)
-  EVT_TEXT_ENTER(ASTextCtrl_Rename, ASTextCtrl::KillControl)
+  EVT_TEXT_ENTER(ASTextCtrl_Rename, ASTextCtrl::KillControl2)
 END_EVENT_TABLE()
 
 ASTextCtrl::ASTextCtrl(wxWindow *parent, int id, wxString title, wxPoint pos, wxSize size, ASListEntry *ale) : wxTextCtrl(parent, ASTextCtrl_Rename, title, pos, size, wxTE_PROCESS_ENTER)
 {
   this->ale = ale;
+}
+
+void ASTextCtrl::KillControl2(wxCommandEvent &e)
+{
+  ale->Rename(GetValue());
+  Destroy();
 }
 
 void ASTextCtrl::KillControl(wxFocusEvent &e)

@@ -38,6 +38,7 @@ class ASTextCtrl : public wxTextCtrl
   public:
     ASTextCtrl(wxWindow *, int, wxString, wxPoint, wxSize, ASListEntry *);
     void KillControl(wxFocusEvent &);
+    void KillControl2(wxCommandEvent &);
   DECLARE_EVENT_TABLE()
 };
 
