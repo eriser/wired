@@ -386,7 +386,8 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
   list<Plugin *>::iterator l;
   new_x = 0;
   new_y = 0;
-
+  int tmp_x = 0;
+  int tmp_y = 0;
   //SeqMutex.Lock();
   if (event->GetEventType() == wxEVT_MOUSEWHEEL)
     {
@@ -406,7 +407,13 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
     }
   else if (event->Dragging() && event->LeftIsDown())
     {
-      plug->Move(wxPoint(event->GetPosition().x + plug->GetPosition().x - OldX, event->GetPosition().y + plug->GetPosition().y - OldY));
+      tmp_x = event->GetPosition().x + plug->GetPosition().x - OldX;
+      tmp_y = event->GetPosition().y + plug->GetPosition().y - OldY;
+      if(tmp_x < 0)
+	tmp_x = 0;
+      if(tmp_y < 0)
+	tmp_y = 0;
+      plug->Move(wxPoint(tmp_x, tmp_y));
       WasDragging = true;
     }
   //  SeqMutex.Unlock();
@@ -502,7 +509,13 @@ bool Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator 
 	      if((*l) == plug)
 		return true;
 	      DeleteRack(plug);
-	      DndInsert(k, l, plug);
+	      if((new_y + yy) < (((*l)->InitInfo->UnitsY * UNIT_H)/ 2))
+		  DndInsert(k, l, plug);
+	      else
+		{
+		  l++;
+		  DndInsert(k, l, plug);
+		}
 	      UpdateUnitXSize();
 	      return true;
 	    }
@@ -516,9 +529,8 @@ bool Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator 
 inline void Rack::DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug)
 {
   list<Plugin *>::iterator debug;
-
-  debug = (*k)->Racks.insert(l,plug);
-  cout << (*debug)->Name << endl;
+  
+  (*k)->Racks.insert(l, plug);
   SetScrolling();
 }
 
