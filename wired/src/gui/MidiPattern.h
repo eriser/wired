@@ -44,7 +44,7 @@ class			MidiPattern: public Pattern
   void			OnMoveToCursorClick(wxCommandEvent &e);
   void			OnPaint(wxPaintEvent &e);
   void			OnHelp(wxMouseEvent &event);
-  vector<MidiEvent *>	GetEvents() { return (Events); };
+  vector<MidiEvent *>	*GetEvents() { return (&Events); };
   wxBitmap		*Bmp;
   wxMemoryDC		memDC;
   unsigned short	ppqn;

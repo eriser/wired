@@ -461,7 +461,7 @@ void					SequencerGui::RedrawEditedPatterns(WaveFile *w)
 	(*p)->Update();
 }
 
-void					SequencerGui::RedrawEditedPatterns(vector<MidiEvent *> &e)
+void					SequencerGui::RedrawEditedPatterns(vector<MidiEvent *> *e)
 {
   vector<Track *>::iterator		t;
   vector<Pattern *>::iterator	p;

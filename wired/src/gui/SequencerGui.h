@@ -184,7 +184,7 @@ class SequencerGui: public wxPanel
   void				RedrawCursors();
   void				RedrawTrackLines();
   void				RedrawEditedPatterns(WaveFile *);
-  void				RedrawEditedPatterns(vector<MidiEvent *> &events);
+  void				RedrawEditedPatterns(vector<MidiEvent *> *e);
   void				SetCurrentPos(double pos);
   void				SetBeginLoopPos(double pos);
   void				SetEndLoopPos(double pos);
