@@ -295,6 +295,8 @@ class				SequencerGui: public wxPanel
 
  protected:
   void				UpdateTracks();
+  void				SwapTracksPos(Track *t1, Track *t2);
+  void				UpdateTrackList(vector<Track *> *track_list);
   void				UpdateMeasures();
   void				DrawMeasures();
   

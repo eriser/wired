@@ -630,8 +630,16 @@ void					SequencerGui::UpdateTracks()
       (*i)->TrackOpt->SetPosition(wxPoint(0, z));
       (*i)->TrackOpt->SetSize(wxSize(TRACK_WIDTH, h)); 
       (*i++)->TrackOpt->Refresh();
-    } 
+    }
   UpdateMeasures();
+}
+
+void					SequencerGui::UpdateTrackList(vector<Track *> *track_list)
+{
+  vector<Track *>::iterator		t;
+  
+  for (t = track_list->begin(); t != track_list->end(); t++)
+    (*t)->RefreshFullTrack();
 }
 
 void					SequencerGui::OnVertSliderUpdate(wxCommandEvent &event)
@@ -674,12 +682,6 @@ void					SequencerGui::UpdateMeasures()
       for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
 	(*p)->Update();
     }  
-  for (x_begin = 0, m = Measures.begin(); (x_begin < x_end) && (m != Measures.end()); m++)
-    {
-      (*m)->SetPosition(wxPoint(x_begin, 0));
-      (*m)->SetSize(wxSize(1, h));      
-      x_begin += mes;
-    }
 }
 
 void					SequencerGui::OnPaint(wxPaintEvent &event)
@@ -710,10 +712,21 @@ void					SequencerGui::UnselectTracks()
       (*i)->TrackOpt->SetSelected(false);
 }
 
+void					SequencerGui::SwapTracksPos(Track *t1, Track *t2)
+{
+  long					z;
+  
+  z = t1->TrackOpt->GetPosition().y;
+  t1->TrackOpt->SetPosition(wxPoint(0, t2->TrackOpt->GetPosition().y));
+  t2->TrackOpt->SetPosition(wxPoint(0, z));
+}
+
 void					SequencerGui::ChangeSelectedTrackIndex(long trackindexdelta)
 {
   vector<Track *>::iterator		i;
   vector<Track *>::iterator		j;
+  vector<Track *>			u;
+  long					x;
   long					z;
   Track					*t;
 
@@ -723,29 +736,31 @@ void					SequencerGui::ChangeSelectedTrackIndex(long trackindexdelta)
   for (i = Seq->Tracks.begin(); (i != Seq->Tracks.end()) && !((*i)->TrackOpt->GetSelected()); i++);
   if (i == Seq->Tracks.end())
     return;
-  if ((trackindexdelta + (*i)->Index) < 0)
-    return;
-  SeqMutex.Lock();
   if ((z = trackindexdelta) > 0)
-    for (j = i++; (z > 0) && (i != Seq->Tracks.end()); z--)
+    for (j = i++, x = 0; (x < z) && (i != Seq->Tracks.end()); x++)
       {
+	SwapTracksPos(*i, *j);
+	(*i)->UpdateIndex((*i)->Index - 1);
+	u.push_back(*i);
 	t = *i;
 	*(i++) = *j;
-	*(j++) = t;	  
+	*(j++) = t;
       }
   else
-    for (j = i--; z < 0; z++)
+    for (j = i--, x = 0; (x > z) && (j != Seq->Tracks.begin()); x--)
       {
-	if (i == Seq->Tracks.begin())
-	  z = 0;
+	SwapTracksPos(*i, *j);
+	(*i)->UpdateIndex((*i)->Index + 1);
+	u.push_back(*i);
 	t = *i;
 	*(i--) = *j;
 	*(j--) = t;
       }
-  for (i = Seq->Tracks.begin(), z = 0; i != Seq->Tracks.end(); i++)
-    (*i)->UpdateIndex(z++);
-  UpdateTracks();
-  SeqMutex.Unlock();
+  (*j)->UpdateIndex((*j)->Index + x);
+  u.push_back(*j);
+  UpdateTrackList(&u);
+  u.clear();
+  TrackView->Update();
 }
 
 void					SequencerGui::ScrollTrackList(long track_delta)
@@ -753,19 +768,13 @@ void					SequencerGui::ScrollTrackList(long track_delta)
   long					z;
   long					h;
   
-  z = SeqView->GetYScroll() + track_delta * (h = (long) floor(TRACK_HEIGHT * VertZoomFactor));
-  printf("TRACK DELTA %d Z %d YS %d TH %d CH %d TTH %d\n", track_delta, z, SeqView->GetYScroll(), h, SeqView->GetClientSize().y, SeqView->GetTotalHeight());
+  z = track_delta * (h = (long) floor(TRACK_HEIGHT * VertZoomFactor));
   if (track_delta > 0)
-    //    VertScrollBar->SetThumbPosition((z > SeqView->GetTotalHeight() - h) ? SeqView->GetTotalHeight() : z + h);
-    {
-      z += SeqView->GetClientSize().y;
-      printf("THUMBPOS %d\n", VertScrollBar->GetThumbPosition());
-      VertScrollBar->SetThumbPosition((z > SeqView->GetTotalHeight() - h) ? SeqView->GetTotalHeight() :
-				      VertScrollBar->GetThumbPosition() + z);
-    }
+    VertScrollBar->SetThumbPosition(((z += VertScrollBar->GetThumbPosition()) > (SeqView->GetTotalHeight() - SeqView->GetClientSize().y - h)) ?
+				    SeqView->GetTotalHeight() - SeqView->GetClientSize().y : VertScrollBar->GetThumbPosition() + z);
   else
     if (track_delta < 0)
-      VertScrollBar->SetThumbPosition((z > VertScrollBar->GetThumbPosition()) ? 0 : VertScrollBar->GetThumbPosition() + z);
+      VertScrollBar->SetThumbPosition((-z > VertScrollBar->GetThumbPosition()) ? 0 : VertScrollBar->GetThumbPosition() + z);
   SetScrolling();
   AdjustVScrolling();
 }

@@ -14,7 +14,7 @@ class					SeqTrack;
 class					SeqTrackPattern;
 class					Channel;
 
-class Track
+class					Track
 {
  public:
   Track(SeqTrack *n1, SeqTrackPattern *n2, char typ = IS_MIDI_TRACK); 
@@ -24,6 +24,7 @@ class Track
   MidiPattern				*AddPattern(MidiTrack *t);
   void					AddPattern(Pattern *p);
   void					UpdateIndex(long trackindex);
+  void					RefreshFullTrack();
   bool					IsAudioTrack() { return (Type == IS_AUDIO_TRACK); }
   bool					IsMidiTrack() { return (Type == IS_MIDI_TRACK); }
   SeqTrack				*TrackOpt;

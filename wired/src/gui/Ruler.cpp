@@ -49,7 +49,7 @@ void		Ruler::OnPaint(wxPaintEvent &event)
     {
       if (!(m % Seq->SigNumerator))
 	{
-	  s.Printf("%d", (long) (m / Seq->SigNumerator));
+	  s.Printf("%d", 1 + (long) (m / Seq->SigNumerator));
 	  dc.DrawText(s, (int) floor(x) + RULER_NUMBER_XOFFSET, RULER_NUMBER_YOFFSET);
 	}
       dc.DrawLine((int) floor(x), (m++ % Seq->SigNumerator) ? h - RULER_MEASURE_DIV_HEIGHT : 0,
