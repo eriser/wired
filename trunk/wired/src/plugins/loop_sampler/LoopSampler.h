@@ -116,6 +116,8 @@ class LoopSampler: public Plugin
   bool	 IsAudio();
   bool	 IsMidi();
 
+  void   Update();
+
   void	 SetWaveFile(WaveFile *w); //locks mutex
   void	 SetBarCoeff();
   
@@ -164,6 +166,8 @@ protected:
   int	 MidiSliceVol[2];
   int	 MidiSliceAffect[2];
   int	 MidiSliceInvert[2];
+
+  bool	 UpdateOctave;
 
   unsigned int PolyphonyCount;
 

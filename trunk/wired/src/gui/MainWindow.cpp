@@ -33,7 +33,6 @@
 #include "../sequencer/Sequencer.h"
 #include "../sequencer/Track.h"
 #include "../mixer/Mixer.h"
-#include "../redist/Plugin.h"
 #include "../engine/WiredSession.h"
 #include "../midi/MidiThread.h"
 #include "../plugins/PluginLoader.h"
@@ -211,6 +210,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   SequencerMenu->Append(MainWin_AddTrackAudio, "&Add Audio Track");
   SequencerMenu->Append(MainWin_AddTrackMidi, "&Add MIDI Track");
   SequencerMenu->Append(MainWin_DeleteTrack, "&Delete Track");
+  SequencerMenu->AppendSeparator();
+  SequencerMenu->Append(MainWin_ChangeAudioDir, "&Change Audio directory...");
   
   RacksMenu->Append(MainWin_DeleteRack, "D&elete Rack");
 
@@ -1115,6 +1116,16 @@ void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
   SeqPanel->DeleteSelectedTrack();
 }
 
+void					MainWindow::OnChangeAudioDir(wxCommandEvent &event)
+{
+  assert(CurrentSession);
+  
+  wxDirDialog dir(this, "Choose the Audio file directory", 
+		  wxFileName::GetCwd());
+  if (dir.ShowModal() == wxID_OK)
+    CurrentSession->AudioDir = dir.GetPath().c_str();    
+}
+
 void					MainWindow::OnUndo(wxCommandEvent &event)
 {
   cActionManager::Global().Undo();
@@ -1199,8 +1210,10 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
   CursorEvent				e;
   list<Pattern *>::iterator		i;
   list<MidiPattern *>::iterator		j;
+  list<Plugin *>::iterator		k;
 
   SeqMutex.Lock();
+
   MixerPanel->OnMasterChange(f);
   if (Seq->Playing)
     {
@@ -1221,7 +1234,17 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
 	  Seq->PatternsToRefresh.clear();
 	}
     }
+
+  for (k = UpdatePlugins.begin(); k != UpdatePlugins.end(); k++)
+    (*k)->Update();
+  UpdatePlugins.clear();
+
   SeqMutex.Unlock();
+}
+
+void					MainWindow::AddUpdatePlugin(Plugin *p)
+{
+  UpdatePlugins.push_back(p);
 }
 
 void					MainWindow::OnFileLoaderStart(wxCommandEvent &event)
@@ -1261,6 +1284,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_AddTrackAudio, MainWindow::OnAddTrackAudio)
   EVT_MENU(MainWin_AddTrackMidi, MainWindow::OnAddTrackMidi)
   EVT_MENU(MainWin_DeleteTrack, MainWindow::OnDeleteTrack)
+  EVT_MENU(MainWin_ChangeAudioDir, MainWindow::OnChangeAudioDir)
   EVT_MENU(MainWin_FloatTransport, MainWindow::OnFloatTransport) 
   EVT_MENU(MainWin_FloatSequencer, MainWindow::OnFloatSequencer) 
   EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack) 

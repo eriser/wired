@@ -24,6 +24,8 @@ using namespace std;
 #define WIRED_VERSION			(0.1f)
 #define PLUG_MENU_INDEX_START		(50000)
 
+#include "Plugin.h"
+
 typedef	struct s_PlugStartInfo		PlugStartInfo;
 class					PluginLoader;
 class					WiredSession;
@@ -49,6 +51,7 @@ class					MainWindow: public wxFrame
   void					OnAddTrackAudio(wxCommandEvent &event);
   void					OnAddTrackMidi(wxCommandEvent &event);
   void					OnDeleteTrack(wxCommandEvent &event);
+  void					OnChangeAudioDir(wxCommandEvent &event);
   void					OnCreateRackClick(wxCommandEvent &event);
   void					OnCreateEffectClick(wxCommandEvent &event);
   void					OnFloatTransport(wxCommandEvent &event);
@@ -80,6 +83,8 @@ class					MainWindow: public wxFrame
   void					OnSpaceKey();
   void					SwitchRackOptView();
   void					SwitchSeqOptView();  
+  void					AddUpdatePlugin(Plugin *p);
+
  private:
   int					PluginMenuIndexCount;			
   bool					RackModeView;
@@ -113,6 +118,9 @@ class					MainWindow: public wxFrame
 
   wxTimer				*SeqTimer;
 
+  /* List of plugins that need to be updated for their gui */
+  list<Plugin *>			UpdatePlugins;
+
   DECLARE_EVENT_TABLE()
 };
 
@@ -133,6 +141,7 @@ enum
   MainWin_AddTrackAudio,
   MainWin_AddTrackMidi,
   MainWin_DeleteTrack,
+  MainWin_ChangeAudioDir,
   MainWin_Copy,
   MainWin_Cut,
   MainWin_Paste,

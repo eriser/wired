@@ -274,6 +274,8 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   MidiSliceAffect[1] = -1;
   MidiSliceInvert[0] = -1;
   MidiSliceInvert[1] = -1;
+
+  UpdateOctave = false;
 }
 
 LoopSampler::~LoopSampler()
@@ -714,12 +716,15 @@ void LoopSampler::ProcessMidiControls(int MidiData[3])
     }
   else if ((MidiOctave[0] == MidiData[0]) && (MidiOctave[1] == MidiData[1]))
     {
-      OctaveKnob->SetValue(MidiData[2] / 10 - 1);
-      Octave = OctaveKnob->GetValue() - 4;
-      
+      //OctaveKnob->SetValue(MidiData[2] / 10 - 1);
+      Octave = MidiData[2] / 10 - 1 - 4;
+
       list<Slice *>::iterator k;
       for (k = Slices.begin(); k != Slices.end(); k++)  
 	(*k)->SetOctave(Octave);     
+
+      UpdateOctave =  true;
+      AskUpdate();
     }
   else if ((MidiPitch[0] == MidiData[0]) && (MidiPitch[1] == MidiData[1]))
     {
@@ -744,7 +749,20 @@ void LoopSampler::ProcessMidiControls(int MidiData[3])
       for (i = Slices.begin(); i != Slices.end(); i++)
 	(*i)->Invert = !(*i)->Invert;
     }
+
   Mutex.Unlock();
+}
+
+void	LoopSampler::Update()
+{
+  if (UpdateOctave)
+    {
+      Mutex.Lock();
+      UpdateOctave = false;
+      Mutex.Unlock();
+
+      OctaveKnob->SetValue((int)(Octave) + 4);
+    }
 }
 
 wxWindow *LoopSampler::CreateView(wxWindow *zone, wxPoint &pos, wxSize &size)

@@ -92,6 +92,7 @@ enum
     wiredOpenFileLoader,
     wiredSaveFileLoader,
     wiredShowMidiController,
+    wiredAskUpdateGui,
 
     // Time events
     wiredGetBpm,
@@ -172,6 +173,12 @@ class Plugin: public wxWindow
   virtual bool	 IsAudio() = 0;
   /* Is plugin supporting MIDI data to be sent to it ? */
   virtual bool   IsMidi() = 0;
+
+  /* Ask the host application to call Update() whenever the main thread can process gui calls  */
+  virtual void	 AskUpdate();
+
+  /* Called by the host that the plugin can update its graphical controls */
+  virtual void	 Update() {}
 
   /* Called when host needs to show the plugin's help */
   virtual std::string GetHelpString() { return "No help provided for this plugin"; }
