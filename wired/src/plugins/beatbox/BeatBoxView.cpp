@@ -490,7 +490,11 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
      (ViewPtr->XScroll)) / static_cast<double>(ViewPtr->XSize) 
 			*  ViewPtr->DRM31->GetSteps()) 
 		       * 100) / 100;
-  
+  if (ViewPtr->Magnetism)
+    {
+      int i = SubDiv + 1;
+      xpos = xpos - fmod(xpos, static_cast<double>(1/static_cast<double>(i)));
+    }
   //cout << "xpos " << xpos << endl;
   
   long track = (event.m_y + ViewPtr->YScroll) / ViewPtr->TrackHeight;
@@ -499,11 +503,12 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
 					  / ViewPtr->TrackHeight) * 1.30) 
 		     * 100) / 100;
   
-  if (vel < 0.0)
+  /*
+if (vel < 0.0)
     vel = 0;
   else if (vel > 1.27)
     vel = 1.27;
-  
+  */  
   if (SelectedNote)
     {
   for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
@@ -530,15 +535,28 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
        note != SelectedNotes.end(); note++)
     {
       (*note)->Position += delta_x;
-      if ((*note)->Position < 0.0)
+      //cout << (*note)->Position << " modulus " << ViewPtr->DRM31->GetSteps();
+      (*note)->Position = fmod((*note)->Position, 
+			       static_cast<double>(ViewPtr->DRM31->GetSteps())
+			       );
+      //cout << " : " << (*note)->Position << endl;
+      /*
+	if ((*note)->Position < 0.0)
 	(*note)->Position = 0.0;
-      (*note)->BarPos = floor(((*note)->Position / ViewPtr->DRM31->GetSteps()) * 100) / 100;
+      */
+      (*note)->BarPos = floor(((*note)->Position / 
+			       static_cast<double>(ViewPtr->DRM31->GetSteps())
+			       ) * 100) / 100;
       
       (*note)->Vel += delta_y;
-      if ((*note)->Vel < 0.0)
+      (*note)->Vel = fmodf((*note)->Vel, 1.27);
+      
+      /*
+	if ((*note)->Vel < 0.0)
 	(*note)->Vel = 0.0;
-      else if ((*note)->Vel > 1.27)
+	else if ((*note)->Vel > 1.27)
 	(*note)->Vel = 1.27;
+      */
     }
   
   for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
@@ -618,11 +636,26 @@ void BeatBoxScrollView::OnLeftUp(wxMouseEvent& event)
      + static_cast<double>
      (ViewPtr->XScroll)) 
     / static_cast<double>(ViewPtr->XSize) *  ViewPtr->DRM31->GetSteps();
-  ypos = (MotionPosY + ViewPtr->YScroll) % ViewPtr->TrackHeight;
-  double to_vel = 
-    floor(static_cast<double>(((ViewPtr->TrackHeight - ypos) / 
-			       ViewPtr->TrackHeight) * 1.30) * 100) / 100;
   
+  long to_track = (MotionPosY + ViewPtr->YScroll) / ViewPtr->TrackHeight;
+  double to_vel;
+  if ( to_track > track )
+    {
+      ypos = ViewPtr->TrackHeight;
+      to_vel = 0.0;
+    }
+  else if ( to_track < track )
+    {
+      ypos = 0;
+      to_vel = 1.27;
+    }
+  else
+    {
+      ypos = (MotionPosY + ViewPtr->YScroll) % ViewPtr->TrackHeight;
+      to_vel = 
+	floor(static_cast<double>(((ViewPtr->TrackHeight - ypos) / 
+				   ViewPtr->TrackHeight) * 1.30) * 100) / 100;
+    }
   //cout << "from xy: " << xpos << " "<< vel << " to " << to_xpos << " " << to_vel << endl;
   if (vel > 1.27)
     vel = 1.27;
@@ -765,6 +798,7 @@ BEGIN_EVENT_TABLE(BeatBoxView, wxPanel)
   EVT_TEXT_ENTER(ID_PosTextCtrl, BeatBoxView::OnPosChange)
   EVT_TEXT_ENTER(ID_VelTextCtrl, BeatBoxView::OnVelChange)
   EVT_COMBOBOX(ID_SubCombo, BeatBoxView::OnSubdivChange)
+  EVT_TOOL(ID_Magnet, BeatBoxView::OnMagnetism)
 END_EVENT_TABLE()
 
 BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
@@ -777,6 +811,7 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   Mutex = mutex;
   DRM31 = bb;
   
+  Magnetism = false;
   HZoom = VZoom = 1.0;
   XScroll = YScroll = 0;
   TrackHeight = BEAT_HEIGHT;
@@ -831,6 +866,16 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
 			       wxSize(RULER_HEIGHT, -1), wxSB_VERTICAL);
   
   
+  
+  ToolBar->AddCheckTool(ID_Magnet, "Magnet", 
+			wxBitmap(_T(string(DRM31->GetDataDir()
+					   + string(MAGN_UP)).c_str()), 
+				 wxBITMAP_TYPE_PNG), 
+			wxBitmap(_T(string(DRM31->GetDataDir() 
+					   + string(MAGN_DOWN)).c_str()), 
+				 wxBITMAP_TYPE_PNG), 
+			"Activate magnetism", "Deactivate magnetism", NULL);
+  
   //wxString combo[(NB_COMBO_CHOICES + 1)];
   
   wxString choices[NB_COMBO_CHOICES];
@@ -845,9 +890,9 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   ToolBar->AddControl(SubCombo);
   ToolBar->AddSeparator();
   
-  PosTextCtrl = new wxTextCtrl(ToolBar, ID_PosTextCtrl, _T("0.00"),
+  PosTextCtrl = new wxTextCtrl(ToolBar, ID_PosTextCtrl, _T("pos"),
 				  wxPoint(-1,-1), wxSize(32, -1));
-  VelTextCtrl = new wxTextCtrl(ToolBar, ID_VelTextCtrl, _T("0.00"),
+  VelTextCtrl = new wxTextCtrl(ToolBar, ID_VelTextCtrl, _T("vel"),
 				  wxPoint(-1,-1), wxSize(32, -1));
   ToolBar->AddControl(PosTextCtrl);
   ToolBar->AddControl(VelTextCtrl);
@@ -1013,17 +1058,25 @@ void BeatBoxView::OnSubdivChange(wxCommandEvent& WXUNUSED(event))
 }
 
 void BeatBoxView::OnPosChange(wxCommandEvent& WXUNUSED(event))
-{}
+{
+  
+}
 
 void BeatBoxView::OnVelChange(wxCommandEvent& WXUNUSED(event))
 {}
+
+void BeatBoxView::OnMagnetism(wxCommandEvent& WXUNUSED(event))
+{
+  Magnetism = 
+    ToolBar->GetToolState(ID_Magnet) ? true : false;
+}
 
 void BeatBoxView::UpdateToolBar(void)
 {
   if (!BeatView->SelectedNote)
     {
-      PosTextCtrl->SetValue(_T("0.00"));
-      VelTextCtrl->SetValue(_T("0.00"));
+      PosTextCtrl->SetValue(_T("pos"));
+      VelTextCtrl->SetValue(_T("vel"));
       return;
     }
   wxString s;

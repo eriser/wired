@@ -21,6 +21,8 @@
 #define VIEW_FGCOLOR	*wxWHITE
 #define VIEW_BARCOLOR	*wxBLUE
 
+#define MAGN_UP		"plugins/beatbox/magn_up.png"
+#define MAGN_DOWN	"plugins/beatbox/magn_down.png"
 
 class WiredBeatBox;
 class BeatBoxChannel;
@@ -123,7 +125,8 @@ class BeatBoxView : public wxPanel
   void OnSubdivChange(wxCommandEvent& event);
   void OnPosChange(wxCommandEvent& event);
   void OnVelChange(wxCommandEvent& event);
-  
+  void OnMagnetism(wxCommandEvent& event);
+
   wxToolBar* ToolBar;
   wxComboBox* SubCombo;
   wxTextCtrl* PosTextCtrl;
@@ -133,6 +136,8 @@ class BeatBoxView : public wxPanel
   
   WiredBeatBox*		DRM31;
   // protected:
+  
+  bool Magnetism;
   double XScrollCoef, YScrollCoef;
   long SelectedTrack;
   long XScroll;
@@ -174,7 +179,8 @@ enum
     ID_PopSelect,
     ID_SubCombo,
     ID_PosTextCtrl,
-    ID_VelTextCtrl
+    ID_VelTextCtrl,
+    ID_Magnet
   };
 
 #endif//__BEATBOXVIEW_H__

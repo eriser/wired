@@ -862,19 +862,31 @@ void WiredBeatBox::ProcessEvent(WiredEvent& event)
 
 inline void WiredBeatBox::SetNoteAttr(BeatNoteToPlay* note, BeatBoxChannel* c)
 {
-  note->Lev *= c->Lev;
-  note->Vel *= c->Vel;
-  note->Pitch *= c->Pitch;
-  note->Start *= c->Start;
-  note->End *= c->End;
+  note->Lev = floor(c->Lev * note->Lev * 100) / 100;
+  note->Vel = floor(c->Vel * note->Vel * 100) / 100;
+  note->Pitch = floor(c->Pitch * note->Pitch * 100) / 100;
+  note->Start = floor(c->Start * note->Start * 100) / 100;
+  note->End = floor(c->End * note->End * 100) / 100;
   note->Reversed = c->Reversed;
-  
+  /*
+    note->Lev *= c->Lev;
+    note->Vel *= c->Vel;
+    note->Pitch *= c->Pitch;
+    note->Start *= c->Start;
+    note->End *= c->End;
+    note->Reversed = c->Reversed;
+  */
   note->OffSet =
     static_cast<unsigned long>
     (floor(c->Wave->GetNumberOfFrames() * (note->Start)));
   note->SEnd = 
     static_cast<unsigned long>
     (floor(c->Wave->GetNumberOfFrames() * note->End));
+  if (note->OffSet > note->SEnd)
+    {
+      cout << "[DRM31] note Offset > End"<< endl;
+    }
+
 }
 	      
 
@@ -1269,6 +1281,7 @@ void WiredBeatBox::RemBeatNote(BeatNote* note, BeatBoxChannel* c,
 	  break;
 	}
     }
+  SetPatternList();
 }
 
 void WiredBeatBox::AddBeatNote(BeatNote* note, BeatBoxChannel* c, 
@@ -1280,6 +1293,7 @@ void WiredBeatBox::AddBeatNote(BeatNote* note, BeatBoxChannel* c,
       PatternMutex.Lock();
       c->Rythms[bank][track].push_back(note);
       PatternMutex.Unlock();
+      SetPatternList();
       return;
     }
   if (note->Position > c->Rythms[bank][track].back()->Position)
@@ -1287,6 +1301,7 @@ void WiredBeatBox::AddBeatNote(BeatNote* note, BeatBoxChannel* c,
       PatternMutex.Lock();
       c->Rythms[bank][track].push_back(note);
       PatternMutex.Unlock();
+      SetPatternList();
       return;
     }
   
@@ -1299,6 +1314,7 @@ void WiredBeatBox::AddBeatNote(BeatNote* note, BeatBoxChannel* c,
 	  PatternMutex.Lock();
 	  c->Rythms[bank][track].insert(b, note);
 	  PatternMutex.Unlock();
+	  SetPatternList();
 	  return;
 	}
     }
