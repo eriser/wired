@@ -917,7 +917,7 @@ void					MainWindow::SwitchRackOptView()
 
       BottomSizer = new wxBoxSizer(wxHORIZONTAL);
       BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
-      BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL, 2); 
+      BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
   
       TopSizer = new wxBoxSizer(wxVERTICAL);
       
@@ -968,7 +968,7 @@ void					MainWindow::SwitchSeqOptView()
 
       BottomSizer = new wxBoxSizer(wxHORIZONTAL);
       BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
-      BottomSizer->Add(SeqPanel, 1, wxEXPAND | wxALL, 2); 
+      BottomSizer->Add(SeqPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
   
       TopSizer = new wxBoxSizer(wxVERTICAL);
       
