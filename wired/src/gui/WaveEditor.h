@@ -10,10 +10,10 @@
 #include 			"WaveEditorDrawer.h"
 #include 			"WaveFile.h"
 
-#define SCROLLH_THUMB_WIDTH	(80)
-#define SCROLLV_THUMB_WIDTH	(80)
-#define SCROLLH			(20)
-#define SCROLLV			(20)
+#define 			SCROLLH_THUMB_WIDTH	(80)
+#define 			SCROLLV_THUMB_WIDTH	(80)
+#define 			SCROLLH			(20)
+#define 			SCROLLV			(20)
 enum
 {
     ID_SCROLL,
@@ -35,16 +35,6 @@ enum
 };
 
 
-#define NB_CHOICE		(5)
-
-typedef struct				s_choice
-{
-  wxString				s;
-  double				value;
-} t_choice;
-
-extern const struct s_choice	Choice[NB_CHOICE + 1];
-
 
 class WaveEditor : public wxPanel, public WaveEditorDrawer 
 {
@@ -53,42 +43,36 @@ class WaveEditor : public wxPanel, public WaveEditorDrawer
 	  long style = wxSIMPLE_BORDER | wxWS_EX_PROCESS_IDLE, bool fulldraw = false, bool use_settings = true);
   ~WaveEditor();
 
-  void			OnPaint(wxPaintEvent &event);
-  void			OnSize(wxSizeEvent &event);
-  void			OnMouseEvent(wxMouseEvent& event);
+  void				OnPaint(wxPaintEvent &event);
+  void				OnSize(wxSizeEvent &event);
+  void				OnMouseEvent(wxMouseEvent& event);
   virtual void		SetWave(float **data, unsigned long frame_length, long channel_count);
   virtual void		SetWave(WaveFile *w);
-  void			SetDrawing();
-  void			SetSize(wxSize s);
-  void			OnCopy(wxCommandEvent &event);
-  void			OnCut(wxCommandEvent &event);
-  void			OnPaste(wxCommandEvent &event);
-  void			OnDelete(wxCommandEvent &event);
-  void 			OnScroll(wxScrollEvent &event);
-  void			RedrawBitmap(wxSize s);
-  void			OnSave(wxCommandEvent &event);
-  void			AdjustScrollbar(wxSize s);
-  void			OnZoom(wxCommandEvent &event);
-  void			OnUndo(wxCommandEvent &event);
-  void			OnRedo(wxCommandEvent &event);
+  void				SetDrawing();
+  void				SetSize(wxSize s);
+  void				OnCopy(wxCommandEvent &event);
+  void				OnCut(wxCommandEvent &event);
+  void				OnPaste(wxCommandEvent &event);
+  void				OnDelete(wxCommandEvent &event);
+  void 				OnScroll(wxScrollBar *sbh);
+  void				RedrawBitmap(wxSize s);
+  void				AdjustScrollbar(wxScrollBar *sbh, wxSize s);
+  void				OnZoom(wxComboBox *combobox);
+  void				OnUndo(wxCommandEvent &event);
+  void				OnRedo(wxCommandEvent &event);
   
-
-  wxMenu		*PopMenu;
-  wxFrame		*frame;
-  wxComboBox 		*combobox;
+  wxMenu			*PopMenu;
+  
  private:  
-  wxRect		mSelectedRegion;
-  bool			mIsSelecting;
-  wxScrollBar		*sbh;
-  wxScrollBar		*sbv;
-  long 					inc;
-  long 					mPosition;
-  long					oldposx;
-  long					xsrc;
-  int					len;
-  wxToolBar				*Toolbar;
-  int					flag;
-  long					sizePaste;
+  wxRect			mSelectedRegion;
+  bool				mIsSelecting;
+  long 				inc;
+  long 				mPosition;
+  long				oldposx;
+  long				xsrc;
+  int				len;
+  int				flag;
+  long				sizePaste;
  
   DECLARE_EVENT_TABLE()
 };
@@ -143,10 +127,7 @@ public:
 	width = Width; 
   };
 
-  ~cPasteAction ()
-  {
-	std::cout << "[cPasteAction] - Destructeur Test" << std::endl;
-  };
+  ~cPasteAction (){};
 
   virtual void Do ();
 
@@ -154,8 +135,7 @@ public:
 
   virtual void Undo ();
 
-  virtual void Accept (cActionVisitor& visitor)
-  { cout << "Test accept" << "\n"; visitor.Visit (*this); };
+  virtual void Accept (cActionVisitor& visitor){};
 };
 
 
