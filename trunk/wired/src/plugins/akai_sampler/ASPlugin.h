@@ -2,6 +2,7 @@
 #define _ASPLUGIN_H_
 
 #include <wx/wx.h>
+#include "Plugin.h"
 
 class ASPlugin : public wxPanel
 {
@@ -12,7 +13,9 @@ class ASPlugin : public wxPanel
     wxString Name;
     virtual void OnAttach(wxWindow *);
     virtual void OnDetach(wxWindow *);
+    void SetPlugin(Plugin *p) { this->p = p; }
   protected:
+    Plugin *p;
 };
 
 #endif

@@ -10,7 +10,8 @@
 #include "Polyphony.h"
 #include "FaderCtrl.h"
 #include "HoldButton.h"
-#include "ASList.h"
+#include "ASSampleList.h"
+#include "ASKeygroupList.h"
 
 #define IMG_SP_BMP	    "plugins/akaisampler/AkaiSampler.bmp"
 #define IMG_SP_OPEN_UP      "plugins/akaisampler/open_up.png"
@@ -28,46 +29,18 @@
 
 using namespace std;
 
-#define PLUGIN_NAME "Sampler"
-
-class ASamplerKey
-{
-  public:
-    ASamplerKey(t_akaiSample *smp, float pitch = 1.f) :
-      AkaiSample(smp), Pitch(pitch)
-    {
-      Wave = new WaveFile(smp->buffer, smp->size, 2, smp->rate);
-      Wave->SetPitch(pitch);
-      AkaiSample->end /= 2;
-      AkaiSample->loop_start /= 2;
-      AkaiSample->loop_len /= 2;
-    }
-    ~ASamplerKey()
-    {
-      delete Wave;
-      free(AkaiSample);
-    }
-
-    t_akaiSample *AkaiSample;
-    WaveFile     *Wave;
-    float   Pitch;
-
-  protected:
-
-};
+#define PLUGIN_NAME "WiredSampler"
 
 class ASamplerNote
 {     
   public:
     ASamplerNote(int note, float vol, ASamplerKey *key, int delta, float **buf, int length)
-      : Note(note), Volume(vol), Key(key), Delta(delta), Buffer(buf), Length(length),
-      Position(key->AkaiSample->start / key->Wave->GetNumberOfChannels())
+      : Note(note), Volume(vol), Key(key), Delta(delta), Buffer(buf), Length(length), Position(key->Position)
       {
-
       }
     ~ASamplerNote()
     {
-
+      delete Key;
     }
 
     int   Note;
@@ -78,7 +51,6 @@ class ASamplerNote
     int   Length;
     long    Position;
 };
-
 
 class AkaiSampler : public Plugin
 {
@@ -101,13 +73,13 @@ class AkaiSampler : public Plugin
     bool   IsInstrument(); 
     bool   IsAudio();
     bool   IsMidi();
-    std::string DefaultName() { return "AkaiSampler"; }
+    std::string DefaultName() { return "WiredSampler"; }
 
     wxBitmap *GetBitmap();
 
   protected:
     /* Audio/Midi members */
-    ASamplerKey    *Keys[127];
+//    ASamplerKey    *Keys[127];
     Polyphony   Workshop;
     list<ASamplerNote *> Notes;
     t_akaiProgram   *AkaiProgram;
@@ -115,7 +87,6 @@ class AkaiSampler : public Plugin
     float  Volume;
     unsigned int PolyphonyCount;
     double SamplingRate;
-
 
     void OnPaint(wxPaintEvent &event);
     void LoadProgram();
@@ -155,7 +126,6 @@ class AkaiSampler : public Plugin
     wxBitmap   *LedOff;
     wxBitmap   *LedOn; 
     wxBitmap   *BgBmp;
-    ASList    *test;
 
     wxStaticText *PolyCountLabel;
 
@@ -194,7 +164,6 @@ enum
   Sampler_Decay,
   Sampler_Sustain,
   Sampler_Release,
-  Sampler_Piano
 };  
 
 #endif
