@@ -28,7 +28,7 @@ AudioPattern::AudioPattern(double pos, double endpos, long trackindex)
 {
   Init();
   Wave = 0;
-  SetWave(0);
+  SetWave(0x0);
 }
 
 AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
@@ -119,7 +119,12 @@ void					AudioPattern::SetWave(WaveFile *w)
 #ifdef __DEBUG__
   cout << "WaveDrawer::StartWavePos = " << WaveDrawer::StartWavePos<< " WaveDrawer::EndWavePos = " << WaveDrawer::EndWavePos << endl;
 #endif
-  WaveDrawer::SetWave(w, GetSize(), StartWavePos, EndWavePos);
+  if (w)
+    {
+      Wave = w;
+      FileName = w->Filename; 
+    }
+  WaveDrawer::SetWave(w, GetSize());//, StartWavePos, EndWavePos);
 }
 
 void					AudioPattern::SetDrawing()
@@ -225,9 +230,11 @@ void					AudioPattern::StopRecord()
       SetWave(w);
       Refresh();
     }
+  /*
   SeqMutex.Lock();
   Wave = w;
   SeqMutex.Unlock();
+  */
 }
 
 void					AudioPattern::GetRecordBuffer()
