@@ -603,6 +603,8 @@ void					SequencerGui::DeleteSelectedTrack()
   printf("SequencerGui::DeleteSelectedTrack()\n");
 #endif
   for (i = Seq->Tracks.begin(); (i != Seq->Tracks.end()) && !((*i)->TrackOpt->GetSelected()); i++);
+  if (i == Seq->Tracks.begin())
+    return;
   if ((*i)->TrackOpt->Record && Seq->Recording)
     return;
   if ((*i)->TrackOpt->ChanGui)

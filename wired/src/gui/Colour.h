@@ -20,14 +20,13 @@
 
 #define CL_WAVEDRAWER_BRUSH	wxColour(251, 252, 253)
 #define CL_WAVEDRAWER_BRUSH_SEL	wxColour(151, 142, 169)
-#define CL_MIDIDRAWER_BRUSH	wxColour(241, 242, 243)
+
+#define CL_MIDIDRAWER_BRUSH	wxColour(251, 252, 253)//wxColour(241, 242, 243)
 #define CL_MIDIDRAWER_BRUSH_SEL	wxColour(151, 142, 169)
 
 
 /*
-** Choses et machins utilises par Ruler & co :
-** !!! use it at your own risk FFS !!!
-** :P
+** Rulers
 */
 
 #define CL_RULER_BACKGROUND	wxColour(237, 237, 242)
@@ -35,7 +34,7 @@
 #define CL_RULER_PATTERNNUM	wxColour(  0,   0,  24)
 
 /*
-** Aspect colorisant (c) du sequenceur.
+** Sequencer colours
 */
 
 #define CL_DEFAULT_BACKGROUND	wxColour(184, 184, 184)
@@ -56,7 +55,7 @@
 #define CL_CURSORZ_LINE_RED	wxColour(242,  24,  42)
 #define CL_CURSORZ_LINE_DARK	wxColour( 24,  24,  42)
 
-#define CL_DEFAULT_SEQ_BRUSH	wxColour( 42,  36, 242)
+#define CL_DEFAULT_SEQ_BRUSH	wxColour( 50, 166, 211)//wxColour( 42,  36, 242)
 #define CL_DEFAULT_SEQ_PEN	wxColour(  4,   2,  42)
 
 /*
