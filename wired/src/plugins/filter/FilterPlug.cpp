@@ -1,65 +1,149 @@
 #include "FilterPlug.h"
+#include "midi.h"
 #include <unistd.h>
 
 /******** FilterPlugin Implementation *********/
 
 BEGIN_EVENT_TABLE(FilterPlugin, wxWindow)
+  EVT_BUTTON(Filter_Bypass, FilterPlugin::OnBypass)
   EVT_COMMAND_SCROLL(Filter_Cutoff, FilterPlugin::OnCutoff)
   EVT_COMMAND_SCROLL(Filter_Res, FilterPlugin::OnResonance)
-#ifdef FRANCIS
-  EVT_COMMAND_SCROLL(Filter_Select, FilterPlugin::OnSelect)
-#endif
+  EVT_BUTTON(Filter_Select, FilterPlugin::OnSelect)
+
+  EVT_BUTTON(Filter_LP, FilterPlugin::OnLPSelect)
+  EVT_BUTTON(Filter_BP, FilterPlugin::OnBPSelect)
+  EVT_BUTTON(Filter_HP, FilterPlugin::OnHPSelect)
+  EVT_BUTTON(Filter_Notch, FilterPlugin::OnNotchSelect)
+  EVT_BUTTON(Filter_NotchBar, FilterPlugin::OnNotchBarSelect)
+
   EVT_PAINT(FilterPlugin::OnPaint)
 END_EVENT_TABLE()
 
 FilterPlugin::FilterPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
-  : Plugin(startinfo, initinfo)
+  : Plugin(startinfo, initinfo), Bypass(false)
 {
-#ifdef MOOG
-#define SIZE_CUTOFF 100
-#define SIZE_RES    400
-  f = 1.f;
-  fb = 0.f;
-#endif
-
-#ifdef FRANCIS
-#define SIZE_CUTOFF 2205
-#define SIZE_RES    100
-#endif
- 
   Init();
 
   wxImage *tr_bg = 
     new wxImage(string(GetDataDir() + string(IMG_FL_BG)).c_str(), wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
+  delete tr_bg;
   
   bmp = new wxBitmap(string(GetDataDir() + string(IMG_FL_BMP)).c_str(), wxBITMAP_TYPE_BMP); 
 
+  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), 
+			  wxBITMAP_TYPE_PNG);
+  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), 
+			   wxBITMAP_TYPE_PNG);
+  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+
+  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), 
+			  wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
+			   wxBITMAP_TYPE_PNG);
+  BypassBtn = new DownButton(this, Filter_Bypass, wxPoint(21, 58),
+			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()),
+			     bypass_off, bypass_on);
+
+  hp_on = new wxImage(string(GetDataDir() + string(IMG_FL_HP)).c_str(), wxBITMAP_TYPE_PNG);
+  hp_off = new wxImage(string(GetDataDir() + string(IMG_FL_HP_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  lp_on = new wxImage(string(GetDataDir() + string(IMG_FL_LP)).c_str(), wxBITMAP_TYPE_PNG);
+  lp_off = new wxImage(string(GetDataDir() + string(IMG_FL_LP_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  bp_on = new wxImage(string(GetDataDir() + string(IMG_FL_BP)).c_str(), wxBITMAP_TYPE_PNG);
+  bp_off = new wxImage(string(GetDataDir() + string(IMG_FL_BP_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  notch_on = new wxImage(string(GetDataDir() + string(IMG_FL_NOTCH)).c_str(), wxBITMAP_TYPE_PNG);
+  notch_off = new wxImage(string(GetDataDir() + string(IMG_FL_NOTCH_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  notchbar_on = new wxImage(string(GetDataDir() + string(IMG_FL_NOTCHBAR)).c_str(), wxBITMAP_TYPE_PNG);
+  notchbar_off = new wxImage(string(GetDataDir() + string(IMG_FL_NOTCHBAR_UP)).c_str(), wxBITMAP_TYPE_PNG);
+
+
+  LpBtn = new DownButton(this, Filter_LP, wxPoint(70, 43),
+			 wxSize(lp_off->GetWidth(), lp_off->GetHeight()),
+			 lp_off, lp_on);
+  BpBtn = new DownButton(this, Filter_BP, wxPoint(81, 47),
+			 wxSize(bp_off->GetWidth(), bp_off->GetHeight()),
+			 bp_off, bp_on);
+  HpBtn = new DownButton(this, Filter_HP, wxPoint(92, 47),
+			 wxSize(hp_off->GetWidth(), hp_off->GetHeight()),
+			 hp_off, hp_on);
+  NotchBarBtn = new DownButton(this, Filter_NotchBar, wxPoint(104, 43),
+			       wxSize(notchbar_off->GetWidth(), notchbar_off->GetHeight()),
+			       notchbar_off, notchbar_on);
+  NotchBtn = new DownButton(this, Filter_Notch, wxPoint(93, 69),
+			    wxSize(notch_off->GetWidth(), notch_off->GetHeight()),
+			    notch_off, notch_on);
+  
   img_bg = new wxImage(string(GetDataDir() + string(IMG_FL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG );
   img_fg = new wxImage(string(GetDataDir() + string(IMG_FL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG );
   
-  CutoffFader = new 
-    FaderCtrl(this, Filter_Cutoff, img_bg, img_fg, 0, SIZE_CUTOFF, 100,
-	      wxPoint(18, 8)/*wxPoint(GetSize().x / 2, 10)*/, wxSize(22,78));
-  ResFader = new 
-    FaderCtrl(this, Filter_Res, img_bg, img_fg, 0, SIZE_RES, 0,
-	      wxPoint(142, 8)/*wxPoint(GetSize().x / 2 + 40, 10)*/,
- wxSize(22,78));
+  CutoffFader = new FaderCtrl(this, Filter_Cutoff, img_bg, img_fg, 1, SIZE_CUTOFF, SIZE_CUTOFF,
+			      wxPoint(118, 12), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
+  ResFader = new FaderCtrl(this, Filter_Res, img_bg, img_fg, 0, SIZE_RES, 0,
+			   wxPoint(153, 12), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
 
-#ifdef FRANCIS
-  wxImage *knob_bg = new wxImage(string(GetDataDir() + string(IMG_FL_KNOB_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *knob_fg = new wxImage(string(GetDataDir() + string(IMG_FL_KNOB_FG)).c_str(), wxBITMAP_TYPE_PNG);
-  FilterSelect = new KnobCtrl(this, Filter_Select, knob_bg, knob_fg, 0, 4, 0, 1,
-			      wxPoint(GetSize().x / 2 - 16, 26), wxSize(23, 23));
-#endif
+  wxImage** imgs;
+
+  imgs = new wxImage*[4];
+  imgs[0] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_LP)).c_str()));
+  imgs[1] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_BP)).c_str()));
+  imgs[2] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_HP)).c_str()));
+  imgs[3] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_NOTCH)).c_str()));
+  
+  FilterSelect = new StaticPosKnob(this, Filter_Select, 4, imgs, 15, 0, 3, 0, 
+				   wxPoint(68, 7), wxDefaultSize);
+  delete imgs[0];
+  delete imgs[1];
+  delete imgs[2];
+  delete imgs[3];
+  delete imgs;
   
   SetBackgroundColour(wxColour(237, 237, 237));
+
+  MidiCutoff[0] = M_CONTROL;
+  MidiCutoff[1] = 0xA;
+  MidiRes[0] = M_CONTROL;
+  MidiRes[1] = 0xB;
+  MidiBypass[0] = -1;
+  MidiBypass[1] = -1;
+  
+  Connect(Filter_Bypass, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&FilterPlugin::OnBypassController);    
+  Connect(Filter_Cutoff, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&FilterPlugin::OnCutoffController);
+  Connect(Filter_Res, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&FilterPlugin::OnResController);    
+}
+
+FilterPlugin::~FilterPlugin()
+{
+  delete bmp;
+  delete TpBmp;
+  delete img_bg;
+  delete img_fg;
+  delete bypass_on;
+  delete bypass_off;
+  delete liquid_on;
+  delete liquid_off;
+  delete hp_on;
+  delete hp_off;  
+  delete lp_on;
+  delete lp_off;  
+  delete bp_on;
+  delete bp_off;  
+  delete notch_on;
+  delete notch_off; 
+  delete notchbar_on;
+  delete notchbar_off; 
 }
 
 void FilterPlugin::Init()
 {
-#ifdef FRANCIS
-  Cutoff = 127.f;
+  Mutex.Lock();
+
+  Cutoff = SIZE_CUTOFF;
   Res = 0.f;
 
   memset(Coefs, 0, sizeof (float) * FILTER_SIZE);  
@@ -67,20 +151,15 @@ void FilterPlugin::Init()
   memset(History[1], 0, sizeof (float) * FILTER_SIZE);  
 
   SetFilter(filter_lp, Cutoff, Res);
-#endif
 
-#ifdef MOOG
-  Cutoff = 1.f;
-  Res = 0.f;
-
-  Lin1 = Lin2 = Lin3 = Lin4 = Lout1 = Lout2 = Lout3 = Lout4 = 0.f;
-  Rin1 = Rin2 = Rin3 = Rin4 = Rout1 = Rout2 = Rout3 = Rout4 = 0.f;
-#endif
+  Mutex.Unlock();
 }
 
 void FilterPlugin::Load(int fd, long size)
 {
   int filter;
+
+  Mutex.Lock();
 
   if (read(fd, &filter, sizeof (filter)) <= 0)
     {
@@ -97,6 +176,15 @@ void FilterPlugin::Load(int fd, long size)
       cout << "[FILTERPLUG] Error while loading patch !" << endl;
       return;
     }
+  if (read(fd, &Bypass, sizeof (Bypass)) <= 0)
+    {
+      cout << "[FILTERPLUG] Error while loading patch !" << endl;
+      return;
+    }
+  read(fd, MidiBypass, sizeof (int[2]));
+  read(fd, MidiCutoff, sizeof (int[2]));
+  read(fd, MidiRes, sizeof (int[2]));
+
   FilterSelect->SetValue(filter);
   CutoffFader->SetValue((int)Cutoff);
   ResFader->SetValue(int(Res * 100));
@@ -106,23 +194,31 @@ void FilterPlugin::Load(int fd, long size)
   memset(History[1], 0, sizeof (float) * FILTER_SIZE);  
 
   SetFilter(filter, Cutoff, Res);
+
+  Mutex.Unlock();
 }
  
 long FilterPlugin::Save(int fd)
 {
+  Mutex.Lock();
+
   long size;
   int filter = FilterSelect->GetValue();
 
   size = write(fd, &filter, sizeof (filter));
   size += write(fd, &Cutoff, sizeof (Cutoff));
   size += write(fd, &Res, sizeof (Res));
+  size += write(fd, &Bypass, sizeof (Bypass));
+  size += write(fd, MidiBypass, sizeof (int[2]));
+  size += write(fd, MidiCutoff, sizeof (int[2]));
+  size += write(fd, MidiRes, sizeof (int[2]));
+
+  Mutex.Unlock();
+
   return (size);
 }
 
 #define IS_DENORMAL(f) (((*(unsigned int *)&f)&0x7f800000)==0)
-//#define IS_DENORMAL(f) (f)
-
-#ifdef FRANCIS
 
 void FilterPlugin::SetCoeffs(double b0, double b1, double b2, double a0, double a1, double a2)
 {
@@ -148,7 +244,7 @@ void FilterPlugin::SetCoeffs(double b0, double b1, double b2, double a0, double 
   else
     {
       memset(Coefs, 0, sizeof (float) * FILTER_SIZE);
-      Coefs[0] = 1;
+      Coefs[0] = 1.f;
     }
 }
 
@@ -209,150 +305,324 @@ void FilterPlugin::SetFilter(int type, float cutoff, float resonance)
     }  
 }
 
-#endif
-
 void FilterPlugin::Process(float **input, float **output, long sample_length)
 {
   long i;
   char chan;
 
-#ifdef FRANCIS
   float out;
   int   j;
 
   static const float anti_denormal = 1e-18; 
 
-  for (chan = 0; chan < 2; chan++)
-    for (i = 0; i < sample_length; i++)
-      {
-	History[chan][2] = History[chan][1];
-	History[chan][1] = History[chan][0];
-	History[chan][0] = input[chan][i];
+  Mutex.Lock();
 
-	out = 0.f;
-	for (j = 0; j < FILTER_SIZE; j++)
+  if (!Bypass)
+    {
+      for (chan = 0; chan < 2; chan++)
+	for (i = 0; i < sample_length; i++)
 	  {
-	    out += History[chan][j] * Coefs[j];
-	    if (IS_DENORMAL(out))
+	    History[chan][2] = History[chan][1];
+	    History[chan][1] = History[chan][0];
+	    History[chan][0] = input[chan][i];
+	    
+	    out = 0.f;
+	    for (j = 0; j < FILTER_SIZE; j++)
 	      {
-		out += anti_denormal; 
-		out -= anti_denormal;
+		out += History[chan][j] * Coefs[j];
+		if (IS_DENORMAL(out))
+		  {
+		    out += anti_denormal; 
+		    out -= anti_denormal;
+		  }
 	      }
-	  }
-	History[chan][4] = History[chan][3];
-	History[chan][3] = out;
-	
-	out *= Reamp;
-		
-	output[chan][i] = out;
-      }
-#endif
-
-#ifdef MOOG
-  f = Cutoff * 1.16;
-  fb = Res * (1.0 - 0.15 * f * f);
-
-  chan = 0;
-  for (i = 0; i < sample_length; i++)
+	    History[chan][4] = History[chan][3];
+	    History[chan][3] = out;
+	    
+	    out *= Reamp;
+	    
+	    if (IS_DENORMAL(out))
+	      out = 0.f;
+	    output[chan][i] = out;
+	  }      
+    }
+  else
     {
-      input[chan][i] -= Lout4 * fb;
-      input[chan][i] *= 0.35013 * (f * f) * (f * f);
-      Lout1 = input[chan][i] + 0.3 * Lin1 + (1 - f) * Lout1; // Pole 1
-      Lin1 = input[chan][i];
-      Lout2 = Lout1 + 0.3 * Lin2 + (1 - f) * Lout2;  // Pole 2
-      Lin2 = Lout1;
-      Lout3 = Lout2 + 0.3 * Lin3 + (1 - f) * Lout3;  // Pole 3
-      Lin3 = Lout2;
-      Lout4 = Lout3 + 0.3 * Lin4 + (1 - f) * Lout4;  // Pole 4
-      Lin4 = Lout3;
-      output[chan][i] = Lout4;
-      if (!isfinite(output[chan][i]))
-	output[chan][i] = 0.f;       
-      /*      if (IS_DENORMAL(output[chan][i]))
-	{
-	  cout << "[SEQ] DENORMAL !!!! " <<output[chan][i] << endl;
-	  output[chan][i] = 0.f;
-	}
-      cout << "[PLUG] INPUT Left: " << input[chan][i] << endl;
-      cout << "[PLUG] Left: " << output[chan][i] << endl;*/
+      memcpy(output[0], input[0], sample_length * sizeof(float));
+      memcpy(output[1], input[1], sample_length * sizeof(float));
     }
 
-  chan = 1;
-  for (i = 0; i < sample_length; i++)
+  Mutex.Unlock();
+}
+
+void FilterPlugin::ProcessEvent(WiredEvent &event)
+{
+  Mutex.Lock();
+
+  if ((MidiCutoff[0] == event.MidiData[0]) && (MidiCutoff[1] == event.MidiData[1]))
     {
-      input[chan][i] -= Rout4 * fb;
-      input[chan][i] *= 0.35013 * (f * f) * (f * f);
-      Rout1 = input[chan][i] + 0.3 * Rin1 + (1 - f) * Rout1; // Pole 1
-      Rin1 = input[chan][i];
-      Rout2 = Rout1 + 0.3 * Rin2 + (1 - f) * Rout2;  // Pole 2
-      Rin2 = Rout1;
-      Rout3 = Rout2 + 0.3 * Rin3 + (1 - f) * Rout3;  // Pole 3
-      Rin3 = Rout2;
-      Rout4 = Rout3 + 0.3 * Rin4 + (1 - f) * Rout4;  // Pole 4
-      Rin4 = Rout3;
-      output[chan][i] = Rout4;
-      if (!isfinite(output[chan][i]))
-	output[chan][i] = 0.f;
-      /*if (IS_DENORMAL(output[chan][i]))
+      float step = SIZE_CUTOFF / 127.f;
+
+      Cutoff = event.MidiData[2] * step;
+      CutoffFader->SetValue((long)Cutoff);
+      SetFilter(FilterSelect->GetValue(), Cutoff, Res);
+    }
+  else if ((MidiRes[0] == event.MidiData[0]) && (MidiRes[1] == event.MidiData[1]))
+    {
+      float step = 100.f / 127.f;
+      
+      Res = event.MidiData[2] * step;
+      ResFader->SetValue((long)Res);
+      Res /= 100.f;
+      SetFilter(FilterSelect->GetValue(), Cutoff, Res);
+    }
+  else if ((MidiBypass[0] == event.MidiData[0]) && (MidiBypass[1] == event.MidiData[1]))
+    {
+      if (event.MidiData[2])
 	{
-	  cout << "[SEQ] DENORMAL !!!! " <<output[chan][i] << endl;
-	  output[chan][i] = 0.f;
+	  BypassBtn->SetOn();
+	  Bypass = true;
+	  // *** Known bug : something generates a X async reply 
+	  Liquid->SetBitmap(wxBitmap(liquid_off));
 	}
-            cout << "[PLUG] INPUT Right: " << input[chan][i] << endl;
-	      cout << "[PLUG] Right: " << output[chan][i] << endl;*/
+      else
+	{
+	  BypassBtn->SetOff();
+	  Bypass = false;
+	  // *** Known bug : something generates a X async reply 
+	  Liquid->SetBitmap(wxBitmap(liquid_on));
+	}
     }
 
-  if (IS_DENORMAL(Lout1))
-    Lout1 = 0.f;
-  if (IS_DENORMAL(Lout2))
-    Lout2 = 0.f;
-  if (IS_DENORMAL(Lout3))
-    Lout3 = 0.f;
-  if (IS_DENORMAL(Lout4))
-    Lout4 = 0.f;
-  if (IS_DENORMAL(Lin1))
-    Lin1 = 0.f;
-  if (IS_DENORMAL(Lin2))
-    Lin2 = 0.f;
-  if (IS_DENORMAL(Lin3))
-    Lin3 = 0.f;
-  if (IS_DENORMAL(Lin4))
-    Lin4 = 0.f;
-
-  if (IS_DENORMAL(Rout1))
-    Rout1 = 0.f;
-  if (IS_DENORMAL(Rout2))
-    Rout2 = 0.f;
-  if (IS_DENORMAL(Rout3))
-    Rout3 = 0.f;
-  if (IS_DENORMAL(Rout4))
-    Rout4 = 0.f;
-  if (IS_DENORMAL(Rin1))
-    Rin1 = 0.f;
-  if (IS_DENORMAL(Rin2))
-    Rin2 = 0.f;
-  if (IS_DENORMAL(Rin3))
-    Rin3 = 0.f;
-  if (IS_DENORMAL(Rin4))
-    Rin4 = 0.f;
-#endif
+  Mutex.Unlock();
 }
 
-FilterPlugin::~FilterPlugin()
+void FilterPlugin::CheckExistingControllerData(int MidiData[3])
 {
-  delete bmp;
+  if ((MidiBypass[0] == MidiData[0]) && (MidiBypass[1] == MidiData[1]))
+    MidiBypass[0] = -1;
+  else if ((MidiCutoff[0] == MidiData[0]) && (MidiCutoff[1] == MidiData[1]))
+    MidiCutoff[0] = -1;
+  else if ((MidiRes[0] == MidiData[0]) && (MidiRes[1] == MidiData[1]))
+    MidiRes[0] = -1;
 }
 
-#ifdef FRANCIS
-void FilterPlugin::OnSelect(wxScrollEvent &e)
+void FilterPlugin::ApplyFilter()
 {
+  Mutex.Lock();
+  
   memset(Coefs, 0, sizeof (float) * FILTER_SIZE);  
   memset(History[0], 0, sizeof (float) * FILTER_SIZE);  
   memset(History[1], 0, sizeof (float) * FILTER_SIZE);  
-
+  
   SetFilter(FilterSelect->GetValue(), Cutoff, Res);
+  
+  Mutex.Unlock();     
 }
-#endif
+
+void FilterPlugin::OnLPSelect(wxCommandEvent &e)
+{
+  if (!LpBtn->GetOn())
+    LpBtn->SetOn();
+  else
+    {
+      FilterSelect->SetValue(0);
+      if (BpBtn->GetOn())
+	BpBtn->SetOff();
+      else if (HpBtn->GetOn())
+	HpBtn->SetOff();
+      else if (NotchBtn->GetOn())
+	{
+	  NotchBtn->SetOff();
+	  NotchBarBtn->SetOff();
+	}
+      ApplyFilter();
+    }
+}
+
+void FilterPlugin::OnBPSelect(wxCommandEvent &e)
+{
+  if (!BpBtn->GetOn())
+    BpBtn->SetOn();
+  else
+    {
+      FilterSelect->SetValue(1);
+      if (LpBtn->GetOn())
+	LpBtn->SetOff();
+      else if (HpBtn->GetOn())
+	HpBtn->SetOff();
+      else if (NotchBtn->GetOn())
+	{
+	  NotchBtn->SetOff();
+	  NotchBarBtn->SetOff();
+	}
+      ApplyFilter();
+    }
+}
+
+void FilterPlugin::OnHPSelect(wxCommandEvent &e)
+{
+  if (!HpBtn->GetOn())
+    HpBtn->SetOn();
+  else
+    {
+      FilterSelect->SetValue(2);
+      if (LpBtn->GetOn())
+	LpBtn->SetOff();
+      else if (BpBtn->GetOn())
+	BpBtn->SetOff();
+      else if (NotchBtn->GetOn())
+	{
+	  NotchBtn->SetOff();
+	  NotchBarBtn->SetOff();
+	}
+      ApplyFilter();
+    }
+}
+
+void FilterPlugin::OnNotchSelect(wxCommandEvent &e)
+{
+  if (!NotchBtn->GetOn())
+    NotchBtn->SetOn();
+  else
+    {
+      NotchBarBtn->SetOn();
+      FilterSelect->SetValue(3);
+      if (LpBtn->GetOn())
+	LpBtn->SetOff();
+      else if (BpBtn->GetOn())
+	BpBtn->SetOff();
+      else if (HpBtn->GetOn())
+	HpBtn->SetOff();
+      ApplyFilter();
+    }
+}
+
+void FilterPlugin::OnNotchBarSelect(wxCommandEvent &e)
+{
+  if (!NotchBarBtn->GetOn())
+    NotchBarBtn->SetOn();
+  else
+    {
+      NotchBtn->SetOn();
+      FilterSelect->SetValue(3);
+      if (LpBtn->GetOn())
+	LpBtn->SetOff();
+      else if (BpBtn->GetOn())
+	BpBtn->SetOff();
+      else if (HpBtn->GetOn())
+	HpBtn->SetOff();
+      ApplyFilter();
+    }
+}
+
+void FilterPlugin::OnBypassController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);      
+      MidiBypass[0] = midi_data[0];
+      MidiBypass[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void FilterPlugin::OnCutoffController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);      
+      MidiCutoff[0] = midi_data[0];
+      MidiCutoff[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void FilterPlugin::OnResController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);      
+      MidiRes[0] = midi_data[0];
+      MidiRes[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void FilterPlugin::OnBypass(wxCommandEvent &e)
+{
+  Mutex.Lock();
+
+  Bypass = BypassBtn->GetOn();
+  if (Bypass)
+    Liquid->SetBitmap(wxBitmap(liquid_off));
+  else
+    Liquid->SetBitmap(wxBitmap(liquid_on));	      
+
+  Mutex.Unlock();
+}
+
+void FilterPlugin::OnSelect(wxCommandEvent &e)
+{
+  int f;
+
+  ApplyFilter();
+  f = FilterSelect->GetValue();
+
+  if (f == 0) 
+    {
+      LpBtn->SetOn();
+      BpBtn->SetOff();
+      HpBtn->SetOff();
+      NotchBtn->SetOff();
+      NotchBarBtn->SetOff();
+    }
+  else if (f == 1)
+    {
+      BpBtn->SetOn();
+      LpBtn->SetOff();
+      HpBtn->SetOff();
+      NotchBtn->SetOff();
+      NotchBarBtn->SetOff();
+    }
+  else if (f == 2)
+    {
+      HpBtn->SetOn();
+      BpBtn->SetOff();
+      LpBtn->SetOff();
+      NotchBtn->SetOff();
+      NotchBarBtn->SetOff();
+    }
+  else if (f == 3)
+    {
+      NotchBtn->SetOn();
+      NotchBarBtn->SetOn();
+      HpBtn->SetOff();
+      BpBtn->SetOff();
+      LpBtn->SetOff();
+    }
+}
 
 bool FilterPlugin::IsAudio()
 {
@@ -371,32 +641,26 @@ wxBitmap *FilterPlugin::GetBitmap()
 
 void FilterPlugin::OnCutoff(wxScrollEvent &e)
 {
-#ifdef FRANCIS
+  Mutex.Lock();
+
   Cutoff = CutoffFader->GetValue();
   SetFilter(FilterSelect->GetValue(), Cutoff, Res);
-#endif
 
-#ifdef MOOG
-  Cutoff = CutoffFader->GetValue() / 100.f;
-
-  if (Cutoff <= 0.f)
-    Cutoff = 0.01f;
-#endif
   cout << "Cutoff: " << Cutoff << "; Res: " << Res << endl;
+
+  Mutex.Unlock();
 }
   
 void FilterPlugin::OnResonance(wxScrollEvent &e)
 {
-#ifdef FRANCIS
+  Mutex.Lock();
+
   Res = ResFader->GetValue() / 100.f;
   SetFilter(FilterSelect->GetValue(), Cutoff, Res);
-#endif
-
-#ifdef MOOG
-  Res = ResFader->GetValue() / 100.f;
-#endif
 
   cout << "Cutoff: " << Cutoff << "; Res: " << Res << endl;
+
+  Mutex.Unlock();
 }
 
 void FilterPlugin::OnPaint(wxPaintEvent &event)

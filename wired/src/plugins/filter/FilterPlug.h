@@ -9,20 +9,43 @@
 
 #include "Plugin.h"
 #include "FaderCtrl.h"
-#include "KnobCtrl.h"
+#include "DownButton.h"
+#include "StaticPosKnob.h"
 
-#define PLUGIN_NAME	"Filter"
+#define PLUGIN_NAME		"Multi-Filter"
 
-#define IMG_FL_BG	"plugins/filter/filter.png"
-#define IMG_FL_BMP	"plugins/filter/FilterPlug.bmp"
-#define IMG_FL_FADER_BG	"plugins/filter/fader_bg.png"
-#define IMG_FL_FADER_FG	"plugins/filter/fader_fg.png"
-#define IMG_FL_KNOB_BG	"plugins/filter/knob_bg.png"
-#define IMG_FL_KNOB_FG	"plugins/filter/knob_fg.png"
+#define IMG_FL_BG		"plugins/filter/filter_bg.png"
+#define IMG_FL_BMP		"plugins/filter/FilterPlug.bmp"
+#define IMG_FL_FADER_BG		"plugins/filter/fader_bg.png"
+#define IMG_FL_FADER_FG		"plugins/filter/fader_button.png"
+
+#define IMG_FL_HP		"plugins/filter/filter_hp_dwn.png"
+#define IMG_FL_BP		"plugins/filter/filter_bp_dwn.png"
+#define IMG_FL_LP		"plugins/filter/filter_lp_dwn.png"
+#define IMG_FL_NOTCH		"plugins/filter/filter_notch_dwn.png"
+#define IMG_FL_NOTCHBAR		"plugins/filter/filter_notchbar_dwn.png"
+#define IMG_FL_HP_UP		"plugins/filter/filter_hp_up.png"
+#define IMG_FL_BP_UP		"plugins/filter/filter_bp_up.png"
+#define IMG_FL_LP_UP		"plugins/filter/filter_lp_up.png"
+#define IMG_FL_NOTCH_UP		"plugins/filter/filter_notch_up.png"
+#define IMG_FL_NOTCHBAR_UP	"plugins/filter/filter_notchbar_up.png"
+#define IMG_FL_KNOB_HP		"plugins/filter/filter_knob_hp.png"
+#define IMG_FL_KNOB_BP		"plugins/filter/filter_knob_bp.png"
+#define IMG_FL_KNOB_LP		"plugins/filter/filter_knob_lp.png"
+#define IMG_FL_KNOB_NOTCH	"plugins/filter/filter_knob_notch.png"
+
+#define IMG_LIQUID_ON		"plugins/filter/liquid-cristal_play.png"
+#define IMG_LIQUID_OFF		"plugins/filter/liquid-cristal_stop.png"
+#define IMG_BYPASS_ON		"plugins/filter/bypass_button_down.png"
+#define IMG_BYPASS_OFF		"plugins/filter/bypass_button_up.png"
+
+#define SIZE_CUTOFF		2205
+#define SIZE_RES		100
+
+#define FILTER_SIZE		5		// 3 inputs, 2 outpus
+
 
 static PlugInitInfo info;
-
-#define FRANCIS
 
 class FilterPlugin: public Plugin
 {
@@ -32,6 +55,7 @@ class FilterPlugin: public Plugin
 
   void	 Init();
   void	 Process(float **input, float **output, long sample_length);
+  void	 ProcessEvent(WiredEvent &event);
   void	 CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
 
   void	 Load(int fd, long size);
@@ -39,9 +63,7 @@ class FilterPlugin: public Plugin
   
   void  SetSamplingRate(double rate)
     { 
-#ifdef FRANCIS
       SamplePeriod = 1.f / rate;
-#endif
     }
   
   bool	 IsAudio();
@@ -49,88 +71,110 @@ class FilterPlugin: public Plugin
 
   std::string DefaultName() { return "Filter"; }
 
-#ifdef FRANCIS
   void SetFilter(int type, float cutoff, float resonance);
-  void OnSelect(wxScrollEvent &e);  
+  void OnSelect(wxCommandEvent &e);  
 
-#endif
-
+  void OnLPSelect(wxCommandEvent &e);
+  void OnBPSelect(wxCommandEvent &e);
+  void OnHPSelect(wxCommandEvent &e);
+  void OnNotchSelect(wxCommandEvent &e);
+  void OnNotchBarSelect(wxCommandEvent &e);
+  void OnBypass(wxCommandEvent &e);
   void OnButtonClick(wxCommandEvent &e); 
   void OnCutoff(wxScrollEvent &e);  
   void OnResonance(wxScrollEvent &e);  
   void OnPaint(wxPaintEvent &event);
 
+
   wxBitmap	*GetBitmap();
+
   float		Cutoff;
   float		Res;
+  bool		Bypass;
   
  protected:
+  wxMutex	Mutex;
+
   wxBitmap *bmp;   
 
   FaderCtrl *CutoffFader;
   FaderCtrl *ResFader;
   wxImage *img_fg;
   wxImage *img_bg;
+
+  wxImage *hp_on;
+  wxImage *hp_off;
+  wxImage *bp_on;
+  wxImage *bp_off;
+  wxImage *lp_on;
+  wxImage *lp_off;
+  wxImage *notch_on;
+  wxImage *notch_off;
+  wxImage *notchbar_on;
+  wxImage *notchbar_off;
+
   wxBitmap *TpBmp;
+
+  wxImage *bypass_on;
+  wxImage *bypass_off;
+  wxImage *liquid_on;;
+  wxImage *liquid_off;;
+
+  StaticBitmap *Liquid;
+  DownButton *BypassBtn;
+
+  DownButton *HpBtn;
+  DownButton *LpBtn;
+  DownButton *BpBtn;
+  DownButton *NotchBarBtn;
+  DownButton *NotchBtn;
+
+  StaticPosKnob  *FilterSelect;
 
   DECLARE_EVENT_TABLE()  
 
-#ifdef FRANCIS
-
-  KnobCtrl  *FilterSelect;
-
-#define FILTER_SIZE	5		// 3 inputs, 2 outputs
   float	History[2][FILTER_SIZE];
   float	Coefs[FILTER_SIZE];
   float	Reamp;
   float SamplePeriod;
 
-  void  SetCoeffs(double b0, double b1, double b2, double a0, double a1, double a2);
-#endif
+  void	 ApplyFilter();
 
-#ifdef MOOG
-  float Lout1;
-  float Lout2;
-  float Lout3;
-  float Lout4;
-  float Lin1;
-  float Lin2;
-  float Lin3;
-  float Lin4;
+  void   SetCoeffs(double b0, double b1, double b2, double a0, double a1, double a2);
 
-  float Rout1;
-  float Rout2;
-  float Rout3;
-  float Rout4;
-  float Rin1;
-  float Rin2;
-  float Rin3;
-  float Rin4;
+  void	 OnBypassController(wxMouseEvent &event);
+  void	 OnCutoffController(wxMouseEvent &event);
+  void	 OnResController(wxMouseEvent &event);
 
-  double f;
-  double fb;
-#endif
+  int		MidiBypass[2];
+  int		MidiCutoff[2];
+  int		MidiRes[2];
+
+  void CheckExistingControllerData(int MidiData[3]);
 };
 
 enum
   {
     Filter_Cutoff = 1,
     Filter_Res,
-    Filter_Select
+    Filter_Select,
+    Filter_Bypass,
+    Filter_HP,
+    Filter_BP,
+    Filter_LP,
+    Filter_Notch,
+    Filter_NotchBar
   };
 
-#ifdef FRANCIS
 enum
   {
     filter_lp = 0,
     filter_bp,
-    filter_notch,
     filter_hp,
+    filter_notch,
     filter_peq,
     
     filter_count
   };
-
-#endif
 
 #endif
