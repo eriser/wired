@@ -10,6 +10,7 @@
 #include "DownButton.h"
 #include "KnobCtrl.h"
 #include "HintedKnob.h"
+#include "CycleKnob.h"
 //#include "Plugin.h"
 
 #define ACT_SELECT	0
@@ -30,16 +31,22 @@
 #define MUTE_DO		"plugins/beatbox/channel_m_down.png"
 #define CH_DOT		"plugins/beatbox/level_dot.png"
 #define CH_KNOB		"plugins/beatbox/channel_knob.png"
-#define CH_KNOB_CENTER	"plugins/beatbox/channel_knob_center.png"
+#define CH_KNOB_CENTER	"plugins/beatbox/channel_knob-center.png"
 #define SOLO_UP		"plugins/beatbox/channel_s_up.png"
 #define SOLO_DO		"plugins/beatbox/channel_s_down.png"
+#define CH_KNOB_LEV_CENTER	"plugins/beatbox/channel_knob_level-center.png"
+#define CH_KNOB_PAN_CENTER	"plugins/beatbox/channel_knob_pan-center.png"
+#define CH_LEV_DOT	CH_DOT//"plugins/beatbox/channel_dot_lev.png"
+#define CH_POLY1	"plugins/beatbox/channel_knob_poly1.png"
+#define CH_POLY2	"plugins/beatbox/channel_knob_poly2.png"
+#define CH_POLY3	"plugins/beatbox/channel_knob_poly3.png"
 
 class BeatBoxChannel;
 
 class BeatNote
 {
  public:
-  BeatNote(double pos, unsigned char state, double bpos)
+  BeatNote(double pos, unsigned int state, double bpos)
     { 
       State = state;
       Position = pos;
@@ -53,7 +60,7 @@ class BeatNote
   bool		Reversed;
   float		Start, End, Len;
   float		Vel, Pitch, Lev;
-  unsigned char State;
+  unsigned int  State;
 };
 
 class BeatNoteToPlay
@@ -119,7 +126,7 @@ class BeatBoxChannel : public wxWindow
   void		OnLenChange(wxScrollEvent& event);
   void		OnPitchChange(wxScrollEvent& event);
   void		OnVelChange(wxScrollEvent& event);
-  
+  void		OnPolyphonyChange(wxCommandEvent& e);
 
   bool		IsSolo;
   
@@ -137,6 +144,9 @@ class BeatBoxChannel : public wxWindow
   unsigned int  Action;
   unsigned int* Data;
   
+  wxStaticText* VoicesLabel;
+  unsigned int	NumVoices;
+
   DownButton*	PlayButton;
   bool		Muted;
   bool		Selected;
@@ -168,7 +178,7 @@ class BeatBoxChannel : public wxWindow
   HintedKnob*	KnobLen;
   HintedKnob*	KnobPitch;
   HintedKnob*	KnobVel;
-  
+  CycleKnob*	PolyKnob;
 DECLARE_EVENT_TABLE()
 };
 
@@ -187,6 +197,7 @@ enum
     BC_End,
     BC_Len,
     BC_Pit,
-    BC_Vel
+    BC_Vel,
+    BC_Pol
   };
 #endif//__BEATBOXCHANNEL_H__

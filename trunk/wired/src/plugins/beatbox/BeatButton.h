@@ -6,6 +6,7 @@
 
 #define ID_POS		0
 #define ID_STATE	1
+#define ID_X		2
 
 #define ID_UNCLICKED	0
 #define ID_VLOW		1
@@ -20,6 +21,9 @@
 #define MEDIUM_POS	11
 #define MEDIUM_SIZE	10
 #define BTN_SIZE	28
+
+#define EVT_MOTION_OUT	31133113
+#define BEATBUTTON_ID	13377331
 
 #define GET_STATE(state, x, y)	{					\
       if ( ((x > MEDIUM_POS) && (x < MEDIUM_POS + MEDIUM_SIZE)) &&	\
@@ -43,17 +47,19 @@ class BeatButton : public wxWindow
 {
  public:
   BeatButton(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
-	     const wxSize& size, wxBitmap** bitmaps, unsigned char pos);
+	     const wxSize& size, wxBitmap** bitmaps, unsigned int pos);
   ~BeatButton();
-  unsigned char* GetData() { return Data; }
+  unsigned int* GetData() { return Data; }
   
   void OnPaint(wxPaintEvent &event);
   void OnMouseEvent(wxMouseEvent &event);
-  void SetState(unsigned char state);
+  void OnMotion(wxMouseEvent &event);
   
+  void SetState(unsigned int state);
+  unsigned int GetState() { return Data[ID_STATE]; }
  protected:
   wxBitmap**	Bitmaps;
-  unsigned char	Data[2];
+  unsigned int	Data[3];
 DECLARE_EVENT_TABLE()
 
 };

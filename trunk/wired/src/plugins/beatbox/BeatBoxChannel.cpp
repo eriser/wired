@@ -16,7 +16,8 @@ BEGIN_EVENT_TABLE(BeatBoxChannel, wxWindow)
   EVT_COMMAND_SCROLL(BC_Len, BeatBoxChannel::OnLenChange)
   EVT_COMMAND_SCROLL(BC_Pit, BeatBoxChannel::OnPitchChange)
   EVT_COMMAND_SCROLL(BC_Vel, BeatBoxChannel::OnVelChange)
-
+  
+  EVT_BUTTON(BC_Pol, BeatBoxChannel::OnPolyphonyChange)
   EVT_BUTTON(BC_Select, BeatBoxChannel::OnSelectChannel)
   EVT_BUTTON(BC_OnLoadSound, BeatBoxChannel::OnLoadSound)
   EVT_BUTTON(BC_ReverseSound, BeatBoxChannel::ReverseSound)
@@ -113,7 +114,8 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   
   /* Wave label */
   WaveLabel = 
-    new wxStaticText(this, -1, "empty", wxPoint(8,5), wxSize(20, 10));
+    new wxStaticText(this, -1, "empty", wxPoint(10,5), wxSize(25, 10), 
+		     wxALIGN_RIGHT);
   WaveLabel->SetFont(wxFont(8, wxNORMAL, wxNORMAL, wxNORMAL));
   WaveLabel->SetForegroundColour(*wxWHITE);
   WaveLabel->Show();
@@ -128,7 +130,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		wxBITMAP_TYPE_PNG);
   if (bmp_su && bmp_sd)
     SelectionButton = new DownButton( this, BC_Select, 
-				      wxPoint(4,180), 
+				      wxPoint(4,251), 
 				      wxSize(39,21),
 				      bmp_su, bmp_sd, false );
   
@@ -140,8 +142,8 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		wxBITMAP_TYPE_PNG);
   if (bmp_pu && bmp_pd)
     PlayButton = new DownButton( this, BC_OnPlaySound, 
-				 wxPoint(21,30), 
-				 wxSize(17,16),
+				 wxPoint(28,34), 
+				 wxSize(21,18),
 				 bmp_pu, bmp_pd, true );
   
   
@@ -155,7 +157,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		wxBITMAP_TYPE_PNG);
   if (bmp1 && bmp2)
     new DownButton( this, BC_OnLoadSound, 
-		    wxPoint(6,31), 
+		    wxPoint(2,34), 
 		    wxSize(14,15),
 		    bmp1, bmp2, true );
   
@@ -167,8 +169,8 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		wxBITMAP_TYPE_PNG);
   if (bmp1 && bmp2)
     new DownButton( this, BC_ReverseSound, 
-		    wxPoint(15,17), 
-		    wxSize(12,14),
+		    wxPoint(18,18), 
+		    wxSize(15,15),
 		    bmp1, bmp2, false );
   
   bmp1 =
@@ -179,7 +181,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		wxBITMAP_TYPE_PNG);
   if (bmp1 && bmp2)  
     SoloButton = 
-      new DownButton( this, BC_Solo, wxPoint(26, 17), wxSize(14,14), 
+      new DownButton( this, BC_Solo, wxPoint(33, 18), wxSize(14,14), 
 		      bmp1, bmp2, false );
 
   bmp1 =
@@ -190,52 +192,77 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		wxBITMAP_TYPE_PNG);
   if (bmp1 && bmp2)  
     MuteButton = 
-      new DownButton( this, BC_Mute, wxPoint(2,17), wxSize(14,14),
+      new DownButton( this, BC_Mute, wxPoint(1,18), wxSize(17,16),
 		      bmp1, bmp2, false );
   
-  
-  bmp1 = new wxImage(string(DataDir + string(CH_KNOB_CENTER)).c_str(),
+  bmp1 = new wxImage(string(DataDir + string(CH_KNOB_LEV_CENTER)).c_str(),
 		     wxBITMAP_TYPE_PNG);
-  bmp2 = new wxImage(string(DataDir + string(CH_DOT)).c_str(),
+  bmp2 = new wxImage(string(DataDir + string(CH_LEV_DOT)).c_str(),
+		     wxBITMAP_TYPE_PNG);
+  if (bmp1 && bmp2)
+    KnobLev = 
+      new HintedKnob(this, BC_Lev, this->GetParent(), bmp1, bmp2, 
+		     0, 127, 100, 1,
+		     wxPoint(17,59), wxSize(16,16), 
+		     GetPosition() + wxPoint(25,61));
+  
+  bmp1 = new wxImage(string(DataDir + string(CH_KNOB_PAN_CENTER)).c_str(),
+		     wxBITMAP_TYPE_PNG);
+ 
+  if (bmp1 && bmp2)
+    KnobBal = 
+      new HintedKnob(this, BC_Bal, this->GetParent(), bmp1, bmp2, 
+		     0, 100, 50, 1,
+		     wxPoint(18,92), wxSize(15,16), 
+		     GetPosition() + wxPoint(40,110));
+  
+ 
+  bmp1 = new wxImage(string(DataDir + string(CH_KNOB_CENTER)).c_str(),
 		     wxBITMAP_TYPE_PNG);
   if (bmp1 && bmp2)
     {
-      KnobLev = 
-	new HintedKnob(this, BC_Lev, this->GetParent(), bmp1, bmp2, 
-		       0, 127, 100, 1,
-		       wxPoint(17, 53), wxSize(8,8), 
-		       GetPosition() + wxPoint(25,61));
-      KnobBal = 
-	new HintedKnob(this, BC_Bal, this->GetParent(), bmp1, bmp2, 
-		       0, 100, 50, 1,
-		       wxPoint(17, 76), wxSize(8,8), 
-		       GetPosition() + wxPoint(25,84));
       KnobStart = 
 	new HintedKnob(this, BC_Sta, this->GetParent(), bmp1, bmp2, 
 		       0, 100, 0, 1,
-		       wxPoint(8, 106), wxSize(8,8), 
+		       wxPoint(8, 138), wxSize(9,9), 
 		       GetPosition() + wxPoint(16,114));
       KnobEnd = 
 	new HintedKnob(this, BC_End, this->GetParent(), bmp1, bmp2, 
 		       0, 100, 100, 1,
-		       wxPoint(24, 106), wxSize(8,8), 
+		       wxPoint(34,138), wxSize(9,9), 
 		       GetPosition() + wxPoint(32,114));
-      KnobLen = 
+      /*  KnobLen = 
 	new HintedKnob(this, BC_Len, this->GetParent(), bmp1, bmp2,
 		       0, 100, 100, 1,
 		       wxPoint(16, 127), wxSize(8,8), 
 		       GetPosition() + wxPoint(24,135));
+      */
       KnobPitch = 
 	new HintedKnob(this, BC_Pit, this->GetParent(), bmp1, bmp2, 
 		       0, 127, 100, 1,
-		       wxPoint(8, 160), wxSize(8,8), 
-		       GetPosition() + wxPoint(16,168));
+		       wxPoint(35, 215), wxSize(9,9), 
+		       GetPosition() + wxPoint(50,240));
       KnobVel = 
 	new HintedKnob(this, BC_Vel, this->GetParent(), bmp1, bmp2, 
 		       0, 127, 100, 1,
-		       wxPoint(25, 160), wxSize(8,8), 
-		       GetPosition() + wxPoint(33,168));
+		       wxPoint(6, 235), wxSize(9,9), 
+		       GetPosition() + wxPoint(25,250));
     }
+  
+  wxImage** imgs_;
+  imgs_ = new wxImage*[3];
+  imgs_[0] = new wxImage(_T(string(DataDir + string(CH_POLY1)).c_str()));
+  imgs_[1] = new wxImage(_T(string(DataDir + string(CH_POLY2)).c_str()));
+  imgs_[2] = new wxImage(_T(string(DataDir + string(CH_POLY3)).c_str()));
+  
+  NumVoices = 99;
+  PolyKnob = new CycleKnob(this, BC_Pol, 3, imgs_, 10, 1, 99, 99,
+			   wxPoint(4, 175), wxDefaultSize);
+  VoicesLabel = new wxStaticText(this, -1, "99", 
+				 wxPoint(25,180), wxSize(16,8), wxALIGN_RIGHT);
+  VoicesLabel->SetFont(wxFont(8, wxBOLD, wxBOLD, wxBOLD));
+  VoicesLabel->SetForegroundColour(*wxWHITE);
+  VoicesLabel->Show();
 }
 
 BeatBoxChannel::~BeatBoxChannel()
@@ -466,6 +493,17 @@ void BeatBoxChannel::SetWaveFile(WaveFile* wave)
   wxPostEvent(GetParent(), event);
 }
 
+void BeatBoxChannel::OnPolyphonyChange(wxCommandEvent& WXUNUSED(e))
+{
+  unsigned int n = PolyKnob->GetValue();
+  wxString s;
+  s.Printf("%d", n);
+  VoicesLabel->SetLabel(s);
+  PatternMutex->Lock();
+  NumVoices = n;
+  PatternMutex->Unlock();
+}
+
 void BeatBoxChannel::Select(void)
 {
   SelectionButton->SetOn();
@@ -475,6 +513,8 @@ void BeatBoxChannel::DeSelect(void)
 {
   SelectionButton->SetOff();
 }
+
+
 
 void BeatBoxChannel::Reset(void)
 {
