@@ -1,6 +1,26 @@
 #include "Track.h"
 #include "Sequencer.h"
 
+wxColour PatternColours[MAX_AUTO_COLOURS] = 
+  {  
+    wxColour( 50, 166, 211),				
+    wxColour( 75, 133, 204),
+    wxColour( 15,  98, 198),
+    wxColour(134, 112, 175),				
+    wxColour(133,  96, 204),
+    wxColour( 96,  47, 188),
+    wxColour(247, 186, 111),				
+    wxColour(237, 134,  66),
+    wxColour(239, 104,  75),
+    wxColour( 50, 166, 211),				
+    wxColour( 75, 133, 204),
+    wxColour( 15,  98, 198),
+    wxColour( 50, 166, 211),				
+    wxColour( 75, 133, 204),
+    wxColour( 15,  98, 198),
+    wxColour( 15,  98, 198)    
+  };
+
 Track::Track(SeqTrack *n1, SeqTrackPattern *n2, char typ) 
 {
   TrackOpt = n1;
@@ -13,6 +33,8 @@ Track::Track(SeqTrack *n1, SeqTrackPattern *n2, char typ)
     Output = Mix->AddStereoOutputChannel("MASTER");
   else
     Output = 0x0;
+
+  ColourIndex = (AudioTrackCount + MidiTrackCount - 1) % MAX_AUTO_COLOURS;
 }
 
 Track::~Track() 
@@ -33,6 +55,8 @@ AudioPattern					*Track::AddPattern(WaveFile *w, double pos)
 
   printf("Track::AddPattern(%d, %f) -- START (AUDIO) Index=%d\n", w, pos, Index);
   a = new AudioPattern(pos, w, Index);
+  a->SetDrawColour(PatternColours[ColourIndex]);
+
   SeqMutex.Lock();
   TrackPattern->Patterns.push_back(a);
   SeqMutex.Unlock();
@@ -46,6 +70,8 @@ MidiPattern					*Track::AddPattern(MidiTrack *t)
 
   printf("Track::AddPattern(%d) -- START (MIDI)\n", t);
   a = new MidiPattern(0, t, Index);
+  a->SetDrawColour(PatternColours[ColourIndex]);
+
   SeqMutex.Lock();
   TrackPattern->Patterns.push_back(a);
   a->Update();
@@ -58,6 +84,7 @@ void					Track::AddPattern(Pattern *p)
 {
   printf("Track::AddPattern(%d) -- START (PATTERN)\n", p);
   SeqMutex.Lock();
+  p->SetDrawColour(PatternColours[ColourIndex]);
   TrackPattern->Patterns.push_back(p);
   SeqMutex.Unlock();
   printf("Track::AddPattern(%d) -- OVER (PATTERN)\n", p);

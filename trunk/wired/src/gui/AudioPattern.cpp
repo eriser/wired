@@ -279,11 +279,16 @@ void				AudioPattern::OnClick(wxMouseEvent &e)
   else
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
       {
-	Pattern::PenColor = SeqPanel->ColorBox->GetColor();
-	WaveDrawer::PenColor = Pattern::PenColor;
-	WaveDrawer::RedrawBitmap(GetSize());
-	Refresh();
+	SetDrawColour(SeqPanel->ColorBox->GetColor());
       }
+}
+
+void					AudioPattern::SetDrawColour(wxColour c)
+{ 
+  Pattern::SetDrawColour(c);
+  WaveDrawer::PenColor = c;
+  RedrawBitmap(GetSize());
+  Refresh();
 }
 
 void					AudioPattern::OnDoubleClick(wxMouseEvent &e)

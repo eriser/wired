@@ -10,10 +10,7 @@
 
 extern SequencerGui *SeqPanel;
 
-
-// Comment c'est gore ...
-// Trop abuse ca les deux vieilles globales :x
-
+// Counts number of Audio and MIDI tracks created yet
 int AudioTrackCount = 0;
 int MidiTrackCount = 0;
 

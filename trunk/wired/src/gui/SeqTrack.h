@@ -83,4 +83,7 @@ enum
   SeqTrack_Mute
 };
 
+extern int AudioTrackCount;
+extern int MidiTrackCount;
+
 #endif

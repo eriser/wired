@@ -10,8 +10,10 @@
 #include "MidiPattern.h"
 #include "Channel.h"
 
-#define IS_MIDI_TRACK					0x0
-#define IS_AUDIO_TRACK					0x1
+#define IS_MIDI_TRACK			0x0
+#define IS_AUDIO_TRACK		      	0x1
+
+#define MAX_AUTO_COLOURS		16		
 
 class Track
 {
@@ -33,7 +35,8 @@ class Track
   Channel				*Output;
 
  protected:
-  char Type;
+  char					Type;
+  char					ColourIndex;
 };
 
 #endif
