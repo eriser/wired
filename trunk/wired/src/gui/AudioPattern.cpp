@@ -115,22 +115,32 @@ void					AudioPattern::OnBpmChange()
   Update();
 }
 
+void					AudioPattern::SetFullWave(WaveFile *w)
+{
+  if (!w)
+    {
+      StartWavePos = 0;
+      EndWavePos = 0;
+      NumberOfChannels = 0;
+    }
+  else
+    FileName = w->Filename;
+  WaveDrawer::SetWave(w, GetSize());
+}
+
 void					AudioPattern::SetWave(WaveFile *w)
 {
 #ifdef __DEBUG__
   cout << "WaveDrawer::StartWavePos = " << WaveDrawer::StartWavePos<< " WaveDrawer::EndWavePos = " << WaveDrawer::EndWavePos << endl;
 #endif
-  if (w)
-    {
-      Wave = w;
-      FileName = w->Filename; 
-    }
-  else
+  if (!w)
     {
       StartWavePos = 0;
       EndWavePos = 0;
+      NumberOfChannels = 0;
     }
-  //  WaveDrawer::SetWave(w, GetSize());//, StartWavePos, EndWavePos);
+  else
+    FileName = w->Filename;
   WaveDrawer::SetWave(w, GetSize(), StartWavePos, EndWavePos);
 }
 
@@ -235,7 +245,7 @@ void					AudioPattern::StopRecord()
   w = WaveCenter.AddWaveFile(s);  
   if (w)
     {
-      SetWave(w);
+      SetFullWave(w);
       Refresh();
     }
   /*
@@ -306,7 +316,7 @@ void					AudioPattern::OnLeftUp(wxMouseEvent &e)
 void					AudioPattern::Split(double pos)
 {
   AudioPattern				*p;
-#define __DEBUG__
+
 #ifdef __DEBUG__
   cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
   cout << "new pos: " << pos << endl;
@@ -315,10 +325,10 @@ void					AudioPattern::Split(double pos)
 #ifdef __DEBUG__
   cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
 #endif
-  p->StartWavePos = (long)(StartWavePos + (pos - Position) * Seq->SamplesPerMeasure);
-  p->EndWavePos = (long)(p->StartWavePos + (p->Length) * Seq->SamplesPerMeasure);
+  p->StartWavePos = (long) (StartWavePos + (pos - Position) * Seq->SamplesPerMeasure);
+  p->EndWavePos = (long) (p->StartWavePos + (p->Length) * Seq->SamplesPerMeasure);
+  p->SetDrawColour(WaveDrawer::PenColor);
   p->SetWave(Wave);
-  p->SetDrawing();
   p->SetCursor(GetCursor());
   p->Update();
   if (IsSelected())
@@ -329,7 +339,7 @@ void					AudioPattern::Split(double pos)
   SetDrawing();
   Update();
   SeqMutex.Unlock();
-  Seq->Tracks[TrackIndex]->AddPattern(p);
+  Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
 }
 
 void					AudioPattern::SetDrawColour(wxColour c)

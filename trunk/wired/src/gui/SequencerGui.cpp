@@ -492,6 +492,7 @@ Track					*SequencerGui::AddTrack(bool is_audio)
   UpdateTracks();
   SetScrolling();
   ReSizeCursors();
+  SeqView->DrawTrackLines();
   return (n);
 }
 
@@ -1113,8 +1114,6 @@ void					SequencerGui::OnColorButtonClick(wxCommandEvent &event)
 {
   vector<Pattern *>::iterator		p;
 
-  //  Tool = ID_TOOL_PAINT_SEQUENCER;
-  //  ChangeMouseCursor(wxCursor(wxCURSOR_PAINT_BRUSH));
   PenColor = ColorBox->GetColor();
   for (p = SelectedItems.begin(); p != SelectedItems.end(); p++)
     if ((*p)->IsSelected())

@@ -143,3 +143,20 @@ void						Track::RefreshFullTrack()
     (*p)->Update();
 }  
 
+void						Track::ChangeTrackColour(wxColour &c)
+{
+  vector<Pattern *>::iterator			p;
+  
+  for (p = TrackPattern->Patterns.begin(); p != TrackPattern->Patterns.end(); p++)
+    {
+      (*p)->SetDrawColour(c);
+      (*p)->Refresh();
+    }
+}
+
+void						Track::AddColoredPattern(Pattern *p)
+{
+  SeqMutex.Lock();
+  TrackPattern->Patterns.push_back(p);
+  SeqMutex.Unlock();
+}
