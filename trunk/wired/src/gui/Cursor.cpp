@@ -22,6 +22,14 @@ CursorH::CursorH(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 {
   Name = wxString(name);
   c = C;
+  /*
+  Connect(c->L->GetId(), wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
+	  &CursorH::OnMouseEvent);
+  Connect(c->L->GetId(), wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
+	  &CursorH::OnClick);
+  Connect(c->L->GetId(), wxEVT_LEFT_UP, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
+	  &CursorH::OnClickUp);
+  */
 }
 
 CursorH::~CursorH()
@@ -119,9 +127,9 @@ Cursor::Cursor(char name, int id, double initpos, Ruler *R, SequencerGui *S,
   pos = initpos;
   s = S->GetSize();
   h = R->GetClientSize().y;
+  L = new ColoredLine(SeqGUI->SeqView, id, wxPoint(0, 0), wxSize(1, s.y), cL);
   H = new CursorH(R, id, wxPoint(0, h - CURSOR_HEIGHT), wxSize(CURSOR_WIDTH, CURSOR_HEIGHT), this, name);
   H->SetBackgroundColour(cH);
-  L = new ColoredLine(SeqGUI->SeqView, id, wxPoint(0, 0), wxSize(1, s.y), cL);
   SetPos(0.0);
 }
 
@@ -169,3 +177,4 @@ BEGIN_EVENT_TABLE(CursorH, wxWindow)
   EVT_LEFT_UP(CursorH::OnClickUp)
   EVT_PAINT(CursorH::OnPaint)
 END_EVENT_TABLE()
+

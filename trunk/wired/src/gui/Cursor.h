@@ -25,10 +25,12 @@ class ColoredLine;
 class CursorH : public wxWindow
 {
   friend class		Cursor;
+  friend class		ColoredLine;
   Cursor		*c;
   wxPoint		m_click;
   wxString		Name;
 
+ protected:
   virtual void		OnMouseEvent(wxMouseEvent &e);
   virtual void		OnClick(wxMouseEvent &e);
   virtual void		OnClickUp(wxMouseEvent &e);

@@ -22,7 +22,7 @@ Pattern::Pattern(double pos, double endpos, long trackindex) :
   EndPosition = endpos;
   Length = endpos - pos;
   TrackIndex = trackindex;
-  Selected = false;
+  StateMask = 0;
   wxWindow::Move((m_pos = wxPoint((int)(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * pos - SeqPanel->CurrentXScrollPos), 
 			 (int)(TRACK_HEIGHT * SeqPanel->VertZoomFactor * trackindex - SeqPanel->CurrentYScrollPos))));
   wxWindow::SetSize((m_size = wxSize((int)(Length * MEASURE_WIDTH * SeqPanel->HoriZoomFactor),
@@ -94,7 +94,8 @@ void					Pattern::UpdateMeasure()
 
 void					Pattern::SetSelected(bool sel)
 {
-  Selected = sel;
+  StateMask = (sel) ? StateMask | PATTERN_MASK_SELECTED :
+    StateMask = StateMask & ~PATTERN_MASK_SELECTED;
   Refresh();
 }
 
@@ -128,7 +129,7 @@ void					Pattern::OnClick(wxMouseEvent &e)
 #ifdef __DEBUG__
       printf("clik at (x = %d) (y = %d)\n", m_click.x, m_click.y);
 #endif
-      if (!e.ShiftDown())	
+      if (!e.ShiftDown() || !(StateMask & PATTERN_MASK_SELECTED))
 	SeqPanel->SelectItem(this, e.ShiftDown());
     }
   else
@@ -143,14 +144,14 @@ void					Pattern::OnClick(wxMouseEvent &e)
 
 void					Pattern::OnLeftUp(wxMouseEvent &e)
 {
-  if (e.ShiftDown())
+  m_click.x = -1;
+  m_click.y = -1;
+  if (e.ShiftDown() && !(StateMask & PATTERN_MASK_DRAGGED))
     {
-      e.m_x = (e.m_x > (PATTERN_MOVE_BOX_SIZE / 2)) ? e.m_x - (PATTERN_MOVE_BOX_SIZE / 2) : 0;
-      e.m_y = (e.m_y > (PATTERN_MOVE_BOX_SIZE / 2)) ? e.m_y - (PATTERN_MOVE_BOX_SIZE / 2) : 0;
-      if ((e.m_x <= m_click.x) && (m_click.x <= (e.m_x + PATTERN_MOVE_BOX_SIZE)) &&
-	  (e.m_y <= m_click.y) && (m_click.y <= (e.m_y + PATTERN_MOVE_BOX_SIZE)))
-	SeqPanel->SelectItem(this, e.ShiftDown());
+      StateMask &= PATTERN_MASK_SELECTED;
+      SeqPanel->SelectItem(this, true);
     }
+  StateMask &= ~PATTERN_MASK_DRAGGED;
 }
 
 void					Pattern::OnDoubleClick(wxMouseEvent &e)
@@ -160,7 +161,7 @@ void					Pattern::OnDoubleClick(wxMouseEvent &e)
 
 void					Pattern::OnRightClick(wxMouseEvent &e)
 {
-  if (!Selected)
+  if (!(StateMask & PATTERN_MASK_SELECTED))
     OnClick(e);
   e.m_x += wxWindow::GetPosition().x;
   e.m_y += wxWindow::GetPosition().y;
@@ -184,6 +185,8 @@ void					Pattern::OnMotion(wxMouseEvent &e)
   double				z;
   double				mes;
   
+  if (m_click.x != -1)
+    StateMask |= (unsigned char) PATTERN_MASK_DRAGGED;
   if (IsSelected() && (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->Wave != this))
     {
       SeqMutex.Lock();

@@ -14,7 +14,7 @@
 class ColoredLine : public wxWindow
 {
   wxColour		c0loR;
-
+  
   void			OnPaint(wxPaintEvent &event);
   /*  virtual void		OnMouseEvent(wxMouseEvent &event);*/
   

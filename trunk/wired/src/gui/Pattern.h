@@ -17,6 +17,8 @@ using namespace				std;
 #define PATTERN_NAME_MARGINS		(3)
 #define PATTERN_NAME_OFFSET		(2)
 #define PATTERN_MOVE_BOX_SIZE		(4)
+#define PATTERN_MASK_SELECTED		(1)
+#define PATTERN_MASK_DRAGGED		(2)
 
 class					WaveFile;
 class					MidiEvent;
@@ -32,15 +34,14 @@ class Pattern : public wxWindow
   void					XMove(double Motion);
   void					DrawName(wxPaintDC &dc, wxSize s);
 
-  wxPoint				m_pos;
-  wxSize				m_size;
-  wxPoint				m_click;
-
   double				Position;
   double				EndPosition;
   double				Length;
-  long					TrackIndex;
-  bool					Selected;
+  unsigned long				TrackIndex;
+  unsigned char				StateMask;
+  wxPoint				m_pos;
+  wxSize				m_size;
+  wxPoint				m_click;
   wxString				Name;
   wxColour				PenColor;
   wxColour				BrushColor;
@@ -68,7 +69,7 @@ class Pattern : public wxWindow
   void					SetSize(wxSize s) { m_size = s; }
   int					GetXPos(double pos);
   
-  bool					IsSelected() { return (Selected); }
+  bool					IsSelected() { return (StateMask & PATTERN_MASK_SELECTED); }
   double				SetPosition(double p) { Position = p; }
   double				GetPosition() { return (Position); }
   double				GetEndPosition() { return (EndPosition); }
