@@ -129,8 +129,8 @@ Channel *Mixer::AddStereoOutputChannel(bool visible)
   try
     {
       chan = new Channel(true, true);
-      /*OutChannels.push_back(chan);
-	MixerPanel->AddChannel(chan);*/
+      OutChannels.push_back(chan);
+      /* MixerPanel->AddChannel(chan); */
       
     }
   catch (std::bad_alloc)
