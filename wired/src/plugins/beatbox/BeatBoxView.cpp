@@ -19,12 +19,25 @@ END_EVENT_TABLE()
 #define DEFAULT_NOTE_COLOUR	wxColour(110,110,110)
 #define SELECTION_COLOUR	wxColour(111,226,122)
 
+
+#define TEXT_COLOUR		*wxBLACK
+#define TRACK_COLOUR		wxColour(165,174,180)
+#define SELECTEDTRACK_COLOUR	wxColour(101,113,122)
+#define BAR_COLOUR		wxColour(142,155,166)
+#define SUBBAR_COLOUR		wxColour(184,204,242)
+#define SEPARATOR_COLOUR	wxColour(124,124,223)
+#define BORDER_COLOUR		wxColour(61,67,71)
+#define BGTRACK_COLOUR		BORDER_COLOUR
+#define BGVIEW_COLOUR		wxColour(242,242,255)
+#define BGRULER_COLOUR		wxColour(237,237,242)
+#define SCROLLBAR_COLOUR	wxColour(142,142,169)
+
 Ruler::Ruler(wxWindow *parent, wxWindowID id, 
 	     const wxPoint &pos, const wxSize &size,
 	     BeatBoxView* view_ptr)
-  : wxWindow(parent, id, pos, size)
+  : wxWindow(parent, id, pos, size, wxSUNKEN_BORDER)
 {
-  SetBackgroundColour(DEEP_GREEN);
+  SetBackgroundColour(BGRULER_COLOUR);
   ViewPtr = view_ptr;
 }
 
@@ -39,11 +52,11 @@ void Ruler::OnPaint(wxPaintEvent& event)
 
   PrepareDC(dc);
   size = GetSize();
-  dc.SetPen(wxPen(LIGHT_BLUE, 1, wxSOLID));
-  dc.SetBrush(wxBrush(DEEP_GREEN));
-  dc.SetTextForeground(*wxWHITE);
+  dc.SetPen(wxPen(BORDER_COLOUR, 1, wxSOLID));
+  dc.SetBrush(wxBrush(BGRULER_COLOUR));
+  dc.SetTextForeground(TEXT_COLOUR);
   dc.DrawRoundedRectangle(0, 0, size.x, size.y, 3);
-  dc.SetPen(wxPen(*wxBLACK, 1, wxSOLID));
+  dc.SetPen(wxPen(BAR_COLOUR, 1, wxSOLID));
   
   int steps = ViewPtr->DRM31->GetSteps();
   
@@ -75,9 +88,9 @@ END_EVENT_TABLE()
 BeatBoxTrackView::BeatBoxTrackView(wxWindow *parent,  wxWindowID id,
 				   const wxPoint &pos, const wxSize &size,
 				   BeatBoxView* view_ptr)
-  : wxWindow(parent, id, pos, size)
+  : wxWindow(parent, id, pos, size, wxSUNKEN_BORDER)
 {
-  SetBackgroundColour(*wxBLACK);
+  SetBackgroundColour(BGTRACK_COLOUR);
   SelectedTrack = 0;
   ViewPtr = view_ptr;
   
@@ -118,9 +131,9 @@ void BeatBoxTrackView::OnPaint(wxPaintEvent& event)
   int y = 0 - ViewPtr->YScroll;
   
   
-  dc.SetPen(*wxMEDIUM_GREY_PEN); 
-  dc.SetTextForeground(*wxBLACK);
-  dc.SetBrush(wxBrush(*wxLIGHT_GREY, wxSOLID));
+  dc.SetPen(BORDER_COLOUR); 
+  dc.SetTextForeground(TEXT_COLOUR);
+  dc.SetBrush(wxBrush(TRACK_COLOUR, wxSOLID));
   
   wxString s;
   
@@ -131,9 +144,9 @@ void BeatBoxTrackView::OnPaint(wxPaintEvent& event)
     {
       if (tr == SelectedTrack)
 	{
-	  dc.SetBrush(wxBrush(DEEP_GREEN, wxSOLID));
+	  dc.SetBrush(wxBrush(SELECTEDTRACK_COLOUR, wxSOLID));
 	  dc.DrawRoundedRectangle(0, y, TRACK_WIDTH, ViewPtr->TrackHeight, 3);
-	  dc.SetBrush(wxBrush(*wxLIGHT_GREY, wxSOLID));
+	  dc.SetBrush(wxBrush(TRACK_COLOUR, wxSOLID));
 	}
       else 
 	dc.DrawRoundedRectangle(0, y, TRACK_WIDTH, ViewPtr->TrackHeight, 3);
@@ -181,10 +194,12 @@ END_EVENT_TABLE()
 BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
 				     const wxPoint &pos, const wxSize &size,
 				     BeatBoxView* view_ptr)
-  : wxScrolledWindow(parent, id, pos, size)
+  : wxScrolledWindow(parent, id, pos, size, wxSUNKEN_BORDER)
 {
-  SetBackgroundColour(*wxWHITE);
-  SetForegroundColour(*wxWHITE);
+  //SetBackgroundColour(*wxWHITE);
+  SetBackgroundColour(BGVIEW_COLOUR);
+  
+  SetForegroundColour(BAR_COLOUR);
   CtrlDown = false;
   ViewPtr = view_ptr;
   OnSelecting = false;
@@ -372,12 +387,12 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
   
   
   
-  dc.SetBrush(wxBrush(VIEW_BGCOLOR));
+  dc.SetBrush(wxBrush(BGVIEW_COLOUR));
   dc.SetTextForeground(*wxBLACK);
     
   if (OnSelecting)
     {
-      dc.SetPen(*wxBLACK_PEN);
+      dc.SetPen(BORDER_COLOUR);
       dc.SetBrush(wxBrush(SELECTION_COLOUR, wxSOLID));
       dc.DrawRectangle(ClickPosX, ClickPosY, 
 		       MotionPosX - ClickPosX, MotionPosY - ClickPosY);
@@ -393,9 +408,9 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
        x = static_cast<long>
 	 (ceil(static_cast<double>(cpt * res))) - ViewPtr->XScroll)
     {
-      dc.SetPen(wxPen(wxColour(84,91,98), 1, wxSOLID));
+      dc.SetPen(wxPen(BAR_COLOUR, 1, wxSOLID));
       dc.DrawLine(x, 0, x, size.y);
-      dc.SetPen(wxPen(*wxLIGHT_GREY, 1, wxSOLID));
+      dc.SetPen(wxPen(SUBBAR_COLOUR, 1, wxSOLID));
       
       for (int i = 1; i <= SubDiv; i++)
       {
@@ -405,7 +420,7 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
       cpt++;
     }
   
-  dc.SetPen(wxPen(VIEW_BGCOLOR, 1, wxSOLID));
+  dc.SetPen(wxPen(BORDER_COLOUR, 1, wxSOLID));
   
   long xn, yn, cpt = 0;
   double pos;
@@ -444,7 +459,7 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
       cpt++;
       y += ViewPtr->TrackHeight;
       
-      dc.SetPen(wxPen(*wxBLACK, 1, wxSOLID));
+      dc.SetPen(wxPen(SEPARATOR_COLOUR, 1, wxSOLID));
       dc.DrawLine(0, y, GetClientSize().x, y);
       dc.SetBrush(wxBrush(*wxLIGHT_GREY, wxSOLID));
     }
@@ -846,7 +861,14 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   
   VScrollBar = new wxScrollBar(this, ID_VScroll, wxDefaultPosition, 
 			       wxSize(RULER_HEIGHT, -1), wxSB_VERTICAL);
-  
+  HScrollBar->SetBackgroundColour(SCROLLBAR_COLOUR);
+  VScrollBar->SetBackgroundColour(SCROLLBAR_COLOUR);
+  //HScrollBar->SetForegroundColour(SCROLLBAR_COLOUR);
+  //VScrollBar->SetForegroundColour(SCROLLBAR_COLOUR);
+  //HZoomSlider->SetForegroundColour(SCROLLBAR_COLOUR);
+  HZoomSlider->SetBackgroundColour(SCROLLBAR_COLOUR);
+  //VZoomSlider->SetForegroundColour(SCROLLBAR_COLOUR);
+  VZoomSlider->SetBackgroundColour(SCROLLBAR_COLOUR);
   /* ToolBar */
   
   ToolBar->AddCheckTool(ID_Magnet, "Magnet", 
