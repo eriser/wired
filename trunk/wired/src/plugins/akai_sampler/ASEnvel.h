@@ -4,28 +4,33 @@
 #include <wx/wx.h>
 #include "ASPlugin.h"
 #include "Splines.h"
+#include "ASWaveView.h"
+#include "ASKeygroupList.h"
 
 using namespace std;
 
 class ASEnvelSeg
 {
   public:
-    ASEnvelSeg(wxPoint, wxPoint);
+    ASEnvelSeg(unsigned long, wxSize);
     ~ASEnvelSeg();
-    void Paint(wxMemoryDC &, wxPoint);
+    void Paint(wxMemoryDC &, int, int, int, int);
     void AddPoint(wxPoint);
     void DelPoint(int);
     void SetPoint(int, wxPoint);
     int IsCtrlPoint(wxPoint, int);
-    bool IsOnCurve(wxPoint, int);
+    void SetSize(wxSize sz) { size = sz; ratiox = ((double)size.GetWidth()) / wl; ratioy = ((double)size.GetHeight()) / 2000.0f; }
+    void SetWaveLen(unsigned long wavelen) { wl = wavelen; ratiox = ((double)size.GetWidth()) / wl; }
+    wxPoint GetPoint(int n);
+    float GetCoef(long);
   private:
-    void Recalc();
     unsigned int nbpts;
     t_pt *points;
-    t_pt *curve;
-    Splines *spline;
-    double step;
-    unsigned int nbcurvept;
+    wxSize size;
+    unsigned long wl;
+    double ratiox;
+    double ratioy;
+    WaveFile *wav;
 };
 
 class ASEnvel : public ASPlugin
@@ -40,7 +45,13 @@ class ASEnvel : public ASPlugin
     void OnLeftDown(wxMouseEvent &e);
     void OnRightDown(wxMouseEvent &e);
     void OnLeftUp(wxMouseEvent &e);
-    static const wxString GetFXName() { return "ASEnvel"; }
+    void SetSample(ASamplerSample *ass);
+    void ApplyEnvel(WaveFile *w);
+    void OnScroll(wxScrollEvent &);
+    void OnDragThumb(wxScrollEvent &);
+    void OnStopDragThumb(wxScrollEvent &);
+    void Process(float **, int, int, long);
+    static const wxString GetFXName() { return "Envelope"; }
   private:
     void MovePt(wxPoint);
     wxBitmap *Grid;
@@ -48,6 +59,14 @@ class ASEnvel : public ASPlugin
     int dragging;
     ASEnvelSeg *seg;
     wxPoint *orig;
+    ASWaveView *wv;
+    int ZoomX;
+    int ZoomY;
+    wxScrollBar *sbx;
+    wxScrollBar *sby;
+    wxSlider *zx;
+    wxSlider *zy;
+    bool thumbdrag;
   public:
   DECLARE_EVENT_TABLE()
 };

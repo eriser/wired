@@ -148,6 +148,7 @@ class AkaiSampler : public Plugin
     void OnSampleButton(wxCommandEvent &event);
     void OnKgroupButton(wxCommandEvent &event);
     void OnEffectButton(wxCommandEvent &event);
+    void OnSelectEffect(wxCommandEvent &event);
 
     void OnOpenFile(wxCommandEvent &event);
     void OnSaveFile(wxCommandEvent &event);

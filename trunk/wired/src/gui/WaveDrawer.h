@@ -18,6 +18,7 @@ class				WaveDrawer
   wxMemoryDC			memDC;
   bool				FullDraw;
   bool				UseSettings;
+  bool        Transparent;
 
   long				StartWavePos;
   long				EndWavePos;
@@ -47,6 +48,8 @@ class				WaveDrawer
   long				GetStartWavePos() { return (StartWavePos); }
   void				SetEndWavePos(long p) { EndWavePos = p; }
   long				GetEndWavePos() { return (EndWavePos); }
+  void        SetTransparent(bool Trans) { Transparent = Trans; }
+  bool        IsTransparent() { return Transparent; }
   WaveFile			*GetWaveFile() { return (Wave); }
 };
 

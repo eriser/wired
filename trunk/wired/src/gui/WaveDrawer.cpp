@@ -23,6 +23,7 @@ WaveDrawer::WaveDrawer(const wxSize& s, bool fulldraw, bool use_settings)
   Bmp = 0;
   PenColor = CL_WAVE_DRAW;
   BrushColor = CL_WAVEDRAWER_BRUSH;
+  Transparent = false;
 }
 
 WaveDrawer::~WaveDrawer()
@@ -254,7 +255,10 @@ void					WaveDrawer::RedrawBitmap(wxSize s)
   Bmp = new wxBitmap(s.x, s.y);
   memDC.SelectObject(*Bmp);
   memDC.SetPen(PenColor);
-  memDC.SetBrush(BrushColor);
+  if (!Transparent)
+    memDC.SetBrush(BrushColor);
+  else
+    memDC.SetBrush(*wxTRANSPARENT_BRUSH);
   memDC.DrawRectangle(0, 0, s.x, s.y);
   for (int i = 0; i < s.x; i++)
     memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
@@ -279,8 +283,10 @@ void					WaveDrawer::SetSize(int x, int y)
 void					WaveDrawer::OnPaint(wxPaintDC &dc, wxSize s, wxRegionIterator &region)
 {
   dc.SetPen(PenColor);
-  dc.SetBrush(BrushColor);
-  //dc.SetBrush(*wxTRANSPARENT_BRUSH);
+  if (!Transparent)
+    dc.SetBrush(BrushColor);
+  else
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
   dc.DrawRectangle(0, 0, s.x, s.y);
   if ((Data || (Wave && !Wave->LoadedInMem)) && Bmp)
     for(; region; region++)
