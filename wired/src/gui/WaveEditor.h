@@ -32,6 +32,7 @@ enum
 };
 
 
+
 typedef struct		      s_nchoice
 {
   wxString		      s;
@@ -40,6 +41,7 @@ typedef struct		      s_nchoice
 
 
 extern const struct s_nchoice  NChoice[NB_CHOICE_NORMA+1];
+
 
 class WaveEditor : public wxPanel, public WaveEditorDrawer 
 {
