@@ -318,12 +318,10 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
   list<RackTrack *>::iterator k;
   list<Plugin *>::iterator j;
   list<Plugin *>::iterator l;
-  int pos_x = 0;
-  int pos_y = 0;
   int new_x = 0;
   int new_y = 0;
-  int flag = 0;
 
+  //SeqMutex.Lock();
   if (event->GetEventType() == wxEVT_MOUSEWHEEL)
     {
       int x, y, y1, y2, y3;
@@ -345,66 +343,88 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
       plug->Move(wxPoint(event->GetPosition().x + plug->GetPosition().x - OldX, event->GetPosition().y + plug->GetPosition().y - OldY));      
       WasDragging = true;
     }
-  else if (event->LeftIsDown())
+  //  SeqMutex.Unlock();
+  /*if(event->RightDown())
+  {  
+    if (menu)
+      delete menu;
+    menu = new wxMenu();  
+    menu->Append(10000, "Cut");
+    menu->Append(10001, "Copy");
+    menu->Append(10002, "Paste");
+    menu->AppendSeparator();
+    menu->Append(10003, "Delete");*/
+    
+    /*Connect(10000, wxEVT_COMMAND_MENU_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction)
+	  (wxCommandEventFunction)&Rack::OnCutClick);
+    Connect(10001, wxEVT_COMMAND_MENU_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction)
+	  (wxCommandEventFunction)&Rack::OnCopyClick);
+    Connect(10002, wxEVT_COMMAND_MENU_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction)
+	  (wxCommandEventFunction)&Rack::OnPasteClick);
+    Connect(NONE_SELECTED_ID, wxEVT_COMMAND_MENU_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction)
+	  (wxCommandEventFunction)&Rack::OnDeleteClick);*/
+ 
+  /*   wxPoint p(event->GetPosition());
+    PopupMenu(menu, p.x, p.y);
+  }
+  */
+   if(event->LeftDown())
     {
+      //    plug->Show(false); a voir
+      // plug->Show(true); a voir
       OldX = event->GetPosition().x;
       OldY = event->GetPosition().y;
       SetSelected(plug);
+      new_x = (event->GetPosition().x + plug->GetPosition().x);
+      new_y = (event->GetPosition().y + plug->GetPosition().y);
     }
     
   else if(event->LeftUp() && WasDragging)
     {
-      WasDragging = false;
-      SeqMutex.Lock();
-
       new_x = (event->GetPosition().x + plug->GetPosition().x);
       new_y = (event->GetPosition().y + plug->GetPosition().y);
-      for (i = RackTracks.begin(); i != RackTracks.end(); i++)
-	{
-	  pos_x = pos_x + (*i)->Units * UNIT_W ;
-	  if(((pos_x - ((*i)->Units * UNIT_W)) < new_x) && (new_x < pos_x) )
+      DndGetDest(k, l, new_x, new_y, plug);
+      ResizeTracks();
+      WasDragging = false;
+    }      
+}
+
+void Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y, Plugin *plug)
+{
+  int pos_x = 0;
+  int pos_y = 0;
+
+   for (k= RackTracks.begin(); k != RackTracks.end(); k++){
+    pos_x = pos_x + (*k)->Units * UNIT_W ;
+    if(((pos_x - ((*k)->Units * UNIT_W)) < new_x) && (new_x < pos_x) )
+      {
+	for(l = (*k)->Racks.begin(); l != (*k)->Racks.end(); l++){
+	  pos_y = pos_y + (*l)->InitInfo->UnitsY * UNIT_H;
+	  if(((pos_y - ((*l)->InitInfo->UnitsY * UNIT_H)) < new_y) && (new_y < pos_y))
 	    {
-	      for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
-		{
-		  pos_y = pos_y + (*j)->InitInfo->UnitsY * UNIT_H;
-		  if(((pos_y - ((*j)->InitInfo->UnitsY * UNIT_H)) < new_y) && (new_y < pos_y))
-		    {
-		   
-		      for (k = RackTracks.begin(); (k != RackTracks.end()) && (flag == 0); k++)  
-			{
-			  for (l = (*k)->Racks.begin(); l != (*k)->Racks.end(); l++)
-			    {
-			      if (*l == plug)
-				{
-				  //(*k)->Racks.erase(l);
-				  if((*k)->Racks.size() == 0)
-				    {
-				      //delete *k;
-				      //  RackTracks.erase(k);
-				      flag = 1;
-				    }		
-				  break;
-				}
-			    }
-			}
-		      if(plug != *j)
-			{
-			  //(*i)->Racks.insert(j,plug); 
-			  ResizeTracks();
-			}
-		      break;
-		    }
-		  else
-		    ResizeTracks(); 
-		}
+	      if((*l) == plug)
+		break;
+	      DeleteRack(plug);
+	      DndInsert(k, l, plug);
+	      //     cout << (*k)->Index << endl;
+	      //cout << (*l)->Name << endl;
 	      break;
 	    }
-	  else
-	    ResizeTracks(); 
-	  
 	}
-      SeqMutex.Unlock();
-    }
+	break;
+      }
+  }
+}
+
+void Rack::DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug)
+{
+  list<Plugin *>::iterator debug; 
+  debug = (*k)->Racks.insert(l,plug);
+  cout << (*debug)->Name << endl;
 }
 
 void Rack::HandleKeyEvent(Plugin *plug, wxKeyEvent *event)
@@ -465,8 +485,22 @@ void Rack::OnClick(wxMouseEvent &event)
   selectedPlugin = 0x0;
 }
 
+void Rack::OnPaint(wxPaintEvent &event)
+{
+  if(selectedPlugin != 0x0){
+  wxClientDC dc(selectedPlugin);
+  PrepareDC(dc);
+  dc.SetPen(wxPen(wxColour(255,0,0), 3, wxSOLID));
+  dc.SetBrush(*wxTRANSPARENT_BRUSH);
+  dc.DrawRectangle(0,0, selectedPlugin->GetSize().x, selectedPlugin->GetSize().y);
+  }
+}
+
+
 BEGIN_EVENT_TABLE(Rack, wxScrolledWindow)
+  EVT_PAINT(Rack::OnPaint)
   EVT_ENTER_WINDOW(Rack::OnHelp)
   EVT_LEFT_DOWN(Rack::OnClick)
+  EVT_RIGHT_DOWN(Rack::OnClick)
   EVT_LEFT_UP(Rack::OnClick)
 END_EVENT_TABLE()
