@@ -8,6 +8,9 @@
 #include "Colour.h"
 #include "WiredSession.h"
 #include "HelpPanel.h"
+#include "DownButton.h"
+#include "HoldButton.h"
+#include "StaticLabel.h"
 #include "../engine/Settings.h"
 
 extern WiredSession				*CurrentSession;

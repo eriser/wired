@@ -163,6 +163,11 @@ void					MidiPattern::OnClick(wxMouseEvent &e)
       SetDrawColour(SeqPanel->ColorBox->GetColor());
 }
 
+void					MidiPattern::OnLeftUp(wxMouseEvent &e)
+{
+  Pattern::OnLeftUp(e);
+}
+
 void					MidiPattern::OnDoubleClick(wxMouseEvent &e)
 {
   Pattern::OnDoubleClick(e);

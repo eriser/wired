@@ -128,7 +128,7 @@ void					*MidiThread::Entry()
 	    }
 	}
       MidiDeviceMutex.Unlock();
-      wxUsleep(1);
+      wxMilliSleep(1);
     }
   return (0x0);
 }

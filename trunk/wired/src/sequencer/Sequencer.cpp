@@ -17,6 +17,7 @@
 #include "../midi/midi.h"
 #include "../audio/WaveFile.h"
 #include "../redist/Plugin.h"
+#include "../audio/WriteWaveFile.h"
 
 wxMutex					SeqMutex;
 
@@ -72,7 +73,7 @@ void					*Sequencer::Entry()
       if ( Audio->IsOk )
 	off = false;
       else
-	wxUsleep(10);
+	wxMilliSleep(10);
       SeqMutex.Unlock();
     }
   
@@ -310,7 +311,7 @@ void					*Sequencer::Entry()
 	Mix->MixOutput(true);
       //SeqMutex.Unlock();
       if (!Audio->StreamIsStarted)
-	wxUsleep(1);      
+	wxMilliSleep(1);
       /* Cleanage des channels et buffers extra */
       for (B = ExtraBufs.begin(); B != ExtraBufs.end(); B++)
 	{

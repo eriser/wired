@@ -16,6 +16,7 @@ using namespace				std;
 #define PATTERN_NAME_HEIGHT		(10)
 #define PATTERN_NAME_MARGINS		(3)
 #define PATTERN_NAME_OFFSET		(2)
+#define PATTERN_MOVE_BOX_SIZE		(4)
 
 class					WaveFile;
 class					MidiEvent;

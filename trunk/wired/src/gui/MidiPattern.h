@@ -37,6 +37,7 @@ class			MidiPattern: public Pattern
  protected:
   void			Init();
   void			OnClick(wxMouseEvent &e);
+  void			OnLeftUp(wxMouseEvent &e);
   void			OnDoubleClick(wxMouseEvent &e);
   void			OnRightClick(wxMouseEvent &e);
   void			OnMotion(wxMouseEvent &e);

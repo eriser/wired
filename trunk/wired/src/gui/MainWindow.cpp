@@ -12,7 +12,6 @@
 #include "FileLoader.h"
 #include "WaveFile.h"
 #include "SettingWindow.h"
-#include "Settings.h"
 #include "AudioPattern.h"
 #include "AudioCenter.h"
 #include "EditMidi.h"
@@ -23,6 +22,13 @@
 #include "Rack.h"
 #include "SeqTrack.h"
 #include "MixerGui.h"
+#include "DownButton.h"
+#include "HoldButton.h"
+#include "FaderCtrl.h"
+#include "StaticLabel.h"
+#include "VUMCtrl.h"
+#include "../engine/AudioEngine.h"
+#include "../engine/Settings.h"
 #include "../engine/EngineError.h"
 #include "../sequencer/Sequencer.h"
 #include "../sequencer/Track.h"
@@ -32,54 +38,16 @@
 #include "../midi/MidiThread.h"
 #include "../plugins/PluginLoader.h"
 
-Rack				*RackPanel;
-SequencerGui			*SeqPanel;
-Sequencer			*Seq;
-AudioEngine			*Audio;
-Mixer				*Mix;
-AudioCenter			WaveCenter;
-Transport			*TransportPanel;
-PlugStartInfo			StartInfo;
-vector<PluginLoader *>		LoadedPluginsList;
-WiredSession			*CurrentSession;
-
-BEGIN_DECLARE_EVENT_TYPES()
-    DECLARE_EVENT_TYPE(wxSetCursorPos, 313131)
-END_DECLARE_EVENT_TYPES()
-
-BEGIN_EVENT_TABLE(MainWindow, wxFrame)
-  EVT_MENU(MainWin_Quit, MainWindow::OnQuit)
-  EVT_MENU(MainWin_New, MainWindow::OnNew)
-  EVT_MENU(MainWin_Save, MainWindow::OnSave)
-  EVT_MENU(MainWin_SaveAs, MainWindow::OnSaveAs)
-  //EVT_MENU(MainWin_ImportWave, MainWindow::OnImportWave)
-  EVT_MENU(MainWin_ImportMIDI, MainWindow::OnImportMIDI)
-  EVT_MENU(MainWin_ImportAKAI, MainWindow::OnImportAKAI)
-  EVT_MENU(MainWin_ExportWave, MainWindow::OnExportWave)
-  EVT_MENU(MainWin_Settings, MainWindow::OnSettings)
-  EVT_MENU(MainWin_Open, MainWindow::OnOpen)
-  EVT_MENU(MainWin_DeleteRack, MainWindow::OnDeleteRack)
-  EVT_MENU(MainWin_AddTrackAudio, MainWindow::OnAddTrackAudio)
-  EVT_MENU(MainWin_AddTrackMidi, MainWindow::OnAddTrackMidi)
-  EVT_MENU(MainWin_DeleteTrack, MainWindow::OnDeleteTrack)
-  EVT_MENU(MainWin_FloatTransport, MainWindow::OnFloatTransport) 
-  EVT_MENU(MainWin_FloatSequencer, MainWindow::OnFloatSequencer) 
-  EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack) 
-  EVT_MENU(MainWin_Undo, MainWindow::OnUndo) 
-  EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
-  EVT_MENU(MainWin_SwitchRack,  MainWindow::OnSwitchRackOptViewEvent)
-  EVT_MENU(MainWin_SwitchSeq,  MainWindow::OnSwitchSeqOptViewEvent)
-  EVT_MENU(MainWin_FullScreen,  MainWindow::OnFullScreen)
-  EVT_MENU(MainWin_About, MainWindow::OnAbout)
-  EVT_MENU(MainWin_IntHelp, MainWindow::OnIntegratedHelp)
-  EVT_CLOSE(MainWindow::OnClose)
-  EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
-  EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
-  EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
-  //EVT_IDLE(MainWindow::OnIdle)
-  //EVT_TEXT_MAXLEN(101010, MainWindow::OnSetPosition)
-  //EVT_PLAYPOSITION(313131, MainWindow::OnSetPosition)
-END_EVENT_TABLE()
+Rack					*RackPanel;
+SequencerGui				*SeqPanel;
+Sequencer				*Seq;
+AudioEngine				*Audio;
+Mixer					*Mix;
+AudioCenter				WaveCenter;
+Transport				*TransportPanel;
+PlugStartInfo				StartInfo;
+vector<PluginLoader *>			LoadedPluginsList;
+WiredSession				*CurrentSession;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
@@ -682,7 +650,7 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 	    up = 99;
 	  Progress->Update(up);
 	  //cout << "pos: " << Seq->CurrentPos << "; end: " << Seq->EndLoopPos << endl;
-	  wxUsleep(50);
+	  wxMilliSleep(50);
 	  SeqMutex.Lock();
 	  if (Seq->CurrentPos >= Seq->EndLoopPos)
 	    done = true;
@@ -1201,3 +1169,42 @@ void					MainWindow::OnIntegratedHelp(wxCommandEvent &event)
 {
   OptPanel->ShowHelp();
 }
+
+BEGIN_DECLARE_EVENT_TYPES()
+    DECLARE_EVENT_TYPE(wxSetCursorPos, 313131)
+END_DECLARE_EVENT_TYPES()
+
+BEGIN_EVENT_TABLE(MainWindow, wxFrame)
+  EVT_MENU(MainWin_Quit, MainWindow::OnQuit)
+  EVT_MENU(MainWin_New, MainWindow::OnNew)
+  EVT_MENU(MainWin_Save, MainWindow::OnSave)
+  EVT_MENU(MainWin_SaveAs, MainWindow::OnSaveAs)
+  //EVT_MENU(MainWin_ImportWave, MainWindow::OnImportWave)
+  EVT_MENU(MainWin_ImportMIDI, MainWindow::OnImportMIDI)
+  EVT_MENU(MainWin_ImportAKAI, MainWindow::OnImportAKAI)
+  EVT_MENU(MainWin_ExportWave, MainWindow::OnExportWave)
+  EVT_MENU(MainWin_Settings, MainWindow::OnSettings)
+  EVT_MENU(MainWin_Open, MainWindow::OnOpen)
+  EVT_MENU(MainWin_DeleteRack, MainWindow::OnDeleteRack)
+  EVT_MENU(MainWin_AddTrackAudio, MainWindow::OnAddTrackAudio)
+  EVT_MENU(MainWin_AddTrackMidi, MainWindow::OnAddTrackMidi)
+  EVT_MENU(MainWin_DeleteTrack, MainWindow::OnDeleteTrack)
+  EVT_MENU(MainWin_FloatTransport, MainWindow::OnFloatTransport) 
+  EVT_MENU(MainWin_FloatSequencer, MainWindow::OnFloatSequencer) 
+  EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack) 
+  EVT_MENU(MainWin_Undo, MainWindow::OnUndo) 
+  EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
+  EVT_MENU(MainWin_SwitchRack,  MainWindow::OnSwitchRackOptViewEvent)
+  EVT_MENU(MainWin_SwitchSeq,  MainWindow::OnSwitchSeqOptViewEvent)
+  EVT_MENU(MainWin_FullScreen,  MainWindow::OnFullScreen)
+  EVT_MENU(MainWin_About, MainWindow::OnAbout)
+  EVT_MENU(MainWin_IntHelp, MainWindow::OnIntegratedHelp)
+  EVT_CLOSE(MainWindow::OnClose)
+  EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
+  EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
+  EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
+  //EVT_IDLE(MainWindow::OnIdle)
+  //EVT_TEXT_MAXLEN(101010, MainWindow::OnSetPosition)
+  //EVT_PLAYPOSITION(313131, MainWindow::OnSetPosition)
+END_EVENT_TABLE()
+
