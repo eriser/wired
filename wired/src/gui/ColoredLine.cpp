@@ -42,6 +42,6 @@ void			ColoredLine::SetColor(wxColour c)
 
 void			ColoredLine::ReSize(unsigned long h)
 {
-  SetSize(-1, (int) h);
+  SetSize(-1, -1, -1, (int) h, wxSIZE_USE_EXISTING);
   Refresh();
 }

@@ -151,10 +151,10 @@ bool WiredSession::Load()
 	  t->TrackOpt->SetRecording(track.Record);
 	  t->TrackOpt->SetDeviceId(track.DeviceId);
 
-	  list<RackTrack *>::iterator it;
-	  list<Plugin *>::iterator it2;
-	  int id = 0;
-	  bool done = false;
+	  list<RackTrack *>::iterator		it;
+	  list<Plugin *>::iterator		it2;
+	  int					id = 0;
+	  bool					done = false;
 
 	  for (it = RackPanel->RackTracks.begin(); 
 	       (it != RackPanel->RackTracks.end()) && !done; it++)
@@ -192,22 +192,20 @@ bool WiredSession::Load()
 		  audio_pattern.Filename = new char[audio_pattern.FilenameLen + 1];
 		  read(fd, audio_pattern.Filename, audio_pattern.FilenameLen);	  
 		  audio_pattern.Filename[audio_pattern.FilenameLen] = 0;
-
-		  AudioPattern *p = new AudioPattern(pattern.Position, 
-						     pattern.EndPosition, i);
-		  WaveFile *w = WaveCenter.AddWaveFile(audio_pattern.Filename);
+		  AudioPattern	*p = new AudioPattern(pattern.Position, 
+						      pattern.EndPosition, i);
+		  WaveFile	*w = WaveCenter.AddWaveFile(audio_pattern.Filename);
 		  if (w)
 		    {		      
-		      p->SetWave(w);
 		      p->SetStartWavePos(audio_pattern.StartWavePos);
 		      p->SetEndWavePos(audio_pattern.EndWavePos);
+		      p->SetWave(w);
 		      p->FileName = audio_pattern.Filename;
 		      t->AddPattern(p);
-		  }
+		    }
 		  else
 		    cout << "[WIREDSESSION] Could not open file: " 
 			 << audio_pattern.Filename << endl;
-
 		  delete audio_pattern.Filename;
 		}
 	      else
@@ -215,8 +213,8 @@ bool WiredSession::Load()
 		  read(fd, &midi_pattern, sizeof (midi_pattern));	
 		  MidiPattern *p = new MidiPattern(pattern.Position, 
 						   pattern.EndPosition, i);
-		  MidiEvent *midi_e;
-
+		  MidiEvent			*midi_e;
+		  
 		  p->SetPPQN(midi_pattern.PPQN);
 		  for (int count = 0; count < midi_pattern.NumberOfEvents; count++)
 		    {
@@ -230,7 +228,6 @@ bool WiredSession::Load()
 	      delete pattern.Name;	     
 	    }
 	}
-
       close(fd);
       return (true);
     }
@@ -364,7 +361,7 @@ bool WiredSession::Save()
 	      // AudioPattern / MidiPattern
 	      if ((*k)->IsAudioTrack())
 		{
-		  AudioPattern *p = (AudioPattern *)*l;
+		  AudioPattern			*p = (AudioPattern *)*l;
 		  audio_pattern.StartWavePos = p->GetStartWavePos();
 		  audio_pattern.EndWavePos = p->GetEndWavePos();
 		  audio_pattern.FilenameLen = p->FileName.size();

@@ -59,7 +59,7 @@ using namespace std;
 #define COLOR_UP			"ihm/toolbar/color_up.png"
 #define COLOR_DOWN			"ihm/toolbar/color_down.png"
 
-#define COLORBOX_MARGINS		(7)
+#define COLORBOX_MARGINS		(8)
 
 enum
   {
@@ -82,8 +82,12 @@ extern const struct s_combo_choice	ComboChoices[NB_COMBO_CHOICES + 1];
 
 class SequencerView: public wxScrolledWindow
 {
+ private:
+  unsigned long			TotalWidth;
+  unsigned long			TotalHeight;
   long				XScroll;
   long				YScroll;
+
  public:
   SequencerView(wxWindow *parent, const wxPoint &pos, const wxSize &size);
   ~SequencerView();
@@ -98,6 +102,11 @@ class SequencerView: public wxScrolledWindow
   void				SetYScroll(long y, long range, long seqwidth);
   void				SetYScrollValue(long Y);
   long				GetYScroll();
+  unsigned long			GetTotalWidth();
+  void				SetTotalWidth(unsigned long w);
+  unsigned long			GetTotalHeight();
+  void				SetTotalHeight(unsigned long h);
+
  protected:
   void				DrawMeasures();
 
@@ -158,6 +167,7 @@ class SequencerGui: public wxPanel
   void				PutCursorsOnTop();
   void				ReSizeCursors();
   void				RedrawCursors();
+  void				RedrawTrackLines();
   void				SetCurrentPos(double pos);
   void				SetBeginLoopPos(double pos);
   void				SetEndLoopPos(double pos);
@@ -200,7 +210,7 @@ class SequencerGui: public wxPanel
   void				OnMagnetismChange(wxCommandEvent &event);
   void				OnColorButtonClick(wxCommandEvent &event);
   void				OnColoredBoxClick(wxCommandEvent &event);
-
+  
   bool				DoCut;
   
   float				HoriZoomFactor;
@@ -262,6 +272,6 @@ class SequencerGui: public wxPanel
   DECLARE_EVENT_TABLE()
 };
 
-extern SequencerGui *SeqPanel;
+extern SequencerGui		*SeqPanel;
 
 #endif

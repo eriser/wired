@@ -384,7 +384,7 @@ void					Sequencer::StopRecord()
 
 void					Sequencer::AddTrack(Track *t)
 {
-  SeqMutex.Lock();  
+  SeqMutex.Lock();
   t->Index = Tracks.size();
   Tracks.push_back(t);
   SeqMutex.Unlock();
