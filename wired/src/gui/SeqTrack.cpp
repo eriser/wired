@@ -3,16 +3,21 @@
 
 #include "SeqTrack.h"
 #include "MainWindow.h"
+#include "SequencerGui.h"
 #include "Colour.h"
 #include "Settings.h"
 #include "ChannelGui.h"
 #include "HelpPanel.h"
-
-extern SequencerGui *SeqPanel;
+#include "ChoiceButton.h"
+#include "Rack.h"
+#include "Plugin.h"
+#include "../midi/MidiInDevice.h"
+#include "../midi/MidiThread.h"
+#include "../sequencer/Sequencer.h"
 
 // Counts number of Audio and MIDI tracks created yet
-int AudioTrackCount = 0;
-int MidiTrackCount = 0;
+int				AudioTrackCount = 0;
+int				MidiTrackCount = 0;
 
 SeqTrack::SeqTrack(long index, wxWindow *parent, 
 		   const wxPoint& pos = wxDefaultPosition, 

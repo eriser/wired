@@ -1,7 +1,14 @@
+#include <wx/colour.h>
 #include "Track.h"
 #include "Sequencer.h"
+#include "../mixer/Mixer.h"
+#include "../gui/Pattern.h"
+#include "../gui/AudioPattern.h"
+#include "../gui/MidiPattern.h"
+#include "../gui/SeqTrack.h"
+#include "../gui/SeqTrackPattern.h"
 
-wxColour PatternColours[MAX_AUTO_COLOURS] = 
+wxColour				PatternColours[MAX_AUTO_COLOURS] = 
   {  
     // blue
     wxColour( 50, 166, 211),				
@@ -58,7 +65,7 @@ Track::~Track()
 
 AudioPattern					*Track::AddPattern(WaveFile *w, double pos)
 {
-  AudioPattern				*a;
+  AudioPattern					*a;
 
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d, %f) -- START (AUDIO) Index=%d\n", w, pos, Index);
@@ -78,7 +85,7 @@ AudioPattern					*Track::AddPattern(WaveFile *w, double pos)
 
 MidiPattern					*Track::AddPattern(MidiTrack *t)
 {
-  MidiPattern				*a;
+  MidiPattern					*a;
 
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d) -- START (MIDI)\n", t);
@@ -97,7 +104,7 @@ MidiPattern					*Track::AddPattern(MidiTrack *t)
   return (a);
 }
 
-void					Track::AddPattern(Pattern *p)
+void						Track::AddPattern(Pattern *p)
 {
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d) -- START (PATTERN)\n", p);
@@ -111,9 +118,9 @@ void					Track::AddPattern(Pattern *p)
 #endif
 }
 
-void					Track::UpdateIndex(long trackindex)
+void						Track::UpdateIndex(long trackindex)
 {  
-  vector<Pattern *>::iterator		k;
+  vector<Pattern *>::iterator			k;
 
 #ifdef __DEBUG__
   printf("Track::UpdateIndex(%d) -- START\n", trackindex);
@@ -125,12 +132,3 @@ void					Track::UpdateIndex(long trackindex)
   printf("Track::UpdateIndex(%d) -- OVER\n", trackindex);
 #endif
 }
-
-
-
-
-
-
-
-
-

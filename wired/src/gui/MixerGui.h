@@ -4,63 +4,59 @@
 #ifndef __MIXERGUI_H__
 #define __MIXERGUI_H__
 
+using namespace					std;
+
+#include <vector>
 #include <wx/wx.h>
-#include "FaderCtrl.h"
-#include "VUMCtrl.h"
-#include "ChannelGui.h"
-//#include "Track.h"
 
-#define ID_MIXER_REFRESH	101020
-#define TYPE_MIXER_REFRESH	9876600
+#define ID_MIXER_REFRESH			(101020)
+#define TYPE_MIXER_REFRESH			(9876600)
+#define CHANNELGUI_WIDTH			(100)
+#define CHANNELGUI_HEIGHT			(131)
+#define FADERFG					"ihm/mixer/fader_fg.png"
+#define FADERBG					"ihm/mixer/fader_bg.png"
+#define MIXERLOCKUP				"ihm/mixer/mixer_lock_up.png"
+#define MIXERLOCKDOWN				"ihm/mixer/mixer_lock_down.png"
+#define MIXERHPUP				"ihm/mixer/mixer_hp_up.png"
+#define MIXERHPDOWN				"ihm/mixer/mixer_hp_down.png"
 
-#define CHANNELGUI_WIDTH	100
-#define CHANNELGUI_HEIGHT	131
+class						Channel;
+class						ChannelGui;
+class						VUMCtrl;
+class						FaderCtrl;
 
-#define FADERFG "ihm/mixer/fader_fg.png"
-#define FADERBG "ihm/mixer/fader_bg.png"
-#define MIXERLOCKUP "ihm/mixer/mixer_lock_up.png"
-#define MIXERLOCKDOWN "ihm/mixer/mixer_lock_down.png"
-#define MIXERHPUP "ihm/mixer/mixer_hp_up.png"
-#define MIXERHPDOWN "ihm/mixer/mixer_hp_down.png"
-
-DEFINE_EVENT_TYPE(wxMixerRefresh)
-
-class MixerGui : public wxScrolledWindow
+class						MixerGui : public wxScrolledWindow
 {
  public:
   MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size);
   ~MixerGui();
   
-  void OnScroll(wxScrollEvent &event);
-  void OnMasterChange(wxCommandEvent &event);
-  void RemoveChannel(Channel *);
-  void RemoveChannel(ChannelGui *);
-  float	  MasterLeft;
-  float	  MasterRight;
-  ChannelGui* AddChannel(Channel *, const wxString&);
-  void AddMasterChannel(Channel *channel);
-  void SetLabelByChan(Channel*, const wxString&);
-  //void SetChanOpt(Track*);
-  ChannelGui* GetGuiByChan(Channel*);
+  void						OnScroll(wxScrollEvent &event);
+  void						OnMasterChange(wxCommandEvent &event);
+  void						RemoveChannel(Channel *);
+  void						RemoveChannel(ChannelGui *);
+  float						MasterLeft;
+  float						MasterRight;
+  void						AddMasterChannel(Channel *channel);
+  void						SetLabelByChan(Channel*, const wxString&);
+  ChannelGui*					AddChannel(Channel *, const wxString&);
+  ChannelGui*					GetGuiByChan(Channel*);
  protected:
   /* Master Channel stuff */
-  VUMCtrl *vuMasterLeft;
-  VUMCtrl *vuMasterRight;
-  FaderCtrl *MasterLeftFader;
-  FaderCtrl *MasterRightFader;
-  
-  wxImage *ImgFaderBg;
-  wxImage *ImgFaderFg;
-  wxImage *ImgLockUp;
-  wxImage *ImgLockDown;
-  wxImage *ImgHpUp;
-  wxImage *ImgHpDown;
+  void						UpdateChannelsPos(void);
 
-  vector<ChannelGui*> ChannelGuiVector;  
+  VUMCtrl					*vuMasterLeft;
+  VUMCtrl					*vuMasterRight;
+  FaderCtrl					*MasterLeftFader;
+  FaderCtrl					*MasterRightFader;
+  wxImage					*ImgFaderBg;
+  wxImage					*ImgFaderFg;
+  wxImage					*ImgLockUp;
+  wxImage					*ImgLockDown;
+  wxImage					*ImgHpUp;
+  wxImage					*ImgHpDown;
+  vector<ChannelGui*>				ChannelGuiVector;  
   
-  void		UpdateChannelsPos(void);
-  
-    
   DECLARE_EVENT_TABLE()
 };
 
@@ -70,6 +66,8 @@ enum
   MixerGui_Right
 };
 
-extern MixerGui *MixerPanel;
+extern MixerGui					*MixerPanel;
 
-#endif
+DEFINE_EVENT_TYPE(wxMixerRefresh)
+
+#endif/*__MIXERGUI_H__*/

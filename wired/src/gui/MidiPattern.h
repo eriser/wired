@@ -8,9 +8,12 @@ using namespace std;
 
 #include <list>
 #include "Pattern.h"
-#include "midi.h"
 
-class MidiPattern: public Pattern
+class			MidiTrack;
+class			MidiEvent;
+class			MidiFileEvent;
+
+class			MidiPattern: public Pattern
 {
  public:
   MidiPattern(double pos, double endpos, long trackindex);
@@ -21,7 +24,7 @@ class MidiPattern: public Pattern
   void			AddEvent(MidiFileEvent *event);
   void			Update();
   void			SetSelected(bool sel);
-  unsigned short	GetPPQN() { return ppqn; }
+  unsigned short	GetPPQN() { return (ppqn); }
   void			SetPPQN(unsigned short p) { ppqn = p; }
   void			SetDrawColour(wxColour c);
   Pattern		*CreateCopy(double pos);
@@ -41,7 +44,7 @@ class MidiPattern: public Pattern
   void			OnMoveToCursorClick(wxCommandEvent &e);
   void			OnPaint(wxPaintEvent &e);
   void			OnHelp(wxMouseEvent &event);
-  
+  vector<MidiEvent *>	GetEvents() { return (Events); };
   wxBitmap		*Bmp;
   wxMemoryDC		memDC;
   unsigned short	ppqn;

@@ -4,17 +4,21 @@
 #ifndef __PATTERN_H__
 #define __PATTERN_H__
 
-using namespace std;
-
 #include <string>
+#include <vector>
 #include <wx/string.h>
 #include <wx/wx.h>
 
-#define PATTERN_DRAG_SCROLL_UNIT		(MEASURE_WIDTH + 1)
-#define PATTERN_NAME_WIDTH			(42)
-#define PATTERN_NAME_HEIGHT			(10)
-#define PATTERN_NAME_MARGINS			(3)
-#define PATTERN_NAME_OFFSET			(2)
+using namespace				std;
+
+#define PATTERN_DRAG_SCROLL_UNIT	(MEASURE_WIDTH + 1)
+#define PATTERN_NAME_WIDTH		(42)
+#define PATTERN_NAME_HEIGHT		(10)
+#define PATTERN_NAME_MARGINS		(3)
+#define PATTERN_NAME_OFFSET		(2)
+
+class					WaveFile;
+class					MidiEvent;
 
 class Pattern : public wxWindow
 {
@@ -40,19 +44,21 @@ class Pattern : public wxWindow
   wxColour				PenColor;
   wxColour				BrushColor;
 
-
  public:
   Pattern(double pos, double endpos, long trackindex);
   virtual ~Pattern();
 
   void					Modify(double newpos = -1, double newendpos = -1, 
 					       long newtrackindex = -1, double newlength = -1);
-  virtual void				Update();
   void					UpdateMeasure();
+  virtual void				Update();
   virtual void				SetSelected(bool sel);
-  virtual Pattern			*CreateCopy(double pos) = 0x0;
   virtual void				OnBpmChange() {}
   virtual void				SetDrawColour(wxColour c) { PenColor = c; }
+  virtual WaveFile			*GetWave() {}
+  virtual vector<MidiEvent *>	        GetEvents() { return (vector<MidiEvent *>::vector()); };
+
+  virtual Pattern			*CreateCopy(double pos) = 0x0;
 
   wxPoint				GetMPosition() { return (m_pos); }
   void					SetMPosition(wxPoint p) { m_pos = p; }

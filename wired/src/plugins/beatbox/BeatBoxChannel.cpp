@@ -31,7 +31,7 @@ BEGIN_EVENT_TABLE(BeatBoxChannel, wxWindow)
 END_EVENT_TABLE()
 
 
-BeatNoteToPlay::BeatNoteToPlay(int notenum, float vel, 
+inline BeatNoteToPlay::BeatNoteToPlay(int notenum, float vel, 
 				      unsigned long delta,
 				      BeatBoxChannel* c, float** b)
 {
@@ -39,7 +39,7 @@ BeatNoteToPlay::BeatNoteToPlay(int notenum, float vel,
       NumChan = c->Id;
       Delta = delta;
       Lev = c->Lev;
-      Vel = vel;
+      Vel = c->Vel * vel;
       Pitch = c->Pitch;
       Start = c->Start;
       End = c->End;
@@ -313,156 +313,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&BeatBoxChannel::OnPolHelp);
   
-  // Midi controls
-  
-  MidiVolume[0] = -1;
-  MidiVolume[1] = 100;
-  MidiPan[0] = -1;
-  MidiPan[1] = 0;
-  MidiStart[0] = -1;
-  MidiStart[1] = 0;
-  MidiEnd[0] = -1;
-  MidiEnd[1] = 0;
-  MidiPoly[0] = -1;
-  MidiPoly[1] = 0;
-  MidiPitch[0] = -1;
-  MidiPitch[1] = 100;
-  MidiVel[0] = -1;
-  MidiVel[1] = 100;
-  
-  Connect(BC_Lev, wxEVT_RIGHT_DOWN,
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&BeatBoxChannel::OnLevController);
-  Connect(BC_Pan, wxEVT_RIGHT_DOWN,
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&BeatBoxChannel::OnPanController);
-  Connect(BC_Sta, wxEVT_RIGHT_DOWN,
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&BeatBoxChannel::OnStartController);
-  Connect(BC_End, wxEVT_RIGHT_DOWN,
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&BeatBoxChannel::OnEndController);
-  Connect(BC_Pit, wxEVT_RIGHT_DOWN,
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&BeatBoxChannel::OnPitchController);
-  Connect(BC_Vel, wxEVT_RIGHT_DOWN,
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&BeatBoxChannel::OnVelController);
-  Connect(BC_Pol, wxEVT_RIGHT_DOWN,
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&BeatBoxChannel::OnPolyController);
 }
-
-void BeatBoxChannel::OnLevController(wxMouseEvent& WXUNUSED(event))
-{
-  int *midi_data;
-  midi_data = new int[3];
-  if (DRM31->ShowMidiController(&midi_data))
-    {
-      //Mutex.Lock();
-      DRM31->CheckExistingControllerData(midi_data);      
-      MidiVolume[0] = midi_data[0];
-      MidiVolume[1] = midi_data[1];
-
-      //Mutex.Unlock();
-    }
-  delete midi_data;
-}
-
-void BeatBoxChannel::OnPanController(wxMouseEvent& WXUNUSED(event))
-{
-  int *midi_data;
-  midi_data = new int[3];
-  if (DRM31->ShowMidiController(&midi_data))
-    {
-      //Mutex.Lock();
-      DRM31->CheckExistingControllerData(midi_data);      
-      MidiPan[0] = midi_data[0];
-      MidiPan[1] = midi_data[1];
-
-      //Mutex.Unlock();
-    }
-  delete midi_data;
-}
-
-void BeatBoxChannel::OnStartController(wxMouseEvent& WXUNUSED(event))
-{
-  int *midi_data;
-  midi_data = new int[3];
-  if (DRM31->ShowMidiController(&midi_data))
-    {
-      //Mutex.Lock();
-      DRM31->CheckExistingControllerData(midi_data);      
-      MidiStart[0] = midi_data[0];
-      MidiStart[1] = midi_data[1];
-
-      //Mutex.Unlock();
-    }
-  delete midi_data;
-}
-
-void BeatBoxChannel::OnEndController(wxMouseEvent& WXUNUSED(event))
-{
-  int *midi_data;
-  midi_data = new int[3];
-  if (DRM31->ShowMidiController(&midi_data))
-    {
-      //Mutex.Lock();
-      DRM31->CheckExistingControllerData(midi_data);      
-      MidiEnd[0] = midi_data[0];
-      MidiEnd[1] = midi_data[1];
-
-      //Mutex.Unlock();
-    }
-  delete midi_data;
-}
-
-void BeatBoxChannel::OnPitchController(wxMouseEvent& WXUNUSED(event))
-{
-  int *midi_data;
-  midi_data = new int[3];
-  if (DRM31->ShowMidiController(&midi_data))
-    {
-      //Mutex.Lock();
-      DRM31->CheckExistingControllerData(midi_data);      
-      MidiPitch[0] = midi_data[0];
-      MidiPitch[1] = midi_data[1];
-      //Mutex.Unlock();
-    }
-  delete midi_data;
-}
-
-void BeatBoxChannel::OnVelController(wxMouseEvent& WXUNUSED(event))
-{
-  int *midi_data;
-  midi_data = new int[3];
-  if (DRM31->ShowMidiController(&midi_data))
-    {
-      //Mutex.Lock();
-      DRM31->CheckExistingControllerData(midi_data);      
-      MidiVel[0] = midi_data[0];
-      MidiVel[1] = midi_data[1];
-
-      //Mutex.Unlock();
-    }
-  delete midi_data;
-}
-
-void BeatBoxChannel::OnPolyController(wxMouseEvent& WXUNUSED(event))
-{
-  int *midi_data;
-  midi_data = new int[3];
-  if (DRM31->ShowMidiController(&midi_data))
-    {
-      //Mutex.Lock();
-      DRM31->CheckExistingControllerData(midi_data);      
-      MidiPoly[0] = midi_data[0];
-      MidiPoly[1] = midi_data[1];
-      //Mutex.Unlock();
-    }
-  delete midi_data;
-}
-
 
 BeatBoxChannel::~BeatBoxChannel()
 {
@@ -527,6 +378,7 @@ void BeatBoxChannel::OnPanChange(wxScrollEvent& WXUNUSED(event))
 void BeatBoxChannel::OnStartChange(wxScrollEvent& WXUNUSED(event))
 {
   float start = static_cast<float>(KnobStart->GetValue()/100.0f);
+  long sample_start = 
   PatternMutex->Lock();
   Start = start;
   PatternMutex->Unlock();
@@ -726,82 +578,6 @@ void BeatBoxChannel::OnPolyphonyChange(wxCommandEvent& WXUNUSED(e))
   Voices = n;
   DRM31->SetVoices();
   PatternMutex->Unlock();
-}
-
-void BeatBoxChannel::SetLev(int lev)
-{
-  float mlevel = lev / 100.0f;
-  PatternMutex->Lock();
-  Lev = mlevel;
-  PatternMutex->Unlock();
-  KnobLev->SetValue(lev);
-}
-
-void BeatBoxChannel::SetPan(int pan)
-{
-  int val = pan;
-  float panl;
-  float panr;
-  
-  if (val == 50)
-    panl = panr = 1.f;
-  else if (val < 50)
-    {
-      panl = 1.f;
-      panr = val * 2 / 100.f;
-    }
-  else
-    {
-      panr = 1.f;
-      panl = (100 - ((val-50)*2)) / 100.f;
-    }
-    
-  PatternMutex->Lock();
-  Pan[0] = panl;
-  Pan[1] = panr;
-  PatternMutex->Unlock();
-  KnobPan->SetValue(pan);
-}
-
-void BeatBoxChannel::SetStart(int start)
-{
-  float s = start / 100.f;
-  PatternMutex->Lock();
-  Start = s;
-  PatternMutex->Unlock();
-  KnobStart->SetValue(start);
-}
-
-
-void BeatBoxChannel::SetEnd(int end)
-{
-  float e = end/100.f;
-  PatternMutex->Lock();
-  End = e;
-  PatternMutex->Unlock();
-  KnobEnd->SetValue(end);
-}
-
-void BeatBoxChannel::SetPitch(int pitch)
-{
-  float p = pitch/100.f;
-  PatternMutex->Lock();
-  Pitch = p;
-  PatternMutex->Unlock();
-  KnobPitch->SetValue(pitch);
-}
-
-void BeatBoxChannel::SetVel(int vel)
-{
-  float v = vel/100.f;
-  PatternMutex->Lock();
-  Vel = v;
-  PatternMutex->Unlock();
-  KnobVel->SetValue(vel);
-}
-
-void BeatBoxChannel::SetPolyphony(int voices)
-{
 }
 
 void BeatBoxChannel::Select(void)

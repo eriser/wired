@@ -19,7 +19,7 @@ WaveFile *AudioCenter::AddWaveFile(string filename)
   
   try
     {
-      w = new WaveFile(filename, false, WaveFile::rwrite);
+      w = new WaveFile(filename, true, WaveFile::rwrite);
       WaveFiles.push_back(w);
     }
   catch (...)

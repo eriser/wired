@@ -6,15 +6,14 @@
 #include "HelpPanel.h"
 #include "AudioEngine.h"
 #include "OptionPanel.h"
+#include "MixerGui.h"
+#include "../sequencer/Sequencer.h"
+#include "../mixer/Mixer.h"
+#include "../redist/Plugin.h"
+#include "../plugins/PluginLoader.h"
 
-extern wxMutex SeqMutex;
-int	RackCount = 0;
-
-BEGIN_EVENT_TABLE(Rack, wxScrolledWindow)
-  EVT_ENTER_WINDOW(Rack::OnHelp)
-  EVT_LEFT_DOWN(Rack::OnClick)
-  EVT_LEFT_UP(Rack::OnClick)
-END_EVENT_TABLE()
+extern wxMutex			SeqMutex;
+int				RackCount = 0;
 
 RackTrack::RackTrack(Rack *parent, int index)
   : Parent(parent), Index(index)
@@ -57,33 +56,24 @@ Plugin *RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin *co
 	}
 	}*/
   Parent->CalcScrolledPosition(xpos, ypos, &xx, &yy);
-
   startinfo.Pos = wxPoint(xx, yy);  
   startinfo.Size = wxSize(p->InitInfo.UnitsX * UNIT_W, p->InitInfo.UnitsY * UNIT_H); 
   plug = p->CreateRack(startinfo);
-
   if (p->InitInfo.UnitsX > Units)
     Units = p->InitInfo.UnitsX;
 
   // Plug initialization
-
   plug->SetId(num++);
   plug->SetBufferSize(Audio->SamplesPerBuffer);
   plug->SetSamplingRate(Audio->SampleRate);
   plug->Init();
-
   plug->SetHelpMode(HelpWin->IsShown());
-
   char str[128];
-  
   sprintf(str, "%d", ++RackCount);
-
   plug->Name = plug->DefaultName() + " " + str;
-
   SeqMutex.Lock();
   Racks.push_back(plug);
   SeqMutex.Unlock();
-
   Parent->ResizeTracks();
   Parent->SetScrolling();
   return (plug);
@@ -474,3 +464,9 @@ void Rack::OnClick(wxMouseEvent &event)
   selectedTrack = 0x0;
   selectedPlugin = 0x0;
 }
+
+BEGIN_EVENT_TABLE(Rack, wxScrolledWindow)
+  EVT_ENTER_WINDOW(Rack::OnHelp)
+  EVT_LEFT_DOWN(Rack::OnClick)
+  EVT_LEFT_UP(Rack::OnClick)
+END_EVENT_TABLE()

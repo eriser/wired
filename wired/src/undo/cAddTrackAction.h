@@ -6,31 +6,33 @@
 #include "cActionManager.h"
 #include "Visitor.h"
 
+class SequencerGui;
+
+extern SequencerGui          *SeqPanel;
 
 class cAddTrackAction : public cAction 
 {
-private:
-   bool mTrackKindFlag;
- 
-public:
+ private:
+  bool mTrackKindFlag;
+  
+ public:
   cAddTrackAction (bool kind)
-  { mTrackKindFlag = kind; };
-
+    { mTrackKindFlag = kind; };
+  
   ~cAddTrackAction ()
-  {};
-
+    {};
+  
   virtual void Do ()
-  { SeqPanel->AddTrack(mTrackKindFlag); NotifyActionManager(); };
-
+    { /* SeqPanel->AddTrack(mTrackKindFlag); NotifyActionManager(); */};
+  
   virtual void Redo ()
-  { SeqPanel->AddTrack(mTrackKindFlag); };
-
+    { /* SeqPanel->AddTrack(mTrackKindFlag); */};
+  
   virtual void Undo ()
-  { SeqPanel->RemoveTrack(); };
-
+    { /* SeqPanel->RemoveTrack(); */};
+  
   virtual void Accept (cActionVisitor& visitor)
-  { visitor.Visit (*this); };
+    { /*visitor.Visit (*this); */};
 };
-
 
 #endif

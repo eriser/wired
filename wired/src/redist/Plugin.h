@@ -37,7 +37,7 @@ typedef struct
 
 /* This is the struct the host will pass you for creating a new instance of your 
    plugin */
-typedef struct  
+typedef struct  s_PlugStartInfo
 {
   HostInterface HostCallback;
   float		Version;
@@ -62,7 +62,7 @@ typedef struct
 }		WiredEvent;
 
 // Sequencer event types, used to create MIDI patterns on the host sequencer
-typedef struct
+typedef struct	s_SeqCreateEvent
 {
   // position relative to pattern position
   double	Position;	

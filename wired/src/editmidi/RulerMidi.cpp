@@ -2,26 +2,23 @@
 #include "Colour.h"
 #include "RulerMidi.h"
 #include "Clavier.h"
-
-BEGIN_EVENT_TABLE(RulerMidi, wxWindow)
-  EVT_PAINT(RulerMidi::OnPaint)
-END_EVENT_TABLE()
+#include "MidiPart.h"
 
 RulerMidi::RulerMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos,
-	     const wxSize &size, EditMidi *editmidi)
-  : wxPanel(parent, id, pos, size, wxTHICK_FRAME)
+		     const wxSize &size, EditMidi *editmidi) :
+  wxPanel(parent, id, pos, size, wxTHICK_FRAME)
 {
   em = editmidi;
   ZoomX = 1;
 }
 
-void		RulerMidi::OnPaint(wxPaintEvent &event)
+void				RulerMidi::OnPaint(wxPaintEvent &event)
 {
-  wxPaintDC	dc(this);
-  wxSize	size;
-  wxString	s;
-  double	x;
-  long		m;
+  wxPaintDC			dc(this);
+  wxSize			size;
+  wxString			s;
+  double			x;
+  long				m;
 
   PrepareDC(dc);
   size = GetSize();
@@ -43,7 +40,11 @@ void		RulerMidi::OnPaint(wxPaintEvent &event)
   }
 }
 
-void		RulerMidi::SetZoomX(double pZoomX)
+void				RulerMidi::SetZoomX(double pZoomX)
 {
   ZoomX = pZoomX;
 }
+
+BEGIN_EVENT_TABLE(RulerMidi, wxWindow)
+  EVT_PAINT(RulerMidi::OnPaint)
+END_EVENT_TABLE()

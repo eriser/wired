@@ -1,17 +1,17 @@
 #ifndef __MIXER_H__
 #define __MIXER_H__
 
+using namespace std;
+
 //#include <vector>
 //#include <string>
 //#include <iostream>
 #include <list>
-#include "Channel.h"
+
 #define PREBUF_NUM 6
 
-
-using namespace std;
-
 class Sequencer;
+class Channel;
 
 class Mixer
 {

@@ -4,7 +4,7 @@
 #ifndef __HOSTCALLBACK_H__
 #define __HOSTCALLBACK_H__
 
-#include "Plugin.h"
+class Plugin;
 
 long HostCallback(Plugin *plug, long param, void *value);
 

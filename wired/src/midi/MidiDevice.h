@@ -1,12 +1,12 @@
 #ifndef __MIDIDEVICE_H__
 #define __MIDIDEVICE_H__
 
-#include "midi.h"
 #include <vector>
 #include <string>
 #include <iostream>
+#include <portmidi.h>
 
-using namespace std;
+using namespace				std;
 
 class MidiDeviceInfo
 {
@@ -25,21 +25,19 @@ class MidiDevice
  public:
   MidiDevice() { id = -1; }
   virtual ~MidiDevice() { CloseDevice(); DeleteDevices(); };
-  
-  virtual int OpenDevice(int _id) = 0;
-  virtual void CloseDevice();
-  virtual MidiDeviceList *ListDevices(void) = 0;
-  int	  GetDeviceIDFromName(string s);
+  virtual int				OpenDevice(int _id) = 0;
+  virtual void				CloseDevice();
+  virtual MidiDeviceList		*ListDevices(void) = 0;
+  int					GetDeviceIDFromName(string s);
 
-  int id;
+  int					id;
  
  protected:
 
-  MidiDeviceList devices;
-  PmStream   *stream;
+  void					DeleteDevices();
   
-  void DeleteDevices();
-
+  MidiDeviceList devices;
+  PmStream				*stream;
 };
 
-#endif
+#endif/*__MIDIDEVICE_H__*/

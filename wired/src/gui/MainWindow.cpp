@@ -6,6 +6,8 @@
 #include <dlfcn.h>
 #include <wx/splitter.h>
 #include <wx/progdlg.h>
+#include <wx/filename.h>
+#include "SequencerGui.h"
 #include "HostCallback.h"
 #include "FileLoader.h"
 #include "WaveFile.h"
@@ -18,8 +20,17 @@
 #include "cImportMidiAction.h"
 #include "Transport.h"
 #include "OptionPanel.h"
-#include <wx/filename.h>
+#include "Rack.h"
+#include "SeqTrack.h"
+#include "MixerGui.h"
 #include "../engine/EngineError.h"
+#include "../sequencer/Sequencer.h"
+#include "../sequencer/Track.h"
+#include "../mixer/Mixer.h"
+#include "../redist/Plugin.h"
+#include "../engine/WiredSession.h"
+#include "../midi/MidiThread.h"
+#include "../plugins/PluginLoader.h"
 
 Rack				*RackPanel;
 SequencerGui			*SeqPanel;
@@ -921,8 +932,8 @@ void					MainWindow::SwitchRackOptView()
       split->ReplaceWindow(OptPanel, RackPanel);
 
       BottomSizer = new wxBoxSizer(wxHORIZONTAL);
-      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
-      BottomSizer->Add(OptPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
+      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
+      BottomSizer->Add(OptPanel, 1, wxEXPAND | wxALL, 2); 
   
       TopSizer = new wxBoxSizer(wxVERTICAL);
       
@@ -941,8 +952,8 @@ void					MainWindow::SwitchRackOptView()
       //split->SplitHorizontally(OptPanel, SeqPanel);
 
       BottomSizer = new wxBoxSizer(wxHORIZONTAL);
-      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
-      BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
+      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
+      BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL, 2); 
   
       TopSizer = new wxBoxSizer(wxVERTICAL);
       

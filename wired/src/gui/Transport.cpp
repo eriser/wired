@@ -1,33 +1,16 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License
 
+#include <wx/filename.h>
 #include "Transport.h"
 #include "Sequencer.h"
 #include "SequencerGui.h"
 #include "Colour.h"
 #include "WiredSession.h"
 #include "HelpPanel.h"
-#include <wx/filename.h>
+#include "../engine/Settings.h"
 
-extern WiredSession	*CurrentSession;
-
-BEGIN_EVENT_TABLE(Transport, wxPanel)
-  EVT_BUTTON(Transport_Play, Transport::OnPlay)
-  EVT_BUTTON(Transport_Stop, Transport::OnStop)
-  EVT_BUTTON(Transport_Record, Transport::OnRecord)
-  EVT_BUTTON(Transport_Loop, Transport::OnLoop)
-  EVT_BUTTON(Transport_Backward, Transport::OnBackward)
-  EVT_BUTTON(Transport_Forward, Transport::OnForward)
-  EVT_BUTTON(Transport_BpmUp, Transport::OnBpmUp)
-  EVT_BUTTON(Transport_BpmDown, Transport::OnBpmDown)
-  EVT_BUTTON(Transport_SigNumUp, Transport::OnSigNumUp)
-  EVT_BUTTON(Transport_SigNumDown, Transport::OnSigNumDown)
-  EVT_BUTTON(Transport_SigDenUp, Transport::OnSigDenUp)
-  EVT_BUTTON(Transport_SigDenDown, Transport::OnSigDenDown)
-  EVT_BUTTON(Transport_Click, Transport::OnMetronome)
-  EVT_BUTTON(Transport_BpmClick, Transport::OnBpmClick)
-  EVT_PAINT(Transport::OnPaint)
-END_EVENT_TABLE()
+extern WiredSession				*CurrentSession;
 
 Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style)
   : wxPanel(parent, -1, pos, size, style)
@@ -146,7 +129,7 @@ Transport::~Transport()
 
 }
 
-void Transport::OnLoopHelp(wxMouseEvent &event)
+void				Transport::OnLoopHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
@@ -155,7 +138,7 @@ void Transport::OnLoopHelp(wxMouseEvent &event)
     }
 }
 
-void Transport::OnClickHelp(wxMouseEvent &event)
+void				Transport::OnClickHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
@@ -164,7 +147,7 @@ void Transport::OnClickHelp(wxMouseEvent &event)
     }
 }
 
-void Transport::OnPlay(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnPlay(wxCommandEvent &WXUNUSED(event))
 {
   if (PlayBtn->GetOn())
     {
@@ -176,7 +159,7 @@ void Transport::OnPlay(wxCommandEvent &WXUNUSED(event))
     PlayBtn->SetOn();
 }
 
-void Transport::OnStop(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnStop(wxCommandEvent &WXUNUSED(event))
 {
   Seq->Stop();
   PlayBtn->SetOff();
@@ -184,7 +167,7 @@ void Transport::OnStop(wxCommandEvent &WXUNUSED(event))
     RecordBtn->SetOff();
 }
 
-void Transport::OnRecord(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnRecord(wxCommandEvent &WXUNUSED(event))
 {
   if (RecordBtn->GetOn())
     {
@@ -209,21 +192,21 @@ void Transport::OnRecord(wxCommandEvent &WXUNUSED(event))
     Seq->StopRecord();
 }
 
-void Transport::OnLoop(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnLoop(wxCommandEvent &WXUNUSED(event))
 {
   wxMutexLocker m(SeqMutex);
 
   Seq->Loop = LoopBtn->GetOn();
 }
 
-void Transport::OnMetronome(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnMetronome(wxCommandEvent &WXUNUSED(event))
 {
   wxMutexLocker m(SeqMutex);
 
   Seq->Click = ClickBtn->GetOn();
 }
 
-void Transport::OnBackward(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnBackward(wxCommandEvent &WXUNUSED(event))
 {
   wxMutexLocker m(SeqMutex);
   double newpos = Seq->CurrentPos - 0.1;
@@ -234,7 +217,7 @@ void Transport::OnBackward(wxCommandEvent &WXUNUSED(event))
   SeqPanel->SetCurrentPos(Seq->CurrentPos);
 }
 
-void Transport::OnForward(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnForward(wxCommandEvent &WXUNUSED(event))
 {
   wxMutexLocker m(SeqMutex);
 
@@ -242,10 +225,10 @@ void Transport::OnForward(wxCommandEvent &WXUNUSED(event))
   SeqPanel->SetCurrentPos(Seq->CurrentPos);
 }
 
-void Transport::OnPaint(wxPaintEvent &WXUNUSED(event))
+void				Transport::OnPaint(wxPaintEvent &WXUNUSED(event))
 {
-  wxMemoryDC memDC;
-  wxPaintDC dc(this);
+  wxMemoryDC			memDC;
+  wxPaintDC			dc(this);
   
   memDC.SelectObject(*TrBmp);    
   wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
@@ -257,10 +240,10 @@ void Transport::OnPaint(wxPaintEvent &WXUNUSED(event))
     }  
 }
 
-void Transport::SetPlayPosition(double pos)
+void				Transport::SetPlayPosition(double pos)
 {
-  int  mes, sig, millisig, w;
-  wxString s;
+  int				mes, sig, millisig, w;
+  wxString			s;
 
   mes = (int)pos;
   sig = (int)(((pos - mes) / (1 / (float)Seq->SigNumerator))) + 1;
@@ -277,7 +260,7 @@ void Transport::SetPlayPosition(double pos)
   MilliSigLabel->SetLabel(s);
 }
 
-void Transport::OnBpmUp(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnBpmUp(wxCommandEvent &WXUNUSED(event))
 {
   wxMutexLocker m(SeqMutex);
 
@@ -291,7 +274,7 @@ void Transport::OnBpmUp(wxCommandEvent &WXUNUSED(event))
     }      
 }
 
-void Transport::OnBpmDown(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnBpmDown(wxCommandEvent &WXUNUSED(event))
 {
   wxMutexLocker m(SeqMutex);
 
@@ -305,7 +288,7 @@ void Transport::OnBpmDown(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void Transport::OnSigNumUp(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnSigNumUp(wxCommandEvent &WXUNUSED(event))
 {
   if (Seq->SigNumerator < 9)
     {
@@ -320,7 +303,7 @@ void Transport::OnSigNumUp(wxCommandEvent &WXUNUSED(event))
     }    
 }
 
-void Transport::OnSigNumDown(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnSigNumDown(wxCommandEvent &WXUNUSED(event))
 {
   if (Seq->SigNumerator > 1)
     {
@@ -335,7 +318,7 @@ void Transport::OnSigNumDown(wxCommandEvent &WXUNUSED(event))
     }    
 }
 
-void Transport::OnSigDenUp(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnSigDenUp(wxCommandEvent &WXUNUSED(event))
 {
   if (Seq->SigDenominator < 9)
     {
@@ -350,7 +333,7 @@ void Transport::OnSigDenUp(wxCommandEvent &WXUNUSED(event))
     }    
 }
 
-void Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
 {
   if (Seq->SigDenominator > 1)
     {
@@ -365,7 +348,7 @@ void Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
     }    
 }
 
-void Transport::OnBpmClick(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnBpmClick(wxCommandEvent &WXUNUSED(event))
 {
   BpmText = new wxTextCtrl(this, Transport_BpmEnter, BpmLabel->GetLabel(), 
 			   BpmLabel->GetPosition(), wxSize(50, BpmLabel->GetSize().y), 
@@ -374,7 +357,7 @@ void Transport::OnBpmClick(wxCommandEvent &WXUNUSED(event))
 	  (wxCommandEventFunction)&Transport::OnBpmEnter);
 }
 
-void Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
+void				Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
 {
   if (BpmText)
     {
@@ -392,28 +375,28 @@ void Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void Transport::SetBpm(float bpm)
+void				Transport::SetBpm(float bpm)
 {
   wxString s;
   s.Printf("%#06.2f", bpm);
   BpmLabel->SetLabel(s);
 }
 
-void Transport::SetSigNumerator(int n)
+void				Transport::SetSigNumerator(int n)
 {
   wxString s;
   s.Printf("%d", n);
   SigNumLabel->SetLabel(s);
 }
 
-void Transport::SetSigDenominator(int d)
+void				Transport::SetSigDenominator(int d)
 {
   wxString s;
   s.Printf("%d", d);
   SigDenLabel->SetLabel(s);
 }
 
-void Transport::SetLoop(bool loop)
+void				Transport::SetLoop(bool loop)
 {
   if (loop)
     LoopBtn->SetOn();
@@ -421,10 +404,28 @@ void Transport::SetLoop(bool loop)
     LoopBtn->SetOff();
 }
 
-void Transport::SetClick(bool click)
+void				Transport::SetClick(bool click)
 {
   if (click)
     ClickBtn->SetOn();
   else
     ClickBtn->SetOff();
 }
+
+BEGIN_EVENT_TABLE(Transport, wxPanel)
+  EVT_BUTTON(Transport_Play, Transport::OnPlay)
+  EVT_BUTTON(Transport_Stop, Transport::OnStop)
+  EVT_BUTTON(Transport_Record, Transport::OnRecord)
+  EVT_BUTTON(Transport_Loop, Transport::OnLoop)
+  EVT_BUTTON(Transport_Backward, Transport::OnBackward)
+  EVT_BUTTON(Transport_Forward, Transport::OnForward)
+  EVT_BUTTON(Transport_BpmUp, Transport::OnBpmUp)
+  EVT_BUTTON(Transport_BpmDown, Transport::OnBpmDown)
+  EVT_BUTTON(Transport_SigNumUp, Transport::OnSigNumUp)
+  EVT_BUTTON(Transport_SigNumDown, Transport::OnSigNumDown)
+  EVT_BUTTON(Transport_SigDenUp, Transport::OnSigDenUp)
+  EVT_BUTTON(Transport_SigDenDown, Transport::OnSigDenDown)
+  EVT_BUTTON(Transport_Click, Transport::OnMetronome)
+  EVT_BUTTON(Transport_BpmClick, Transport::OnBpmClick)
+  EVT_PAINT(Transport::OnPaint)
+END_EVENT_TABLE()

@@ -1,9 +1,11 @@
-
 #include "cImportMidiAction.h"
 #include "WaveFile.h"
 #include "Track.h"
 #include "SequencerGui.h"
 #include "akai.h"
+#include "../engine/AudioCenter.h"
+#include "../midi/MidiFile.h"
+#include "../gui/Rack.h"
 
 cImportWaveAction::cImportWaveAction (string path, bool kind)
 {

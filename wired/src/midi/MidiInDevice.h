@@ -3,22 +3,23 @@
 
 #include "MidiDevice.h"
 
-class MidiDevice;
+using namespace			std;
 
-class MidiInDevice : public MidiDevice
+typedef int			MidiType;
+
+class				MidiInDevice : public MidiDevice
 {
  public:
   MidiInDevice();
   virtual ~MidiInDevice() {}
-  int		    OpenDevice(int ID);
-  MidiDeviceList    *ListDevices(void);
+  int				OpenDevice(int ID);
+  MidiDeviceList		*ListDevices(void);
   
-  bool           Poll();
-  bool           Read(MidiType *buf);
+  bool				Poll();
+  bool				Read(MidiType *buf);
   
  protected:
-  PmEvent        buffer;
-  
+  PmEvent			buffer;
 };
 
-#endif
+#endif/*__MIDIINDEVICE_H__*/

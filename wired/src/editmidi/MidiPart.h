@@ -4,14 +4,13 @@
 #include <wx/wx.h>
 #include <iostream>
 #include <vector>
-#include "MidiPattern.h"
-#include "midi.h"
-#include "MidiFile.h"
-#include "Note.h"
-#include "Clavier.h"
-#include "EditMidi.h"
-#include "EditNote.h"
-#include "Sequencer.h"
+
+using namespace				std;
+
+#define NB_ROWS				(NB_WHITEKEY * 12 / 7)	
+#define ROW_HEIGHT			BLACKKEY_HEIGHT
+#define ROW_WIDTH			BLACKKEY_WIDTH
+#define MAXNPM				(64)
 
 enum
   {
@@ -20,15 +19,12 @@ enum
     ID_TOOL_DEL_MIDIPART
   };
 
-#define NB_ROWS				(NB_WHITEKEY * 12 / 7)	
-#define ROW_HEIGHT			BLACKKEY_HEIGHT
-#define ROW_WIDTH			BLACKKEY_WIDTH
-#define MAXNPM				64
+class					Note;
+class					EditNote;
+class					Sequencer;
+class					MidiPattern;
 
-using namespace std;
-using std::vector;
-
-class MidiPart: public wxControl
+class					MidiPart: public wxControl
 {
  public:
   MidiPart(wxWindow *parent, wxWindowID id, const wxPoint& pos,

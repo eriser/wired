@@ -5,24 +5,23 @@
 #define __HELPPANEL_H__
 
 #include <wx/wx.h>
-#include "HelpCtrl.h"
 
-class HelpPanel : public wxPanel
+class				HelpCtrl;
+
+class				HelpPanel : public wxPanel
 {
  public:
   HelpPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size);
   ~HelpPanel();
+  void				SetText(wxString &s);
 
-  void	SetText(wxString &s);
-
-   HelpCtrl *Help;
+   HelpCtrl			*Help;
  protected:
- 
-  void OnSize(wxSizeEvent &event);
+  void				OnSize(wxSizeEvent &event);
 
   DECLARE_EVENT_TABLE()
 };
 
-extern HelpPanel *HelpWin;
+extern HelpPanel		*HelpWin;
 
 #endif

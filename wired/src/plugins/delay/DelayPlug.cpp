@@ -6,8 +6,6 @@
 
 #include "Plugin.h"
 #include "FaderCtrl.h"
-#include "StaticBitmap.h"
-#include "DownButton.h"
 
 #define PLUGIN_NAME	"Delay"
 
@@ -28,7 +26,6 @@ class DelayPlugin: public Plugin
 
   std::string DefaultName() { return "Delay"; }
 
-  void	 OnBypass(wxCommandEvent &e);  
   void	 OnDelayTime(wxScrollEvent &e);  
   void   OnFeedback(wxScrollEvent &e);  
   void   OnDryWet(wxScrollEvent &event);
@@ -42,8 +39,6 @@ class DelayPlugin: public Plugin
   float		DryLevel;
   
  protected:
-  bool	   Bypass;
-
   wxBitmap *bmp;   
 
   FaderCtrl *TimeFader;
@@ -52,12 +47,6 @@ class DelayPlugin: public Plugin
   wxImage *img_fg;
   wxImage *img_bg;
   wxBitmap *TpBmp;
-  wxImage *bypass_on;
-  wxImage *bypass_off;
-  wxImage *liquid_on;;
-  wxImage *liquid_off;;
-  StaticBitmap *Liquid;
-  DownButton *BypassBtn;
 
   float *DelayBuffer;
   float *BufStart[2];
@@ -73,8 +62,7 @@ class DelayPlugin: public Plugin
 
 enum
   {
-    Delay_Bypass = 1,
-    Delay_Time,
+    Delay_Time = 1,
     Delay_Feedback,
     Delay_DryWet,
   };
@@ -82,24 +70,19 @@ enum
 /******** DelayPlugin Implementation *********/
 
 BEGIN_EVENT_TABLE(DelayPlugin, wxWindow)
-  EVT_BUTTON(Delay_Bypass, DelayPlugin::OnBypass)
   EVT_COMMAND_SCROLL(Delay_Time, DelayPlugin::OnDelayTime)
   EVT_COMMAND_SCROLL(Delay_Feedback, DelayPlugin::OnFeedback)
   EVT_COMMAND_SCROLL(Delay_DryWet, DelayPlugin::OnDryWet)
   EVT_PAINT(DelayPlugin::OnPaint)
 END_EVENT_TABLE()
 
-#define IMG_DL_BG	"plugins/delay/delay_bg.png"
+#define IMG_DL_BG	"plugins/delay/delay.png"
 #define IMG_DL_BMP	"plugins/delay/DelayPlug.bmp"
-#define IMG_DL_FADER_BG	"plugins/delay/fader_bg.png"
-#define IMG_DL_FADER_FG	"plugins/delay/fader_button.png"
-#define IMG_LIQUID_ON	"plugins/delay/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF	"plugins/delay/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON	"plugins/delay/bypass_button_down.png"
-#define IMG_BYPASS_OFF	"plugins/delay/bypass_button_up.png"
+#define IMG_DL_FADER_BG "plugins/delay/fader_bg.png"
+#define IMG_DL_FADER_FG	"plugins/delay/fader_fg.png"
 
 DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
-  : Plugin(startinfo, initinfo), Bypass(false)
+  : Plugin(startinfo, initinfo)
 {
   BufStart[0] = 0x0;
   BufStart[1] = 0x0;
@@ -108,53 +91,32 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   wxImage *tr_bg = 
     new wxImage(string(GetDataDir() + string(IMG_DL_BG)).c_str(), wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
+  
+  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(), wxBITMAP_TYPE_BMP); 
 
-  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), 
-			  wxBITMAP_TYPE_PNG);
-  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), 
-			   wxBITMAP_TYPE_PNG);
-  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
-
-  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), 
-			  wxBITMAP_TYPE_PNG);
-  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
-			   wxBITMAP_TYPE_PNG);
-  BypassBtn = new DownButton(this, Delay_Bypass, wxPoint(21, 58),
-			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()),
-			     bypass_off, bypass_on);
-
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(), 
-		     wxBITMAP_TYPE_BMP); 
-
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(),
-		       wxBITMAP_TYPE_PNG );
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(),
-		       wxBITMAP_TYPE_PNG );
+  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(),wxBITMAP_TYPE_PNG );
+  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(),wxBITMAP_TYPE_PNG );
   
   TimeFader = new 
     FaderCtrl(this, Delay_Time, img_bg, img_fg, 0, 5000, 1000,
-	      wxPoint(73, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
+	      wxPoint(18, 8)/*wxPoint(GetSize().x / 2, 10)*/, wxSize(22,78));
   FeedbackFader = new 
     FaderCtrl(this, Delay_Feedback, img_bg, img_fg, 0, 100, 50,
-	      wxPoint(110, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
+	      wxPoint(74, 8)/*wxPoint(GetSize().x / 2 + 40, 10)*/, wxSize(22,78));
   DryWetFader = new 
     FaderCtrl(this, Delay_DryWet, img_bg, img_fg, 0, 100, 50,
-	      wxPoint(149, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
+	      wxPoint(142, 8)/*wxPoint(GetSize().x / 2 + 40, 10)*/, wxSize(22,78));
   
   SetBackgroundColour(wxColour(237, 237, 237));
 }
 
 DelayPlugin::~DelayPlugin()
 {
+  //delete tr_bg;
   delete TpBmp;
   delete bmp;
   delete img_bg;
   delete img_fg;
-
-  delete bypass_on;
-  delete bypass_off;
-  delete liquid_on;
-  delete liquid_off;
 }
 
 void DelayPlugin::Init()
@@ -205,26 +167,20 @@ void DelayPlugin::Process(float **input, float **output, long sample_length)
 
   DelayMutex.Lock();
 
-  if (!Bypass)
-    for (chan = 0; chan < 2; chan++)
-      {
-	for (i = 0; i < sample_length; i++)
-	  {
-	    out[chan] = *BufPtr[chan];
-	    
-	    output[chan][i] = DryLevel * input[chan][i] + 
-	      WetLevel * out[chan];
-	    
-	    *BufPtr[chan] = input[chan][i] + Feedback * out[chan];
-	    
-	    if (++(BufPtr[chan]) >= BufEnd[chan])
-	      BufPtr[chan] = BufStart[chan];
-	  }
-      }
-  else
+  for (chan = 0; chan < 2; chan++)
     {
-      memcpy(output[0], input[0], sample_length * sizeof(float));
-      memcpy(output[1], input[1], sample_length * sizeof(float));
+      for (i = 0; i < sample_length; i++)
+	{
+	  out[chan] = *BufPtr[chan];
+
+	  output[chan][i] = DryLevel * input[chan][i] + 
+	    WetLevel * out[chan];
+
+	  *BufPtr[chan] = input[chan][i] + Feedback * out[chan];
+	  
+	  if (++(BufPtr[chan]) >= BufEnd[chan])
+	    BufPtr[chan] = BufStart[chan];
+	}
     }
 
   DelayMutex.Unlock();
@@ -243,19 +199,6 @@ bool DelayPlugin::IsMidi()
 wxBitmap *DelayPlugin::GetBitmap()
 {
   return (bmp);
-}
-
-void DelayPlugin::OnBypass(wxCommandEvent &e)
-{
-  DelayMutex.Lock();
-
-  Bypass = BypassBtn->GetOn();
-  if (Bypass)
-    Liquid->SetBitmap(wxBitmap(liquid_off));
-  else
-    Liquid->SetBitmap(wxBitmap(liquid_on));	      
-
-  DelayMutex.Unlock();
 }
 
 void DelayPlugin::OnDelayTime(wxScrollEvent &WXUNUSED(e))

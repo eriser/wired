@@ -1,19 +1,21 @@
-
 #if !defined(IMPORT_WAVE_ACTION_H)
 #define IMPORT_WAVE_ACTION_H
 
+using namespace				std;
+
+#include <string>
 #include "cAction.h"
 #include "cActionManager.h"
 #include "Visitor.h"
 
-#include "AudioCenter.h"
-#include "Rack.h"
+class					PluginLoader;
+typedef struct s_PlugStartInfo		PlugStartInfo;
 
-class cImportWaveAction : public cAction 
+class					cImportWaveAction : public cAction 
 {
 private:
-   bool mTrackKindFlag;
-   string mWavePath;
+   bool					mTrackKindFlag;
+   string				mWavePath;
  
 public:
   cImportWaveAction (std::string path, bool kind);
@@ -27,59 +29,57 @@ public:
 
 /////////////////////////////////////////////////////////////////
 
-class cImportMidiAction : public cAction 
+class					cImportMidiAction : public cAction 
 {
 private:
-   bool mTrackKindFlag;
-   string mMidiPath;
+   bool					mTrackKindFlag;
+   string				mMidiPath;
 
 public:
   cImportMidiAction (std::string path, bool kind);
   ~cImportMidiAction () {};
-  virtual void Do ();
-  virtual void Redo ();
-  virtual void Undo ();
-  virtual void Accept (cActionVisitor& visitor)
-  { visitor.Visit (*this); };
+  virtual void				Do();
+  virtual void				Redo();
+  virtual void				Undo();
+  virtual void				Accept(cActionVisitor& visitor) { visitor.Visit (*this); };
 };
 
 /////////////////////////////////////////////////////////////////
 
-class cImportAkaiAction : public cAction 
+class					cImportAkaiAction : public cAction 
 {
 private:
-   bool mTrackKindFlag;
-   string mDevice;
-   int mPart;
-   string mPath;
-   string mName;
-
+   bool					mTrackKindFlag;
+   string				mDevice;
+   int					mPart;
+   string				mPath;
+   string				mName;
+   
 public:
-  cImportAkaiAction (std::string path, bool kind);
-  ~cImportAkaiAction () {};
-  virtual void Do ();
-  virtual void Redo ();
-  virtual void Undo ();
-  virtual void Accept (cActionVisitor& visitor)
-  { visitor.Visit (*this); };
+   cImportAkaiAction (std::string path, bool kind);
+   ~cImportAkaiAction () {};
+   virtual void				Do();
+   virtual void				Redo();
+   virtual void				Undo();
+   virtual void				Accept(cActionVisitor& visitor) { visitor.Visit (*this); };
 };
 
 
 /////////////////////////////////////////////////////////////////
 
-class cCreateEffectAction : public cAction 
+class					cCreateEffectAction : public cAction 
 {
 private:
-  PluginLoader * mPluginLoader;
-  PlugStartInfo * mStartInfo;
+  PluginLoader				*mPluginLoader;
+  PlugStartInfo				*mStartInfo;
   
 public:
   cCreateEffectAction (PlugStartInfo* startInfo, PluginLoader * plugin);
   ~cCreateEffectAction () {};
-  virtual void Do ();
-  virtual void Redo ();
-  virtual void Undo ();
-  virtual void Accept (cActionVisitor& visitor)
+  virtual void				Do ();
+  virtual void				Redo ();
+  virtual void				Undo ();
+  virtual void				Accept (cActionVisitor& visitor)
   { visitor.Visit (*this); };
 };
 
@@ -87,21 +87,20 @@ public:
 /////////////////////////////////////////////////////////////////
 
 
-class cCreateRackAction : public cAction 
+class					cCreateRackAction : public cAction 
 {
 private:
-  PluginLoader * mPluginLoader;
-  PlugStartInfo * mStartInfo;
+  PluginLoader				*mPluginLoader;
+  PlugStartInfo				*mStartInfo;
   
 public:
   cCreateRackAction (PlugStartInfo* startInfo, PluginLoader* plugLoader);
   ~cCreateRackAction () {};
-  virtual void Do ();
-  virtual void Redo ();
-  virtual void Undo ();
-  virtual void Accept (cActionVisitor& visitor)
+  virtual void				Do ();
+  virtual void				Redo ();
+  virtual void				Undo ();
+  virtual void				Accept (cActionVisitor& visitor)
   { visitor.Visit (*this); };
 };
-
 
 #endif

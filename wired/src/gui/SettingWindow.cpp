@@ -3,24 +3,10 @@
 
 #include "SettingWindow.h"
 #include "AudioEngine.h"
-#include "MidiThread.h"
 #include "Settings.h"
 #include "Colour.h"
-
-BEGIN_EVENT_TABLE(SettingWindow, wxDialog)
-  EVT_TOGGLEBUTTON(Setting_General, SettingWindow::OnGeneralClick)
-  EVT_TOGGLEBUTTON(Setting_Audio, SettingWindow::OnAudioClick)
-  EVT_TOGGLEBUTTON(Setting_Midi, SettingWindow::OnMidiClick)
-  EVT_BUTTON(Setting_Ok, SettingWindow::OnOkClick)
-  EVT_BUTTON(Setting_Cancel,SettingWindow:: OnCancelClick)
-  EVT_BUTTON(Setting_Apply, SettingWindow::OnApplyClick)
-  EVT_CHOICE(Setting_OutputDev, SettingWindow::OnOutputDevClick)
-  EVT_CHOICE(Setting_InputDev, SettingWindow::OnInputDevClick)
-  EVT_CHOICE(Setting_Bits, SettingWindow::OnSampleFormatClick)
-  EVT_CHOICE(Setting_Rate, SettingWindow::OnSampleRateClick)
-  EVT_CHECKLISTBOX(Setting_OutputChan, SettingWindow::OnOutputChanClick)
-  EVT_SLIDER(Setting_Latency, SettingWindow::OnLatencyChange)
-END_EVENT_TABLE()
+#include "../midi/MidiThread.h"
+#include "../midi/MidiDevice.h"
 
 SettingWindow::SettingWindow()
   : wxDialog(0x0, -1, "Wired Settings", wxDefaultPosition, wxSize(400, 516))
@@ -114,9 +100,9 @@ SettingWindow::SettingWindow()
 		   wxPoint(8, 8));
   MidiInList = new wxCheckListBox(MidiPanel, Setting_MidiIn, wxPoint(8, 30), wxSize(368, 200), 0);
 
-  AudioPanel->SetBackgroundColour(CL_SEQ_FOREGROUND);
-  MidiPanel->SetBackgroundColour(CL_SEQ_FOREGROUND);
-  GeneralPanel->SetBackgroundColour(CL_SEQ_FOREGROUND);
+  AudioPanel->SetBackgroundColour(CL_SEQ_BACKGROUND);
+  MidiPanel->SetBackgroundColour(CL_SEQ_BACKGROUND);
+  GeneralPanel->SetBackgroundColour(CL_SEQ_BACKGROUND);
 
   AudioPanel->Show(false);
   MidiPanel->Show(false);
@@ -539,4 +525,17 @@ void SettingWindow::UpdateLatency()
   Latency->SetLabel(s);
 }
 
-
+BEGIN_EVENT_TABLE(SettingWindow, wxDialog)
+  EVT_TOGGLEBUTTON(Setting_General, SettingWindow::OnGeneralClick)
+  EVT_TOGGLEBUTTON(Setting_Audio, SettingWindow::OnAudioClick)
+  EVT_TOGGLEBUTTON(Setting_Midi, SettingWindow::OnMidiClick)
+  EVT_BUTTON(Setting_Ok, SettingWindow::OnOkClick)
+  EVT_BUTTON(Setting_Cancel,SettingWindow:: OnCancelClick)
+  EVT_BUTTON(Setting_Apply, SettingWindow::OnApplyClick)
+  EVT_CHOICE(Setting_OutputDev, SettingWindow::OnOutputDevClick)
+  EVT_CHOICE(Setting_InputDev, SettingWindow::OnInputDevClick)
+  EVT_CHOICE(Setting_Bits, SettingWindow::OnSampleFormatClick)
+  EVT_CHOICE(Setting_Rate, SettingWindow::OnSampleRateClick)
+  EVT_CHECKLISTBOX(Setting_OutputChan, SettingWindow::OnOutputChanClick)
+  EVT_SLIDER(Setting_Latency, SettingWindow::OnLatencyChange)
+END_EVENT_TABLE()

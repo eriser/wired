@@ -1,15 +1,17 @@
-#include "MidiInDevice.h"
 #include <stdio.h>
+#include <porttime.h>
+#include "MidiInDevice.h"
+#include "midi.h"
 
 MidiInDevice::MidiInDevice() : MidiDevice()
 {
 
 }
   
-int	MidiInDevice::OpenDevice(int ID)
+int				MidiInDevice::OpenDevice(int ID)
 {
-  int err;
-
+  int				err;
+  
   MidiDevice::CloseDevice();
   Pt_Start(1, 0, 0); 
   if ((err = Pm_OpenInput(&stream, ID, NULL, MIDI_IN_BUFSIZE, NULL, NULL, NULL)) 
@@ -23,11 +25,11 @@ int	MidiInDevice::OpenDevice(int ID)
   return (1);
 }
 
-MidiDeviceList *MidiInDevice::ListDevices(void)
+MidiDeviceList			*MidiInDevice::ListDevices(void)
 {
-  MidiDeviceInfo *d;
-  const PmDeviceInfo *pdi;
-  int numdev = Pm_CountDevices();
+  const PmDeviceInfo		*pdi;
+  MidiDeviceInfo		*d;
+  int				numdev = Pm_CountDevices();
   
   MidiDevice::DeleteDevices();
   for (unsigned int i = 0; i < numdev; i++)
@@ -42,7 +44,7 @@ MidiDeviceList *MidiInDevice::ListDevices(void)
   return (&devices);
 }
 
-bool MidiInDevice::Poll()
+bool				MidiInDevice::Poll()
 {
   if (Pm_Poll(stream) == TRUE)
     return (true);
@@ -50,18 +52,18 @@ bool MidiInDevice::Poll()
     return (false);
 }
 
-bool MidiInDevice::Read(MidiType *buf)
+bool				MidiInDevice::Read(MidiType *buf)
 {
-  int err;
+  int				err;
   
   if ((err = Pm_Read(stream, &buffer, 1)) > 0) 
     {
-            printf("Got midi in : time %d, %2x %2x %2x\n",
+      printf("Got midi in : time %d, %2x %2x %2x\n",
 	     buffer.timestamp,
 	     Pm_MessageStatus(buffer.message),
 	     Pm_MessageData1(buffer.message),
 	     Pm_MessageData2(buffer.message));
-
+      
       buf[0] = Pm_MessageStatus(buffer.message);
       buf[1] = Pm_MessageData1(buffer.message);
       buf[2] = Pm_MessageData2(buffer.message);

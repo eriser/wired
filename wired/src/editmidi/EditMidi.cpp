@@ -1,5 +1,9 @@
-#include	"EditMidi.h"
-#include	"OptionPanel.h"
+#include "EditMidi.h"
+#include "Clavier.h"
+#include "MidiAttr.h"
+#include "RulerMidi.h"
+#include "MidiPart.h"
+#include "../gui/OptionPanel.h"
 
 EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) 
   :  wxPanel(parent, id, pos, size, style)
