@@ -3,6 +3,8 @@
 #include "ASKeygroupList.h"
 #include "WaveFile.h"
 
+// ICI METTRE TOUT LES EFFETS
+
 #include "ASEnvel.h"
 #include "ASLoop.h"
 
@@ -11,6 +13,8 @@ static wxString EFFECTSNAMES[NB_EFFECTS] = {
   _T("Enveloppe"),
   _T("Looping")
 };
+
+// FIN DES EFFETS
 
 BEGIN_EVENT_TABLE(ASSampleList, wxWindow)
   EVT_BUTTON(ASSampleList_AddSample, ASSampleList::OnAddSample)
@@ -155,7 +159,6 @@ void  ASSampleList::OnSelectEffect(wxCommandEvent &e)
     case 2:
       // Looping
       p = new ASLoop(wxString("Looping for ") + (*i)->GetName());
-      ((ASLoop *)p)->SetSample((ASamplerSample *)((*i)->GetEntry()));
       break;
     default:
       p = NULL;
@@ -166,6 +169,7 @@ void  ASSampleList::OnSelectEffect(wxCommandEvent &e)
     if (p2)
       pp->ClosePlug(p2);
     delete p2;
+    p->SetSample(ass);
     ass->SetEffect(p);
     pp->AddPlug(p);
     pp->ShowPlugin(p);

@@ -20,10 +20,9 @@ class ASLoop : public ASPlugin
     void OnLeftDown(wxMouseEvent &e);
     void OnRightDown(wxMouseEvent &e);
     void OnLeftUp(wxMouseEvent &e);
-    void SetSample(ASamplerSample *);
+    void SetSample(ASamplerSample *ass);
   private:
     ASWaveView *wv;
-    ASamplerSample *ass;
   public:
   DECLARE_EVENT_TABLE()
 };
