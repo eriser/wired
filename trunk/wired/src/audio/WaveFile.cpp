@@ -281,10 +281,44 @@ unsigned long WaveFile::Read(float **buf, long pos, long size,
     }
   else // Mono
     {
-      memcpy(buf[0] + delta, Data[0] + pos , size * sizeof(float));
+      /*      memcpy(buf[0] + delta, Data[0] + pos , size * sizeof(float));
       memcpy(buf[1] + delta, buf[0], size * sizeof(float));
       if (new_pos)
-	*new_pos = pos + size;
+      *new_pos = pos + size;*/
+
+      if (Pitch == 1.f)
+	{
+	  if (Invert)
+	    {
+	      ret = NumberOfFrames - pos;
+	      for (i = 0; i < size; i++)
+		buf[0][i + delta] = Data[0][ret - i];
+	    }
+	  else
+	    memcpy(buf[0] + delta, Data[0] + pos, size * sizeof(float));	  
+	  if (new_pos)
+	    *new_pos = pos + size;
+	}
+      else
+	{
+	  if (Invert)
+	    {
+	      double kk;
+	      ret = NumberOfFrames - pos - 1;
+	      for (k = ret, i = 0, kk = 0; (k >= 0.0) && (i < size); k -= Pitch, i++, kk += Pitch)
+		buf[0][delta + i] = Data[0][(int)k];
+	      k = kk;
+	    }
+	  else
+	    {
+	      for (k = 0.f, i = 0; (pos + (int)k < NumberOfFrames) && (i < size); 
+		   k += Pitch, i++)
+		buf[0][delta + i] = Data[0][pos + (int)k];
+	    }
+	  if (new_pos)
+	    *new_pos = pos + (int)ceilf(k);
+	}
+      memcpy(buf[1] + delta, buf[0] + delta, size * sizeof(float));
     }
   return (size);
 }
