@@ -51,10 +51,10 @@ class				Rack: public wxScrolledWindow
        const wxSize& size = wxDefaultSize);
   ~Rack();
   
-  void				AddTrack(PlugStartInfo &startinfo, PluginLoader *p);
+  Plugin			*AddTrack(PlugStartInfo &startinfo, PluginLoader *p);
   void				AddTrack(Plugin *p);  
   RackTrack			*AddTrack();
-  void				AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p);
+  Plugin			*AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p);
   void				DeleteRack(Plugin *plug);
   void				DeleteAllRacks();
   RackTrack			*GetRackTrack(Plugin *plug);
@@ -90,6 +90,11 @@ class				Rack: public wxScrolledWindow
   int				OldY;
   int				new_x;
   int				new_y;		
+  int				fd_copy;
+  int				fd_size;
+  bool				is_cut;
+  bool				is_copy;
+  Plugin			*copy_plug;
   wxMenu			*menu;
   wxMenu			*submenu;
   wxMenu			*instr_menu;

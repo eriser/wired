@@ -132,18 +132,20 @@ Rack::~Rack()
     delete *i;
 }
 
-void Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
+Plugin *Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
 {
   RackTrack *t;
+  Plugin *tmp;
 
   t = new RackTrack(this, RackTracks.size());
-  t->AddRack(startinfo, p);
+  tmp = t->AddRack(startinfo, p);
 
   SeqMutex.Lock(); 
   RackTracks.push_back(t);
   SeqMutex.Unlock();      
-
+  
   SetScrolling();
+  return tmp;
 }
 
 void Rack::AddTrack(Plugin *p)
@@ -185,16 +187,18 @@ RackTrack *Rack::AddTrack()
   return (t);
 }
 
-void Rack::AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p)
+Plugin *Rack::AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p)
 {
   //if (!selectedTrack && (RackTracks.size() > 0))
   //  selectedTrack = *(RackTracks.begin());
+  Plugin *tmp;
   if (selectedTrack)
     {
-      selectedTrack->AddRack(startinfo, p, selectedTrack->Racks.back());
+      tmp = selectedTrack->AddRack(startinfo, p, selectedTrack->Racks.back());
     }
   else
-    AddTrack(startinfo, p);
+    tmp = AddTrack(startinfo, p);
+  return tmp;
 }
 
 void Rack::RemoveFromSelectedTrack()
@@ -436,17 +440,11 @@ void Rack::AddPlugToMenu()
 	{
 	  Id++;
 	  instr_menu->Append((*i)->Id, ((*i)->InitInfo.Name).c_str());
-	  /*Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED, 
-		      (wxObjectEventFunction)(wxEventFunction) 
-		      (wxCommandEventFunction)&Rack::OnCreateRackClick);*/
 	}
       else
 	{
 	  Id++;
 	  effects_menu->Append((*i)->Id, ((*i)->InitInfo.Name).c_str());
-	  /*Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED, 
-		  (wxObjectEventFunction)(wxEventFunction) 
-		  (wxCommandEventFunction)&Rack::OnCreateEffectClick);*/
 	}
     }
 }
@@ -521,22 +519,25 @@ void Rack::OnDeleteClick()
 
 void Rack::OnCutClick()
 {
-  int fd;
+  int fd_copy;
   char file[12] ;
-  
+  int size;
   if(selectedPlugin == 0x0)
     return;
   
+  copy_plug = selectedPlugin;
   strcpy(file, "wiredXXXXXX");
   
-  fd = mkstemp(file);
+  fd_copy = mkstemp(file);
   
-  if(fd < 0)
+  if(fd_copy < 0)
     cout << "echec"<< endl;
   
   else{
     cout << "creation du fichier ok"<< endl;
-    selectedPlugin->Save(fd);
+    fd_size = copy_plug->Save(fd_copy);
+    cout << fd_size << endl;
+    is_cut = true;
   }
 
   
@@ -544,28 +545,56 @@ void Rack::OnCutClick()
 
 void Rack::OnCopyClick()
 {
-  int fd;
+  int fd_copy;
   char file[12] ;
 
   if(selectedPlugin == 0x0)
     return;
   
+  copy_plug = selectedPlugin;
   strcpy(file, "wiredXXXXXX");
   
-  fd = mkstemp(file);
+  fd_copy = mkstemp(file);
   
-  if(fd < 0)
+  if(fd_copy < 0)
     cout << "echec"<< endl;
   
   else{
     cout << "creation du fichier ok"<< endl;
-    selectedPlugin->Save(fd);
+    fd_size = copy_plug->Save(fd_copy);
+    is_copy = true;
   }  
 }
 
 void Rack::OnPasteClick()
 {
-  cout << OldX << endl;
+  list<RackTrack *>::iterator i;
+  list<Plugin *>::iterator j;
+  vector<PluginLoader *>::iterator	k;
+  Plugin				*tmp;
+  PluginLoader				*p = 0x0;
+  
+  for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
+    if (COMPARE_IDS((*k)->InitInfo.UniqueId, copy_plug->InitInfo->UniqueId))
+      {
+	  p = *k;
+	  break;
+      }
+   if (p)
+    {
+      cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name << endl;     
+      if(fd_copy > 0){
+	lseek(fd_copy,0,SEEK_SET);
+	
+	tmp = AddToSelectedTrack(StartInfo, p);
+	tmp->Load(fd_copy, fd_size);
+	cout << fd_size << endl;
+	cout << "loadedddddddd" <<endl;
+      }       
+ 
+      
+    }
+   
 }
 void Rack::HandleKeyEvent(Plugin *plug, wxKeyEvent *event)
 {
