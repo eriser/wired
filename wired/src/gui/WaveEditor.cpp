@@ -34,19 +34,16 @@ WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
   
   SubMenuEffect->Append(ID_SUBMENU_GAIN_WAVEEDITOR, "Gain...");
   SubMenuEffect->Append(ID_SUBMENU_NORMA_WAVEEDITOR, "Normalize..");
-
-//  PopMenu->Append(ID_POPUP_CUT_WAVEEDITOR, "Cut");
-//  PopMenu->Append(ID_POPUP_COPY_WAVEEDITOR, "Copy");
-//  PopMenu->Append(ID_POPUP_PASTE_WAVEEDITOR, "Paste");
-//  PopMenu->Append(ID_POPUP_DEL_WAVEEDITOR, "Delete");
   
   PopMenu->Append(ID_TOOL_CUT_WAVE, "Cut");
   PopMenu->Append(ID_TOOL_COPY_WAVE, "Copy");
   PopMenu->Append(ID_TOOL_PASTE_WAVE, "Paste");
   PopMenu->Append(ID_TOOL_DEL_WAVE, "Delete");
   PopMenu->AppendSeparator();
-
+  PopMenu->Append(ID_TOOL_SELECT_WAVE, "Select All");
+  PopMenu->AppendSeparator();
   PopMenu->Append(ID_SEBMENU_EFFECTS_WAVEEDITOR, "Effects", SubMenuEffect);
+  
   
   Connect(ID_SUBMENU_GAIN_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
@@ -96,9 +93,9 @@ void WaveEditor::OnPaint(wxPaintEvent &event)
       memDC.SetBrush(selectedBrush);
       memDC.SetPen(selectedPen);
       if (mSelectedRegion.width != 0)
-	memDC.DrawRectangle(mSelectedRegion);
+		memDC.DrawRectangle(mSelectedRegion);  
       else
-	memDC.DrawLine(mSelectedRegion.x, 0, mSelectedRegion.x, height);
+		memDC.DrawLine(mSelectedRegion.x, 0, mSelectedRegion.x, height);
       // Repaint the wave form
       memDC.SetPen(CL_WAVE_DRAW);
       long coeff = height / 2;
@@ -240,6 +237,11 @@ void 					WaveEditor::OnMouseEvent(wxMouseEvent& event)
   Refresh ();
 }
 
+void					WaveEditor::OnSelect(wxCommandEvent &event)
+{
+  mSelectedRegion.x = 0;
+  mSelectedRegion.width = Wave->GetNumberOfFrames();
+}
 
 void					WaveEditor::OnZoom(wxComboBox *combobox)
 {
@@ -427,6 +429,11 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 
   from = (mSelectedRegion.x+xsrc)*inc;
   width = savew = mSelectedRegion.width*inc;
+  if (width < 0) 
+    {
+      from = from + width;
+      width = -width;  
+    }
 
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
@@ -450,7 +457,6 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 	
 	WaveFile *input;
 	WaveFile *output;
-	cout << "number of channel" << Wave->GetNumberOfChannels()<< endl;
 	if (input)
 	  wxRemoveFile("/tmp/tmp2.wav");
 	if (output)
@@ -493,6 +499,7 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
     wxRemoveFile("/tmp/tmp2.wav");
     wxRemoveFile("/tmp/tmp3.wav");
   }
+  mSelectedRegion.width = 0;
   SetDrawing();
   SeqPanel->UpdateAudioPatterns(Wave);
   Refresh();
@@ -593,20 +600,17 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
 
 void				cCutAction::Do()
 {  
- cout << "cCutAction::Do - begin --- from = " << from << endl;
   cClipBoard::Global().Cut(*wave, from, width);	
   NotifyActionManager();
 }
 
 void				cCutAction::Redo()
 {  
-cout << "cCutAction::ReDo - begin --- from = " << from << endl;
   Do();
 }
 
 void				cCutAction::Undo()
 {  
-cout << "cCutAction::UnDo - begin --- from = " << from << endl;
   if (wave)
 	cClipBoard::Global().Paste(*wave, (int)from);
 }
@@ -616,7 +620,6 @@ cout << "cCutAction::UnDo - begin --- from = " << from << endl;
 
 void				cPasteAction::Do()
 {  
-  cout << "cPasteAction::Do - begin --- to= " << to << endl;
   cClipBoard::Global().Paste(*wave, to);
   	
   NotifyActionManager();
@@ -624,13 +627,11 @@ void				cPasteAction::Do()
 
 void				cPasteAction::Redo()
 {  
-cout << "cPasteAction::ReDo - begin --- to= " << to << endl;
   Do();
 }
 
 void				cPasteAction::Undo()
 {  
-  cout << "cPasteAction::UnDo - begin --- to= " << to << endl;
 	cClipBoard::Global().Cut(*wave, to, width);
 }
 

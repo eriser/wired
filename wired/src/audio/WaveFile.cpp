@@ -139,13 +139,10 @@ WaveFile::WaveFile()
   }
   else
   {
-    cout << "nom du fichier : " << Filename << endl;
-	cout << "[WaveFile::WaveFile] sfinfo.channels = " << sfinfo.channels << endl;
-  
     NumberOfFrames = sfinfo.frames;
     TempBuf = new float[sfinfo.channels * WAVE_TEMP_SIZE];
   }
-  cout << "[WAVEFILE] read: " << NumberOfFrames << "; sf: " << sfinfo.frames << endl;    
+ // cout << "[WAVEFILE] read: " << NumberOfFrames << "; sf: " << sfinfo.frames << endl;    
 }
 
 WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
@@ -160,7 +157,7 @@ WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
   }
   NumberOfFrames = size / channels;
   sfinfo.channels = channels;
-  cout << "[WAVEFILE] Channels :" << channels << "; size: "  << size << "; NumberOfFrames: "  << NumberOfFrames << endl;    
+  //cout << "[WAVEFILE] Channels :" << channels << "; size: "  << size << "; NumberOfFrames: "  << NumberOfFrames << endl;    
   Data = new float *[channels];
   for (int i = 0; i < channels; i++)
   {
@@ -172,7 +169,6 @@ WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
 
 WaveFile::~WaveFile()
 {
-cout << "wavefile nom fichier : " << Filename << endl;
   if (sffile)
     sf_close(sffile);
 

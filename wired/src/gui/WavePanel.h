@@ -29,15 +29,11 @@ enum
     ID_TOOLBAR_WAVE,
     ID_TOOL_UNDO_WAVE,
     ID_TOOL_REDO_WAVE,
-    ID_TOOL_COMBO_WAVE
-    
-//    ID_POPUP_CUT_WAVEEDITOR,
-//    ID_POPUP_COPY_WAVEEDITOR, 
-//    ID_POPUP_PASTE_WAVEEDITOR,
-//    ID_POPUP_DEL_WAVEEDITOR,
-//    ID_SEBMENU_EFFECTS_WAVEEDITOR,
-//    ID_SUBMENU_GAIN_WAVEEDITOR,
-//    ID_SUBMENU_NORMA_WAVEEDITOR
+    ID_TOOL_SELECT_WAVE,
+    ID_TOOL_COMBO_WAVE,
+    ID_SEBMENU_EFFECTS_WAVEEDITOR,
+    ID_SUBMENU_GAIN_WAVEEDITOR,
+    ID_SUBMENU_NORMA_WAVEEDITOR
 };
 
 
@@ -70,14 +66,12 @@ class WavePanel : public wxPanel
   void				OnUndo(wxCommandEvent &event);
   void				OnRedo(wxCommandEvent &event);
   void				OnDetach(wxFrame *f);
-//  void 				OnMouseEvent(wxMouseEvent& event);
-//  void				OnGain(wxCommandEvent &event);
-  
+  void				OnSelect(wxCommandEvent &event);
 
-  wxComboBox 		        *combobox;
-  wxScrollBar		        *sbh;
+  wxComboBox 		*combobox;
+  wxScrollBar		*sbh;
   wxToolBar			*Toolbar;
-  WaveEditor                    *w;
+  WaveEditor        *w;
 
 
  private:  

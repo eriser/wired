@@ -49,8 +49,6 @@ void					WaveEditorDrawer::SetWave(float **data, unsigned long frame_length, lon
 void					WaveEditorDrawer::SetWave(WaveFile *w, wxSize s)
 {
 
-  printf(" [ START ] WaveEditorDrawer::SetWave(%d)\n", w);
-
   if (!w)
     {
       Wave = 0;
@@ -61,80 +59,14 @@ void					WaveEditorDrawer::SetWave(WaveFile *w, wxSize s)
     }
   else
     {
-    printf(" [ ELSE START ] WaveEditorDrawer::SetWave(%d)\n", w);
       Wave = w;
       Data = w->Data;
       NumberOfChannels = w->GetNumberOfChannels();
       StartWavePos = 0;
-      EndWavePos = w->GetNumberOfFrames();
-      
+      EndWavePos = w->GetNumberOfFrames(); 
     }
 }
 
-
-//void			WaveEditorDrawer::ReadElmtList(float *f, long pos, long xsrc)
-//{
-//  int					len = xsrc+PAINT_WIDTH;
-//  
-//  cout << "Debut ReadElmtList"<< endl;
-//  list<tRegion>::iterator it;
-//  for (it = l.begin(); it != l.end(); it++)
-//	  if ((pos >= (*it).start) && (pos <= (*it).end))
-//	  {
-//		(*it).from->Read(f, pos);
-//		break;
-//	  }
-//	  cout << "fin ReadElmtList"<< endl;
-//}
-//
-//
-//void			WaveEditorDrawer::deleteFromList()
-//{
-//
-//  cout << "Debut deleteFromList"<< endl;
-//  list<tRegion>::iterator it;
-//  for (it = l.begin(); it != l.end(); it++)
-//	  if (((*it).start == -1) && ((*it).end == -1))
-//		l.pop_front();
-//  cout << "fin deleteFromList"<< endl;
-//}
-//
-//void					WaveEditorDrawer::SetTempFile()
-//{
-//  float					**TempBuf;
-//  long					width;
-//  int 					frames_nbr = 0;
-//  f_count_t 			read_frames;
-//  long					inc;
-//  
-//  
-//
-//  inc = (EndWavePos / s.x);
-//  printf(" [  Debut  ] WaveEditorDrawer::SetTempFFile()\n");
-//  list<tRegion>::iterator it;
-//  for (it = l.begin(); it != l.end(); it++)
-//  {
-//	width = (*it).end - (*it).start;
-//	
-//	// buffer destine a recevoir les donnees a copier
-//	float * rw_buffer = new float [(*it).from.GetNumberOfChannels() * width];
-//	
-//	(*it).from.SetCurrentPosition((*it).pos);
-//	read_frames = (*it).from.ReadFloatF(rw_buffer, width);
-//	temp.WriteFloatF(rw_buffer, read_frames);
-//	frames_nbr += read_frames;
-//	
-//	delete rw_buffer;
-//  }
-// 
-//  temp->sfinfo.frames = frames_nbr;
-//  temp->sfinfo.channels = Wave.GetNumberOfChannels();
-//  temp->sfinfo.format = Wave.GetFormat();
-//  temp->sfinfo.samplerate = Wave.GetSampleRate();
-//  
-//  printf(" [  END  ] WaveEditorDrawer::SetTempFFile()\n");
-//
-//}
 
 
 void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
@@ -145,9 +77,6 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
   int					len;
   float					f[NumberOfChannels];
 
-
-  //printf(" [ START ] WaveEditorDrawer::SetDrawing()\n");
-
   size_x = s.x;
   size_y = s.y;
   if (size_x < 2)
@@ -157,8 +86,6 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
 	len = (PAINT_WIDTH);
   else
 	len = EndWavePos;
-  
-
   
   // Coefficient d'amplitude
   coeff = (size_y / 2);
@@ -185,19 +112,19 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
 	  for (i = 0, pos = pos_deb; (i < size_x) && (pos < pos_fin); i++)
 	    {
 	      for (k = 0, cur = 0; (k < inc) && (pos < pos_fin); k++, pos++)
-		{		
-		  Wave->Read(f, pos);
-		  for (j = 0; (j < NumberOfChannels); j++)
-		    cur += fabsf(f[j]);
-		}
+		  {		
+			Wave->Read(f, pos);
+			for (j = 0; (j < NumberOfChannels); j++)
+			  cur += fabsf(f[j]);
+		  }
 	      val = cur / (NumberOfChannels + inc);
 	      val = 10 * log10(val);
 	      // The smallest value we will see is -45.15 (10*log10(1/32768))
 	      val = (val + 45.f) / 45.f;
 	      if (val < 0.f)
-		val = 0.f;
+			val = 0.f;
 	      else if (val > 1.f)
-		val = 1.f;
+			val = 1.f;
 	      DrawData[i] = (long)(val * coeff);
 	    }	  
 	}
@@ -292,8 +219,6 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
 	  }
       }
   RedrawBitmap(s);
-
-  //printf(" [  END  ] WaveEditorDrawer::SetDrawing()\n");
 }
 
 

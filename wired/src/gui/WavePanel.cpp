@@ -5,7 +5,6 @@
 #include 	"Colour.h"
 #include 	"Settings.h"
 //#include	"OptionPanel.h"
-
 #include 	<math.h>
 #include 	<iostream>
 #include	<wx/textdlg.h>
@@ -28,8 +27,6 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
 					  long style) 
 					: wxPanel(parent, id, pos, size, style)
 {
-  cout << "[WaveEditor] - Constructor" << endl;
-  
   wxBoxSizer			*row;
   wxString				combochoice[NB_CHOICE];
   long					c;
@@ -89,19 +86,9 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
   Connect(ID_TOOL_DEL_WAVE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	  &WavePanel::OnDelete);
-	  
-//  Connect(ID_POPUP_COPY_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
-//	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-//	  &WavePanel::OnCopy);
-//  Connect(ID_POPUP_CUT_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
-//	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-//	  &WavePanel::OnCut);
-//  Connect(ID_POPUP_PASTE_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
-//	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-//	  &WavePanel::OnPaste);
-//  Connect(ID_POPUP_DEL_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
-//	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
-//	  &WavePanel::OnDelete);
+  Connect(ID_TOOL_SELECT_WAVE, wxEVT_COMMAND_MENU_SELECTED,
+	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
+	  &WavePanel::OnSelect);
   
   //	Toolbar->ToggleTool(ID_TOOL_UNDO_WAVEEDITOR, NULL);
   //	Toolbar->ToggleTool(ID_TOOL_REDO_WAVEEDITOR, NULL);
@@ -113,7 +100,6 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
 
 WavePanel::~WavePanel()
 {
-  cout << "WavePanel::~WavePanel" << endl;
 
 }
 
@@ -130,7 +116,10 @@ void 					WavePanel::OnScroll(wxScrollEvent &event)
    w->OnScroll(sbh);
 }
 
-
+void					WavePanel::OnSelect(wxCommandEvent &event)
+{
+  w->OnSelect(event);
+}
 
 void					WavePanel::OnZoom(wxCommandEvent &event)
 {
