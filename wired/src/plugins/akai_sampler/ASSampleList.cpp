@@ -3,10 +3,20 @@
 #include "ASKeygroupList.h"
 #include "WaveFile.h"
 
+#include "ASEnvel.h"
+#include "ASLoop.h"
+
+#define NB_EFFECTS 2
+static wxString EFFECTSNAMES[NB_EFFECTS] = {
+  _T("Enveloppe"),
+  _T("Looping")
+};
+
 BEGIN_EVENT_TABLE(ASSampleList, wxWindow)
   EVT_BUTTON(ASSampleList_AddSample, ASSampleList::OnAddSample)
   EVT_BUTTON(ASSampleList_DelSample, ASSampleList::OnDelSample)
   EVT_BUTTON(ASSampleList_AssignSample, ASSampleList::OnAssignSample)
+  EVT_BUTTON(ASSampleList_EffectSample, ASSampleList::OnEffectSample)
   EVT_SIZE(ASSampleList::OnResize)
 END_EVENT_TABLE()
 
@@ -18,6 +28,7 @@ ASSampleList::ASSampleList(wxString Name) :
 {
   List = NULL;
   p = NULL;
+  pp = NULL;
 }
 
 ASSampleList::~ASSampleList()
@@ -39,9 +50,11 @@ wxWindow *ASSampleList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
   wxImage *btadd = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_ADD_SAMPLE)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *btdel = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_DEL_SAMPLE)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *btassign = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_ASSIGN_SAMPLE)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *bteffect = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_EFFECT_SAMPLE)).c_str(), wxBITMAP_TYPE_PNG);
   List->AddControl(new wxBitmapButton(List, ASSampleList_AddSample, wxBitmap(btadd)));
   List->AddControl(new wxBitmapButton(List, ASSampleList_DelSample, wxBitmap(btdel)));
   List->AddControl(new wxBitmapButton(List, ASSampleList_AssignSample, wxBitmap(btassign)));
+  List->AddControl(new wxBitmapButton(List, ASSampleList_EffectSample, wxBitmap(bteffect)));
   Show(true);
   return this;
 }
@@ -121,4 +134,57 @@ void  ASSampleList::OnAssignSample(wxCommandEvent &e)
     ((ASamplerSample *)(*i)->GetEntry())->SetKeygroup((ASamplerKeygroup *)kg[selkg - 1]->GetEntry());
     ((ASamplerKeygroup *)kg[selkg - 1]->GetEntry())->SetSample((ASamplerSample *)(*i)->GetEntry());
   }
+}
+
+void  ASSampleList::OnSelectEffect(wxCommandEvent &e)
+{
+  vector<ASListEntry *> v;
+  v = List->GetSelected();
+  if (!v.size())
+    return;
+  vector<ASListEntry *>::iterator i;
+  i = v.begin();
+  ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
+  ASPlugin *p;
+  switch (e.GetId())
+  {
+    case 1:
+      // Enveloppe
+      p = new ASEnvel(wxString("Enveloppe for ") + (*i)->GetName());
+      break;
+    case 2:
+      // Looping
+      p = new ASLoop(wxString("Looping for ") + (*i)->GetName());
+      ((ASLoop *)p)->SetSample((ASamplerSample *)((*i)->GetEntry()));
+      break;
+    default:
+      p = NULL;
+  }
+  if (p && pp)
+  {
+    ASPlugin *p2 = ass->GetEffect();
+    if (p2)
+      pp->ClosePlug(p2);
+    delete p2;
+    ass->SetEffect(p);
+    pp->AddPlug(p);
+    pp->ShowPlugin(p);
+  }
+}
+
+void  ASSampleList::OnEffectSample(wxCommandEvent &e)
+{
+  long        k;
+  wxMenu      *menu;
+            
+  menu = new wxMenu();
+  for (k = 1; k <= NB_EFFECTS; k++)
+  {
+    menu->Append(k, EFFECTSNAMES[k - 1]);
+    Connect(k, wxEVT_COMMAND_MENU_SELECTED,
+      (wxObjectEventFunction)(wxEventFunction)
+      (wxCommandEventFunction)&ASSampleList::OnSelectEffect);
+  }       
+  wxPoint p(((wxWindow *)e.GetEventObject())->GetPosition());
+  PopupMenu(menu, p.x, p.y);
 }

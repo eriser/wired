@@ -9,6 +9,7 @@ libWiredSampler_la_SOURCES =					\
 			ASClavier.cpp    		\
 			ASPlugin.cpp			\
 			ASEnvel.cpp      		\
+			ASWaveView.cpp      		\
 			ASKey.cpp 			\
 		        Solver.cpp			\
 			ASList.cpp			\
@@ -16,6 +17,7 @@ libWiredSampler_la_SOURCES =					\
 			ASPlugPanel.cpp			\
 			ASSampleList.cpp		\
 			ASKeygroupList.cpp		\
+			ASLoop.cpp			\
 			AkaiSampler.h			\
 			ASClavier.h    			\
 			ASPlugin.h			\
@@ -27,10 +29,14 @@ libWiredSampler_la_SOURCES =					\
 		        Splines.h			\
 			ASPlugPanel.h			\
 			ASSampleList.h			\
+			ASWaveView.h			\
 			ASKeygroupList.h		\
+			ASLoop.h			\
 			../../redist/Polyphony.cpp	\
 			../../redist/Plugin.cpp		\
 			../../engine/Settings.cpp	\
+			../../gui/WaveView.cpp		\
+			../../gui/WaveDrawer.cpp	\
 			../../audio/WaveFile.cpp
 
 libWiredSampler_la_LIBADD = $(DEPS_LIBS)

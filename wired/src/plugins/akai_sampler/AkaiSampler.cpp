@@ -4,7 +4,6 @@
 #include <math.h>
 #include <wx/progdlg.h>
 #include "ASPlugPanel.h"
-#include "ASEnvel.h"
 #include "Settings.h"
 
 static PlugInitInfo info;
@@ -34,14 +33,11 @@ END_EVENT_TABLE()
   PlugPanel = new ASPlugPanel(this, wxPoint(150, 0), wxSize(GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), wxTHICK_FRAME, this);
 
   Samples = new ASSampleList("Samples");
+  Samples->SetPlugPanel(PlugPanel);
   Keygroups = new ASKeygroupList("Keygroups");
 
   PlugPanel->AddPlug(Samples);
   PlugPanel->AddPlug(Keygroups);
-
-  //ASEnvel *envel = new ASEnvel("Envelope");
-  //PlugPanel->AddPlug(envel);
-
   PlugPanel->ShowPlugin(Samples);
 
   //memset(Keys, 0x0, sizeof(ASamplerKey *) * 127);

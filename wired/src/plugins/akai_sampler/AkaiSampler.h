@@ -128,6 +128,8 @@ class AkaiSampler : public Plugin
     wxBitmap   *LedOn; 
     wxBitmap   *BgBmp;
 
+    ASamplerSample *ass;
+
     wxStaticText *PolyCountLabel;
 
     wxMutex    Mutex;
