@@ -4,6 +4,7 @@
 #include "RulerMidi.h"
 #include "MidiPart.h"
 #include "../gui/OptionPanel.h"
+#include "../engine/Settings.h"
 
 EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) 
   :  wxPanel(parent, id, pos, size, style)
@@ -258,9 +259,9 @@ void					EditMidi::OnAttach()
 void					EditMidi::OnDetach(wxFrame *f)
 {
   toolbar = new wxToolBar(f, ID_TOOLBAR_EDITMIDI, wxPoint(-1, -1), wxSize(-1, -1), wxTB_FLAT | wxTB_DOCKABLE);
-  toolbar->AddRadioTool(ID_TOOL_MOVE_MIDIPART, "Move", wxBitmap("data/Toolbar/hand_up.png", wxBITMAP_TYPE_PNG), wxBitmap("data/Toolbar/hand_down.png", wxBITMAP_TYPE_PNG), "Move", "Moves notes", NULL);
-  toolbar->AddRadioTool(ID_TOOL_EDIT_MIDIPART, "Edit", wxBitmap("data/Toolbar/draw_up.png", wxBITMAP_TYPE_PNG), wxBitmap("data/Toolbar/draw_down.png", wxBITMAP_TYPE_PNG), "Edit", "Resizes notes", NULL);
-  toolbar->AddRadioTool(ID_TOOL_DEL_MIDIPART, "Del", wxBitmap("data/Toolbar/erase_up.png", wxBITMAP_TYPE_PNG), wxBitmap("data/Toolbar/erase_down.png", wxBITMAP_TYPE_PNG), "Del", "Deletes notes", NULL);
+  toolbar->AddRadioTool(ID_TOOL_MOVE_MIDIPART, "Move", wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/hand_up.png").c_str()), wxBITMAP_TYPE_PNG), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/hand_down.png").c_str()), wxBITMAP_TYPE_PNG), "Move", "Moves notes", NULL);
+  toolbar->AddRadioTool(ID_TOOL_EDIT_MIDIPART, "Edit", wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/draw_up.png").c_str()), wxBITMAP_TYPE_PNG), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/draw_down.png").c_str()), wxBITMAP_TYPE_PNG), "Edit", "Resizes notes", NULL);
+  toolbar->AddRadioTool(ID_TOOL_DEL_MIDIPART, "Del", wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/erase_up.png").c_str()), wxBITMAP_TYPE_PNG), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/erase_down.png").c_str()), wxBITMAP_TYPE_PNG), "Del", "Deletes notes", NULL);
   toolbar->Realize();
   ((WiredFrame *)f)->em = this;
   f->SetToolBar(toolbar);
