@@ -46,6 +46,9 @@ void cClipBoard::Copy (WaveFile& wave, int from, int size_of_copy)
   // buffer destine a recevoir les donnees a copier
   float * rw_buffer = new float [wave.GetNumberOfChannels() * WAVE_TEMP_SIZE];
   
+  sf_count_t tmp_frames = 0;
+  sf_command (GetFilePtr(), SFC_FILE_TRUNCATE, &tmp_frames, sizeof (tmp_frames)) ;
+  sf_command (GetFilePtr(), SFC_UPDATE_HEADER_NOW, NULL, SF_FALSE) ;
   // On se positionne au debut de la selection a copier 
   wave.SetCurrentPosition (from);
   

@@ -77,18 +77,31 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
   
   SetSizer(row);
   
-  Connect(ID_POPUP_COPY_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
+  Connect(ID_TOOL_COPY_WAVE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	  &WavePanel::OnCopy);
-  Connect(ID_POPUP_CUT_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
+  Connect(ID_TOOL_CUT_WAVE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	  &WavePanel::OnCut);
-  Connect(ID_POPUP_PASTE_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
+  Connect(ID_TOOL_PASTE_WAVE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	  &WavePanel::OnPaste);
-  Connect(ID_POPUP_DEL_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
+  Connect(ID_TOOL_DEL_WAVE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	  &WavePanel::OnDelete);
+	  
+//  Connect(ID_POPUP_COPY_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
+//	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
+//	  &WavePanel::OnCopy);
+//  Connect(ID_POPUP_CUT_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
+//	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
+//	  &WavePanel::OnCut);
+//  Connect(ID_POPUP_PASTE_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
+//	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
+//	  &WavePanel::OnPaste);
+//  Connect(ID_POPUP_DEL_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
+//	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
+//	  &WavePanel::OnDelete);
   
   //	Toolbar->ToggleTool(ID_TOOL_UNDO_WAVEEDITOR, NULL);
   //	Toolbar->ToggleTool(ID_TOOL_REDO_WAVEEDITOR, NULL);

@@ -9,7 +9,7 @@
 #include 	<wx/menu.h>
 #include 	<math.h>
 #include 	<iostream>
-//#include 	<WavePanel.h>
+#include 	<WavePanel.h>
 #include        <wx/choicdlg.h>
 #include        "SequencerGui.h"
 
@@ -35,10 +35,15 @@ WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
   SubMenuEffect->Append(ID_SUBMENU_GAIN_WAVEEDITOR, "Gain...");
   SubMenuEffect->Append(ID_SUBMENU_NORMA_WAVEEDITOR, "Normalize..");
 
-  PopMenu->Append(ID_POPUP_CUT_WAVEEDITOR, "Cut");
-  PopMenu->Append(ID_POPUP_COPY_WAVEEDITOR, "Copy");
-  PopMenu->Append(ID_POPUP_PASTE_WAVEEDITOR, "Paste");
-  PopMenu->Append(ID_POPUP_DEL_WAVEEDITOR, "Delete");
+//  PopMenu->Append(ID_POPUP_CUT_WAVEEDITOR, "Cut");
+//  PopMenu->Append(ID_POPUP_COPY_WAVEEDITOR, "Copy");
+//  PopMenu->Append(ID_POPUP_PASTE_WAVEEDITOR, "Paste");
+//  PopMenu->Append(ID_POPUP_DEL_WAVEEDITOR, "Delete");
+  
+  PopMenu->Append(ID_TOOL_CUT_WAVE, "Cut");
+  PopMenu->Append(ID_TOOL_COPY_WAVE, "Copy");
+  PopMenu->Append(ID_TOOL_PASTE_WAVE, "Paste");
+  PopMenu->Append(ID_TOOL_DEL_WAVE, "Delete");
   PopMenu->AppendSeparator();
 
   PopMenu->Append(ID_SEBMENU_EFFECTS_WAVEEDITOR, "Effects", SubMenuEffect);
