@@ -65,10 +65,10 @@ class				Rack: public wxScrolledWindow
   void				RemoveFromSelectedTrack();
   void				RemoveTrack();
 
-  
+  void				OnDeleteClick();
   bool 				DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y , Plugin *plug);
   void				DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug);
-
+  void				AddPlugToMenu();
   //  bool ProcessEvent(wxEvent& event);  
 
   void				HandleMouseEvent(Plugin *plug, wxMouseEvent *event);
@@ -86,10 +86,25 @@ class				Rack: public wxScrolledWindow
   int				OldX;
   int				OldY;
   wxMenu			*menu;
+  wxMenu			*submenu;
+  wxMenu			*instr_menu;
+  wxMenu			*effects_menu;
   bool				WasDragging;
   virtual void			OnPaint(wxPaintEvent &event);
   void				OnHelp(wxMouseEvent &event);
   void				OnClick(wxMouseEvent &event);
+};
+
+// IDS
+enum
+{
+  ID_MENU_ADD = 20000,
+  ID_MENU_CUT,
+  ID_MENU_COPY,
+  ID_MENU_PASTE,
+  ID_MENU_DELETE,
+  ID_INSTR_MENU,
+  ID_EFFECTS_MENU
 };
 
 extern Rack			*RackPanel;
