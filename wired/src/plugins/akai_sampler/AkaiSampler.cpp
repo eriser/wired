@@ -455,23 +455,12 @@ wxBitmap *AkaiSampler::GetBitmap()
 
 void AkaiSampler::Process(float **input, float **output, long sample_length)
 {
-  //long i;
-  //int chan;
-  
-  cerr << "Process start" << endl;
   Mutex.Lock();
 
-  /*  if (!AkaiProgram)
-      {
-      Mutex.Unlock();
-      return;
-      }
-      */
   list<ASamplerNote *>::iterator i;
   ASamplerNote *n;
   long length, end, idx, chan;
 
-  cerr << "Process note" << endl;
   // Processing des notes
   for (i = Notes.begin(); i != Notes.end(); i++)
   {
@@ -482,7 +471,6 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
       endtotest = n->Key->ass->GetLoopEnd();
     if (n->Position < endtotest)
     {
-  cerr << "pos < endtotest" << endl;
       length = sample_length - n->Delta;
       end = (long)(endtotest / n->Key->Pitch);
       if (end < (length))
@@ -491,29 +479,23 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
         end = 0;
       n->Key->ass->GetSample()->SetPitch(n->Key->Pitch);
       long pos = n->Position;
-  cerr << "read" << endl;
       n->Key->ass->GetSample()->Read(n->Buffer, n->Position, length, n->Delta, &(n->Position));
 
-  cerr << "vol" << endl;
       if (n->Volume != 1.f)
         for (chan = 0; chan < 2; chan++)
           for (idx = n->Delta; idx < length; idx++)
             n->Buffer[chan][idx] *= n->Volume;
 
-  cerr << "plugs" << endl;
       vector<ASPlugin *> p = n->Key->ass->GetEffects();
       for (vector<ASPlugin*>::iterator i = p.begin(); i != p.end(); i++)
         (*i)->Process(n->Buffer, 2, pos, length);
-  cerr << "ok c fini" << endl;
       if (n->Delta)
         n->Delta = 0;
     }
   }
 
-  cerr << "on mixe" << endl;
   Workshop.GetMix(output);
 
-  cerr << "deletion" << endl;
   // Suppression des notes termin~Aées
   for (i = Notes.begin(); i != Notes.end();)
   {
@@ -523,10 +505,8 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
       endtotest = (*i)->Key->ass->GetLoopEnd();
     if ((*i)->Position >= endtotest)
     {
-  cerr << "haha pos > end" << endl;
       if (((*i)->Key->ass->GetLoopCount() > (*i)->Key->loops) || ((*i)->Key->ass->GetLoopCount() == -1))
       {
-  cerr << "je loop" << endl;
         (*i)->Position = (*i)->Key->ass->GetLoopStart();
         (*i)->Key->looping = true;
         (*i)->Key->loops++;
@@ -534,7 +514,6 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
       }
       else
       {
-  cerr << "je delete " << endl;
         Workshop.SetFreeBuffer((*i)->Buffer);
         delete *i;
         i = Notes.erase(i);
@@ -543,12 +522,9 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
     else
     {
       i++;
-  cerr << "c good on delete pas a po fini " << endl;
     }
   }
-  cerr << "mutex bientot unlock" << endl;
   Mutex.Unlock();
-  cerr << "THE END" << endl;
 
 }
 
