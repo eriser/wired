@@ -508,6 +508,7 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 	      if (n->Position < n->SliceNote->EndPosition)
 		{
 		  //		  cout << "POS: " << n->Position << "; ENDPOS: " << n->SliceNote->EndPosition << endl;
+		  //cout << "read pos: " << n->Position << endl;
 		  Wave->Read(read_buf, n->Position, length, 0, &(n->Position));
 		  n->SliceNote->LeftTouch->putSamples(read_buf[0], length);
 		  n->SliceNote->RightTouch->putSamples(read_buf[1], length);
@@ -530,19 +531,30 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 	      for (idx = n->Delta; idx < length; idx++)
 		n->Buffer[chan][idx] *= n->Volume;
 	  
-	  /*
-	    if (end)
-	    {
-	      if (length - 500 > 0)
-		{
-		  float f;
-		  for (chan = 0; chan < 2; chan++)	    
-		    for (idx = length - 500, f = 1.f; idx < length; idx++, f -= 0.002f)
-		      n->Buffer[chan][idx] *= f;  
-		}
-	    }
-	  */
+	  //cout << "begin pos: " << n->BeginPosition << ", pos: " << n->Position << ", length: " << length << endl;
 
+	  if (n->Start)
+	    {
+	      n->Start = false;
+	      cout << "start slice: " << n << endl;
+	      float f;
+	      for (chan = 0; chan < 2; chan++)	    
+		for (idx = 0, f = 0.f; idx < length; idx++, f += 1.f / (float)length)
+		  n->Buffer[chan][idx] *= f;  
+	      cout << "f: " << f << endl;
+	    }
+
+	  end = (long)((n->SliceNote->EndPosition - n->Position) / n->SliceNote->Pitch);
+
+	  if (end <= length)
+	    {
+	      cout << "end slice: " << n << endl;
+	      float f;
+	      for (chan = 0; chan < 2; chan++)	    
+		for (idx = 0, f = 1.f; idx < length; idx++, f -= 1.f / (float)length)
+		  n->Buffer[chan][idx] *= f;  
+	    }	  
+	  
 	  /*
 	  if ((n->Position - n->BeginPosition) < AttackLen)
 	    {	      
