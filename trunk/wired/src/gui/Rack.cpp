@@ -486,6 +486,7 @@ bool Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator 
 		return true;
 	      DeleteRack(plug);
 	      DndInsert(k, l, plug);
+	      UpdateUnitXSize();
 	      return true;
 	    }
 	}
@@ -493,16 +494,37 @@ bool Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator 
       }
   }
    return false;
-}
+}  
 
-void Rack::DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug)
+inline void Rack::DndInsert(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug)
 {
-  list<Plugin *>::iterator debug; 
+  list<Plugin *>::iterator debug;
+
   debug = (*k)->Racks.insert(l,plug);
   cout << (*debug)->Name << endl;
+  SetScrolling();
 }
 
-void Rack::OnDeleteClick()
+void Rack::UpdateUnitXSize()
+{
+  list<RackTrack *>::iterator		i;
+  list<Plugin *>::iterator		j;
+
+  
+  for(i = RackTracks.begin(); i != RackTracks.end(); i++)
+    {
+      for(j = (*i)->Racks.begin(); j != (*i)->Racks.end() ; j++)
+	{
+	  if((*j)->InitInfo->UnitsX > (*i)->Units)
+	    {
+	      (*i)->Units = (*j)->InitInfo->UnitsX;
+	      break;
+	    }
+	}
+    }
+}
+
+inline void Rack::OnDeleteClick()
 {
   vector<RackTrack *>::iterator		i;
   vector<Plugin *>::iterator		j;
@@ -524,7 +546,7 @@ void Rack::OnDeleteClick()
     }
 }
 
-void Rack::OnCutClick()
+inline void Rack::OnCutClick()
 {
   int fd_copy;
   char file[12] ;
@@ -550,7 +572,7 @@ void Rack::OnCutClick()
   
 }
 
-void Rack::OnCopyClick()
+inline void Rack::OnCopyClick()
 {
   int fd_copy;
   char file[12] ;
@@ -573,7 +595,7 @@ void Rack::OnCopyClick()
   }  
 }
 
-void Rack::OnPasteClick()
+inline void Rack::OnPasteClick()
 {
   list<RackTrack *>::iterator i;
   list<Plugin *>::iterator j;
@@ -611,7 +633,7 @@ void Rack::HandleKeyEvent(Plugin *plug, wxKeyEvent *event)
     }
 }
 
-void Rack::ResizeTracks()
+inline void Rack::ResizeTracks()
 {
   int xx, yy, xpos, ypos, k;
   list<RackTrack *>::iterator i;
@@ -629,7 +651,7 @@ void Rack::ResizeTracks()
 	  yy += (*j)->InitInfo->UnitsY;
 	}
       xx += (*i)->Units;
-      }
+    }
 }
 
 RackTrack *Rack::GetRackTrack(Plugin *plug)
