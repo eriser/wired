@@ -101,7 +101,7 @@ class AkaiSampler : public Plugin
 //    ASamplerKey    *Keys[127];
     Polyphony   Workshop;
     list<ASamplerNote *> Notes;
-    akaiProgram   *AkaiProgram;
+    t_akaiProgram   *AkaiProgram;
     wxString        AkaiPrefix;
 
     float  Volume;
