@@ -30,6 +30,7 @@
 #include "akai.h"
 #include "Settings.h"
 
+using namespace std;
 using std::string;
 using std::vector;
 
@@ -120,7 +121,7 @@ class FileLoader: public wxDialog
   wxBitmapButton *favdel;
   bool		akai;
   bool		save;
-  int		akaifd;
+  akaiImage *img;
 
   string	favdir;
   string	mrudir;
