@@ -232,7 +232,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
     
   SetMenuBar(MenuBar);
 
-  wxSplitterWindow *split;
   split = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(800, 450)); 
 
   /* Creation Panel */
@@ -270,6 +269,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   StartInfo.Rack = RackPanel;    
   
   LoadPlugins();
+
+  RackModeView = true;
 
   // Taille minimum de la fenetre
   SetSizeHints(400, 300);
@@ -882,6 +883,50 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
       RackPanel->Reparent(this);
       delete RackFrame;
       RackFrame = 0x0;
+    }
+}
+
+void					MainWindow::OnSwitchRackOptView()
+{
+  RackModeView = !RackModeView;
+  if (RackModeView)
+    {
+      OptPanel->SetSize(wxSize(470, 150));
+      OptPanel->Reparent(this);
+      
+      RackPanel->Reparent(split);      
+      //split->SplitHorizontally(RackPanel, SeqPanel);
+      split->ReplaceWindow(OptPanel, RackPanel);
+
+      BottomSizer = new wxBoxSizer(wxHORIZONTAL);
+      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
+      BottomSizer->Add(OptPanel, 1, wxEXPAND | wxALL, 2); 
+  
+      TopSizer = new wxBoxSizer(wxVERTICAL);
+      
+      TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
+      TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
+      SetSizer(TopSizer);
+    }
+  else
+    {
+      RackPanel->SetSize(wxSize(470, 150));
+      RackPanel->Reparent(this);
+      RackPanel->SetPosition(wxPoint(306, 452));
+      
+      OptPanel->Reparent(split);
+      split->ReplaceWindow(RackPanel, OptPanel);
+      //split->SplitHorizontally(OptPanel, SeqPanel);
+
+      BottomSizer = new wxBoxSizer(wxHORIZONTAL);
+      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
+      BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL, 2); 
+  
+      TopSizer = new wxBoxSizer(wxVERTICAL);
+      
+      TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
+      TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
+      SetSizer(TopSizer);
     }
 }
 

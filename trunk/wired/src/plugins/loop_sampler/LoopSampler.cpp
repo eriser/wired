@@ -476,6 +476,7 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 
 	  while (!(n->End) && ((curL < length) || (curR < length)))
 	    {
+	      cout << "slice : " << n << ", pos: " << n->Position << ", curL: " << curL << endl;
 	      do
 		{
 		  retTouchL = n->SliceNote->LeftTouch->receiveSamples(n->Buffer[0] + curL +
@@ -550,13 +551,7 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 	}
     }
 
-  //memset(output[0], 0, sample_length * sizeof(float));
-  //memset(output[1], 0, sample_length * sizeof(float));
-
   Workshop.GetMix(output);
-
-  //for (int o = 0; o < sample_length; o++)
-  //cout << output[0][o] << endl;
 
   // Suppression des notes terminées
   for (i = Notes.begin(); i != Notes.end();)

@@ -815,7 +815,7 @@ void WiredBeatBox::ProcessEvent(WiredEvent& event)
 {
   if ((event.MidiData[0] == M_NOTEON1) || (event.MidiData[0] == M_NOTEON2))
     {
-      if (!event.MidiData[2]) 
+      /*  if (!event.MidiData[2]) 
 	{
 	  PatternMutex.Lock();
 	  // Suppression des notes terminées
@@ -833,29 +833,28 @@ void WiredBeatBox::ProcessEvent(WiredEvent& event)
 	  PatternMutex.Unlock();
 	}
       else
+      {*/
+      PatternMutex.Lock();
+      
+      if ((NotesToPlay.size() + 1 > 
+	   static_cast<unsigned int>(Pool->GetCount())))
+	Pool->SetPolyphony(NotesToPlay.size()+ 32);
+      int i;
+      for (i = 0; i < NB_CHAN; i++)
 	{
-	  PatternMutex.Lock();
-	  
-	  if ((NotesToPlay.size() + 1 > 
-	       static_cast<unsigned int>(Pool->GetCount())))
-	      Pool->SetPolyphony(NotesToPlay.size()+ 32);
-	  int i;
-	  for (i = 0; i < NB_CHAN; i++)
+	  if (ChanMidiNotes[i] == event.MidiData[1])
 	    {
-	      if (ChanMidiNotes[i] == event.MidiData[1])
-		{
-		  BeatNoteToPlay *n = 
-		    new BeatNoteToPlay(event.MidiData[1], 
-				       event.MidiData[2] / 100.f,
-				       event.DeltaFrames, 
-				       Channels[i], Pool->GetFreeBuffer());
-		  //event.NoteLength);
-		  NotesToPlay.push_back(n);
-		  printf("[BEATBOX] Note added: %2x\n", n->NoteNum);
-		  break;
-		}		
-	    }			       
-	}	  
+	      BeatNoteToPlay *n = 
+		new BeatNoteToPlay(event.MidiData[1], 
+				   event.MidiData[2] / 100.f,
+				   event.DeltaFrames, 
+				   Channels[i], Pool->GetFreeBuffer());
+	      //event.NoteLength);
+	      NotesToPlay.push_back(n);
+	      printf("[BEATBOX] Note added: %2x\n", n->NoteNum);
+	      break;
+	    }		
+	}			       
       PatternMutex.Unlock();
     }
 }

@@ -59,6 +59,7 @@ class MainWindow: public wxFrame
   void OnFloatTransport(wxCommandEvent &event);
   void OnFloatSequencer(wxCommandEvent &event);
   void OnFloatRack(wxCommandEvent &event);
+  void OnSwitchRackOptView();
   void OnFullScreen(wxCommandEvent &event);
   void OnAbout(wxCommandEvent &event);
   void OnIntegratedHelp(wxCommandEvent &event);
@@ -78,11 +79,13 @@ class MainWindow: public wxFrame
   
  private:
   int PluginMenuIndexCount;			
-  
+  bool RackModeView;
+
   /* Config files */
   wxTextFile	PluginsConfFile;
   
   /* Visible controls */
+  wxSplitterWindow *split;
   wxMenuBar *MenuBar;
   wxMenu *FileMenu;
   wxMenu *EditMenu;
