@@ -139,13 +139,18 @@ class WiredBeatBox : public Plugin
   
   wxMutex*	GetMutexPtr() { return &PatternMutex; }
   wxBitmap*	GetBitmap() { return bmp; }
+  
   void		AddBeatNote(BeatBoxChannel* c, double rel_pos,
 			    unsigned int state);
   // View interface
     
   int		GetSig(void);
   int		GetSteps(void);
-  
+  void		AddBeatNote(BeatNote* note, BeatBoxChannel* c, 
+			    unsigned int bank, unsigned int track);
+  void		RemBeatNote(BeatNote* note, BeatBoxChannel* c, 
+			    unsigned int bank, unsigned int track);
+
   void		SetHelpMode(bool on) { HelpMode = true; }
   bool		HelpMode;
   
@@ -153,7 +158,7 @@ class WiredBeatBox : public Plugin
   BeatBoxChannel*	SelectedChannel;
   unsigned int		EditedPattern;
   unsigned int		EditedBank;
-
+  
  protected:
   wxMutex		PatternMutex;
   BeatBoxView*		View;

@@ -1234,43 +1234,93 @@ void WiredBeatBox::OnPatternMotion(wxCommandEvent& e)
     View->Refresh();
 }
 
+void WiredBeatBox::RemBeatNote(BeatNote* note, BeatBoxChannel* c, 
+			       unsigned int bank, unsigned int track)
+{
+  
+  for ( list<BeatNote*>::iterator b = c->Rythms[bank][track].begin();
+	b != c->Rythms[bank][track].end(); b++)
+    {
+      if (*b == note)
+	{
+	  PatternMutex.Lock();
+	  c->Rythms[bank][track].erase(b);
+	  PatternMutex.Unlock();
+	  break;
+	}
+    }
+}
+
+void WiredBeatBox::AddBeatNote(BeatNote* note, BeatBoxChannel* c, 
+			       unsigned int bank, unsigned int track)
+{
+  
+  if (c->Rythms[bank][track].empty())
+    {
+      PatternMutex.Lock();
+      c->Rythms[bank][track].push_back(note);
+      PatternMutex.Unlock();
+      return;
+    }
+  if (note->Position > c->Rythms[bank][track].back()->Position)
+    {
+      PatternMutex.Lock();
+      c->Rythms[bank][track].push_back(note);
+      PatternMutex.Unlock();
+      return;
+    }
+  
+  for ( list<BeatNote*>::iterator b = c->Rythms[bank][track].begin();
+	b != c->Rythms[bank][track].end(); b++)
+    {  
+      if ( (*b)->Position > note->Position
+	   || (*b)->Position == note->Position) 
+	{
+	  PatternMutex.Lock();
+	  c->Rythms[bank][track].insert(b, note);
+	  PatternMutex.Unlock();
+	  return;
+	}
+    }
+}
+
 inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c,
 				      double rel_pos, unsigned int state)
 {
   //PatternMutex.Lock();
   unsigned int bank = (OnEdit ? EditedBank : NewSelectedBank);
-  unsigned int cur = (OnEdit ? EditedPattern : NewSelectedPattern);
+  unsigned int track = (OnEdit ? EditedPattern : NewSelectedPattern);
   //PatternMutex.Unlock();
   
   double bar_pos = 
-    static_cast<double>( rel_pos / static_cast<double>(Steps[bank][cur]) );
+    static_cast<double>( rel_pos / static_cast<double>(Steps[bank][track]) );
     
-  if (c->Rythms[bank][cur].empty())
+  if (c->Rythms[bank][track].empty())
     {
-      BeatNote *note = new BeatNote(rel_pos, state, bar_pos);
+      BeatNote *note = new BeatNote(c->Id, rel_pos, state, bar_pos);
       note->Vel = 1.0f * static_cast<float>(state / 4.f);
       note->Reversed = false;
       
       PatternMutex.Lock();
-      c->Rythms[bank][cur].push_back(note);
+      c->Rythms[bank][track].push_back(note);
       PatternMutex.Unlock();
       return;
     }
-  if ( rel_pos > c->Rythms[bank][cur].back()->Position ) 
+  if ( rel_pos > c->Rythms[bank][track].back()->Position ) 
     {
-      BeatNote *note = new BeatNote( rel_pos, state, bar_pos);
+      BeatNote *note = new BeatNote(c->Id, rel_pos, state, bar_pos);
       note->Vel = 1.0f * static_cast<float>(state / 4.f);
       note->Reversed = false;
       
       PatternMutex.Lock();
-      c->Rythms[bank][cur].push_back(note);
+      c->Rythms[bank][track].push_back(note);
       PatternMutex.Unlock();
       return;
     }
   
   
-  for ( list<BeatNote*>::iterator b = c->Rythms[bank][cur].begin();
-	b != c->Rythms[bank][cur].end(); b++)
+  for ( list<BeatNote*>::iterator b = c->Rythms[bank][track].begin();
+	b != c->Rythms[bank][track].end(); b++)
     {  
       if ( (*b)->Position == rel_pos ) 
 	{
@@ -1278,10 +1328,9 @@ inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c,
 	    {
 	      BeatNote* note = *b;
 	      PatternMutex.Lock();
-	      c->Rythms[bank][cur].erase(b);
+	      c->Rythms[bank][track].erase(b);
 	      PatternMutex.Unlock();
 	      delete note;
-	      
 	    }
 	  else
 	    {
@@ -1294,11 +1343,11 @@ inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c,
 	}
       else if ( (*b)->Position > rel_pos ) 
 	{
-	  BeatNote *note = new BeatNote(rel_pos, state, bar_pos);
+	  BeatNote *note = new BeatNote(c->Id, rel_pos, state, bar_pos);
 	  note->Vel = 1.0f * static_cast<float>(state / 4.f);
 	  note->Reversed = false;
 	  PatternMutex.Lock();
-	  c->Rythms[bank][cur].insert(b, note);
+	  c->Rythms[bank][track].insert(b, note);
 	  PatternMutex.Unlock();
 	  return;
 	}
@@ -1532,7 +1581,7 @@ void WiredBeatBox::Load(int fd, long size)
 		size -= read(fd, &pos, sizeof(double));
 		//printf("note pos=%f; state=%d\n", pos,state);
 		note = 
-		  new BeatNote(pos, state, 
+		  new BeatNote(i, pos, state, 
 			       0.0);
 		/*
 		  static_cast<double>

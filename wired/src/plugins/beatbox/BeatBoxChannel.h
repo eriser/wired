@@ -47,8 +47,9 @@ class BeatBoxChannel;
 class BeatNote
 {
  public:
-  BeatNote(double pos, unsigned int state, double bpos)
+  BeatNote(unsigned int numchan, double pos, unsigned int state, double bpos)
     { 
+      NumChan = numchan;
       State = state;
       Position = pos;
       BarPos = bpos;
@@ -56,6 +57,7 @@ class BeatNote
     }
   ~BeatNote() {}
   
+  unsigned int	NumChan;
   double	Position;
   double	BarPos;
   bool		Reversed;
