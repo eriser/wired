@@ -35,7 +35,7 @@ WaveFile::WaveFile()
 }
 
 
-  WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode) 
+  WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode, int channel) 
 : Filename(filename), LoadedInMem(loadmem), TempBuf(0), Pitch(1), 
   Invert(false), Data(0), Error(false),   m_open_mode (open_mode)
 {
@@ -51,7 +51,10 @@ WaveFile::WaveFile()
   // Ces infos peuvent etre mis a jour avec la commande SFC_UPDATE_HEADER_NOW 
   if ( (m_open_mode == rwrite) || (m_open_mode == write) )
   {
-    sfinfo.channels   = 2;
+	if (channel == 1)
+	  sfinfo.channels   = 1;
+	else
+	  sfinfo.channels   = 2;
     sfinfo.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
     sfinfo.samplerate = 44100;
   }
@@ -136,6 +139,8 @@ WaveFile::WaveFile()
   }
   else
   {
+	cout << "[WaveFile::WaveFile] sfinfo.channels = " << sfinfo.channels << endl;
+  
     NumberOfFrames = sfinfo.frames;
     TempBuf = new float[sfinfo.channels * WAVE_TEMP_SIZE];
   }
@@ -166,6 +171,7 @@ WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
 
 WaveFile::~WaveFile()
 {
+cout << "wavefile nom fichier : " << Filename << endl;
   if (sffile)
     sf_close(sffile);
 
@@ -176,7 +182,7 @@ WaveFile::~WaveFile()
     delete Data;
   }
   else
-    delete TempBuf;
+   delete TempBuf;
 }
 
 unsigned long WaveFile::Read(float **buf, long pos, long size, 

@@ -146,7 +146,7 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
   float					f[NumberOfChannels];
 
 
-  printf(" [ START ] WaveEditorDrawer::SetDrawing()\n");
+  //printf(" [ START ] WaveEditorDrawer::SetDrawing()\n");
 
   size_x = s.x;
   size_y = s.y;
@@ -176,7 +176,8 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
   
   if (DrawData)
     delete [] DrawData;
-  DrawData = new long[size_x];
+  DrawData = new long[s.x];
+
   if (UseSettings && WiredSettings->dbWaveRender)
     {
       if (!Data) // Wave sur disque
@@ -222,11 +223,9 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
   else
     if (!UseSettings || !WiredSettings->QuickWaveRender)
       {
-		
 	if (!Data) // Wave sur disque
 	  {
-	  cout << "etape 3 " << endl;
-	  #define WAVEVIEW_TEMP_BUF_SIZE	4096
+	   #define WAVEVIEW_TEMP_BUF_SIZE	4096
 	    float		**TempBuf;
 	    long		buf_pos;
 
@@ -252,10 +251,10 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
 	    delete TempBuf[0];
 	    delete TempBuf[1];
 	    delete TempBuf;
-	    cout << "end etape 3 " << endl;
 	  }	  
 	else // Wave loadeé en memoire
 	  {
+	  
 	    for (i = 0, pos = pos_deb; (i < size_x) && (pos < pos_fin); i++)
 	      {
 	      
@@ -294,8 +293,7 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
       }
   RedrawBitmap(s);
 
-  printf(" [  END  ] WaveEditorDrawer::SetDrawing()\n");
-
+  //printf(" [  END  ] WaveEditorDrawer::SetDrawing()\n");
 }
 
 
@@ -335,7 +333,6 @@ void					WaveEditorDrawer::SetSize(int x, int y)
 
 void					WaveEditorDrawer::OnPaint(wxPaintDC &dc, wxSize s, wxRegionIterator &region)
 {
-  //cout << " WaveEditorDrawer::OnPaint"  << endl ;
    dc.SetPen(PenColor);
   dc.SetBrush(BrushColor);
   //dc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -346,6 +343,4 @@ void					WaveEditorDrawer::OnPaint(wxPaintDC &dc, wxSize s, wxRegionIterator &re
 		    region.GetW(), region.GetH(),
 			&memDC, region.GetX(), region.GetY(), 
 		  wxCOPY , FALSE);  
-  
-  //cout << " WaveEditorDrawer::OnPaint End"  << endl ; 
 }
