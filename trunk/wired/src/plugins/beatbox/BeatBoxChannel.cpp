@@ -129,10 +129,11 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
     new wxImage(string(DataDir + string(REV_DO)).c_str(),
 		wxBITMAP_TYPE_PNG);
   if (bmp1 && bmp2)
-    new DownButton( this, BC_ReverseSound, 
-		    wxPoint(18,18), 
-		    wxSize(15,15),
-		    bmp1, bmp2, false );
+    ReverseButton =
+      new DownButton( this, BC_ReverseSound, 
+		      wxPoint(18,18), 
+		      wxSize(15,15),
+		      bmp1, bmp2, false );
   
   bmp1 =
     new wxImage(string(DataDir + string(SOLO_UP)).c_str(),
@@ -923,6 +924,37 @@ void BeatBoxChannel::Update()
     {
       KnobEnd->SetValue(MidiEnd[2]);
     }
+}
+
+void BeatBoxChannel::UpdateGui()
+{
+  if (IsSolo)
+    SoloButton->SetOn();
+  else
+    SoloButton->SetOff();
+  if (Muted)
+    SoloButton->SetOn();
+  else
+    SoloButton->SetOff();
+  if (Reversed)
+    ReverseButton->SetOn();
+  else
+    ReverseButton->SetOff();
+  
+  KnobLev->SetValue((int)floor(Params[LEV] * 100));
+  KnobVel->SetValue((int)floor(Params[VEL] * 100));
+  KnobPitch->SetValue((int)floor(Params[PIT] * 100));
+  KnobVel->SetValue((int)floor(Params[PAN] * 100));
+  KnobVel->SetValue((int)floor(Params[STA] * 100));
+  KnobVel->SetValue((int)floor(Params[END] * 100));
+  KnobVel->SetValue((int)floor(Params[VEL] * 100));
+  
+  PolyKnob->SetValue(Voices);
+  wxString s;
+  s.Printf("%d", Voices);
+  VoicesLabel->SetLabel(s);
+  
+  DeSelect();
 }
 
 void BeatBoxChannel::OnMouseEvent(wxMouseEvent& event)

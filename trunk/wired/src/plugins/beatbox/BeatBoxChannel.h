@@ -163,6 +163,7 @@ class BeatBoxChannel : public wxWindow
   bool AskUpdateEnd;
   
   void Update();
+  void UpdateGui();
  protected:
   WiredBeatBox*	DRM31;
   string        DataDir;
@@ -171,6 +172,7 @@ class BeatBoxChannel : public wxWindow
   wxMutex*	PatternMutex;
   DownButton*	MuteButton;
   DownButton*	SoloButton;
+  DownButton*	ReverseButton;
   DownButton*	OpenFile;
   DownButton*	SelectionButton;
   KnobCtrl*	KnobLev;
