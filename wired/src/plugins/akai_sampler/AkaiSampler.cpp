@@ -169,7 +169,7 @@ void AkaiSampler::Load(int fd, long size)
 
 
   /**** DEBUG ONLY ****/
-  /**/
+  /**
   char *buffer = (char *)malloc(size);
   long count = read(fd, buffer, size);
   printf("[WiredSampler] -- SAVE FILE DUMP --\n");
@@ -204,7 +204,7 @@ void AkaiSampler::Load(int fd, long size)
   printf("[WiredSampler] -- END OF DUMP --\n");
   free(buffer);
   lseek(fd, -count, SEEK_CUR);
-  /**/
+  **/
   /**** END OF DEBUG ****/
 
 
@@ -756,12 +756,8 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
       case 1:
         // Enveloppe
         for (vector<ASPlugin *>::iterator i = plugs.begin(); i != plugs.end(); i++)
-        {
-          cout << "Cmp " << EFFECTSNAMES[0] << " with " << (*i)->Name.Left(EFFECTSNAMES[0].Len()) << endl;
           if ((*i)->Name.Left(EFFECTSNAMES[0].Len()) == EFFECTSNAMES[0])
             count++;
-        }
-        printf("Count = %d\n", count);
         s << EFFECTSNAMES[0];
         s << " #";
         s << count;
@@ -772,12 +768,8 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
       case 2:
         // Looping
         for (vector<ASPlugin *>::iterator i = plugs.begin(); i != plugs.end(); i++)
-        {
-          cout << "Cmp " << EFFECTSNAMES[1] << " with " << (*i)->Name.Left(EFFECTSNAMES[1].Len()) << endl;
           if ((*i)->Name.Left(EFFECTSNAMES[1].Len()) == EFFECTSNAMES[1])
             count++;
-        }
-        printf("Count = %d\n", count);
         s << EFFECTSNAMES[1];
         s << " #";
         s << count;
