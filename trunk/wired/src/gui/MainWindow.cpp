@@ -224,8 +224,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   SeqPanel = new SequencerGui(split, wxPoint(0, 254), wxSize(800, 200));
   //  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 150), wxSIMPLE_BORDER);
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
-  
+
+  cout << "1111" << endl;  
   split->SplitHorizontally(RackPanel, SeqPanel);
+  cout << "2222" << endl;  
   
   /* Placement Panel */
     

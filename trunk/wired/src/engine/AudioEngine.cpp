@@ -407,8 +407,8 @@ void AudioEngine::OpenStream()
       cout << "[AUDIO] Sample rate is: " << SampleRate 
 	   << " Samples per buffer is: " << SamplesPerBuffer 
 	   << endl;
-      AlertDialog("AUDIO", wxString("Error using portaudio OpenStream(): ") + 
-		  wxString(Pa_GetErrorText(err)));
+      //AlertDialog("AUDIO", wxString("Error using portaudio OpenStream(): ") + 
+      //	  wxString(Pa_GetErrorText(err)));
       throw Error::StreamNotOpen();
     }
   cout << "[AUDIO] Stream opened:" 

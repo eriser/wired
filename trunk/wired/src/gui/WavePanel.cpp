@@ -40,7 +40,7 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
   w = new WaveEditor(this, -1, wxPoint(0, WAVE_TOOLBAR_HEIGHT), 
 		     wxSize(GetSize().GetWidth(), GetSize().GetHeight() - WAVE_TOOLBAR_HEIGHT), true);
   
-  Toolbar = new wxToolBar(this, ID_TOOLBAR_WAVE, wxPoint(0, 0), wxSize(size.GetWidth(),WAVE_TOOLBAR_HEIGHT ), wxTB_FLAT | wxTB_DOCKABLE);
+  Toolbar = new wxToolBar(this, ID_TOOLBAR_WAVE, wxPoint(0, 0), wxSize(size.GetWidth(),WAVE_TOOLBAR_HEIGHT ), wxTB_FLAT);
  
   Toolbar->AddTool(ID_TOOL_COPY_WAVE, "Copy", wxBitmap("data/toolbar/copy_up.bmp", wxBITMAP_TYPE_BMP), 
 		   wxBitmap("data/toolbar/copy_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Copy", "Copy wave", NULL);
