@@ -48,6 +48,7 @@ wxWindow *ASSampleList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
 
 void  ASSampleList::OnAddSample(wxCommandEvent &e)
 {
+  static int fk = 0;
   vector<string> exts;
   string s = p->OpenFileLoader("Load Sample", 0x0, false);
   if (!s.empty())
@@ -56,7 +57,26 @@ void  ASSampleList::OnAddSample(wxCommandEvent &e)
     int i;
     for (i = s.length(); i >= 0 && s[i] != '/'; i--);
     i++;
-    List->AddEntry(wxString(s.substr(i, s.length() - i).c_str()), new ASamplerSample(w));
+    ASamplerSample *ass = new ASamplerSample(w);
+    List->AddEntry(wxString(s.substr(i, s.length() - i).c_str()), ass);
+    ASamplerKeygroup *askg = new ASamplerKeygroup(fk, fk + 11);
+    wxString s = "Keygroup ";
+    int oct = fk / 12 - 2;
+    int note = fk % 12;
+    wxString notes[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    s += notes[note];
+    s += ' ';
+    s << oct;
+    s += " - ";
+    oct = (fk + 11) / 12 - 2;
+    note = (fk + 11) % 12;
+    s += notes[note];
+    s += ' ';
+    s << oct;
+    fk += 12;
+    Keygroups->List->AddEntry(s, askg);
+    askg->SetSample(ass);
+    ass->SetKeygroup(askg);
   }
 }
   
