@@ -555,7 +555,7 @@ void					Sequencer::SetCurrentPos()
   event.SetId(ID_SEQ_SETPOS);
   event.SetEventType(TYPE_SEQ_SETPOS);
   //  event.SetEventObject(MainWin);
-  SeqPanel->CurrentPos = CurrentPos - (Audio->SamplesPerBuffer * MeasurePerSample * 2);
+  SeqPanel->SetCurrentPos(CurrentPos - (Audio->SamplesPerBuffer * MeasurePerSample * 2));
   //wxPostEvent(SeqPanel, event);
 }
 

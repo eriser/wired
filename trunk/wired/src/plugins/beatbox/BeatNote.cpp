@@ -1,3 +1,4 @@
+#include <math.h>
 #include "BeatNote.h"
 #include "BeatBoxChannel.h"
 

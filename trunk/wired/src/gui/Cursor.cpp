@@ -10,6 +10,7 @@
 #include "Ruler.h"
 #include "ColoredLine.h"
 #include "SequencerGui.h"
+#include "AccelCenter.h"
 #include "Cursor.h"
 
 /*
@@ -85,34 +86,13 @@ void					CursorH::OnMouseEvent(wxMouseEvent &e)
 	if (SeqPanel->Magnetism & CURSOR_MASK)
 	  c->pos = round(c->pos * SeqPanel->CursorMagnetism) / SeqPanel->CursorMagnetism;
       c->SetPos(c->pos);
-      //      printf("POS = %f, MAX SCROLL = %d, FIRST_MEASURE = %f, LAST MEASURE = %f\n", c->pos, max, SeqPanel->FirstMeasure, SeqPanel->LastMeasure);
-      if (c->pos <= (SeqPanel->FirstMeasure))
-	{
-	  if ((x = (long) floor((c->pos * (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) / Seq->EndPos)) > 0)
-	    SeqPanel->HorizScrollBar->SetThumbPosition(x);
-	  else
-	    SeqPanel->HorizScrollBar->SetThumbPosition(0);
-	  SeqPanel->AdjustHScrolling();
-	  //	  cout << "gauche [" << c->H->Name << "] pos = " << c->pos << endl;
-	}
+      if (c->pos <= SeqPanel->FirstMeasure)
+	SeqPanel->SeqView->AutoXScrollBackward(ACCEL_TYPE_CURSOR);
       else
 	if (c->pos >= SeqPanel->LastMeasure)
-	  {
-	    if ((x = (long) floor((c->pos * (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) / Seq->EndPos))
-		< (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH))
-	      SeqPanel->HorizScrollBar->SetThumbPosition(x);
-	    else
-	      {
-		Seq->EndPos = floor(c->pos + 1);
-		if (Name != "E")
-		  SeqPanel->EndCursor->SetPos(Seq->EndPos);
-		SeqPanel->SetScrolling();
-		SeqPanel->HorizScrollBar->SetThumbPosition(SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH);
-	      }
-	    SeqPanel->AdjustHScrolling();
-	    //	    cout << "droite [" << c->H->Name << "] pos = " << c->pos << " [ x = " << x << " ] [ rangemax = " <<
-	    //	      (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH) << " ] " << endl;
-	  }
+	  SeqPanel->SeqView->AutoXScrollForward(ACCEL_TYPE_CURSOR);
+	else
+	  SeqPanel->SeqView->AutoXScrollReset();
       SeqMutex.Unlock();
     }
 }

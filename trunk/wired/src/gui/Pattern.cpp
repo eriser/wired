@@ -11,6 +11,7 @@
 #include "AudioPattern.h"
 #include "../sequencer/Sequencer.h"
 #include "../sequencer/Track.h"
+#include "AccelCenter.h"
 
 Pattern::Pattern(double pos, double endpos, long trackindex) :
   wxWindow(SeqPanel->SeqView, -1, wxPoint(0, 0), wxSize(0, 0))
@@ -193,12 +194,12 @@ void					Pattern::OnMotion(wxMouseEvent &e)
   if (IsSelected() && (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->Wave != this))
     {
       SeqMutex.Lock();
-      if ((x = (e.GetPosition().x - m_click.x)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->HoriZoomFactor)))
+      if ((x = (e.GetPosition().x - m_click.x)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->HoriZoomFactor / Seq->SigNumerator)))
 	x = max;
       else
 	if (x < -max)
 	  x = -max;
-      if ((y = (e.GetPosition().y - m_click.y)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->VertZoomFactor)))
+      if ((y = (e.GetPosition().y - m_click.y)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->VertZoomFactor / Seq->SigNumerator)))
 	y = max;
       else
 	if (y < -max)
@@ -215,39 +216,12 @@ void					Pattern::OnMotion(wxMouseEvent &e)
 	    (*p)->XMove(z);
 	}
       if ((x < 0) && (Position <= SeqPanel->FirstMeasure))
-	{
-// 	  if ((x = (long) floor(((Position / SeqPanel->PatternMagnetism) * (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) / Seq->EndPos)) > 0)
-// 	    SeqPanel->HorizScrollBar->SetThumbPosition(x);
-	  if ((x = (long) floor((Position * (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) / Seq->EndPos)) > 0)
-	    SeqPanel->HorizScrollBar->SetThumbPosition(x);
-	  else
-	    SeqPanel->HorizScrollBar->SetThumbPosition(0);
-	  SeqPanel->AdjustHScrolling();
-	  //printf("<<<<< gauche <<<<< : x = %d\n", x);
-	}
+	SeqPanel->SeqView->AutoXScrollBackward(ACCEL_TYPE_PATTERN);
       else
 	if ((x > 0) && (Position + ceil(m_click.x / mes) >= SeqPanel->LastMeasure))
-	  {
-	    if ((x = (long) floor(((z = Position + ceil(m_size.x / mes))
-				   * (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) / Seq->EndPos))
-		< (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH))
-	      SeqPanel->HorizScrollBar->SetThumbPosition(x);
-	    else
-	      {
-		Seq->EndPos = floor(z + 1);
-		SeqPanel->EndCursor->SetPos(Seq->EndPos);
-		SeqPanel->SetScrolling();
-		SeqPanel->HorizScrollBar->SetThumbPosition(SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH);
-	      }
-	    SeqPanel->AdjustHScrolling();
-	    //printf(">>>>> droite >>>>> : x = %d\n", x);
-	  }
-      	else
-	  {
-	    //printf("[[[[[ nothing ]]]]] endpos = %f -- pattern_start = %f -- pattern_end = %f\n",
-	    // Seq->EndPos, Position, Position + (double) m_size.x / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor));
-	  }
-      
+	  SeqPanel->SeqView->AutoXScrollForward(ACCEL_TYPE_PATTERN);
+	else
+	  SeqPanel->SeqView->AutoXScrollReset();
       SeqMutex.Unlock();
     }
 }

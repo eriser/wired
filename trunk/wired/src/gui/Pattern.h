@@ -11,7 +11,7 @@
 
 using namespace				std;
 
-#define PATTERN_DRAG_SCROLL_UNIT	(MEASURE_WIDTH + 1)
+#define PATTERN_DRAG_SCROLL_UNIT	(2 * MEASURE_WIDTH + 1)
 #define PATTERN_NAME_WIDTH		(42)
 #define PATTERN_NAME_HEIGHT		(10)
 #define PATTERN_NAME_MARGINS		(3)

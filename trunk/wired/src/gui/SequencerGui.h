@@ -115,35 +115,49 @@ class				Plugin;
 class				Pattern;
 class				WaveFile;
 class				MidiEvent;
+class				AccelCenter;
 
 class				SequencerView: public wxScrolledWindow
 {
   friend class			SequencerGui;
+  friend class			Pattern;
 
  private:
+  void				OnClick(wxMouseEvent &e);
+  void				OnMotion(wxMouseEvent &e);
+  void				OnLeftUp(wxMouseEvent &e);
+  void				OnRightClick(wxMouseEvent &event);
+  void				OnPaint(wxPaintEvent &event);
+  void				OnHelp(wxMouseEvent &event);
+  void				SelectZonePatterns(bool shift);
+
   unsigned long			TotalWidth;
   unsigned long			TotalHeight;
   long				XScroll;
   long				YScroll;
   SelectionZone			*TheZone;
+  AccelCenter			*HAxl;
+  AccelCenter			*VAxl;
 
  public:
   SequencerView(wxWindow *parent, const wxPoint &pos, const wxSize &size);
   ~SequencerView();
 
-  void				OnClick(wxMouseEvent &e);
-  void				OnMotion(wxMouseEvent &e);
-  void				SelectZonePatterns(bool shift);
-  void				OnLeftUp(wxMouseEvent &e);
-  void				OnRightClick(wxMouseEvent &event);
-  void				OnPaint(wxPaintEvent &event);
-  void				OnHelp(wxMouseEvent &event);
   void				SetXScroll(long x, long range, long seqwidth);
   void				SetXScrollValue(long X);
   long				GetXScroll();
   void				SetYScroll(long y, long range, long seqwidth);
   void				SetYScrollValue(long Y);
   long				GetYScroll();
+  void				AutoScroll(double xmove, double ymove);
+  void				AutoXScroll(double xmove);
+  void				AutoXScrollBackward(long accel_type = 0);
+  void				AutoXScrollForward(long accel_type = 0);
+  void				AutoXScrollReset();
+  void				AutoYScroll(double ymove);
+  void				AutoYScrollBackward(long accel_type = 0);
+  void				AutoYScrollForward(long accel_type = 0);
+  void				AutoYScrollReset();
   unsigned long			GetTotalWidth();
   void				SetTotalWidth(unsigned long w);
   unsigned long			GetTotalHeight();
@@ -155,20 +169,67 @@ class				SequencerView: public wxScrolledWindow
   DECLARE_EVENT_TABLE()
 };
 
-class CursorEvent: public wxEvent
+class				CursorEvent: public wxEvent
 {
+  double			Position;
+
  public:
   CursorEvent(int id = 0, wxEventType eventType = wxEVT_NULL)
     : wxEvent(id, eventType) { Position = 0.0; }
   ~CursorEvent() {}
 
-  virtual wxEvent* Clone() const { return new CursorEvent(*this); }
-
-  double			Position;
+  virtual wxEvent*		Clone() const { return new CursorEvent(*this); }
 };
 
-class SequencerGui: public wxPanel
+class				SequencerGui: public wxPanel
 {
+  friend class			Pattern;
+  friend class			AudioPattern;
+  friend class			MidiPattern;
+  friend class			Cursor;
+  friend class			CursorH;
+  friend class			Ruler;
+  friend class			ColoredBox;
+  friend class			SequencerView;
+  friend class			SeqTrack;
+
+  float				HoriZoomFactor;
+  float				VertZoomFactor;
+  double			CurrentPos;
+  int				Tool;
+  double			CurrentXScrollPos;
+  double			CurrentYScrollPos;
+  double			FirstMeasure;
+  double			LastMeasure;
+  char				FollowPlayCursor;
+  char				Magnetism;
+  unsigned short		CursorMagnetism;
+  unsigned short		PatternMagnetism;
+  long				VertNowPos;
+  long				HorizNowPos;
+  bool				DoCut;
+  SequencerView			*SeqView;
+  wxMenu			*PopMenu;
+  Ruler				*RulerPanel;
+  wxScrolledWindow		*TrackView;
+  wxScrollBar			*VertScrollBar;
+  wxScrollBar			*HorizScrollBar;
+  wxSlider			*VertZoomSlider;
+  wxSlider			*HoriZoomSlider;
+  vector<wxStaticLine *>	Measures;
+  vector<Pattern *>		SelectedItems;
+  vector<Pattern *>		CopyItems;
+  Cursor			*PlayCursor;
+  Cursor			*EndCursor;
+  Cursor			*BeginLoopCursor;
+  Cursor			*EndLoopCursor;
+  wxToolBar			*Toolbar;
+  wxComboBox			*MagnetQuant;
+  wxColourDialog		*ColorDialogBox;
+  wxColour			BrushColor;
+  wxColour			PenColor;
+  ColoredBox			*ColorBox;
+	
  public:
   SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size);
   ~SequencerGui();
@@ -177,6 +238,7 @@ class SequencerGui: public wxPanel
   void				RemoveTrack();
   void				UnselectTracks();
   void				ChangeSelectedTrackIndex(long trackindex);
+  void				ScrollTrackList(long track_delta);
   void				AdjustHScrolling();
   void				AdjustVScrolling();
   void				SetScrolling();
@@ -230,62 +292,12 @@ class SequencerGui: public wxPanel
   void				OnMagnetismChange(wxCommandEvent &event);
   void				OnColorButtonClick(wxCommandEvent &event);
   void				OnColoredBoxClick(wxCommandEvent &event);
-  
-  float				HoriZoomFactor;
-  float				VertZoomFactor;
-  double			CurrentPos;
-  int				Tool;
-  bool				DoCut;
-  SequencerView			*SeqView;
-  wxMenu			*PopMenu;
 
  protected:
-  friend class			Pattern;
-  friend class			AudioPattern;
-  friend class			MidiPattern;
-  friend class			Cursor;
-  friend class			CursorH;
-  friend class			Ruler;
-  friend class			ColoredBox;
-  friend class			SequencerView;
-
   void				UpdateTracks();
   void				UpdateMeasures();
   void				DrawMeasures();
   
-  Ruler				*RulerPanel;
-  wxScrolledWindow		*TrackView;
-  wxScrollBar			*VertScrollBar;
-  wxScrollBar			*HorizScrollBar;
-  wxSlider			*VertZoomSlider;
-  wxSlider			*HoriZoomSlider;
-  vector<wxStaticLine *>	Measures;
-  vector<Pattern *>		SelectedItems;
-  vector<Pattern *>		CopyItems;
-
-  Cursor			*PlayCursor;
-  Cursor			*EndCursor;
-  Cursor			*BeginLoopCursor;
-  Cursor			*EndLoopCursor;
-
-  wxToolBar			*Toolbar;
-  wxComboBox			*MagnetQuant;
-  wxColourDialog		*ColorDialogBox;
-  wxColour			BrushColor;
-  wxColour			PenColor;
-  ColoredBox			*ColorBox;
-	
-  double			CurrentXScrollPos;
-  double			CurrentYScrollPos;
-  double			FirstMeasure;
-  double			LastMeasure;
-  char				FollowPlayCursor;
-  char				Magnetism;
-  unsigned short		CursorMagnetism;
-  unsigned short		PatternMagnetism;
-  long				VertNowPos;
-  long				HorizNowPos;
-
   DECLARE_EVENT_TABLE()
 };
 

@@ -5,6 +5,8 @@ CPPFLAGS = $(shell wx-config --cflags) -I../audio -I../plugins -I../fileloader -
 noinst_LIBRARIES = libgui.a
 
 libgui_a_SOURCES = 			\
+		AccelCenter.h		\
+		AccelCenter.cpp		\
 		ChannelGui.cpp		\
 		ChannelGui.h		\
 		ColoredLine.cpp		\
