@@ -167,7 +167,7 @@ unsigned long WaveFile::Read(float **buf, long pos, long size,
 {
   long ret, i, j;
   float		k;
-
+  
   if (!LoadedInMem)
     {
       if (WAVE_TEMP_SIZE < size)
@@ -214,6 +214,7 @@ unsigned long WaveFile::Read(float **buf, long pos, long size,
       return (ret);      
     }
   // Loading en mem
+  
   if (sfinfo.channels > 1)
     {       
       if ((pos + size) > NumberOfFrames)
@@ -241,7 +242,9 @@ unsigned long WaveFile::Read(float **buf, long pos, long size,
 	      memcpy(buf[1] + delta, Data[1] + pos, size * sizeof(float));
 	    }	  
 	  if (new_pos)
-	    *new_pos = pos + size;
+	    {
+	      *new_pos = pos + size;
+	    }
 	}
       else
 	{
@@ -280,6 +283,8 @@ unsigned long WaveFile::Read(float **buf, long pos, long size,
     {
       memcpy(buf[0] + delta, Data[0] + pos , size * sizeof(float));
       memcpy(buf[1] + delta, buf[0], size * sizeof(float));
+      if (new_pos)
+	*new_pos = pos + size;
     }
   return (size);
 }
