@@ -392,7 +392,7 @@ void				Mixer::MixInput(void)
 	   << ", which is connected to FIFO:"
 	   << cpt++ << endl;
       */
-      for ( int i = 0; i < PREBUF_NUM; i++ )
+      for (int i = 0; i < PREBUF_NUM; i++ )
 	{
 	  bytes = (*c)->Read(Input[i], Audio->SamplesPerBuffer);
 	  if ( bytes != Audio->SamplesPerBuffer )
@@ -409,8 +409,9 @@ void				Mixer::MixInput(void)
 		  (*mix_chan)->PushBuffer(Input[i], bytes);
 		}
 	    }
-	  if ( i + 1 == PREBUF_NUM )
+	  if (i + 1 == PREBUF_NUM)
 	    throw MixerError::InputBuffersFull();
+	    //	    cout << "MIX INPUT ERROR\n";
 	}
       //cout << << endl;
     }

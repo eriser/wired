@@ -23,8 +23,10 @@ class					Track
   AudioPattern				*AddPattern(WaveFile *w, double pos = 0);
   MidiPattern				*AddPattern(MidiTrack *t);
   void					AddPattern(Pattern *p);
+  void					AddColoredPattern(Pattern *p);
   void					UpdateIndex(long trackindex);
   void					RefreshFullTrack();
+  void					ChangeTrackColour(wxColour &c);
   bool					IsAudioTrack() { return (Type == IS_AUDIO_TRACK); }
   bool					IsMidiTrack() { return (Type == IS_MIDI_TRACK); }
   SeqTrack				*TrackOpt;

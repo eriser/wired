@@ -180,13 +180,13 @@ void					MidiPattern::Split(double pos)
 	  (*o)->EndPosition = pos;
 	o++;
       }
+  p->SetDrawColour(PenColor);
   p->DrawMidi();
   if (IsSelected())
     p->SetSelected(false);
   p->SetCursor(GetCursor());
   Update();
-  Seq->Tracks[TrackIndex]->AddPattern(p);
-  Refresh();
+  Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
 }
 
 void					MidiPattern::OnDoubleClick(wxMouseEvent &e)
