@@ -34,7 +34,7 @@ class WaveFile
   
  public:
   WaveFile(); 
-  WaveFile(string filename, bool loadmem = true, t_opening_mode open_mode = read);
+  WaveFile(string filename, bool loadmem = true, t_opening_mode open_mode = read, int channel = 2);
   WaveFile(short *buffer, unsigned int size, int channels, long rate);
   ~WaveFile();
   

@@ -10,18 +10,10 @@
 #include 	<math.h>
 #include 	<iostream>
 //#include 	<WavePanel.h>
-
-
 #include        <wx/choicdlg.h>
 #include        "SequencerGui.h"
 
 using namespace std;
-
-const struct s_nchoice		NChoice[NB_CHOICE_NORMA + 1] =
-{
-  { "Normaliser a 1db", 1},
-  { "Normaliser a ....", 2},
-};
 
 
 
@@ -316,6 +308,7 @@ void					WaveEditor::OnCut(wxCommandEvent &event)
 	cCutAction 	*action = new cCutAction(Wave, from, width);
 	action->Do();
   //cClipBoard::Global().Cut(*Wave, (mSelectedRegion.x+xsrc)*inc, (mSelectedRegion.width*inc));
+	SeqPanel->UpdateAudioPatterns(Wave);
 	mSelectedRegion.width = 0;
 	SetWave(Wave);
   }
@@ -350,6 +343,7 @@ void					WaveEditor::OnPaste(wxCommandEvent &event)
 	cPasteAction 	*action = new cPasteAction(Wave, to, sizePaste);
 	action->Do();
   //cClipBoard::Global().Paste(*Wave, ((mPosition+xsrc)*inc));
+	SeqPanel->UpdateAudioPatterns(Wave);
 	SetWave(Wave);
   }
 
@@ -384,6 +378,7 @@ void					WaveEditor::OnDelete(wxCommandEvent &event)
   //flag = 1;
 	mSelectedRegion.width = 0;
 	SetWave(Wave);
+	SeqPanel->UpdateAudioPatterns(Wave);
   }
 
   Refresh();
@@ -448,9 +443,18 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 	  return;
 	float gain = atof(text); 
 	
-	WaveFile input ("/tmp/tmp2.wav", false, WaveFile::rwrite);
-	WaveFile output ("/tmp/tmp3.wav", false, WaveFile::rwrite);
-	
+	WaveFile *input;
+	WaveFile *output;
+	if (Wave->GetNumberOfChannels() == 1)
+	{
+	input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite, 1);
+	output= new WaveFile("/tmp/tmp3.wav", false, WaveFile::rwrite, 1);
+	}
+	else
+	{
+	  input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite);
+	  output = new WaveFile("/tmp/tmp3.wav", false, WaveFile::rwrite);
+	}
 	float * rw_buffer = new float [Wave->GetNumberOfChannels() * WAVE_TEMP_SIZE];
 
 	Wave->SetCurrentPosition(from);
@@ -458,31 +462,29 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 	if (nb_read > width)
 	  nb_read = width;
   
-      while (nb_read && width)
+	while (nb_read && width)
 	{
-	  input.WriteFloatF(rw_buffer, nb_read);
+	  input->WriteFloatF(rw_buffer, nb_read);
 	  width -= nb_read;
 	  nb_read = Wave->ReadFloatF(rw_buffer);
 	  if (width < WAVE_TEMP_SIZE)
 	    nb_read = width;
 	}
+    p.Process(*input, *output, gain, Wave->GetNumberOfChannels(), 1);
       
-      p.Process(input, output, gain, Wave->GetNumberOfChannels(), 1);
-      
-      Wave->SetCurrentPosition(from);
-      output.SetCurrentPosition(0);
-      nb_read = output.ReadFloatF(rw_buffer);
-      while (nb_read)
+    Wave->SetCurrentPosition(from);
+    output->SetCurrentPosition(0);
+    nb_read = output->ReadFloatF(rw_buffer);
+    while (nb_read)
 	{
 	  Wave->WriteFloatF(rw_buffer, nb_read);
-	  nb_read = output.ReadFloatF(rw_buffer);
+	  nb_read = output->ReadFloatF(rw_buffer);
 	}
-      wxRemoveFile("/tmp/tmp2.wav");
-      wxRemoveFile("/tmp/tmp3.wav");
-    
-  }
-
+    wxRemoveFile("/tmp/tmp2.wav");
+    wxRemoveFile("/tmp/tmp3.wav");
+}
   SetDrawing();
+  SeqPanel->UpdateAudioPatterns(Wave);
   Refresh();
 }
 
@@ -522,8 +524,20 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
 	  return;
 	
 	float norma = atof(text); 
-	WaveFile input ("/tmp/tmp2.wav", false, WaveFile::rwrite);
-	WaveFile output ("/tmp/tmp3.wav", false, WaveFile::rwrite);
+	WaveFile *input;
+	WaveFile *output;
+	
+	if (Wave->GetNumberOfChannels() == 1)
+	{
+	  input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite, 1);
+	  output = new WaveFile("/tmp/tmp3.wav", false, WaveFile::rwrite, 1);
+	}
+	else
+	{
+	  input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite);
+	  output = new WaveFile("/tmp/tmp3.wav", false, WaveFile::rwrite);
+	}
+	
 	float * rw_buffer = new float [Wave->GetNumberOfChannels() * WAVE_TEMP_SIZE];
 
 	Wave->SetCurrentPosition(from);
@@ -533,7 +547,7 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
   
 	while (nb_read && width)
     {
-      input.WriteFloatF(rw_buffer, nb_read);
+      input->WriteFloatF(rw_buffer, nb_read);
       width -= nb_read;
       nb_read = Wave->ReadFloatF(rw_buffer);
       if (width < nb_read)
@@ -541,21 +555,21 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
 
     }
     
-    p.Process(input, output, norma, Wave->GetNumberOfChannels(), 2);
+    p.Process(*input, *output, norma, Wave->GetNumberOfChannels(), 2);
 	
-	output.SetCurrentPosition(0);
+	output->SetCurrentPosition(0);
 	Wave->SetCurrentPosition(from);
-	nb_read = output.ReadFloatF(rw_buffer);
+	nb_read = output->ReadFloatF(rw_buffer);
 	while (nb_read)
 	{
 	  Wave->WriteFloatF(rw_buffer, nb_read);
-	  nb_read = output.ReadFloatF(rw_buffer);
+	  nb_read = output->ReadFloatF(rw_buffer);
 	}
 	wxRemoveFile("/tmp/tmp2.wav");
 	wxRemoveFile("/tmp/tmp3.wav");
-	
   }
   SetDrawing();
+  SeqPanel->UpdateAudioPatterns(Wave);
   Refresh();
 }
 
@@ -565,19 +579,20 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
 
 void				cCutAction::Do()
 {  
- //cout << "cCutAction::Do - begin --- from = " << from << endl;
+ cout << "cCutAction::Do - begin --- from = " << from << endl;
   cClipBoard::Global().Cut(*wave, from, width);	
   NotifyActionManager();
 }
 
 void				cCutAction::Redo()
 {  
+cout << "cCutAction::ReDo - begin --- from = " << from << endl;
   Do();
 }
 
 void				cCutAction::Undo()
 {  
-// cout << "cCutAction::UnoDo - begin --- from = " << from << endl;
+cout << "cCutAction::UnDo - begin --- from = " << from << endl;
   if (wave)
 	cClipBoard::Global().Paste(*wave, (int)from);
 }
@@ -587,7 +602,7 @@ void				cCutAction::Undo()
 
 void				cPasteAction::Do()
 {  
-//cout << "cPasteAction::Do - begin --- to= " << to << endl;
+  cout << "cPasteAction::Do - begin --- to= " << to << endl;
   cClipBoard::Global().Paste(*wave, to);
   	
   NotifyActionManager();
@@ -595,11 +610,13 @@ void				cPasteAction::Do()
 
 void				cPasteAction::Redo()
 {  
+cout << "cPasteAction::ReDo - begin --- to= " << to << endl;
   Do();
 }
 
 void				cPasteAction::Undo()
 {  
+  cout << "cPasteAction::UnDo - begin --- to= " << to << endl;
 	cClipBoard::Global().Cut(*wave, to, width);
 }
 

@@ -38,12 +38,13 @@ void					PluginEffect::Gain(WaveFile &input, WaveFile &output,
   for (int i=0; i < nb_read; i++)
 	rw_buffer[i] = rw_buffer[i] * gain;
   while (nb_read)
-    {
-      output.WriteFloatF(rw_buffer, nb_read);
-      nb_read = input.ReadFloatF(rw_buffer);
-      for (int i=0; i < nb_read; i++)
-	rw_buffer[i] = rw_buffer[i] * gain;
-    }
+  {
+    output.WriteFloatF(rw_buffer, nb_read);
+    nb_read = input.ReadFloatF(rw_buffer);
+	for (int i=0; i < nb_read; i++)
+	  rw_buffer[i] = rw_buffer[i] * gain;
+  }
+  delete[] rw_buffer;
 }
 
 void					PluginEffect::Normalize(WaveFile &input, WaveFile &output, float norma, int channel)
@@ -55,21 +56,24 @@ void					PluginEffect::Normalize(WaveFile &input, WaveFile &output, float norma,
   input.SetCurrentPosition(0);
   nb_read = input.ReadFloatF(rw_buffer);
   while (nb_read)
-    {
-      for (int i=0; i < nb_read; i++)
-	if (k < rw_buffer[i])
-	  k = rw_buffer[i];
-      nb_read = input.ReadFloatF(rw_buffer);
-    }
+  {
+	for (int i=0; i < nb_read; i++)
+	  if (k < rw_buffer[i])
+	    k = rw_buffer[i];
+	nb_read = input.ReadFloatF(rw_buffer);
+  }
   norma = fabs(norma - k); 
+
   input.SetCurrentPosition(0);
   nb_read = input.ReadFloatF(rw_buffer);
   while (nb_read)
-    {
-      for (int i=0; i < nb_read; i++)
-	rw_buffer[i] += norma;
-      output.WriteFloatF(rw_buffer, nb_read);
-      nb_read = input.ReadFloatF(rw_buffer);
-    }
+  {
+	for (int i=0; i < nb_read; i++)
+		rw_buffer[i] += norma;
+    output.WriteFloatF(rw_buffer, nb_read);
+    nb_read = input.ReadFloatF(rw_buffer);
+  }
+  delete[] rw_buffer;
+
 }
 
