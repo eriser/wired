@@ -96,9 +96,9 @@ void WaveEditor::OnPaint(wxPaintEvent &event)
       memDC.SetBrush(selectedBrush);
       memDC.SetPen(selectedPen);
       if (mSelectedRegion.width != 0)
-	memDC.DrawRectangle(mSelectedRegion);  
+		memDC.DrawRectangle(mSelectedRegion.x-xsrc, 0, mSelectedRegion.width, height);  
       else
-	memDC.DrawLine(mSelectedRegion.x, 0, mSelectedRegion.x, height);
+		memDC.DrawLine(mSelectedRegion.x-xsrc, 0, mSelectedRegion.x, height);
       // Repaint the wave form
       memDC.SetPen(CL_WAVE_DRAW);
       long coeff = height / 2;
