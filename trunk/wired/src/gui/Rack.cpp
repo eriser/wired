@@ -338,7 +338,7 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
 	  Scroll(x, y3 + y);
 	}
     }
-  else if (event->Dragging())
+  else if (event->Dragging() && event->LeftIsDown())
     {
       plug->Move(wxPoint(event->GetPosition().x + plug->GetPosition().x - OldX, event->GetPosition().y + plug->GetPosition().y - OldY));      
       WasDragging = true;
@@ -410,8 +410,6 @@ void Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator 
 		break;
 	      DeleteRack(plug);
 	      DndInsert(k, l, plug);
-	      //     cout << (*k)->Index << endl;
-	      //cout << (*l)->Name << endl;
 	      break;
 	    }
 	}
