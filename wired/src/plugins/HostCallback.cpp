@@ -6,6 +6,7 @@
 #include "OptionPanel.h"
 #include "HelpPanel.h"
 #include "Settings.h"
+#include "FileLoader.h"
 
 #include <string>
 #include <iostream>
@@ -99,6 +100,40 @@ long HostCallback(Plugin *plug, long param, void *value)
 	OptPanel->ClosePlug(plug);
 	break;
       }
+    case wiredOpenFileLoader :
+      {
+	struct s_wired_l
+	{
+	  std::string *t;
+	  std::vector<std::string> *e;
+	  bool ak;
+	  std::string result;
+	} *w;
+	
+	w = (s_wired_l *)value;
+	FileLoader *dlg = new FileLoader(0x0, -1, *(w->t), w->ak, false, w->e);
+	if (dlg->ShowModal() == wxID_OK)
+	  w->result = dlg->GetSelectedFile();
+	dlg->Destroy();
+	break;
+      }
+    case wiredSaveFileLoader :
+      {
+	struct s_wired_l
+	{
+	  std::string *t;
+	  std::vector<std::string> *e;
+	  std::string result;
+	} *w;
+	
+	w = (s_wired_l *)value;
+	FileLoader *dlg = new FileLoader(0x0, -1, *(w->t), false, true, w->e);
+	if (dlg->ShowModal() == wxID_OK)
+	  w->result = dlg->GetSelectedFile();
+	dlg->Destroy();
+	break;
+      }
+
     case  wiredCreateMidiPattern :
       {
 	Seq->AddMidiPattern((list<SeqCreateEvent *> *)value, plug);
