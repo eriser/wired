@@ -9,4 +9,6 @@ libsequencer_a_SOURCES = 		\
 		Sequencer.h		\
 		../gui/AudioPattern.cpp \
 		Track.cpp		\
-		Track.h
+		Track.h			\
+		../gui/WaveDrawer.cpp
+
