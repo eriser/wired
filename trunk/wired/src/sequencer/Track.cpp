@@ -132,3 +132,14 @@ void						Track::UpdateIndex(long trackindex)
   printf("Track::UpdateIndex(%d) -- OVER\n", trackindex);
 #endif
 }
+
+void						Track::RefreshFullTrack()
+{
+  vector<Pattern *>::iterator			p;
+  
+  TrackOpt->Refresh();
+  TrackPattern->Update();
+  for (p = TrackPattern->Patterns.begin(); p != TrackPattern->Patterns.end(); p++)
+    (*p)->Update();
+}  
+

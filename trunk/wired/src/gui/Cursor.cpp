@@ -129,7 +129,7 @@ void					Cursor::SetPos(double newpos)
   x = (long) floor((pos = newpos) * MEASURE_WIDTH * SeqGUI->HoriZoomFactor) - SeqGUI->SeqView->GetXScroll();
   h = SeqGUI->RulerPanel->GetClientSize().y;
   H->Move(x  - (CURSOR_WIDTH / 2) + 1, h - CURSOR_HEIGHT);
-  L->Move(x, 0);
+  L->Move(x, -SeqGUI->SeqView->GetYScroll());
 }
 
 double					Cursor::GetPos()

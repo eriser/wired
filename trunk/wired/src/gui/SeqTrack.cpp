@@ -145,6 +145,10 @@ void					SeqTrack::FillChoices()
 
 void					SeqTrack::OnConnectTo(wxCommandEvent &event)
 {
+  list<RackTrack *>::iterator		i;
+  list<Plugin *>::iterator		j;
+  long					k = 1000;
+  
   OnClick(event);
   if (RackPanel->RackTracks.size() <= 0)
     return;
@@ -155,11 +159,6 @@ void					SeqTrack::OnConnectTo(wxCommandEvent &event)
   Connect(NONE_SELECTED_ID, wxEVT_COMMAND_MENU_SELECTED, 
 	  (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&SeqTrack::OnConnectSelected);
-
-  list<RackTrack *>::iterator		i;
-  list<Plugin *>::iterator		j;
-  long					k = 1000;
-
   for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)
     for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++, k++)
       {
@@ -203,8 +202,8 @@ void					SeqTrack::OnConnectSelected(wxCommandEvent &event)
   list<RackTrack *>::iterator		i;
   list<Plugin *>::iterator		j;
   long					k = 1000;
+  wxMutexLocker				m(SeqMutex);
 
-  wxMutexLocker m(SeqMutex);
   if (event.GetId() == NONE_SELECTED_ID)
     {
       ConnectTo(0x0);
@@ -259,28 +258,36 @@ void					SeqTrack::OnMouseClick(wxMouseEvent &e)
 void					SeqTrack::OnMotion(wxMouseEvent &e)
 {
   long					z;
+  long					h;
 
   if (Selected && e.Dragging())
     {
-      z = ((e.m_y - m_click.y) / (long) (TRACK_HEIGHT * SeqPanel->VertZoomFactor));
-      if (z != 0)
-	SeqPanel->ChangeSelectedTrackIndex(z);
-      /*
-	if (z < 0)
-	if (GetPosition().y < SeqPanel->SeqView->GetYScroll())
-	SeqPanel->ScrollTrackList(z);
+      SeqMutex.Lock();
+      z = ((e.m_y - m_click.y) / (h = (long) (TRACK_HEIGHT * SeqPanel->VertZoomFactor)));
+      if (z < 0)
+	if (GetPosition().y < 0)
+	  {
+	    SeqPanel->ScrollTrackList(-1);
+	    SeqPanel->ChangeSelectedTrackIndex(-1);
+	  }
 	else
+	  SeqPanel->ChangeSelectedTrackIndex(z);
+      else
 	if (z > 0)
-	if (GetPosition().y >= (SeqPanel->SeqView->GetYScroll() + SeqPanel->TrackView->GetClientSize().y - TRACK_HEIGHT))
-	SeqPanel->ScrollTrackList(z);
-      */
+	  if (GetPosition().y >= SeqPanel->TrackView->GetClientSize().y - h)
+	    {
+	      SeqPanel->ChangeSelectedTrackIndex(1);
+	      SeqPanel->ScrollTrackList(1);
+	    }
+	  else
+	    SeqPanel->ChangeSelectedTrackIndex(z);
+      SeqMutex.Unlock();
     }
 }
 
 void					SeqTrack::SetSelected(bool sel)
 {
   Selected = sel;
-
   Refresh();
 }
 
