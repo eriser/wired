@@ -131,7 +131,7 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   PolyUpBtn = new HoldButton(this, LoopSampler_PolyUp, wxPoint(268, 110), wxSize(13, 9), 
 			    up_up, up_down);
-  PolyDownBtn = new HoldButton(this, LoopSampler_PolyDown, wxPoint(268, 110), wxSize(13, 9), 
+  PolyDownBtn = new HoldButton(this, LoopSampler_PolyDown, wxPoint(268, 120), wxSize(13, 9), 
 			      down_up, down_down);
 
   LedOff = new wxBitmap(wxImage(string(GetDataDir() + string(IMG_LS_LED_OFF_IMG)).c_str(), wxBITMAP_TYPE_PNG));

@@ -48,14 +48,14 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
 				   0, 127, 0,
 				   wxPoint(69, 10), wxDefaultSize, 
 				   GetPosition() + wxPoint(75,15));
-      VolumeLeft = new wxStaticText(this, -1, "100", wxPoint(5, 90));
+      /*VolumeLeft = new wxStaticText(this, -1, "100", wxPoint(5, 90));
       VolumeLeft->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));
       VolumeRight = new wxStaticText(this, -1, "100", wxPoint(75, 90));
-      VolumeRight->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));
-      Label = new wxStaticText(this, -1, label, wxPoint(22, 0));
+      VolumeRight->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));*/
+      Label = new wxStaticText(this, -1, label, wxPoint(25, 0));
       Label->SetForegroundColour(*wxWHITE);
       //Label->SetForegroundColour(*wxBLACK);
-      Label->SetFont(wxFont(6, wxBOLD, wxBOLD, wxBOLD));//wxNORMAL, wxNORMAL));
+      Label->SetFont(wxFont(8, wxBOLD, wxBOLD, wxBOLD));//wxNORMAL, wxNORMAL));
       FaderLeft->SetValue( (int)(Chan->VolumeLeft * 100) );
       FaderRight->SetValue( (int)(Chan->VolumeRight * 100) );
       VumLeft->SetValue( 0 );
@@ -113,7 +113,7 @@ void				ChannelGui::OnFaderLeft(wxScrollEvent& WXUNUSED(e))
       Chan->VolumeLeft = res;
       MixMutex.Unlock();
       FaderRight->SetValue(FaderLeft->GetValue());
-      VolumeRight->SetLabel(s);
+      //VolumeRight->SetLabel(s);
     }
   else 
     {
@@ -121,7 +121,7 @@ void				ChannelGui::OnFaderLeft(wxScrollEvent& WXUNUSED(e))
       Chan->VolumeLeft = res;
       MixMutex.Unlock();
     }
-  VolumeLeft->SetLabel(s);
+  //VolumeLeft->SetLabel(s);
 }
 
 void				ChannelGui::OnFaderRight(wxScrollEvent& WXUNUSED(e))
@@ -137,7 +137,7 @@ void				ChannelGui::OnFaderRight(wxScrollEvent& WXUNUSED(e))
       Chan->VolumeLeft = res;
       MixMutex.Unlock();
       FaderLeft->SetValue(FaderRight->GetValue());
-      VolumeLeft->SetLabel(s);
+      //VolumeLeft->SetLabel(s);
     }
   else 
     {
@@ -145,7 +145,7 @@ void				ChannelGui::OnFaderRight(wxScrollEvent& WXUNUSED(e))
       Chan->VolumeRight = res;
       MixMutex.Unlock();
     }
-  VolumeRight->SetLabel(s);
+  //VolumeRight->SetLabel(s);
 }
 
 void				ChannelGui::SetLabel(const wxString& label)
@@ -267,7 +267,7 @@ void				MasterChannelGui::OnFaderLeft(wxScrollEvent &e)
       Mix->VolumeLeft = res;
       MixMutex.Unlock();
       FaderRight->SetValue(FaderLeft->GetValue());
-      VolumeRight->SetLabel(s);
+      //VolumeRight->SetLabel(s);
     }
   else 
     {
@@ -275,7 +275,7 @@ void				MasterChannelGui::OnFaderLeft(wxScrollEvent &e)
       Chan->VolumeLeft = res;
       MixMutex.Unlock();
     }
-  VolumeLeft->SetLabel(s); 
+  //VolumeLeft->SetLabel(s); 
 }
 
 void				MasterChannelGui::OnFaderRight(wxScrollEvent &e)
@@ -291,7 +291,7 @@ void				MasterChannelGui::OnFaderRight(wxScrollEvent &e)
       Mix->VolumeLeft = res;
       MixMutex.Unlock();
       FaderLeft->SetValue(FaderRight->GetValue());
-      VolumeLeft->SetLabel(s);
+      //VolumeLeft->SetLabel(s);
     }
   else 
     {
@@ -299,7 +299,7 @@ void				MasterChannelGui::OnFaderRight(wxScrollEvent &e)
       Mix->VolumeRight = res;
       MixMutex.Unlock();
     }
-  VolumeRight->SetLabel(s);
+  //  VolumeRight->SetLabel(s);
 }
 
 
