@@ -102,12 +102,65 @@ void					SequencerView::SetYScroll(long y, long range, long seqwidth)
     YScroll = 0;
 }
 
+unsigned long				SequencerView::GetTotalWidth()
+{
+  return (TotalWidth);
+}
+
+void					SequencerView::SetTotalWidth(unsigned long w)
+{
+  TotalWidth = (w > GetClientSize().x) ? w : GetClientSize().x;
+}
+
+unsigned long				SequencerView::GetTotalHeight()
+{
+  return (TotalHeight);
+}
+
+void					SequencerView::SetTotalHeight(unsigned long h)
+{
+  TotalHeight = (h > GetClientSize().y) ? h : GetClientSize().y;
+}
+
 void					SequencerView::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
       wxString s("This is the Wired sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above to choose one of the sequencer editing tools.");
       HelpWin->SetText(s);
+    }
+}
+
+void					SequencerView::DrawMeasures()
+{
+  wxPaintDC				dc(this);
+  wxSize				size;
+  wxString				s;
+  double				x;
+  double				u;
+  long					m;
+
+  PrepareDC(dc);
+  size = GetClientSize();
+  dc.SetPen(wxPen(CL_SEQVIEW_BACKGROUND, 1, wxSOLID));
+  dc.SetBrush(wxBrush(CL_SEQVIEW_BACKGROUND));
+  dc.SetTextForeground(CL_SEQVIEW_FOREGROUND);
+  dc.DrawRectangle(0, 0, size.x, size.y);
+  dc.SetPen(wxPen(CL_SEQVIEW_BAR, 1, wxSOLID));
+  u = MEASURE_WIDTH * SeqPanel->HoriZoomFactor / Seq->SigNumerator;
+  m = (long) ceil(XScroll / u);
+  for (x = u * m - XScroll; (long) floor(x) < size.x; x += u)
+    {
+      if (!(m++ % Seq->SigNumerator))
+        {
+	  dc.SetPen(wxPen(CL_SEQVIEW_MES, 1, wxSOLID));
+	  dc.DrawLine((int) floor(x), 0,
+		      (int) floor(x), size.y);
+	  dc.SetPen(wxPen(CL_SEQVIEW_BAR, 1, wxSOLID));
+	  }
+      else
+	dc.DrawLine((int) floor(x), 0,
+		    (int) floor(x), size.y);
     }
 }
 
@@ -217,24 +270,22 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   FollowPlayCursor = PLAY_CURSOR_FOLLOWING;
   SetScrolling();
   AdjustHScrolling();
+  SeqView->SetTotalWidth(0);
+  SeqView->SetTotalHeight(0);
 
   /* Curseurs */
   BeginLoopCursor = new Cursor('L', ID_CURSOR_BEGIN, 0.0, RulerPanel, this,
 			       CL_CURSORZ_HEAD_BEGINL, CL_CURSORZ_LINE_DARK);
   BeginLoopCursor->SetPos(0);
-
   EndLoopCursor = new Cursor('R', ID_CURSOR_REPEAT, 0.0, RulerPanel, this,
 			       CL_CURSORZ_HEAD_ENDL, CL_CURSORZ_LINE_DARK);
   EndLoopCursor->SetPos(4);
-
   EndCursor = new Cursor('E', ID_CURSOR_END, 0.0, RulerPanel, this,
 			       CL_CURSORZ_HEAD_END, CL_CURSORZ_LINE_DARK);
   EndCursor->SetPos(16);
-
   PlayCursor = new Cursor('P', ID_CURSOR_PLAY, 0.0, RulerPanel, this,
 				CL_CURSORZ_HEAD_PLAY, CL_CURSORZ_LINE_DARK);
   PlayCursor->SetPos(0);
-
   // evenement curseur
   Connect(ID_SEQ_SETPOS, TYPE_SEQ_SETPOS, (wxObjectEventFunction)&SequencerGui::OnSetPosition);
   // evenement resize pattern
@@ -276,39 +327,6 @@ SequencerGui::~SequencerGui()
 
 }
 
-void					SequencerView::DrawMeasures()
-{
-  wxPaintDC				dc(this);
-  wxSize				size;
-  wxString				s;
-  double				x;
-  double				u;
-  long					m;
-
-  PrepareDC(dc);
-  size = GetClientSize();
-  dc.SetPen(wxPen(CL_SEQVIEW_BACKGROUND, 1, wxSOLID));
-  dc.SetBrush(wxBrush(CL_SEQVIEW_BACKGROUND));
-  dc.SetTextForeground(CL_SEQVIEW_FOREGROUND);
-  dc.DrawRectangle(0, 0, size.x, size.y);
-  dc.SetPen(wxPen(CL_SEQVIEW_BAR, 1, wxSOLID));
-  u = MEASURE_WIDTH * SeqPanel->HoriZoomFactor / Seq->SigNumerator;
-  m = (long) ceil(XScroll / u);
-  for (x = u * m - XScroll; (long) floor(x) < size.x; x += u)
-    {
-      if (!(m++ % Seq->SigNumerator))
-        {
-	  dc.SetPen(wxPen(CL_SEQVIEW_MES, 1, wxSOLID));
-	  dc.DrawLine((int) floor(x), 0,
-		      (int) floor(x), size.y);
-	  dc.SetPen(wxPen(CL_SEQVIEW_BAR, 1, wxSOLID));
-	  }
-      else
-	dc.DrawLine((int) floor(x), 0,
-		    (int) floor(x), size.y);
-    }
-}
-
 Track					*SequencerGui::AddTrack(bool is_audio)
 {
   Track					*n;
@@ -316,17 +334,13 @@ Track					*SequencerGui::AddTrack(bool is_audio)
   SeqTrackPattern			*n2;
   long					yy;
 
-  /*  TrackView->CalcScrolledPosition(0, Seq->Tracks.size() * 
-      (TRACK_HEIGHT * VertZoomFactor), &xx, &yy);  */
-  yy = Seq->Tracks.size() * (long)(TRACK_HEIGHT * VertZoomFactor) - (long)CurrentYScrollPos;
+  yy = SeqView->GetTotalHeight() - (long) floor(CurrentYScrollPos);
   wxPoint p(0, yy);
   wxSize  s(TRACK_WIDTH, (long)(TRACK_HEIGHT * VertZoomFactor));
   printf("adding SEQTRACK %d with Y=%d\n", Seq->Tracks.size() + 1, yy);
   n1 = new SeqTrack(Seq->Tracks.size() + 1, TrackView, p, s, is_audio);
-  //  n1 = new SeqTrack(Seq->Tracks.size(), TrackView, p, s, is_audio);
   printf("adding SEQTRACK PATTERN\n");
-  n2 = new SeqTrackPattern(SeqView, n1, 
-			(long)(Seq->EndPos * MEASURE_WIDTH * HoriZoomFactor));
+  n2 = new SeqTrackPattern(SeqView, n1, SeqView->GetTotalWidth());
   printf("adding TRACK\n");
   n = new Track(n1, n2, is_audio ? IS_AUDIO_TRACK : IS_MIDI_TRACK);
   if (is_audio)
@@ -337,6 +351,7 @@ Track					*SequencerGui::AddTrack(bool is_audio)
   Seq->AddTrack(n);
   UpdateTracks();
   SetScrolling();
+  ReSizeCursors();
   return (n);
 }
 
@@ -358,6 +373,9 @@ void					SequencerGui::PutCursorsOnTop()
 
 void					SequencerGui::ReSizeCursors()
 {
+#ifdef __DEBUG__
+  printf("SequencerGui::ReSizeCursors()\n");
+#endif
   PlayCursor->ReSize();
   BeginLoopCursor->ReSize();
   EndLoopCursor->ReSize();
@@ -372,18 +390,27 @@ void					SequencerGui::RedrawCursors()
   EndCursor->SetPos(EndCursor->GetPos());
 }
 
+void					SequencerGui::RedrawTrackLines()
+{
+  vector<Track *>::iterator		i;
+  
+  for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)  
+    if ((*i)->TrackPattern)
+      (*i)->TrackPattern->Update();
+}
+
 void					SequencerGui::SetScrolling()
 {
   long					z;
   
-  if ((z = ((long) floor(Seq->Tracks.size() * TRACK_HEIGHT * VertZoomFactor) + VSCROLL_THUMB_WIDTH
-	    - SeqView->GetClientSize().y)) > 0)
-    VertScrollBar->SetScrollbar(VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, z, 1, true);
+  SeqView->SetTotalHeight((unsigned long) ceil(Seq->Tracks.size() * TRACK_HEIGHT * VertZoomFactor));
+  if ((z = (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)) > 0)
+    VertScrollBar->SetScrollbar(VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, z + VSCROLL_THUMB_WIDTH, 1, true);
   else
     VertScrollBar->SetScrollbar(VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, VSCROLL_THUMB_WIDTH, 1, true);
-  if ((z = ((long) floor(Seq->EndPos * MEASURE_WIDTH * HoriZoomFactor) + HSCROLL_THUMB_WIDTH
-	    - SeqView->GetClientSize().x)) > 0)
-    HorizScrollBar->SetScrollbar(HorizScrollBar->GetThumbPosition(), HSCROLL_THUMB_WIDTH, z, 1, true);
+  SeqView->SetTotalWidth((unsigned long) ceil(Seq->EndPos * MEASURE_WIDTH * HoriZoomFactor));
+  if ((z = (SeqView->GetTotalWidth() - SeqView->GetClientSize().x)) > 0)
+    HorizScrollBar->SetScrollbar(HorizScrollBar->GetThumbPosition(), HSCROLL_THUMB_WIDTH, z + HSCROLL_THUMB_WIDTH, 1, true);
   else
     HorizScrollBar->SetScrollbar(HorizScrollBar->GetThumbPosition(), HSCROLL_THUMB_WIDTH, HSCROLL_THUMB_WIDTH, 1, true);
 }
@@ -395,8 +422,7 @@ void					SequencerGui::AdjustHScrolling()
   double				pos_tmp;
   
   pos_tmp = ((range = HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) ?
-    (((double) (Seq->EndPos * MEASURE_WIDTH *
-		HoriZoomFactor - SeqView->GetClientSize().x)
+    (((double) (SeqView->GetTotalWidth() - SeqView->GetClientSize().x)
       * (double) (thumb_pos = HorizScrollBar->GetThumbPosition())) /
      (double) range) : 0;
   SeqView->ScrollWindow((long) (floor(CurrentXScrollPos) - floor(pos_tmp)), 0, (const wxRect *) NULL);
@@ -419,8 +445,7 @@ void					SequencerGui::AdjustVScrolling()
   double				pos_tmp;
   
   pos_tmp = ((range = VertScrollBar->GetRange() - VSCROLL_THUMB_WIDTH)) ?
-    (((double) (Seq->Tracks.size() * TRACK_HEIGHT *
-		VertZoomFactor - SeqView->GetClientSize().y)
+    (((double) (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)
       * (double) (thumb_pos = VertScrollBar->GetThumbPosition())) /
      (double) range) : 0;
   SeqView->ScrollWindow(0, (long) (floor(CurrentYScrollPos) - floor(pos_tmp)), (const wxRect *) NULL);
@@ -468,6 +493,7 @@ void					SequencerGui::OnVertSliderUpdate(wxCommandEvent &event)
   UpdateTracks();
   SetScrolling();
   AdjustVScrolling();
+  ReSizeCursors();
   PutCursorsOnTop();
 }
 
@@ -486,7 +512,6 @@ void					SequencerGui::UpdateMeasures()
   long					x_begin;
   long					mes;
   long					x_end;
-  long					h_len;
   long					h;
   vector<Track *>::iterator		t;
   vector<wxStaticLine *>::iterator	m;
@@ -495,12 +520,9 @@ void					SequencerGui::UpdateMeasures()
   h = (long) (VertZoomFactor * TRACK_HEIGHT) * Seq->Tracks.size();
   mes = (long) ceil(MEASURE_WIDTH * HoriZoomFactor);
   x_end = (long) (Seq->EndPos * mes);
-  h_len = (long) SeqView->GetSize().x;
-  if (h_len < x_end)
-    h_len = x_end;
   for (t = Seq->Tracks.begin(); t != Seq->Tracks.end(); t++)
     {
-      (*t)->TrackPattern->Update(h_len);
+      (*t)->TrackPattern->Update();
       for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
 	(*p)->Update();
     }  
@@ -556,9 +578,7 @@ void					SequencerGui::DeleteAllTracks()
   for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)  
     {
       if ((*i)->TrackOpt->ChanGui)
-	{
-	  MixerPanel->RemoveChannel((*i)->TrackOpt->ChanGui);
-	}      
+	MixerPanel->RemoveChannel((*i)->TrackOpt->ChanGui);
       delete (*i);
     }
   Seq->Tracks.clear();
@@ -571,34 +591,21 @@ void					SequencerGui::DeleteSelectedTrack()
   vector<Track *>::iterator		i;
   long					j;
 
-  //printf("SequencerGui::DeleteSelectedTrack()\n");
-  
-  for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
-    if ((*i)->TrackOpt->GetSelected())
-      {
-	if ((*i)->TrackOpt->Record && Seq->Recording)
-	  return;
-	if ((*i)->TrackOpt->ChanGui)
-	  {
-	    MixerPanel->RemoveChannel((*i)->TrackOpt->ChanGui);
-	  }
-	SeqMutex.Lock();
-	delete *i;
-	Seq->Tracks.erase(i);
-	SeqMutex.Unlock();
-
-	break;
-      }
-  // mise a jour des index des tracks
+#ifdef __DEBUG__
+  printf("SequencerGui::DeleteSelectedTrack()\n");
+#endif
+  for (i = Seq->Tracks.begin(); (i != Seq->Tracks.end()) && !((*i)->TrackOpt->GetSelected()); i++);
+  if ((*i)->TrackOpt->Record && Seq->Recording)
+    return;
+  if ((*i)->TrackOpt->ChanGui)
+    MixerPanel->RemoveChannel((*i)->TrackOpt->ChanGui);
   SeqMutex.Lock();
+  delete (*i);
+  Seq->Tracks.erase(i);
   for (i = Seq->Tracks.begin(), j = 0; i != Seq->Tracks.end(); i++)
-    {
-      (*i)->UpdateIndex(j);
-      j++;
-    }
+    (*i)->UpdateIndex(j++);
   UpdateTracks();
   SeqMutex.Unlock();
-
   SetScrolling();
 }
 
@@ -622,12 +629,8 @@ void					SequencerGui::SelectItem(Pattern *p, bool shift)
     else
       {
 	p->SetSelected(false);
-	for (i = SelectedItems.begin(); i != SelectedItems.end(); i++)
-	  if (*i == p)
-	    {
-	      SelectedItems.erase(i);
-	      break;
-	    }
+	for (i = SelectedItems.begin(); (i != SelectedItems.end()) && (*i != p); i++);
+	SelectedItems.erase(i);
       }
 }
 
@@ -645,7 +648,6 @@ void					SequencerGui::PasteItems()
   vector<Pattern *>::iterator		j;
   Pattern				*p;
   
-  //SeqMutex.Lock();
   for (j = CopyItems.begin(); j != CopyItems.end(); j++)
     {
       p = *j;
@@ -653,7 +655,6 @@ void					SequencerGui::PasteItems()
     }
   if (DoCut)
     DeleteSelectedPatterns();
-  //SeqMutex.Unlock();
 }
 
 void					SequencerGui::DeleteSelectedPatterns()
@@ -685,7 +686,7 @@ void					SequencerGui::DeletePattern(Pattern *p)
 	break;
       }
   for (i = CopyItems.begin(); i != CopyItems.end(); i++)
-    if ((*i) == p)
+    if (*i == p)
       {
 	i = CopyItems.erase(i);
 	break;
@@ -775,8 +776,8 @@ void					SequencerGui::OnResizePattern(wxCommandEvent &event)
 {
   Pattern				*p;
 
-  p = (Pattern *)event.GetEventObject();
-  p->Modify(-1, Seq->CurrentPos);// - p->Position);
+  p = (Pattern *) event.GetEventObject();
+  p->Modify(-1, Seq->CurrentPos);
   p->Update();
 }
 

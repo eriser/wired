@@ -40,7 +40,7 @@ CursorH::~CursorH()
 ** Fonctions gerant le drag d'un curseur.
 */
 
-void			CursorH::OnClick(wxMouseEvent &e)
+void					CursorH::OnClick(wxMouseEvent &e)
 {
   m_click.x = e.m_x;
   m_click.y = e.m_y;
@@ -51,26 +51,26 @@ void			CursorH::OnClick(wxMouseEvent &e)
 ** de par exemple set la nouvelle position dans le sequenceur
 */
 
-void			CursorH::OnClickUp(wxMouseEvent &e)
+void					CursorH::OnClickUp(wxMouseEvent &e)
 {
   wxCommandEvent _event(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
   _event.SetEventObject(this);
   GetEventHandler()->ProcessEvent(_event);
 }
 
-void			CursorH::OnPaint(wxPaintEvent &e)
+void					CursorH::OnPaint(wxPaintEvent &e)
 {
-  wxPaintDC dc(this);
+  wxPaintDC				dc(this);
   
   dc.SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   dc.SetTextForeground(CL_CURSORZ_HEAD_NAME);
   dc.DrawText(Name, 3, 0);
 }
 
-void			CursorH::OnMouseEvent(wxMouseEvent &e)
+void					CursorH::OnMouseEvent(wxMouseEvent &e)
 {
-  long			x;
-  long			max;
+  long					x;
+  long					max;
 
   if(e.Dragging())
     {
@@ -119,7 +119,7 @@ void			CursorH::OnMouseEvent(wxMouseEvent &e)
 Cursor::Cursor(char name, int id, double initpos, Ruler *R, SequencerGui *S,
 	       wxColour cH, wxColour cL)
 {
-  wxSize s;
+  wxSize				s;
 
   SeqGUI = S;
   pos = initpos;
@@ -136,9 +136,9 @@ Cursor::~Cursor()
   delete (L);
 }
 
-void			Cursor::SetPos(double newpos)
+void					Cursor::SetPos(double newpos)
 {
-  long			x;
+  long					x;
 
   if (newpos < 0)
     newpos = 0;
@@ -147,18 +147,21 @@ void			Cursor::SetPos(double newpos)
   H->Move(x  - (CURSOR_WIDTH / 2) + 1, RULER_HEIGHT - CURSOR_HEIGHT - 4);
 }
 
-double			Cursor::GetPos()
+double					Cursor::GetPos()
 {
   return (pos);
 }
 
-void			Cursor::PutOnTop()
+void					Cursor::PutOnTop()
 {
   L->Show(false);
   L->Show(true);
 }
 
-void			Cursor::ReSize()
+void					Cursor::ReSize()
 {
-  L->ReSize(SeqGUI->GetClientSize().y);
+#ifdef __DEBUG__
+  printf("Cursor::ReSize()\n");
+#endif
+  L->SetSize(-1, -SeqGUI->SeqView->GetYScroll(), -1, (int) SeqGUI->SeqView->GetTotalHeight(), wxSIZE_USE_EXISTING);
 }

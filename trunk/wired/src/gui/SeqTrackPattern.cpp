@@ -2,11 +2,12 @@
 // Under the GNU General Public License
 
 #include "SeqTrackPattern.h"
+#include "SequencerGui.h"
 
-SeqTrackPattern::SeqTrackPattern(wxWindow *parent, SeqTrack *n, long length)
+SeqTrackPattern::SeqTrackPattern(SequencerView *parent, SeqTrack *n, long length)
 { 
-  Parent = parent;
   TrackOpt = n;
+  Parent = parent;
   Horiz = new wxStaticLine(Parent, -1, 
 			   wxPoint(0, n->GetPosition().y + n->GetSize().y),
 			   wxSize(length, 1), wxLI_HORIZONTAL);
@@ -14,16 +15,15 @@ SeqTrackPattern::SeqTrackPattern(wxWindow *parent, SeqTrack *n, long length)
 
 SeqTrackPattern::~SeqTrackPattern()
 {
-  vector<Pattern *>::iterator k;
+  vector<Pattern *>::iterator		k;
 
   for (k = Patterns.begin(); k != Patterns.end(); k++)
     delete *k;
   Horiz->Destroy();
 }
 
-void					SeqTrackPattern::Update(long length)
+void					SeqTrackPattern::Update()
 {
-  Horiz->SetPosition(wxPoint(0, TrackOpt->GetPosition().y 
-			     + TrackOpt->GetSize().y));
-  Horiz->SetSize(wxSize(length, 1));
+  Horiz->SetSize(-Parent->GetXScroll(), TrackOpt->GetPosition().y + TrackOpt->GetSize().y,
+		 Parent->GetTotalWidth(), 1, wxSIZE_USE_EXISTING);
 }

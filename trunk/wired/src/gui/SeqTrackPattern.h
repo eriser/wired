@@ -8,19 +8,20 @@
 #include "Pattern.h"
 #include <wx/statline.h>
 
+class SequencerView;
+
 class SeqTrackPattern
 {
  public:
-  SeqTrackPattern(wxWindow *parent, SeqTrack *n, long length);
+  SeqTrackPattern(SequencerView *parent, SeqTrack *n, long length);
   ~SeqTrackPattern();
-
-  void Update(long length);
-
-  SeqTrack	  *TrackOpt;
-  wxStaticLine	  *Horiz;
-  wxWindow	  *Parent;
   
-  vector<Pattern *> Patterns;
+  void					Update();
+
+  SeqTrack				*TrackOpt;
+  wxStaticLine				*Horiz;
+  SequencerView				*Parent;
+  vector<Pattern *>			Patterns;
 };
 
 #endif

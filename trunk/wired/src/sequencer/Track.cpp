@@ -67,6 +67,8 @@ AudioPattern					*Track::AddPattern(WaveFile *w, double pos)
   a->SetDrawColour(PatternColours[ColourIndex]);
   SeqMutex.Lock();
   TrackPattern->Patterns.push_back(a);
+  if (a->GetEndPosition() > Seq->EndPos)
+    Seq->EndPos = a->GetEndPosition();
   SeqMutex.Unlock();
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d, %f) -- OVER (AUDIO)\n", w, pos);
@@ -83,10 +85,12 @@ MidiPattern					*Track::AddPattern(MidiTrack *t)
 #endif
   a = new MidiPattern(0, t, Index);
   a->SetDrawColour(PatternColours[ColourIndex]);
-
+  
   SeqMutex.Lock();
   TrackPattern->Patterns.push_back(a);
   a->Update();
+  if (a->GetEndPosition() > Seq->EndPos)
+    Seq->EndPos = a->GetEndPosition();
   SeqMutex.Unlock();
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d) -- OVER (MIDI)\n", t);
