@@ -22,8 +22,8 @@ RackTrack::RackTrack(Rack *parent, int index)
   Units = 0;
   CurrentBuffer = 0x0;
   wxString s;
-  s.Printf("Rack %d", index);
-  Output = Mix->AddStereoOutputChannel();
+  s.Printf("Rack %d", index + 1);
+  Output = Mix->AddStereoOutputChannel(true);
   ChanGui = MixerPanel->AddChannel(Output, s);
 }
 
