@@ -41,7 +41,7 @@ BEGIN_EVENT_TABLE(WiredBeatBox, wxWindow)
   EVT_BUTTON(BB_PatternClick, WiredBeatBox::OnPatternClick)
   EVT_BUTTON(BB_ShowOpt, WiredBeatBox::ShowOpt)
   EVT_BUTTON(BB_OnPlayClick, WiredBeatBox::OnPlay)
-  EVT_BUTTON(BB_OnEditClick, WiredBeatBox::OnEdit)
+  EVT_BUTTON(BB_OnEditClick, WiredBeatBox::OnEditButton)
   EVT_BUTTON(BB_Channel, WiredBeatBox::OnToggleChannel)
   EVT_BUTTON(BB_OnLoadPatch, WiredBeatBox::OnLoadPatch)
   EVT_BUTTON(BB_OnSavePatch, WiredBeatBox::OnSavePatch)
@@ -246,7 +246,10 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   /* Pattern Selectors */
   NewSelectedPattern = SelectedPattern = 0;
-  
+  SelectedBank = 0;
+  EditedPattern = 0;
+  OnEdit = false;
+
   PatternSelectors = new IdButton*[8];
   tmp_img = new wxImage(_T(string(GetDataDir() + string(UP_1)).c_str()));
   tmp_img2 = new wxImage(_T(string(GetDataDir() + string(DO_1)).c_str()));
@@ -850,10 +853,10 @@ void WiredBeatBox::OnPositionChoice(wxCommandEvent& e)
   unsigned int *i = static_cast<unsigned int*>(e.GetClientData());
   PositionButtons[PosIndex]->SetOff();
   PositionButtons[*i]->SetOn();
-  PatternMutex.Lock();
+  //PatternMutex.Lock();
   PosIndex = *i;
   SetPatternList();
-  PatternMutex.Unlock();
+  //PatternMutex.Unlock();
 }
 
 void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)  
@@ -862,7 +865,7 @@ void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)
   BeatBoxChannel* tmp = Channels[data[0]];
   BeatNoteToPlay* bn;
   
-  PatternMutex.Lock();
+  //PatternMutex.Lock();
   
   switch (data[1])
     {
@@ -870,7 +873,11 @@ void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)
       for (unsigned char i = 0; i < NB_CHAN; i++)
 	Channels[i]->DeSelect();
       tmp->Select();
+      
+      PatternMutex.Lock();
       SelectedChannel = tmp;
+      PatternMutex.Unlock();
+
       SetPatternList();
       /*
 	if (View && SelectedChannel->Wave)
@@ -886,8 +893,12 @@ void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)
 	  Channels[i]->UnSolo();
 	}
       tmp->Select();
+      
+      PatternMutex.Lock();
       tmp->Solo();
       SelectedChannel = tmp;
+      PatternMutex.Unlock();
+      
       SetPatternList();
       break;
     case ACT_PLAY:
@@ -897,8 +908,10 @@ void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)
 	   < NotesToPlay.size()+1 )
 	Pool->SetPolyphony(NotesToPlay.size()+32);
       bn = new BeatNoteToPlay(tmp, Pool->GetFreeBuffer());
-      NotesToPlay.push_back(bn);
       
+      PatternMutex.Lock();
+      NotesToPlay.push_back(bn);
+      PatternMutex.Unlock();
       break;
     case ACT_SETWAVE:
       
@@ -906,24 +919,39 @@ void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)
     default:
       break;
     }
-  PatternMutex.Unlock();
 }
 
 void WiredBeatBox::OnPatternSelectors(wxCommandEvent& e)
 {
   unsigned int *p = (unsigned int*)e.GetClientData();
   
-  PatternMutex.Lock();
-  if (NewSelectedPattern != *p && !EditButton->GetOn())
+  if (OnEdit && (EditedPattern != *p))
     {
       PatternSelectors[SelectedPattern]->SetOff();
       PatternSelectors[NewSelectedPattern]->SetOff();
-      //SelectedPattern = *p;
-      NewSelectedPattern = *p;
-      PatternSelectors[NewSelectedPattern]->SetOn();
+      PatternSelectors[EditedPattern]->SetOff();
+      EditedPattern = *p;
+      PatternSelectors[EditedPattern]->SetOn();
+      
+      //PatternMutex.Lock();
+      SetPatternList();
+      //PatternMutex.Unlock();
     }
-  SetPatternList();
-  PatternMutex.Unlock();
+  else if (!OnEdit && (NewSelectedPattern != *p))
+    {
+      PatternSelectors[SelectedPattern]->SetOff();
+      PatternSelectors[NewSelectedPattern]->SetOff();
+      
+      PatternMutex.Lock();
+      EditedPattern = NewSelectedPattern = *p;
+      PatternMutex.Unlock();
+      
+      PatternSelectors[NewSelectedPattern]->SetOn();
+      
+      //PatternMutex.Lock();
+      SetPatternList();
+      //PatternMutex.Unlock();
+    }
 }
 
 void WiredBeatBox::SetPatternList(void)
@@ -937,9 +965,11 @@ void WiredBeatBox::SetPatternList(void)
   i = static_cast<double>(PosIndex * 16);
   j = static_cast<double>(i + 16.0);
   
+  unsigned int cur = (OnEdit ? EditedPattern : NewSelectedPattern);
+  
   for (list<BeatNote*>::iterator bn = 
-	 SelectedChannel->Rythms[NewSelectedPattern].begin();
-       bn != SelectedChannel->Rythms[NewSelectedPattern].end(); bn++)
+	 SelectedChannel->Rythms[cur].begin();
+       bn != SelectedChannel->Rythms[cur].end(); bn++)
     {
       if ( (*bn)->Position > j )
 	break;
@@ -982,63 +1012,57 @@ void WiredBeatBox::OnPatternMotion(wxCommandEvent& e)
 inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c, double bar_pos, 
 				  double rel_pos, unsigned int state)
 {
-  if (c->Rythms[NewSelectedPattern].empty())
+  unsigned int cur = (OnEdit ? EditedPattern : NewSelectedPattern);
+
+  if (c->Rythms[cur].empty())
     {
       BeatNote *note = new BeatNote(rel_pos, state, bar_pos);
       note->Vel = 1.0f * static_cast<float>(state / 4.f);
       note->Reversed = false;
+      
       PatternMutex.Lock();
-      c->Rythms[NewSelectedPattern].push_back(note);
+      c->Rythms[cur].push_back(note);
       PatternMutex.Unlock();
-      //cout << "note added real pos: " << rel_pos 
-      //<< ", bar pos: " << bar_pos << endl;
       return;
     }
-  if ( bar_pos > c->Rythms[NewSelectedPattern].back()->BarPos ) 
+  if ( rel_pos > c->Rythms[cur].back()->Position ) 
     {
       BeatNote *note = new BeatNote( rel_pos, state, bar_pos);
       note->Vel = 1.0f * static_cast<float>(state / 4.f);
       note->Reversed = false;
+      
       PatternMutex.Lock();
-      c->Rythms[NewSelectedPattern].push_back(note);
+      c->Rythms[cur].push_back(note);
       PatternMutex.Unlock();
-      //cout << "note added real pos: " << rel_pos 
-      //<< ", bar pos: " << bar_pos << endl;
       return;
     }
-  for ( list<BeatNote*>::iterator b = c->Rythms[NewSelectedPattern].begin();
-	b != c->Rythms[NewSelectedPattern].end(); b++)
+  for ( list<BeatNote*>::iterator b = c->Rythms[cur].begin();
+	b != c->Rythms[cur].end(); b++)
     {  
-      if ( (*b)->BarPos == bar_pos ) 
+      if ( (*b)->Position == rel_pos ) 
 	{
 	  if ( state == ID_UNCLICKED )
 	    {
 	      PatternMutex.Lock();
 	      delete *b;
-	      c->Rythms[NewSelectedPattern].erase(b);
+	      c->Rythms[cur].erase(b);
 	      PatternMutex.Unlock();
-	      //cout << "note removed real pos: " << rel_pos 
-	      //<< ", bar pos: " << bar_pos << endl;
-	      //break;
 	    }
 	  else
 	    {
-	      //cout << "note velocity changed real pos: " << rel_pos 
-	      //<< ", bar pos: " << bar_pos << endl;
+	      (*b)->State = state;
 	      (*b)->Vel = 1.f * static_cast<float>(state / 4.f);
 	    }
 	  return;
 	}
-      else if ( (*b)->BarPos > bar_pos ) 
+      else if ( (*b)->Position > rel_pos ) 
 	{
 	  BeatNote *note = new BeatNote(rel_pos, state, bar_pos);
 	  note->Vel = 1.0f * static_cast<float>(state / 4.f);
 	  note->Reversed = false;
 	  PatternMutex.Lock();
-	  c->Rythms[NewSelectedPattern].insert(b, note);
+	  c->Rythms[cur].insert(b, note);
 	  PatternMutex.Unlock();
-	  //cout << "note added real pos: " << rel_pos 
-	  //<< ", bar pos: " << bar_pos << endl;
 	  return;
 	}
     }
@@ -1283,15 +1307,25 @@ void WiredBeatBox::Load(int fd, long size)
   //printf("size:%d\n", size);
 }
 
-void WiredBeatBox::OnEdit(wxCommandEvent& WXUNUSED(e))
+void WiredBeatBox::OnEditButton(wxCommandEvent& WXUNUSED(e))
 {
-  
+  OnEdit = !OnEdit;
+  if (EditedPattern != NewSelectedPattern)
+    {
+      PatternMutex.Lock();
+      NewSelectedPattern = EditedPattern;
+      PatternMutex.Unlock();
+      SetPatternList();
+    }
 }
 
 
 void WiredBeatBox::OnBankChange(wxCommandEvent& WXUNUSED(event))
 {
-  int bank = BankKnob->GetValue();
+  int bank = BankKnob->GetValue() - 1;
+  PatternMutex.Lock();
+  SelectedBank = bank;
+  PatternMutex.Unlock();
 }
 
 void WiredBeatBox::OnStepsChange(wxCommandEvent& WXUNUSED(event))

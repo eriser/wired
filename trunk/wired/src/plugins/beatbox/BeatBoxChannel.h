@@ -37,9 +37,10 @@
 #define CH_KNOB_LEV_CENTER	"plugins/beatbox/channel_knob_level-center.png"
 #define CH_KNOB_PAN_CENTER	"plugins/beatbox/channel_knob_pan-center.png"
 #define CH_LEV_DOT	CH_DOT//"plugins/beatbox/channel_dot_lev.png"
-#define CH_POLY1	"plugins/beatbox/channel_knob_poly1.png"
+
+#define CH_POLY1	"plugins/beatbox/channel_knob_poly3.png"
 #define CH_POLY2	"plugins/beatbox/channel_knob_poly2.png"
-#define CH_POLY3	"plugins/beatbox/channel_knob_poly3.png"
+#define CH_POLY3	"plugins/beatbox/channel_knob_poly1.png"
 
 class BeatBoxChannel;
 

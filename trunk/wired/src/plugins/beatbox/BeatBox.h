@@ -24,7 +24,10 @@
 
 using namespace std;
 
-#define PLUGIN_NAME		"WiredBeatBox"
+#define PLUGIN_NAME		"DRM-31"
+
+#define NUM_PATTERNS		8
+#define NUM_BANKS		5
 
 #define BEATBOX_BG		"plugins/beatbox/beatbox_bg.png"
 #define BEATBTN_UNCLICKED	"plugins/beatbox/beatbtn_unclicked.png"
@@ -128,7 +131,7 @@ class WiredBeatBox : public Plugin
   void		OnLoadPatch(wxCommandEvent& event);
   void		OnSavePatch(wxCommandEvent& event);
   void		OnPatternSelectors(wxCommandEvent& event);
-  void		OnEdit(wxCommandEvent& event);
+  void		OnEditButton(wxCommandEvent& event);
   //void		OnStepsUp(wxCommandEvent& event);
   //void		OnStepsDown(wxCommandEvent& event);
   void		OnStepsChange(wxCommandEvent& event);
@@ -190,6 +193,10 @@ class WiredBeatBox : public Plugin
   
   unsigned int		SelectedPattern;
   unsigned int		NewSelectedPattern;
+  unsigned int		EditedPattern;
+  unsigned int		SelectedBank;
+  bool			OnEdit;
+  
   unsigned int		PosIndex;
   unsigned int		SigIndex;
   IdButton**		PatternSelectors;
