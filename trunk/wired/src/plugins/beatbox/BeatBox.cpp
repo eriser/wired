@@ -479,7 +479,7 @@ void WiredBeatBox::OnPlayHelp(wxMouseEvent& WXUNUSED(event))
 void WiredBeatBox::OnPatternHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("This is a tracker edition control, it can be clicked in 5 different places to obtain different velocities");
+    SendHelp("This is a tracker edition control, it can be clicked in 5 different places to obtain different velocities, right click returns to unclicked state");
 }
 
 void WiredBeatBox::OnHelp(wxMouseEvent& WXUNUSED(event))
