@@ -11,7 +11,9 @@
 Pattern::Pattern(double pos, double endpos, long trackindex) :
   wxWindow(SeqPanel->SeqView, -1, wxPoint(0, 0), wxSize(0, 0))
 {
-  //printf("Pattern::Pattern(%f, %f, %d)\n", pos, endpos, trackindex);
+#ifdef __DEBUG__
+  printf("Pattern::Pattern(%f, %f, %d)\n", pos, endpos, trackindex);
+#endif
   Position = pos;
   EndPosition = endpos;
   Length = endpos - pos;
@@ -23,7 +25,9 @@ Pattern::Pattern(double pos, double endpos, long trackindex) :
 		  (int)(TRACK_HEIGHT * SeqPanel->VertZoomFactor))));
   PenColor = CL_WAVE_DRAW;
   BrushColor = CL_SEQ_BACKGROUND;
-  //printf("NEW PATTERN from pos %f to %f (length=%f) on TRACK %d\n", Position, EndPosition, Length, TrackIndex);
+#ifdef __DEBUG__
+  printf(">> NEW PATTERN from pos %f to %f (length=%f) on TRACK %d\n", Position, EndPosition, Length, TrackIndex);
+#endif
 }
 
 Pattern::~Pattern()
@@ -155,7 +159,7 @@ void					Pattern::OnMotion(wxMouseEvent &e)
   double				z;
   double				mes;
 
-  if (e.Dragging() && (Seq->Tracks[TrackIndex]->Wave != this))
+  if ((SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->Wave != this))
     {
       SeqMutex.Lock();
       if ((x = (e.GetPosition().x - m_click.x)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->HoriZoomFactor)))
@@ -221,7 +225,7 @@ void					Pattern::DrawName(wxPaintDC &dc, wxSize s)
   long					h;
 
   dc.SetPen(PenColor);
-  dc.SetBrush(BrushColor);
+  dc.SetBrush(CL_PATTERN_NAME_BRUSH);
   dc.SetTextForeground(CL_PATTERN_NAME);
   dc.SetFont(wxFont(PATTERN_NAME_HEIGHT - 2 * PATTERN_NAME_OFFSET, wxDEFAULT, wxNORMAL, wxNORMAL));
   dc.GetTextExtent(Name, &w, &h);
@@ -238,3 +242,4 @@ void					Pattern::DrawName(wxPaintDC &dc, wxSize s)
       dc.DrawText(Name, PATTERN_NAME_MARGINS + 2 * PATTERN_NAME_OFFSET, y + PATTERN_NAME_OFFSET);
     }
 }
+

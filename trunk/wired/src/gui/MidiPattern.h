@@ -42,12 +42,10 @@ class MidiPattern: public Pattern
   void			OnPaint(wxPaintEvent &e);
   void			OnHelp(wxMouseEvent &event);
   
-  wxColour		Colour;		// Keeps original pattern color
   wxBitmap		*Bmp;
   wxMemoryDC		memDC;
-
   unsigned short	ppqn;
-  //  long			OldMousePosX;
+
   DECLARE_EVENT_TABLE()
 };
 

@@ -28,13 +28,20 @@ AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
   : Pattern(pos, pos + Seq->MeasurePerSample * w->GetNumberOfFrames(), trackindex),
     WaveDrawer(Pattern::GetSize())
 {
-  cout << "Position: "<< Position << "; EndPosition: " << EndPosition << endl;
+#ifdef __DEBUG__
+  cout << " ### NEW AUDIO PATTERN ###\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
+       << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
+#endif
   Init();
   Wave = w;
   wxSize s = GetSize();
   SetSize(s);
   WaveDrawer::SetWave(w, s);
   FileName = w->Filename;
+#ifdef __DEBUG__
+  cout << " ---  OK AUDIO PATTERN ---\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
+       << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
+#endif
 }
 
 AudioPattern::~AudioPattern()
@@ -101,7 +108,10 @@ void				AudioPattern::OnBpmChange()
 
 void				AudioPattern::SetWave(WaveFile *w)
 {
-  WaveDrawer::SetWave(w, GetSize());
+#ifdef __DEBUG__
+  cout << "WaveDrawer::StartWavePos = " << WaveDrawer::StartWavePos<< " WaveDrawer::EndWavePos = " << WaveDrawer::EndWavePos << endl;
+#endif
+  WaveDrawer::SetWave(w, GetSize(), StartWavePos, EndWavePos);
 }
 
 void				AudioPattern::SetDrawing()
@@ -131,9 +141,7 @@ float				**AudioPattern::GetBlock(long block)
 	size = Audio->SamplesPerBuffer; 
       buf[0] = new float[Audio->SamplesPerBuffer];
       buf[1] = new float[Audio->SamplesPerBuffer];	
-
       Wave->Read(buf, pos, size);
-
       return (buf);
     }
   else
@@ -259,41 +267,44 @@ Pattern				*AudioPattern::CreateCopy(double pos)
 
 void				AudioPattern::OnClick(wxMouseEvent &e)
 {
-  Pattern::OnClick(e);
+  AudioPattern			*p;
+  double			d;
 
+  Pattern::OnClick(e);
+#ifdef __DEBUG__
+  cout << " >>> CLICKED :\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition;
+  printf(" >>> HERE : StartWavePos %d, EndWavePos %d\n", StartWavePos, EndWavePos);
+  printf(" >>> HERE : s.x %d s.y %d\n", GetSize().x, GetSize().y);
+#endif
   if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
     {
-      AudioPattern		*p;
-      double			d;
-      
       d = (double) ((SeqPanel->CurrentXScrollPos 
 		     + Pattern::GetMPosition().x + e.m_x)
 		    / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor));
-      //      cout << "new pos: " << d<< endl;
-      //	  p = new AudioPattern(d, Wave, TrackIndex);
+#ifdef __DEBUG__
+      cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
+      cout << "new pos: " << d << endl;
+#endif
       p = new AudioPattern(d, EndPosition, TrackIndex);
-      p->SetWave(Wave);
-      //p->Position = d;
-      //p->EndPosition = EndPosition - Position - d;
+#ifdef __DEBUG__
+      cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
+#endif
       p->StartWavePos = (long)(StartWavePos + (d - Position) * Seq->SamplesPerMeasure);
       p->EndWavePos = (long)(p->StartWavePos + (p->Length) * Seq->SamplesPerMeasure);
+      p->SetWave(Wave);
       p->SetDrawing();
       p->Update();
       SeqMutex.Lock();
       EndWavePos = p->StartWavePos;
-      EndPosition = d;
-      Length = EndPosition - Position;
+      Length = (EndPosition = d) - Position;
       SetDrawing();
       Update();
-      //wxWindow::SetSize(event.m_x, -1);
       SeqMutex.Unlock();
       Seq->Tracks[TrackIndex]->AddPattern(p);
     }
   else
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
-      {
-	SetDrawColour(SeqPanel->ColorBox->GetColor());
-      }
+      SetDrawColour(SeqPanel->ColorBox->GetColor());
 }
 
 void					AudioPattern::SetDrawColour(wxColour c)

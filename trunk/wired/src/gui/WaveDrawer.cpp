@@ -35,19 +35,23 @@ WaveDrawer::~WaveDrawer()
 
 void					WaveDrawer::SetWave(float **data, unsigned long frame_length, long channel_count, wxSize s)
 {
-  //printf("WaveDrawer::SetWave(%d, %d, %d) -- START\n", data, frame_length, channel_count);
+#ifdef __DEBUG__
+  printf(" [ START ] WaveDrawer::SetWave(%x, %d, %d) -- START\n", data, frame_length, channel_count);
+#endif
   Data = data;
   StartWavePos = 0;
   EndWavePos = frame_length;
   NumberOfChannels = channel_count;
   SetDrawing(s);
-  //printf("WaveDrawer::SetWave(%d, %d, %d) -- OVER\n", data, frame_length, channel_count);  
+#ifdef __DEBUG__
+  printf(" [ START ] WaveDrawer::SetWave(%x, %d, %d) -- OVER\n", data, frame_length, channel_count);
+#endif
 }
 
 void					WaveDrawer::SetWave(WaveFile *w, wxSize s)
 {
 #ifdef __DEBUG__
-  printf(" [ START ] WaveDrawer::SetWave(%d)\n", w);
+  printf(" [ START ] WaveDrawer::SetWave(%x, sise x %d y %d)\n", w, s.x, s.y);
 #endif
   if (!w)
     {
@@ -71,37 +75,66 @@ void					WaveDrawer::SetWave(WaveFile *w, wxSize s)
 #endif
 }
 
+void					WaveDrawer::SetWave(WaveFile *w, wxSize s,
+							    long wstart, long wend)
+{
+#ifdef __DEBUG__
+  printf(" [ START ] WaveDrawer::SetWave(%x, size, wstart = %d, wend = %d)\n", w, wstart, wend);
+#endif
+  if (!w)
+    {
+      Wave = 0;
+      Data = 0;
+      NumberOfChannels = 0;
+      StartWavePos = 0;
+      EndWavePos = 0;
+    }
+  else
+    {
+      Wave = w;
+      Data = w->Data;
+      NumberOfChannels = w->GetNumberOfChannels();
+      StartWavePos = wstart;
+      EndWavePos = (wend <= w->GetNumberOfFrames()) ? wend : w->GetNumberOfFrames();
+    }
+  SetDrawing(s);
+#ifdef __DEBUG__
+  printf(" [  END  ] WaveDrawer::SetWave(%x)\n", w);
+#endif
+}
+
 void					WaveDrawer::SetDrawing(wxSize s)
 {
   int					size_x, size_y;
   long					i, j, k, pos, coeff, inc;  
   float					cur, val;
-  int					len;
+  int					end;
   float					f[NumberOfChannels];
 
 #ifdef __DEBUG__
-  printf(" [ START ] WaveDrawer::SetDrawing()\n");
+  printf(" [ START ] WaveDrawer::SetDrawing(size x %d y %d)\n", s.x, s.y);
+  printf(" >>> HERE : StartWavePos %d, EndWavePos %d\n", StartWavePos, EndWavePos);
 #endif
   size_x = s.x;
   size_y = s.y;
   if (size_x < 2)
     return;
-  len = EndWavePos;// * NumberOfChannels;
+  end = EndWavePos;
   // Coefficient d'amplitude
   coeff = size_y / 2;
   // Création du buffer contenant les datas a dessiner
   if (DrawData)
     delete [] DrawData;
   DrawData = new long[size_x];
+  // Coefficient d'incrémentation
+  inc = (EndWavePos - StartWavePos) / size_x;
   if (UseSettings && WiredSettings->dbWaveRender)
     {
-      // Coefficient d'incrémentation
-      inc = (EndWavePos / size_x);  
       if (!Data) // Wave sur disque
 	{
-	  for (i = 0, pos = StartWavePos; (i < size_x) && (pos < len); i++)
+	  for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	    {
-	      for (k = 0, cur = 0; (k < inc) && (pos < len); k++, pos++)
+	      for (k = 0, cur = 0; (k < inc) && (pos < end); k++, pos++)
 		{		
 		  Wave->Read(f, pos);
 		  for (j = 0; (j < NumberOfChannels); j++)
@@ -113,16 +146,17 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	      val = (val + 45.f) / 45.f;
 	      if (val < 0.f)
 		val = 0.f;
-	      else if (val > 1.f)
-		val = 1.f;
+	      else
+		if (val > 1.f)
+		  val = 1.f;
 	      DrawData[i] = (long)(val * coeff);
 	    }	  
 	}
       else // Wave loadeé en memoire
 	{
-	  for (i = 0, pos = StartWavePos; (i < size_x) && (pos < len); i++)
+	  for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	    {
-	      for (k = 0, cur = 0; (k < inc) && (pos < len); k++, pos++)
+	      for (k = 0, cur = 0; (k < inc) && (pos < end); k++, pos++)
 		for (j = 0; (j < NumberOfChannels); j++)
 		  cur += fabsf(Data[j][pos]);
 	      val = cur / (NumberOfChannels + inc);
@@ -141,27 +175,24 @@ void					WaveDrawer::SetDrawing(wxSize s)
     if (!UseSettings || !WiredSettings->QuickWaveRender)
       {
 	// Coefficient d'incrémentation
-	inc = (EndWavePos / size_x);  
-	//printf("WaveDrawer::SetDrawing() - STEP 21\n");
-	
 	if (!Data) // Wave sur disque
 	  {
 #define WAVEVIEW_TEMP_BUF_SIZE	4096
 	    float		**TempBuf;
 	    long		buf_pos;
-
+	    
 	    TempBuf = new float *[2];
 	    TempBuf[0] = new float[WAVEVIEW_TEMP_BUF_SIZE];
 	    TempBuf[1] = new float[WAVEVIEW_TEMP_BUF_SIZE];      	
-	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < len); i++)
+	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
-		for (k = 0, buf_pos = 0, cur = 0; (k < inc) && (pos < len); k++, pos++, buf_pos++)
+		for (k = 0, buf_pos = 0, cur = 0; (k < inc) && (pos < end); k++, pos++, buf_pos++)
 		  {		
 		    if (!(buf_pos % WAVEVIEW_TEMP_BUF_SIZE))
-		    {
-		      Wave->Read(TempBuf, pos, WAVEVIEW_TEMP_BUF_SIZE);
-		      buf_pos = 0;
-		    }
+		      {
+			Wave->Read(TempBuf, pos, WAVEVIEW_TEMP_BUF_SIZE);
+			buf_pos = 0;
+		      }
 		    for (j = 0; (j < NumberOfChannels); j++)
 		      cur += fabsf(TempBuf[j][buf_pos]);
 		  }
@@ -173,9 +204,9 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	  }	  
 	else // Wave loadeé en memoire
 	  {
-	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < len); i++)
+	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
-		for (k = 0, cur = 0; (k < inc) && (pos < len); k++, pos++)
+		for (k = 0, cur = 0; (k < inc) && (pos < end); k++, pos++)
 		  for (j = 0; (j < NumberOfChannels); j++)
 		    cur += fabsf(Data[j][pos]);	    
 		DrawData[i] = (long)(((cur / (NumberOfChannels + inc) * coeff) + 0.5));
@@ -184,10 +215,9 @@ void					WaveDrawer::SetDrawing(wxSize s)
       }
     else 
       {
-	inc = (EndWavePos / size_x);
 	if (!Data) // Wave sur disque
 	  {
-	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < len); i++)
+	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
 		Wave->Read(f, pos);
 		for (j = 0, cur = 0; (j < NumberOfChannels); j++)
@@ -198,12 +228,12 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	  }
 	else
 	  {
-	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < len); i++)
+	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
-	      for (j = 0, cur = 0; (j < NumberOfChannels); j++)
-		cur += fabsf(Data[j][pos++]);
-	      DrawData[i] = (long)((cur / (NumberOfChannels)) * coeff);
-	      pos += inc;
+		for (j = 0, cur = 0; (j < NumberOfChannels); j++)
+		  cur += fabsf(Data[j][pos++]);
+		DrawData[i] = (long)((cur / (NumberOfChannels)) * coeff);
+		pos += inc;
 	      }
 	  }
       }

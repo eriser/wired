@@ -18,22 +18,22 @@ END_EVENT_TABLE()
 static int midi_pattern_count = 1;
 
 MidiPattern::MidiPattern(double pos, double endpos, long trackindex)
-  : Pattern(pos, endpos, trackindex)//,
-  //    wxWindow(SeqPanel->SeqView, -1, Pattern::GetPosition(), Pattern::GetSize())
+  : Pattern(pos, endpos, trackindex)
 {
   Init();
 }
 
 MidiPattern::MidiPattern(double pos, MidiTrack *t, long trackindex)
-  : Pattern(pos, ((double)t->GetMaxPos()) / (Seq->SigNumerator * t->GetPPQN()), trackindex)//,
-     //     wxWindow(SeqPanel->SeqView, -1, Pattern::GetPosition(), Pattern::GetSize())
+  : Pattern(pos, ((double)t->GetMaxPos()) / (Seq->SigNumerator * t->GetPPQN()), trackindex)
 {
+  vector<MidiFileEvent *>		me;
+  unsigned long				i;
+
   Init();
-  vector<MidiFileEvent *> me;
-  me = t->GetMidiEvents();
   ppqn = t->GetPPQN();
   temp.clear();
-  for (unsigned int i = 0; i < me.size(); i++)
+  me = t->GetMidiEvents();
+  for (i = 0; i < me.size(); i++)
     AddEvent(me[i]);    
 }
 
@@ -42,17 +42,16 @@ MidiPattern::~MidiPattern()
 
 }
 
-void				MidiPattern::Init()
+void					MidiPattern::Init()
 {
   wxString	s;
 
   s.Printf("T%d M%d", TrackIndex + 1, midi_pattern_count++);
   PenColor = CL_MIDI_DRAW;
-  Colour = PenColor;
+  BrushColor = CL_MIDIDRAWER_BRUSH;
   Name = s.c_str();
   ppqn = 1;
   Bmp = 0x0;
-
   Connect(GetId(), wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &MidiPattern::OnMotion);
   Connect(GetId(), wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
@@ -61,14 +60,12 @@ void				MidiPattern::Init()
 	  &MidiPattern::OnRightClick);
   Connect(GetId(), wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &MidiPattern::OnDoubleClick);
- Connect(GetId(), wxEVT_ENTER_WINDOW, (wxObjectEventFunction)(wxEventFunction)
+  Connect(GetId(), wxEVT_ENTER_WINDOW, (wxObjectEventFunction)(wxEventFunction)
 	  (wxMouseEventFunction) &MidiPattern::OnHelp);
-
-
   SeqPanel->PutCursorsOnTop();
 }
 
-void				MidiPattern::OnHelp(wxMouseEvent &event)
+void					MidiPattern::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
@@ -77,7 +74,7 @@ void				MidiPattern::OnHelp(wxMouseEvent &event)
     }
 }
 
-void				MidiPattern::Update()
+void					MidiPattern::Update()
 {
   Pattern::Update();
   wxWindow::SetSize(Pattern::GetSize());
@@ -85,21 +82,20 @@ void				MidiPattern::Update()
   DrawMidi();
 }
 
-void				MidiPattern::SetSelected(bool sel)
+void					MidiPattern::SetSelected(bool sel)
 {
   Pattern::SetSelected(sel);
   if (sel)
-    PenColor = CL_PATTERN_SEL;
+    BrushColor = CL_MIDIDRAWER_BRUSH_SEL;
   else
-    PenColor = Colour;
-
+    BrushColor = CL_MIDIDRAWER_BRUSH;
   DrawMidi();
   wxWindow::Refresh(true);
 }
 
-Pattern				*MidiPattern::CreateCopy(double pos)
+Pattern					*MidiPattern::CreateCopy(double pos)
 {
-  MidiPattern			*p;
+  MidiPattern				*p;
 
   p = new MidiPattern(pos, EndPosition, TrackIndex);
   p->Events = Events;
@@ -107,59 +103,93 @@ Pattern				*MidiPattern::CreateCopy(double pos)
   return (p);
 }
 
-void				MidiPattern::SetDrawColour(wxColour c)
+void					MidiPattern::SetDrawColour(wxColour c)
 {
-  Colour = c;
   PenColor = c;
   DrawMidi();
   Refresh();
 }
 
-void				MidiPattern::OnClick(wxMouseEvent &e)
+void					MidiPattern::OnClick(wxMouseEvent &e)
 {
+  MidiPattern				*p;
+  double				d;
+  vector<MidiEvent *>::iterator		o;
+
   Pattern::OnClick(e);
   if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
     {
-      /* SPLIT MIDI PATTERN CODE HERE */
+      d = (double) ((SeqPanel->CurrentXScrollPos 
+		     + Pattern::GetMPosition().x + e.m_x)
+		    / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor));
+#ifdef __DEBUG__
+      cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
+      cout << "new pos: " << d << endl;
+#endif
+      p = new MidiPattern(d, EndPosition, TrackIndex);
+#ifdef __DEBUG__
+      cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
+#endif
+      for (o = Events.begin(); o != Events.end(); )
+	if ((*o)->Position >= d)
+	  {
+#ifdef __DEBUG__
+	    printf("Moving event (position %d) \n", (*o)->Position);
+#endif
+	    (*o)->Position -= d;
+	    p->Events.push_back(*o);
+	    Events.erase(o);
+	  }
+	else
+	  {
+	    if (((*o)->Position >= 0) && (*o)->EndPosition >= d)
+	      (*o)->EndPosition = d;
+	    o++;
+	  }
+      p->DrawMidi();
+      SeqMutex.Lock();
+      Length = (EndPosition = d) - Position;
+      Update();
+      SeqMutex.Unlock();
+      Seq->Tracks[TrackIndex]->AddPattern(p);
+      Refresh();
     }
-  else if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
-      {
-	SetDrawColour(SeqPanel->ColorBox->GetColor());
-      }
-
+  else
+    if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
+      SetDrawColour(SeqPanel->ColorBox->GetColor());
 }
 
-void				MidiPattern::OnDoubleClick(wxMouseEvent &e)
+void					MidiPattern::OnDoubleClick(wxMouseEvent &e)
 {
   Pattern::OnDoubleClick(e);
   OnClick(e);
   OptPanel->ShowMidi(this);
 }
 
-void				MidiPattern::OnRightClick(wxMouseEvent &e)
+void					MidiPattern::OnRightClick(wxMouseEvent &e)
 {
   Pattern::OnRightClick(e);
 }
 
-void				MidiPattern::OnMotion(wxMouseEvent &e)
+void					MidiPattern::OnMotion(wxMouseEvent &e)
 {
   Pattern::OnMotion(e);
 }
 
-void				MidiPattern::OnDeleteClick(wxCommandEvent &e)
+void					MidiPattern::OnDeleteClick(wxCommandEvent &e)
 {
   SeqPanel->DeleteSelectedPatterns();
 }
 
-void				MidiPattern::OnMoveToCursorClick(wxCommandEvent &e)
+void					MidiPattern::OnMoveToCursorClick(wxCommandEvent &e)
 {
   SeqPanel->MoveToCursor();
 }
 
-void				MidiPattern::AddEvent(MidiFileEvent *event)
+void					MidiPattern::AddEvent(MidiFileEvent *event)
 {
-  MidiEvent			*e;
-  int				msg[3];
+  MidiEvent				*e;
+  int					msg[3];
   
   msg[0] = event->GetID();
   msg[0] += event->GetChannel();
@@ -191,10 +221,10 @@ void				MidiPattern::AddEvent(MidiFileEvent *event)
       Events.push_back(e);
 }
 
-void				MidiPattern::AddEvent(MidiEvent *event)
+void					MidiPattern::AddEvent(MidiEvent *event)
 {
-  list<MidiEvent *>::iterator	j;
-  MidiEvent *e;
+  list<MidiEvent *>::iterator		j;
+  MidiEvent				*e;
   
   if ((event->EndPosition == 0.0) && 
       ((event->Msg[0] == M_NOTEON1) || (event->Msg[0] == M_NOTEON2)))
@@ -205,12 +235,9 @@ void				MidiPattern::AddEvent(MidiEvent *event)
           {
             if ((*j)->Msg[1] == event->Msg[1])
               {
-                (*j)->EndPosition = event->Position;// - (*j)->Position;
-		//                if ((*j)->EndPosition < 0.0)
-		//(*j)->EndPosition = (*j)->Position + fabs((*j)->EndPosition);
+                (*j)->EndPosition = event->Position;
                 delete event;
                 Events.push_back(*j);
-
 		// adds the note off	       
 		e = new MidiEvent(0, (*j)->EndPosition, (*j)->Msg);
 		e->EndPosition = e->Position;
@@ -231,57 +258,45 @@ void				MidiPattern::AddEvent(MidiEvent *event)
 }
 
 /* TODO: gerer le draw d'un seul event */
-void				MidiPattern::DrawMidi()
+void					MidiPattern::DrawMidi()
 {
-  long				x;
-  float				inc;
-  int				size_x, size_y;
-  vector<MidiEvent *>::iterator	j;
+  long					z;
+  long					size_x, size_y;
+  double				inc;
+  vector<MidiEvent *>::iterator		j;
   
-  wxWindow::GetSize(&size_x, &size_y);
   if (Bmp)
     delete Bmp;
-  Bmp = new wxBitmap(size_x, size_y);
+  Bmp = new wxBitmap(size_x = GetSize().x, size_y = GetSize().y);
   memDC.SelectObject(*Bmp);
-
   memDC.SetPen(PenColor);
-  memDC.SetBrush(CL_SEQ_BACKGROUND);
+  memDC.SetBrush(BrushColor);
   memDC.DrawRectangle(0, 0, size_x, size_y);
-
-  //memDC.SetPen(PenColor);
-
-  inc = size_y / 127.f;
-
+  inc = size_y / 127.0;
   for (j = Events.begin(); j != Events.end(); j++)
-    { 
-      if ((*j)->EndPosition >= 0.0)
-	{
-	  x = GetXPos((*j)->Position);
-	  memDC.DrawLine(x, size_y - (int)((*j)->Msg[1] * inc), 
-			 GetXPos((*j)->EndPosition), size_y - (int)((*j)->Msg[1] * inc));
-	}
-    }
+    if ((*j)->EndPosition >= 0.0)
+      {
+	z = size_y - (long) floor((*j)->Msg[1] * inc);
+	memDC.DrawLine(GetXPos((*j)->Position), z, GetXPos((*j)->EndPosition), z);
+      }
 }
 
-void				MidiPattern::OnPaint(wxPaintEvent &e)
+void					MidiPattern::OnPaint(wxPaintEvent &e)
 {
-  wxPaintDC			dc(this);
-  wxSize			s = wxWindow::GetSize();
-  wxRegionIterator		region;
+  wxPaintDC				dc(this);
+  wxSize				s = wxWindow::GetSize();
+  wxRegionIterator			region;
  
   dc.SetPen(PenColor);
+  dc.SetBrush(BrushColor);
   if (Bmp)
-    {
-      for(region = GetUpdateRegion(); region; region++)
-	dc.Blit(region.GetX(), region.GetY(),
-		region.GetW(), region.GetH(),
-		&memDC, region.GetX(), region.GetY(), 
-		wxCOPY, FALSE);      
-      dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    }
+    for(region = GetUpdateRegion(); region; region++)
+      dc.Blit(region.GetX(), region.GetY(),
+	      region.GetW(), region.GetH(),
+	      &memDC, region.GetX(), region.GetY(), 
+	      wxCOPY, FALSE);
   else
-    dc.SetBrush(CL_SEQ_BACKGROUND);
-  dc.DrawRectangle(0, 0, s.x, s.y);
+    dc.DrawRectangle(0, 0, s.x, s.y);
   Pattern::DrawName(dc, s);
 }
 
