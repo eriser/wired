@@ -10,8 +10,6 @@
 #define STA		4
 #define END		5
 
-void CalcPan(float pan, float* panvals);
-
 class BeatBoxChannel;
 
 class BeatNote
@@ -25,7 +23,6 @@ class BeatNote
       Position = pos;
       BarPos = bpos;
       Params[LEV] = 1.0f;
-      //Params[VEL] = floor((float)(state / 4.f) * 100) / 100;
       Params[VEL] = (float)(state / 4.f);
       Params[PIT] = 1.0f;
       Params[PAN] = 0.5f;
@@ -59,8 +56,8 @@ class BeatNoteToPlay
 {
  public:
   BeatNoteToPlay(float vel, unsigned long delta, 
-		 int numchan, float* params);		//Midi notes ctor()
-  BeatNoteToPlay(BeatNote* bn, unsigned long delta)	//ctor()from other note
+		 int numchan);		//Midi notes ctor()
+  BeatNoteToPlay(BeatNote* bn, unsigned long delta)	//ctor()from note
     {
       NumChan = bn->NumChan;
       Reversed = bn->Reversed;
@@ -68,12 +65,11 @@ class BeatNoteToPlay
       OffSet = 0;
       SEnd = 0;
       Buffer = 0x0;
-      
       for (int i = 0; i < NB_PARAMS; i++)
 	Params[i] = bn->Params[i];
     }
-  BeatNoteToPlay(BeatBoxChannel* chan);
-  ~BeatNoteToPlay() 
+  BeatNoteToPlay(void);
+  ~BeatNoteToPlay()
     {
     }
   
