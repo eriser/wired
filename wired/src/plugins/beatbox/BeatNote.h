@@ -37,7 +37,7 @@ class BeatNote
       State = note->State;
       Position = note->Position;
       BarPos = note->BarPos;
-      
+      Reversed = note->Reversed;
       for (int i = 0; i < NB_PARAMS; i++)
 	Params[i] = note->Params[i];
     }

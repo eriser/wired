@@ -69,28 +69,16 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   /* Popup Menu */
   
   PopMenu = new wxMenu();
-  wxMenu* bank_menu = new wxMenu();
-  wxMenu* pattern_menu = new wxMenu();
   
-  PopMenu->Append(BB_PopMenu, _T("Copy pattern to"), bank_menu);
-  
-  bank_menu->Append(BB_BankCopy, _T("bank 1"), pattern_menu);
-  bank_menu->Append(BB_BankCopy, _T("bank 2"), pattern_menu);
-  bank_menu->Append(BB_BankCopy, _T("bank 3"), pattern_menu);
-  bank_menu->Append(BB_BankCopy, _T("bank 4"), pattern_menu);
-  bank_menu->Append(BB_BankCopy, _T("bank 5"), pattern_menu);
-  pattern_menu->Append(BB_PatternCopy, _T("pattern 1"));
-  pattern_menu->Append(BB_PatternCopy, _T("pattern 2"));
-  pattern_menu->Append(BB_PatternCopy, _T("pattern 3"));
-  pattern_menu->Append(BB_PatternCopy, _T("pattern 4"));
-  pattern_menu->Append(BB_PatternCopy, _T("pattern 5"));
-  pattern_menu->Append(BB_PatternCopy, _T("pattern 6"));
-  pattern_menu->Append(BB_PatternCopy, _T("pattern 7"));
-  pattern_menu->Append(BB_PatternCopy, _T("pattern 8"));
+  PopMenu->Append(BB_PatternCopy, _T("Copy pattern"));
+  PopMenu->Append(BB_PatternPaste, _T("Paste pattern"));
   
   Connect(BB_PatternCopy, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	  &WiredBeatBox::OnCopyPattern);
+  Connect(BB_PatternPaste, wxEVT_COMMAND_MENU_SELECTED,
+	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
+	  &WiredBeatBox::OnPastePattern);
   
   
   /* Master Volume */
@@ -1687,7 +1675,10 @@ void WiredBeatBox::OnPatternClick(wxCommandEvent &e)
   int* tmp = (int*)e.GetClientData();
   
   if (tmp[ID_COPY])
-    PopupMenu(PopMenu);
+    {
+      PopupMenu(PopMenu);
+      return;
+    }
   BeatBoxChannel* c = SelectedChannel;
   
   int i = PosIndex * 16;
@@ -1917,7 +1908,7 @@ long WiredBeatBox::Save(int fd)
 		  size +=
 		    write(fd, &((*bn)->Params[p]), sizeof (float));
 		p = (*bn)->Reversed ? 1 : 0;
-		size += write(fd, &p, sizeof(p));
+		size += write(fd, &p, sizeof(int));
 	      }
 	  }
     }
@@ -2080,7 +2071,7 @@ void WiredBeatBox::Load(int fd, long size)
 		if ((res = read(fd, &tmp_int, sizeof (int))) != sizeof (int))
 		  { cout << "[DRM31] Load: read error" << endl; return; }
 		else
-		  { size -= res; note->Reversed = p ? true : false; }
+		  { size -= res; note->Reversed = (tmp_int ? true : false); }
 		
 		Channels[i]->Rythms[bank][ps].push_back(note);
 		tmp_long--;
@@ -2399,14 +2390,75 @@ void WiredBeatBox::Update()
       }
 }
 
+void	WiredBeatBox::OnPastePattern(wxCommandEvent& event)
+{
+  PatternMutex.Lock();
+  for (int i = 0; i < NB_CHAN; i++)
+    for (list<BeatNote*>::iterator note = 
+	   Channels[i]->Rythms[EditedBank][EditedPattern].begin(); 
+	 note != Channels[i]->Rythms[EditedBank][EditedPattern].end(); )
+      {
+	TmpPatternToErase[i].push_back(*note);
+	note = Channels[i]->Rythms[EditedBank][EditedPattern].erase(note);
+      }
+  PatternMutex.Unlock();
+  
+  BeatNote* n;
+  for (int i = 0; i < NB_CHAN; i++)
+    {
+      for (list<BeatNote*>::iterator note = 
+	     TmpPatternToErase[i].begin(); 
+	   note != TmpPatternToErase[i].end();)
+	{ delete *note; note = TmpPatternToErase[i].erase(note); }
+      TmpPatternToErase[i].clear();
+      
+      for (list<BeatNote*>::iterator note = 
+	     TmpPattern[i].begin(); 
+	 note != TmpPattern[i].end(); note++)
+	{
+	  n = new BeatNote(*note);
+	  TmpPatternToErase[i].push_back(n);
+	}
+    }
+  
+  PatternMutex.Lock();
+  for (int i = 0; i < NB_CHAN; i++)
+    {
+      for (list<BeatNote*>::iterator note = 
+	     TmpPatternToErase[i].begin(); 
+	   note != TmpPatternToErase[i].end(); note++)
+	{ Channels[i]->Rythms[EditedBank][EditedPattern].push_back(*note); }
+    }
+  PatternMutex.Unlock();
+  for (int i = 0; i < NB_CHAN; i++)
+    TmpPatternToErase[i].clear();
+  SetPatternList();
+}
+
 void	WiredBeatBox::OnCopyPattern(wxCommandEvent& event)
 {
-  cout << "copy pattern !!" << endl;
+  BeatNote* n;
+  for (int i = 0; i < NB_CHAN; i++)
+    {
+      for (list<BeatNote*>::iterator note = 
+	     TmpPattern[i].begin(); 
+	   note != TmpPattern[i].end();)
+	{ delete *note; note = TmpPattern[i].erase(note); }
+      TmpPattern[i].clear();
+    }
+  for (int i = 0; i < NB_CHAN; i++)
+    for (list<BeatNote*>::iterator note = 
+	   Channels[i]->Rythms[EditedBank][EditedPattern].begin(); 
+	 note != Channels[i]->Rythms[EditedBank][EditedPattern].end(); note++)
+      {
+	n = new BeatNote(*note);
+	TmpPattern[i].push_back(n);
+      }
 }
 
 void	WiredBeatBox::OnRightDown(wxMouseEvent& event)
 {
-  cout << "wouuuuuuuuuuuuuuw" << endl;
+  cout << "[DRM31] Right Down event caught" << endl;
 }
 
 /******** Main and mandatory library functions *********/
