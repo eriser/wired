@@ -172,6 +172,7 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 				wxSize(14, 17), opt_img_up, opt_img_dn, true);
   
   /* Play Button */
+  //PlayNext = false;
   Playing = false;
   AutoPlay = false;
   SeqPlaying = false;
@@ -778,15 +779,10 @@ void WiredBeatBox::Process(float** WXUNUSED(input),
       
       //RefreshPosLeds(bar_pos);
       bool isend = false;
-      /*
-	if (!SelectedChannel->Muted)
-	GetNotesFromChannel(SelectedChannel, bar_pos, bar_end, 
-			    new_bar_pos, new_bar_end, &isend);
-			    else*/
-	for (int i = 0; i < NB_CHAN; i++)
-	  if ( (Channels[i]->Wave != 0x0) && !Channels[i]->Muted )
-	    GetNotesFromChannel(Channels[i], bar_pos, bar_end, 
-				new_bar_pos, new_bar_end, &isend);
+      for (int i = 0; i < NB_CHAN; i++)
+	if ( (Channels[i]->Wave != 0x0) && !Channels[i]->Muted )
+	  GetNotesFromChannel(Channels[i], bar_pos, bar_end, 
+			      new_bar_pos, new_bar_end, &isend);
       if (isend)
 	{
 	  SelectedPattern = NewSelectedPattern;
@@ -2251,6 +2247,7 @@ void WiredBeatBox::OnPlay(wxCommandEvent& WXUNUSED(e))
 {
   PatternMutex.Lock();
   AutoPlay = !AutoPlay;
+  //PlayNext= true;
   if (SeqPlaying == true && AutoPlay == true)
     Playing = true;
   else 
@@ -2260,8 +2257,9 @@ void WiredBeatBox::OnPlay(wxCommandEvent& WXUNUSED(e))
 
 void WiredBeatBox::Play()
 {
-  SeqPlaying = true;
   PatternMutex.Lock();
+  //PlayNext= true;
+  SeqPlaying = true;
   if (AutoPlay == true)
     Playing = true;
   PatternMutex.Unlock();

@@ -1017,7 +1017,7 @@ void BeatBoxChannel::OnLevHelp(wxMouseEvent& event)
 void BeatBoxChannel::OnPanHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Pan left - right");
+    DRM31->SendHelp("Panoramic left - right");
 }
 
 void BeatBoxChannel::OnStaHelp(wxMouseEvent& event)

@@ -219,6 +219,7 @@ class WiredBeatBox : public Plugin
   float			MLevel;
   list<BeatNoteToPlay*>	NotesToPlay;
   Polyphony*		Pool;
+  //bool			PlayNext;
   bool			Playing;
   bool			SeqPlaying;
   bool			AutoPlay;
