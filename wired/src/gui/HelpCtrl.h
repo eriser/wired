@@ -9,9 +9,10 @@
 #include "wx/html/htmlwin.h"
 #include "wx/fs_zip.h"
 
-#define HTMLTOP "<html><body bgcolor=\"#889399\" leftmargin=\"0\" topmargin=\"0\" marginwidth=\"0\" marginheight=\"0\"><table width=\"100%\"  border=\"0\" cellspacing=\"0\" cellpadding=\"0\"><tr><td><img src=\"logo.png\" width=\"263\" height=\"74\"></td></tr></table><table width=\"100%\"  border=\"0\" cellspacing=\"0\" cellpadding=\"8\"><tr><td><strong><font size=-2>"
+#define HTMLTOP "<html><body bgcolor=\"#889399\" leftmargin=\"0\" topmargin=\"0\" marginwidth=\"0\" marginheight=\"0\"><table cellpadding=\"0\" cellspacing=\"0\" ><TR><TD><img src=\"logo.png\" align=\"left\"><font size=\"-2\">" 
 
-#define HTMLDOWN "</font></strong></td></tr></table></body></html>"
+#define HTMLDOWN "</TD></TR></table></font></body></html>"
+
 
 using namespace std;
 
