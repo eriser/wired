@@ -48,13 +48,14 @@ BEGIN_EVENT_TABLE(WiredBeatBox, wxWindow)
   EVT_BUTTON(BB_OnPosChoice, WiredBeatBox::OnPositionChoice)
 END_EVENT_TABLE()
   
+
 WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo) 
   : Plugin(startinfo, initinfo)
 {
   cout << "[WIREDBEATBOX] Host is " << GetHostProductName()
        << " version " << GetHostProductVersion() << endl;
   
-  
+  //count = 0;  
   /* Master Volume */
   MVol = 
     new HintedKnob(this, BB_OnMasterChange, this,
@@ -447,6 +448,10 @@ inline void WiredBeatBox::RefreshPosLeds(double bar_pos)
     }
 }
 
+
+
+
+
 void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_length)
 {
   PatternMutex.Lock();
@@ -490,15 +495,16 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
       len = sample_length - (*bn)->Delta;
       
       if ( !Channels[(*bn)->NumChan]->Wave )
-	cout << "COMMENT?!!" << endl;
+	{
+	  continue;
+	}      
       
-      //cout << (*bn)->OffSet << " " << (*bn)->SEnd << endl;
       if ( (*bn)->OffSet >= 
 	   Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames() ||
 	   (*bn)->OffSet >= (*bn)->SEnd )
 	{
-	  memset((*bn)->Buffer[0], 0, sample_length * sizeof(float));
-	  memset((*bn)->Buffer[1], 0, sample_length * sizeof(float));
+	  //memset((*bn)->Buffer[0], 0, sample_length * sizeof(float));
+	  //memset((*bn)->Buffer[1], 0, sample_length * sizeof(float));
 	  continue;
 	}
       
@@ -518,31 +524,34 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
       long end = 
 	( Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames() > (*bn)->SEnd ? 
 	  (*bn)->SEnd : Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames());
+      
+      assert(end <= Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames());
+      
       if ( (*bn)->OffSet + len > end )
 	   //Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames()) 	
 	{
-	  //printf("finishing sound\n");
-	  len = end - (*bn)->OffSet; 
+	  //cout << "finishing sound1\n" << endl;
+	  len = end - (*bn)->OffSet;
 	  if (len <= 0)
 	    {
 	      cout << " len < 0 !! " << endl;
 	      continue;
 	    }
-	  // cout << "samples to read="<<len << endl;
-	  
-	  //Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames() - (*bn)->OffSet;
-	  
 	}
-      
+      /*else if ((*bn)->OffSet + len == end )
+	{
+	  cout << "finishing sound2\n" << endl;
+	}
+      */
       Channels[(*bn)->NumChan]->Wave->SetPitch((*bn)->Pitch);
       Channels[(*bn)->NumChan]->Wave->SetInvert((*bn)->Reversed);
+      
       /*(*bn)->OffSet += */
       Channels[(*bn)->NumChan]->Wave->Read((*bn)->Buffer,
 					   (*bn)->OffSet,
 					   len,
 					   (*bn)->Delta,
 					   &newoffset);
-      //cout << "offsets=" << (*bn)->OffSet << "-"<< newoffset << endl;
       (*bn)->OffSet = newoffset;
       if ((*bn)->Delta)
 	{
@@ -551,14 +560,19 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	}
       for (long i = 0; i < sample_length; i++)
 	{
-	  (*bn)->Buffer[0][i] *= Channels[(*bn)->NumChan]->Lev * curvel;
-	  (*bn)->Buffer[1][i] *= Channels[(*bn)->NumChan]->Lev * curvel;
-	  curvel -= velstep;
-	  if (curvel < 0.f)
+	  if (curvel <= 0.f)
 	    {
 	      //printf("vel < 0.f     break\n");
 	      break;
 	    }
+	  //printf("before b0 b1: %f %f\n", (*bn)->Buffer[0][i], (*bn)->Buffer[1][i]);
+	  
+	  (*bn)->Buffer[0][i] *= Channels[(*bn)->NumChan]->Lev * curvel;
+	  (*bn)->Buffer[1][i] *= Channels[(*bn)->NumChan]->Lev * curvel;
+	  //printf("after b0 b1: %f %f\n", (*bn)->Buffer[0][i], (*bn)->Buffer[1][i]);
+	  curvel -= velstep;
+	  //printf("curvel=%f\n", curvel);
+	  
 	}
     }
   Pool->GetMix(output);
@@ -567,10 +581,14 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
   for (list<BeatNoteToPlay*>::iterator bn = NotesToPlay.begin(); 
        bn != NotesToPlay.end(); )
     {
-      if ( (*bn)->OffSet >= 
-	   Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames() )
+      if ( !(Channels[(*bn)->NumChan]->Wave) || 
+	   ((*bn)->OffSet >= 
+	    Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames()) )
 	{
+	  
 	  //Channels[(*bn)->NumChan]->PlayButton->SetOff();
+	  //count--;
+	  //cout << "deleting note, count=" << count << endl;
 	  Pool->SetFreeBuffer((*bn)->Buffer);
 	  delete *bn;
 	  bn = NotesToPlay.erase(bn);
@@ -671,12 +689,19 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	  note->OffSet =
 	    static_cast<unsigned long>
 	    (floor(c->Wave->GetNumberOfFrames() * (note->Start)));
-	  //cout << note->Start << " offset=" << note->OffSet << endl;
-
 	  note->SEnd = 
 	    static_cast<unsigned long>
 	    (floor(c->Wave->GetNumberOfFrames() * note->End));
 	  
+	  //count++;
+	  //cout << "[ new note ], count=" << count << endl;
+	  
+	  /*
+	    cout << note->Start << " offset=" << note->OffSet << endl;
+	    cout << note->End << " sample end=" << note->SEnd 
+	    << " <= " << c->Wave->GetNumberOfFrames() << endl;
+	  */
+	  assert(note->SEnd <= c->Wave->GetNumberOfFrames());
 	  
 	  NotesToPlay.push_back(note);
 	}
@@ -715,8 +740,16 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	    (floor(c->Wave->GetNumberOfFrames() * (note->Start)));
 	  note->SEnd = 
 	    static_cast<unsigned long>(floor(c->Wave->GetNumberOfFrames()*note->End));
-	  //cout << note->Start << " offset=" << note->OffSet << endl;
-
+	  
+	  //count++;
+	  //cout << "[ new note ], count=" << count << endl;
+	  /*
+	    cout << note->Start << " offset=" << note->OffSet << endl;
+	    cout << note->End << " sample end=" << note->SEnd 
+	    << " <= " << c->Wave->GetNumberOfFrames() << endl;
+	  */
+	  assert(note->SEnd <= c->Wave->GetNumberOfFrames());
+	  
 	  NotesToPlay.push_back(note);
 	}
     }
@@ -847,6 +880,7 @@ void WiredBeatBox::OnToggleChannel(wxCommandEvent& e)
 	Pool->SetPolyphony(NotesToPlay.size()+32);
       bn = new BeatNoteToPlay(tmp, Pool->GetFreeBuffer());
       NotesToPlay.push_back(bn);
+      
       break;
     case ACT_SETWAVE:
       

@@ -132,7 +132,7 @@ class WiredBeatBox : public Plugin
   
   int		GetSig(void);
   
-    
+  int count;  
  protected:
   wxMutex		PatternMutex;
   BeatBoxView*		View;
