@@ -160,7 +160,7 @@ WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
   {
     Data[i] = new float[NumberOfFrames];
     for (int j = 0; j < NumberOfFrames; j++)
-      Data[i][j] = (float)buffer[i * j] / 32767.f;
+      Data[i][j] = (float)buffer[i * NumberOfFrames + j] / 32767.f;
   }
 }
 
