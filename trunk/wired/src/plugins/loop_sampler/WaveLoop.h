@@ -34,6 +34,7 @@ class WaveLoop: public WaveView
   void SetSlices(list<Slice *> *slices);
   void SetBarCoeff(double coef) { BarCoeff = coef; }
   void SetSamplingRate(int rate) { SamplingRate = rate; }
+  void SetLoopCursors();
   void AddSlice(int x, int m_x);
   void CreateSlices(int beats, int mescount);
 

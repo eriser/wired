@@ -771,7 +771,6 @@ void LoopSampler::Load(int fd, long size)
   read(fd, &Pitch, sizeof (Pitch));
   read(fd, &Invert, sizeof (Invert));
   read(fd, &Tempo, sizeof (Tempo));
-  //  read(fd, &len, sizeof (len));
 
   wxString str;
 
@@ -805,6 +804,9 @@ void LoopSampler::Load(int fd, long size)
     {
       cout << "[LOOPSAMPLER] Cannot open wave file !" << endl;      
     }
+
+  read(fd, &(LoopInfo.Start), sizeof (LoopInfo.Start));
+  read(fd, &(LoopInfo.End), sizeof (LoopInfo.End));
 
   if (read(fd, &len, sizeof (len)) < sizeof (len))
     return;
@@ -853,7 +855,10 @@ void LoopSampler::Load(int fd, long size)
     TempoBtn->SetOff();
 
   if (View)
-    View->SetSlices(&Slices);
+    {
+      View->SetSlices(&Slices);
+      View->SetLoopCursors();
+    }
 
   Mutex.Unlock();
 }
@@ -878,7 +883,9 @@ long LoopSampler::Save(int fd)
       size += write(fd, &Pitch, sizeof (Pitch));
       size += write(fd, &Invert, sizeof (Invert));
       size += write(fd, &Tempo, sizeof (Tempo));
-      
+      size += write(fd, &(LoopInfo.Start), sizeof (LoopInfo.Start));
+      size += write(fd, &(LoopInfo.End), sizeof (LoopInfo.End));      
+
       len = Slices.size();
       size += write(fd, &len, sizeof (len));
       list<Slice *>::iterator i;
