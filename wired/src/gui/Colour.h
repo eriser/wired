@@ -16,10 +16,12 @@
 #define CL_PATTERN_NORM		CL_WAVE_DRAW
 #define CL_PATTERN_SEL		wxColour( 70,  37, 142)//wxColour( 91, 204,  54)
 #define CL_PATTERN_NAME		wxColour(  4,   2,  42)
-
+#define CL_PATTERN_NAME_BRUSH	wxColour(251, 252, 253)
 
 #define CL_WAVEDRAWER_BRUSH	wxColour(251, 252, 253)
 #define CL_WAVEDRAWER_BRUSH_SEL	wxColour(151, 142, 169)
+#define CL_MIDIDRAWER_BRUSH	wxColour(241, 242, 243)
+#define CL_MIDIDRAWER_BRUSH_SEL	wxColour(151, 142, 169)
 
 
 /*
