@@ -5,6 +5,7 @@ BEGIN_EVENT_TABLE(KnobCtrl, wxWindow)
   EVT_MOTION(KnobCtrl::OnMouseEvent) 
   EVT_PAINT(KnobCtrl::OnPaint)
   EVT_LEFT_DOWN(KnobCtrl::OnMouseEvent)
+  EVT_RIGHT_DOWN(KnobCtrl::OnMouseEvent)
   EVT_LEFT_UP(KnobCtrl::OnMouseEvent)
   EVT_ENTER_WINDOW(KnobCtrl::OnEnterWindow)
   EVT_KEY_DOWN(KnobCtrl::OnKeyDown)
@@ -71,6 +72,10 @@ void KnobCtrl::OnMouseEvent(wxMouseEvent &event)
     {
       oldy = 0;
       first = true;
+    }
+  if (event.RightDown())
+    {
+      wxPostEvent(GetParent(), event);
     }
 }
 

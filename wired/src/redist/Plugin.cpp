@@ -109,6 +109,14 @@ void Plugin::SendClickEvent(wxMouseEvent &event)
   StartInfo.HostCallback(this, wiredSendClickEvent, (void *)&event);  
 }
 
+bool Plugin::ShowMidiController(int *MidiData[3])
+{
+  StartInfo.HostCallback(this, wiredShowMidiController, (void *)MidiData);  
+  if (*MidiData[0] == -1)
+    return (false);
+  return (true);
+}
+
 void Plugin::ShowOptionalView()
 {
   StartInfo.HostCallback(this, wiredShowOptionalView, 0x0);

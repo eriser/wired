@@ -90,6 +90,7 @@ enum
     wiredCloseOptionalView,
     wiredOpenFileLoader,
     wiredSaveFileLoader,
+    wiredShowMidiController,
 
     // Time events
     wiredGetBpm,
@@ -220,6 +221,10 @@ class Plugin: public wxWindow
   void SendKeyEvent(wxKeyEvent &event);
   /* Tells the host that the plugin got selected */
   void SendClickEvent(wxMouseEvent &event);
+  /* Shows MIDI controller change window, if returns true,
+     MidiData will be filled by the MIDI data received (you need to pass a valid pointer
+     to a int[3] variable */
+  bool ShowMidiController(int *MidiData[3]);
 
   /* Shows plugin's optional view */
   void ShowOptionalView();
