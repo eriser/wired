@@ -203,8 +203,17 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   Steps = 16;
   Signature = (float)((float)1/(float)16);
-  SamplesPerBar = (unsigned long)GetSamplesPerBar();
-    
+  
+  StepsSigCoef = static_cast<double>
+    ( Steps / static_cast<double>(SignatureDen) );
+  
+  //SamplesPerBar = (unsigned long)GetSamplesPerBar();
+  SamplesPerBar =
+    static_cast<long>
+    ((static_cast<double>(GetSamplesPerBar() * StepsSigCoef )
+      )
+     );
+   
   SignatureButtons = new IdButton*[5];
   PositionButtons = new IdButton*[4];
   
@@ -348,13 +357,11 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
       ChanMidiNotes[i] = notenum++;
       Channels[i] = new BeatBoxChannel(this, BB_Channel, 
 				       wxPoint(i*44 + 70, 10), wxSize(42,204),
-				       i, GetDataDir(), &PatternMutex);
+				       i, this);//GetDataDir(), &PatternMutex);
     }
   SelectedChannel = Channels[0];
   Channels[0]->Select();
   
-  StepsSigCoef = static_cast<double>
-    ( Steps / static_cast<double>(SignatureDen) );
   
   /* Polyphony */
   Pool = new Polyphony();
@@ -442,25 +449,17 @@ inline void WiredBeatBox::RefreshPosLeds(double bar_pos)
 void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_length)
 {
   PatternMutex.Lock();
-  /*if (!Playing)
-    {
-      PatternMutex.Unlock();
-      return;
-    }
-  */
-  /*StepsSigCoef = static_cast<double>
-    ( Steps / static_cast<double>(SignatureDen));
-  */
+  
+
+  // try to do this calculation when GetSamplesPerBar() has changed
   SamplesPerBar =
     static_cast<long>
     ((static_cast<double>(GetSamplesPerBar() * StepsSigCoef )
       )
      );
   
-  double bar_pos = GetBarPos() / StepsSigCoef;
-  bar_pos = fmod(bar_pos, 1.0);
   
-  
+  double bar_pos = fmod( (GetBarPos() / StepsSigCoef), 1.0 );
   
   double bps = GetBarsPerSample() / StepsSigCoef;
   
@@ -536,11 +535,12 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
       
       Channels[(*bn)->NumChan]->Wave->SetPitch((*bn)->Pitch);
       Channels[(*bn)->NumChan]->Wave->SetInvert((*bn)->Reversed);
-      /*(*bn)->OffSet += */Channels[(*bn)->NumChan]->Wave->Read((*bn)->Buffer,
-								(*bn)->OffSet,
-								len,
-								(*bn)->Delta,
-								&newoffset);
+      /*(*bn)->OffSet += */
+      Channels[(*bn)->NumChan]->Wave->Read((*bn)->Buffer,
+					   (*bn)->OffSet,
+					   len,
+					   (*bn)->Delta,
+					   &newoffset);
       //cout << "offsets=" << (*bn)->OffSet << "-"<< newoffset << endl;
       (*bn)->OffSet = newoffset;
       if ((*bn)->Delta)
@@ -986,13 +986,9 @@ void WiredBeatBox::OnSavePatch(wxCommandEvent& WXUNUSED(e))
   exts.push_back("drm\tDRM-31 patch file (*.drm)");
   cout << "OnSavePatch(): begin" << endl;
   
-  FileLoader *dlg = 
-    new FileLoader(this, -1, "Save Patch", false, true, &exts);
-  if (dlg->ShowModal() == wxID_OK)
+  string selfile = OpenFileLoader("Save Patch", &exts);
+  if (!selfile.empty())
     {
-      string selfile = dlg->GetSelectedFile();
-      dlg->Destroy();
-      
       int fd = open(selfile.c_str(),  O_CREAT | O_TRUNC | O_WRONLY, 
 		    S_IRUSR | S_IWUSR);
       //	    S_IRUSR | S_IWUSR );
@@ -1016,9 +1012,9 @@ void WiredBeatBox::OnSavePatch(wxCommandEvent& WXUNUSED(e))
       
       close(fd);
       
-          }
+    }
   else
-    dlg->Destroy();
+    cout << "[DRM31] could not open save file" << endl;
   cout << "OnSavePatch(): end" << endl;
   //delete dlg;
 }
@@ -1029,13 +1025,10 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
   exts.push_back("drm\tDRM-31 patch file (*.drm)");
   
   cout << "OnLoadPatch: begin" << endl;
-  FileLoader *dlg = new FileLoader(this, -1, "Load Patch", false,false,&exts);
+  string selfile = OpenFileLoader("Load Patch", &exts);
   
-  if (dlg->ShowModal() == wxID_OK)
+  if (!selfile.empty())
     {
-      string selfile = dlg->GetSelectedFile();
-      dlg->Destroy();
-      
       int fd = open(selfile.c_str(), O_RDONLY);
       if (fd < 0)
 	{
@@ -1069,7 +1062,7 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
       delete Progress;
     }
   else
-    dlg->Destroy();
+    cout << "[DRM31] Could not load file" << endl;
   cout << "OnLoadPatch: end" << endl;
 }
 

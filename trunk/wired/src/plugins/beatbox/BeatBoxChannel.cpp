@@ -1,7 +1,8 @@
 #include <wx/progdlg.h>
 
 #include "BeatBoxChannel.h"
-#include "FileLoader.h"
+#include "BeatBox.h"
+//#include "FileLoader.h"
 #include <wx/filename.h>
 #include <math.h>
 
@@ -80,7 +81,7 @@ BeatNoteToPlay::BeatNoteToPlay(BeatBoxChannel* c, float** buf)
 
 BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id, 
 				const wxPoint &pos, const wxSize &size, 
-				unsigned int num, string datadir, wxMutex* m )
+				unsigned int num, WiredBeatBox* drm31)//string datadir, wxMutex* m )
   : wxWindow( parent, id, pos, size )
 {
   Data = new unsigned int[2];
@@ -88,8 +89,9 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   Data[0] = num; /* Channel number 0-11 */
   Data[1] = 0;
   
-  DataDir = datadir;
-  PatternMutex = m;
+  DataDir = drm31->GetDataDir();//datadir;
+  PatternMutex = drm31->GetMutexPtr();
+  DRM31 = drm31;
   
   Start = 0.f;
   End = Len = 1.f;
@@ -324,12 +326,9 @@ void BeatBoxChannel::OnSelectChannel(wxCommandEvent& WXUNUSED(e))
 
 void BeatBoxChannel::OnLoadSound(wxCommandEvent& WXUNUSED(e))
 {
-  FileLoader *dlg = 
-    new FileLoader(this, -1, "Loading sound file", false, false, NULL);
-  if (dlg->ShowModal() == wxID_OK)
+  string selfile = DRM31->OpenFileLoader("Loading sound file", 0x0);
+  if (!selfile.empty())
     {
-      string selfile = dlg->GetSelectedFile();
-      dlg->Destroy();
       WaveFile *w;
       
       wxProgressDialog *Progress = 
@@ -351,8 +350,9 @@ void BeatBoxChannel::OnLoadSound(wxCommandEvent& WXUNUSED(e))
       delete Progress;
     }
   else
-    dlg->Destroy();
-  
+    {
+      cout << "[BEATBOX] Cannot open wave file !" << endl;
+    }
 }
 
 void BeatBoxChannel::ReverseSound(wxCommandEvent& WXUNUSED(e))
