@@ -76,8 +76,7 @@ void					WaveDrawer::SetWave(WaveFile *w, wxSize s)
 #endif
 }
 
-void					WaveDrawer::SetWave(WaveFile *w, wxSize s,
-							    long wstart, long wend)
+void					WaveDrawer::SetWave(WaveFile *w, wxSize s, long wstart, long wend)
 {
 #ifdef __DEBUG__
   printf(" [ START ] WaveDrawer::SetWave(%x, size, wstart = %d, wend = %d)\n", w, wstart, wend);
