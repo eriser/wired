@@ -3,7 +3,7 @@
 #include "Mixer.h"
 
 Channel::Channel(bool stereo)
-  : VolumeLeft(1.f), VolumeRight(1.f), Label(""), Visible(false),
+  : VolumeLeft(1.f), VolumeRight(1.f), /*Label(""),*/Visible(false),
     MuteLeft(false), MuteRight(false), Stereo(stereo), 
     Filled(false), Lrms(0.f), Rrms(0.f)
 {
@@ -15,8 +15,8 @@ Channel::Channel(bool stereo)
     AddBuffers(NUM_BUFFERS);
 }
 
-Channel::Channel(bool stereo, bool visible, const wxString& label)
-  : Volume(1.f), VolumeLeft(1.f), VolumeRight(1.f), Label(label), 
+Channel::Channel(bool stereo, bool visible)
+  : Volume(1.f), VolumeLeft(1.f), VolumeRight(1.f),// Label(label), 
     Visible(visible),
     Mute(false), Stereo(stereo), Filled(false), Lrms(0.f), Rrms(0.f)
 {

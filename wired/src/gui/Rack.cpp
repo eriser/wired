@@ -23,17 +23,19 @@ RackTrack::RackTrack(Rack *parent, int index)
   CurrentBuffer = 0x0;
   wxString s;
   s.Printf("Rack %d", index);
-  Output = Mix->AddStereoOutputChannel(s);
+  Output = Mix->AddStereoOutputChannel();
+  ChanGui = MixerPanel->AddChannel(Output, s);
 }
 
 RackTrack::~RackTrack()
 {
-  
-  Mix->RemoveChannel(Output);
+  RemoveChannel();
 }
 
 void RackTrack::RemoveChannel()
 {
+  cout << "removing changui" << endl;
+  MixerPanel->RemoveChannel(ChanGui);
   Mix->RemoveChannel(Output);
 }
 

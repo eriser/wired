@@ -324,14 +324,17 @@ Track					*SequencerGui::AddTrack(bool is_audio)
   //  n1 = new SeqTrack(Seq->Tracks.size(), TrackView, p, s, is_audio);
   printf("adding SEQTRACK PATTERN\n");
   n2 = new SeqTrackPattern(SeqView, n1, 
-			   (long)(Seq->EndPos * MEASURE_WIDTH * HoriZoomFactor));
+			(long)(Seq->EndPos * MEASURE_WIDTH * HoriZoomFactor));
   printf("adding TRACK\n");
   n = new Track(n1, n2, is_audio ? IS_AUDIO_TRACK : IS_MIDI_TRACK);
+  if (is_audio)
+    {
+      n1->ChanGui = MixerPanel->AddChannel(n->Output, n1->Text->GetValue());
+      n1->ChanGui->SetOpt(n1);
+    }
   Seq->AddTrack(n);
   UpdateTracks();
   SetScrolling();
-  //MixerPanel->SetLabelByChan(n->Output, n->TrackOpt->Text->GetValue());
-  MixerPanel->SetChanOpt(n);
   return (n);
 }
 
@@ -564,14 +567,17 @@ void					SequencerGui::DeleteSelectedTrack()
   vector<Track *>::iterator		i;
   long					j;
 
-  printf("SequencerGui::DeleteSelectedTrack()\n");
+  //printf("SequencerGui::DeleteSelectedTrack()\n");
   
   for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
     if ((*i)->TrackOpt->GetSelected())
       {
 	if ((*i)->TrackOpt->Record && Seq->Recording)
 	  return;
-
+	if ((*i)->TrackOpt->ChanGui)
+	  {
+	    MixerPanel->RemoveChannel((*i)->TrackOpt->ChanGui);
+	  }
 	SeqMutex.Lock();
 	delete *i;
 	Seq->Tracks.erase(i);

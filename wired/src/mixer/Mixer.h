@@ -25,8 +25,8 @@ class Mixer
   Channel*		AddStereoInputChannel(void);
   Channel*              OpenInput(long num);
   
-  Channel*		AddMonoOutputChannel(const wxString& label);
-  Channel*		AddStereoOutputChannel(const wxString& label);
+  Channel*		AddMonoOutputChannel(bool visible);
+  Channel*		AddStereoOutputChannel(bool visible);
   
   bool			RemoveChannel(Channel*);
   bool			InitOutputBuffers(void);

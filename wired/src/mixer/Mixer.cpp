@@ -104,15 +104,16 @@ Channel *Mixer::AddStereoInputChannel()
     }
   return chan;
 }
-Channel *Mixer::AddMonoOutputChannel(const wxString& label)
+
+Channel *Mixer::AddMonoOutputChannel(bool visible)
 {
   Channel *chan;
 
   try
     {
-      chan = new Channel(false, true, label);
+      chan = new Channel(false, true);
       OutChannels.push_back(chan);
-      MixerPanel->AddChannel(chan);
+      //MixerPanel->AddChannel(chan);
     }
   catch (std::bad_alloc)
     {
@@ -121,15 +122,16 @@ Channel *Mixer::AddMonoOutputChannel(const wxString& label)
   return chan;
 }
 
-Channel *Mixer::AddStereoOutputChannel(const wxString& label)
+Channel *Mixer::AddStereoOutputChannel(bool visible)
 {
   Channel *chan;
   
   try
     {
-      chan = new Channel(true, true, label);
-      OutChannels.push_back(chan);
-      MixerPanel->AddChannel(chan);
+      chan = new Channel(true, true);
+      /*OutChannels.push_back(chan);
+	MixerPanel->AddChannel(chan);*/
+      
     }
   catch (std::bad_alloc)
     {
@@ -152,8 +154,8 @@ bool Mixer::RemoveChannel(Channel *chan)
        c != OutChannels.end(); c++)
     if ((*c) == chan)
       {
-	//if (1)//(*c)->Visible)
-	  MixerPanel->RemoveChannel(*c);
+	//if ((*c)->Visible)
+	//MixerPanel->RemoveChannel(*c);
 	delete (*c);
 	OutChannels.erase(c);
 	return true;

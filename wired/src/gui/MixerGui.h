@@ -8,7 +8,7 @@
 #include "FaderCtrl.h"
 #include "VUMCtrl.h"
 #include "ChannelGui.h"
-#include "Track.h"
+//#include "Track.h"
 
 #define ID_MIXER_REFRESH	101020
 #define TYPE_MIXER_REFRESH	9876600
@@ -33,13 +33,14 @@ class MixerGui : public wxScrolledWindow
   
   void OnScroll(wxScrollEvent &event);
   void OnMasterChange(wxCommandEvent &event);
-  void AddChannel(Channel *);
   void RemoveChannel(Channel *);
+  void RemoveChannel(ChannelGui *);
   float	  MasterLeft;
   float	  MasterRight;
+  ChannelGui* AddChannel(Channel *, const wxString&);
   void AddMasterChannel(Channel *channel);
   void SetLabelByChan(Channel*, const wxString&);
-  void SetChanOpt(Track*);
+  //void SetChanOpt(Track*);
   ChannelGui* GetGuiByChan(Channel*);
  protected:
   /* Master Channel stuff */

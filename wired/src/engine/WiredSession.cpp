@@ -169,7 +169,9 @@ bool WiredSession::Load()
 		id++;
 	      }
 
-	  t->TrackOpt->Text->SetValue(track.Name);	  
+	  //t->TrackOpt->Text->SetValue(track.Name);
+	  t->TrackOpt->SetName(track.Name);
+	  
 	  delete track.Name;
 	  // Pattern
 	  for (j = 0; j < track.NumberOfPatterns; j++)

@@ -10,26 +10,29 @@
 #include "Mixer.h"
 #include "Channel.h"
 #include "HintedFader.h"
+#include "DownButton.h" 
 //#include "FaderCtrl.h"
 #include "VUMCtrl.h"
-#include "Track.h"
 
-#define LABEL_MAXCHAR  20
-#define BG "ihm/mixer/bg.png"
-#define MIXERLOCKUP "ihm/mixer/mixer_lock_up.png"
-#define MIXERLOCKDOWN "ihm/mixer/mixer_lock_down.png"
-#define MIXERHPUP "ihm/mixer/mixer_hp_up.png"
-#define MIXERHPDOWN "ihm/mixer/mixer_hp_down.png"
-#define VUM_GREEN		"ihm/widgets/vum_green.png"
-#define VUM_ORANGE		"ihm/widgets/vum_orange.png"
-#define VUM_RED			"ihm/widgets/vum_red.png"
+#define LABEL_MAXCHAR	20
+#define BG		"ihm/mixer/bg.png"
+#define MIXERLOCKUP	"ihm/mixer/mixer_lock_up.png"
+#define MIXERLOCKDOWN	"ihm/mixer/mixer_lock_down.png"
+#define MIXERHPUP	"ihm/mixer/mixer_hp_up.png"
+#define MIXERHPDOWN	"ihm/mixer/mixer_hp_down.png"
+#define VUM_GREEN	"ihm/widgets/vum_green.png"
+#define VUM_ORANGE	"ihm/widgets/vum_orange.png"
+#define VUM_RED		"ihm/widgets/vum_red.png"
+
+class SeqTrack;
 
 class ChannelGui : public wxPanel
 {
  public:
   ChannelGui( Channel *channel, wxImage* img_bg, wxImage* img_fg,
 	      wxWindow* parent, wxWindowID id,
-	      const wxPoint& pos, const wxSize& size );
+	      const wxPoint& pos, const wxSize& size,
+	      const wxString& label);
   ~ChannelGui();
   
   void OnFaderLeft(wxScrollEvent &e);
@@ -40,10 +43,10 @@ class ChannelGui : public wxPanel
   void OnPaint(wxPaintEvent& e);
   
   void SetLabel(const wxString&);
-  void SetOpt(Track*);
+  void SetOpt(SeqTrack*);
   void UpdateScreen();
   
-  Track*	ConnectedTrack;
+  SeqTrack*	ConnectedSeqTrack;
   HintedFader*	FaderLeft;
   HintedFader*	FaderRight;
   

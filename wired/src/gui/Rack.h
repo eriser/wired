@@ -9,6 +9,7 @@
 
 #include "PluginLoader.h"
 #include "Mixer.h"
+#include "MixerGui.h"
 
 #define UNIT_W	200	
 #define UNIT_H	100
@@ -16,6 +17,7 @@
 
 extern int	RackCount;
 
+//class ChannelGui;
 class Rack;
 
 class RackTrack
@@ -36,6 +38,7 @@ class RackTrack
   int		   Index;
   list<Plugin *>   Racks;
   Channel	   *Output;
+  ChannelGui*	   ChanGui;
   float		   **CurrentBuffer;
   
 };

@@ -12,7 +12,7 @@ class Channel
 {
  public:
   Channel(bool stereo);
-  Channel(bool stereo, bool visible, const wxString& label);
+  Channel(bool stereo, bool visible);
   ~Channel();
   
   bool		Stereo;

@@ -66,7 +66,6 @@ void MixerGui::OnMasterChange(wxCommandEvent &event)
 
 void MixerGui::AddMasterChannel(Channel *channel)
 {
-  channel->Label = "MASTER";
   MasterChannelGui *gui = new MasterChannelGui(channel, ImgFaderBg,
 					       ImgFaderFg, this, -1, 
 					       wxPoint(0, 0),
@@ -80,17 +79,19 @@ void MixerGui::AddMasterChannel(Channel *channel)
   vuMasterRight = gui->VumRight;
 }
 
-void MixerGui::AddChannel(Channel *channel)
+ChannelGui* MixerGui::AddChannel(Channel *channel, const wxString& label)
 {
   int x =/* CHANNELGUI_WIDTH +*/ ChannelGuiVector.size() * CHANNELGUI_WIDTH;
   ChannelGui *gui = new ChannelGui(channel, ImgFaderBg, ImgFaderFg, 
 				   this, -1, wxPoint(x, 0),
 				   wxSize(CHANNELGUI_WIDTH, 
-					  CHANNELGUI_HEIGHT));
+					  CHANNELGUI_HEIGHT),
+				   label);
   
   
   ChannelGuiVector.push_back(gui);
   UpdateChannelsPos();
+  return gui;
 }
 
 void MixerGui::RemoveChannel(Channel *channel)
@@ -106,7 +107,18 @@ void MixerGui::RemoveChannel(Channel *channel)
   UpdateChannelsPos();
 }
 
-
+void MixerGui::RemoveChannel(ChannelGui *gui)
+{
+  for (vector<ChannelGui*>::iterator cg = ChannelGuiVector.begin();
+       cg != ChannelGuiVector.end(); cg++)
+    if ((*cg) == gui)
+      {
+	delete *cg;
+	ChannelGuiVector.erase(cg);
+	break;
+      }
+  UpdateChannelsPos();
+}
 
 void MixerGui::UpdateChannelsPos()
 {
@@ -137,6 +149,7 @@ void MixerGui::SetLabelByChan(Channel *channel, const wxString& label)
   cg->SetLabel(label);
 }
 
+/*
 void MixerGui::SetChanOpt(Track *tr)
 {
   if (!tr->IsAudioTrack())
@@ -144,3 +157,4 @@ void MixerGui::SetChanOpt(Track *tr)
   ChannelGui* cg = GetGuiByChan(tr->Output);
   cg->SetOpt(tr);
 }
+*/
