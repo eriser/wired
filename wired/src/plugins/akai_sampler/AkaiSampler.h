@@ -83,6 +83,7 @@ class AkaiSampler : public Plugin
     Polyphony   Workshop;
     list<ASamplerNote *> Notes;
     t_akaiProgram   *AkaiProgram;
+    wxString        AkaiPrefix;
 
     float  Volume;
     unsigned int PolyphonyCount;

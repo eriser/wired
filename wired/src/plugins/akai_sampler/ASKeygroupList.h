@@ -35,10 +35,10 @@ class ASamplerSample
       this->id = id;
     }
 
-    ASamplerSample(t_akaiSample *smp, unsigned long id = 0)
+    ASamplerSample(t_akaiSample *smp, wxString AkaiPrefix, unsigned long id = 0)
     {
       this->w = new WaveFile(smp->buffer, smp->size, 2, smp->rate);
-      w->Filename = smp->name;
+      w->Filename = AkaiPrefix + smp->name;
       this->askg = NULL;
       this->Position = smp->start / 2;
       if (!id)
