@@ -23,6 +23,7 @@ class StaticPosKnob : public wxWindow
   virtual void OnLeftUp(wxMouseEvent &event);
   virtual void OnLeftDown(wxMouseEvent &event);
   virtual void OnKeyDown(wxKeyEvent& event);
+  void OnEnter(wxMouseEvent& event);
   
   int GetValue();
   void SetValue(int val);
