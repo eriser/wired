@@ -117,7 +117,7 @@ class				WaveFile;
 class				MidiEvent;
 class				AccelCenter;
 
-class				SequencerView: public wxScrolledWindow
+class				SequencerView: public wxWindow
 {
   friend class			SequencerGui;
   friend class			Pattern;

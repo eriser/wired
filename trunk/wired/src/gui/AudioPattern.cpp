@@ -101,8 +101,8 @@ void					AudioPattern::Update()
 #endif
   Pattern::Update();
   AudioPattern::SetSize(Pattern::GetSize());
-  //Pattern::SetMPosition(Pattern::GetMPosition());
-  wxWindow::SetPosition(Pattern::GetMPosition());
+  wxWindow::SetPosition(Pattern::GetMPosition() -
+			wxPoint((int) floor(SeqPanel->CurrentXScrollPos), (int) SeqPanel->CurrentYScrollPos));
 #ifdef __DEBUG__
   printf(" [  END  ] AudioPattern::Update()\n");
 #endif
@@ -300,7 +300,7 @@ void					AudioPattern::OnClick(wxMouseEvent &e)
 {
   Pattern::OnClick(e);
   if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
-    Split((double) ((SeqPanel->CurrentXScrollPos + Pattern::GetMPosition().x + e.m_x)
+    Split((double) ((Pattern::GetMPosition().x + e.m_x)
 		    / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor)));
   else
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
@@ -315,7 +315,7 @@ void					AudioPattern::OnLeftUp(wxMouseEvent &e)
 void					AudioPattern::Split(double pos)
 {
   AudioPattern				*p;
-#define __DEBUG__
+
   if ((Position < pos) && (pos < EndPosition))
     {
       SeqMutex.Lock();

@@ -46,11 +46,12 @@ const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1] =
 
 SequencerView::SequencerView(wxWindow *parent, const wxPoint &pos, 
 			     const wxSize &size)
-  : wxScrolledWindow(parent, -1, pos, size, wxSUNKEN_BORDER)
+  : wxWindow(parent, -1, pos, size, wxSUNKEN_BORDER)
 {
   TheZone = new SelectionZone(this);
   HAxl = new AccelCenter(ACCEL_TYPE_DEFAULT);
   VAxl = new AccelCenter(ACCEL_TYPE_DEFAULT);
+  wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 }
 
 SequencerView::~SequencerView()
@@ -576,20 +577,22 @@ void					SequencerGui::AdjustHScrolling()
   long					range;
   double				pos_tmp;
   
-  pos_tmp = ((range = HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) ?
+  if ((long) (floor(CurrentXScrollPos) - floor((pos_tmp = ((range = HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) ?
     (((double) (SeqView->GetTotalWidth() - SeqView->GetClientSize().x)
       * (double) (thumb_pos = (HorizScrollBar->GetThumbPosition() >= range) ?
 		  range : HorizScrollBar->GetThumbPosition())) /
-     (double) range) : 0;
-  SeqView->ScrollWindow((long) (floor(CurrentXScrollPos) - floor(pos_tmp)), 0, (const wxRect *) NULL);
-  SeqView->SetXScrollValue((long) ceil(pos_tmp));
-  SeqView->Refresh();
-  RulerPanel->ScrollWindow((long) (floor(CurrentXScrollPos) - floor(pos_tmp)), 0, (const wxRect *) NULL);
-  RulerPanel->SetXScrollValue((long) ceil(pos_tmp));
+     (double) range) : 0))))
+    {
+      SeqView->ScrollWindow((long) (floor(CurrentXScrollPos) - floor(pos_tmp)), 0, (const wxRect *) NULL);
+      SeqView->SetXScrollValue((long) ceil(pos_tmp));
+      RulerPanel->ScrollWindow((long) (floor(CurrentXScrollPos) - floor(pos_tmp)), 0, (const wxRect *) NULL);
+      RulerPanel->SetXScrollValue((long) ceil(pos_tmp));
+      CurrentXScrollPos = pos_tmp;
+      FirstMeasure = pos_tmp / (MEASURE_WIDTH * HoriZoomFactor);
+      LastMeasure = (pos_tmp + SeqView->GetClientSize().x) / (MEASURE_WIDTH * HoriZoomFactor);
+    }
   RulerPanel->Refresh();
-  CurrentXScrollPos = pos_tmp;
-  FirstMeasure = pos_tmp / (MEASURE_WIDTH * HoriZoomFactor);
-  LastMeasure = (pos_tmp + SeqView->GetClientSize().x) / (MEASURE_WIDTH * HoriZoomFactor);
+  SeqView->Refresh();
   //  cout << "FIRST VISIBLE MEASURE = " << FirstMeasure << endl;
   //  cout << "LAST VISIBLE MEASURE = " << LastMeasure << endl;
 }
@@ -600,17 +603,19 @@ void					SequencerGui::AdjustVScrolling()
   long					range;
   double				pos_tmp;
   
-  pos_tmp = ((range = VertScrollBar->GetRange() - VSCROLL_THUMB_WIDTH)) ?
+  if ((long) (floor(CurrentYScrollPos) - floor((pos_tmp = ((range = VertScrollBar->GetRange() - VSCROLL_THUMB_WIDTH)) ?
     (((double) (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)
       * (double) (thumb_pos = (VertScrollBar->GetThumbPosition() >= range) ?
 		  range : VertScrollBar->GetThumbPosition())) /
-     (double) range) : (double) 0;
-  SeqView->ScrollWindow(0, (long) (floor(CurrentYScrollPos - floor(pos_tmp))), (const wxRect *) NULL);
-  TrackView->ScrollWindow(0, (long) (floor(CurrentYScrollPos - floor(pos_tmp))), (const wxRect *) NULL);
-  SeqView->SetYScrollValue((long) ceil(pos_tmp));
-  SeqView->Refresh();
+     (double) range) : (double) 0))))
+    {
+      SeqView->ScrollWindow(0, (long) (floor(CurrentYScrollPos) - floor(pos_tmp)), (const wxRect *) NULL);
+      TrackView->ScrollWindow(0, (long) (floor(CurrentYScrollPos) - floor(pos_tmp)), (const wxRect *) NULL);
+      SeqView->SetYScrollValue((long) ceil(pos_tmp));
+      CurrentYScrollPos = pos_tmp;
+    }
   TrackView->Refresh();
-  CurrentYScrollPos = pos_tmp;
+  SeqView->Refresh();
 }
 
 void					SequencerGui::OnScroll(wxScrollEvent &event)
@@ -1181,7 +1186,7 @@ BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   EVT_MOUSEWHEEL(SequencerGui::OnWheelMove)
 END_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(SequencerView, wxScrolledWindow)
+BEGIN_EVENT_TABLE(SequencerView, wxWindow)
   EVT_PAINT(SequencerView::OnPaint)
   EVT_LEFT_DOWN(SequencerView::OnClick)
   EVT_LEFT_UP(SequencerView::OnLeftUp)

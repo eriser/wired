@@ -23,6 +23,7 @@ CursorH::CursorH(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 {
   Name = wxString(name);
   c = C;
+  wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
   /*
   Connect(c->L->GetId(), wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &CursorH::OnMouseEvent);
@@ -125,8 +126,9 @@ void					Cursor::SetPos(double newpos)
 
   if (newpos < 0)
     newpos = 0;
-  x = (long) floor((pos = newpos) * MEASURE_WIDTH * SeqGUI->HoriZoomFactor) - SeqGUI->SeqView->GetXScroll();
-  H->SetSize(x  - (CURSOR_WIDTH / 2) + 1, -1, -1, -1);
+  if (Xpos == (x = (long) floor((pos = newpos) * MEASURE_WIDTH * SeqGUI->HoriZoomFactor) - SeqGUI->SeqView->GetXScroll()))
+    return ;
+  H->SetSize((Xpos = x) - (CURSOR_WIDTH / 2) + 1, -1, -1, -1);
   L->SetSize(x, -1, -1, -1);
 }
 

@@ -20,6 +20,7 @@ using namespace				std;
 #define PATTERN_MASK_SELECTED		(1)
 #define PATTERN_MASK_DRAGGED		(2)
 #define PATTERN_MASK_TOGGLED		(4)
+#define PATTERN_AUTO_SCROLL_BOX		(42)
 
 class					WaveFile;
 class					MidiEvent;

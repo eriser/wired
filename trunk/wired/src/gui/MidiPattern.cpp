@@ -84,7 +84,8 @@ void					MidiPattern::Update()
 {
   Pattern::Update();
   wxWindow::SetSize(Pattern::GetSize());
-  wxWindow::SetPosition(Pattern::GetMPosition());
+  wxWindow::SetPosition(Pattern::GetMPosition() -
+			wxPoint((int) floor(SeqPanel->CurrentXScrollPos), (int) SeqPanel->CurrentYScrollPos));
   DrawMidi();
 }
 
@@ -123,7 +124,7 @@ void					MidiPattern::OnClick(wxMouseEvent &e)
 {
   Pattern::OnClick(e);
   if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
-    Split((double) ((SeqPanel->CurrentXScrollPos + Pattern::GetMPosition().x + e.m_x)
+    Split((double) ((Pattern::GetMPosition().x + e.m_x)
 		    / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor)));
   else
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
@@ -139,7 +140,7 @@ void					MidiPattern::Split(double pos)
 {
   MidiPattern				*p;
   vector<MidiEvent *>::iterator		o;
-#define __DEBUG_
+
   if ((Position < pos) && (pos < EndPosition))
     {
       SeqMutex.Lock();

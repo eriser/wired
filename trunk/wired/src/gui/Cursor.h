@@ -47,6 +47,7 @@ class					Cursor
 {
   friend class				CursorH;
   double				pos;
+  long					Xpos;
   CursorH				*H;
   ColoredLine				*L;
   SequencerGui				*SeqGUI;

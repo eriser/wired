@@ -91,6 +91,7 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   Vu->SetValue(0);
   menu = 0x0;
   Selected = false;
+  wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 }
 
 SeqTrack::~SeqTrack()

@@ -15,6 +15,7 @@ ColoredLine::ColoredLine(wxWindow *parent, wxWindowID id, const wxPoint &pos,
   : wxWindow(parent, id, pos, size, wxNO_BORDER)
 {
   SetColor(c);
+  wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 }
 
 ColoredLine::~ColoredLine()
