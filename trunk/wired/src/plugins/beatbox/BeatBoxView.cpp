@@ -24,7 +24,8 @@ BEGIN_EVENT_TABLE(BeatBoxTrackView, wxWindow)
 END_EVENT_TABLE()
 
 BeatBoxTrackView::BeatBoxTrackView(wxWindow *parent,  wxWindowID id,
-			   const wxPoint &pos, const wxSize &size)
+				   const wxPoint &pos, const wxSize &size,
+				     BeatBoxView* view_ptr)
   : wxWindow(parent, id, pos, size)
 {
   SetBackgroundColour(*wxGREEN);
@@ -32,53 +33,87 @@ BeatBoxTrackView::BeatBoxTrackView(wxWindow *parent,  wxWindowID id,
     new wxStaticText(this, -1, _T("This is the track view"), wxPoint(0,0), 
 		     wxDefaultSize);
   */
+  ViewPtr = view_ptr;
+  BeatTrack* beat_track;
+  //wxBoxSizer* top = new wxBoxSizer(wxVERTICAL);
+  
+  for (int i = 0; i < 11; i++)
+    {
+      try 
+	{
+	  beat_track = new BeatTrack(ViewPtr->DRM31->Channels[i]);
+	  //beat_track = new BeatTrack(this, -1, wxPoint(0, i * ViewPtr->TrackHeight), wxSize(TRACK_WIDTH, ViewPtr->TrackHeight), ViewPtr->DRM31->Channels[i]);
+	  //top->Add(beat_track, 1, 0, 0);
+	}
+      catch (std::bad_alloc)
+	{
+	  cout << "[BeatBoxView] bad alloc" << endl;
+	}
+      catch (...) 
+	{ 
+	  cout <<"[BeatBoxView] unexpected error during new" << endl; 
+	}
+      BeatTracks.push_back(beat_track);
+    }
+  //SetSizer(top);
 }
+
 BeatBoxTrackView::~BeatBoxTrackView()
 {}
+
 void BeatBoxTrackView::OnPaint(wxPaintEvent& event)
 {
-  /*wxPaintDC				dc(this);
-  wxSize				size;
-  //wxString				s;
-  double				x;
-  double				u;
-  long					m;
-  
+  wxPaintDC dc(this);
   PrepareDC(dc);
-  size = GetClientSize();
   
-  dc.SetPen(wxPen(VIEW_BGCOLOR, 1, wxSOLID));
-  dc.SetBrush(wxBrush(VIEW_BGCOLOR));
-  dc.SetTextForeground(VIEW_FGCOLOR);
+  int y = 0 - ViewPtr->YScroll;
+  
+  
+  dc.SetPen(*wxMEDIUM_GREY_PEN); 
+  
+  dc.SetBrush(wxBrush(*wxBLACK, wxTRANSPARENT));//*wxLIGHT_GREY_BRUSH); 
   
   for (vector<BeatTrack*>::iterator bt = BeatTracks.begin(); 
        bt != BeatTracks.end(); bt++)
     {
-      
+      dc.DrawRoundedRectangle(0, y, TRACK_WIDTH, ViewPtr->TrackHeight, 3);
+      y += ViewPtr->TrackHeight;
     }
-  TRACK_HEIGHT
-  
-    
-  dc.DrawRectangle(0, 0, size.x, size.y);
-  dc.SetPen(wxPen(VIEW_BARCOLOR, 1, wxSOLID));
-  u = BAR_WIDTH * HZoom / Steps;
-  
-  m = static_cast<long>(ceil(XScroll / u));
-  for (x = u * m - XScroll; (long) floor(x) < size.x; x += u)
-    {
-      if (!(m++ % Seq->SigNumerator))
-        {
-	  dc.SetPen(wxPen(CL_SEQVIEW_MES, 1, wxSOLID));
-	  dc.DrawLine((int) floor(x), 0,
-		      (int) floor(x), size.y);
-	  dc.SetPen(wxPen(CL_SEQVIEW_BAR, 1, wxSOLID));
-	  }
-      else
-	dc.DrawLine((int) floor(x), 0,
-		    (int) floor(x), size.y);
-    }
+}
+
+//BEGIN_EVENT_TABLE(BeatTrack, wxWindow)
+  //EVT_PAINT(BeatTrack::OnPaint)
+//END_EVENT_TABLE()
+
+//BeatTrack::BeatTrack(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, BeatBoxChannel* channel)
+BeatTrack::BeatTrack(BeatBoxChannel* channel)
+  //  : wxWindow(parent, id, pos, size)
+{
+  Channel = channel;
+  /*
+    wxStaticText* text = 
+    new wxStaticText(this, -1, _T("channel"), wxPoint(0,0), 
+		     wxDefaultSize);
   */
 }
+
+BeatTrack::~BeatTrack()
+{}
+/*
+void BeatTrack::OnPaint(wxPaintEvent& event)
+{
+wxPaintDC dc(this);
+  wxSize s;
+  
+  PrepareDC(dc);
+  s = GetSize();
+  dc.SetPen(*wxMEDIUM_GREY_PEN); 
+  
+  dc.SetBrush(wxBrush(*wxBLACK, wxTRANSPARENT));//*wxLIGHT_GREY_BRUSH); 
+  dc.DrawRoundedRectangle(0, 0, s.x, s.y, 3);
+  
+}
+*/
 
 BEGIN_EVENT_TABLE(BeatBoxScrollView, wxScrolledWindow)
   EVT_PAINT(BeatBoxScrollView::OnPaint)
@@ -96,6 +131,7 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
     new wxStaticText(this, -1, _T("This is the scroll view"), wxPoint(0,0), 
 		     wxDefaultSize);
   */
+  
 }
 
 BeatBoxScrollView::~BeatBoxScrollView()
@@ -107,7 +143,7 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
   wxSize size;
   double x;
   double u;
-  long	m;
+  long	 m;
   long y = 0 - ViewPtr->YScroll;
   
   PrepareDC(dc);
@@ -117,15 +153,13 @@ void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
   dc.SetBrush(wxBrush(VIEW_BGCOLOR));
   dc.SetTextForeground(VIEW_FGCOLOR);
   
-  for (vector<BeatTrack*>::iterator bt = ViewPtr->BeatTracks.begin();
-       bt != ViewPtr->BeatTracks.end(); 
+  for (vector<BeatTrack*>::iterator bt = ViewPtr->TrackView->BeatTracks.begin();
+       bt != ViewPtr->TrackView->BeatTracks.end(); 
        bt++)
     {
       y += ViewPtr->TrackHeight;
       dc.DrawLine(0, y, GetClientSize().x, y);
     }
-  
-
 }
 
 
@@ -146,23 +180,6 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   Mutex = mutex;
   DRM31 = bb;
   
-  BeatTrack* beat_track;
-  for (int i = 0; i < 11; i++)
-    {
-      try 
-	{
-	  beat_track = new BeatTrack(DRM31->Channels[i]);
-	}
-      catch (std::bad_alloc)
-	{
-	  cout << "[BeatBoxView] bad alloc" << endl;
-	}
-      catch (...) 
-	{ 
-	  cout <<"[BeatBoxView] unexpected error during new" << endl; 
-	}
-      BeatTracks.push_back(beat_track);
-    }
   
   HZoom = VZoom = 1.0;
   XScroll = YScroll = 0;
@@ -178,11 +195,30 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   RulerView = new Ruler(this, -1, wxPoint(TRACK_WIDTH,0), 
 			wxSize(GetClientSize().x - TRACK_WIDTH, RULER_HEIGHT));
   
-  TrackView = new BeatBoxTrackView(this, -1, 
-			       wxPoint(0,RULER_HEIGHT), 
-			       wxSize(TRACK_WIDTH, 
-				      GetClientSize().y));
-  
+  TrackView = new BeatBoxTrackView(this, -1, wxPoint(0,RULER_HEIGHT), 
+				   wxSize(TRACK_WIDTH, GetClientSize().y),
+				   this);
+  /*
+  BeatTrack* beat_track;
+  for (int i = 0; i < 11; i++)
+    {
+      try 
+	{
+	  beat_track = new BeatTrack(TrackView, -1,wxPoint(0, i * TrackHeight),
+				     wxSize(TRACK_WIDTH, TrackHeight), 
+				     DRM31->Channels[i]);
+	}
+      catch (std::bad_alloc)
+	{
+	  cout << "[BeatBoxView] bad alloc" << endl;
+	}
+      catch (...) 
+	{ 
+	  cout <<"[BeatBoxView] unexpected error during new" << endl; 
+	}
+      TrackView->BeatTracks.push_back(beat_track);
+    }
+  */
   BeatView = new BeatBoxScrollView(this, -1, wxPoint(TRACK_WIDTH,RULER_HEIGHT),
 				   GetClientSize()-wxSize(150,20), this);
   
@@ -220,7 +256,7 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   SetSizer(glob);
   
   XSize = BeatView->GetClientSize().x;
-  YSize = BEAT_HEIGHT * BeatTracks.size();
+  YSize = BEAT_HEIGHT * TrackView->BeatTracks.size();
   
   AdjustHScrolling();
   AdjustVScrolling();
@@ -237,8 +273,8 @@ void BeatBoxView::OnHZoom(wxCommandEvent& event)
   HZoom = static_cast<double>(HZoomSlider->GetValue() / 100.0);
   XSize = static_cast<long>(floor(BeatView->GetClientSize().x * HZoom));
   AdjustHScrolling();
+  RulerView->Refresh();
   BeatView->Refresh();
-
 }
 
 void BeatBoxView::OnVZoom(wxCommandEvent& event)
@@ -246,27 +282,38 @@ void BeatBoxView::OnVZoom(wxCommandEvent& event)
   VZoom = static_cast<double>(VZoomSlider->GetValue() / 100.0);
   TrackHeight = static_cast<long>(floor(BEAT_HEIGHT * VZoom));
   
-  YSize =  TrackHeight * BeatTracks.size();
+  YSize =  TrackHeight * TrackView->BeatTracks.size();
   
   
   AdjustVScrolling();
   BeatView->Refresh();
-  
+  /*
+    for (vector<BeatTrack*>::iterator bt = TrackView->BeatTracks.begin(); 
+       bt != TrackView->BeatTracks.end(); bt++)
+    {
+      (*bt)->SetSize(TRACK_WIDTH, TrackHeight);
+    }
+  */
+  //TrackView->SetSize(TRACK_WIDTH, YSize);
+  TrackView->Refresh();
 }
 
 void BeatBoxView::OnHScroll(wxScrollEvent& event)
 {
   XScroll = HScrollBar->GetThumbPosition();
-
+  
 }
 
 void BeatBoxView::OnVScroll(wxScrollEvent& event)
 {
   long yscroll = VScrollBar->GetThumbPosition();
 
-  BeatView->ScrollWindow( yscroll - YScroll, 0, (const wxRect *) NULL);
+  BeatView->ScrollWindow( 0, YScroll - yscroll, (const wxRect *) NULL);
+  TrackView->ScrollWindow( 0, YScroll - yscroll, (const wxRect *) NULL);
+  
   YScroll = yscroll;
   BeatView->Refresh();
+  TrackView->Refresh();
 }
 
 void BeatBoxView::OnSize(wxSizeEvent& event)
