@@ -8,7 +8,7 @@
 #include "WaveFile.h"
 
 
-//#define				PAINT_WIDTH	(20000)
+//#define				PAINT_WIDTH	(100000)
 
 #include 			<list>
 
