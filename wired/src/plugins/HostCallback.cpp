@@ -21,6 +21,21 @@ long					HostCallback(Plugin *plug, long param, void *value)
 {
   switch (param)
     {
+    case wiredSendMouseEvent :
+      {
+	RackPanel->HandleMouseEvent(plug, (wxMouseEvent *)value);
+	break;
+      }
+    case wiredSendPaintEvent :
+      {
+	RackPanel->HandlePaintEvent(plug, (wxPaintEvent *)value);
+	break;
+      }
+    case wiredAskUpdateGui :
+      {
+	MainWin->AddUpdatePlugin(plug);
+	break;
+      }
     case wiredHostProductName :
       {
 	strcpy((char *)value, "Wired");
@@ -52,16 +67,6 @@ long					HostCallback(Plugin *plug, long param, void *value)
     case wiredSendKeyEvent :
       {
 	RackPanel->HandleKeyEvent(plug, (wxKeyEvent *)value);
-	break;
-      }
-    case wiredSendMouseEvent :
-      {
-	RackPanel->HandleMouseEvent(plug, (wxMouseEvent *)value);
-	break;
-      }
-    case wiredSendPaintEvent :
-      {
-	RackPanel->HandlePaintEvent(plug, (wxPaintEvent *)value);
 	break;
       }
     case wiredGetBpm :      

@@ -98,6 +98,11 @@ double Plugin::GetBarPos()
 
 // User interface events
 
+void Plugin::AskUpdate()
+{
+  StartInfo.HostCallback(this, wiredAskUpdateGui, 0x0);
+}
+
 void Plugin::SendHelp(std::string str)
 {
   StartInfo.HostCallback(this, wiredSendHelp, (void *)&str);
