@@ -46,7 +46,7 @@ wxWindow *ASSampleList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
 
 void  ASSampleList::OnAddSample(wxCommandEvent &e)
 {
-  static int fk = 24;
+  int fk = 24;
   vector<string> exts;
   string s = p->OpenFileLoader("Load Sample", 0x0, false);
   if (!s.empty())
@@ -57,8 +57,8 @@ void  ASSampleList::OnAddSample(wxCommandEvent &e)
     i++;
     ASamplerSample *ass = new ASamplerSample(as, w);
     List->AddEntry(wxString(s.substr(i, s.length() - i).c_str()), ass);
+    fk += 12 * as->keygroupid;
     ASamplerKeygroup *askg = new ASamplerKeygroup(as, fk, fk + 11);
-    fk += 12;
     as->Keygroups.push_back(askg);
     askg->SetSample(ass);
     ass->SetKeygroup(askg);
