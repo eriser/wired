@@ -1,8 +1,9 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License#include "HostCallback.h"
 
-#include "AudioEngine.h"
 #include <unistd.h>
+#include <sndfile.h>
+#include "AudioEngine.h"
 #include "MainWindow.h"
 #include "EngineError.h"
 

@@ -1,11 +1,19 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License
 
+#include <wx/string.h>
 #include "OptionPanel.h"
 #include "EditMidi.h"
 #include "WaveEditor.h"
 #include "Colour.h"
-#include <wx/string.h>
+#include "DownButton.h"
+#include "MixerGui.h"
+#include "HelpPanel.h"
+#include "AudioPattern.h"
+#include "MidiPattern.h"
+#include "../editmidi/MidiPart.h"
+#include "../redist/Plugin.h"
+#include "../engine/Settings.h"
 
 OptionPanel			*OptPanel;
 

@@ -6,8 +6,19 @@
 #include "Mixer.h"
 #include "AudioEngine.h"
 #include "akai.h"
+#include "Track.h"
+#include "../gui/SequencerGui.h"
+#include "../gui/SeqTrack.h"
+#include "../gui/SeqTrackPattern.h"
+#include "../gui/Pattern.h"
+#include "../gui/AudioPattern.h"
+#include "../gui/MidiPattern.h"
+#include "../mixer/Channel.h"
+#include "../midi/midi.h"
+#include "../audio/WaveFile.h"
+#include "../redist/Plugin.h"
 
-wxMutex SeqMutex;
+wxMutex					SeqMutex;
 
 Sequencer::Sequencer() 
   : wxThread(), BPM(96), SigNumerator(4), SigDenominator(4), Loop(false), 
@@ -247,9 +258,7 @@ void					*Sequencer::Entry()
 	      (*RacksTrack)->CurrentBuffer = 0x0;  
 	    } 
 	}
-      
-      //SeqMutex.Unlock();
-
+      SeqMutex.Unlock();
       delta = Audio->SamplesPerBuffer;
       /* Jouer fichier du FileLoader si besoin */
       if (PlayWave)
@@ -299,9 +308,7 @@ void					*Sequencer::Entry()
 	}
       else
 	Mix->MixOutput(true);
-      
-      SeqMutex.Unlock();
-      
+      //SeqMutex.Unlock();
       if (!Audio->StreamIsStarted)
 	wxUsleep(1);      
       /* Cleanage des channels et buffers extra */

@@ -1,9 +1,9 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License#include "HostCallback.h"
 
-#include "PluginLoader.h"
-
 #include <iostream>
+#include <dlfcn.h>
+#include "PluginLoader.h"
 
 PluginLoader::PluginLoader(string filename) : 
   FileName(filename)

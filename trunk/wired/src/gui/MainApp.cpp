@@ -1,31 +1,33 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License#include "HostCallback.h"
 
-#include "MainApp.h"
-#include <wx/splash.h>
 #include <wx/bitmap.h>
+#include <wx/event.h>
+#include <wx/timer.h>
+#include <wx/splash.h>
+#include "MainApp.h"
+#include "MainWindow.h"
+
 IMPLEMENT_APP(MainApp)
 
-MainWindow *MainWin;
+MainWindow			*MainWin;
 
-bool MainApp::OnInit()
+bool				MainApp::OnInit()
 {
-
+  wxBitmap			bitmap;
 #if wxUSE_LIBPNG
-  wxImage::AddHandler( new wxPNGHandler );
+  wxImage::AddHandler(new wxPNGHandler);
 #endif
- 
-  wxBitmap bitmap;
   if (bitmap.LoadFile("/usr/local/share/wired/data/ihm/splash/splash.png", wxBITMAP_TYPE_PNG))
     {
-      wxSplashScreen* splash = new wxSplashScreen(bitmap,
-						  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
-						  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
-						  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
+      wxSplashScreen*		splash = 
+	new wxSplashScreen(bitmap,
+			   wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
+			   6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
+			   wxSIMPLE_BORDER|wxSTAY_ON_TOP);
     }
-
 #if 0
-  const wxString name = wxString::Format("wired-%s", wxGetUserId().c_str());
+  const wxString		name = wxString::Format("wired-%s", wxGetUserId().c_str());
   Checker = new wxSingleInstanceChecker(name);
   if (Checker->IsAnotherRunning())
     {
@@ -33,18 +35,16 @@ bool MainApp::OnInit()
       return (false);
     }
 #endif
-
   SetUseBestVisual(true);
   Frame = new MainWindow(APP_TITLE, wxDefaultPosition,
 			 wxSize(APP_WIDTH, APP_HEIGHT));
   MainWin = Frame;
   Frame->Show(true);
   SetTopWindow(Frame);
-  
   return (true);
 }
 
-int MainApp::OnExit()
+int				MainApp::OnExit()
 {
 #if 0
   delete Checker;
@@ -52,7 +52,7 @@ int MainApp::OnExit()
   return (0);
 }
 
-int MainApp::FilterEvent(wxEvent& event)
+int				MainApp::FilterEvent(wxEvent& event)
 {
   if ((event.GetEventType() == wxEVT_KEY_DOWN))
     {

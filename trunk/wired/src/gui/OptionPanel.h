@@ -4,17 +4,11 @@
 #ifndef __OPTIONPANEL_H__
 #define __OPTIONPANEL_H__
 
+using namespace			std;
+
+#include <vector>
 #include <wx/wx.h>
 #include <wx/string.h>
-#include "WaveFile.h"
-#include "EditMidi.h"
-#include "MixerGui.h"
-#include "DownButton.h"
-#include "AudioPattern.h"
-#include "MidiPattern.h"
-#include "HelpPanel.h"
-#include "Plugin.h"
-#include "EditMidi.h"
 
 #define OPT_TOOLBAR_HEIGHT	(17)
 #define OPT_TOOLBAR_BORDER	(2)
@@ -43,9 +37,14 @@ enum
     ID_TOOL_DEL_OPTIONPANEL
   };
 
-class WiredTool;
+class				WiredTool;
+class				EditMidi;
+class				DownButton;
+class				AudioPattern;
+class				MidiPattern;
+class				Plugin;
 
-class WiredFrame: public wxFrame
+class				WiredFrame: public wxFrame
 {
  protected:
   WiredTool			*Tool;
@@ -64,8 +63,9 @@ class WiredFrame: public wxFrame
       Connect(GetId(), wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)(wxEventFunction)
 	      (wxCloseEventFunction) &WiredFrame::OnClose);
     }
-  EditMidi			*em;
   ~WiredFrame() {}
+
+  EditMidi			*em;
   DECLARE_EVENT_TABLE();
 };
 
@@ -77,17 +77,14 @@ class WiredTool
 
   void				Attach();
   void				Detach();
+  void				OnClose(wxCloseEvent &event);
 
   wxString			Name;
   int				Type;
   wxWindow			*Panel;
-
   bool				IsDetached;
   WiredFrame			*Frame;
-
   void				*Data;
-
-  void				OnClose(wxCloseEvent &event);
 };
 
 class OptionPanel : public wxPanel

@@ -29,7 +29,6 @@ class AudioPattern: public Pattern, public WaveDrawer
 
   Pattern				*CreateCopy(double pos);
   Channel				*InputChan;
-
   long					LastBlock;
   string				FileName;
 

@@ -1,19 +1,18 @@
 #ifndef __TRACK_H__
 #define __TRACK_H__
 
-#include "SeqTrack.h"
-#include "SeqTrackPattern.h"
-#include "WriteWaveFile.h"
-#include "WaveFile.h"
-#include "Pattern.h"
-#include "AudioPattern.h"
-#include "MidiPattern.h"
-#include "Channel.h"
-
 #define IS_MIDI_TRACK			0x0
 #define IS_AUDIO_TRACK		      	0x1
-
 #define MAX_AUTO_COLOURS		16		
+
+class WaveFile;
+class MidiTrack;
+class Pattern;
+class AudioPattern;
+class MidiPattern;
+class SeqTrack;
+class SeqTrackPattern;
+class Channel;
 
 class Track
 {

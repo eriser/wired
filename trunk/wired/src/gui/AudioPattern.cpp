@@ -12,6 +12,9 @@
 #include "WiredSession.h"
 #include "ColoredBox.h"
 #include "AudioPattern.h"
+#include "HelpPanel.h"
+#include "../sequencer/Track.h"
+#include "../gui/SeqTrack.h"
 
 static long		audio_pattern_count = 1;
 extern WiredSession	*CurrentSession;

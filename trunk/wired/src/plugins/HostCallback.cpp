@@ -1,6 +1,8 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License#include "HostCallback.h"
 
+#include <string>
+#include <iostream>
 #include "Rack.h"
 #include "Sequencer.h"
 #include "OptionPanel.h"
@@ -10,13 +12,12 @@
 #include "MainWindow.h"
 #include "MidiThread.h"
 #include "MidiController.h"
+#include "../redist/Plugin.h"
+#include "../gui/HelpCtrl.h"
 
-#include <string>
-#include <iostream>
+extern Rack				*RackPanel;
 
-extern Rack		*RackPanel;
-
-long HostCallback(Plugin *plug, long param, void *value)
+long					HostCallback(Plugin *plug, long param, void *value)
 {
   switch (param)
     {
@@ -162,6 +163,5 @@ long HostCallback(Plugin *plug, long param, void *value)
     default:
       return (-1);
     }
-
   return (1);
 }

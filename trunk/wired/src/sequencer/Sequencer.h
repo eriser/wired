@@ -1,17 +1,26 @@
 #ifndef __SEQUENCER_H__
 #define __SEQUENCER_H__
 
+using namespace				std;
+
 #include <vector>
 #include <list>
 #include <iostream>
+#include <string>
 #include <wx/thread.h>
 
-#include "midi.h"
-#include "Track.h"
-#include "Pattern.h"
-#include "AudioPattern.h"
-
-extern wxMutex SeqMutex;
+typedef struct s_SeqCreateEvent		SeqCreateEvent;
+typedef int				MidiType;
+class					Channel;
+class					Track;
+class					Plugin;
+class					Track;
+class					Pattern;
+class					AudioPattern;
+class					MidiPattern;
+class					MidiEvent;
+class					WaveFile;
+class					WriteWaveFile;
 
 class ChanBuf
 {
@@ -103,6 +112,7 @@ class Sequencer : public wxThread
   Channel				*PlayWaveChannel;
 };
 
+extern wxMutex				SeqMutex;
 extern Sequencer			*Seq;
 
 #endif

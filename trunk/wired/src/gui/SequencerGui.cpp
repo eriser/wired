@@ -15,8 +15,15 @@
 #include "HelpPanel.h"
 #include "SelectionZone.h"
 #include "MixerGui.h"
+#include "ChannelGui.h"
 #include "WaveFile.h"
 #include "WaveView.h"
+#include "Pattern.h"
+#include "AudioPattern.h"
+#include "MidiPattern.h"
+#include "SeqTrack.h"
+#include "SeqTrackPattern.h"
+#include "../midi/MidiDevice.h"
 
 SequencerGui				*SeqGui;
 
@@ -285,10 +292,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
   /* Sizers */
   zer_5 = new wxBoxSizer(wxVERTICAL);
-  if (wxCHECK_VERSION(2, 5, 3))
-    zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
-  else
-    zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND, 0);
+  zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
   zer_5->Add(SeqView, 1, wxALL | wxEXPAND, 0);
   zer_5->Add(HorizScrollBar, 0, wxALL | wxEXPAND, 0);
   zer_4 = new wxBoxSizer(wxVERTICAL);
@@ -445,6 +449,35 @@ void					SequencerGui::RedrawTrackLines()
     if ((*i)->TrackPattern)
       (*i)->TrackPattern->Update();
 }
+
+void					SequencerGui::RedrawEditedPatterns(WaveFile *w)
+{
+  vector<Track *>::iterator		t;
+  vector<Pattern *>::iterator		p;
+
+  for (t = Seq->Tracks.begin(); t != Seq->Tracks.end(); t++)
+    for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
+      if ((*t)->IsAudioTrack() && ((*p)->GetWave() == w))
+	(*p)->Update();
+}
+
+void					SequencerGui::RedrawEditedPatterns(vector<MidiEvent *> &e)
+{
+  vector<Track *>::iterator		t;
+  vector<Pattern *>::iterator	p;
+  
+  for (t = Seq->Tracks.begin(); t != Seq->Tracks.end(); t++)
+    for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
+      if (!((*t)->IsAudioTrack()) && ((*p)->GetEvents() == e))
+	(*p)->Update();
+}
+
+/*
+void					SequencerGui::RedrawEditedMidiPatterns()
+{
+  
+}
+*/
 
 void					SequencerGui::SetScrolling()
 {

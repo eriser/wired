@@ -4,10 +4,6 @@
 #include <wx/wx.h>
 #include <wx/splitter.h>
 #include <string>
-#include "Clavier.h"
-#include "MidiPart.h"
-#include "MidiAttr.h"
-#include "RulerMidi.h"
 #include <wx/toolbar.h>
 
 enum
@@ -26,14 +22,16 @@ enum
     ID_TOOL_DEL_EDITMIDI
   };
 
-#define	MIDIPART_WIDTH			500
-#define	SBS				20
-#define	SBPASH				10
-#define	SBPASV				10
+#define	MIDIPART_WIDTH			(500)
+#define	SBS				(20)
+#define	SBPASH				(10)
+#define	SBPASV				(10)
 
-using std::string;
+using					std::string;
 
-class EditMidi: public wxPanel
+class					MidiPattern;
+
+class					EditMidi: public wxPanel
 {
  public:
   EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, 

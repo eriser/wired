@@ -1,9 +1,16 @@
 #include <math.h>
 #include "MidiPart.h"
+#include "Clavier.h"
+#include "RulerMidi.h"
+#include "MidiAttr.h"
+#include "Note.h"
+#include "EditNote.h"
+#include "../gui/MidiPattern.h"
+#include "../midi/MidiFile.h"
 
 MidiPart::MidiPart(wxWindow *parent, wxWindowID id, const wxPoint& pos,
-		const wxSize& size, long style, EditMidi *editmidi):
-wxControl(parent, id, pos, size, style)
+		   const wxSize& size, long style, EditMidi *editmidi) :
+  wxControl(parent, id, pos, size, style)
 {
   em = editmidi;
   ZoomX = 1;

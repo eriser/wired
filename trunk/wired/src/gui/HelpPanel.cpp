@@ -1,15 +1,12 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License
 
-#include "HelpPanel.h"
 #include "Colour.h"
 #include "Settings.h"
+#include "HelpCtrl.h"
+#include "HelpPanel.h"
 
-HelpPanel *HelpWin;
-
-BEGIN_EVENT_TABLE(HelpPanel, wxPanel)
-  EVT_SIZE(HelpPanel::OnSize)
-END_EVENT_TABLE()
+HelpPanel			*HelpWin;
 
 HelpPanel::HelpPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size)
   : wxPanel(parent, -1, pos, size)
@@ -26,20 +23,16 @@ HelpPanel::~HelpPanel()
   
 }
 
-void HelpPanel::SetText(wxString &s)
+void				HelpPanel::SetText(wxString &s)
 {
   HelpWin->Help->Load_Text(s);
 }
 
-void HelpPanel::OnSize(wxSizeEvent &event)
+void				HelpPanel::OnSize(wxSizeEvent &event)
 {
   Help->SetSize(wxSize(GetSize().x + 4, GetSize().y));
 }
 
-
-
-
-
-
-
-
+BEGIN_EVENT_TABLE(HelpPanel, wxPanel)
+  EVT_SIZE(HelpPanel::OnSize)
+END_EVENT_TABLE()

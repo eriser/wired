@@ -2,30 +2,28 @@
 #include "Clavier.h"
 #include "Key.h"
 #include "Sequencer.h"
+#include "MidiPattern.h"
+#include "../redist/Plugin.h"
+#include "../sequencer/Track.h"
+#include "../gui/SeqTrack.h"
 
-BEGIN_EVENT_TABLE(Clavier, wxControl)
-	EVT_PAINT(Clavier::OnPaint)
-  EVT_LEFT_DOWN(Clavier::OnKeyDown)
-  EVT_LEFT_UP(Clavier::OnKeyUp)
-END_EVENT_TABLE()
-  
 Clavier::Clavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
 		 const wxSize& size, long style, EditMidi *editmidi)
   : wxControl(parent, id, pos, size, style)
 {
   em = editmidi;
   ZoomY = 1;
-  bool		inter_2 = true;
-  int		j = 0;
-  int		posY = static_cast<int>(ceil(BLACKKEY_HEIGHT * 2 * ZoomY));
-  int		posYW = static_cast<int>(ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2));
-  int		wkeyh = static_cast<int>(ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2));
-  wxString	gamme = "CDEFGAB";
-  int		oct = -2;
-  int		note = 0;
-  int		code = 0;
-  int		whprog[7] = {2, 2, 1, 2, 2, 2, 1};
-  int		blprog[5] = {2, 3, 2, 2, 3};
+  bool				inter_2 = true;
+  int				j = 0;
+  int				posY = static_cast<int>(ceil(BLACKKEY_HEIGHT * 2 * ZoomY));
+  int				posYW = static_cast<int>(ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2));
+  int				wkeyh = static_cast<int>(ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2));
+  wxString			gamme = "CDEFGAB";
+  int				oct = -2;
+  int				note = 0;
+  int				code = 0;
+  int				whprog[7] = {2, 2, 1, 2, 2, 2, 1};
+  int				blprog[5] = {2, 3, 2, 2, 3};
 
   // creation des touches blanches
   for (int i = NB_WHITEKEY; i > 0; i--)
@@ -119,15 +117,15 @@ code += blprog[(arf++) % 5];
     }
 }
 
-void	Clavier::RecalcKeyPos()
+void				Clavier::RecalcKeyPos()
 {
-  bool		inter_2 = true;
-  int		j = 0;
-  int		posY = (int) ceil(BLACKKEY_HEIGHT * 2 * ZoomY);
-  int		posYW = (int) ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2);
-  int		wkeyh = (int) ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2);
-  wxSize		size = GetSize();
-  int		curkey = 0;
+  bool				inter_2 = true;
+  int				j = 0;
+  int				posY = (int) ceil(BLACKKEY_HEIGHT * 2 * ZoomY);
+  int				posYW = (int) ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2);
+  int				wkeyh = (int) ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2);
+  wxSize			size = GetSize();
+  int				curkey = 0;
 
   // deplacement des touches blanches
   for (int i = NB_WHITEKEY; i > 0; i--)
@@ -197,7 +195,7 @@ void	Clavier::RecalcKeyPos()
     }
 }
 
-void	Clavier::SetZoomY(double pZoomY)
+void				Clavier::SetZoomY(double pZoomY)
 {
   /*
     ZoomY = pZoomY;
@@ -207,13 +205,13 @@ void	Clavier::SetZoomY(double pZoomY)
   */
 }
 
-void	Clavier::OnPaint(wxPaintEvent &event)
+void				Clavier::OnPaint(wxPaintEvent &event)
 {
-  wxPaintDC	dc(this);
-  wxSize s = GetSize();
-  int j = -2;
-  int posY = (int) ceil(ZoomY * BLACKKEY_HEIGHT * 3 / 2);
-  wxFont f = dc.GetFont();
+  wxPaintDC			dc(this);
+  wxSize			s = GetSize();
+  int				j = -2;
+  int				posY = (int) ceil(ZoomY * BLACKKEY_HEIGHT * 3 / 2);
+  wxFont			f = dc.GetFont();
 
   // dessine le texte
   f.SetPointSize(6);
@@ -229,9 +227,9 @@ void	Clavier::OnPaint(wxPaintEvent &event)
     } 
 }
 
-void	Clavier::OnKeyDown(wxMouseEvent &event)
+void				Clavier::OnKeyDown(wxMouseEvent &event)
 {
-  Key *k = (Key *)event.GetEventObject();
+  Key				*k = (Key *)event.GetEventObject();
 
   WiredEvent	midievent;
   midievent.Type = WIRED_MIDI_EVENT;
@@ -240,23 +238,27 @@ void	Clavier::OnKeyDown(wxMouseEvent &event)
   midievent.MidiData[0] = 0x90;
   midievent.MidiData[1] = k->code;
   midievent.MidiData[2] = 100;
-        
   if (Seq->Tracks[em->midi_pattern->GetTrackIndex()]->TrackOpt->Connected)
     Seq->Tracks[em->midi_pattern->GetTrackIndex()]->TrackOpt->Connected->ProcessEvent(midievent);
 }
 
-void	Clavier::OnKeyUp(wxMouseEvent &event)
+void				Clavier::OnKeyUp(wxMouseEvent &event)
 {
-  Key *k = (Key *)event.GetEventObject();
+  Key				*k = (Key *)event.GetEventObject();
+  WiredEvent			midievent;
 
-  WiredEvent	midievent;
   midievent.Type = WIRED_MIDI_EVENT;
   midievent.NoteLength = 0;
   midievent.DeltaFrames = 0;
   midievent.MidiData[0] = 0x90;
   midievent.MidiData[1] = k->code;
   midievent.MidiData[2] = 0;
-        
   if (Seq->Tracks[em->midi_pattern->GetTrackIndex()]->TrackOpt->Connected)
     Seq->Tracks[em->midi_pattern->GetTrackIndex()]->TrackOpt->Connected->ProcessEvent(midievent);
 }
+
+BEGIN_EVENT_TABLE(Clavier, wxControl)
+  EVT_PAINT(Clavier::OnPaint)
+  EVT_LEFT_DOWN(Clavier::OnKeyDown)
+  EVT_LEFT_UP(Clavier::OnKeyUp)
+END_EVENT_TABLE()

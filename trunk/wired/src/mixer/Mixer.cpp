@@ -1,12 +1,13 @@
+#include <math.h>
+#include <wx/thread.h>
 #include "Mixer.h"
 #include "MixerGui.h"
-#include <math.h>
 #include "MixerError.h"
+#include "../mixer/Channel.h"
+#include "../engine/AudioEngine.h"
 
-extern Mixer *Mix;
-
-wxMutex MixMutex;
-
+extern Mixer			*Mix;
+wxMutex				MixMutex;
 
 Mixer::Mixer() : VolumeLeft(1), VolumeRight(1), Volume(1), 
 		 MuteL(false), MuteR(false)
@@ -43,7 +44,7 @@ Mixer::~Mixer()
   delete Input;
 }
 
-Channel *Mixer::AddMonoOutputChannel()
+Channel				*Mixer::AddMonoOutputChannel()
 {
   Channel *chan;
   
@@ -59,9 +60,9 @@ Channel *Mixer::AddMonoOutputChannel()
   return chan;
 }
 
-Channel *Mixer::AddMonoInputChannel()
+Channel				*Mixer::AddMonoInputChannel()
 { 
-  Channel *chan;
+  Channel			*chan;
   
   try
     {
@@ -74,9 +75,9 @@ Channel *Mixer::AddMonoInputChannel()
     }
   return chan;
 }
-Channel *Mixer::AddStereoOutputChannel()
+Channel				*Mixer::AddStereoOutputChannel()
 {
-  Channel *chan;
+  Channel			*chan;
   try
     {
       chan = new Channel(true);
@@ -89,9 +90,9 @@ Channel *Mixer::AddStereoOutputChannel()
   return chan;
 }
 
-Channel *Mixer::AddStereoInputChannel()
+Channel				*Mixer::AddStereoInputChannel()
 { 
-  Channel *chan;
+  Channel			*chan;
 
   try
     {
@@ -105,7 +106,7 @@ Channel *Mixer::AddStereoInputChannel()
   return chan;
 }
 
-Channel *Mixer::AddMonoOutputChannel(bool visible)
+Channel				*Mixer::AddMonoOutputChannel(bool visible)
 {
   Channel *chan;
 
@@ -122,7 +123,7 @@ Channel *Mixer::AddMonoOutputChannel(bool visible)
   return chan;
 }
 
-Channel *Mixer::AddStereoOutputChannel(bool visible)
+Channel				*Mixer::AddStereoOutputChannel(bool visible)
 {
   Channel *chan;
   
@@ -140,7 +141,7 @@ Channel *Mixer::AddStereoOutputChannel(bool visible)
   return chan;
 }
 
-bool Mixer::RemoveChannel(Channel *chan)
+bool				Mixer::RemoveChannel(Channel *chan)
 {
   for (list<Channel*>::iterator c = InChannels.begin(); 
        c != InChannels.end(); c++)
@@ -163,15 +164,13 @@ bool Mixer::RemoveChannel(Channel *chan)
   return false;
 }
 
-bool Mixer::InitOutputBuffers(void)
+bool				Mixer::InitOutputBuffers(void)
 {
   if (OutputLeft)
     delete OutputLeft;
   if (OutputRight)
     delete OutputRight;
-  
   OutputLeft = OutputRight = 0x0;
-  
   try
     {
       OutputLeft = new float[Audio->SamplesPerBuffer];
@@ -191,7 +190,6 @@ bool Mixer::InitOutputBuffers(void)
       cout << "[MIXER] insufficient memory"<< endl;
       return false;
     }
-  
   for (list<Channel*>::iterator c = OutChannels.begin(); 
        c != OutChannels.end(); c++)
     (*c)->ClearAllBuffers();
@@ -201,22 +199,19 @@ bool Mixer::InitOutputBuffers(void)
   return true;
 }
 
-void Mixer::MixOutput(bool soundcard)
+void				Mixer::MixOutput(bool soundcard)
 {
-  struct timespec t;
+  struct timespec		t;
+  float				Lrms = 0.f;
+  float				Rrms = 0.f;
+  unsigned int			i;
+
   t.tv_sec = 0;
   t.tv_nsec = 100;       
-  float Lrms = 0.f;
-  float Rrms = 0.f;
-  
   memset(OutputLeft, 0, Audio->SamplesPerBuffer * sizeof(float));
   memset(OutputRight, 0, Audio->SamplesPerBuffer * sizeof(float));
   
-  
-  unsigned int i;
-  
   //MixMutex.Lock();
-  
   for (list<Channel*>::iterator c = OutChannels.begin(); 
        c != OutChannels.end(); c++)
     {
@@ -268,10 +263,9 @@ void Mixer::MixOutput(bool soundcard)
 	}
     }
   
-  
   // additional stuff
-  float lvol;
-  float rvol;
+  float				lvol;
+  float				rvol;
   
   MixMutex.Lock(); // used by MixerGui for MasterChannelGui
   if (MuteL == true)
@@ -288,7 +282,6 @@ void Mixer::MixOutput(bool soundcard)
     {
       OutputLeft[i]  *= lvol;
       OutputRight[i] *= rvol;
-      
       // CLIPPING OUTPUT
       if (OutputLeft[i] > 1.f)
 	OutputLeft[i] = 1.f;
@@ -298,23 +291,20 @@ void Mixer::MixOutput(bool soundcard)
 	OutputRight[i] = 1.f;
       else if (OutputRight[i] < -1.f)
 	OutputRight[i] = -1.f;
-      
       // Calcul du RMS
       Lrms += fabs(OutputLeft[i]);
       Rrms += fabs(OutputRight[i]);
     }
   Lrms /=  Audio->SamplesPerBuffer;
   Rrms /=  Audio->SamplesPerBuffer;
-  
   MixMutex.Lock();
   MixerPanel->MasterLeft = Lrms; // used by MixerGui
   MixerPanel->MasterRight = Rrms;
   MixMutex.Unlock();
-    
   if (soundcard)
     {
-      long bytes_written;
-      float *tmp;
+      long			bytes_written;
+      float			*tmp;
       i = 0;
       for (vector<RingBuffer<float>*>::iterator chan = 
 	     Audio->UserData->OutFIFOVector.begin(); 
@@ -323,7 +313,6 @@ void Mixer::MixOutput(bool soundcard)
 	  bytes_written = 0;
 	  /* Left/Right fourberie */
 	  tmp = ((i % 2) ?  OutputRight : OutputLeft);
-	  
 	  /* Blocking write */
 	  //cout << "[MIXER] blocking write BEGIN" << endl;
 	  for (long spb = Audio->SamplesPerBuffer; spb > 0; 
@@ -341,13 +330,13 @@ void Mixer::MixOutput(bool soundcard)
      RemoveFirstBuffer()
      function already Lock MixMutex because of rms value reset 
   */
-  long spb = 0;
+  long				spb = 0;
   for (list<Channel*>::iterator ch = OutChannels.begin(); 
        ch != OutChannels.end(); ch++)
     (*ch)->RemoveFirstBuffer();
 }
 
-Channel *Mixer::OpenInput(long num)
+Channel				*Mixer::OpenInput(long num)
 {
   bool exist = false;
   for (vector<long>::iterator i = WiredSettings->InputChannels.begin(); 
@@ -368,10 +357,11 @@ Channel *Mixer::OpenInput(long num)
   return c;
 }
 
-void Mixer::FlushInput(long num)
+void				Mixer::FlushInput(long num)
 {
-  long bytes = 0;
-  vector<long>::iterator chan = WiredSettings->InputChannels.begin();
+  long				bytes = 0;
+  vector<long>::iterator	chan = WiredSettings->InputChannels.begin();
+
   for (vector<RingBuffer<float>*>::iterator c = 
 	 Audio->UserData->InFIFOVector.begin();
        c != Audio->UserData->InFIFOVector.end(); c++, chan++)
@@ -387,11 +377,12 @@ void Mixer::FlushInput(long num)
     }
 }
 
-void Mixer::MixInput(void)
+void				Mixer::MixInput(void)
 {
-  long bytes = 0;
-  vector<long>::iterator chan = WiredSettings->InputChannels.begin();
-  int cpt = 0;
+  long				bytes = 0;
+  vector<long>::iterator	chan = WiredSettings->InputChannels.begin();
+  int				cpt = 0;
+
   for (vector<RingBuffer<float>*>::iterator c = 
 	 Audio->UserData->InFIFOVector.begin();
        c != Audio->UserData->InFIFOVector.end(); c++, chan++)
@@ -406,7 +397,6 @@ void Mixer::MixInput(void)
 	  bytes = (*c)->Read(Input[i], Audio->SamplesPerBuffer);
 	  if ( bytes != Audio->SamplesPerBuffer )
 	    break;
-	  
 	  for (list<Channel*>::iterator mix_chan = InChannels.begin();
 	       mix_chan != InChannels.end(); mix_chan++)
 	    {

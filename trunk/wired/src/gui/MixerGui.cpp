@@ -2,10 +2,15 @@
 // Under the GNU General Public License
 
 #include <math.h>
-#include "MixerGui.h"
+#include "VUMCtrl.h"
 #include "Colour.h"
+#include "MixerGui.h"
+#include "ChannelGui.h"
+#include "../mixer/Channel.h"
+#include "../mixer/Mixer.h"
+#include "../engine/Settings.h"
 
-MixerGui *MixerPanel;
+MixerGui				*MixerPanel;
 
 BEGIN_EVENT_TABLE(MixerGui, wxScrolledWindow)
 END_EVENT_TABLE()
@@ -14,11 +19,8 @@ MixerGui::MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size)
   : wxScrolledWindow(parent, -1, pos, size, wxNO_BORDER)//SUNKEN_BORDER)
 {
   SetScrollRate(10, 0);
-  
   SetVirtualSize(300, 131);
-  
   SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);
-
   ImgFaderBg = new wxImage(string(WiredSettings->DataDir + string(FADERBG)).c_str(), wxBITMAP_TYPE_PNG );
   ImgFaderFg = new wxImage(string(WiredSettings->DataDir + string(FADERFG)).c_str(), wxBITMAP_TYPE_PNG );
   ImgLockUp = new wxImage(string(WiredSettings->DataDir + string(MIXERLOCKUP)).c_str(), wxBITMAP_TYPE_PNG );
@@ -28,10 +30,8 @@ MixerGui::MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size)
   /*
     Adding Master Channel directly
    */
-  
   Channel *c = new Channel(true);
   AddMasterChannel(c);
-  
   // evenement refresh master volume
   Connect(ID_MIXER_REFRESH, TYPE_MIXER_REFRESH, (wxObjectEventFunction)&MixerGui::OnMasterChange);
 }

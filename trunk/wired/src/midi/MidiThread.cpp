@@ -2,11 +2,11 @@
 #include "Sequencer.h"
 #include "Settings.h"
 #include "MidiController.h"
+#include "MidiInDevice.h"
 
-wxMutex MidiMutex;
-wxMutex MidiDeviceMutex;
-
-MidiThread *MidiEngine;
+wxMutex					MidiMutex;
+wxMutex					MidiDeviceMutex;
+MidiThread				*MidiEngine;
 
 MidiThread::MidiThread()
 {
@@ -15,7 +15,7 @@ MidiThread::MidiThread()
 
 MidiThread::~MidiThread()
 {
-  vector<MidiInDevice *>:: iterator i;
+  vector<MidiInDevice *>:: iterator	i;
 
   for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
     delete *i;
@@ -26,10 +26,10 @@ void MidiThread::OnExit()
 
 }
 
-void MidiThread::OpenDevice(int id)
+void					MidiThread::OpenDevice(int id)
 {
   MidiInDevice *dev;
-  vector<MidiInDevice *>:: iterator i;
+  vector<MidiInDevice *>:: iterator	i;
 
   MidiMutex.Lock();
   dev = 0x0;
@@ -51,14 +51,14 @@ void MidiThread::OpenDevice(int id)
   MidiMutex.Unlock();
 }
 
-void MidiThread::OpenDefaultDevices()
+void					MidiThread::OpenDefaultDevices()
 {
-  MidiDeviceList::iterator i;
-  vector<long>:: iterator j;
-  long k;
-
-    for (j = WiredSettings->MidiIn.begin(); j != WiredSettings->MidiIn.end(); j++)
-      for (k = 0, i = DeviceList.begin(); i != DeviceList.end(); i++, k++)
+  MidiDeviceList::iterator		i;
+  vector<long>:: iterator		j;
+  long					k;
+  
+  for (j = WiredSettings->MidiIn.begin(); j != WiredSettings->MidiIn.end(); j++)
+    for (k = 0, i = DeviceList.begin(); i != DeviceList.end(); i++, k++)
 	if (k == *j)
 	  {
 	    OpenDevice((*i)->Id);       
@@ -66,9 +66,9 @@ void MidiThread::OpenDefaultDevices()
 	  }
 }
 
-void MidiThread::CloseDevice(int id)
+void					MidiThread::CloseDevice(int id)
 {
-  vector<MidiInDevice *>:: iterator i;
+  vector<MidiInDevice *>:: iterator	i;
 
   MidiMutex.Lock();
   for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
@@ -80,9 +80,9 @@ void MidiThread::CloseDevice(int id)
   MidiMutex.Unlock();
 }
 
-void MidiThread::RemoveDevice(int id)
+void					MidiThread::RemoveDevice(int id)
 {
-  vector<MidiInDevice *>:: iterator i;
+  vector<MidiInDevice *>:: iterator	i;
 
   for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
     if ((*i)->id == id)
@@ -93,11 +93,11 @@ void MidiThread::RemoveDevice(int id)
       }
 }
 
-MidiDeviceList *MidiThread::ListDevices()
+MidiDeviceList				*MidiThread::ListDevices()
 {
-  MidiDeviceInfo *d;
-  const PmDeviceInfo *pdi;
-  int numdev = Pm_CountDevices();
+  const PmDeviceInfo			*pdi;
+  MidiDeviceInfo			*d;
+  int					numdev = Pm_CountDevices();
   
   for (unsigned int i = 0; i < numdev; i++)
     {
@@ -111,15 +111,14 @@ MidiDeviceList *MidiThread::ListDevices()
   return (&DeviceList);
 }
 
-void *MidiThread::Entry()
+void					*MidiThread::Entry()
 {
-  vector<MidiInDevice *>:: iterator i;
+  vector<MidiInDevice *>:: iterator	i;
 
   cout << "[MIDITHREAD] Thread started !" << endl;    
   while (1)
     {
       MidiDeviceMutex.Lock();
-
       for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
 	{
 	  if ((*i)->Poll())
@@ -129,13 +128,12 @@ void *MidiThread::Entry()
 	    }
 	}
       MidiDeviceMutex.Unlock();
-
       wxUsleep(1);
     }
   return (0x0);
 }
 
-void MidiThread::AnalyzeMidi(int id)
+void					MidiThread::AnalyzeMidi(int id)
 {
   if ((midi_msg[0] == M_START) || (midi_msg[0] == M_CONT))
     {
@@ -158,13 +156,10 @@ void MidiThread::AnalyzeMidi(int id)
       //ParamWin->ProcessMidi(CHANNEL(midi_msg[0]), midi_msg[1], midi_msg[2]);
       // cout << "Controller number " << midi_msg[1] << " has value " << midi_msg[2] << endl;
     }
-
   MidiMutex.Lock();
-
   if (Controller)
     Controller->ProcessMidi(midi_msg);
   else
     Seq->AddMidiEvent(id, midi_msg);
-
   MidiMutex.Unlock();
 }

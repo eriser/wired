@@ -4,24 +4,25 @@
 #ifndef __MAINAPP_H__
 #define __MAINAPP_H__
 
-#include "MainWindow.h"
+#include <wx/app.h>
 #include <wx/snglinst.h>
 
-#define APP_TITLE	"Wired 0.11"
-#define APP_WIDTH	800
-#define APP_HEIGHT	600
+#define APP_TITLE		"Wired 0.11"
+#define APP_WIDTH		(800)
+#define APP_HEIGHT		(600)
+
+class MainWindow;
 
 class MainApp : public wxApp
 {
  public:
-  virtual bool OnInit();
-  virtual int  OnExit();
-  int	       FilterEvent(wxEvent& event);
+  virtual bool			OnInit();
+  virtual int			OnExit();
+  int				FilterEvent(wxEvent& event);
 
  private:
-  MainWindow    *Frame;
-  wxSingleInstanceChecker *Checker;
-
+  MainWindow			*Frame;
+  wxSingleInstanceChecker	*Checker;
 };
 
-#endif
+#endif/*__MAINAPP_H__*/

@@ -9,6 +9,10 @@
 #include "OptionPanel.h"
 #include "ColoredBox.h"
 #include "MidiPattern.h"
+#include "HelpPanel.h"
+#include "../midi/midi.h"
+#include "../midi/MidiFile.h"
+#include "../sequencer/Track.h"
 
 BEGIN_EVENT_TABLE(MidiPattern, wxWindow)
   EVT_PAINT(MidiPattern::OnPaint)

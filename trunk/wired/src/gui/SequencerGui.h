@@ -106,15 +106,17 @@ enum
     ID_SEQ_COLORBOX
   };
 
-class Ruler;
-class Cursor;
-class SelectionZone;
-class ColoredBox;
-class Track;
-class Plugin;
-class Pattern;
+class				Ruler;
+class				Cursor;
+class				SelectionZone;
+class				ColoredBox;
+class				Track;
+class				Plugin;
+class				Pattern;
+class				WaveFile;
+class				MidiEvent;
 
-class SequencerView: public wxScrolledWindow
+class				SequencerView: public wxScrolledWindow
 {
   friend class			SequencerGui;
 
@@ -181,6 +183,8 @@ class SequencerGui: public wxPanel
   void				ReSizeCursors();
   void				RedrawCursors();
   void				RedrawTrackLines();
+  void				RedrawEditedPatterns(WaveFile *);
+  void				RedrawEditedPatterns(vector<MidiEvent *> &events);
   void				SetCurrentPos(double pos);
   void				SetBeginLoopPos(double pos);
   void				SetEndLoopPos(double pos);
@@ -225,17 +229,13 @@ class SequencerGui: public wxPanel
   void				OnColorButtonClick(wxCommandEvent &event);
   void				OnColoredBoxClick(wxCommandEvent &event);
   
-  bool				DoCut;
-  
   float				HoriZoomFactor;
   float				VertZoomFactor;
-  
   double			CurrentPos;
-
+  int				Tool;
+  bool				DoCut;
   SequencerView			*SeqView;
   wxMenu			*PopMenu;
-
-  int				Tool;
 
  protected:
   friend class			Pattern;

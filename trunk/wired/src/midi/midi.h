@@ -1,11 +1,7 @@
 #ifndef __MIDI_H__
 #define __MIDI_H__
 
-#include "MidiFile.h"
-#include "portmidi.h"
-#include "porttime.h"
-
-class MidiEvent
+class				MidiEvent
 {
  public:
   MidiEvent(int id, double pos, int msg[3]) 
@@ -19,26 +15,23 @@ class MidiEvent
     }  	   
   ~MidiEvent() {}
 
-  int		Id;		// Id du controlleur MIDI
+  int				Id;		// Id du controlleur MIDI
   // Les positions sont relatives a celles du MidiPattern
-  double	Position;	// position dans la mesure de l'evenement
-  double	EndPosition;	// Longueur de la note
-  int		Msg[3];		// data midi
+  double			Position;	// position dans la mesure de l'evenement
+  double			EndPosition;	// Longueur de la note
+  int				Msg[3];		// data midi
 };
 
-#define  MIDI_IN_BUFSIZE 96
+#define MIDI_IN_BUFSIZE		(96)
+#define	STATUS(x)		(x & 0xF0)
+#define CHANNEL(x)		(x & 0x0F)
+#define M_START			(0xFA)
+#define M_CONT			(0xFB)
+#define M_STOP			(0xFC)
+#define M_NOTEON1		(0x80)
+#define M_NOTEON2		(0x90)
+#define M_CONTROL		(0xB0)
 
-#define STATUS(x)  (x & 0xF0)
-#define CHANNEL(x) (x & 0x0F)
-
-#define M_START   0xFA
-#define M_CONT    0xFB
-#define M_STOP    0xFC 
-
-#define M_NOTEON1 0x80 
-#define M_NOTEON2 0x90 
-#define M_CONTROL 0xB0
-
-typedef int MidiType;
+typedef int			MidiType;
 
 #endif

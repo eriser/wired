@@ -1,17 +1,25 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License#include "HostCallback.h"
 
-#include "WiredSession.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <iostream>
+#include "WiredSession.h"
 #include "Sequencer.h"
 #include "SequencerGui.h"
 #include "Transport.h"
 #include "Rack.h"
 #include "AudioCenter.h"
+#include "../plugins/PluginLoader.h"
+#include "../sequencer/Track.h"
+#include "../gui/SeqTrack.h"
+#include "../gui/SeqTrackPattern.h"
+#include "../gui/Pattern.h"
+#include "../gui/AudioPattern.h"
+#include "../gui/MidiPattern.h"
+#include "../midi/midi.h"
 
 extern vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo		StartInfo;
