@@ -164,6 +164,7 @@ class WiredBeatBox : public Plugin
   void			RefreshPosLeds(double pos);
   void			UpdateNotesPositions(unsigned int bank,
 					     unsigned int track);
+  void			SetNoteAttr(BeatNoteToPlay* note, BeatBoxChannel* c);
   void			GetNotesFromChannel(BeatBoxChannel* channel,
 					    double bar_pos,
 					    double bar_end,
