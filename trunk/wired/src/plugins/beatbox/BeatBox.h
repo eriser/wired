@@ -144,6 +144,7 @@ class WiredBeatBox : public Plugin
   // View interface
     
   int		GetSig(void);
+  int		GetSteps(void);
   
   void		SetHelpMode(bool on) { HelpMode = true; }
   bool		HelpMode;

@@ -1678,11 +1678,16 @@ void WiredBeatBox::OnViewAction(wxCommandEvent& event)
   cout << "VIEW ACTION" << endl;
 }
 
+int WiredBeatBox::GetSteps(void)
+{
+  return Steps[EditedBank][EditedPattern];
+}
+
 int WiredBeatBox::GetSig()
 {
   int s;
   PatternMutex.Lock();
-  s = GetSigNumerator();
+  //  s = 
   PatternMutex.Unlock();
   return s;
 }
