@@ -13,9 +13,11 @@
 
 #define 			SCROLLH_THUMB_WIDTH	(80)
 #define 			SCROLLV_THUMB_WIDTH	(80)
-#define 			SCROLLH			(20)
-#define 			SCROLLV			(20)
+#define 			SCROLLH				(20)
+#define 			SCROLLV				(20)
 #define 			WAVE_TOOLBAR_HEIGHT	(32)
+#define				NB_CHOICE			(5)
+
 enum
 {
     ID_HSCROLL,
@@ -31,7 +33,7 @@ enum
 };
 
 
-#define NB_CHOICE				(5)
+
 
 typedef struct					s_choice
 {
@@ -60,8 +62,6 @@ class WavePanel : public wxPanel
   void				OnUndo(wxCommandEvent &event);
   void				OnRedo(wxCommandEvent &event);
   void				OnDetach(wxFrame *f);
-  //void				OnPaint(wxPaintEvent &event);
-  
   
 
   wxComboBox 		*combobox;

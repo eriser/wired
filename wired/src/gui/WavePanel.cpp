@@ -8,6 +8,7 @@
 
 #include 	<math.h>
 #include 	<iostream>
+#include	<wx/textdlg.h>
 
 using namespace std;
 
@@ -20,6 +21,8 @@ const struct s_choice		Choice[NB_CHOICE + 1] =
   { "1/75"	,	4	},
   { "1/100"	,	5	}
 };
+
+
 
 WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, 
 					  long style) 
@@ -63,6 +66,8 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
 			    wxPoint(-1, -1), wxSize(68, -1), 5, combochoice, wxCB_DROPDOWN);
   
   Toolbar->AddControl(combobox);
+  Toolbar->AddSeparator();
+  
   Toolbar->Realize();
   
   row = new wxBoxSizer(wxVERTICAL);
@@ -84,16 +89,6 @@ WavePanel::~WavePanel()
   cout << "WavePanel::~WavePanel" << endl;
 
 }
-
-
-//void 					WavePanel::OnPaint(wxPaintEvent &event)
-//{
-//  wxSize 	s = GetSize();
-//  wxPaintDC dc(this);
-//  wxRegionIterator region(GetUpdateRegion());
-//  
-//  w->Paint(dc, event, s, region);
-//}
 
 
 void 					WavePanel::AdjustScrollbar()
@@ -161,9 +156,8 @@ void					WavePanel::OnDetach(wxFrame *f)
 }
 
 
+
 BEGIN_EVENT_TABLE(WavePanel, wxPanel)
-  //EVT_SIZE(WavePanel::OnSize)
-  //EVT_PAINT(WavePanel::OnPaint)
   EVT_COMMAND_SCROLL(ID_HSCROLL, WavePanel::OnScroll)
   EVT_TOOL(ID_TOOL_COPY_WAVE, WavePanel::OnCopy)
   EVT_TOOL(ID_TOOL_PASTE_WAVE, WavePanel::OnPaste)
