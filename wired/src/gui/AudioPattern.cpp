@@ -15,9 +15,12 @@
 #include "HelpPanel.h"
 #include "../sequencer/Track.h"
 #include "../gui/SeqTrack.h"
+#include "../engine/AudioEngine.h"
+#include "../audio/WriteWaveFile.h"
+#include "../mixer/Channel.h"
 
-static long		audio_pattern_count = 1;
-extern WiredSession	*CurrentSession;
+static long				audio_pattern_count = 1;
+extern WiredSession			*CurrentSession;
 
 AudioPattern::AudioPattern(double pos, double endpos, long trackindex)
   : Pattern(pos, endpos, trackindex),
@@ -53,9 +56,9 @@ AudioPattern::~AudioPattern()
   
 }
 
-void				AudioPattern::Init()
+void					AudioPattern::Init()
 {
-  wxString			s;
+  wxString				s;
 
   Pattern::PenColor = CL_PATTERN_NORM;
   s.Printf("T%d A%d", TrackIndex + 1, audio_pattern_count++);
@@ -66,6 +69,8 @@ void				AudioPattern::Init()
 	  &AudioPattern::OnMotion);
   Connect(GetId(), wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &AudioPattern::OnClick);
+  Connect(GetId(), wxEVT_LEFT_UP, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
+	  &AudioPattern::OnLeftUp);
   Connect(GetId(), wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &AudioPattern::OnRightClick);
   Connect(GetId(), wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
@@ -79,7 +84,7 @@ void				AudioPattern::Init()
   SeqPanel->PutCursorsOnTop();
 }
 
-void				AudioPattern::OnHelp(wxMouseEvent &event)
+void					AudioPattern::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
@@ -88,7 +93,7 @@ void				AudioPattern::OnHelp(wxMouseEvent &event)
     }
 }
 
-void				AudioPattern::Update()
+void					AudioPattern::Update()
 {
 #ifdef __DEBUG__
   printf(" [ START ] AudioPattern::Update()\n");
@@ -102,14 +107,14 @@ void				AudioPattern::Update()
 #endif
 }
 
-void				AudioPattern::OnBpmChange()
+void					AudioPattern::OnBpmChange()
 {
   Length = Seq->MeasurePerSample * Wave->GetNumberOfFrames();
   EndPosition = Position + Length;
   Update();
 }
 
-void				AudioPattern::SetWave(WaveFile *w)
+void					AudioPattern::SetWave(WaveFile *w)
 {
 #ifdef __DEBUG__
   cout << "WaveDrawer::StartWavePos = " << WaveDrawer::StartWavePos<< " WaveDrawer::EndWavePos = " << WaveDrawer::EndWavePos << endl;
@@ -117,7 +122,7 @@ void				AudioPattern::SetWave(WaveFile *w)
   WaveDrawer::SetWave(w, GetSize(), StartWavePos, EndWavePos);
 }
 
-void				AudioPattern::SetDrawing()
+void					AudioPattern::SetDrawing()
 {
   WaveDrawer::SetPenColor(Pattern::PenColor);
   WaveDrawer::SetBrushColor(Pattern::BrushColor);
@@ -125,11 +130,11 @@ void				AudioPattern::SetDrawing()
   Refresh();
 }
 
-float				**AudioPattern::GetBlock(long block)
+float					**AudioPattern::GetBlock(long block)
 {
-  float				**buf;
-  long				size;
-  long				pos;
+  float					**buf;
+  long					size;
+  long					pos;
 
   if (!Wave)
     return (0x0);
@@ -149,7 +154,7 @@ float				**AudioPattern::GetBlock(long block)
     return (0x0);
 }
 
-void				AudioPattern::SetSelected(bool sel)
+void					AudioPattern::SetSelected(bool sel)
 {
   Pattern::SetSelected(sel);
   if (sel)
@@ -161,11 +166,11 @@ void				AudioPattern::SetSelected(bool sel)
   Refresh();
 }
 
-bool				AudioPattern::PrepareRecord(int type)
+bool					AudioPattern::PrepareRecord(int type)
 {
-  wxString			s;
-  bool				done = false;
-  int				i = 1;
+  wxString				s;
+  bool					done = false;
+  int					i = 1;
 
   cout << "Preparing record for pattern " << this 
        << " with audio dir : " << CurrentSession->AudioDir << endl;
@@ -200,11 +205,11 @@ bool				AudioPattern::PrepareRecord(int type)
   return (false);
 }
 
-void				AudioPattern::StopRecord()
+void					AudioPattern::StopRecord()
 {
-  string			s = RecordWave->Filename;
-  WaveFile			*w;
-  WriteWaveFile			*recw;
+  string				s = RecordWave->Filename;
+  WaveFile				*w;
+  WriteWaveFile				*recw;
 
   SeqMutex.Lock();
   Mix->RemoveChannel(InputChan);
@@ -225,9 +230,9 @@ void				AudioPattern::StopRecord()
   SeqMutex.Unlock();
 }
 
-void				AudioPattern::GetRecordBuffer()
+void					AudioPattern::GetRecordBuffer()
 {
-  float				*f;
+  float					*f;
 
   if (InputChan)
     {
@@ -248,9 +253,9 @@ void				AudioPattern::GetRecordBuffer()
     }
 }
 
-Pattern				*AudioPattern::CreateCopy(double pos)
+Pattern					*AudioPattern::CreateCopy(double pos)
 {
-  Pattern			*p;
+  Pattern				*p;
 
 #ifdef __DEBUG__
   printf(" [ START ] AudioPattern::CreateCopy(%f) on track %d\n", pos, TrackIndex);
@@ -266,10 +271,10 @@ Pattern				*AudioPattern::CreateCopy(double pos)
   return (p);
 }
 
-void				AudioPattern::OnClick(wxMouseEvent &e)
+void					AudioPattern::OnClick(wxMouseEvent &e)
 {
-  AudioPattern			*p;
-  double			d;
+  AudioPattern				*p;
+  double				d;
 
   Pattern::OnClick(e);
 #ifdef __DEBUG__
@@ -306,6 +311,11 @@ void				AudioPattern::OnClick(wxMouseEvent &e)
   else
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
       SetDrawColour(SeqPanel->ColorBox->GetColor());
+}
+
+void					AudioPattern::OnLeftUp(wxMouseEvent &e)
+{
+  Pattern::OnLeftUp(e);
 }
 
 void					AudioPattern::SetDrawColour(wxColour c)
@@ -365,12 +375,3 @@ void					AudioPattern::SetSize(wxSize s)
     }
   //  printf(" [  END  ] AudioPattern::SetSize(wxSize s) >> [ %d ] [ %d ]\n", s.x, s.y);
 }
-
-
-/*
-BEGIN_EVENT_TABLE(AudioPattern, wxWindow)
-  EVT_LEFT_DOWN(AudioPattern::OnClick)
-  EVT_RIGHT_DOWN(AudioPattern::OnRightClick)
-  EVT_MENU(Audio_Delete, AudioPattern::OnDeleteClick)
-END_EVENT_TABLE()
-*/

@@ -5,11 +5,12 @@
 #define __AUDIOPATTERN_H__
 
 #include "Pattern.h"
-#include "WaveView.h"
-#include "WriteWaveFile.h"
-#include "Channel.h"
+#include "WaveDrawer.h"
 
-class AudioPattern: public Pattern, public WaveDrawer
+class					WriteWaveFile;
+class					Channel;
+
+class					AudioPattern: public Pattern, public WaveDrawer
 {
  public:
   AudioPattern(double pos, double endpos, long trackindex);
@@ -35,6 +36,7 @@ class AudioPattern: public Pattern, public WaveDrawer
  protected:
   void					Init();
   void					OnClick(wxMouseEvent &e);
+  void					OnLeftUp(wxMouseEvent &e);
   void					OnDoubleClick(wxMouseEvent &e);
   void					OnRightClick(wxMouseEvent &e);
   void					OnMotion(wxMouseEvent &e);
@@ -44,7 +46,6 @@ class AudioPattern: public Pattern, public WaveDrawer
   void					OnHelp(wxMouseEvent &event);
   
   WriteWaveFile				*RecordWave;
-//  DECLARE_EVENT_TABLE()
 };
 
 #endif/*__AUDIOPATTERN_H__*/

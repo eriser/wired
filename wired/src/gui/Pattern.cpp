@@ -128,7 +128,8 @@ void					Pattern::OnClick(wxMouseEvent &e)
 #ifdef __DEBUG__
       printf("clik at (x = %d) (y = %d)\n", m_click.x, m_click.y);
 #endif
-      SeqPanel->SelectItem(this, e.ShiftDown());
+      if (!e.ShiftDown())	
+	SeqPanel->SelectItem(this, e.ShiftDown());
     }
   else
     if (SeqPanel->Tool == ID_TOOL_DELETE_SEQUENCER)
@@ -142,7 +143,14 @@ void					Pattern::OnClick(wxMouseEvent &e)
 
 void					Pattern::OnLeftUp(wxMouseEvent &e)
 {
-  
+  if (e.ShiftDown())
+    {
+      e.m_x = (e.m_x > (PATTERN_MOVE_BOX_SIZE / 2)) ? e.m_x - (PATTERN_MOVE_BOX_SIZE / 2) : 0;
+      e.m_y = (e.m_y > (PATTERN_MOVE_BOX_SIZE / 2)) ? e.m_y - (PATTERN_MOVE_BOX_SIZE / 2) : 0;
+      if ((e.m_x <= m_click.x) && (m_click.x <= (e.m_x + PATTERN_MOVE_BOX_SIZE)) &&
+	  (e.m_y <= m_click.y) && (m_click.y <= (e.m_y + PATTERN_MOVE_BOX_SIZE)))
+	SeqPanel->SelectItem(this, e.ShiftDown());
+    }
 }
 
 void					Pattern::OnDoubleClick(wxMouseEvent &e)
@@ -193,8 +201,13 @@ void					Pattern::OnMotion(wxMouseEvent &e)
       if (SeqPanel->SelectedItems.size() == 1)
 	XMove(z);
       else
-	for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end(); p++)
-	  (*p)->XMove(z);
+	{
+	  for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end() && (z < 0); p++)
+	    if ((*p)->GetPosition() < -z)
+	      z = 0;
+	  for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end() && (z != 0); p++)
+	    (*p)->XMove(z);
+	}
       if ((x < 0) && (Position <= SeqPanel->FirstMeasure))
 	{
 // 	  if ((x = (long) floor(((Position / SeqPanel->PatternMagnetism) * (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) / Seq->EndPos)) > 0)

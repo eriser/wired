@@ -11,6 +11,8 @@
 #include "ChoiceButton.h"
 #include "Rack.h"
 #include "Plugin.h"
+#include "DownButton.h"
+#include "VUMCtrl.h"
 #include "../midi/MidiInDevice.h"
 #include "../midi/MidiThread.h"
 #include "../sequencer/Sequencer.h"

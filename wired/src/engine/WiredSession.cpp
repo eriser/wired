@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <iostream>
+#include <wx/filename.h>
 #include "WiredSession.h"
 #include "Sequencer.h"
 #include "SequencerGui.h"

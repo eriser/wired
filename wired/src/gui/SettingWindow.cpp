@@ -17,13 +17,13 @@ SettingWindow::SettingWindow()
   AudioLoaded = false;
   Center();
   GeneralBtn = new wxToggleButton(this, Setting_General, "General", 
-		       wxPoint(8, 8), wxSize(80, 22));
+				  wxPoint(8, 8), wxSize(80, 28));
   AudioBtn = new wxToggleButton(this, Setting_Audio, "Audio", 
-				wxPoint(92, 8), wxSize(80, 22));
-  MidiBtn = new wxToggleButton(this, Setting_Midi, "MIDI", wxPoint(176, 8), wxSize(80, 22));
-
+				wxPoint(92, 8), wxSize(80, 28));
+  MidiBtn = new wxToggleButton(this, Setting_Midi, "MIDI", wxPoint(176, 8), wxSize(80, 28));
+  
   // GENERAL panel
-  GeneralPanel = new wxPanel(this, -1, wxPoint(8, 38), wxSize(384, 436), wxNO_BORDER);
+  GeneralPanel = new wxPanel(this, -1, wxPoint(8, 42), wxSize(384, 436), wxNO_BORDER);
   QuickWaveBox = new wxCheckBox(GeneralPanel, -1, "Quickly render waveforms", wxPoint(8, 8));
   dBWaveBox = new wxCheckBox(GeneralPanel, -1, "Render waveforms in dB mode", wxPoint(8, 28));
 
@@ -66,14 +66,14 @@ SettingWindow::SettingWindow()
   LatencySlider->SetPageSize(1);
   Latencies = new int [9];
   Latencies[0] = 16;
-  Latencies[1] = 16*2;
-  Latencies[2] = 16*2*2;
-  Latencies[3] = 16*2*2*2;
-  Latencies[4] = 16*2*2*2*2;
-  Latencies[5] = 16*2*2*2*2*2;
-  Latencies[6] = 16*2*2*2*2*2*2;
-  Latencies[7] = 16*2*2*2*2*2*2*2;
-  Latencies[8] = 16*2*2*2*2*2*2*2*2;
+  Latencies[1] = 16 * 2;
+  Latencies[2] = 16 * 2 * 2;
+  Latencies[3] = 16 * 2 * 2 * 2;
+  Latencies[4] = 16 * 2 * 2 * 2 * 2;
+  Latencies[5] = 16 * 2 * 2 * 2 * 2 * 2;
+  Latencies[6] = 16 * 2 * 2 * 2 * 2 * 2 * 2;
+  Latencies[7] = 16 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
+  Latencies[8] = 16 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
     
   // AUDIO/Input
   new wxStaticText(AudioPanel, -1, "Select Input sound card:", 
@@ -109,9 +109,9 @@ SettingWindow::SettingWindow()
   GeneralPanel->Show(true);
   GeneralBtn->SetValue(true);
 
-  OkBtn = new wxButton(this, Setting_Ok, "OK", wxPoint(180, 484), wxSize(64, 22));
-  ApplyBtn = new wxButton(this, Setting_Apply, "Apply", wxPoint(248, 484), wxSize(64, 22));
-  CancelBtn = new wxButton(this, Setting_Cancel, "Cancel", wxPoint(316, 484), wxSize(64, 22));
+  OkBtn = new wxButton(this, Setting_Ok, "OK", wxPoint(180, 484), wxSize(64, 28));
+  ApplyBtn = new wxButton(this, Setting_Apply, "Apply", wxPoint(248, 484), wxSize(64, 28));
+  CancelBtn = new wxButton(this, Setting_Cancel, "Cancel", wxPoint(316, 484), wxSize(64, 28));
   
   Load();
 }

@@ -24,6 +24,8 @@
 #include "SeqTrack.h"
 #include "SeqTrackPattern.h"
 #include "../midi/MidiDevice.h"
+#include "../engine/Settings.h"
+#include "../audio/WriteWaveFile.h"
 
 SequencerGui				*SeqGui;
 
@@ -388,11 +390,11 @@ Track					*SequencerGui::AddTrack(bool is_audio)
   yy = SeqView->GetTotalHeight() - (long) floor(CurrentYScrollPos);
   wxPoint p(0, yy);
   wxSize  s(TRACK_WIDTH, (long)(TRACK_HEIGHT * VertZoomFactor));
-  printf("adding SEQTRACK %d with Y=%d\n", Seq->Tracks.size() + 1, yy);
+  //  printf("adding SEQTRACK %d with Y=%d\n", Seq->Tracks.size() + 1, yy);
   n1 = new SeqTrack(Seq->Tracks.size() + 1, TrackView, p, s, is_audio);
-  printf("adding SEQTRACK PATTERN\n");
+  //  printf("adding SEQTRACK PATTERN\n");
   n2 = new SeqTrackPattern(SeqView, n1, SeqView->GetTotalWidth());
-  printf("adding TRACK\n");
+  //  printf("adding TRACK\n");
   n = new Track(n1, n2, is_audio ? IS_AUDIO_TRACK : IS_MIDI_TRACK);
   if (is_audio)
     {
@@ -1049,8 +1051,6 @@ BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   EVT_TOOL(ID_SEQ_MAGNET, SequencerGui::OnMagnetismToggle)
   EVT_TOOL(ID_SEQ_COLOR, SequencerGui::OnColorButtonClick)
   EVT_TEXT(ID_SEQ_COMBO_MAGNET, SequencerGui::OnMagnetismChange)
-  //EVT_MOTION	    (SequencerGui::OnMouseEvent) 
-  //EVT_LEFT_DOWN	    (SequencerGui::OnLeftIsDownEvent)
   EVT_SIZE(SequencerGui::OnSize)
   EVT_MOUSEWHEEL(SequencerGui::OnWheelMove)
 END_EVENT_TABLE()
