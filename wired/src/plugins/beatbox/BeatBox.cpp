@@ -804,6 +804,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input),
   for (list<BeatNoteToPlay*>::iterator bn = NotesToPlay.begin(); 
        bn != NotesToPlay.end(); )
     {
+      
       if ( !Channels[(*bn)->NumChan]->Wave )
 	{
 	  //if ((*bn)->Buffer)
@@ -944,6 +945,7 @@ void WiredBeatBox::Process(float** WXUNUSED(input),
   for (list<BeatNoteToPlay*>::iterator bn = NotesToPlay.begin(); 
        bn != NotesToPlay.end(); )
     {
+      //exclusive channels
       if ( !(Channels[(*bn)->NumChan]->Wave) || 
 	   ((*bn)->OffSet >= 
 	    Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames()) ||
@@ -1866,6 +1868,14 @@ long WiredBeatBox::Save(int fd)
 	  size += res;
       }
   
+  //master Level
+  if ((res = write(fd, &MLevel, sizeof (float))) 
+      != sizeof (float))
+    { cout << "[DRM31] Save: write() error" << endl; return (-1); }
+  else
+    size += res;
+  
+  
   for (int i = 0; i < NB_CHAN; i++)
     {
       if (Channels[i]->Wave)
@@ -1885,6 +1895,13 @@ long WiredBeatBox::Save(int fd)
       int p;
       for (p = 0; p < NB_PARAMS; p++)
 	size += write(fd, &(Channels[i]->Params[p]), sizeof(float));
+      p = (Channels[i]->Muted ? 1 : 0);
+      size += write(fd, &p, sizeof(int));
+      p = (Channels[i]->IsSolo ? 1 : 0);
+      size += write(fd, &p, sizeof(int));
+      p = (Channels[i]->Reversed ? 1 : 0);
+      size += write(fd, &p, sizeof(int));
+      size += write(fd, &(Channels[i]->Voices), sizeof(unsigned int));
       
       //writing notes
       for (bank = 0; bank < 5; bank++)
@@ -1980,8 +1997,7 @@ void WiredBeatBox::Load(int fd, long size)
 	else
 	  { size -= res; Channels[i]->MidiEnd[m] = tmp_int; }
     }
-  //cout << "[DRM31] Midi params loaded" << endl;
-  
+    
   cout << "[DRM31] Signatures/Steps params loading" << endl;
   for (bank = 0; bank < 5; bank++)
     for (ps = 0; ps < 8; ps++)
@@ -1999,7 +2015,14 @@ void WiredBeatBox::Load(int fd, long size)
 	else
 	  { size -= res; Steps[bank][ps] = tmp_int; }
       }
-  //cout << "[DRM31] Signatures/Steps params loaded" << endl;
+  
+  if ((res = read(fd, &tmp_float, sizeof(float))) != sizeof (float))
+    { cout << "[DRM31] Load: read error" << endl; return; }
+  else
+    { size -= res; MLevel = tmp_float; 
+    Pool->SetVolume(MLevel); 
+    MVol->SetValue((int)floor(MLevel*100)); } //update gui
+  
   cout << "[DRM31] Loading Channels: Samples, Params, Notes" << endl;
   for (int i = 0; i < NB_CHAN; i++)
     {
@@ -2037,7 +2060,24 @@ void WiredBeatBox::Load(int fd, long size)
 	if ((res = read(fd, &tmp_float, sizeof(float))) != sizeof (float))
 	  { cout << "[DRM31] Load: read error" << endl; return; }
 	else
-	  { size -= res; Channels[i]->Params[p] = tmp_float; }      
+	  { size -= res; Channels[i]->Params[p] = tmp_float; }
+      if ((res = read(fd, &p, sizeof (int))) != sizeof (int))
+	{ cout << "[DRM31] Load: read error" << endl; return; }
+      else
+	{ size -= res; Channels[i]->Muted = (p ? true : false); }      
+      if ((res = read(fd, &p, sizeof (int))) != sizeof (int))
+	{ cout << "[DRM31] Load: read error" << endl; return; }
+      else
+	{ size -= res; Channels[i]->IsSolo = (p ? true : false); }      
+      if ((res = read(fd, &p, sizeof (int))) != sizeof (int))
+	{ cout << "[DRM31] Load: read error" << endl; return; }
+      else
+	{ size -= res; Channels[i]->Reversed = (p ? true : false); }      
+      if ((res = read(fd, &tmp_uint, sizeof (unsigned int))) 
+	  != sizeof (unsigned int))
+	{ cout << "[DRM31] Load: read error" << endl; return; }
+      else
+	{ size -= res; Channels[i]->Voices = tmp_uint; }      
       
       //reading notes
       for (bank = 0; bank < 5; bank++)
@@ -2076,12 +2116,21 @@ void WiredBeatBox::Load(int fd, long size)
 		Channels[i]->Rythms[bank][ps].push_back(note);
 		tmp_long--;
 	      }
+	    Channels[i]->UpdateGui();
 	  }
     }
   
   cout << "[DRM31] Channels Loaded" << endl;
   
+  SetVoices();
   SelectedChannel = Channels[0];
+  Channels[0]->Select();
+  EditedPattern = SelectedPattern = EditedBank = SelectedBank = 0;
+  for (int i = 0; i < NUM_PATTERNS; i++)
+    PatternSelectors[i]->SetOff();
+  PatternSelectors[0]->SetOn();
+  BankKnob->SetValue(1);
+  
   ReCalcStepsSigCoef();
   UpdateSteps(0,0);
   SetPatternList();
@@ -2393,6 +2442,7 @@ void WiredBeatBox::Update()
 void	WiredBeatBox::OnPastePattern(wxCommandEvent& event)
 {
   PatternMutex.Lock();
+  int cpt = 0;
   for (int i = 0; i < NB_CHAN; i++)
     for (list<BeatNote*>::iterator note = 
 	   Channels[i]->Rythms[EditedBank][EditedPattern].begin(); 
@@ -2402,7 +2452,7 @@ void	WiredBeatBox::OnPastePattern(wxCommandEvent& event)
 	note = Channels[i]->Rythms[EditedBank][EditedPattern].erase(note);
       }
   PatternMutex.Unlock();
-  
+    
   BeatNote* n;
   for (int i = 0; i < NB_CHAN; i++)
     {
@@ -2427,9 +2477,11 @@ void	WiredBeatBox::OnPastePattern(wxCommandEvent& event)
       for (list<BeatNote*>::iterator note = 
 	     TmpPatternToErase[i].begin(); 
 	   note != TmpPatternToErase[i].end(); note++)
-	{ Channels[i]->Rythms[EditedBank][EditedPattern].push_back(*note); }
+	{ cpt++; Channels[i]->Rythms[EditedBank][EditedPattern].push_back(*note); }
     }
   PatternMutex.Unlock();
+  cout << cpt << " note pasted" << endl;
+
   for (int i = 0; i < NB_CHAN; i++)
     TmpPatternToErase[i].clear();
   SetPatternList();
@@ -2446,14 +2498,18 @@ void	WiredBeatBox::OnCopyPattern(wxCommandEvent& event)
 	{ delete *note; note = TmpPattern[i].erase(note); }
       TmpPattern[i].clear();
     }
+  int cpt = 0;
   for (int i = 0; i < NB_CHAN; i++)
     for (list<BeatNote*>::iterator note = 
 	   Channels[i]->Rythms[EditedBank][EditedPattern].begin(); 
 	 note != Channels[i]->Rythms[EditedBank][EditedPattern].end(); note++)
       {
+	cpt++;
 	n = new BeatNote(*note);
 	TmpPattern[i].push_back(n);
       }
+  cout << cpt << " notes copied" << endl;
+  
 }
 
 void	WiredBeatBox::OnRightDown(wxMouseEvent& event)
