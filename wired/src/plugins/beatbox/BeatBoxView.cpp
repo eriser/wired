@@ -203,6 +203,7 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
 {
   SetBackgroundColour(*wxWHITE);
   SetForegroundColour(*wxWHITE);
+  CtrlDown = false;
   ViewPtr = view_ptr;
   OnSelecting = false;
   ClickPosX = ClickPosY = MotionPosX = MotionPosY = 0;
@@ -259,6 +260,7 @@ void BeatBoxScrollView::OnKeyDown(wxKeyEvent& event)
     {
     case WXK_CONTROL:
       //cout << "ctrl pressed" << endl;
+      CtrlDown = true;
       break;
     case 'C':
       //cout << "c clicked" << endl;
@@ -286,7 +288,16 @@ void BeatBoxScrollView::OnKeyDown(wxKeyEvent& event)
 }
 
 void BeatBoxScrollView::OnKeyUp(wxKeyEvent& event)
-{}
+{
+  switch (event.GetKeyCode())
+    {
+    case WXK_CONTROL:
+      CtrlDown = false;
+      break;
+    default :
+      break;
+    }
+}
 
 void BeatBoxScrollView::OnNewNote(wxCommandEvent& WXUNUSED(event))
 {}
@@ -623,9 +634,10 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
 
     }
   //cout << "SelectedNote pos: " << SelectedNote->Position << endl;
-  double delta_x =  xpos - SelectedNote->Position;
+  double delta_x = xpos - SelectedNote->Position;
+  //cout << SelectedNote->Vel << endl;
   float delta_y = vel - SelectedNote->Vel;
-  //cout << "delta vel: " << delta_y << endl;
+  //cout << "delta vel: " << delta_y << " delta x: " << delta_x << endl;
   for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
        note != SelectedNotes.end(); note++)
     {
@@ -633,51 +645,33 @@ void BeatBoxScrollView::OnMotion(wxMouseEvent& event)
       (*note)->Position += delta_x;
       if ((*note)->Position >= static_cast<double>(ViewPtr->DRM31->GetSteps()))
 	{
-	  (*note)->Position = (*note)->Position 
-	    - static_cast<double>(ViewPtr->DRM31->GetSteps());
+	  (*note)->Position = 
+	    fmod((*note)->Position, 
+		 static_cast<double>(ViewPtr->DRM31->GetSteps()));
+	    //- static_cast<double>(ViewPtr->DRM31->GetSteps());
 	}
       else if ((*note)->Position < 0.00)
 	{
 	  (*note)->Position = static_cast<double>(ViewPtr->DRM31->GetSteps()) 
-	    + (*note)->Position;
+	    + fmod((*note)->Position, 
+		   static_cast<double>(ViewPtr->DRM31->GetSteps()));
 	}
-      /*
-	(*note)->Position = fmod((*note)->Position, 
-	static_cast<double>(ViewPtr->DRM31->GetSteps()));
-      */		
-      //cout << " : " << (*note)->Position << endl;
-      /*
-	if ((*note)->Position < 0.0)
-	(*note)->Position = 0.0;
-      */
+      (*note)->Position = floor((*note)->Position * 100) / 100;
       (*note)->BarPos = floor(((*note)->Position / 
 			       static_cast<double>(ViewPtr->DRM31->GetSteps())
 			       ) * 100) / 100;
-      
       (*note)->Vel += delta_y;
       if ((*note)->Vel > 1.27)
-	(*note)->Vel = (*note)->Vel - 1.27;
+	(*note)->Vel = fmodf((*note)->Vel, 1.27);
       else if ((*note)->Vel < 0.00)
-	(*note)->Vel = 1.27 + (*note)->Vel;
+	(*note)->Vel = 1.27 + fmodf((*note)->Vel, 1.27);
       
-
-      //cout << n << " note pos " << (*note)->Position << " vel "
-      //   << (*note)->Vel <<  endl;
-      
-      //(*note)->Vel = fmodf((*note)->Vel, 1.27);
-      
-      /*
-	if ((*note)->Vel < 0.0)
-	(*note)->Vel = 0.0;
-	else if ((*note)->Vel > 1.27)
-	(*note)->Vel = 1.27;
-      */
+      (*note)->Vel = floor((*note)->Vel * 100) / 100;
     }
   
   for (list<BeatNote*>::iterator note = SelectedNotes.begin(); 
        note != SelectedNotes.end(); note++)
     {
-      //cout << "note added" << endl;
       ViewPtr->DRM31->AddBeatNote(*note,
 				  ViewPtr->DRM31->Channels[(*note)->NumChan], 
 				  ViewPtr->DRM31->EditedBank, 
@@ -715,9 +709,14 @@ inline void BeatBoxScrollView::ClearSelected(void)
 void BeatBoxScrollView::OnLeftUp(wxMouseEvent& event)
 {
   //ClearSelected();
-  if (!OnSelecting && SelectedNote)
+  if (!OnSelecting)
     {
-      //ClearSelected();
+      if (!SelectedNote)
+	{
+	  cout << "SelectedNote = false" << endl;
+	  ClearSelected();
+	}
+	  //ClearSelected();
       //SelectNote(SelectedNote);
       Refresh();
       return;
@@ -783,7 +782,8 @@ void BeatBoxScrollView::OnLeftUp(wxMouseEvent& event)
   
   if (!SelectedNote)
     {
-      ClearSelected();
+      if (!CtrlDown)
+	ClearSelected();
       for (list<BeatNote*>::iterator note = 
 	     ViewPtr->TrackView->BeatTracks[track]->Channel->Rythms[ViewPtr->DRM31->EditedBank][ViewPtr->DRM31->EditedPattern].begin(); 
 	   note != ViewPtr->TrackView->BeatTracks[track]->Channel->Rythms[ViewPtr->DRM31->EditedBank][ViewPtr->DRM31->EditedPattern].end(); 
@@ -794,8 +794,15 @@ void BeatBoxScrollView::OnLeftUp(wxMouseEvent& event)
 	       && (((*note)->Vel >= vel && (*note)->Vel <= to_vel) 
 		   || ((*note)->Vel <= vel && (*note)->Vel >= to_vel)) )
 	    {
-	      SelectNote(*note);
-	      SelectedNote = 0x0;
+	      if ((*note)->Selected)
+		{
+		  DeSelectNote(*note);
+		}
+	      else
+		{
+		  SelectNote(*note);
+		  SelectedNote = 0x0;
+		}
 	      ViewPtr->UpdateToolBar();
 	      //cout << "new note selected: " << SelectedNotes.size() << endl;
 	    }
@@ -854,25 +861,30 @@ void BeatBoxScrollView::OnLeftDown(wxMouseEvent& event)
       if ( (*note)->Position > inf && (*note)->Position < sup 
 	   && (*note)->Vel >= min && (*note)->Vel <= max )
 	{
-	  //  cout << "note clicked and selected" << endl;
 	  none = false;
 	  for (list<BeatNote*>::iterator sel = SelectedNotes.begin();
 	       sel != SelectedNotes.end(); sel++)
 	    if (*sel == *note)
 	      { 
-		//cout << "already in selection"<< endl;
-		already = true; 
-		(*note)->Selected = true;
-		SelectedNote = *note;
+		already = true;
+		if ((*note)->Selected && CtrlDown)
+		  {
+		    DeSelectNote(*note);
+		  }
+		else
+		  {
+		    (*note)->Selected = true;
+		    SelectedNote = *note;
+		    //ClearSelected(); 
+		    //SelectNote(*note); 
+		  }
 		ViewPtr->UpdateToolBar();
-		//ClearSelected(); 
-		//SelectNote(*note); 
 		break; 
 	      }
 	  if (!already)
 	    {
-	      //cout << "clearing all and selecting one note"<< endl;
-	      ClearSelected();
+	      if (!CtrlDown)
+		ClearSelected();
 	      SelectNote(*note);
 	    }
 	}
@@ -881,6 +893,7 @@ void BeatBoxScrollView::OnLeftDown(wxMouseEvent& event)
     }
   if (none)
     {
+      
       SelectedNote = 0x0;
       ViewPtr->UpdateToolBar();
       //ClearSelected();
@@ -910,6 +923,28 @@ inline void BeatBoxScrollView::SelectNote(BeatNote* note)
 			      ViewPtr->DRM31->EditedBank, 
 			      ViewPtr->DRM31->EditedPattern);
   */
+}
+inline void BeatBoxScrollView::DeSelectNote(BeatNote* n)
+{
+  for (list<BeatNote*>::iterator note = SelectedNotes.begin();
+       note != SelectedNotes.end(); note++)
+    {
+      if (*note == n)
+	{
+	  n->Selected = false;
+	  
+	  SelectedNotes.erase(note);
+	  if (SelectedNote == n || !SelectedNote)
+	    {
+	      if (!SelectedNotes.empty())
+		SelectedNote = SelectedNotes.front();
+	      else
+		SelectedNote = 0x0;
+	      ViewPtr->UpdateToolBar();
+	    }
+	  return;
+	}
+    }
 }
 
 BEGIN_EVENT_TABLE(BeatBoxView, wxPanel)
