@@ -202,7 +202,7 @@ void					*Sequencer::Entry()
 		  if (!(*T)->TrackOpt->Mute)
 		    {
 		      /* Récupération des buffers Audio */
-		      AudioP = (AudioPattern *)GetCurrentPattern(*T);  
+		      AudioP = GetCurrentAudioPattern(*T);  
 		      if (AudioP)
 			{
 			  buf = GetCurrentAudioBuffer(AudioP);
@@ -222,8 +222,15 @@ void					*Sequencer::Entry()
 		      if ((*T)->Midi->GetEndPosition() < CurrentPos)
 			ResizePattern((*T)->Midi);
 		    }
-		  if ((!(*T)->TrackOpt->Mute) && (MidiP = (MidiPattern *)GetCurrentPattern(*T)))
-		    ProcessCurrentMidiEvents(*T, MidiP);
+		  list<MidiPattern *> l;
+		  list<MidiPattern *>::iterator midi_it;
+
+		  if (!((*T)->TrackOpt->Mute))
+		    {
+		      l = GetCurrentMidiPatterns(*T);
+		      for (midi_it = l.begin(); midi_it != l.end(); midi_it++)
+			ProcessCurrentMidiEvents(*T, *midi_it);
+		    }
 		}
 	    }
 
@@ -627,7 +634,37 @@ void					Sequencer::SetSigDenominator(int dennum)
       (*j)->SetSignature(SigNumerator, SigDenominator);
 }
 
-Pattern					*Sequencer::GetCurrentPattern(Track *t)
+// Call only with a MIDI track
+list<MidiPattern *>			Sequencer::GetCurrentMidiPatterns(Track *t)
+{
+  vector<Pattern *>::iterator		i;
+  vector<Pattern *>::iterator		ret;
+  double				delta_mes = MeasurePerSample * Audio->SamplesPerBuffer;
+  list<MidiPattern *>			l;
+
+  for (i = t->TrackPattern->Patterns.begin(); i != t->TrackPattern->Patterns.end(); i++)
+    {
+      if ((CurrentPos + delta_mes >= (*i)->GetPosition()) && 
+	  (CurrentPos < (*i)->GetEndPosition()))
+	{
+	  ret = i;
+	  
+	  // Check if the next pattern starts when this one finishes
+	  //i++;
+	  /*	  if (i != t->TrackPattern->Patterns.end())
+	    {
+	      if (((*ret)->GetEndPosition() == (*i)->GetPosition()) &&
+		  ((CurrentPos + delta_mes > (*ret)->GetEndPosition())))
+		l.push_ (*i);
+		}*/
+	  l.push_back((MidiPattern *)*ret);	  
+	}
+    }
+  return (l);
+}
+
+// Call only with an audio track
+AudioPattern				*Sequencer::GetCurrentAudioPattern(Track *t)
 {
   vector<Pattern *>::iterator		i;
   vector<Pattern *>::iterator		ret;
@@ -646,9 +683,9 @@ Pattern					*Sequencer::GetCurrentPattern(Track *t)
 	    {
 	      if (((*ret)->GetEndPosition() == (*i)->GetPosition()) &&
 		  ((CurrentPos + delta_mes > (*ret)->GetEndPosition())))
-		return (*i);
+		return ((AudioPattern *)*i);
 	    }
-	  return (*ret);	  
+	  return ((AudioPattern *)*ret);	  
 	}
     }
   return (0x0);
