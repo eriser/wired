@@ -9,11 +9,15 @@
 #include 	<wx/menu.h>
 #include 	<math.h>
 #include 	<iostream>
-//#include 	<WavePanel.h>
-
+#include        <wx/choicdlg.h>
+#include        "SequencerGui.h"
 using namespace std;
 
-
+const struct s_nchoice		NChoice[NB_CHOICE_NORMA + 1] =
+{
+  { "Normaliser a 1db", 1},
+  { "Normaliser a ....", 2},
+};
 
 
 WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, 
@@ -289,26 +293,27 @@ void					WaveEditor::OnCut(wxCommandEvent &event)
     inc = (PAINT_WIDTH / s.x);
   else
     inc = (EndWavePos / s.x);
-
+  
   from = (mSelectedRegion.x+xsrc)*inc;
   width = mSelectedRegion.width*inc;
   sizePaste = mSelectedRegion.width*inc;
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
-  {
-     wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
- 		  wxOK | wxCENTRE);
-    int res = msg.ShowModal();
-    if (res == wxOK)
-	  return;
-  }
+    {
+      wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+			  wxOK | wxCENTRE);
+      int res = msg.ShowModal();
+      if (res == wxOK)
+	return;
+    }
   else
-  {
-	cCutAction 	*action = new cCutAction(Wave, from, width);
-	action->Do();
-  //cClipBoard::Global().Cut(*Wave, (mSelectedRegion.x+xsrc)*inc, (mSelectedRegion.width*inc));
-	mSelectedRegion.width = 0;
-	SetWave(Wave);
-  }
+    {
+      cCutAction 	*action = new cCutAction(Wave, from, width);
+      action->Do();
+      //cClipBoard::Global().Cut(*Wave, (mSelectedRegion.x+xsrc)*inc, (mSelectedRegion.width*inc));
+      SeqPanel->UpdateAudioPatterns(Wave);
+      mSelectedRegion.width = 0;
+      SetWave(Wave);
+    }
   Refresh();
 }
 
@@ -316,8 +321,8 @@ void					WaveEditor::OnCut(wxCommandEvent &event)
 void					WaveEditor::OnPaste(wxCommandEvent &event)
 {
   wxSize 	s = GetSize();
-  long	to;
-  long	width;
+  long	        to;
+  long	        width;
   
   if (PAINT_WIDTH < EndWavePos)
     inc = (PAINT_WIDTH / s.x);
@@ -326,21 +331,22 @@ void					WaveEditor::OnPaste(wxCommandEvent &event)
   
   to = (mPosition+xsrc)*inc;
   width = mSelectedRegion.width*inc;
- if ( Wave->GetOpenMode() != WaveFile::rwrite )
-  {
-     wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
- 		  wxOK | wxCENTRE);
-    int res = msg.ShowModal();
-    if (res == wxOK)
-	  return;
-  }
+  if ( Wave->GetOpenMode() != WaveFile::rwrite )
+    {
+      wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+			  wxOK | wxCENTRE);
+      int res = msg.ShowModal();
+      if (res == wxOK)
+	return;
+    }
   else
-  {
-	cPasteAction 	*action = new cPasteAction(Wave, to, sizePaste);
-	action->Do();
-  //cClipBoard::Global().Paste(*Wave, ((mPosition+xsrc)*inc));
-	SetWave(Wave);
-  }
+    {
+      cPasteAction 	*action = new cPasteAction(Wave, to, sizePaste);
+      action->Do();
+      //cClipBoard::Global().Paste(*Wave, ((mPosition+xsrc)*inc));
+      SeqPanel->UpdateAudioPatterns(Wave);
+      SetWave(Wave);
+    }
   Refresh();
 }
 
@@ -358,20 +364,20 @@ void					WaveEditor::OnDelete(wxCommandEvent &event)
   from = (mSelectedRegion.x+xsrc)*inc;
   width = mSelectedRegion.width*inc;
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
-  {
+    {
      wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
- 		  wxOK | wxCENTRE);
-    int res = msg.ShowModal();
-    if (res == wxOK)
-	  return;
-  }
+			 wxOK | wxCENTRE);
+     int res = msg.ShowModal();
+     if (res == wxOK)
+       return;
+    }
   else
-  {
-	cClipBoard::Global().Delete(*Wave, (mSelectedRegion.x+xsrc)*inc, (mSelectedRegion.width*inc));
-  //flag = 1;
-	mSelectedRegion.width = 0;
-	SetWave(Wave);
-  }
+    {
+      cClipBoard::Global().Delete(*Wave, (mSelectedRegion.x+xsrc)*inc, (mSelectedRegion.width*inc));
+      SeqPanel->UpdateAudioPatterns(Wave);
+      mSelectedRegion.width = 0;
+      SetWave(Wave);
+    }
   Refresh();
 }
 
@@ -400,69 +406,69 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
   wxSize 				s = GetSize();
   long					from;
   long					width, savew;
-  long                  wtest;
+  long                                  wtest;
   wxString 				text;
-  int                   nb_read;
-  PluginEffect			p;
+  int                                   nb_read;
+  PluginEffect			        p;
 
 
   if (PAINT_WIDTH < EndWavePos)
-	inc = (PAINT_WIDTH / s.x);
+    inc = (PAINT_WIDTH / s.x);
   else
-	inc = (EndWavePos / s.x);
+    inc = (EndWavePos / s.x);
   from = (mSelectedRegion.x+xsrc)*inc;
   width = savew = mSelectedRegion.width*inc;
-
-  if ( Wave->GetOpenMode() != WaveFile::rwrite )
-  {
-     wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
- 		  wxOK | wxCENTRE);
-    int res = msg.ShowModal();
-    if (res == wxOK)
-	  return;
-  }
-  else
-  {
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, "Enter gain ", "Please enter text", "1", 
-			wxOK | wxCANCEL, wxPoint(-1, -1));
-	text = dlg->GetValue();
-	int res = dlg->ShowModal();
-	if (res == wxID_OK)
-	  text = dlg->GetValue();
-	float gain = atof(text); 
-	
-	WaveFile input ("/tmp/tmp2.wav", false, WaveFile::rwrite);
-	WaveFile output ("/tmp/tmp3.wav", false, WaveFile::rwrite);
-	
-	float * rw_buffer = new float [Wave->GetNumberOfChannels() * WAVE_TEMP_SIZE];
-
-	Wave->SetCurrentPosition(from);
-	nb_read = Wave->ReadFloatF(rw_buffer);
-	if (nb_read > width)
-	  nb_read = width;
   
-	while (nb_read && width)
+  if ( Wave->GetOpenMode() != WaveFile::rwrite )
     {
-      input.WriteFloatF(rw_buffer, nb_read);
-      width -= nb_read;
+      wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+			  wxOK | wxCENTRE);
+      int res = msg.ShowModal();
+      if (res == wxOK)
+	return;
+    }
+  else
+    {
+      wxTextEntryDialog *dlg = new wxTextEntryDialog(this, "Enter gain ", "Please enter text", "1", 
+						     wxOK | wxCANCEL, wxPoint(-1, -1));
+      text = dlg->GetValue();
+      int res = dlg->ShowModal();
+      if (res == wxID_OK)
+	text = dlg->GetValue();
+      float gain = atof(text); 
+      
+      WaveFile input ("/tmp/tmp2.wav", false, WaveFile::rwrite);
+      WaveFile output ("/tmp/tmp3.wav", false, WaveFile::rwrite);
+      
+      float * rw_buffer = new float [Wave->GetNumberOfChannels() * WAVE_TEMP_SIZE];
+      
+      Wave->SetCurrentPosition(from);
       nb_read = Wave->ReadFloatF(rw_buffer);
-      if (width < WAVE_TEMP_SIZE)
-		nb_read = width;
-    }
-    
-	p.Process(input, output, gain, Wave->GetNumberOfChannels(), 1);
-	
-	Wave->SetCurrentPosition(from);
-	output.SetCurrentPosition(0);
-	nb_read = output.ReadFloatF(rw_buffer);
-	while (nb_read)
-    {
-      Wave->WriteFloatF(rw_buffer, nb_read);
+      if (nb_read > width)
+	nb_read = width;
+      
+      while (nb_read && width)
+	{
+	  input.WriteFloatF(rw_buffer, nb_read);
+	  width -= nb_read;
+	  nb_read = Wave->ReadFloatF(rw_buffer);
+	  if (width < WAVE_TEMP_SIZE)
+	    nb_read = width;
+	}
+      
+      p.Process(input, output, gain, Wave->GetNumberOfChannels(), 1);
+      
+      Wave->SetCurrentPosition(from);
+      output.SetCurrentPosition(0);
       nb_read = output.ReadFloatF(rw_buffer);
+      while (nb_read)
+	{
+	  Wave->WriteFloatF(rw_buffer, nb_read);
+	  nb_read = output.ReadFloatF(rw_buffer);
+	}
+      wxRemoveFile("/tmp/tmp2.wav");
+      wxRemoveFile("/tmp/tmp3.wav");
     }
-	wxRemoveFile("/tmp/tmp2.wav");
-	wxRemoveFile("/tmp/tmp3.wav");
-  }
   SetDrawing();
   Refresh();
 }
@@ -472,59 +478,75 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
 {
   long					from, width, savew;
   wxSize 				s = GetSize();
-  int                   nb_read;
-  PluginEffect			p;
+  int                                   nb_read;
+  PluginEffect			        p;        
+  wxString				nchoice[NB_CHOICE_NORMA];
   
   if (PAINT_WIDTH < EndWavePos)
-	inc = (PAINT_WIDTH / s.x);
+    inc = (PAINT_WIDTH / s.x);
   else
-	inc = (EndWavePos / s.x);
-	
+    inc = (EndWavePos / s.x);
+  
   from = (mSelectedRegion.x+xsrc)*inc;
   width = savew = mSelectedRegion.width*inc;
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
-  {
-     wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
- 		  wxOK | wxCENTRE);
-    int res = msg.ShowModal();
-    if (res == wxOK)
-	  return;
-  }
-  else
-  {
-	WaveFile input ("/tmp/tmp2.wav", false, WaveFile::rwrite);
-	WaveFile output ("/tmp/tmp3.wav", false, WaveFile::rwrite);
-	float * rw_buffer = new float [Wave->GetNumberOfChannels() * WAVE_TEMP_SIZE];
-
-	Wave->SetCurrentPosition(from);
-	nb_read = Wave->ReadFloatF(rw_buffer);
-	if (nb_read > width)
-	  nb_read = width;
-  
-	while (nb_read && width)
     {
-      input.WriteFloatF(rw_buffer, nb_read);
-      width -= nb_read;
-      nb_read = Wave->ReadFloatF(rw_buffer);
-      if (width < nb_read)
-		nb_read = width;
-
+      wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+			  wxOK | wxCENTRE);
+      int res = msg.ShowModal();
+      if (res == wxOK)
+	return;
     }
-    
-    p.Process(input, output, 0, Wave->GetNumberOfChannels(), 2);
-	
-	output.SetCurrentPosition(0);
-	Wave->SetCurrentPosition(from);
-	nb_read = output.ReadFloatF(rw_buffer);
-	while (nb_read)
+  else
+    {
+      for (int c = 0; c < NB_CHOICE_NORMA; c++)
+	nchoice[c] = NChoice[c].s;
+ 
+      wxSingleChoiceDialog *cdlg = new wxSingleChoiceDialog(this, "Select normalize", 
+							    "Normalize", 1, nchoice, NULL,
+							  wxCHOICEDLG_STYLE, wxPoint(-1, -1));
+      //wxWindow* parent, const wxString& message, const wxString& caption, int n, const wxString* choices, void** clientData = NULL, long style = wxCHOICEDLG_STYLE, const wxPoint& pos = wxDefaultPosition
+      int res = cdlg->ShowModal();
+      if (res == wxOK)
+	{
+	  cout << " la normalisation selectionnee est : " << cdlg->GetSelection()<< endl;
+	  return;
+	}
+      else
+	return;
+      WaveFile input ("/tmp/tmp2.wav", false, WaveFile::rwrite);
+      WaveFile output ("/tmp/tmp3.wav", false, WaveFile::rwrite);
+      float * rw_buffer = new float [Wave->GetNumberOfChannels() * WAVE_TEMP_SIZE];
+      
+      Wave->SetCurrentPosition(from);
+      nb_read = Wave->ReadFloatF(rw_buffer);
+      if (nb_read > width)
+	nb_read = width;
+      
+      while (nb_read && width)
+	{
+	  input.WriteFloatF(rw_buffer, nb_read);
+	  width -= nb_read;
+	  nb_read = Wave->ReadFloatF(rw_buffer);
+	  if (width < nb_read)
+	    nb_read = width;
+	  
+	}
+      
+      p.Process(input, output, 0, Wave->GetNumberOfChannels(), 2);
+      
+      output.SetCurrentPosition(0);
+      Wave->SetCurrentPosition(from);
+      nb_read = output.ReadFloatF(rw_buffer);
+      while (nb_read)
 	{
 	  Wave->WriteFloatF(rw_buffer, nb_read);
 	  nb_read = output.ReadFloatF(rw_buffer);
 	}
-	wxRemoveFile("/tmp/tmp2.wav");
-	wxRemoveFile("/tmp/tmp3.wav");
-	
-  }
+      wxRemoveFile("/tmp/tmp2.wav");
+      wxRemoveFile("/tmp/tmp3.wav");
+      
+    }
   SetDrawing();
   Refresh();
 }

@@ -15,6 +15,8 @@
 #define 			SCROLLV_THUMB_WIDTH	(80)
 #define 			SCROLLH			(20)
 #define 			SCROLLV			(20)
+#define 			NB_CHOICE_NORMA		(2)
+
 enum
 {
     ID_SCROLL,
@@ -28,6 +30,16 @@ enum
     ID_SUBMENU_GAIN_WAVEEDITOR,
     ID_SUBMENU_NORMA_WAVEEDITOR
 };
+
+
+typedef struct		      s_nchoice
+{
+  wxString		      s;
+  double		      value;
+} t_nchoice;
+
+
+extern const struct s_nchoice  NChoice[NB_CHOICE_NORMA+1];
 
 class WaveEditor : public wxPanel, public WaveEditorDrawer 
 {
