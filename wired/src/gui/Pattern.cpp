@@ -11,6 +11,7 @@
 #include "AudioPattern.h"
 #include "../sequencer/Sequencer.h"
 #include "../sequencer/Track.h"
+#include "Ruler.h"
 #include "AccelCenter.h"
 
 Pattern::Pattern(double pos, double endpos, long trackindex) :
@@ -24,6 +25,8 @@ Pattern::Pattern(double pos, double endpos, long trackindex) :
   Length = endpos - pos;
   TrackIndex = trackindex;
   StateMask = 0;
+  xdrag = 0;
+  ydrag = 0;
   wxWindow::Move((m_pos = wxPoint((int)(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * pos - SeqPanel->CurrentXScrollPos), 
 			 (int)(TRACK_HEIGHT * SeqPanel->VertZoomFactor * trackindex - SeqPanel->CurrentYScrollPos))));
   wxWindow::SetSize((m_size = wxSize((int)(Length * MEASURE_WIDTH * SeqPanel->HoriZoomFactor),
@@ -150,7 +153,8 @@ void					Pattern::OnLeftUp(wxMouseEvent &e)
 {
   m_click.x = -1;
   m_click.y = -1;
-  if (e.ShiftDown() && !(StateMask & PATTERN_MASK_DRAGGED) && !(StateMask & PATTERN_MASK_TOGGLED))
+  if ((SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.ShiftDown() &&
+      !(StateMask & PATTERN_MASK_DRAGGED) && !(StateMask & PATTERN_MASK_TOGGLED))
     {
       StateMask &= PATTERN_MASK_SELECTED;
       SeqPanel->SelectItem(this, true);
@@ -174,7 +178,7 @@ void					Pattern::OnRightClick(wxMouseEvent &e)
 
 void					Pattern::XMove(double Motion)
 {
-  if ((Position = Position + Motion) > 0)
+  if ((Position = Position + Motion) >= 0)
     if (SeqPanel->Magnetism & PATTERN_MASK)
       Position = round(Position * SeqPanel->PatternMagnetism) / SeqPanel->PatternMagnetism;
   Move(SetPos(Position, TrackIndex));
@@ -189,44 +193,51 @@ void					Pattern::OnMotion(wxMouseEvent &e)
   double				z;
   double				mes;
   
-  if (m_click.x != -1)
-    StateMask |= (unsigned char) PATTERN_MASK_DRAGGED;
   if (IsSelected() && (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->Wave != this))
     {
+      if (m_click.x != -1)
+	StateMask |= (unsigned char) PATTERN_MASK_DRAGGED;
       SeqMutex.Lock();
-      if ((x = (e.GetPosition().x - m_click.x)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->HoriZoomFactor / Seq->SigNumerator)))
+      if ((x = (e.GetPosition().x - m_click.x)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->HoriZoomFactor)))
 	x = max;
       else
 	if (x < -max)
 	  x = -max;
-      if ((y = (e.GetPosition().y - m_click.y)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->VertZoomFactor / Seq->SigNumerator)))
+      if ((y = (e.GetPosition().y - m_click.y)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->VertZoomFactor)))
 	y = max;
       else
 	if (y < -max)
 	  y = -max;
-      z = x / (mes = MEASURE_WIDTH * SeqPanel->HoriZoomFactor);
-      if (SeqPanel->SelectedItems.size() == 1)
-	XMove(z);
-      else
+      if ((z = x / (mes = MEASURE_WIDTH * SeqPanel->HoriZoomFactor)) != 0)
 	{
-	  for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end() && (z < 0); p++)
-	    if ((*p)->GetPosition() < -z)
-	      z = 0;
-	  for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end() && (z != 0); p++)
-	    (*p)->XMove(z);
+	  if (SeqPanel->SelectedItems.size() == 1)
+	    XMove(z);
+	  else
+	    {
+	      for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end() && (z < 0); p++)
+		if ((*p)->GetPosition() < -z)
+		  z = -(*p)->GetPosition();
+	      for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end() && (z != 0); p++)
+		(*p)->XMove(z);
+	    }
+	  //	  printf("X DRAG %d OLD XDRAG %d DIFF : (xdrag - x) = %d\n", x, xdrag, xdrag - x);
+	  if ((x < 0) && (Position <= SeqPanel->FirstMeasure))
+	    SeqPanel->SeqView->AutoXScrollBackward(ACCEL_TYPE_PATTERN);
+	  else
+	    if ((x > 0) && (Position + ceil(m_click.x / mes) >= SeqPanel->LastMeasure))
+	      SeqPanel->SeqView->AutoXScrollForward(ACCEL_TYPE_PATTERN);
+	    else
+	      SeqPanel->SeqView->AutoXScrollReset();
+	  //	  xdrag = Position + x + m_click.x;
 	}
-      if ((x < 0) && (Position <= SeqPanel->FirstMeasure))
-	SeqPanel->SeqView->AutoXScrollBackward(ACCEL_TYPE_PATTERN);
-      else
-	if ((x > 0) && (Position + ceil(m_click.x / mes) >= SeqPanel->LastMeasure))
-	  SeqPanel->SeqView->AutoXScrollForward(ACCEL_TYPE_PATTERN);
-	else
-	  SeqPanel->SeqView->AutoXScrollReset();
       SeqMutex.Unlock();
     }
+//   else
+//     if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
+//       SeqPanel->RulerPanel->MoveXMark(e.GetPosition().x + GetXPos(Position));
 }
 
-void					Pattern::DrawName(wxPaintDC &dc, wxSize s)
+void					Pattern::DrawName(wxPaintDC &dc, const wxSize &s)
 {
   long					x;
   long					y;

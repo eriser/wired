@@ -165,6 +165,7 @@ class				SequencerView: public wxScrolledWindow
 
  protected:
   void				DrawMeasures();
+  void				DrawTrackLines();
 
   DECLARE_EVENT_TABLE()
 };
@@ -244,30 +245,23 @@ class				SequencerGui: public wxPanel
   void				PutCursorsOnTop();
   void				ReSizeCursors();
   void				RedrawCursors();
-  void				RedrawTrackLines();
-  void				RedrawEditedPatterns(WaveFile *);
-  void				RedrawEditedPatterns(vector<MidiEvent *> *e);
   void				SetCurrentPos(double pos);
   void				SetBeginLoopPos(double pos);
   void				SetEndLoopPos(double pos);
   void				SetEndPos(double pos);
-
   void				RemoveReferenceTo(Plugin *plug);
   void				DeleteSelectedTrack();
   void				DeleteAllTracks();
   void				DeleteSelectedPatterns();
   void				DeletePattern(Pattern *p);
-
   void				UpdateAudioPatterns(WaveFile *w);
   void				UpdateMidiPattern(MidiPattern *m);
-
   void				MoveToCursor();
   void				SelectItem(Pattern *p, bool shift);
   void				CopySelectedItems();
   void				PasteItems();
   void				ShowPopup(wxPoint pos);
   void				ChangeMouseCursor(wxCursor c);
-
   void				OnScroll(wxScrollEvent &event);
   void				OnWheelMove(wxMouseEvent &e);
   void				OnVertSliderUpdate(wxCommandEvent &event);

@@ -38,7 +38,7 @@ class					CursorH : public wxWindow
   
  public:
   CursorH(wxWindow *parent, wxWindowID id, const wxPoint &pos,
-	  const wxSize &size, Cursor *C, char name);
+	  const wxSize &size, Cursor *C, const char name);
   ~CursorH();
   DECLARE_EVENT_TABLE()
 };
@@ -52,8 +52,8 @@ class					Cursor
   SequencerGui				*SeqGUI;
   
  public:
-  Cursor(char name, int id, double initpos, Ruler *R, SequencerGui *S, 
-	 wxColour cH, wxColour cL);
+  Cursor(const char name, const int id, const double initpos, Ruler *R, SequencerGui *S, 
+	 const wxColour &cH, const wxColour &cL);
   ~Cursor();
   void					SetPos(double newpos);
   double				GetPos();

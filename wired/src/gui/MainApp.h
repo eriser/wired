@@ -7,7 +7,7 @@
 #include <wx/app.h>
 #include <wx/snglinst.h>
 
-#define APP_TITLE		"Wired 0.11"
+#define APP_TITLE		"Wired 0.12"
 #define APP_WIDTH		(800)
 #define APP_HEIGHT		(600)
 

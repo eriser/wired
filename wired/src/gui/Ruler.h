@@ -11,21 +11,30 @@
 #define RULER_NUMBER_XOFFSET		(2)
 #define RULER_NUMBER_YOFFSET		(-1)
 #define RULER_MEASURE_DIV_HEIGHT	(3)
+#define RULER_XMARK_HEIGHT		(4)
 
-class Ruler : public wxWindow
+class					ColoredLine;
+
+class					Ruler : public wxWindow
 {
-  long		XScroll;
+  virtual void				OnPaint(wxPaintEvent &event);
+  virtual void				OnMouseEvent(wxMouseEvent &event);
 
-  virtual void	OnPaint(wxPaintEvent &event);
-  virtual void	OnMouseEvent(wxMouseEvent &event);
+  long					XMark;
+  long					XScroll;
+  ColoredLine				*T1;
+  ColoredLine				*T2;
+  ColoredLine				*T3;
 
  public:
-  Ruler(wxWindow *parent, wxWindowID id, const wxPoint &pos,
-	const wxSize &size);
+  Ruler(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size);
   ~Ruler();
-  void		SetXScroll(long x, long range, long seqwidth);
-  void		SetXScrollValue(long X);
-  long		GetXScroll();
+  void					SetXScroll(long x, long range, long seqwidth);
+  void					SetXScrollValue(long X);
+  long					GetXScroll();
+  int					GetXPos(double pos);
+  void					MoveXMark(long x);
+
   DECLARE_EVENT_TABLE()
 };
 

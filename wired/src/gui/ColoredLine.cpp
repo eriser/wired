@@ -31,7 +31,7 @@ void			ColoredLine::OnPaint(wxPaintEvent &event)
   size = GetSize();
   dc.SetPen(wxPen(c0loR, 1, wxSOLID));
   dc.DrawLine(0, 0, size.x - 1, size.y - 1);
-  dc.DrawPoint(size.x -1, size.y -1);
+  dc.DrawPoint(size.x - 1, size.y - 1);
 }
 
 void			ColoredLine::SetColor(wxColour c)

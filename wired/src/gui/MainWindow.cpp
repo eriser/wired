@@ -363,7 +363,7 @@ bool					MainWindow::NewSession()
 
   wxMessageDialog			msg(this, "Save current session ?", "Wired", 
 					    wxYES_NO | wxCANCEL | wxICON_QUESTION);
-  int				res;
+  int					res;
   
   res = msg.ShowModal();
   if (res == wxID_YES)

@@ -31,6 +31,8 @@
 #define CL_RULER_BACKGROUND		wxColour(237, 237, 242)
 #define CL_RULER_FOREGROUND		wxColour( 10,  10,  42)
 #define CL_RULER_PATTERNNUM		wxColour(  0,   0,  24)
+/* #define CL_RULER_XMARK			wxColour( 42,  42, 142) */
+#define CL_RULER_XMARK			wxColour(255,  42, 142)
 
 /*
 ** Sequencer colours
@@ -42,6 +44,9 @@
 #define CL_SEQVIEW_FOREGROUND		wxColour( 59,  65,  70)
 #define CL_SEQVIEW_MES			wxColour(142, 155, 166)
 #define CL_SEQVIEW_BAR			wxColour(184, 204, 242)
+#define CL_SEQVIEW_TRACK_LINE_TOP	wxColour(204, 204, 254)
+#define CL_SEQVIEW_TRACK_LINE		wxColour(142, 142, 204)
+#define CL_SEQVIEW_TRACK_LINE_BOTTOM	wxColour( 69,  69, 104)
 #define CL_TRKVIEW_CONTOUR		wxColour(202, 207, 211)
 #define CL_TRKVIEW_BACKGROUND		wxColour(109, 122, 130)
 #define CL_CURSORZ_HEAD_PLAY		wxColour( 88, 108, 242)

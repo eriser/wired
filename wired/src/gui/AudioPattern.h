@@ -27,6 +27,7 @@ class					AudioPattern: public Pattern, public WaveDrawer
   void					SetDrawing();
   void					SetWave(WaveFile *w);
   void					SetDrawColour(wxColour c);
+  void					Split(double pos);
 
   Pattern				*CreateCopy(double pos);
   Channel				*InputChan;

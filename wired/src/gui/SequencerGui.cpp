@@ -55,6 +55,7 @@ SequencerView::SequencerView(wxWindow *parent, const wxPoint &pos,
 
 SequencerView::~SequencerView()
 {
+  delete (TheZone);
   delete (HAxl);
   delete (VAxl);
 }
@@ -140,6 +141,7 @@ void					SequencerView::OnRightClick(wxMouseEvent &event)
 void					SequencerView::OnPaint(wxPaintEvent &event)
 {
   DrawMeasures();
+  DrawTrackLines();
 }
 
 void					SequencerView::AutoScroll(double xmove, double ymove)
@@ -177,7 +179,6 @@ void					SequencerView::AutoXScrollForward(long accel_type)
       Seq->EndPos += floor(HAxl->GetValue()) * Seq->EndPos / (double) SeqPanel->HorizScrollBar->GetRange();
       SeqPanel->EndCursor->SetPos(Seq->EndPos);
       SeqPanel->SetScrolling();
-      SeqPanel->RedrawTrackLines();
       SeqPanel->HorizScrollBar->SetThumbPosition(SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH);
     }
   SeqPanel->AdjustHScrolling();
@@ -302,6 +303,31 @@ void					SequencerView::DrawMeasures()
     }
 }
 
+void					SequencerView::DrawTrackLines()
+{
+  wxPaintDC				dc(this);
+  vector<Track *>::iterator		i;
+  long					h;
+  
+  PrepareDC(dc);
+  for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)  
+    if ((*i)->TrackPattern)
+      {
+	if ((h = (*i)->TrackOpt->GetPosition().y + (*i)->TrackOpt->GetSize().y) > 0)
+	  {
+	    dc.SetPen(wxPen(CL_SEQVIEW_TRACK_LINE_TOP, 1, wxSOLID));
+	    dc.DrawLine(-XScroll, h - 1, TotalWidth, h - 1);
+	  }
+	dc.SetPen(wxPen(CL_SEQVIEW_TRACK_LINE, 1, wxSOLID));
+	dc.DrawLine(-XScroll, h, TotalWidth, h);
+	if (h < TotalHeight - 1)
+	  {
+	    dc.SetPen(wxPen(CL_SEQVIEW_TRACK_LINE_BOTTOM, 1, wxSOLID));
+	    dc.DrawLine(-XScroll, h + 1, TotalWidth, h + 1);
+	  }
+      }
+}
+
 SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size)
   : wxPanel(parent, -1, pos, size, wxSIMPLE_BORDER | wxWS_EX_PROCESS_IDLE)
 {
@@ -392,20 +418,16 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   AdjustHScrolling();
   SeqView->SetTotalWidth(0);
   SeqView->SetTotalHeight(0);
-
+  
   /* Curseurs */
   BeginLoopCursor = new Cursor('L', ID_CURSOR_BEGIN, 0.0, RulerPanel, this,
 			       CL_CURSORZ_HEAD_RIGHT, CL_CURSORZ_LINE_DARK);
-  BeginLoopCursor->SetPos(0);
-  EndLoopCursor = new Cursor('R', ID_CURSOR_REPEAT, 0.0, RulerPanel, this,
-			       CL_CURSORZ_HEAD_LEFT, CL_CURSORZ_LINE_DARK);
-  EndLoopCursor->SetPos(4);
-  EndCursor = new Cursor('E', ID_CURSOR_END, 0.0, RulerPanel, this,
-			       CL_CURSORZ_HEAD_END, CL_CURSORZ_LINE_DARK);
-  EndCursor->SetPos(16);
+  EndLoopCursor = new Cursor('R', ID_CURSOR_REPEAT, 4.0, RulerPanel, this,
+			     CL_CURSORZ_HEAD_LEFT, CL_CURSORZ_LINE_DARK);
+  EndCursor = new Cursor('E', ID_CURSOR_END, Seq->EndPos, RulerPanel, this,
+			 CL_CURSORZ_HEAD_END, CL_CURSORZ_LINE_DARK);
   PlayCursor = new Cursor('P', ID_CURSOR_PLAY, 0.0, RulerPanel, this,
-				CL_CURSORZ_HEAD_PLAY, CL_CURSORZ_LINE_DARK);
-  PlayCursor->SetPos(0);
+			  CL_CURSORZ_HEAD_PLAY, CL_CURSORZ_LINE_DARK);
   // evenement curseur
   Connect(ID_SEQ_SETPOS, TYPE_SEQ_SETPOS, (wxObjectEventFunction)&SequencerGui::OnSetPosition);
   // evenement resize pattern
@@ -508,35 +530,21 @@ void					SequencerGui::RedrawCursors()
   EndCursor->SetPos(EndCursor->GetPos());
 }
 
-void					SequencerGui::RedrawTrackLines()
-{
-  vector<Track *>::iterator		i;
-  
-  for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)  
-    if ((*i)->TrackPattern)
-      (*i)->TrackPattern->Update();
-}
-
-void					SequencerGui::RedrawEditedPatterns(WaveFile *w)
+void					SequencerGui::UpdateAudioPatterns(WaveFile *w)
 {
   vector<Track *>::iterator		t;
   vector<Pattern *>::iterator		p;
 
   for (t = Seq->Tracks.begin(); t != Seq->Tracks.end(); t++)
     for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
-      if ((*t)->IsAudioTrack() && ((*p)->GetWave() == w))
-	(*p)->Update();
+      if ((*t)->IsAudioTrack() && (((AudioPattern *) *p)->GetWaveFile() == w))
+	((AudioPattern *) *p)->SetDrawing();
 }
 
-void					SequencerGui::RedrawEditedPatterns(vector<MidiEvent *> *e)
+void					SequencerGui::UpdateMidiPattern(MidiPattern *m)
 {
-  vector<Track *>::iterator		t;
-  vector<Pattern *>::iterator		p;
-  
-  for (t = Seq->Tracks.begin(); t != Seq->Tracks.end(); t++)
-    for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
-      if (!((*t)->IsAudioTrack()) && ((*p)->GetEvents() == e))
-	(*p)->Update();
+  m->Update();
+  m->Refresh();
 }
 
 void					SequencerGui::SetScrolling()
@@ -665,50 +673,15 @@ void					SequencerGui::OnHoriSliderUpdate(wxCommandEvent &event)
 
 void					SequencerGui::UpdateMeasures()
 {
-  long					x_begin;
-  long					mes;
-  long					x_end;
-  long					h;
   vector<Track *>::iterator		t;
-  vector<wxStaticLine *>::iterator	m;
   vector<Pattern *>::iterator		p;
 
-  h = (long) (VertZoomFactor * TRACK_HEIGHT) * Seq->Tracks.size();
-  mes = (long) ceil(MEASURE_WIDTH * HoriZoomFactor);
-  x_end = (long) (Seq->EndPos * mes);
   for (t = Seq->Tracks.begin(); t != Seq->Tracks.end(); t++)
     {
-      (*t)->TrackPattern->Update();
+      //      (*t)->TrackPattern->Update();
       for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
 	(*p)->Update();
     }  
-}
-
-void					SequencerGui::UpdateAudioPatterns(WaveFile *w)
-{
-  vector<Track *>::iterator		i;
-  vector<Pattern *>::iterator		p;
-  AudioPattern				*a;
-
-  for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
-    {
-      if ((*i)->IsAudioTrack())
-	{
-	  for (p = (*i)->TrackPattern->Patterns.begin(); 
-	       p != (*i)->TrackPattern->Patterns.end(); p++)
-	    {
-	      a = (AudioPattern *)(*p);
-	      if (a->GetWaveFile() == w)
-		a->SetDrawing();
-	    }
-	}
-    }  
-}
-
-void					SequencerGui::UpdateMidiPattern(MidiPattern *m)
-{
-  m->Update();
-  m->Refresh();
 }
 
 void					SequencerGui::OnPaint(wxPaintEvent &event)
@@ -787,7 +760,6 @@ void					SequencerGui::ChangeSelectedTrackIndex(long trackindexdelta)
   u.push_back(*j);
   UpdateTrackList(&u);
   u.clear();
-  TrackView->Update();
 }
 
 void					SequencerGui::ScrollTrackList(long track_delta)
@@ -899,13 +871,9 @@ void					SequencerGui::CopySelectedItems()
 void					SequencerGui::PasteItems()
 {
   vector<Pattern *>::iterator		j;
-  Pattern				*p;
   
   for (j = CopyItems.begin(); j != CopyItems.end(); j++)
-    {
-      p = *j;
-      p->CreateCopy(p->GetEndPosition());
-    }
+    ((Pattern *) *j)->CreateCopy(((Pattern *) *j)->GetEndPosition());
   if (DoCut)
     DeleteSelectedPatterns();
 }

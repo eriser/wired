@@ -7,16 +7,27 @@
 #include "Colour.h"
 #include "Cursor.h"
 #include "Ruler.h"
+#include "ColoredLine.h"
 
-Ruler::Ruler(wxWindow *parent, wxWindowID id, const wxPoint &pos,
-	     const wxSize &size)
+Ruler::Ruler(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size)
   : wxWindow(parent, id, pos, size, wxRAISED_BORDER) 
 {
+//   T1 = new ColoredLine(this, -1, wxPoint(42, RULER_HEIGHT - RULER_XMARK_HEIGHT), wxSize(1, RULER_XMARK_HEIGHT    ), CL_RULER_XMARK);
+//   T2 = new ColoredLine(this, -1, wxPoint(43, RULER_HEIGHT - RULER_XMARK_HEIGHT), wxSize(1, RULER_XMARK_HEIGHT - 1), CL_RULER_XMARK);
+//   T3 = new ColoredLine(this, -1, wxPoint(44, RULER_HEIGHT - RULER_XMARK_HEIGHT), wxSize(1, RULER_XMARK_HEIGHT    ), CL_RULER_XMARK);
+  T1 = new ColoredLine(this, -1, wxPoint(42, 0), wxSize(8, RULER_XMARK_HEIGHT    ), CL_RULER_XMARK);
+  T2 = new ColoredLine(this, -1, wxPoint(43, 0), wxSize(16, RULER_XMARK_HEIGHT - 1), CL_RULER_XMARK);
+  T3 = new ColoredLine(this, -1, wxPoint(44, 0), wxSize(24, RULER_XMARK_HEIGHT    ), CL_RULER_XMARK);
+  T1->Show(true);
+  T2->Show(true);
+  T3->Show(true);
 }
 
 Ruler::~Ruler()
 {
-
+  delete (T1);
+  delete (T2);
+  delete (T3);
 }
 
 /*
@@ -24,15 +35,15 @@ Ruler::~Ruler()
 ** et du facteur de zoom.
 */
 
-void		Ruler::OnPaint(wxPaintEvent &event)
+void				Ruler::OnPaint(wxPaintEvent &event)
 {
-  wxPaintDC	dc(this);
-  wxSize	size;
-  wxString	s;
-  double	x;
-  double	u;
-  long		m;
-  long		h;
+  wxPaintDC			dc(this);
+  wxSize			size;
+  wxString			s;
+  double			x;
+  double			u;
+  long				m;
+  long				h;
 
   PrepareDC(dc);
   size = GetClientSize();
@@ -57,7 +68,7 @@ void		Ruler::OnPaint(wxPaintEvent &event)
     }
 }
 
-void		Ruler::OnMouseEvent(wxMouseEvent &e)
+void				Ruler::OnMouseEvent(wxMouseEvent &e)
 {
   SeqPanel->SetCurrentPos(((double) (XScroll + e.m_x)) / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor));
   Seq->SetCurrentPos(SeqPanel->PlayCursor->GetPos());
@@ -65,7 +76,7 @@ void		Ruler::OnMouseEvent(wxMouseEvent &e)
   wxPostEvent(GetParent(), event);
 }
 
-void		Ruler::SetXScroll(long x, long range, long seqwidth)
+void				Ruler::SetXScroll(long x, long range, long seqwidth)
 {
   
   if (!range || ((XScroll = (long) floor(((Seq->EndPos * MEASURE_WIDTH * SeqPanel->HoriZoomFactor
@@ -73,16 +84,32 @@ void		Ruler::SetXScroll(long x, long range, long seqwidth)
     XScroll = 0;
 }
 
-void		Ruler::SetXScrollValue(long X)
+void				Ruler::SetXScrollValue(long X)
 {
   if (X >= 0)
     XScroll = X;
 }
 
 
-long		Ruler::GetXScroll()
+long				Ruler::GetXScroll()
 {
   return (XScroll);
+}
+
+int				Ruler::GetXPos(double pos)
+{
+  return ((int) (MEASURE_WIDTH * SeqPanel->HoriZoomFactor * pos));
+}
+
+void				Ruler::MoveXMark(long x)
+{
+  printf("youpi ? %d\n", x);
+  T1->SetSize((int)     x, (int)     RULER_HEIGHT - RULER_XMARK_HEIGHT, (int) -1, -1, wxSIZE_USE_EXISTING);
+  T2->SetSize((int) 1 + x, (int) 1 + RULER_HEIGHT - RULER_XMARK_HEIGHT, (int) -1, -1, wxSIZE_USE_EXISTING);
+  T3->SetSize((int) 2 + x, (int)     RULER_HEIGHT - RULER_XMARK_HEIGHT, (int) -1, -1, wxSIZE_USE_EXISTING);
+  T1->Show(true);
+  T2->Show(true);
+  T3->Show(true);
 }
 
 BEGIN_EVENT_TABLE(Ruler, wxWindow)

@@ -6,7 +6,6 @@
 
 #include "SeqTrack.h"
 #include "Pattern.h"
-#include <wx/statline.h>
 
 class SequencerView;
 
@@ -19,7 +18,6 @@ class SeqTrackPattern
   void					Update();
 
   SeqTrack				*TrackOpt;
-  wxStaticLine				*Horiz;
   SequencerView				*Parent;
   vector<Pattern *>			Patterns;
 };

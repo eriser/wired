@@ -9,46 +9,48 @@ using namespace std;
 #include <list>
 #include "Pattern.h"
 
-class			MidiTrack;
-class			MidiEvent;
-class			MidiFileEvent;
+class				MidiTrack;
+class				MidiEvent;
+class				MidiFileEvent;
 
-class			MidiPattern: public Pattern
+class				MidiPattern: public Pattern
 {
  public:
   MidiPattern(double pos, double endpos, long trackindex);
   MidiPattern(double pos, MidiTrack *t, long trackindex);
   ~MidiPattern();
   
-  void			AddEvent(MidiEvent *event);
-  void			AddEvent(MidiFileEvent *event);
-  void			Update();
-  void			SetSelected(bool sel);
-  unsigned short	GetPPQN() { return (ppqn); }
-  void			SetPPQN(unsigned short p) { ppqn = p; }
-  void			SetDrawColour(wxColour c);
-  Pattern		*CreateCopy(double pos);
-  void			DrawMidi();
+  void				AddEvent(MidiEvent *event);
+  void				AddEvent(MidiFileEvent *event);
+  void				Update();
+  void				SetSelected(bool sel);
+  unsigned short		GetPPQN() { return (ppqn); }
+  void				SetPPQN(unsigned short p) { ppqn = p; }
+  void				SetDrawColour(wxColour c);
+  Pattern			*CreateCopy(double pos);
+  void				DrawMidi();
+  void				Split(double pos);
   
-  vector<MidiEvent *>	Events;
-  list<MidiEvent *>	temp;
-  list<MidiEvent *>	RecordingEvents;  // Events being record (waits for NOTE OFF)
+  vector<MidiEvent *>		Events;
+  list<MidiEvent *>		temp;
+  list<MidiEvent *>		RecordingEvents;  // Events being record (waits for NOTE OFF)
 
  protected:
-  void			Init();
-  void			OnClick(wxMouseEvent &e);
-  void			OnLeftUp(wxMouseEvent &e);
-  void			OnDoubleClick(wxMouseEvent &e);
-  void			OnRightClick(wxMouseEvent &e);
-  void			OnMotion(wxMouseEvent &e);
-  void			OnDeleteClick(wxCommandEvent &e);
-  void			OnMoveToCursorClick(wxCommandEvent &e);
-  void			OnPaint(wxPaintEvent &e);
-  void			OnHelp(wxMouseEvent &event);
-  vector<MidiEvent *>	*GetEvents() { return (&Events); };
-  wxBitmap		*Bmp;
-  wxMemoryDC		memDC;
-  unsigned short	ppqn;
+  void				Init();
+  void				OnClick(wxMouseEvent &e);
+  void				OnLeftUp(wxMouseEvent &e);
+  void				OnDoubleClick(wxMouseEvent &e);
+  void				OnRightClick(wxMouseEvent &e);
+  void				OnMotion(wxMouseEvent &e);
+  void				OnDeleteClick(wxCommandEvent &e);
+  void				OnMoveToCursorClick(wxCommandEvent &e);
+  void				OnPaint(wxPaintEvent &e);
+  void				OnHelp(wxMouseEvent &event);
+
+  vector<MidiEvent *>		*GetEvents() { return (&Events); };
+  wxBitmap			*Bmp;
+  wxMemoryDC			memDC;
+  unsigned short		ppqn;
 
   DECLARE_EVENT_TABLE()
 };
