@@ -7,6 +7,7 @@
 #include "HelpPanel.h"
 #include "Settings.h"
 #include "FileLoader.h"
+#include "MainWindow.h"
 
 #include <string>
 #include <iostream>
@@ -111,7 +112,7 @@ long HostCallback(Plugin *plug, long param, void *value)
 	} *w;
 	
 	w = (s_wired_l *)value;
-	FileLoader *dlg = new FileLoader(0x0, -1, *(w->t), w->ak, false, w->e);
+	FileLoader *dlg = new FileLoader(MainWin, MainWin_FileLoader, *(w->t), w->ak, false, w->e);
 	if (dlg->ShowModal() == wxID_OK)
 	  w->result = dlg->GetSelectedFile();
 	dlg->Destroy();
@@ -127,7 +128,7 @@ long HostCallback(Plugin *plug, long param, void *value)
 	} *w;
 	
 	w = (s_wired_l *)value;
-	FileLoader *dlg = new FileLoader(0x0, -1, *(w->t), false, true, w->e);
+	FileLoader *dlg = new FileLoader(MainWin, MainWin_FileLoader, *(w->t), false, true, w->e);
 	if (dlg->ShowModal() == wxID_OK)
 	  w->result = dlg->GetSelectedFile();
 	dlg->Destroy();
