@@ -666,7 +666,7 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 	  up += 10;
 	  if (up > 99)
 	    up = 99;
-	  Progress->Update(up);
+	  //Progress->Update(up); ** Generates segfault in pango
 	  //cout << "pos: " << Seq->CurrentPos << "; end: " << Seq->EndLoopPos << endl;
 	  wxMilliSleep(50);
 	  SeqMutex.Lock();
