@@ -17,6 +17,7 @@ cClipBoard::~cClipBoard()
 {
   delete spSingleton;
   //wxRemoveFile("/tmp/tmp.wav");
+  //cout << " destructeur clipboard " << endl;
 }
 
 
@@ -89,7 +90,7 @@ void cClipBoard::Cut (WaveFile& wave, int from, int size_of_cut)
   if ( wave.GetOpenMode() != rwrite )
     throw cException ("File opened in read only mode");
   
-  
+  sizec = size_of_cut;
   // buffer destine a recevoir les donnees a copier
   float * rw_buffer = new float [wave.GetNumberOfChannels() * WAVE_TEMP_SIZE];
   
@@ -143,7 +144,7 @@ void cClipBoard::Paste (WaveFile& wave, int to)
     throw cException ("Paste : Nothing to paste");
   
   size_paste = sizec;
-  // cout << "[cClipBoard] - Paste : " << GetNumberOfFrames() << " frames to paste" << endl;
+  //cout << "[cClipBoard] - Paste : " << GetNumberOfFrames() << " frames to paste" << endl;
   
   int size_of_paste = GetNumberOfFrames();
   
@@ -179,7 +180,7 @@ void cClipBoard::Paste (WaveFile& wave, int to)
     }
   
   // Copie des frames 'decales'
-  temp.SetCurrentPosition();
+  temp.SetCurrentPosition(0);
   read_frames = temp.ReadFloatF(rw_buffer);
   while ((read_frames > 0) && (size_paste > 0))
     {
@@ -187,7 +188,7 @@ void cClipBoard::Paste (WaveFile& wave, int to)
       size_paste -= read_frames;
       read_frames = temp.ReadFloatF(rw_buffer);
       if (read_frames > size_paste)
-	read_frames = size_paste;
+		read_frames = size_paste;
     }
   
   // Met a jour le nombre de frames du wave
@@ -197,8 +198,8 @@ void cClipBoard::Paste (WaveFile& wave, int to)
   // Met a jour le header du wave
   sf_command (wave.GetFilePtr(), SFC_UPDATE_HEADER_NOW, NULL, SF_FALSE) ;
   
-  delete[] rw_buffer;
   wxRemoveFile("/tmp/tmp1.wav");
+  delete[] rw_buffer;
 }
 
 

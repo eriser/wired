@@ -47,7 +47,7 @@ WaveFile::WaveFile()
   // Initialise le header de fichier
   memset (&sfinfo, 0, sizeof(sfinfo) );
 
-  cout << "[WaveFile ] ----  LoadedInMem = " << LoadedInMem << endl;
+  //cout << "[WaveFile ] ----  LoadedInMem = " << LoadedInMem << endl;
   // Si le fichier doit etre ouvert en mode write ou read/write
   // on initialise son sf_info avec des donnees valides
   // Ces infos peuvent etre mis a jour avec la commande SFC_UPDATE_HEADER_NOW 
@@ -94,6 +94,7 @@ WaveFile::WaveFile()
     {
       cout << "[WAVEFILE] Could not open file for writing, trying read-only..." << endl;
       sffile = sf_open (Filename.c_str(), SFM_READ, &sfinfo);
+      m_open_mode =0;
       if (sffile == NULL)
         throw Error::File(filename, sf_strerror(0));
     }

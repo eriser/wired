@@ -59,4 +59,6 @@ libgui_a_SOURCES = 			\
 		WaveEditorDrawer.cpp	\
 		WaveEditorDrawer.h	\
 		WavePanel.cpp		\
-		WavePanel.h
+		WavePanel.h		\
+		PluginEffect.cpp	\
+		PluginEffect.h
