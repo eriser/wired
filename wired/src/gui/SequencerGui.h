@@ -13,6 +13,7 @@ using namespace std;
 
 #include "Track.h"
 #include "Ruler.h"
+#include "SelectionZone.h"
 #include "Cursor.h"
 #include "ColoredBox.h"
 #include <wx/toolbar.h>
@@ -85,17 +86,23 @@ extern const struct s_combo_choice	ComboChoices[NB_COMBO_CHOICES + 1];
 
 class SequencerView: public wxScrolledWindow
 {
+  friend class			SequencerGui;
+
  private:
   unsigned long			TotalWidth;
   unsigned long			TotalHeight;
   long				XScroll;
   long				YScroll;
+  SelectionZone			*TheZone;
 
  public:
   SequencerView(wxWindow *parent, const wxPoint &pos, const wxSize &size);
   ~SequencerView();
 
-  void				OnClick(wxMouseEvent &event);
+  void				OnClick(wxMouseEvent &e);
+  void				OnMotion(wxMouseEvent &e);
+  void				SelectZonePatterns();
+  void				OnLeftUp(wxMouseEvent &e);
   void				OnRightClick(wxMouseEvent &event);
   void				OnPaint(wxPaintEvent &event);
   void				OnHelp(wxMouseEvent &event);
@@ -235,6 +242,7 @@ class SequencerGui: public wxPanel
   friend class			CursorH;
   friend class			Ruler;
   friend class			ColoredBox;
+  friend class			SequencerView;
 
   void				UpdateTracks();
   void				UpdateMeasures();

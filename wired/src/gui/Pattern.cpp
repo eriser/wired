@@ -214,7 +214,6 @@ void					Pattern::OnMotion(wxMouseEvent &e)
       
       SeqMutex.Unlock();
     }
-  
 }
 
 void					Pattern::DrawName(wxPaintDC &dc, wxSize s)

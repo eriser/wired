@@ -10,15 +10,13 @@
 #include "SequencerGui.h"
 #include "Transport.h"
 #include "HelpPanel.h"
-
+#include "SelectionZone.h"
 #include "MixerGui.h"
-
 #include <iostream>
-
-SequencerGui				*SeqGui;
-
 #include "WaveFile.h"
 #include "WaveView.h"
+
+SequencerGui				*SeqGui;
 
 const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1] =
 {
@@ -38,12 +36,7 @@ SequencerView::SequencerView(wxWindow *parent, const wxPoint &pos,
 			     const wxSize &size)
   : wxScrolledWindow(parent, -1, pos, size, wxSUNKEN_BORDER)
 {
-  /*  Connect(GetId(), wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)(wxPaintEventFunction)
-	  &SequencerView::OnPaint);
-  Connect(GetId(), wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
-	  &SequencerView::OnClick);
-  Connect(GetId(), wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
-  &SequencerView::OnRightClick);*/
+  TheZone = new SelectionZone(this);
 }
 
 SequencerView::~SequencerView()
@@ -51,9 +44,77 @@ SequencerView::~SequencerView()
 
 }
 
-void					SequencerView::OnClick(wxMouseEvent &event)
+void					SequencerView::OnClick(wxMouseEvent &e)
 {
   SeqPanel->SelectItem(0x0, false);
+  if (!TheZone->IsVisible())
+    TheZone->SetZone(e.m_x, e.m_y, 2, 2);
+}
+
+void					SequencerView::OnMotion(wxMouseEvent &e)
+{
+  if (e.Dragging())
+    if (TheZone->IsVisible())
+      {
+	TheZone->UpdateZone(e.m_x, e.m_y);
+	SelectZonePatterns();
+      }
+}
+
+void					SequencerView::SelectZonePatterns()
+{
+  vector<Track *>::iterator		t;
+  vector<Pattern *>::iterator		p;
+  vector<Pattern *>::iterator		i;
+  double				x1;
+  double				x2;
+  unsigned long				y1;
+  unsigned long				y2;
+
+  if (!TheZone->IsXReversed())
+    {
+      x1 = (x2 = XScroll + TheZone->GetZoneX()) / (double) (MEASURE_WIDTH * SeqPanel->HoriZoomFactor);
+      x2 = (x2 + TheZone->GetZoneW()) / (double) (MEASURE_WIDTH * SeqPanel->HoriZoomFactor);
+    }
+  else
+    {
+      x2 = (x1 = XScroll + TheZone->GetZoneX()) / (double) (MEASURE_WIDTH * SeqPanel->HoriZoomFactor);
+      x1 = (x1 - TheZone->GetZoneW()) / (double) (MEASURE_WIDTH * SeqPanel->HoriZoomFactor);
+    }
+  if (!TheZone->IsYReversed())
+    {
+      y1 = YScroll + TheZone->GetZoneY();
+      y2 = y1 + TheZone->GetZoneH();
+    }
+  else
+    {
+      y2 = YScroll + TheZone->GetZoneY();
+      y1 = y2 - TheZone->GetZoneH();
+    }
+  for (t = Seq->Tracks.begin(); t != Seq->Tracks.end(); t++)
+    for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
+      if (((*p)->GetPosition() >= x1) && ((*p)->GetEndPosition() <= x2) &&
+	  (((*p)->GetTrackIndex() * TRACK_HEIGHT * SeqPanel->VertZoomFactor) >= y1) &&
+	  ((((*p)->GetTrackIndex() + 1) * TRACK_HEIGHT * SeqPanel->VertZoomFactor) <= y2))
+	{
+	  if (!(*p)->IsSelected())
+	    {
+	      (*p)->SetSelected(true);
+	      SeqPanel->SelectedItems.push_back(*p);
+	    }
+	}
+      else
+	if ((*p)->IsSelected())
+	  {
+	    (*p)->SetSelected(false);
+	    for (i = SeqPanel->SelectedItems.begin(); (i != SeqPanel->SelectedItems.end()) && (*i != *p); i++);
+	    SeqPanel->SelectedItems.erase(i);
+	  }
+}
+
+void					SequencerView::OnLeftUp(wxMouseEvent &e)
+{
+  TheZone->Hide();
 }
 
 void					SequencerView::OnRightClick(wxMouseEvent &event)
@@ -319,7 +380,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Connect(ID_POPUP_PASTE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	  &SequencerGui::OnPaste);
-
 }
 
 SequencerGui::~SequencerGui()
@@ -972,6 +1032,8 @@ END_EVENT_TABLE()
 BEGIN_EVENT_TABLE(SequencerView, wxScrolledWindow)
   EVT_PAINT(SequencerView::OnPaint)
   EVT_LEFT_DOWN(SequencerView::OnClick)
+  EVT_LEFT_UP(SequencerView::OnLeftUp)
+  EVT_MOTION(SequencerView::OnMotion)
   EVT_RIGHT_DOWN(SequencerView::OnRightClick)
   EVT_ENTER_WINDOW(SequencerView::OnHelp)
 END_EVENT_TABLE()

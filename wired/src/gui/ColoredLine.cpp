@@ -10,7 +10,6 @@ BEGIN_EVENT_TABLE(ColoredLine, wxWindow)
   EVT_PAINT(ColoredLine::OnPaint)
 END_EVENT_TABLE()
 
-
 ColoredLine::ColoredLine(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 			 const wxSize &size, const wxColour c)
   : wxWindow(parent, id, pos, size, wxNO_BORDER)
@@ -31,7 +30,8 @@ void			ColoredLine::OnPaint(wxPaintEvent &event)
   PrepareDC(dc);
   size = GetSize();
   dc.SetPen(wxPen(c0loR, 1, wxSOLID));
-  dc.DrawLine(0, 0, size.x - 1, size.y);
+  dc.DrawLine(0, 0, size.x - 1, size.y - 1);
+  dc.DrawPoint(size.x -1, size.y -1);
 }
 
 void			ColoredLine::SetColor(wxColour c)
@@ -40,8 +40,21 @@ void			ColoredLine::SetColor(wxColour c)
   Refresh();
 }
 
-void			ColoredLine::ReSize(unsigned long h)
+void			ColoredLine::SetVSize(unsigned long h)
 {
   SetSize(-1, -1, -1, (int) h, wxSIZE_USE_EXISTING);
   Refresh();
 }
+
+void			ColoredLine::SetHSize(unsigned long w)
+{
+  SetSize(-1, -1, (int) w, -1, wxSIZE_USE_EXISTING);
+  Refresh();
+}
+
+void			ColoredLine::ReSize(unsigned long w, unsigned long h)
+{
+  SetSize(-1, -1, (int) w, (int) h, wxSIZE_USE_EXISTING);
+  Refresh();
+}
+
