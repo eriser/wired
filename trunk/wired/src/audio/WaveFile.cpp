@@ -139,6 +139,7 @@ WaveFile::WaveFile()
   }
   else
   {
+    cout << "nom du fichier : " << Filename << endl;
 	cout << "[WaveFile::WaveFile] sfinfo.channels = " << sfinfo.channels << endl;
   
     NumberOfFrames = sfinfo.frames;

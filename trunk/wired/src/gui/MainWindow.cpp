@@ -243,13 +243,16 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   /* Creation Panel */
   RackPanel = new Rack(split, -1, wxPoint(0, 0), wxSize(800, 250));
+
+  cout << "1111" << endl;  
+    
   SeqPanel = new SequencerGui(split, wxPoint(0, 254), wxSize(800, 200));
+  cout << "2222" << endl;  
+
   //  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 150), wxSIMPLE_BORDER);
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
 
-  cout << "1111" << endl;  
   split->SplitHorizontally(RackPanel, SeqPanel);
-  cout << "2222" << endl;  
   
   /* Placement Panel */
     
@@ -1211,6 +1214,7 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
   list<Pattern *>::iterator		i;
   list<MidiPattern *>::iterator		j;
   list<Plugin *>::iterator		k;
+  list<Track *>::iterator		t;
 
   SeqMutex.Lock();
 
@@ -1218,6 +1222,10 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
   if (Seq->Playing)
     {
       SeqPanel->OnSetPosition(e);
+      for (t = Seq->TracksToRefresh.begin(); t != Seq->TracksToRefresh.end(); t++)
+	(*t)->TrackOpt->SetVuValue();
+      Seq->TracksToRefresh.clear();
+
       if (Seq->Recording)
 	{
 	  for (i = Seq->PatternsToResize.begin(); i != Seq->PatternsToResize.end(); i++)
@@ -1244,6 +1252,11 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
 
 void					MainWindow::AddUpdatePlugin(Plugin *p)
 {
+  list<Plugin *>::iterator		i;
+
+  for (i = UpdatePlugins.begin(); i != UpdatePlugins.end(); i++)
+    if (*i == p)
+      return;
   UpdatePlugins.push_back(p);
 }
 

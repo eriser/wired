@@ -106,6 +106,10 @@ FilterPlugin::FilterPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   MidiRes[1] = 0xB;
   MidiBypass[0] = -1;
   MidiBypass[1] = -1;
+
+  UpdateBypass = false;
+  UpdateCutoff = false;
+  UpdateRes = false;
   
   Connect(Filter_Bypass, wxEVT_RIGHT_DOWN,
 	  (wxObjectEventFunction)(wxEventFunction) 
@@ -319,31 +323,40 @@ void FilterPlugin::Process(float **input, float **output, long sample_length)
   if (!Bypass)
     {
       for (chan = 0; chan < 2; chan++)
-	for (i = 0; i < sample_length; i++)
-	  {
-	    History[chan][2] = History[chan][1];
-	    History[chan][1] = History[chan][0];
-	    History[chan][0] = input[chan][i];
-	    
-	    out = 0.f;
-	    for (j = 0; j < FILTER_SIZE; j++)
-	      {
-		out += History[chan][j] * Coefs[j];
-		if (IS_DENORMAL(out))
-		  {
-		    out += anti_denormal; 
-		    out -= anti_denormal;
-		  }
-	      }
-	    History[chan][4] = History[chan][3];
-	    History[chan][3] = out;
-	    
-	    out *= Reamp;
-	    
-	    if (IS_DENORMAL(out))
+	{
+	  for (i = 0; i < sample_length; i++)
+	    {
+	      History[chan][2] = History[chan][1];
+	      History[chan][1] = History[chan][0];
+	      History[chan][0] = input[chan][i];
+	      
 	      out = 0.f;
-	    output[chan][i] = out;
-	  }      
+	      for (j = 0; j < FILTER_SIZE; j++)
+		{
+		  out += History[chan][j] * Coefs[j];
+		  if (IS_DENORMAL(out))
+		    {
+		      out += anti_denormal; 
+		      out -= anti_denormal;
+		    }
+		}
+	      History[chan][4] = History[chan][3];
+	      History[chan][3] = out;
+	      
+	      out *= Reamp;
+	      
+	      if (IS_DENORMAL(out))
+		{
+		  out = 0.f;
+		}
+	      output[chan][i] = out;
+	    } 
+	  for (j = 0; j < FILTER_SIZE; j++)     
+	    {
+	      if (IS_DENORMAL(History[chan][j]))
+		History[chan][j] = 0.f;
+	    }
+	}		  
     }
   else
     {
@@ -363,36 +376,66 @@ void FilterPlugin::ProcessEvent(WiredEvent &event)
       float step = SIZE_CUTOFF / 127.f;
 
       Cutoff = event.MidiData[2] * step;
-      CutoffFader->SetValue((long)Cutoff);
+      if (Cutoff < 1.f)
+	Cutoff = 1.f;
       SetFilter(FilterSelect->GetValue(), Cutoff, Res);
+
+      UpdateCutoff = true;
+      AskUpdate();
     }
   else if ((MidiRes[0] == event.MidiData[0]) && (MidiRes[1] == event.MidiData[1]))
     {
       float step = 100.f / 127.f;
       
-      Res = event.MidiData[2] * step;
-      ResFader->SetValue((long)Res);
-      Res /= 100.f;
+      Res = (event.MidiData[2] * step) / 100.f;
       SetFilter(FilterSelect->GetValue(), Cutoff, Res);
+
+      UpdateRes = true;
+      AskUpdate();
     }
   else if ((MidiBypass[0] == event.MidiData[0]) && (MidiBypass[1] == event.MidiData[1]))
     {
       if (event.MidiData[2])
+	Bypass = true;
+      else
+	Bypass = false;
+
+      UpdateBypass = true;
+      AskUpdate();
+    }
+
+  Mutex.Unlock();
+}
+
+void FilterPlugin::Update()
+{
+  Mutex.Lock();
+
+  if (UpdateCutoff)
+    {
+      CutoffFader->SetValue((long)Cutoff);
+      UpdateCutoff = false;
+    }
+  if (UpdateRes)
+    {
+      ResFader->SetValue((long)(Res * 100.f));
+      UpdateRes = false;      
+    }
+  if (UpdateBypass)
+    {
+      if (Bypass)
 	{
 	  BypassBtn->SetOn();
-	  Bypass = true;
-	  // *** Known bug : something generates a X async reply 
 	  Liquid->SetBitmap(wxBitmap(liquid_off));
 	}
       else
 	{
 	  BypassBtn->SetOff();
-	  Bypass = false;
-	  // *** Known bug : something generates a X async reply 
 	  Liquid->SetBitmap(wxBitmap(liquid_on));
 	}
+      UpdateBypass = false;
     }
-
+  
   Mutex.Unlock();
 }
 

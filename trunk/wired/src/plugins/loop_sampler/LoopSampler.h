@@ -167,7 +167,23 @@ protected:
   int	 MidiSliceAffect[2];
   int	 MidiSliceInvert[2];
 
+  bool   UpdateMidiLed;
+  bool	 UpdateVolume;
+  bool	 UpdateAttack;
+  bool	 UpdateDecay;
+  bool	 UpdateSustain;
+  bool	 UpdateRelease;
   bool	 UpdateOctave;
+  bool	 UpdatePitch;
+  bool	 UpdateTempo;
+  bool	 UpdateInvert;
+  bool	 UpdateSliceNote;
+  bool	 UpdateSlicePitch;
+  bool	 UpdateSliceVol;
+  bool	 UpdateSliceAffect;
+  bool	 UpdateSliceInvert;
+  
+  bool	 MidiLed;
 
   unsigned int PolyphonyCount;
 

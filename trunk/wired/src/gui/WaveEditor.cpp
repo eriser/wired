@@ -445,6 +445,11 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 	
 	WaveFile *input;
 	WaveFile *output;
+	cout << "number of channel" << Wave->GetNumberOfChannels()<< endl;
+	if (input)
+	  wxRemoveFile("/tmp/tmp2.wav");
+	if (output)
+	  wxRemoveFile("/tmp/tmp3.wav");
 	if (Wave->GetNumberOfChannels() == 1)
 	{
 	input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite, 1);
@@ -482,7 +487,7 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 	}
     wxRemoveFile("/tmp/tmp2.wav");
     wxRemoveFile("/tmp/tmp3.wav");
-}
+  }
   SetDrawing();
   SeqPanel->UpdateAudioPatterns(Wave);
   Refresh();
@@ -527,6 +532,10 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
 	WaveFile *input;
 	WaveFile *output;
 	
+	if (input)
+	  wxRemoveFile("/tmp/tmp2.wav");
+	if (output)
+	  wxRemoveFile("/tmp/tmp3.wav");
 	if (Wave->GetNumberOfChannels() == 1)
 	{
 	  input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite, 1);

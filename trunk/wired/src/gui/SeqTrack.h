@@ -48,6 +48,7 @@ class					SeqTrack: public wxControl
   void					SetSelected(bool sel);
   bool					GetSelected() { return Selected; }
   void					SetVuValue(long value);
+  void					SetVuValue();
   void					SetRecording(bool rec);
   void					SetMute(bool mut);
   void					SetDeviceId(long devid);
@@ -63,6 +64,7 @@ class					SeqTrack: public wxControl
   ChannelGui*				ChanGui;
   Plugin				*Connected;
   RackTrack				*ConnectedRackTrack;
+  int					VuValue;
 
  protected:
   void					OnMotion(wxMouseEvent &e);

@@ -111,7 +111,7 @@ void					*Sequencer::Entry()
 		{		  
 		  midievent.Type = WIRED_MIDI_EVENT;
 		  midievent.NoteLength = CurAudioPos;
-		  midievent.DeltaFrames = 0; // TODO ----- A REMPLIR ----
+		  midievent.DeltaFrames = 0; //**TODO ----- A REMPLIR ----
 		  memcpy(midievent.MidiData, (*MidiMsg)->Msg, sizeof(int) * 3);
 		  // Envoyer evenement midi au plugin connecte
 		  if ((*T)->TrackOpt->Connected)
@@ -725,7 +725,9 @@ void					Sequencer::ProcessCurrentMidiEvents(Track *T, MidiPattern *p)
       if ((p->GetPosition() + (*i)->Position >= CurrentPos) && 
 	  (p->GetPosition() + (*i)->Position < CurrentPos + delta_mes))
 	{
-	  T->TrackOpt->SetVuValue((*i)->Msg[2]);
+	  T->TrackOpt->VuValue = (*i)->Msg[2];
+	  TracksToRefresh.push_back(T);
+
 	  if (T->TrackOpt->Connected)
 	    {
 	      curevent = new WiredEvent; //** really needed to dyn alloc ?
@@ -821,13 +823,13 @@ void					Sequencer::ExportToWave(string filename)
     {
       ExportWave = new WriteWaveFile(filename, (int)Audio->SampleRate, 2, 
 				     SF_FORMAT_PCM_16);
-      Seq->SetCurrentPos(BeginLoopPos);
+      SetCurrentPos(BeginLoopPos);
       
       SeqMutex.Lock();
       Exporting = true;
       SeqMutex.Unlock();
       
-      Seq->Play();
+      Play();
     } 
   catch (...)
     {

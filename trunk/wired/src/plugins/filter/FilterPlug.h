@@ -71,6 +71,8 @@ class FilterPlugin: public Plugin
 
   std::string DefaultName() { return "Filter"; }
 
+  void Update();
+
   void SetFilter(int type, float cutoff, float resonance);
   void OnSelect(wxCommandEvent &e);  
 
@@ -149,6 +151,10 @@ class FilterPlugin: public Plugin
   int		MidiBypass[2];
   int		MidiCutoff[2];
   int		MidiRes[2];
+
+  bool		UpdateBypass;
+  bool		UpdateCutoff;
+  bool		UpdateRes;
 
   void CheckExistingControllerData(int MidiData[3]);
 };
