@@ -42,12 +42,12 @@ WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode)
   unsigned long i;
   long k;
 
+  loadmem = false;
+  LoadedInMem = false;
   // Initialise le header de fichier
   memset (&sfinfo, 0, sizeof(sfinfo) );
 
-  m_open_mode = read;
-  open_mode = read;
-  
+  cout << "[WaveFile ] ----  LoadedInMem = " << LoadedInMem << endl;
   // Si le fichier doit etre ouvert en mode write ou read/write
   // on initialise son sf_info avec des donnees valides
   // Ces infos peuvent etre mis a jour avec la commande SFC_UPDATE_HEADER_NOW 
@@ -70,7 +70,14 @@ WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode)
 	  sffile = sf_open (Filename.c_str(), SFM_WRITE, &sfinfo);
 	  break;
   case rwrite :
+	  cout << "Temporary file created" << endl;
 	  sffile = sf_open (Filename.c_str(), SFM_RDWR, &sfinfo);
+	  break;
+   case tmp :
+	  //cout << "Trying to creat a new temporary file " << endl;
+	  //sfinfo.format = SF_ENDIAN_CPU | SF_FORMAT_AU | SF_FORMAT_FLOAT;
+  	  sffile = sf_open_fd (fileno(tmpfile()), SFM_RDWR, &sfinfo, TRUE) ;
+	  //cout << "Temporary file created" << endl;
 	  break;
   default: 
 	  throw cException ("WaveFile : Unknow opening mode!!");
