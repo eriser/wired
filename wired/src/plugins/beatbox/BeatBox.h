@@ -168,6 +168,9 @@ class WiredBeatBox : public Plugin
   void		OnStepsChange(wxCommandEvent& event);
   void		OnBankChange(wxCommandEvent& event);
   
+  void		LockLoading();
+  void		UnlockLoading();
+  
   wxMutex*	GetMutexPtr() { return &PatternMutex; }
   wxBitmap*	GetBitmap() { return MiniBmp; }
   
@@ -228,6 +231,8 @@ class WiredBeatBox : public Plugin
   void			UpdateNotesPositions(unsigned int bank,
 					     unsigned int track);
   void			SetNoteAttr(BeatNoteToPlay* note, BeatBoxChannel* c);
+  void			SetChanAttrToNote(BeatNoteToPlay* note, 
+					  BeatBoxChannel* c);
   void			SetMidiNoteAttr(BeatNoteToPlay* note, 
 					BeatBoxChannel* c);
   void			GetNotesFromChannel(BeatBoxChannel* channel,
@@ -306,8 +311,11 @@ class WiredBeatBox : public Plugin
   void			OnEditHelp(wxMouseEvent& event);
   void			OnPatternsSelectionHelp(wxMouseEvent& event);
   void			OnSaveLoadHelp(wxMouseEvent& event);
+  void			OnRightDown(wxMouseEvent& event);
+  void			OnCopyPattern(wxCommandEvent& event);
   
-
+  wxMenu*		PopMenu;
+  
   /* graphical updates relatives */
   void			Update();
   bool			AskUpdateSteps;
@@ -333,7 +341,10 @@ enum
     BB_OnLoadPatch,
     BB_OnSavePatch,
     BB_OnStepsChange,
-    BB_OnBankChange
+    BB_OnBankChange,
+    BB_PopMenu,
+    BB_BankCopy,
+    BB_PatternCopy
   };
 
 #endif//__BEATBOX_H__
