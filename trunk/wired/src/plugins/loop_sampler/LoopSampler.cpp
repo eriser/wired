@@ -91,21 +91,23 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   btn_down = new wxImage(string(GetDataDir() + string(IMG_LS_BTN_DOWN_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   fader_bg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
   fader_fg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
+  fader_vol_bg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_VOL_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  fader_vol_fg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_VOL_FG)).c_str(), wxBITMAP_TYPE_PNG);
   knob_bg = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_BG)).c_str(), wxBITMAP_TYPE_PNG);
   knob_fg = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_FG)).c_str(), wxBITMAP_TYPE_PNG);
   
   /* Toolbar Gauche */
     
   ShowOptBtn = new DownButton(this, LoopSampler_ShowOpt, 
-			      wxPoint(138, 28), wxSize(28, 28), opt_up, opt_down, true);
+			      wxPoint(346, 39), wxSize(28, 28), opt_up, opt_down, true);
   PlayBtn = new DownButton(this, LoopSampler_Play, 
-			   wxPoint(14, 28), wxSize(28, 28), play_up, play_down, false);
+			   wxPoint(219, 39), wxSize(28, 28), play_up, play_down, false);
   ToSeqTrackBtn = new DownButton(this, LoopSampler_ToSeqTrack, 
-				 wxPoint(108, 28), wxSize(28, 28), seq_up, seq_down, true);
+				 wxPoint(314, 39), wxSize(28, 28), seq_up, seq_down, true);
   SaveBtn = new DownButton(this, LoopSampler_Save, 
-			   wxPoint(76, 28), wxSize(28, 28), save_up, save_down, true);
+			   wxPoint(283, 39), wxSize(28, 28), save_up, save_down, true);
   OpenBtn = new DownButton(this, LoopSampler_Open, 
-			   wxPoint(46, 28), wxSize(28, 28), open_up, open_down, true);
+			   wxPoint(251, 39), wxSize(28, 28), open_up, open_down, true);
 
   /* Toolbar Haut */
   
@@ -114,59 +116,59 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   s.Printf("%d", BeatCount);
 
-  MesCountLabel = new wxStaticText(this, -1, s, wxPoint(229, 34), wxSize(-1, 12));
+  MesCountLabel = new wxStaticText(this, -1, s, wxPoint(288, 89), wxSize(-1, 12));
   MesCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
 
-  MesUpBtn = new HoldButton(this, LoopSampler_MesUp, wxPoint(260, 31), wxSize(11, 8), 
+  MesUpBtn = new HoldButton(this, LoopSampler_MesUp, wxPoint(269, 90), wxSize(11, 8), 
 			    up_up, up_down);
-  MesDownBtn = new HoldButton(this, LoopSampler_MesDown, wxPoint(260, 41), wxSize(11, 8), 
+  MesDownBtn = new HoldButton(this, LoopSampler_MesDown, wxPoint(269, 97), wxSize(11, 8), 
 			      down_up, down_down);
 
   s.Printf("%d", PolyphonyCount);
-  PolyCountLabel = new wxStaticText(this, -1, s, wxPoint(344, 34), wxSize(-1, 12));
+  PolyCountLabel = new wxStaticText(this, -1, s, wxPoint(288, 108), wxSize(-1, 12));
   PolyCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   PolyCountLabel->SetLabel(s);
 
-  PolyUpBtn = new HoldButton(this, LoopSampler_PolyUp, wxPoint(372, 32), wxSize(11, 8), 
+  PolyUpBtn = new HoldButton(this, LoopSampler_PolyUp, wxPoint(269, 109), wxSize(11, 8), 
 			    up_up, up_down);
-  PolyDownBtn = new HoldButton(this, LoopSampler_PolyDown, wxPoint(372, 41), wxSize(11, 8), 
+  PolyDownBtn = new HoldButton(this, LoopSampler_PolyDown, wxPoint(269, 116), wxSize(11, 8), 
 			      down_up, down_down);
 
   LedOff = new wxBitmap(wxImage(string(GetDataDir() + string(IMG_LS_LED_OFF_IMG)).c_str(), wxBITMAP_TYPE_PNG));
   LedOn = new wxBitmap(wxImage(string(GetDataDir() + string(IMG_LS_LED_ON_IMG)).c_str(), wxBITMAP_TYPE_PNG));
 
-  MidiInBmp = new wxStaticBitmap(this, -1, *LedOff, wxPoint(372, 10));
+  MidiInBmp = new wxStaticBitmap(this, -1, *LedOff, wxPoint(368, 6));
 
   /* Envelope */
 
-  VolumeFader = new FaderCtrl(this, LoopSampler_Volume, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(28, 100), wxSize(20, 76));
+  VolumeFader = new FaderCtrl(this, LoopSampler_Volume, fader_vol_bg, fader_vol_fg, 0, 127, 100, 
+                             wxPoint(13, 56), wxSize(20, 76));
 
 
   AttackFader = new FaderCtrl(this, LoopSampler_Attack, fader_bg, fader_fg, 0, 1000, 0, 
-			      wxPoint(70, 100), wxSize(20, 76));
+			      wxPoint(51, 56), wxSize(20, 76));
 
   DecayFader = new FaderCtrl(this, LoopSampler_Decay, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(110, 100), wxSize(20, 76));
+                             wxPoint(89, 56), wxSize(20, 76));
 
   SustainFader = new FaderCtrl(this, LoopSampler_Sustain, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(152, 100), wxSize(20, 76));
+                             wxPoint(127, 56), wxSize(20, 76));
 
 
   ReleaseFader = new FaderCtrl(this, LoopSampler_Release, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(195, 100), wxSize(20, 76));
+                             wxPoint(166, 56), wxSize(20, 76));
 
   /* Global tuning */
 
   OctaveKnob = new KnobCtrl(this, LoopSampler_Octave, knob_bg, knob_fg, 0, 8, 4, 1,
-			    wxPoint(270, 82), wxSize(23, 23));
+			    wxPoint(233, 133), wxSize(23, 23));
   PitchKnob = new KnobCtrl(this, LoopSampler_Pitch, knob_bg, knob_fg, 1, 200, 100, 1,
-			   wxPoint(330, 82), wxSize(23, 23));
+			   wxPoint(311, 133), wxSize(23, 23));
 
   /* Modes */
 
-  InvertBtn = new DownButton(this, LoopSampler_Invert, wxPoint(328, 135), wxSize(28, 28), btn_down, btn_up, false);
-  TempoBtn = new DownButton(this, LoopSampler_Tempo, wxPoint(263, 135)/*wxPoint(328, 135)*/, wxSize(28, 28), btn_down, btn_up, false);
+  InvertBtn = new DownButton(this, LoopSampler_Invert, wxPoint(321, 92), wxSize(19, 15), btn_down, btn_up, false);
+  TempoBtn = new DownButton(this, LoopSampler_Tempo, wxPoint(321, 111), wxSize(19, 15), btn_down, btn_up, false);
 
   /* Help events */
 
@@ -279,6 +281,8 @@ LoopSampler::~LoopSampler()
   delete down_down;
   delete fader_bg;
   delete fader_fg;
+  delete fader_vol_bg;
+  delete fader_vol_fg;
   delete knob_bg;
   delete knob_fg;
 

@@ -21,27 +21,29 @@ using namespace std;
 #define PLUGIN_NAME "Loop Sampler"
 
 #define IMG_LS_BMP	"plugins/loopsampler/LoopSampler.bmp"
-#define IMG_LS_PLAY_UP  "plugins/loopsampler/play_up.png"
-#define IMG_LS_PLAY_DOWN "plugins/loopsampler/play_down.png"
-#define IMG_LS_OPEN_UP  "plugins/loopsampler/open_up.png"
-#define IMG_LS_OPEN_DOWN "plugins/loopsampler/open_down.png"
-#define IMG_LS_SAVE_UP  "plugins/loopsampler/save_up.png"
-#define IMG_LS_SAVE_DOWN "plugins/loopsampler/save_down.png"
-#define IMG_LS_SEQ_UP   "plugins/loopsampler/seq_up.png"
-#define IMG_LS_SEQ_DOWN "plugins/loopsampler/seq_down.png"
-#define IMG_LS_OPT_UP   "plugins/loopsampler/opt_up.png"
-#define IMG_LS_OPT_DOWN "plugins/loopsampler/opt_down.png"
-#define IMG_LS_UPUP_IMG "plugins/loopsampler/up_up.png"
-#define IMG_LS_UPDO_IMG    "plugins/loopsampler/up_down.png"
-#define IMG_LS_DOWNUP_IMG  "plugins/loopsampler/down_up.png"
-#define IMG_LS_DOWNDO_IMG  "plugins/loopsampler/down_down.png"
-#define IMG_LS_LED_OFF_IMG  "plugins/loopsampler/mid_off.png"
-#define IMG_LS_LED_ON_IMG  "plugins/loopsampler/mid_on.png"
-#define IMG_LS_BTN_ON_IMG  "plugins/loopsampler/btn_green.png"
-#define IMG_LS_BTN_DOWN_IMG  "plugins/loopsampler/btn_red.png"
-#define IMG_LS_BG	"plugins/loopsampler/bg.png"
-#define IMG_LS_FADER_BG  "plugins/loopsampler/fader_bg.png"
-#define IMG_LS_FADER_FG  "plugins/loopsampler/fader_fg.png"
+#define IMG_LS_PLAY_UP  "plugins/loopsampler/loop_play_up.png"
+#define IMG_LS_PLAY_DOWN "plugins/loopsampler/loop_play_down.png"
+#define IMG_LS_OPEN_UP  "plugins/loopsampler/loop_open_up.png"
+#define IMG_LS_OPEN_DOWN "plugins/loopsampler/loop_open_down.png"
+#define IMG_LS_SAVE_UP  "plugins/loopsampler/loop_save_up.png"
+#define IMG_LS_SAVE_DOWN "plugins/loopsampler/loop_save_down.png"
+#define IMG_LS_SEQ_UP   "plugins/loopsampler/loop_toseq_up.png"
+#define IMG_LS_SEQ_DOWN "plugins/loopsampler/loop_toseq_down.png"
+#define IMG_LS_OPT_UP   "plugins/loopsampler/loop_opt_up.png"
+#define IMG_LS_OPT_DOWN "plugins/loopsampler/loop_opt_down.png"
+#define IMG_LS_UPUP_IMG "plugins/loopsampler/loop_up_button_up.png"
+#define IMG_LS_UPDO_IMG    "plugins/loopsampler/loop_up_button_down.png"
+#define IMG_LS_DOWNUP_IMG  "plugins/loopsampler/loop_down_button_up.png"
+#define IMG_LS_DOWNDO_IMG  "plugins/loopsampler/loop_down_button_down.png"
+#define IMG_LS_LED_OFF_IMG  "plugins/loopsampler/loop_midi_light_off.png"
+#define IMG_LS_LED_ON_IMG  "plugins/loopsampler/loop_midi_light_on.png"
+#define IMG_LS_BTN_ON_IMG  "plugins/loopsampler/loop_button_down.png"
+#define IMG_LS_BTN_DOWN_IMG  "plugins/loopsampler/loop_button_up.png"
+#define IMG_LS_BG	"plugins/loopsampler/loopsampler_bg.png"
+#define IMG_LS_FADER_BG  "plugins/loopsampler/loop_fader_bg.png"
+#define IMG_LS_FADER_FG  "plugins/loopsampler/loop_fader_button.png"
+#define IMG_LS_FADER_VOL_BG  "plugins/loopsampler/loop_fader_vol_bg.png"
+#define IMG_LS_FADER_VOL_FG  "plugins/loopsampler/loop_fader_vol_button.png"
 #define IMG_LS_KNOB_BG  "plugins/loopsampler/knob_bg.png"
 #define IMG_LS_KNOB_FG  "plugins/loopsampler/knob_fg.png"
 
@@ -189,6 +191,8 @@ protected:
   wxImage *down_down;
   wxImage *fader_bg;
   wxImage *fader_fg;
+  wxImage *fader_vol_bg;
+  wxImage *fader_vol_fg;
   wxImage *knob_bg;
   wxImage *knob_fg;
   wxImage *btn_up;
