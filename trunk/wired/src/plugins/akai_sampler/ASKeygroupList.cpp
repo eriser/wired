@@ -55,6 +55,7 @@ ASamplerSample::~ASamplerSample()
     delete askg;
   for (vector<ASPlugin *>::iterator i = effects.begin(); i != effects.end(); i++)
     delete (*i);
+  effects.clear();
 }
 
 ASamplerKeygroup::ASamplerKeygroup(class AkaiSampler *as, int lo, int hi, unsigned long id)

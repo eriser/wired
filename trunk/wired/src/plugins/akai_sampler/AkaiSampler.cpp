@@ -121,7 +121,7 @@ AkaiSampler::~AkaiSampler()
 {
   //delete BgBmp;
   //delete bmp;
-
+  Keygroups.clear();
   delete open_up;
   delete open_down;
   delete save_up;

@@ -107,6 +107,8 @@ ASList::ASList(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 
 ASList::~ASList()
 {
+  for (vector<ASListEntry *>::iterator i = entries.begin(); i != entries.end(); i++)
+    delete (*i);
   entries.clear();
 }
 
