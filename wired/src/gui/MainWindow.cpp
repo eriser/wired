@@ -278,6 +278,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   
   LoadPlugins();
 
+  RackPanel->AddPlugToMenu();
+
   RackModeView = true;
   SeqModeView = true;
 
