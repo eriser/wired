@@ -27,12 +27,14 @@ Pattern::Pattern(double pos, double endpos, long trackindex) :
   StateMask = 0;
   xdrag = 0;
   ydrag = 0;
-  wxWindow::Move((m_pos = wxPoint((int) (floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * pos) - SeqPanel->CurrentXScrollPos), 
-				  (int) (floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * trackindex) - SeqPanel->CurrentYScrollPos))));
-  wxWindow::SetSize((m_size = wxSize((int) ceil(Length * MEASURE_WIDTH * SeqPanel->HoriZoomFactor),
-				     (int) ceil(TRACK_HEIGHT * SeqPanel->VertZoomFactor))));
+  m_pos = wxPoint((int) floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * pos), 
+		  (int) floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * trackindex));
+  m_size = wxSize((int) ceil(Length * MEASURE_WIDTH * SeqPanel->HoriZoomFactor),
+		  (int) ceil(TRACK_HEIGHT * SeqPanel->VertZoomFactor));
+  wxWindow::SetSize(m_pos.x - (int) floor(SeqPanel->CurrentXScrollPos), m_pos.y - (int) floor(SeqPanel->CurrentYScrollPos), m_size.x, m_size.y);
   PenColor = CL_WAVE_DRAW;
   BrushColor = CL_SEQ_BACKGROUND;
+  wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 #ifdef __DEBUG__
   printf(">> NEW PATTERN from pos %f to %f (length=%f) on TRACK %d\n", Position, EndPosition, Length, TrackIndex);
 #endif
@@ -53,8 +55,7 @@ void					Pattern::Modify(double newpos, double newendpos,
 	newpos = 0.0;
       Position = newpos;
       EndPosition = Position + Length;
-      m_pos.x = (int) (floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * newpos)
-		       - SeqPanel->CurrentXScrollPos);
+      m_pos.x = (int) floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * newpos);
     }
   if (newendpos != -1)
     {
@@ -71,8 +72,7 @@ void					Pattern::Modify(double newpos, double newendpos,
   if (newtrackindex != -1)
     {
       TrackIndex = newtrackindex;
-      m_pos.y = (int) (floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * newtrackindex)
-		       - SeqPanel->CurrentYScrollPos);
+      m_pos.y = (int) floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * newtrackindex);
     }
   //  printf("MOD PATTERN (pos=%f) (endpos=%f) (length=%f) (trackindex=%d)\n", Position, EndPosition, Length, TrackIndex);
 }
@@ -81,8 +81,8 @@ void					Pattern::Update()
 {
   //  printf("UPDATING PATTERN : BeginPosition = %f, Position = %f, EndPosition = %f, Length = %f\n",
   //  BeginPosition, Position, EndPosition, Length);
-  m_pos = wxPoint((int) (floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * Position) - SeqPanel->CurrentXScrollPos), 
-		  (int) (floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * TrackIndex) - SeqPanel->CurrentYScrollPos));
+  m_pos = wxPoint((int) floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * Position), 
+		  (int) floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * TrackIndex));
   m_size = wxSize((int) ceil(Length * MEASURE_WIDTH * SeqPanel->HoriZoomFactor),
 		  (int) ceil(TRACK_HEIGHT * SeqPanel->VertZoomFactor));
   //  printf("UPDATING PATTERN : BeginPosition = %f, Position = %f, EndPosition = %f, Length = %f\n",
@@ -116,8 +116,8 @@ wxPoint					Pattern::SetPos(double newpos, long track)
   /*  printf("moving pattern at pos %f on track %d\n", newpos, track);*/
   if (newpos < 0)
     newpos = 0;
-  m_pos.x = (long) floor((Position = newpos) * MEASURE_WIDTH * SeqPanel->HoriZoomFactor) - SeqPanel->SeqView->GetXScroll();
-  m_pos.y = (long) floor((TrackIndex = track) * TRACK_HEIGHT * SeqPanel->VertZoomFactor) - SeqPanel->SeqView->GetYScroll();
+  m_pos.x = (int) floor((Position = newpos) * MEASURE_WIDTH * SeqPanel->HoriZoomFactor);
+  m_pos.y = (int) floor((TrackIndex = track) * TRACK_HEIGHT * SeqPanel->VertZoomFactor);
   EndPosition = Position + Length;
   return (m_pos);
 }
@@ -179,7 +179,7 @@ void					Pattern::XMove(double Motion)
   if ((Position = Position + Motion) >= 0)
     if (SeqPanel->Magnetism & PATTERN_MASK)
       Position = round(Position * SeqPanel->PatternMagnetism) / SeqPanel->PatternMagnetism;
-  Move(SetPos(Position, TrackIndex));
+  Move(SetPos(Position, TrackIndex) - wxPoint((int) floor(SeqPanel->CurrentXScrollPos), (int) floor(SeqPanel->CurrentYScrollPos)));
 }
 
 void					Pattern::OnMotion(wxMouseEvent &e)
@@ -218,15 +218,13 @@ void					Pattern::OnMotion(wxMouseEvent &e)
 	      for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end() && (z != 0); p++)
 		(*p)->XMove(z);
 	    }
-	  //	  printf("X DRAG %d OLD XDRAG %d DIFF : (xdrag - x) = %d\n", x, xdrag, xdrag - x);
-	  if ((x < 0) && (Position <= SeqPanel->FirstMeasure))
+	  if ((m_pos.x + e.GetPosition().x - PATTERN_AUTO_SCROLL_BOX) < (long) floor(SeqPanel->CurrentXScrollPos))
 	    SeqPanel->SeqView->AutoXScrollBackward(ACCEL_TYPE_PATTERN);
 	  else
-	    if ((x > 0) && (Position + ceil(m_click.x / mes) >= SeqPanel->LastMeasure))
+	    if ((m_pos.x + e.GetPosition().x + PATTERN_AUTO_SCROLL_BOX) > ((long) floor(SeqPanel->CurrentXScrollPos) + SeqPanel->SeqView->GetClientSize().x))
 	      SeqPanel->SeqView->AutoXScrollForward(ACCEL_TYPE_PATTERN);
 	    else
 	      SeqPanel->SeqView->AutoXScrollReset();
-	  //	  xdrag = Position + x + m_click.x;
 	}
       SeqMutex.Unlock();
     }
