@@ -1,11 +1,13 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License#include "HostCallback.h"
 
-#include <unistd.h>
-#include <sndfile.h>
-#include "AudioEngine.h"
-#include "MainWindow.h"
-#include "EngineError.h"
+#include	<unistd.h>
+#include	<sndfile.h>
+#include	"AudioEngine.h"
+#include	"MainWindow.h"
+#include	"EngineError.h"
+
+wxMutex		AudioMutex;
 
 AudioEngine::AudioEngine() 
 {
@@ -513,11 +515,11 @@ bool AudioEngine::StopStream()
 
 void AudioEngine::AlertDialog(const wxString& from, const wxString& msg)
 {
-  /*
-    wxMutexGuiEnter();    
-    MainWin->AlertDialog(from, msg);
-    wxMutexGuiLeave();
-  */
+  
+  //wxMutexGuiEnter();    
+  MainWin->AlertDialog(from, msg);
+  //wxMutexGuiLeave();
+  
 }
 
 void AudioEngine::SetChannels(int in, int out)

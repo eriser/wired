@@ -17,7 +17,7 @@ WriteWaveFile::WriteWaveFile(string filename, int sample_rate, int channels,
 
   if (!(sffile = sf_open(filename.c_str(), SFM_WRITE, &sfinfo)))
     throw Error::File(filename, sf_strerror(0));
-  WriteSoftware("Wired");
+  //WriteSoftware("Wired");
 }
 
 WriteWaveFile::~WriteWaveFile()

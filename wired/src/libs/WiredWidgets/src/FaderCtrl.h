@@ -27,6 +27,7 @@
 #include <iostream>
 #include "StaticBitmap.h"
 #include <wx/cshelp.h>
+#include "Hint.h"
 
 using namespace std;
 
@@ -36,18 +37,26 @@ class FaderCtrl : public wxWindow
   FaderCtrl(wxWindow *parent, wxWindowID id,  wxImage *img_bg, wxImage *img_fg, long begin_value, 
 	    long end_value, long val,
 	    const wxPoint &pos, const wxSize &size = wxDefaultSize);
-
+  FaderCtrl(wxWindow *parent, wxWindowID id,
+	    wxImage *img_bg, wxImage  *img_fg,
+	    long begin_value, long end_value, long val,
+	    const wxPoint &pos, const wxSize &size,
+	    wxWindow* hintparent, const wxPoint &hintpos);
   ~FaderCtrl();
   virtual void OnPaint(wxPaintEvent &event);
   virtual void OnMouseEvent(wxMouseEvent &event);
+  virtual void OnKeyUp(wxKeyEvent& event);
   virtual void OnKeyDown(wxKeyEvent& event);
+  virtual void OnLeftUp(wxMouseEvent &event);
+  virtual void OnLeftDown(wxMouseEvent& event);
   virtual void OnEnterWindow(wxMouseEvent &event);
+  virtual void OnLeaveWindow(wxMouseEvent &event);
 
   int GetValue();
   void SetValue(int val);
 
  protected:
-  
+  Hint* Label;
   long Value;
   long BeginValue;
   long EndValue;
@@ -56,7 +65,7 @@ class FaderCtrl : public wxWindow
   wxBitmap *tmp_fg;
   wxStaticBitmap *fg;
   
-  DECLARE_EVENT_TABLE()
+DECLARE_EVENT_TABLE()
 };
 
 #endif

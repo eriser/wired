@@ -122,10 +122,11 @@ class BeatBoxChannel : public wxWindow
   
   float		Params[NB_PARAMS];
   
-  float		Lev, Pitch, Vel;
+  /*
+    float		Lev, Pitch, Vel;
   float		Start, End;
   float		Pan[2];
-
+  */
   list<BeatNote*>**
     Rythms;
   

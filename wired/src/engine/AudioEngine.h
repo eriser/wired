@@ -149,4 +149,6 @@ static int	AudioCallback(const void *input,
   
 }
 
+extern wxMutex	AudioMutex;
+
 #endif  // __AUDIOENGINE_H__

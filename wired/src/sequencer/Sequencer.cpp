@@ -66,17 +66,22 @@ void					*Sequencer::Entry()
   float					**buf1;
   float					**buf2;
   
-  bool off = true;
-  while ( off )
-    {
-      SeqMutex.Lock();
-      if ( Audio->IsOk )
-	off = false;
-      else
-	wxMilliSleep(10);
-      SeqMutex.Unlock();
-    }
   
+  AudioMutex.Lock(); /* Locked before in MainWindow		\
+			if Audio configuration fails		*/
+  AudioMutex.Unlock();
+  /*
+    bool off = true;
+    while ( off )
+    {
+    SeqMutex.Lock();
+    if ( Audio->IsOk )
+    off = false;
+    else
+    wxMilliSleep(10);
+    SeqMutex.Unlock();
+    }
+  */
   if ( !Audio->StartStream() )
     cout << "[SEQUENCER] StartStream returned false" << endl;
   SetBufferSize();
@@ -183,11 +188,11 @@ void					*Sequencer::Entry()
 		  /* - Enregistrement Audio */
 		  if (Recording && (*T)->TrackOpt->Record)
 		    {	 
-		      cout << "MixInput()"<< endl;
+		      //cout << "MixInput()"<< endl;
 		      Mix->MixInput();	// Mutex ou pas ? a prioris non
 
 		      /* - Recuperation des buffers d'enregistrement */
-		      cout << "GetRecordBuffer" << endl;
+		      //cout << "GetRecordBuffer" << endl;
 		      (*T)->Wave->GetRecordBuffer();
 		      if ((*T)->Wave->GetEndPosition() < CurrentPos)
 			ResizePattern((*T)->Wave);
