@@ -32,7 +32,7 @@ class LoopSamplerView : public wxPanel
 {
  public:
   LoopSamplerView(wxMutex *mutex, wxWindow *parent, const wxPoint &pos, 
-		  const wxSize &size, string datadir);
+		  const wxSize &size, string datadir, LoopPos *loopinfo);
   ~LoopSamplerView();
 
   void SetWaveFile(WaveFile *w);
@@ -49,6 +49,7 @@ class LoopSamplerView : public wxPanel
   int Bars;
 
   string DataDir;
+  LoopPos *LoopInfo;
 
   wxPanel *Toolbar;
   WaveLoop *Wave;

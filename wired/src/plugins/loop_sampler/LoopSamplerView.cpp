@@ -19,8 +19,8 @@ BEGIN_EVENT_TABLE(LoopSamplerView, wxPanel)
 END_EVENT_TABLE()
 
 LoopSamplerView::LoopSamplerView(wxMutex *mutex, wxWindow *parent, const wxPoint &pos, 
-				 const wxSize &size, string datadir)
-  : wxPanel(parent, -1, pos, size), Mutex(mutex), DataDir(datadir)
+				 const wxSize &size, string datadir, LoopPos *loopinfo)
+  : wxPanel(parent, -1, pos, size), Mutex(mutex), DataDir(datadir), LoopInfo(loopinfo)
 {
   SetBackgroundColour(wxColour(146, 155, 162));//CL_SEQVIEW_BACKGROUND);
   Toolbar = new wxPanel(this, -1, wxPoint(0, 0), wxSize(TOOLBAR_HEIGHT, size.y), wxSIMPLE_BORDER);
@@ -125,7 +125,8 @@ LoopSamplerView::~LoopSamplerView()
 void LoopSamplerView::SetSlices(list<Slice *> *slices) 
 { 
   Slices = slices;
-  Wave->SetSlices(slices); 
+  if (Wave)
+    Wave->SetSlices(slices); 
 }
 
 void LoopSamplerView::SetWaveFile(WaveFile *w)
@@ -134,7 +135,7 @@ void LoopSamplerView::SetWaveFile(WaveFile *w)
     {
       Wave->Destroy();
     }
-  Wave = new WaveLoop(Mutex, this, LoopSamplerView_Wave, wxPoint(TOOLBAR_HEIGHT, RULER_HEIGHT), 
+  Wave = new WaveLoop(Mutex, LoopInfo, this, LoopSamplerView_Wave, wxPoint(TOOLBAR_HEIGHT, RULER_HEIGHT), 
 		      wxSize(GetSize().x - TOOLBAR_HEIGHT - 2, GetSize().y - RULER_HEIGHT));
   Wave->SetWave(w);
 

@@ -13,18 +13,20 @@
 #define SLICE_ID	3131
 #define START_ID	3132
 
-WaveLoop::WaveLoop(wxMutex *mutex, wxWindow *parent, wxWindowID id, 
+WaveLoop::WaveLoop(wxMutex *mutex, LoopPos *loopinfo, wxWindow *parent, wxWindowID id, 
 		   const wxPoint& pos, const wxSize& size)
-  : WaveView(parent, id, pos, size, true, false), Mutex(mutex)
+  : WaveView(parent, id, pos, size, true, false), Mutex(mutex), LoopInfo(loopinfo)
 {
+  LoopStart = 0;
+  LoopEnd = 0;
   Drawing = false;
   Select = true;
   NoteNumber = 0x48; //C3
   SamplingRate = 44100;
 
-  LoopEnd = new LoopCursor(false, this, START_ID, wxPoint(GetSize().x, 0), 
+  LoopEndCursor = new LoopCursor(false, this, START_ID, wxPoint(GetSize().x, 0), 
 			   wxSize(1, GetSize().y));
-  LoopStart = new LoopCursor(true, this, START_ID, wxPoint(0, 0), wxSize(1, GetSize().y));
+  LoopStartCursor = new LoopCursor(true, this, START_ID, wxPoint(0, 0), wxSize(1, GetSize().y));
 
   Connect(GetId(), wxEVT_LEFT_DOWN, 
 	  (wxObjectEventFunction)(wxEventFunction) 
@@ -51,22 +53,42 @@ WaveLoop::~WaveLoop()
 
 }
 
+void WaveLoop::SetWave(WaveFile *w)
+{
+  WaveView::SetWave(w);
+  LoopStart = 0;
+  LoopEnd = EndWavePos;
+}
+
 void WaveLoop::OnLoopMove(wxCommandEvent &event)
 {
   LoopCursor *cur = (LoopCursor *)event.GetClientData();
   int pos_x = event.GetInt() + cur->GetPosition().x;
 
   if (pos_x < 0)
-    cur->SetPosition(wxPoint(0, 0)); 
+    {
+      if (cur->LoopBegin)
+	cur->SetPosition(wxPoint(0, 0)); 
+      else
+	cur->SetPosition(wxPoint(4, 0)); 
+    }
   else if (pos_x > GetClientSize().x)
     cur->SetPosition(wxPoint(GetClientSize().x, 0)); 
   else
     cur->SetPosition(wxPoint(pos_x, 0)); 
 
+  Mutex->Lock();
+
   if (cur->LoopBegin)
-    cout << "Start Pos: " << cur->GetPosition().x * (EndWavePos / GetClientSize().x) << endl;
+    {
+      LoopInfo->Start = cur->GetPosition().x * (EndWavePos / GetClientSize().x);
+    }
   else
-    cout << "End Pos: " << cur->GetPosition().x * (EndWavePos / GetClientSize().x) << endl;
+    {
+      LoopInfo->End = cur->GetPosition().x * (EndWavePos / GetClientSize().x);
+    }
+
+  Mutex->Unlock();
 }
 
 void WaveLoop::OnSliceBtnSelected(wxCommandEvent &event)
@@ -201,7 +223,7 @@ void WaveLoop::OnSize(wxSizeEvent &event)
   list<Slice *>::iterator i;
   int size_x;
   GetSize(&size_x, 0x0);
-  long inc = (EndWavePos / size_x);
+  double inc = (double)size_x / (double)EndWavePos;
   SliceGui *s;
   int x, y;
 
@@ -215,10 +237,13 @@ void WaveLoop::OnSize(wxSizeEvent &event)
   for (i = Slices->begin(); i != Slices->end(); i++)
     {
       s = (SliceGui *)((*i)->Data);
-      x = (int)((1.0 / (double)inc) * (*i)->Position);
+      x = (int)(inc * (*i)->Position);
       s->SetPosition(wxPoint(x, -1));
       s->SetSize(wxSize(-1, y));
     }
+
+  LoopStartCursor->SetPosition(wxPoint((int)(inc * LoopInfo->Start), 0)); 
+  LoopEndCursor->SetPosition(wxPoint((int)(inc * LoopInfo->End), 0)); 
 
   Mutex->Unlock();
 }
