@@ -61,7 +61,7 @@ void					*Sequencer::Entry()
       if ( Audio->IsOk )
 	off = false;
       else
-	wxMilliSleep(10);
+	wxUsleep(10);
       SeqMutex.Unlock();
     }
   
@@ -297,7 +297,7 @@ void					*Sequencer::Entry()
 	Mix->MixOutput(true);
       //SeqMutex.Unlock();
       if (!Audio->StreamIsStarted)
-	wxMilliSleep(1);      
+	wxUsleep(1);      
       /* Cleanage des channels et buffers extra */
       for (B = ExtraBufs.begin(); B != ExtraBufs.end(); B++)
 	{

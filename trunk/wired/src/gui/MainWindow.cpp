@@ -661,7 +661,7 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 	    up = 99;
 	  Progress->Update(up);
 	  //cout << "pos: " << Seq->CurrentPos << "; end: " << Seq->EndLoopPos << endl;
-	  wxMilliSleep(50);
+	  wxUsleep(50);
 	  SeqMutex.Lock();
 	  if (Seq->CurrentPos >= Seq->EndLoopPos)
 	    done = true;
