@@ -122,7 +122,38 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
   SetVirtualSize(760, 180);  
   selectedPlugin = 0x0;
   selectedTrack = 0x0;
-}
+  fd_copy = -1;
+
+  menu = new wxMenu();
+  submenu = new wxMenu();
+  instr_menu = new wxMenu();
+  effects_menu  = new wxMenu();
+  AddPlugToMenu();
+  menu->Append(ID_MENU_ADD, _T("Add"), submenu);
+  submenu->Append(ID_INSTR_MENU, _T("&Instruments"), instr_menu);
+  submenu->Append(ID_EFFECTS_MENU, _T("&Effects"), effects_menu);
+  menu->Append(ID_MENU_CUT, _T("Cut"));
+  menu->Append(ID_MENU_COPY, _T("Copy"));
+  menu->Append(ID_MENU_PASTE, _T("Paste"), false);
+  menu->AppendSeparator();
+  menu->Append(ID_MENU_DELETE, _T("Delete"));
+  menu->Enable(ID_MENU_PASTE, false);
+  
+  Connect(ID_MENU_CUT, wxEVT_COMMAND_MENU_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction)
+	  (wxCommandEventFunction)&Rack::OnCutClick);
+  Connect(ID_MENU_COPY, wxEVT_COMMAND_MENU_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction)
+	  (wxCommandEventFunction)&Rack::OnCopyClick);
+  Connect(ID_MENU_PASTE, wxEVT_COMMAND_MENU_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction)
+	  (wxCommandEventFunction)&Rack::OnPasteClick);
+  
+  Connect(ID_MENU_DELETE, wxEVT_COMMAND_MENU_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction)
+	  (wxCommandEventFunction)&Rack::OnDeleteClick);
+  
+ }
 
 Rack::~Rack()
 {
@@ -130,6 +161,15 @@ Rack::~Rack()
 
   for (i = RackTracks.begin(); i != RackTracks.end(); i++)
     delete *i;
+
+  if(fd_copy != -1)
+    {
+      close(fd_copy);
+      if(wxRemoveFile("/tmp/.tmpccp") == false)
+	cout << "error supression\n" <<endl;
+      
+    }
+      
 }
 
 Plugin *Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
@@ -386,34 +426,6 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
    if(event->RightDown())
      {
        SetSelected(plug);
-       menu = new wxMenu();
-       submenu = new wxMenu();
-       instr_menu = new wxMenu();
-       effects_menu  = new wxMenu();
-       AddPlugToMenu();
-       menu->Append(ID_MENU_ADD, _T("Add"), submenu);
-       submenu->Append(ID_INSTR_MENU, _T("&Instruments"), instr_menu);
-       submenu->Append(ID_EFFECTS_MENU, _T("&Effects"), effects_menu);
-       menu->Append(ID_MENU_CUT, _T("Cut"));
-       menu->Append(ID_MENU_COPY, _T("Copy"));
-       menu->Append(ID_MENU_PASTE, _T("Paste"));
-       menu->AppendSeparator();
-       menu->Append(ID_MENU_DELETE, _T("Delete"));
-       
-       Connect(ID_MENU_CUT, wxEVT_COMMAND_MENU_SELECTED, 
-	       (wxObjectEventFunction)(wxEventFunction)
-	       (wxCommandEventFunction)&Rack::OnCutClick);
-       Connect(ID_MENU_COPY, wxEVT_COMMAND_MENU_SELECTED, 
-	       (wxObjectEventFunction)(wxEventFunction)
-	       (wxCommandEventFunction)&Rack::OnCopyClick);
-       Connect(ID_MENU_PASTE, wxEVT_COMMAND_MENU_SELECTED, 
-	       (wxObjectEventFunction)(wxEventFunction)
-	       (wxCommandEventFunction)&Rack::OnPasteClick);
-  
-       Connect(ID_MENU_DELETE, wxEVT_COMMAND_MENU_SELECTED, 
-	       (wxObjectEventFunction)(wxEventFunction)
-	       (wxCommandEventFunction)&Rack::OnDeleteClick);
-       
        wxPoint p(event->GetPosition().x + plug->GetPosition().x, event->GetPosition().y + plug->GetPosition().y);
        PopupMenu(menu, p.x, p.y);
      }   
@@ -548,25 +560,23 @@ inline void Rack::OnDeleteClick()
 
 inline void Rack::OnCutClick()
 {
-  int fd_copy;
   char file[12] ;
-  int size;
+
   if(selectedPlugin == 0x0)
     return;
-  
+    
   copy_plug = selectedPlugin;
-  strcpy(file, "wiredXXXXXX");
+  strcpy(file, "/tmp/.tmpccp");
   
-  fd_copy = mkstemp(file);
+  fd_copy = open(file,  O_CREAT | O_TRUNC | O_RDWR, 0644);
   
   if(fd_copy < 0)
-    cout << "echec"<< endl;
+    cout << "[RACKPANEL] Error creating tmp file"<< endl;
   
   else{
-    cout << "creation du fichier ok"<< endl;
     fd_size = copy_plug->Save(fd_copy);
-    cout << fd_size << endl;
     is_cut = true;
+    menu->Enable(ID_MENU_PASTE, false);
   }
 
   
@@ -574,24 +584,23 @@ inline void Rack::OnCutClick()
 
 inline void Rack::OnCopyClick()
 {
-  int fd_copy;
   char file[12] ;
 
   if(selectedPlugin == 0x0)
     return;
   
   copy_plug = selectedPlugin;
-  strcpy(file, "wiredXXXXXX");
-  
-  fd_copy = mkstemp(file);
+  strcpy(file, "/tmp/.tmpccp");
+  if(fd_copy != -1)
+    close(fd_copy);
+  fd_copy = open(file,  O_CREAT | O_TRUNC | O_RDWR, 0644);
   
   if(fd_copy < 0)
-    cout << "echec"<< endl;
-  
+     cout << "[RACKPANEL] Error creating tmp file"<< endl;
+   
   else{
-    cout << "creation du fichier ok"<< endl;
     fd_size = copy_plug->Save(fd_copy);
-    is_copy = true;
+    menu->Enable(ID_MENU_PASTE, true);
   }  
 }
 
@@ -611,19 +620,17 @@ inline void Rack::OnPasteClick()
       }
    if (p)
     {
-      cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name << endl;     
-      if(fd_copy > 0){
-	lseek(fd_copy,0,SEEK_SET);
-	
-	tmp = AddToSelectedTrack(StartInfo, p);
-	tmp->Load(fd_copy, fd_size);
-	cout << fd_size << endl;
-	cout << "loadedddddddd" <<endl;
+      if(fd_copy >= 0){
+	cout << fd_copy << endl;
+	if(lseek(fd_copy,0,SEEK_SET) != -1){
+	  tmp = AddToSelectedTrack(StartInfo, p);
+	  tmp->Load(fd_copy, fd_size);
+	  cout << "[RACKPANEL] plugin pasted" <<endl;
+	}
       }       
  
       
     }
-   
 }
 void Rack::HandleKeyEvent(Plugin *plug, wxKeyEvent *event)
 {

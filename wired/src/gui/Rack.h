@@ -94,7 +94,6 @@ class				Rack: public wxScrolledWindow
   int				fd_copy;
   int				fd_size;
   bool				is_cut;
-  bool				is_copy;
   Plugin			*copy_plug;
   wxMenu			*menu;
   wxMenu			*submenu;
