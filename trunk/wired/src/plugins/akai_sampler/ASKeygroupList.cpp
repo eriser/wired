@@ -49,12 +49,12 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akai
       data[i] = smpL->buffer[i];
     for (int i = 0; i < smpR->size; i++)
       data[smpL->size + i] = smpR->buffer[i];
-    this->w = new WaveFile(data, smpL->end + smpR->end, 2, smpL->rate);
+    this->w = new WaveFile(data, smpL->size + smpR->size, 2, smpL->rate);
     w->Filename = AkaiPrefix + smpL->name + "/" + smpR->name;
     free(data);
-    this->Position = smpL->start;
-    this->loopstart = smpL->loop_len;
-    this->loopend = smpL->loop_start;
+    this->Position = smpL->start / 2;
+    this->loopstart = smpL->loop_len / 2;
+    this->loopend = smpL->loop_start / 2;
   }
   else
   {
