@@ -215,6 +215,7 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
   ParamsLimits[END][0] = 0.f;
   ParamsLimits[END][1] = 1.f;
   
+  OnKeyMove = false;
   CtrlDown = false;
   ViewPtr = view_ptr;
   OnSelecting = false;
@@ -266,6 +267,50 @@ void BeatBoxScrollView::OnKeyDown(wxKeyEvent& event)
     case WXK_CONTROL:
       CtrlDown = true;
       break;
+    case WXK_UP:
+      if (OnKeyMove) 
+	{
+	  for(list<BeatNote*>::iterator n = SelectedNotes.begin();
+	      n != SelectedNotes.end(); n++)
+	    (*n)->Params[Param] = 
+	      fmodf((*n)->Params[Param] + 0.01,	ParamsLimits[Param][1]);
+	  ViewPtr->UpdateToolBar();
+	  Refresh();
+	}
+      else
+	{ OnKeyMove = true;
+	  for(list<BeatNote*>::iterator n = SelectedNotes.begin();
+	      n != SelectedNotes.end(); n++)
+	    (*n)->Params[Param] = 
+	      fmodf((*n)->Params[Param] + 0.01,	ParamsLimits[Param][1]);
+	  ViewPtr->UpdateToolBar();
+	  Refresh();
+	}
+      break;
+    case WXK_DOWN:
+      if (OnKeyMove) 
+	{
+	  for(list<BeatNote*>::iterator n = SelectedNotes.begin();
+	      n != SelectedNotes.end(); n++)
+	    (*n)->Params[Param] = 
+	      fmodf((*n)->Params[Param] - 0.01,	ParamsLimits[Param][1]);
+	  ViewPtr->UpdateToolBar();
+	  Refresh();
+	}
+      else
+	{ OnKeyMove = true;
+	  for(list<BeatNote*>::iterator n = SelectedNotes.begin();
+	      n != SelectedNotes.end(); n++)
+	    (*n)->Params[Param] = //((*n)->Params[Param] - 0.01) 
+	      fmodf((*n)->Params[Param] - 0.01,	ParamsLimits[Param][1]);
+	  ViewPtr->UpdateToolBar();
+	  Refresh();
+	}
+      break;
+    case WXK_LEFT:
+      break;
+    case WXK_RIGHT:
+      break;
     case 'C':
       if (event.ControlDown())
 	{
@@ -295,6 +340,9 @@ void BeatBoxScrollView::OnKeyUp(wxKeyEvent& event)
     {
     case WXK_CONTROL:
       CtrlDown = false;
+      break;
+    case WXK_UP:
+      OnKeyMove = false;
       break;
     default :
       break;
@@ -1094,8 +1142,8 @@ void BeatBoxView::UpdateToolBar(void)
 {
   if (!BeatView->SelectedNote)
     {
-      PosTextCtrl->SetValue(_T("pos"));
-      VelTextCtrl->SetValue(_T("----"));
+      PosTextCtrl->SetValue(_T("POS"));
+      VelTextCtrl->SetValue(_T("--------------"));
       return;
     }
   wxString s;

@@ -35,6 +35,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   cout << "[DRM31] Host is " << GetHostProductName()
        << " version " << GetHostProductVersion() << endl;
   
+  OnLoading = false;
+  
   /* Master Volume */
   wxImage* mini_bmp = 
     new wxImage(_T(string(GetDataDir() + string(BEATBOX_MINI_BG)).c_str()), 
@@ -654,12 +656,15 @@ inline void WiredBeatBox::RefreshPosLeds(double bar_pos)
 }
 
 
-
-
-
-void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_length)
+void WiredBeatBox::Process(float** WXUNUSED(input), 
+			   float **output, long sample_length)
 {
   PatternMutex.Lock();
+  if (OnLoading)
+    { 
+      PatternMutex.Unlock();
+      return; 
+    }
   
   if (OldSamplesPerBar != GetSamplesPerBar() ||
       OldBarsPerSample != GetBarsPerSample())
@@ -939,14 +944,16 @@ inline void WiredBeatBox::ProcessMidiControls(int data[3])
       float tmp = data[2] / 100.0f;
       //cout << tmp << endl;
       MLevel = tmp;
-      //PatternMutex.Lock();
+      PatternMutex.Lock();
       Pool->SetVolume(MLevel);
-      //PatternMutex.Unlock();
+      PatternMutex.Unlock();
       MVol->SetValue(data[2]);
     }
   else if ((MidiSteps[0] == data[0]) && (MidiSteps[1] == data[1]))
     {
+      PatternMutex.Lock();
       UpdateStepsDeps(data[2]/2);
+      PatternMutex.Unlock();
     }
   else 
     {
@@ -1559,30 +1566,28 @@ void WiredBeatBox::OnSavePatch(wxCommandEvent& WXUNUSED(e))
 {
   vector<string> exts;
   exts.push_back("drm\tDRM-31 patch file (*.drm)");
-  cout << "OnSavePatch(): begin" << endl;
+  //cout << "OnSavePatch(): begin" << endl;
   
-  string selfile = OpenFileLoader("Save Patch", &exts);
+  string selfile = SaveFileLoader("Save Patch", &exts);
   if (!selfile.empty())
     {
       int fd = open(selfile.c_str(),  O_CREAT | O_TRUNC | O_WRONLY, 
 		    S_IRUSR | S_IWUSR);
-      //	    S_IRUSR | S_IWUSR );
-      /*      if (fd <= 2)
+      if (fd < 0)
 	{
 	  cout << "Couldnt open( "<<selfile << " )" << endl;
 	  //close(fd);
 	  return;
 	}
-      */
-      cout << "open " << selfile << " fd: "<< fd << endl;
-      /* wxProgressDialog *Progress = 
+      /*
+	wxProgressDialog *Progress = 
 	new wxProgressDialog("Saving patch file", "Please wait...", 
-			     100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
-			     | wxPD_REMAINING_TIME);
-      Progress->Update(1);
-      Progress->Update(55);
-      delete Progress;
-*/
+	100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
+	| wxPD_REMAINING_TIME);
+	Progress->Update(1);
+	Progress->Update(55);
+	delete Progress;
+      */
       cout << "saved " << Save(fd) << " byte(s)"<< endl;
       
       close(fd);
@@ -1611,28 +1616,40 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
 	  return;
 	}
       PatternMutex.Lock();
-      for (int chan = 0; chan < NB_CHAN; chan++)
-	DELETE_RYTHMS(Channels[chan]->Rythms)
+      OnLoading = true;
       PatternMutex.Unlock();
-
-
-      cout << "OnLoadPatch: open( " << selfile << " ) fd: " << fd << endl;
       
+      for (int chan = 0; chan < NB_CHAN; chan++)
+	Channels[chan]->Reset();
+      
+      
+      cout << "OnLoadPatch: open( " << selfile << " ) fd: " << fd << endl;
       struct stat st;
       fstat(fd, &st);
       cout << "file length: " << st.st_size << endl;
       
+      /*
+	long test = 31;
+      read(fd, &test, sizeof(long));
+      cout << "TEST " << test << endl;
+      */
       wxProgressDialog *Progress = 
 	new wxProgressDialog("Loading patch file", "Please wait...", 
 			     100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 			     | wxPD_REMAINING_TIME);
       Progress->Update(1);
       Progress->Update(55);
+      
       Load(fd, st.st_size);
+      
       Progress->Update(75);
       Progress->Update(100);
       
       close(fd);
+      
+      PatternMutex.Lock();
+      OnLoading = false;
+      PatternMutex.Unlock();
       
       delete Progress;
     }
@@ -1648,14 +1665,28 @@ long WiredBeatBox::Save(int fd)
   int bank, ps;
   
   PatternMutex.Lock();
+  OnLoading = true;
+  PatternMutex.Unlock();
+  
+  //writing steps/signatures params
+  for (bank = 0; bank < 5; bank++)
+    for (ps = 0; ps < 8; ps++)
+      {
+	sig_index = SigIndex[bank][ps];
+	steps = Steps[bank][ps];
+	
+	size += write(fd, &sig_index, sizeof(sig_index));
+	size += write(fd, &steps, sizeof(steps));
+      }
   
   for (int i = 0; i < NB_CHAN; i++)
     {
       if (Channels[i]->Wave)
 	{
 	  len = Channels[i]->Wave->Filename.size();
-	  size += write(fd, &len, sizeof(long));
-	  size += write(fd, Channels[i]->Wave->Filename.c_str(), len);
+	  size += write(fd, &len, sizeof(len));
+	  size +=
+	    write(fd, Channels[i]->Wave->Filename.c_str(), len * sizeof(char));
 	  /*
 	    cout << "writing channel: " << i 
 	       << " file len: " << len << " name: " 
@@ -1665,7 +1696,7 @@ long WiredBeatBox::Save(int fd)
       else
 	{
 	  len = 0;
-	  size += write(fd, &len, sizeof(long));
+	  size += write(fd, &len, sizeof(len));
 	}
       int p;
       for (p = 0; p < NB_PARAMS; p++)
@@ -1675,17 +1706,11 @@ long WiredBeatBox::Save(int fd)
       for (bank = 0; bank < 5; bank++)
 	for (ps = 0; ps < 8; ps++)
 	  {
-	    sig_index = SigIndex[bank][ps];
-	    steps = Steps[bank][ps];
-	    
-	    size += write(fd, &sig_index, sizeof(int));
-	    size += write(fd, &steps, sizeof(int));
-	    
 	    len = Channels[i]->Rythms[bank][ps].size();
-	    size += write(fd, &len, sizeof(long));
+	    size += write(fd, &len, sizeof(len));
 	    /*
 	      cout << "writing "<<len << " notes for rythm["<< bank 
-		 << "][" << ps << "]" 
+	      << "][" << ps << "]" 
 		 << endl;
 	    */
 	    for (list<BeatNote*>::iterator bn = 
@@ -1697,24 +1722,28 @@ long WiredBeatBox::Save(int fd)
 		  printf("note pos=%f; state=%d\n", 
 		       (*bn)->Position,(*bn)->State);
 		*/
-		size += write(fd, &((*bn)->State), sizeof(unsigned int));
+		size += write(fd, &((*bn)->State), sizeof((*bn)->State));
 		size += 
-		  write(fd, &((*bn)->Position), sizeof (double));
+		  write(fd, &((*bn)->Position), sizeof ((*bn)->Position));
 		for (p = 0; p < NB_PARAMS; p++ )
 		  size +=
 		    write(fd, &((*bn)->Params[p]), sizeof (float));
 		p = (*bn)->Reversed ? 1 : 0;
-		size += write(fd, &p, sizeof(int));
+		size += write(fd, &p, sizeof(p));
 	      }
 	  }
     }
+  PatternMutex.Lock();
+  OnLoading = false;
   PatternMutex.Unlock();
+  
   cout << "saved size " << size << endl;
   return size;
 }
 
 void WiredBeatBox::Load(int fd, long size)
 {
+  int res;
   long len;
   int bank,  ps;
   unsigned int state = 0;
@@ -1724,17 +1753,75 @@ void WiredBeatBox::Load(int fd, long size)
   
   int sig_index, steps = 0;
   
+  cout << "Load fd " << fd  << endl;
   
-  //PatternMutex.Lock();
+  PatternMutex.Lock();
+  OnLoading = true;
+  PatternMutex.Unlock();
   
+  
+  cout << "reading steps/signatures params" << endl;
+  
+  for (bank = 0; bank < 5; bank++)
+    for (ps = 0; ps < 8; ps++)
+      {
+	/*cout << "load: reading params begin for bank: " 
+	  << bank << " " << ps << endl;
+	*/
+	cout << "size to read " << size << endl;
+	if ((res = read(fd, &sig_index, sizeof (int))) < 0)
+	  {
+	    cout << errno << endl;
+	    switch (errno)
+	      {
+	      case EINTR:
+		cout << "1"<< endl;
+		break;
+	      case EAGAIN:
+		cout << "2"<< endl;
+		break;
+	      case EIO:
+		cout << "3"<< endl;
+		break;
+	      case EISDIR:
+		cout << "4"<< endl;
+		break;
+	      case EBADF:
+		cout << "5"<< endl;
+		break;
+	      case EINVAL:
+		cout << "6"<< endl;
+		break;
+	      case EFAULT:
+		cout << "7"<< endl;
+		break;
+	      default:
+		cout << "default" << endl;
+		break;
+	      }
+	  }
+	else
+	  size -= res;
+	cout << "size to read " << size << endl;
+	size -= read(fd, &steps, sizeof (int));
+	cout << "size to read " << size << endl;
+	cout << sig_index << " " << steps << endl;
+	Steps[bank][ps] = steps;
+	SigIndex[bank][ps] = sig_index;
+	SignatureDen[bank][ps] = SigDen[sig_index];
+	Signature[bank][ps] = Signatures[sig_index];
+      }
+  cout << "reading channels" << endl;
   for (int i = 0; i < NB_CHAN; i++)
     {
-      size -= read(fd, &len, sizeof(long));
+      size -= read(fd, &len, sizeof(len));
+      cout << "load: channels["<< i << "] loads wavename len "<< len << endl;
       if (len > 0 && len < 255)
 	{
 	  char wave[len+1];
 	  size -= read(fd, &wave, len*sizeof(char));
 	  wave[len] = '\0';
+	  cout << "load: " << wave << endl;
 	  try 
 	    {
 	      w = new WaveFile(string(wave), true);
@@ -1745,29 +1832,23 @@ void WiredBeatBox::Load(int fd, long size)
 	    }
 	  Channels[i]->SetWaveFile(w);
 	}
-            
-      PatternMutex.Lock();
       
+      
+      cout << "load: reading channel parameters" << endl;
       int p;
       for (p = 0; p < NB_PARAMS; p++)
 	size -= read(fd, &(Channels[i]->Params[p]), sizeof(float));
-
+      
+      
+      cout << "load: reading notes" << endl;
       for (bank = 0; bank < 5; bank++)
 	for (ps = 0; ps < 8; ps++)
 	  {
-	    size -= read(fd, &sig_index, sizeof (int));
-	    size -= read(fd, &steps, sizeof (int));
-	    
-	    Steps[bank][ps] = steps;
-	    SigIndex[bank][ps] = sig_index;
-	    SignatureDen[bank][ps] = SigDen[sig_index];
-	    Signature[bank][ps] = Signatures[sig_index];
-	    
-	    size -= read(fd, &len, sizeof(long));
+	    size -= read(fd, &len, sizeof(len));
 	    if (len)
 	      cout << "reading "<< len << " notes for rythm["<< bank 
-		 << "][" << ps << "]" 
-		 << endl;
+		   << "][" << ps << "]" 
+		   << endl;
 	    
 	    while (len)
 	      {
@@ -1791,17 +1872,18 @@ void WiredBeatBox::Load(int fd, long size)
 	    
 	    
 	  }
-      PatternMutex.Unlock();
     }
   
-  PatternMutex.Lock();
   
   SelectedChannel = Channels[0];
   ReCalcStepsSigCoef();
   UpdateSteps(0,0);
   SetPatternList();
   
+  PatternMutex.Lock();
+  OnLoading = false;
   PatternMutex.Unlock();
+  
   printf("size:%d\n", size);
 }
 

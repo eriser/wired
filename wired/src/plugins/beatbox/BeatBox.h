@@ -110,11 +110,8 @@ using namespace std;
 				     bn = R[bank][ps].erase(bn);	\
 				   }					\
 			        }					\
-			      delete [] R[bank];			\
 			    }						\
-			  delete [] R;					\
-			 }
-
+			 }						
 
 
 #define CLIP(x)	{							\
@@ -196,6 +193,10 @@ class WiredBeatBox : public Plugin
   
   void			OnVolumeController(wxMouseEvent& event);
   void			OnStepsController(wxMouseEvent& event);
+  
+  int			BankMidiNotes[NUM_BANKS];
+  int			PatternMidiNotes[NUM_PATTERNS];
+  
   int			ChanMidiNotes[NB_CHAN];
   void			ProcessMidiControls(int data[3]);
   void			CheckExistingControllerData(int data[3]);
@@ -203,8 +204,9 @@ class WiredBeatBox : public Plugin
   int			MidiSteps[3];
   int			MidiBank[3];
   int			MidiTrack[3];
-
+  
  protected:
+  bool			OnLoading;
   wxMutex		PatternMutex;
   wxMutex		MidiMutex;
   BeatBoxView*		View;
@@ -261,7 +263,7 @@ class WiredBeatBox : public Plugin
   double		OldSamplesPerBar;
   double		BarsPerSample[NUM_BANKS][NUM_PATTERNS];
   double		OldBarsPerSample;
-  unsigned int		SigIndex[NUM_BANKS][NUM_PATTERNS];
+  int			SigIndex[NUM_BANKS][NUM_PATTERNS];
   
   DownButton*		OptViewBtn;
   

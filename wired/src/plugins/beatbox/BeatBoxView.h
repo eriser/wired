@@ -111,8 +111,9 @@ class BeatBoxScrollView : public wxScrolledWindow
   BeatNote* SelectedNote;
   list<BeatNote*> SelectedNotes;
   list<BeatNote*> TmpNotes;
-
+  
  protected:
+  bool OnKeyMove;
   bool CtrlDown;
   wxMenu* PopMenu;
   bool OnSelecting;
@@ -151,7 +152,7 @@ class BeatBoxView : public wxPanel
   wxTextCtrl* VelTextCtrl;
   
   void UpdateToolBar(void);
-    
+  
   WiredBeatBox*		DRM31;
   // protected:
   
