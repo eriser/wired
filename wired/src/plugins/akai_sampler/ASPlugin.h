@@ -7,7 +7,7 @@
 class ASPlugin : public wxPanel
 {
   public:
-    ASPlugin(wxString Name);
+    ASPlugin(class AkaiSampler *as, wxString Name);
     ~ASPlugin();
     virtual wxWindow *CreateView(wxPanel *, wxPoint &, wxSize &);
     wxString Name;
@@ -20,6 +20,7 @@ class ASPlugin : public wxPanel
   protected:
     Plugin *p;
     class ASamplerSample *ass;
+    class AkaiSampler *as;
 };
 
 #endif

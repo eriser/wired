@@ -1,8 +1,6 @@
 #include "ASPlugPanel.h"
 #include "Colour.h"
 
-ASPlugPanel   *PlugPanel;
-
 void				ASPlugFrame::OnClose(wxCloseEvent &event)
 {
   Plug->Attach();
@@ -11,7 +9,7 @@ void				ASPlugFrame::OnClose(wxCloseEvent &event)
   Destroy();
 }
 
-ASPlug::ASPlug(wxString name, int type, wxWindow *win)
+ASPlug::ASPlug(ASPlugPanel *aspp, wxString name, int type, wxWindow *win)
 {
   Name = name;
   Type = type;
@@ -19,6 +17,7 @@ ASPlug::ASPlug(wxString name, int type, wxWindow *win)
   IsDetached = false;
   Frame = 0x0;
   Plugin = 0x0;
+  this->aspp = aspp;
 }
  
 ASPlug::~ASPlug()
@@ -32,11 +31,11 @@ ASPlug::~ASPlug()
 void				ASPlug::Attach()
 {
   IsDetached = false;
-  Panel->Reparent(PlugPanel);
+  Panel->Reparent(aspp);
   Panel->SetPosition(wxPoint(0, OPT_TOOLBAR_HEIGHT));
-  Panel->SetSize(wxSize(PlugPanel->GetSize().GetWidth(), PlugPanel->GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT));
-  PlugPanel->ShowPlug(this);
-  Plugin->OnAttach(PlugPanel);
+  Panel->SetSize(wxSize(aspp->GetSize().GetWidth(), aspp->GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT));
+  aspp->ShowPlug(this);
+  Plugin->OnAttach(aspp);
   Frame = 0x0;
 }
 
@@ -54,35 +53,20 @@ ASPlugPanel::ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
   : wxPanel(parent, -1, pos, size, style)
 {
   this->p = p;
-  SetBackgroundColour(CL_RULER_BACKGROUND);//wxColour(204, 199, 219));//*wxLIGHT_GREY);
+  SetBackgroundColour(CL_RULER_BACKGROUND);
   ToolbarPanel = new wxPanel(this, -1, wxPoint(0, 0), wxSize(GetSize().x, OPT_TOOLBAR_HEIGHT),
 			     wxSIMPLE_BORDER);
   ToolbarPanel->SetBackgroundColour(CL_OPTION_TOOLBAR);
   Title = new wxStaticText(ToolbarPanel, -1, "Plugin", wxPoint(18, 0), 
 			   wxSize(-1, OPT_TOOLBAR_HEIGHT));
-  //Title->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   Title->SetForegroundColour(*wxWHITE);
-  /*
-  wxImage *list_up = new wxImage(string(p->GetDataDir() + string(OPT_LIST_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *list_down = new wxImage(string(p->GetDataDir() + string(OPT_LIST_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  */
   wxImage *detach_up = new wxImage(string(p->GetDataDir() + string(OPT_DETACH_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *detach_down = new wxImage(string(p->GetDataDir() + string(OPT_DETACH_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  /*
-  wxImage *close_up = new wxImage(string(p->GetDataDir() + string(OPT_CLOSE_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *close_down = new wxImage(string(p->GetDataDir() + string(OPT_CLOSE_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  */
-  //ListPlugBtn = new DownButton(this, ID_TOOL_LIST_OPTIONPANEL, wxPoint(GetSize().x - 48, 2), wxSize(14, 12), 
-	//		       list_up, list_down, true);
   DetachPlugBtn = new DownButton(this, ID_TOOL_DETACH_OPTIONPANEL, wxPoint(2, 2), wxSize(14, 12), 
 				 detach_up, detach_down, true);
-  //ClosePlugBtn = new DownButton(this, ID_TOOL_CLOSE_OPTIONPANEL, wxPoint(GetSize().x - 16, 2), wxSize(14, 12), 
-	//			 close_up, close_down, true);
   wxBoxSizer *right_sizer;
   right_sizer = new wxBoxSizer(wxHORIZONTAL);
- // right_sizer->Add(ListPlugBtn, 0, wxALL, 2); 
   right_sizer->Add(DetachPlugBtn, 0, wxALL, 2); 
- // right_sizer->Add(ClosePlugBtn, 0, wxALL, 2); 
   wxBoxSizer *sizer;
   sizer = new wxBoxSizer(wxHORIZONTAL);
   sizer->Add(4, OPT_TOOLBAR_HEIGHT, 0, 0); 
@@ -106,14 +90,13 @@ void				ASPlugPanel::AddPlug(ASPlugin *p)
   
   p->SetPlugin(this->p);
   m = p->CreateView(this, pt, sz);
-  tool = new ASPlug(p->Name, ID_TOOL_OTHER_OPTIONPANEL, m);
+  tool = new ASPlug(this, p->Name, ID_TOOL_OTHER_OPTIONPANEL, m);
   tool->Plugin = p;
   PlugsList.push_back(tool);
   tool->Panel->Show(false);
   if (!CurrentPlug)
     CurrentPlug = tool;
   ShowPlug(CurrentPlug);
-  //ShowPlug(tool);
 }
 
 void				ASPlugPanel::ShowPlug(ASPlug *t)
@@ -155,25 +138,7 @@ void				ASPlugPanel::ShowPlugin(ASPlugin *p)
     }
   AddPlug(p);  
 }
-/*
-void				ASPlugPanel::OnListPlugClick(wxCommandEvent &event)
-{
-  vector<ASPlug *>::iterator	i;
-  long				k;
-  wxMenu			*menu;
-  
-  menu = new wxMenu();
-  for (k = OPT_TOOL_ID_START, i = PlugsList.begin(); i != PlugsList.end(); i++, k++)
-    {
-      menu->Append(k, (*i)->Name.c_str());
-      Connect(k, wxEVT_COMMAND_MENU_SELECTED, 
-	      (wxObjectEventFunction)(wxEventFunction)
-	      (wxCommandEventFunction)&ASPlugPanel::OnSelectPlug);
-    }
-  wxPoint p(ListPlugBtn->GetPosition());
-  PopupMenu(menu, p.x, p.y);
-}
-*/
+
 void				ASPlugPanel::OnDetachPlugClick(wxCommandEvent &event)
 {
   if (CurrentPlug)
@@ -182,22 +147,6 @@ void				ASPlugPanel::OnDetachPlugClick(wxCommandEvent &event)
       ShowLastPlug();
     }
 }
-/*
-void				ASPlugPanel::OnClosePlugClick(wxCommandEvent &event)
-{
-}
-*/
-/*
-void				ASPlugPanel::OnSelectPlug(wxCommandEvent &event)
-{
-  unsigned int			id = event.GetId() - OPT_TOOL_ID_START;
-
-  if (id < PlugsList.size())
-    {
-      ShowPlug(PlugsList[id]);
-    }
-}
-*/
 
 void				ASPlugPanel::ShowLastPlug()
 {
@@ -225,30 +174,8 @@ void				ASPlugPanel::DeletePlugs()
     }
   PlugsList.clear();
 }
-/*
-void				ASPlugPanel::ClosePlug(ASPlugin *p)
-{
-  vector<ASPlug *>::iterator	i;
-  
-  for (i = PlugsList.begin(); i != PlugsList.end(); i++)
-    {
-      if ((*i)->Plugin == p)
-	{
-	  if (*i == CurrentPlug)
-	    {	    
-	      ShowLastPlug();
-  	    }     
-	  delete *i;
-	  PlugsList.erase(i);
-	  break;
-	}
-    }
-}
-*/
 
 BEGIN_EVENT_TABLE(ASPlugPanel, wxPanel)
-//  EVT_BUTTON(ID_TOOL_LIST_OPTIONPANEL, ASPlugPanel::OnListPlugClick)
   EVT_BUTTON(ID_TOOL_DETACH_OPTIONPANEL, ASPlugPanel::OnDetachPlugClick)
-//  EVT_BUTTON(ID_TOOL_CLOSE_OPTIONPANEL, ASPlugPanel::OnClosePlugClick)
 END_EVENT_TABLE()
   

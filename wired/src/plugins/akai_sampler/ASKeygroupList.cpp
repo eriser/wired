@@ -1,124 +1,85 @@
 #include <wx/wx.h>
 #include "ASKeygroupList.h"
 #include "ASSampleList.h"
+#include "AkaiSampler.h"
 
-BEGIN_EVENT_TABLE(ASKeygroupList, wxWindow)
-  /*
-  EVT_BUTTON(ASKeygroupList_AddKeygroup, ASKeygroupList::OnAddKeygroup)
-  EVT_BUTTON(ASKeygroupList_DelKeygroup, ASKeygroupList::OnDelKeygroup)
-  EVT_BUTTON(ASKeygroupList_EditKeygroup, ASKeygroupList::OnEditKeygroup)
-  */
-  EVT_SIZE(ASKeygroupList::OnResize)
-END_EVENT_TABLE()
-
-
-//ASKeygroupList *Keygroups = NULL;
-vector<ASamplerKeygroup *> Keygroups;
-
-ASKeygroupList::ASKeygroupList(wxString Name) :
-  ASPlugin(Name)
+ASamplerSample::ASamplerSample(class AkaiSampler *as, WaveFile *w, unsigned long id)
 {
-  List = NULL;
+  this->as = as;
+  this->w = w;
+  this->askg = NULL;
+  this->aske = NULL;
+  this->Position = 0;
+  if (!id)
+    id = as->sampleid++;
+  else
+    if (id > as->sampleid)
+      as->sampleid = id + 1;
+  this->id = id;
+  this->loopcount = -1;
+  this->loopstart = 0;
+  this->loopend = w->GetNumberOfFrames();
 }
 
-ASKeygroupList::~ASKeygroupList()
+ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smp, wxString AkaiPrefix, unsigned long id)
 {
+  this->w = new WaveFile(smp->buffer, smp->size, 2, smp->rate);
+  w->Filename = AkaiPrefix + smp->name;
+  this->askg = NULL;
+  this->aske = NULL;
+  this->Position = smp->start / 2;
+  if (!id)
+    id = as->sampleid++;
+  else
+    if (id > as->sampleid)
+      as->sampleid = id + 1;
+  this->id = id;
+  this->loopcount = smp->loop_times;
+  if (loopcount == 9999)
+    loopcount = -1;
+  this->loopstart = smp->loop_len / 2;
+  this->loopend = smp->loop_start / 2;
+  if (loopend > w->GetNumberOfFrames())
+    loopend = w->GetNumberOfFrames();
+  cout << "[WiredSampler] AKAI Sample Loaded, loopcount= " << loopcount << " loopstart= " << loopstart << " loopend= " << loopend << endl;
+  this->as = as;
 }
 
-void ASKeygroupList::OnResize(wxSizeEvent &e)
+ASamplerSample::~ASamplerSample()
 {
-  if (List)
-    List->SetSize(e.GetSize());
+  if (w)
+    delete w;
+  if (aske)
+    delete aske;
+  if (askg)
+    delete askg;
+  for (vector<ASPlugin *>::iterator i = effects.begin(); i != effects.end(); i++)
+    delete (*i);
 }
 
-wxWindow *ASKeygroupList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
+ASamplerKeygroup::ASamplerKeygroup(class AkaiSampler *as, int lo, int hi, unsigned long id)
 {
-  Reparent(panel);
-  List = new ASList(this, -1, wxPoint(0, 0), GetSize());
-  SetSize(sz);
-  Move(pt);
-  List->SetSize(sz);
-  /*
-  wxImage *btadd = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_ADD_KEYGROUP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *btdel = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_DEL_KEYGROUP)).c_str(), wxBITMAP_TYPE_PNG);
-  List->AddControl(new wxBitmapButton(List, ASKeygroupList_AddKeygroup, wxBitmap(btadd)));
-  List->AddControl(new wxBitmapButton(List, ASKeygroupList_DelKeygroup, wxBitmap(btdel)));
-  wxImage *btassign = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_EDIT_KEYGROUP)).c_str(), wxBITMAP_TYPE_PNG);
-  List->AddControl(new wxBitmapButton(List, ASKeygroupList_EditKeygroup, wxBitmap(btassign)));
-  */
-  //Show(true);
-  Show(false);
-  return this;
+  this->as = as;
+  lokey = lo;
+  hikey = hi;
+  smp = NULL;
+  if (!id)
+    id = as->keygroupid++;
+  else
+    if (id > as->keygroupid)
+      as->keygroupid = id + 1;
+  this->id = id;
 }
 
-/*
-void  ASKeygroupList::OnAddKeygroup(wxCommandEvent &e)
+
+ASamplerKeygroup::~ASamplerKeygroup()
 {
-  wxString keys[128];
-  int oct = -2;
-  wxString notes[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-  int note = 0;
-  for (int i = 0; i < 128; i++)
+  for (vector<ASamplerKeygroup *>::iterator i = as->Keygroups.begin(); i != as->Keygroups.end(); i++)
   {
-    keys[i] = notes[note] + " ";
-    keys[i] << oct;
-    note = (note + 1) % 12;
-    if (!note)
-      oct++;
+    if ((*i) == this)
+    {
+      as->Keygroups.erase(i);
+      return;
+    }
   }
-  int lokey = wxGetSingleChoiceIndex("Choose lowest key in group : ", "Keygroup creation", 128, keys);
-  if (lokey == -1)
-    return;
-  int hikey = wxGetSingleChoiceIndex("Choose highest key in group : ", "Keygroup creation", 128, keys);
-  if (hikey == -1)
-    return;
-  ASamplerKeygroup *askg = new ASamplerKeygroup(lokey, hikey);
-  List->AddEntry("Keygroup " + keys[lokey] + " - " + keys[hikey], askg);
-}
-  
-void  ASKeygroupList::OnDelKeygroup(wxCommandEvent &e)
-{
-  vector<ASListEntry *> v;
-  v = List->GetSelected();
-  vector<ASListEntry *>::iterator i;
-  for (i = v.begin(); i != v.end(); i++)
-  {
-    List->DelEntry((*i)->GetEntry());
-    delete (ASamplerKeygroup *)(*i)->GetEntry();
-  }
-}
-
-void  ASKeygroupList::OnEditKeygroup(wxCommandEvent &e)
-{
-  vector<ASListEntry *> v;
-  v = List->GetSelected();
-  vector<ASListEntry *>::iterator i;
-  i = v.begin();
-  ASamplerSample *ass = ((ASamplerKeygroup *)((*i)->GetEntry()))->GetSample();
-  vector<ASListEntry *> v2 = Samples->List->GetEntries();
-  vector<ASListEntry *>::iterator j;
-  for (j = v2.begin(); (j != v2.end()) && ((*j)->GetEntry() != ass); j++) ;
-  ASKeygroupEditor *aske = ass->GetKgEditor();
-  if (!aske)
-  {
-    aske = new ASKeygroupEditor(this, -1, wxString(_T("Keygroup editor for ")) + (*j)->GetName(), wxPoint(0, 0), wxSize(400, 400));
-    aske->SetSample(ass);
-    ass->SetKgEditor(aske);
-  }
-  aske->Raise();
-  aske->Show();
-}
-*/
- 
-ASamplerKeygroup *ASKeygroupList::FindKeygroup(int key)
-{
-  vector<ASListEntry *> v;
-  v = List->GetEntries();
-  for (vector<ASListEntry *>::iterator i = v.begin(); i != v.end(); i++)
-  {
-    ASamplerKeygroup *askg = (ASamplerKeygroup *)(*i)->GetEntry();
-    if (askg->HasKey(key))
-      return askg;
-  }
-  return NULL;
 }

@@ -18,32 +18,21 @@ using namespace std;
 class ASSampleList : public ASPlugin
 {
   public:
-    ASSampleList(wxString Name);
+    ASSampleList(class AkaiSampler *as, wxString Name);
     ~ASSampleList();
     wxWindow *CreateView(wxPanel *, wxPoint &, wxSize &);
     void OnAddSample(wxCommandEvent &);
     void OnDelSample(wxCommandEvent &);
-//    void OnAssignSample(wxCommandEvent &);
- //   void OnEffectSample(wxCommandEvent &);
     void OnResize(wxSizeEvent &);
- //   void OnSelectEffect(wxCommandEvent &);
     ASList *List;
-  //  ASPlugPanel *pp;
- //   void SetPlugPanel(ASPlugPanel *pp) { this->pp = pp; }
 
   DECLARE_EVENT_TABLE()
 };
-
-extern ASSampleList *Samples;
 
 enum 
 {
   ASSampleList_AddSample = 1234,
   ASSampleList_DelSample,
-  /*
-  ASSampleList_AssignSample,
-  ASSampleList_EffectSample
-  */
 };
 
 #endif

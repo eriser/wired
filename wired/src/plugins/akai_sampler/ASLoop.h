@@ -11,7 +11,7 @@ using namespace std;
 class ASLoop : public ASPlugin
 {
   public:
-    ASLoop(wxString Name);
+    ASLoop(class AkaiSampler *as, wxString Name);
     ~ASLoop();
     wxWindow *CreateView(wxPanel *, wxPoint &, wxSize &);
     void OnPaint(wxPaintEvent &);

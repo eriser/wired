@@ -17,9 +17,6 @@ static wxString EFFECTSNAMES[NB_EFFECTS] = {
 };
 // FIN DES EFFETS
 
-vector <ASamplerKeygroup *> Keygroups;
-unsigned long keygroupid = 1;
-
 static PlugInitInfo info;
 
 BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
@@ -36,9 +33,12 @@ BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
   EVT_COMMAND_SCROLL(Sampler_Volume, AkaiSampler::OnVolume)
 END_EVENT_TABLE()
 
-  AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
+AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 : Plugin(startinfo, initinfo), PolyphonyCount(7), Volume(1.f), AkaiProgram(0x0)
 {
+
+  sampleid = 0;
+  keygroupid = 0;
   wxImage *tr_bg =
     new wxImage(string(GetDataDir() + string(IMG_SP_BMP)).c_str(), 
         wxBITMAP_TYPE_BMP);
@@ -48,20 +48,14 @@ END_EVENT_TABLE()
 
   PlugPanel = new ASPlugPanel(this, wxPoint(150, 0), wxSize(GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), wxTHICK_FRAME, this);
 
-  //Keygroups = new ASKeygroupList("Keygroups");
-  Samples = new ASSampleList("Samples");
+  Samples = new ASSampleList(this, "Samples");
 
   clavier = new ASClavier(this, -1, wxPoint(GetSize().GetWidth() - ASCLAVIER_WIDTH, GetSize().GetHeight() - ASCLAVIER_HEIGHT),
       wxSize(ASCLAVIER_WIDTH, ASCLAVIER_HEIGHT),
       wxSIMPLE_BORDER, this);
 
   PlugPanel->AddPlug(Samples);
-  //PlugPanel->AddPlug(Keygroups);
   PlugPanel->ShowPlugin(Samples);
-
-  //memset(Keys, 0x0, sizeof(ASamplerKey *) * 127);
-
-  /* Graphic control initialization */
 
   open_up = new wxImage(string(GetDataDir() + string(IMG_SP_OPEN_UP)).c_str(),
       wxBITMAP_TYPE_PNG);
@@ -257,16 +251,16 @@ void AkaiSampler::Load(int fd, long size)
       t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
       if (sample)
       {
-        ass = new ASamplerSample(sample, AkaiPrefix, id);
+        ass = new ASamplerSample(this, sample, AkaiPrefix, id);
         free(sample);
-        ASPlugin *p = new ASLoop(ASLoop::GetFXName() + " #0 for " + name);
+        ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + name);
         p->SetSample(ass);
         ass->AddEffect(p);
         PlugPanel->AddPlug(p);
       }
     }
     else
-      ass = new ASamplerSample(new WaveFile(string(str), true), id);
+      ass = new ASamplerSample(this, new WaveFile(string(str), true), id);
     if (ass)
     {
       cerr << "[WiredSampler] Loaded wav " << wxString(_T(str)) << endl;
@@ -310,7 +304,7 @@ void AkaiSampler::Load(int fd, long size)
     long hikey;
     count += read(fd, &hikey, sizeof(hikey));
     cerr << "[WiredSampler] Loaded high key " << hikey << endl;
-    ASamplerKeygroup *askg = new ASamplerKeygroup(lokey, hikey, id);
+    ASamplerKeygroup *askg = new ASamplerKeygroup(this, lokey, hikey, id);
     Keygroups.push_back(askg);
     count += read(fd, &len, sizeof(len));
     if (len)
@@ -411,13 +405,13 @@ void AkaiSampler::LoadProgram()
     cout << "Num: " << group->num << endl;
     if (group->zone_sample[0])
     {
-      ASamplerSample *ass = new ASamplerSample(group->zone_sample[0], AkaiPrefix);
+      ASamplerSample *ass = new ASamplerSample(this, group->zone_sample[0], AkaiPrefix);
       Samples->List->AddEntry(group->zone_sample[0]->name, (void *)ass);
-      ASamplerKeygroup *askg = new ASamplerKeygroup(group->lowkey, group->highkey);
+      ASamplerKeygroup *askg = new ASamplerKeygroup(this, group->lowkey, group->highkey);
       Keygroups.push_back(askg);
       ass->SetKeygroup(askg);
       askg->SetSample(ass);
-      ASPlugin *p = new ASLoop(ASLoop::GetFXName() + " #0 for " + group->zone_sample[0]->name);
+      ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + group->zone_sample[0]->name);
       p->SetSample(ass);
       ass->AddEffect(p);
       PlugPanel->AddPlug(p);
@@ -732,7 +726,7 @@ void AkaiSampler::OnKgroupButton(wxCommandEvent &event)
     ASamplerKeygroup *askg = ass->GetKeygroup();
     if (!aske)
     {
-      aske = new ASKeygroupEditor(wxString(_T("Keygroup editor for ")) + e->GetName());
+      aske = new ASKeygroupEditor(this, wxString(_T("Keygroup editor for ")) + e->GetName());
       aske->SetSample(ass);
       ass->SetKgEditor(aske);
       PlugPanel->AddPlug(aske);
@@ -763,7 +757,7 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
         s << count;
         s << " for " ;
         s << e->GetName();
-        p = new ASEnvel(s);
+        p = new ASEnvel(this, s);
         break;
       case 2:
         // Looping
@@ -775,7 +769,7 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
         s << count;
         s << " for " ;
         s << e->GetName();
-        p = new ASLoop(s);
+        p = new ASLoop(this, s);
         break;
       default:
         p = NULL;

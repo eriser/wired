@@ -10,8 +10,8 @@ BEGIN_EVENT_TABLE(ASLoop, wxWindow)
   EVT_RIGHT_DOWN(ASLoop::OnRightDown)
 END_EVENT_TABLE()
 
-ASLoop::ASLoop(wxString Name) :
-  ASPlugin(Name)
+ASLoop::ASLoop(class AkaiSampler *as, wxString Name) :
+  ASPlugin(as, Name)
 {
   wv = NULL;
 }

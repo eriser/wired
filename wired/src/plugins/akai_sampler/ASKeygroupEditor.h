@@ -8,7 +8,7 @@
 class ASKeygroupEditor : public ASPlugin
 {
   public:
-    ASKeygroupEditor(wxString Name);
+    ASKeygroupEditor(class AkaiSampler *as, wxString Name);
     wxWindow *CreateView(wxPanel *, wxPoint &, wxSize &);
     void OnPaint(wxPaintEvent &);
     void OnKeyUp(wxMouseEvent &ev);
