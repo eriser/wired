@@ -40,6 +40,8 @@ libgui_a_SOURCES = 			\
 		SeqTrackPattern.h	\
 		SequencerGui.cpp	\
 		SequencerGui.h		\
+		SelectionZone.h		\
+		SelectionZone.cpp	\
 		SettingWindow.cpp	\
 		SettingWindow.h		\
 		StaticLabel.cpp		\
@@ -51,4 +53,4 @@ libgui_a_SOURCES = 			\
 		WaveView.cpp		\
 		WaveView.h		\
 		WaveDrawer.cpp		\
-		WaveDrawer.h
+		WaveDrawer.h		

@@ -55,8 +55,10 @@
 #define CL_CURSORZ_LINE_RED	wxColour(242,  24,  42)
 #define CL_CURSORZ_LINE_DARK	wxColour( 24,  24,  42)
 
-#define CL_DEFAULT_SEQ_BRUSH	wxColour( 50, 166, 211)//wxColour( 42,  36, 242)
+#define CL_DEFAULT_SEQ_BRUSH	wxColour( 42, 142, 242)//wxColour( 42,  36, 242)
 #define CL_DEFAULT_SEQ_PEN	wxColour(  4,   2,  42)
+
+#define CL_SELECTED_ZONE	wxColour( 42,  42, 242)
 
 /*
 ** Option panel

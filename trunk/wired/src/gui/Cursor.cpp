@@ -12,13 +12,6 @@
 #include "Cursor.h"
 #include "SequencerGui.h"
 
-BEGIN_EVENT_TABLE(CursorH, wxWindow)
-  EVT_MOTION(CursorH::OnMouseEvent) 
-  EVT_LEFT_DOWN(CursorH::OnClick)
-  EVT_LEFT_UP(CursorH::OnClickUp)
-  EVT_PAINT(CursorH::OnPaint)
-END_EVENT_TABLE()
-
 /*
 ** Constructeurs d'un curseur :
 */
@@ -165,3 +158,10 @@ void					Cursor::ReSize()
 #endif
   L->SetSize(-1, -SeqGUI->SeqView->GetYScroll(), -1, (int) SeqGUI->SeqView->GetTotalHeight(), wxSIZE_USE_EXISTING);
 }
+
+BEGIN_EVENT_TABLE(CursorH, wxWindow)
+  EVT_MOTION(CursorH::OnMouseEvent) 
+  EVT_LEFT_DOWN(CursorH::OnClick)
+  EVT_LEFT_UP(CursorH::OnClickUp)
+  EVT_PAINT(CursorH::OnPaint)
+END_EVENT_TABLE()

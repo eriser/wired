@@ -25,7 +25,9 @@ class ColoredLine : public wxWindow
   ~ColoredLine();
   
   void			SetColor(wxColour c);
-  void			ReSize(unsigned long h);
+  void			SetVSize(unsigned long h);
+  void			SetHSize(unsigned long w);
+  void			ReSize(unsigned long w, unsigned long h);
 
   DECLARE_EVENT_TABLE()
 };

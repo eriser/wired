@@ -319,7 +319,7 @@ link_all_deplibs=unknown
 sys_lib_search_path_spec=" /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../../i686-pc-linux-gnu/lib/i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../../i686-pc-linux-gnu/lib/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../ /lib/i686-pc-linux-gnu/3.4.2/ /lib/ /usr/lib/i686-pc-linux-gnu/3.4.2/ /usr/lib/"
 
 # Run-time system search path for libraries
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/local/lib /usr/X11R6/lib /usr/i486-slackware-linux/lib /opt/kde/lib /usr/lib/qt/lib "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/local/lib /usr/X11R6/lib /usr/i486-slackware-linux/lib /opt/kde/lib /usr/lib/qt/lib /usr/winex/lib "
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
@@ -7017,7 +7017,7 @@ link_all_deplibs=unknown
 sys_lib_search_path_spec=" /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../../i686-pc-linux-gnu/lib/i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../../i686-pc-linux-gnu/lib/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../ /lib/i686-pc-linux-gnu/3.4.2/ /lib/ /usr/lib/i686-pc-linux-gnu/3.4.2/ /usr/lib/"
 
 # Run-time system search path for libraries
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/local/lib /usr/X11R6/lib /usr/i486-slackware-linux/lib /opt/kde/lib /usr/lib/qt/lib "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/local/lib /usr/X11R6/lib /usr/i486-slackware-linux/lib /opt/kde/lib /usr/lib/qt/lib /usr/winex/lib "
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
@@ -7316,7 +7316,7 @@ link_all_deplibs=unknown
 sys_lib_search_path_spec=" /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../../i686-pc-linux-gnu/lib/i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../../i686-pc-linux-gnu/lib/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../i686-pc-linux-gnu/3.4.2/ /usr/lib/gcc/i686-pc-linux-gnu/3.4.2/../../../ /lib/i686-pc-linux-gnu/3.4.2/ /lib/ /usr/lib/i686-pc-linux-gnu/3.4.2/ /usr/lib/"
 
 # Run-time system search path for libraries
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/local/lib /usr/X11R6/lib /usr/i486-slackware-linux/lib /opt/kde/lib /usr/lib/qt/lib "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/local/lib /usr/X11R6/lib /usr/i486-slackware-linux/lib /opt/kde/lib /usr/lib/qt/lib /usr/winex/lib "
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
