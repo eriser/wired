@@ -403,16 +403,22 @@ void					SequencerGui::SetScrolling()
 {
   long					z;
   
-  SeqView->SetTotalHeight((unsigned long) ceil(Seq->Tracks.size() * TRACK_HEIGHT * VertZoomFactor));
+  SeqView->SetTotalHeight((unsigned long) (z = (long) floor(Seq->Tracks.size() * TRACK_HEIGHT * VertZoomFactor)));
+  if (z < (SeqView->GetYScroll() + SeqView->GetClientSize().y))
+    SeqView->SetTotalHeight(z);
   if ((z = (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)) > 0)
-    VertScrollBar->SetScrollbar(VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, z + VSCROLL_THUMB_WIDTH, 1, true);
+    VertScrollBar->SetScrollbar((VertScrollBar->GetThumbPosition() >= z)
+				? z : VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, z + VSCROLL_THUMB_WIDTH, 1, true);
   else
-    VertScrollBar->SetScrollbar(VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, VSCROLL_THUMB_WIDTH, 1, true);
-  SeqView->SetTotalWidth((unsigned long) ceil(Seq->EndPos * MEASURE_WIDTH * HoriZoomFactor));
+    VertScrollBar->SetScrollbar(0, VSCROLL_THUMB_WIDTH, VSCROLL_THUMB_WIDTH, 1, true);
+  SeqView->SetTotalWidth((unsigned long) (z = (long) floor(Seq->EndPos * MEASURE_WIDTH * HoriZoomFactor)));
+  if (z < (SeqView->GetXScroll() + SeqView->GetClientSize().x))
+    SeqView->SetTotalWidth(z);
   if ((z = (SeqView->GetTotalWidth() - SeqView->GetClientSize().x)) > 0)
-    HorizScrollBar->SetScrollbar(HorizScrollBar->GetThumbPosition(), HSCROLL_THUMB_WIDTH, z + HSCROLL_THUMB_WIDTH, 1, true);
+    HorizScrollBar->SetScrollbar((HorizScrollBar->GetThumbPosition() >= z)
+				 ? z : HorizScrollBar->GetThumbPosition(), HSCROLL_THUMB_WIDTH, z + HSCROLL_THUMB_WIDTH, 1, true);
   else
-    HorizScrollBar->SetScrollbar(HorizScrollBar->GetThumbPosition(), HSCROLL_THUMB_WIDTH, HSCROLL_THUMB_WIDTH, 1, true);
+    HorizScrollBar->SetScrollbar(0, HSCROLL_THUMB_WIDTH, HSCROLL_THUMB_WIDTH, 1, true);
 }
 
 void					SequencerGui::AdjustHScrolling()
@@ -444,12 +450,17 @@ void					SequencerGui::AdjustVScrolling()
   long					range;
   double				pos_tmp;
   
+//   pos_tmp = ((range = VertScrollBar->GetRange() - VSCROLL_THUMB_WIDTH)) ?
+//     (((double) (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)
+//       * (double) (thumb_pos = VertScrollBar->GetThumbPosition())) /
+//      (double) range) : 0;
   pos_tmp = ((range = VertScrollBar->GetRange() - VSCROLL_THUMB_WIDTH)) ?
     (((double) (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)
-      * (double) (thumb_pos = VertScrollBar->GetThumbPosition())) /
+      * (double) (thumb_pos = ((double) VertScrollBar->GetThumbPosition() >= range) ?
+		  (double) range : (double) VertScrollBar->GetThumbPosition())) /
      (double) range) : 0;
-  SeqView->ScrollWindow(0, (long) (floor(CurrentYScrollPos) - floor(pos_tmp)), (const wxRect *) NULL);
-  TrackView->ScrollWindow(0, (long) (floor(CurrentYScrollPos) - floor(pos_tmp)), (const wxRect *) NULL);
+  SeqView->ScrollWindow(0, (long) (floor(CurrentYScrollPos - floor(pos_tmp))), (const wxRect *) NULL);
+  TrackView->ScrollWindow(0, (long) (floor(CurrentYScrollPos - floor(pos_tmp))), (const wxRect *) NULL);
   SeqView->SetYScrollValue((long) ceil(pos_tmp));
   SeqView->Refresh();
   TrackView->Refresh();

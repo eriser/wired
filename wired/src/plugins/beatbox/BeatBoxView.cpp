@@ -1,4 +1,3 @@
-#include "BeatBoxView.h"
 #include <math.h>
 #include "BeatBox.h"
 
