@@ -1163,6 +1163,8 @@ void WiredBeatBox::OnPatternSelectors(wxCommandEvent& e)
       PatternMutex.Unlock();
     }
   PatternMutex.Unlock();
+  if (View)
+    View->Refresh();
 }
 
 inline void WiredBeatBox::UpdateSteps(unsigned int bank, unsigned int track)
@@ -1228,6 +1230,8 @@ void WiredBeatBox::OnPatternMotion(wxCommandEvent& e)
 	  break;
 	}
     }
+  if (View)
+    View->Refresh();
 }
 
 inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c,
@@ -1264,7 +1268,7 @@ inline void WiredBeatBox::AddBeatNote(BeatBoxChannel* c,
       return;
     }
   
-
+  
   for ( list<BeatNote*>::iterator b = c->Rythms[bank][cur].begin();
 	b != c->Rythms[bank][cur].end(); b++)
     {  
@@ -1312,6 +1316,8 @@ void WiredBeatBox::OnPatternClick(wxCommandEvent &e)
   double pos = static_cast<double>(tmp[ID_POS] + i);
   
   AddBeatNote(c, pos, tmp[ID_STATE]);
+  if (View)
+    View->Refresh();
 }
 
 void WiredBeatBox::ShowOpt(wxCommandEvent& WXUNUSED(e))
@@ -1588,6 +1594,8 @@ void WiredBeatBox::OnBankChange(wxCommandEvent& WXUNUSED(event))
       UpdateSteps(NewSelectedBank, NewSelectedPattern);
       SetPatternList();
     }
+  if (View)
+    View->Refresh();
 }
 
 void WiredBeatBox::OnStepsChange(wxCommandEvent& WXUNUSED(event))
@@ -1627,6 +1635,9 @@ void WiredBeatBox::OnStepsChange(wxCommandEvent& WXUNUSED(event))
     OldBarsPerSample / StepsSigCoef[bank][track];
   UpdateNotesPositions(bank, track);
   PatternMutex.Unlock();
+  
+  if (View)
+    View->Refresh();
 }
 
 void WiredBeatBox::OnPlay(wxCommandEvent& WXUNUSED(e))
