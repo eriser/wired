@@ -67,7 +67,7 @@ void  ASSampleList::OnAddSample(wxCommandEvent &e)
   string s = p->OpenFileLoader("Load Sample", 0x0, false);
   if (!s.empty())
   {
-    WaveFile *w = new WaveFile(s, false);
+    WaveFile *w = new WaveFile(s, true);
     int i;
     for (i = s.length(); i >= 0 && s[i] != '/'; i--);
     i++;
