@@ -13,7 +13,7 @@ using namespace std;
 WaveEditorDrawer::WaveEditorDrawer(const wxSize& s, bool fulldraw, bool use_settings) 
   : FullDraw(fulldraw), UseSettings(use_settings)
 {
-  PAINT_WIDTH = 50000;
+  PAINT_WIDTH = 800000;
   zoomx = PAINT_WIDTH;
   zoomy = 1;
   if (!s.x)

@@ -383,6 +383,11 @@ bool					MainWindow::NewSession()
   
   WaveCenter.Clear();
 
+  UpdatePlugins.clear();
+  Seq->PatternsToRefresh.clear();
+  Seq->PatternsToResize.clear();
+  Seq->TracksToRefresh.clear();
+
   SeqPanel->DeleteAllTracks();
   RackPanel->DeleteAllRacks();
   OptPanel->DeleteTools();
