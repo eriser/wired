@@ -141,30 +141,46 @@ void	ASClavier::OnPaint(wxPaintEvent &event)
 
 void	ASClavier::OnKeyDown(wxMouseEvent &event)
 {
-  ASKey *k = (ASKey *)event.GetEventObject();
-
-  WiredEvent	midievent;
-  midievent.Type = WIRED_MIDI_EVENT;
-  midievent.NoteLength = 0;
-  midievent.DeltaFrames = 0;
-  midievent.MidiData[0] = 0x90;
-  midievent.MidiData[1] = k->code;
-  midievent.MidiData[2] = 100;
-  printf("[ASClavier] Sending 0x%02X 0X%02X 0X%02X\n", midievent.MidiData[0], midievent.MidiData[1], midievent.MidiData[2]);
-  as->ProcessEvent(midievent);
+  if (!as)
+  {
+    wxMouseEvent ev(wxEVT_LEFT_DOWN);
+    ev.SetEventObject(event.GetEventObject());
+    GetParent()->ProcessEvent(ev);
+  }
+  else
+  {
+    ASKey *k = (ASKey *)event.GetEventObject();
+    WiredEvent	midievent;
+    midievent.Type = WIRED_MIDI_EVENT;
+    midievent.NoteLength = 0;
+    midievent.DeltaFrames = 0;
+    midievent.MidiData[0] = 0x90;
+    midievent.MidiData[1] = k->code;
+    midievent.MidiData[2] = 100;
+    printf("[ASClavier] Sending 0x%02X 0X%02X 0X%02X\n", midievent.MidiData[0], midievent.MidiData[1], midievent.MidiData[2]);
+    as->ProcessEvent(midievent);
+  }
 }
 
 void	ASClavier::OnKeyUp(wxMouseEvent &event)
 {
-  ASKey *k = (ASKey *)event.GetEventObject();
-
-  WiredEvent	midievent;
-  midievent.Type = WIRED_MIDI_EVENT;
-  midievent.NoteLength = 0;
-  midievent.DeltaFrames = 0;
-  midievent.MidiData[0] = 0x90;
-  midievent.MidiData[1] = k->code;
-  midievent.MidiData[2] = 0;
-  printf("[ASClavier] Sending 0x%02X 0X%02X 0X%02X\n", midievent.MidiData[0], midievent.MidiData[1], midievent.MidiData[2]);
-  as->ProcessEvent(midievent);
+  if (!as)
+  {
+    wxMouseEvent ev(wxEVT_LEFT_UP);
+    ev.SetEventObject(event.GetEventObject());
+    GetParent()->ProcessEvent(ev);
+  }
+  else
+  {
+    ASKey *k = (ASKey *)event.GetEventObject();
+    WiredEvent	midievent;
+    midievent.Type = WIRED_MIDI_EVENT;
+    midievent.NoteLength = 0;
+    midievent.DeltaFrames = 0;
+    midievent.MidiData[0] = 0x90;
+    midievent.MidiData[1] = k->code;
+    midievent.MidiData[2] = 0;
+    printf("[ASClavier] Sending 0x%02X 0X%02X 0X%02X\n", midievent.MidiData[0], midievent.MidiData[1], midievent.MidiData[2]);
+    as->ProcessEvent(midievent);
+  }
 }

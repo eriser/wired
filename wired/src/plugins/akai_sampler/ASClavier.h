@@ -26,6 +26,7 @@ class ASClavier: public wxControl
   void OnPaint(wxPaintEvent &);
   void OnKeyDown(wxMouseEvent &event);
   void OnKeyUp(wxMouseEvent &event);
+  vector<ASKey *> GetKeys() { return keys; }
 
   DECLARE_EVENT_TABLE()
 };

@@ -8,11 +8,13 @@
 #include "ASList.h"
 #include "WaveFile.h"
 #include "akai.h"
+#include "ASKeygroupEditor.h"
 
 using namespace std;
 
 #define IMAGE_BT_ADD_KEYGROUP     "plugins/akaisampler/add.png"
 #define IMAGE_BT_DEL_KEYGROUP    "plugins/akaisampler/del.png"
+#define IMAGE_BT_EDIT_KEYGROUP    "plugins/akaisampler/assign.png"
 
 class ASamplerKeygroup;
 
@@ -26,6 +28,7 @@ class ASamplerSample
     {
       this->w = w;
       this->askg = NULL;
+      this->aske = NULL;
       this->Position = 0;
       if (!id)
         id = sampleid++;
@@ -44,6 +47,7 @@ class ASamplerSample
       this->w = new WaveFile(smp->buffer, smp->size, 2, smp->rate);
       w->Filename = AkaiPrefix + smp->name;
       this->askg = NULL;
+      this->aske = NULL;
       this->Position = smp->start / 2;
       if (!id)
         id = sampleid++;
@@ -59,6 +63,8 @@ class ASamplerSample
 
     void SetKeygroup(ASamplerKeygroup *askg) { this->askg = askg; }
     ASamplerKeygroup *GetKeygroup() { return askg; }
+    void SetKgEditor(class ASKeygroupEditor *aske) { this->aske = aske; }
+    class ASKeygroupEditor *GetKgEditor() { return aske; }
     WaveFile *GetSample() { return w; }
     long GetPosition() { return Position; }
     unsigned long GetID() { return id; }
@@ -73,6 +79,7 @@ class ASamplerSample
   private:
     WaveFile *w;
     ASamplerKeygroup *askg;
+    ASKeygroupEditor *aske;
     long Position;
     unsigned long id;
     long loopstart;
@@ -130,6 +137,8 @@ class ASamplerKeygroup
     }
     int GetLowKey() { return lokey; }
     int GetHighKey() { return hikey; }
+    void SetLowKey(int lokey) { this->lokey = lokey; }
+    void SetHighKey(int hikey) { this->hikey = hikey; }
   private:
     ASamplerSample *smp;
     int lokey;
@@ -145,6 +154,7 @@ class ASKeygroupList : public ASPlugin
     wxWindow *CreateView(wxPanel *, wxPoint &, wxSize &);
     void OnAddKeygroup(wxCommandEvent &);
     void OnDelKeygroup(wxCommandEvent &);
+    void OnEditKeygroup(wxCommandEvent &);
     void OnResize(wxSizeEvent &);
     ASamplerKeygroup *FindKeygroup(int key);
     vector <ASListEntry *> GetEntries() { return List->GetEntries(); }
@@ -159,6 +169,7 @@ enum
 {
   ASKeygroupList_AddKeygroup = 1234,
   ASKeygroupList_DelKeygroup,
+  ASKeygroupList_EditKeygroup,
 };
 
 #endif

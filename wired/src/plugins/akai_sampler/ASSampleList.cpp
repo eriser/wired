@@ -1,9 +1,10 @@
 #include <wx/wx.h>
 #include "ASSampleList.h"
 #include "ASKeygroupList.h"
+#include "ASKeygroupEditor.h"
 #include "WaveFile.h"
 
-// ICI METTRE TOUT LES EFFETS
+// ICI METTRE TOUS LES EFFETS
 
 #include "ASEnvel.h"
 #include "ASLoop.h"
@@ -65,7 +66,7 @@ wxWindow *ASSampleList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
 
 void  ASSampleList::OnAddSample(wxCommandEvent &e)
 {
-  static int fk = 0;
+  static int fk = 24;
   vector<string> exts;
   string s = p->OpenFileLoader("Load Sample", 0x0, false);
   if (!s.empty())
@@ -117,27 +118,17 @@ void  ASSampleList::OnAssignSample(wxCommandEvent &e)
     return;
   vector<ASListEntry *>::iterator i;
   i = v.begin();
-  vector<ASListEntry *> kg = Keygroups->GetEntries();
-  int num = kg.size() + 1;
-  wxArrayString labels;
-  labels.Add("None");
-  for (int j = 1; j < num; j++)
-    labels.Add(kg[j - 1]->GetName());
-  int selkg = wxGetSingleChoiceIndex("Choose keygroup : ", "Assign sample to keygroup", labels);
-  if (selkg == -1)
-    return;
-  if (!selkg)
+  ASamplerSample *ass = (ASamplerSample *)((*i)->GetEntry());
+  ASKeygroupEditor *aske = ass->GetKgEditor();
+  ASamplerKeygroup *askg = ass->GetKeygroup();
+  if (!aske)
   {
-    ASamplerKeygroup *askg = ((ASamplerSample *)(*i)->GetEntry())->GetKeygroup();
-    if (askg)
-      askg->SetSample(NULL);
-    ((ASamplerSample *)(*i)->GetEntry())->SetKeygroup(NULL);
+    aske = new ASKeygroupEditor(this, -1, wxString(_T("Keygroup editor for ")) + (*i)->GetName(), wxPoint(0, 0), wxSize(400, 400));
+    aske->SetSample(ass);
+    ass->SetKgEditor(aske);
   }
-  else
-  {
-    ((ASamplerSample *)(*i)->GetEntry())->SetKeygroup((ASamplerKeygroup *)kg[selkg - 1]->GetEntry());
-    ((ASamplerKeygroup *)kg[selkg - 1]->GetEntry())->SetSample((ASamplerSample *)(*i)->GetEntry());
-  }
+  aske->Show();
+  aske->Raise();
 }
 
 void  ASSampleList::OnSelectEffect(wxCommandEvent &e)

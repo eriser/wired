@@ -47,6 +47,7 @@ class ASEnvel : public ASPlugin
     int dragging;
     ASEnvelSeg *seg;
     wxPoint *orig;
+  public:
   DECLARE_EVENT_TABLE()
 };
 

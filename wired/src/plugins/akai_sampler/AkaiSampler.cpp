@@ -14,6 +14,8 @@ static PlugInitInfo info;
   EVT_BUTTON(Sampler_Save, AkaiSampler::OnSaveFile)
   EVT_BUTTON(Sampler_PolyUp, AkaiSampler::OnPolyUp)
   EVT_BUTTON(Sampler_PolyDown, AkaiSampler::OnPolyDown)
+  EVT_LEFT_DOWN(AkaiSampler::OnKeyDown)
+  EVT_LEFT_UP(AkaiSampler::OnKeyUp)
   EVT_COMMAND_SCROLL(Sampler_Volume, AkaiSampler::OnVolume)
 END_EVENT_TABLE()
 
@@ -679,7 +681,13 @@ void AkaiSampler::OnSaveFile(wxCommandEvent &event)
 
 }
 
+void AkaiSampler::OnKeyUp(wxMouseEvent &event)
+{
+}
 
+void AkaiSampler::OnKeyDown(wxMouseEvent &event)
+{
+}
 
 /******** Main and mandatory library functions *********/
 
@@ -707,3 +715,4 @@ extern "C"
     delete p;
   }
 }
+

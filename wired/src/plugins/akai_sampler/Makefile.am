@@ -17,6 +17,7 @@ libWiredSampler_la_SOURCES =					\
 			ASPlugPanel.cpp			\
 			ASSampleList.cpp		\
 			ASKeygroupList.cpp		\
+			ASKeygroupEditor.cpp		\
 			ASLoop.cpp			\
 			AkaiSampler.h			\
 			ASClavier.h    			\
