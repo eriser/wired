@@ -16,8 +16,7 @@ cClipBoard::cClipBoard(string filename, bool loadmem, t_opening_mode open_mode)
 cClipBoard::~cClipBoard()
 {
   delete spSingleton;
-  //wxRemoveFile("/tmp/tmp.wav");
-  //cout << " destructeur clipboard " << endl;
+  wxRemoveFile("/tmp/tmp.wav");
 }
 
 
@@ -31,10 +30,7 @@ cClipBoard& cClipBoard::Global()
 
 void cClipBoard::Copy (WaveFile& wave, int from, int size_of_copy)
 {
-  //cout << "[cClipBoard] - Copy" << endl;
-  //cout << "[cClipBoard] - Copy : " << size_of_copy << " frames to copy" << endl;
-  
-  
+ 
   if (size_of_copy < 0) 
     {
       from = from + size_of_copy;
@@ -74,8 +70,6 @@ void cClipBoard::Copy (WaveFile& wave, int from, int size_of_copy)
   sfinfo.samplerate = wave.GetSampleRate();
   
   delete[] rw_buffer;
-  
-  //cout << "[cClipBoard] - Copy - end" << endl;
 }
 
 void cClipBoard::Cut (WaveFile& wave, int from, int size_of_cut)
@@ -131,8 +125,6 @@ void cClipBoard::Cut (WaveFile& wave, int from, int size_of_cut)
   sf_command (wave.GetFilePtr(), SFC_UPDATE_HEADER_NOW, NULL, SF_FALSE) ;
   
   delete[] rw_buffer;
-  
-  //cout << "[cClipBoard] - Cut - end" << endl;
 }
 
 void cClipBoard::Paste (WaveFile& wave, int to)
@@ -253,6 +245,4 @@ void cClipBoard::Delete (WaveFile& wave, int from, int size_of_cut)
   sf_command (wave.GetFilePtr(), SFC_UPDATE_HEADER_NOW, NULL, SF_FALSE) ;
   
   delete[] rw_buffer;
-  
-  //cout << "[cClipBoard] - Delete - end" << endl;
 }

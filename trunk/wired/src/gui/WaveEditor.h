@@ -17,20 +17,6 @@
 #define 			SCROLLV			(20)
 #define 			NB_CHOICE_NORMA		(2)
 
-enum
-{
-    ID_SCROLL,
-    ID_SCROLLH,
-    ID_SCROLLV,
-    ID_POPUP_CUT_WAVEEDITOR,
-    ID_POPUP_COPY_WAVEEDITOR, 
-    ID_POPUP_PASTE_WAVEEDITOR,
-    ID_POPUP_DEL_WAVEEDITOR,
-    ID_SEBMENU_EFFECTS_WAVEEDITOR,
-    ID_SUBMENU_GAIN_WAVEEDITOR,
-    ID_SUBMENU_NORMA_WAVEEDITOR
-};
-
 
 
 typedef struct		      s_nchoice
@@ -69,6 +55,7 @@ class WaveEditor : public wxPanel, public WaveEditorDrawer
   void				OnRedo(wxCommandEvent &event);
   void				OnGain(wxCommandEvent &event);
   void				OnNormalize(wxCommandEvent &event);
+  void				OnSelect(wxCommandEvent &event);
   void				TestWave();
   
   wxMenu			*PopMenu;
