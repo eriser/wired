@@ -95,11 +95,6 @@ void					SequencerView::SelectZonePatterns(bool shift)
     }
   for (t = Seq->Tracks.begin(); t != Seq->Tracks.end(); t++)
     for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
-      /******* OLD TEST FULL ZONE INCLUSION *******
-       if (((*p)->GetPosition() >= x1) && ((*p)->GetEndPosition() <= x2) &&
-	(((*p)->GetTrackIndex() * TRACK_HEIGHT * SeqPanel->VertZoomFactor) >= y1) &&
-	((((*p)->GetTrackIndex() + 1) * TRACK_HEIGHT * SeqPanel->VertZoomFactor) <= y2))
-       ****** OLD TEST FULL ZONE INCLUSION ********/
       if ((((*p)->GetPosition() > x2) || ((*p)->GetEndPosition() < x1)) ||
 	  ((((*p)->GetTrackIndex() * TRACK_HEIGHT * SeqPanel->VertZoomFactor) > y2) ||
 	   ((((*p)->GetTrackIndex() + 1) * TRACK_HEIGHT * SeqPanel->VertZoomFactor) < y1)))
@@ -194,7 +189,7 @@ void					SequencerView::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      wxString s("This is the Wired sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above to choose one of the sequencer editing tools.");
+      wxString s(_T("This is the Wired sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above to choose one of the sequencer editing tools."));
       HelpWin->SetText(s);
     }
 }
@@ -236,6 +231,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   : wxPanel(parent, -1, pos, size, wxSIMPLE_BORDER | wxWS_EX_PROCESS_IDLE)
 {
   wxSize				s;
+  wxSize				v;
   wxBoxSizer				*zer_1;
   wxBoxSizer				*zer_2;
   wxBoxSizer				*zer_3;
@@ -243,14 +239,15 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   wxBoxSizer				*zer_5;
   wxString				combo_choices[NB_COMBO_CHOICES];
   long					c;
+  long					r;
 
   Tool = ID_TOOL_MOVE_SEQUENCER;
   CurrentPos = 0.0;
   HoriZoomFactor = 1.0f;
   VertZoomFactor = 1.0f;
   DoCut = false;
-  SetBackgroundColour(CL_DEFAULT_BACKGROUND);
-  SetForegroundColour(CL_DEFAULT_FOREGROUND);
+  SetBackgroundColour(CL_SEQ_BACKGROUND);
+  SetForegroundColour(CL_SEQ_FOREGROUND);
   Toolbar = new wxToolBar(this, -1, wxPoint(-1, -1), wxSize(-1, TOOLS_HEIGHT), wxTB_FLAT);
   Toolbar->AddRadioTool(ID_SEQ_MOVE, "Move", wxBitmap(string(WiredSettings->DataDir + string(HAND_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(HAND_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "Move Pattern", "Move Pattern", NULL);
   Toolbar->AddRadioTool(ID_SEQ_EDIT, "Draw", wxBitmap(string(WiredSettings->DataDir + string(DRAW_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(DRAW_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "Draw Pattern", "Draw Pattern", NULL);
@@ -261,32 +258,25 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   for (c = 0; c < NB_COMBO_CHOICES; c++)
     combo_choices[c] = ComboChoices[c].s;
   MagnetQuant = new wxComboBox(Toolbar, ID_SEQ_COMBO_MAGNET, DEFAULT_MAGNETISM_COMBO_VALUE, 
-			       wxPoint(-1, -1), wxSize(68, -1), 9, combo_choices);
+			       wxPoint(-1, -1), wxSize(72, -1), 9, combo_choices);
   Toolbar->AddControl(MagnetQuant);
   Toolbar->AddSeparator();
   Toolbar->AddTool(ID_SEQ_COLOR, "Color", wxBitmap(string(WiredSettings->DataDir + string(COLOR_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(COLOR_DOWN)).c_str(), wxBITMAP_TYPE_PNG));
   Toolbar->Realize();
   Toolbar->ToggleTool(ID_SEQ_MAGNET, MAGNETISM);
-  //SetToolBar(Toolbar);
+//   SetToolBar(Toolbar);
   VertScrollBar = new wxScrollBar(this, ID_SEQ_SCROLLING, wxPoint(-1, 0), 
 			      wxSize(-1, -1), wxSB_VERTICAL);
-  s = VertScrollBar->GetSize();
-  VertScrollBar->Move(wxPoint(size.x - s.x, 0));
-  SeqView = new SequencerView(this, wxPoint(TRACK_WIDTH, RULER_HEIGHT + TOOLS_HEIGHT), 
-			      wxSize(size.x - TRACK_WIDTH - s.x, size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT)));
-  HorizScrollBar = new wxScrollBar(this, ID_SEQ_SCROLLING, 
-				   wxPoint(TRACK_WIDTH, SeqView->GetClientSize().y + TOOLS_HEIGHT), 
-				   wxSize(SeqView->GetClientSize().x, RULER_HEIGHT), 
-				   wxSB_HORIZONTAL);
-  TrackView = new wxScrolledWindow(this, ID_TRACK_VIEW, wxPoint(0, RULER_HEIGHT + TOOLS_HEIGHT), 
-				   wxSize(TRACK_WIDTH, size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT)), wxSUNKEN_BORDER);
-  VertZoomSlider = new wxSlider(this, ID_SEQ_VSLIDER, 100, 100, 400, wxPoint(0, TOOLS_HEIGHT), 
-				wxSize(TRACK_WIDTH, RULER_HEIGHT));
-  HoriZoomSlider = new wxSlider(this, ID_SEQ_HSLIDER, 100, 25, 400, 
-				wxPoint(0, SeqView->GetClientSize().y + RULER_HEIGHT + TOOLS_HEIGHT),
-				wxSize(TRACK_WIDTH, RULER_HEIGHT));
-  RulerPanel = new Ruler(this, ID_SEQ_RULER, wxPoint(TRACK_WIDTH, TOOLS_HEIGHT), 
-			 wxSize(size.x - TRACK_WIDTH - s.x, RULER_HEIGHT));
+  s = GetClientSize();
+  v = VertScrollBar->GetSize();
+  SeqView = new SequencerView(this, wxPoint(-1, -1), wxSize(-1, -1));
+  HorizScrollBar = new wxScrollBar(this, ID_SEQ_SCROLLING, wxPoint(-1, -1), wxSize(-1, -1), wxSB_HORIZONTAL);
+  TrackView = new wxScrolledWindow(this, ID_TRACK_VIEW, wxPoint(-1, -1), wxSize(TRACK_WIDTH, -1), wxSUNKEN_BORDER);
+  VertZoomSlider = new wxSlider(this, ID_SEQ_VSLIDER, 100, 100, 400, wxPoint(-1, -1), wxSize(-1, RULER_HEIGHT),
+				wxMAXIMIZE_BOX | wxNO_BORDER, wxDefaultValidator, _T("Vertical Zoom"));
+  HoriZoomSlider = new wxSlider(this, ID_SEQ_HSLIDER, 100, 25, 400, wxPoint(-1, -1),
+				wxSize(-1, HorizScrollBar->GetSize().y));
+  RulerPanel = new Ruler(this, ID_SEQ_RULER, wxPoint(-1, -1), wxSize(-1, RULER_HEIGHT));
   ColorDialogBox = new wxColourDialog(this, 0);
   BrushColor = CL_DEFAULT_SEQ_BRUSH;
   ColorBox = new ColoredBox(this, ID_SEQ_COLORBOX, wxPoint(Toolbar->GetSize().x + COLORBOX_MARGINS, COLORBOX_MARGINS),
@@ -297,25 +287,26 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   zer_5 = new wxBoxSizer(wxVERTICAL);
   zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
   zer_5->Add(SeqView, 1, wxALL | wxEXPAND, 0);
-  zer_5->Add(HorizScrollBar, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
+  zer_5->Add(HorizScrollBar, 0, wxALL | wxEXPAND, 0);
   zer_4 = new wxBoxSizer(wxVERTICAL);
-  zer_4->Add(VertZoomSlider, 0, wxALL | wxFIXED_MINSIZE, 0);
+  zer_4->Add(VertZoomSlider, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
   zer_4->Add(TrackView, 1, wxALL | wxEXPAND, 0);
-  zer_4->Add(HoriZoomSlider, 0, wxALL | wxFIXED_MINSIZE, 0);
+  zer_4->Add(HoriZoomSlider, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
   zer_3 = new wxBoxSizer(wxHORIZONTAL);
-  zer_3->Add(zer_4, 0, wxEXPAND | wxALL, 0);
-  zer_3->Add(zer_5, 1, wxEXPAND | wxALL, 0);
-  zer_2 = new wxBoxSizer(wxVERTICAL);
-  zer_2->Add(Toolbar, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
-  zer_2->Add(zer_3, 1, wxEXPAND | wxALL, 0);
-  zer_1 = new wxBoxSizer(wxHORIZONTAL);
-  zer_1->Add(zer_2, 1, wxEXPAND | wxALL, 0);
-  zer_1->Add(VertScrollBar, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
+  zer_3->Add(zer_4, 0, wxALL | wxEXPAND, 0);
+  zer_3->Add(zer_5, 1, wxALL | wxEXPAND, 0);
+  zer_3->Add(VertScrollBar, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
+  //  TO BE UPDATED SOON (after having redone the toolbar with panels)
+  //  zer_2 = new wxBoxSizer(wxHORIZONTAL);
+  //  zer_2->Add(Toolbar, 1, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
+  //  zer_2->Add(ColorBox, 0, wxALIGN_CENTER_VERTICAL | wxALL | wxFIXED_MINSIZE, 0);
+  zer_1 = new wxBoxSizer(wxVERTICAL);
+  zer_1->Add(Toolbar, 0, wxALL | wxEXPAND, 0);
+  zer_1->Add(zer_3, 1, wxALL | wxEXPAND, 0);
   SetSizer(zer_1);
   SeqView->SetBackgroundColour(CL_SEQVIEW_BACKGROUND);
   TrackView->SetScrollRate(10, 10);
   TrackView->SetBackgroundColour(wxColour(204, 199, 219));//*wxLIGHT_GREY);
-  VertZoomSlider->SetBackgroundColour(*wxLIGHT_GREY);
   VertNowPos = 0;
   HorizNowPos = 0;
   Magnetism = MAGNETISM;
@@ -329,10 +320,10 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
 
   /* Curseurs */
   BeginLoopCursor = new Cursor('L', ID_CURSOR_BEGIN, 0.0, RulerPanel, this,
-			       CL_CURSORZ_HEAD_BEGINL, CL_CURSORZ_LINE_DARK);
+			       CL_CURSORZ_HEAD_RIGHT, CL_CURSORZ_LINE_DARK);
   BeginLoopCursor->SetPos(0);
   EndLoopCursor = new Cursor('R', ID_CURSOR_REPEAT, 0.0, RulerPanel, this,
-			       CL_CURSORZ_HEAD_ENDL, CL_CURSORZ_LINE_DARK);
+			       CL_CURSORZ_HEAD_LEFT, CL_CURSORZ_LINE_DARK);
   EndLoopCursor->SetPos(4);
   EndCursor = new Cursor('E', ID_CURSOR_END, 0.0, RulerPanel, this,
 			       CL_CURSORZ_HEAD_END, CL_CURSORZ_LINE_DARK);
@@ -600,8 +591,8 @@ void					SequencerGui::OnPaint(wxPaintEvent &event)
   wxPaintDC				dc(this);
 
   PrepareDC(dc);
-  dc.SetBrush(wxBrush(*wxLIGHT_GREY, wxSOLID));
-  dc.SetPen(wxPen(*wxLIGHT_GREY, 1, wxSOLID));
+  dc.SetBrush(wxBrush(CL_SEQ_BACKGROUND, wxSOLID));
+  dc.SetPen(wxPen(CL_SEQ_BACKGROUND, 1, wxSOLID));
   dc.DrawRectangle(0, 0, GetSize().x, GetSize().y);
 }
 

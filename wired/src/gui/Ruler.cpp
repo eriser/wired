@@ -12,7 +12,6 @@ Ruler::Ruler(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 	     const wxSize &size)
   : wxWindow(parent, id, pos, size, wxRAISED_BORDER) 
 {
-  printf("youpi ROFL %d\n", GetSize().y);
 }
 
 Ruler::~Ruler()
@@ -33,25 +32,28 @@ void		Ruler::OnPaint(wxPaintEvent &event)
   double	x;
   double	u;
   long		m;
+  long		h;
 
   PrepareDC(dc);
-  size = GetSize();
+  size = GetClientSize();
   dc.SetPen(wxPen(CL_RULER_BACKGROUND, 1, wxSOLID));
   dc.SetBrush(wxBrush(CL_RULER_BACKGROUND));
   dc.SetTextForeground(CL_RULER_PATTERNNUM);
+  dc.SetFont(wxFont(RULER_NUMBER_HEIGHT, wxDEFAULT, wxNORMAL, wxNORMAL));
   dc.DrawRectangle(0, 0, size.x, size.y);
   dc.SetPen(wxPen(CL_RULER_FOREGROUND, 1, wxSOLID));
   u = MEASURE_WIDTH * SeqPanel->HoriZoomFactor / Seq->SigNumerator;
   m = (int) ceil(XScroll / u);
+  h = GetClientSize().y;
   for (x = u * m - XScroll; (long) floor(x) < size.x; x += u)
     {
       if (!(m % Seq->SigNumerator))
 	{
 	  s.Printf("%d", (long) (m / Seq->SigNumerator));
-	  dc.DrawText(s, (int) floor(x) + 3, 0);
+	  dc.DrawText(s, (int) floor(x) + RULER_NUMBER_XOFFSET, RULER_NUMBER_YOFFSET);
 	}
-      dc.DrawLine((int) floor(x), (m++ % Seq->SigNumerator) ? RULER_HEIGHT - 8 : 0,
-		  (int) floor(x), RULER_HEIGHT);
+      dc.DrawLine((int) floor(x), (m++ % Seq->SigNumerator) ? h - RULER_MEASURE_DIV_HEIGHT : 0,
+		  (int) floor(x), h);
     }
 }
 

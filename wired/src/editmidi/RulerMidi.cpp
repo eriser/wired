@@ -36,7 +36,7 @@ void		RulerMidi::OnPaint(wxPaintEvent &event)
     if (!(m % 4))
     {
       s.Printf("%lu", (long) (m / 4));
-      dc.DrawText(s, (int) floor(x) + 3, 0);
+      dc.DrawText(s, (int) floor(x) + 2, 0);
     }
     dc.DrawLine((int) floor(x), (m++ % 4) ? MIDI_RULER_HEIGHT - 8 : 0,
 	        (int) floor(x), MIDI_RULER_HEIGHT);

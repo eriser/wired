@@ -5,11 +5,12 @@
 #define __CURSOR_H__
 
 #include <wx/gdicmn.h>
-#include "ColoredLine.h"
-#include "Ruler.h"
 
 #define CURSOR_WIDTH			(12)
-#define CURSOR_HEIGHT			(10)
+#define CURSOR_HEIGHT			(12)
+#define CURSOR_NAME_HEIGHT		(6)
+#define CURSOR_NAME_XOFFSET		(3)
+#define CURSOR_NAME_YOFFSET		(1)
 #define CURSOR_DRAG_SCROLL_UNIT		(MEASURE_WIDTH + 1)
 
 /*
@@ -19,6 +20,7 @@
 
 class SequencerGui;
 class Cursor;
+class ColoredLine;
 
 class CursorH : public wxWindow
 {

@@ -73,7 +73,6 @@ void				AudioPattern::Init()
 	  &AudioPattern::OnSize);
   Connect(GetId(), wxEVT_ENTER_WINDOW, (wxObjectEventFunction)(wxEventFunction)
 	  (wxMouseEventFunction) &AudioPattern::OnHelp);
-
   SeqPanel->PutCursorsOnTop();
 }
 
@@ -133,11 +132,9 @@ float				**AudioPattern::GetBlock(long block)
     return (0x0);
   pos = (block * Audio->SamplesPerBuffer) + StartWavePos;
   size = EndWavePos - pos;
-  // On vérifi si il reste des samples non joués dans le wave
   if (size > 0)
     {
       buf = new float *[2];
-      // Vérification au cas ou size est inférieur a SamplesPerBuffer
       if (size > Audio->SamplesPerBuffer)
 	size = Audio->SamplesPerBuffer; 
       buf[0] = new float[Audio->SamplesPerBuffer];
@@ -241,10 +238,10 @@ void				AudioPattern::GetRecordBuffer()
 	    }
 	}
       /*
-      f = InputChan->PopBuffer(i);
-      if (f)
+	f = InputChan->PopBuffer(i);
+	if (f)
 	RecordWave->WriteFloat(f, InputChan->OffSet);
-	 */
+      */
     }
 }
 

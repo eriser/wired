@@ -6,7 +6,11 @@
 
 #include <wx/wx.h>
 
-#define RULER_HEIGHT			(20)
+#define RULER_HEIGHT			(16)
+#define RULER_NUMBER_HEIGHT		(6)
+#define RULER_NUMBER_XOFFSET		(2)
+#define RULER_NUMBER_YOFFSET		(-1)
+#define RULER_MEASURE_DIV_HEIGHT	(3)
 
 class Ruler : public wxWindow
 {
