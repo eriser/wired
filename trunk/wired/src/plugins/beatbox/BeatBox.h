@@ -167,7 +167,8 @@ class WiredBeatBox : public Plugin
   void		OnEditButton(wxCommandEvent& event);
   void		OnStepsChange(wxCommandEvent& event);
   void		OnBankChange(wxCommandEvent& event);
-  
+    
+
   void		LockLoading();
   void		UnlockLoading();
   
@@ -313,9 +314,14 @@ class WiredBeatBox : public Plugin
   void			OnSaveLoadHelp(wxMouseEvent& event);
   void			OnRightDown(wxMouseEvent& event);
   void			OnCopyPattern(wxCommandEvent& event);
-  
+  void			OnPastePattern(wxCommandEvent& event);
+    
   wxMenu*		PopMenu;
-  
+  wxMenu*		BankMenu;
+  wxMenu*		PatternMenu;
+  list<BeatNote*>	TmpPattern[NB_CHAN];
+  list<BeatNote*>	TmpPatternToErase[NB_CHAN];
+ 
   /* graphical updates relatives */
   void			Update();
   bool			AskUpdateSteps;
@@ -343,8 +349,8 @@ enum
     BB_OnStepsChange,
     BB_OnBankChange,
     BB_PopMenu,
-    BB_BankCopy,
-    BB_PatternCopy
+    BB_PatternCopy,
+    BB_PatternPaste
   };
 
 #endif//__BEATBOX_H__
