@@ -111,8 +111,12 @@ class BeatBoxChannel : public wxWindow
 		  const wxSize &size, unsigned int num, WiredBeatBox* drm31);
   //string datadir,  wxMutex* mutex );
   ~BeatBoxChannel();
- 
+  
   void		OnPaint(wxPaintEvent& event);
+  void		OnMouseEvent(wxMouseEvent& event);
+  void		OnEnterWindow(wxMouseEvent& event);
+  void		OnLeave(wxMouseEvent& event);
+  
   void		OnSelectChannel(wxCommandEvent& event);
   void		OnLoadSound(wxCommandEvent& event);
   void		OnPlaySound(wxCommandEvent& event);
@@ -128,7 +132,7 @@ class BeatBoxChannel : public wxWindow
   void		OnPitchChange(wxScrollEvent& event);
   void		OnVelChange(wxScrollEvent& event);
   void		OnPolyphonyChange(wxCommandEvent& e);
-
+  
   bool		IsSolo;
   
   void		Reset(void);

@@ -8,6 +8,7 @@ libWiredBeatBox_la_SOURCES =				\
 			BeatBox.cpp			\
 			BeatButton.cpp			\
 			BeatBoxChannel.cpp		\
+			BeatBoxView.cpp			\
 			../../redist/Plugin.cpp		\
 			../../gui/WaveView.cpp          \
 			../../gui/WaveDrawer.cpp        \

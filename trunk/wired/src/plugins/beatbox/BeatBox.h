@@ -132,8 +132,6 @@ class WiredBeatBox : public Plugin
   void		OnSavePatch(wxCommandEvent& event);
   void		OnPatternSelectors(wxCommandEvent& event);
   void		OnEditButton(wxCommandEvent& event);
-  //void		OnStepsUp(wxCommandEvent& event);
-  //void		OnStepsDown(wxCommandEvent& event);
   void		OnStepsChange(wxCommandEvent& event);
   void		OnBankChange(wxCommandEvent& event);
   
@@ -145,7 +143,8 @@ class WiredBeatBox : public Plugin
     
   int		GetSig(void);
   
-  int count;  
+  void		SetHelpMode(bool on) { HelpMode = true; }
+  
  protected:
   wxMutex		PatternMutex;
   BeatBoxView*		View;
@@ -159,6 +158,7 @@ class WiredBeatBox : public Plugin
   bool			SeqPlaying;
   bool			AutoPlay;
   HintedKnob*		MVol;
+  //KnobCtrl*		MVol;
   
   void			RefreshPosLeds(double pos);
   void			UpdateNotesPositions(void);
@@ -216,6 +216,12 @@ class WiredBeatBox : public Plugin
   wxBitmap*		bmp;
   wxBitmap*		BgBmp;
   
+  bool			HelpMode;
+  void			OnHelp(wxMouseEvent& event);
+  void			OnPlayHelp(wxMouseEvent& event);
+  void			OnPatternHelp(wxMouseEvent& event);
+  void			OnMasterLevHelp(wxMouseEvent& event);
+
 DECLARE_EVENT_TABLE()
 };
 
@@ -226,7 +232,6 @@ enum
     BB_OnSigChoice,
     BB_OnPosChoice,
     BB_PatternClick,
-    BB_LoadKit,
     BB_OnPlayClick,
     BB_OnEditClick,
     BB_Channel,

@@ -4,6 +4,8 @@
 using namespace std;
 
 BEGIN_EVENT_TABLE(BeatButton, wxWindow)
+  EVT_LEAVE_WINDOW(BeatButton::OnLeave)
+  EVT_ENTER_WINDOW(BeatButton::OnEnter)
   EVT_LEFT_DOWN(BeatButton::OnMouseEvent)
   EVT_PAINT(BeatButton::OnPaint)
   EVT_MOTION(BeatButton::OnMotion)
@@ -82,4 +84,14 @@ void BeatButton::SetState(unsigned int state)
 {
   Data[ID_STATE] = state;
   Refresh();
+}
+
+void BeatButton::OnLeave(wxMouseEvent& event)
+{
+  wxPostEvent(GetParent(), event);
+}
+
+void BeatButton::OnEnter(wxMouseEvent& event)
+{
+  wxPostEvent(GetParent(), event);
 }

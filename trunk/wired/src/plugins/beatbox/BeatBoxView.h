@@ -7,6 +7,26 @@
 
 class WiredBeatBox;
 
+class BeatBoxTrack : public wxWindow
+{
+ public:
+  BeatBoxTrack(wxWindow *parent, const wxPoint &pos, const wxSize &size);
+  ~BeatBoxTrack();  
+ protected:
+
+DECLARE_EVENT_TABLE()
+};
+
+class BeatBoxScrollView : public wxScrolledWindow
+{
+ public:
+  BeatBoxScrollView(wxWindow *parent, const wxPoint &pos, const wxSize &size);
+  ~BeatBoxScrollView();
+ protected:
+
+DECLARE_EVENT_TABLE()
+};
+
 class BeatBoxView : public wxPanel
 {
  public:
@@ -15,11 +35,8 @@ class BeatBoxView : public wxPanel
 	      wxMutex* mutex);
   ~BeatBoxView();
   
-  void SetWaveFile(WaveFile* w);
-  WiredBeatBox* BB;
+  WiredBeatBox* DRM31;
  protected:
-  WaveEnv*	Env;
-  WaveFile*	Wave;
   wxMutex*	Mutex;
   
 DECLARE_EVENT_TABLE()

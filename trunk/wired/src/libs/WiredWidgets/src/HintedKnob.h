@@ -16,7 +16,9 @@ class HintedKnob : public KnobCtrl
   virtual void OnKeyDown(wxKeyEvent& event);
   virtual void OnLeftUp(wxMouseEvent &event);
   virtual void OnKeyUp(wxKeyEvent& event);
-
+  //virtual void OnEnterWindow(wxMouseEvent &event);
+  virtual void OnLeave(wxMouseEvent &event);
+  
  protected:
   Hint* Label;
 

@@ -9,6 +9,11 @@
 BEGIN_EVENT_TABLE(BeatBoxChannel, wxWindow)
   EVT_PAINT(BeatBoxChannel::OnPaint)
   
+  EVT_LEFT_DOWN(BeatBoxChannel::OnMouseEvent)
+  EVT_MOTION(BeatBoxChannel::OnMouseEvent)
+  EVT_ENTER_WINDOW(BeatBoxChannel::OnEnterWindow)
+  EVT_LEAVE_WINDOW(BeatBoxChannel::OnLeave)
+
   EVT_COMMAND_SCROLL(BC_Lev, BeatBoxChannel::OnLevChange)
   EVT_COMMAND_SCROLL(BC_Bal, BeatBoxChannel::OnBalChange)
   EVT_COMMAND_SCROLL(BC_Sta, BeatBoxChannel::OnStartChange)
@@ -531,4 +536,19 @@ void BeatBoxChannel::Reset(void)
   if (Wave)
     delete Wave;
   Wave = 0x0;
+}
+
+void BeatBoxChannel::OnMouseEvent(wxMouseEvent& event)
+{
+  wxPostEvent(GetParent(), event);
+}
+
+void BeatBoxChannel::OnEnterWindow(wxMouseEvent& event)
+{ 
+  wxPostEvent(GetParent(), event);
+}
+
+void BeatBoxChannel::OnLeave(wxMouseEvent& event)
+{
+  wxPostEvent(GetParent(), event);
 }

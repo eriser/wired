@@ -17,12 +17,14 @@ class HintedFader : public FaderCtrl
 	      const wxPoint &hintpos);
   virtual ~HintedFader();
   
-  void OnMouseEvent(wxMouseEvent &event);
-  void OnLeftUp(wxMouseEvent &event);
-  void OnLeftDown(wxMouseEvent& event);
-  void OnKeyDown(wxKeyEvent& event);
-  void OnKeyUp(wxKeyEvent& event);
-  
+  virtual void OnMouseEvent(wxMouseEvent &event);
+  virtual void OnLeftUp(wxMouseEvent &event);
+  virtual void OnLeftDown(wxMouseEvent& event);
+  virtual void OnKeyDown(wxKeyEvent& event);
+  virtual void OnKeyUp(wxKeyEvent& event);
+  virtual void OnEnterWindow(wxMouseEvent &event);
+  virtual void OnLeave(wxMouseEvent &event);
+
  protected:
   Hint* Label;
 DECLARE_EVENT_TABLE()

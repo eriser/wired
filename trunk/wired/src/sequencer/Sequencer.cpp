@@ -170,10 +170,12 @@ void					*Sequencer::Entry()
 		{
 		  /* - Enregistrement Audio */
 		  if (Recording && (*T)->TrackOpt->Record)
-		    {	  
-		      Mix->MixInput(); // Mutex ou pas ? a prioris non
-		      
+		    {	 
+		      cout << "MixInput()"<< endl;
+		      Mix->MixInput();	// Mutex ou pas ? a prioris non
+
 		      /* - Recuperation des buffers d'enregistrement */
+		      cout << "GetRecordBuffer" << endl;
 		      (*T)->Wave->GetRecordBuffer();
 		      if ((*T)->Wave->GetEndPosition() < CurrentPos)
 			ResizePattern((*T)->Wave);

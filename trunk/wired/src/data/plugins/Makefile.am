@@ -1,1 +1,1 @@
-SUBDIRS = akaisampler beatbox compressor crusher delay filter loopsampler reverb
+SUBDIRS = akaisampler compressor crusher delay filter loopsampler reverb beatbox

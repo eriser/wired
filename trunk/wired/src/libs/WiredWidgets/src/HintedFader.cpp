@@ -2,8 +2,11 @@
 
 
 BEGIN_EVENT_TABLE(HintedFader, wxWindow)
+  EVT_LEAVE_WINDOW(HintedFader::OnLeave)
+  EVT_ENTER_WINDOW(HintedFader::OnEnterWindow)
   EVT_LEFT_DOWN(HintedFader::OnLeftDown)
-  EVT_LEFT_DOWN(HintedFader::OnMouseEvent)
+  
+  //EVT_LEFT_DOWN(HintedFader::OnMouseEvent)
   EVT_LEFT_UP(HintedFader::OnLeftUp)
   EVT_MOTION(HintedFader::OnMouseEvent)
   EVT_PAINT(FaderCtrl::OnPaint)
@@ -69,4 +72,16 @@ void HintedFader::OnMouseEvent(wxMouseEvent &event)
   Label->SetLabel(s);
   if (!event.LeftIsDown())
     Label->Show(false);
+}
+
+
+void HintedFader::OnEnterWindow(wxMouseEvent &event)
+{
+  wxPostEvent(GetParent(), event);
+}
+
+void HintedFader::OnLeave(wxMouseEvent &event)
+{
+  Label->Show(false);
+  wxPostEvent(GetParent(), event);
 }

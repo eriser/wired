@@ -2,6 +2,9 @@
 
 
 BEGIN_EVENT_TABLE(HintedKnob, wxWindow)
+  EVT_LEAVE_WINDOW(HintedKnob::OnLeave)
+  //EVT_ENTER_WINDOW(HintedKnob::OnEnterWindow)
+  EVT_ENTER_WINDOW(KnobCtrl::OnEnterWindow)
   EVT_MOTION(HintedKnob::OnMouseEvent) 
   EVT_PAINT(KnobCtrl::OnPaint)
   EVT_LEFT_DOWN(HintedKnob::OnMouseEvent)
@@ -52,11 +55,23 @@ void HintedKnob::OnKeyDown(wxKeyEvent& event)
 
 void HintedKnob::OnLeftUp(wxMouseEvent& WXUNUSED(event))
 {
-    Label->Show(false);
+  Label->Show(false);
 }
 
 void HintedKnob::OnKeyUp(wxKeyEvent& WXUNUSED(event))
 {
-    Label->Show(false);
+  Label->Show(false);
 }
-  
+
+/*
+void HintedKnob::OnEnterWindow(wxMouseEvent &event)
+  : KnobCtrl::OnEnterWindow(event)
+{
+  //wxPostEvent(GetParent(), event);
+}
+*/
+void HintedKnob::OnLeave(wxMouseEvent &event)
+{
+  Label->Show(false);
+  wxPostEvent(GetParent(), event);
+}
