@@ -39,8 +39,6 @@ enum
 class ASPlug;
 class ASPlugPanel;
 
-extern ASPlugPanel *PlugPanel;
-
 class ASPlugFrame: public wxFrame
 {
  protected:
@@ -62,7 +60,7 @@ class ASPlugFrame: public wxFrame
 class ASPlug
 {
  public:
-  ASPlug(wxString name, int type, wxWindow *panel);
+  ASPlug(class ASPlugPanel *aspp, wxString name, int type, wxWindow *panel);
   ~ASPlug();
 
   void				Attach();
@@ -71,13 +69,11 @@ class ASPlug
   wxString			Name;
   int				  Type;
   wxWindow		*Panel;
-
   bool				IsDetached;
   ASPlugFrame	*Frame;
-
   ASPlugin *Plugin;
-
   void				OnClose(wxCloseEvent &event);
+  class ASPlugPanel *aspp;
 };
 
 class ASPlugPanel: public wxPanel
@@ -98,20 +94,11 @@ class ASPlugPanel: public wxPanel
   wxPanel			*ToolbarPanel;
   wxStaticText			*Title;
   Plugin      *p;
-
   wxBoxSizer			*TopSizer;
-
-//  DownButton			*ListPlugBtn;
   DownButton			*DetachPlugBtn;
-//  DownButton			*ClosePlugBtn;
-
   vector<ASPlug *>		PlugsList;
   ASPlug        *CurrentPlug;
-
-//  void				OnListPlugClick(wxCommandEvent &event);
   void				OnDetachPlugClick(wxCommandEvent &event);
-//  void				OnClosePlugClick(wxCommandEvent &event);
-//  void				OnSelectPlug(wxCommandEvent &event);
 
   DECLARE_EVENT_TABLE()
 };

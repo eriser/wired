@@ -36,7 +36,7 @@ class ASEnvelSeg
 class ASEnvel : public ASPlugin
 {
   public:
-    ASEnvel(wxString Name);
+    ASEnvel(class AkaiSampler *as, wxString Name);
     ~ASEnvel();
     wxWindow * CreateView(wxPanel *, wxPoint &, wxSize &);
     void OnPaint(wxPaintEvent &);

@@ -152,8 +152,8 @@ BEGIN_EVENT_TABLE(ASEnvel, wxWindow)
   EVT_SCROLL_THUMBRELEASE(ASEnvel::OnStopDragThumb)
 END_EVENT_TABLE()
 
-ASEnvel::ASEnvel(wxString Name) :
-    ASPlugin(Name)
+ASEnvel::ASEnvel(class AkaiSampler *as, wxString Name) :
+    ASPlugin(as, Name)
 {
   Grid = NULL;
   seg = NULL;

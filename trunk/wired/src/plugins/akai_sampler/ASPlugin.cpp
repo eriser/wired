@@ -1,10 +1,12 @@
 #include <wx/wx.h>
 #include "ASPlugPanel.h"
 #include "ASPlugin.h"
+#include "AkaiSampler.h"
 
-ASPlugin::ASPlugin(wxString Name) : 
-  wxPanel(PlugPanel, -1, wxPoint(-1, -1), wxSize(-1, -1))
+ASPlugin::ASPlugin(class AkaiSampler *as, wxString Name) : 
+  wxPanel(as->PlugPanel, -1, wxPoint(-1, -1), wxSize(-1, -1))
 {
+  this->as = as;
   this->Name = Name;
   this->ass = NULL;
   Show(false);

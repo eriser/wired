@@ -1,14 +1,14 @@
 #include "ASKeygroupEditor.h"
+#include "AkaiSampler.h"
 
-  BEGIN_EVENT_TABLE(ASKeygroupEditor, wxWindow)
-EVT_PAINT(ASKeygroupEditor::OnPaint)
-  //  EVT_CLOSE(ASKeygroupEditor::OnClose)
+BEGIN_EVENT_TABLE(ASKeygroupEditor, wxWindow)
+  EVT_PAINT(ASKeygroupEditor::OnPaint)
   EVT_LEFT_DOWN(ASKeygroupEditor::OnKeyDown)
   EVT_LEFT_UP(ASKeygroupEditor::OnKeyUp)
 END_EVENT_TABLE()
 
-ASKeygroupEditor::ASKeygroupEditor(wxString Name)
-   : ASPlugin(Name) 
+ASKeygroupEditor::ASKeygroupEditor(class AkaiSampler *as, wxString Name)
+   : ASPlugin(as, Name) 
 {
   clav = NULL;
   sw = NULL;
@@ -29,12 +29,6 @@ wxWindow *ASKeygroupEditor::CreateView(wxPanel *p, wxPoint &pt, wxSize &sz)
 void ASKeygroupEditor::OnPaint(wxPaintEvent &ev)
 {
 }
-
-/*
-void ASKeygroupEditor::OnClose(wxCloseEvent &ev)
-{
-}
-*/
 
 void ASKeygroupEditor::PaintSelection()
 {

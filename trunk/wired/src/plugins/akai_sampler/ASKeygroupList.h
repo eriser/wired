@@ -12,60 +12,14 @@
 
 using namespace std;
 
-/*
-#define IMAGE_BT_ADD_KEYGROUP     "plugins/akaisampler/add.png"
-#define IMAGE_BT_DEL_KEYGROUP    "plugins/akaisampler/del.png"
-#define IMAGE_BT_EDIT_KEYGROUP    "plugins/akaisampler/assign.png"
-*/
-
 class ASamplerKeygroup;
-
-extern unsigned long sampleid;
-extern unsigned long keygroupid;
 
 class ASamplerSample
 {
   public:
-    ASamplerSample(WaveFile *w, unsigned long id = 0)
-    {
-      this->w = w;
-      this->askg = NULL;
-      this->aske = NULL;
-      this->Position = 0;
-      if (!id)
-        id = sampleid++;
-      else
-        if (id > sampleid)
-          sampleid = id + 1;
-      this->id = id;
-      this->loopcount = -1;
-      this->loopstart = 0;
-      this->loopend = w->GetNumberOfFrames();
-    }
-
-    ASamplerSample(t_akaiSample *smp, wxString AkaiPrefix, unsigned long id = 0)
-    {
-      this->w = new WaveFile(smp->buffer, smp->size, 2, smp->rate);
-      w->Filename = AkaiPrefix + smp->name;
-      this->askg = NULL;
-      this->aske = NULL;
-      this->Position = smp->start / 2;
-      if (!id)
-        id = sampleid++;
-      else
-        if (id > sampleid)
-          sampleid = id + 1;
-      this->id = id;
-      this->loopcount = smp->loop_times;
-      if (loopcount == 9999)
-        loopcount = -1;
-      this->loopstart = smp->loop_len / 2;
-      this->loopend = smp->loop_start / 2;
-      if (loopend > w->GetNumberOfFrames())
-        loopend = w->GetNumberOfFrames();
-      cout << "[WiredSampler] AKAI Sample Loaded, loopcount= " << loopcount << " loopstart= " << loopstart << " loopend= " << loopend << endl;
-    }
-
+    ASamplerSample(class AkaiSampler *as, WaveFile *w, unsigned long id = 0);
+    ASamplerSample(class AkaiSampler *as, t_akaiSample *smp, wxString AkaiPrefix, unsigned long id = 0);
+    ~ASamplerSample();
     void SetKeygroup(ASamplerKeygroup *askg) { this->askg = askg; }
     ASamplerKeygroup *GetKeygroup() { return askg; }
     void SetKgEditor(class ASKeygroupEditor *aske) { this->aske = aske; }
@@ -91,6 +45,7 @@ class ASamplerSample
     long loopend;
     int loopcount;
     vector<ASPlugin *> effects;
+    class AkaiSampler *as;
 };
 
 class ASamplerKey
@@ -118,18 +73,8 @@ class ASamplerKey
 class ASamplerKeygroup
 {
   public:
-    ASamplerKeygroup(int lo, int hi, unsigned long id = 0)
-    {
-      lokey = lo;
-      hikey = hi;
-      smp = NULL;
-      if (!id)
-        id = keygroupid++;
-      else
-        if (id > keygroupid)
-          keygroupid = id + 1;
-      this->id = id;
-    }
+    ASamplerKeygroup(class AkaiSampler *as, int lo, int hi, unsigned long id = 0);
+    ~ASamplerKeygroup();
     void SetSample(ASamplerSample *s) { smp = s; }
     ASamplerSample *GetSample() { return smp; }
     int HasKey(int key) { return ((key >= lokey) && (key <= hikey)); }
@@ -149,37 +94,7 @@ class ASamplerKeygroup
     int lokey;
     int hikey;
     unsigned long id;
+    class AkaiSampler *as;
 };
-
-/*
-class ASKeygroupList : public ASPlugin
-{
-  public:
-    ASKeygroupList(wxString Name);
-    ~ASKeygroupList();
-    wxWindow *CreateView(wxPanel *, wxPoint &, wxSize &);
-//    void OnAddKeygroup(wxCommandEvent &);
-//    void OnDelKeygroup(wxCommandEvent &);
-//    void OnEditKeygroup(wxCommandEvent &);
-    void OnResize(wxSizeEvent &);
-    ASamplerKeygroup *FindKeygroup(int key);
-    vector <ASListEntry *> GetEntries() { return List->GetEntries(); }
-    ASList *List;
-
-  DECLARE_EVENT_TABLE()
-};
-*/
-
-//extern ASKeygroupList *Keygroups;
-extern vector <ASamplerKeygroup*> Keygroups;
-
-/*
-enum 
-{
-  ASKeygroupList_AddKeygroup = 1234,
-  ASKeygroupList_DelKeygroup,
-  ASKeygroupList_EditKeygroup,
-};
-*/
 
 #endif

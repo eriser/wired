@@ -84,6 +84,12 @@ class AkaiSampler : public Plugin
 
     wxBitmap *GetBitmap();
 
+    int sampleid;
+    int keygroupid;
+    vector<ASamplerKeygroup *> Keygroups;
+    ASSampleList *Samples;
+    ASPlugPanel *PlugPanel;
+
   protected:
     /* Audio/Midi members */
 //    ASamplerKey    *Keys[127];
