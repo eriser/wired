@@ -1686,6 +1686,8 @@ void WiredBeatBox::OnPatternClick(wxCommandEvent &e)
 {
   int* tmp = (int*)e.GetClientData();
   
+  if (tmp[ID_COPY])
+    PopupMenu(PopMenu);
   BeatBoxChannel* c = SelectedChannel;
   
   int i = PosIndex * 16;

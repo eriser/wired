@@ -7,6 +7,7 @@
 #define ID_POS		0
 #define ID_STATE	1
 #define ID_X		2
+#define ID_COPY		3
 
 #define ID_UNCLICKED	0
 #define ID_VLOW		1
@@ -61,7 +62,7 @@ class BeatButton : public wxWindow
   unsigned int GetState() { return Data[ID_STATE]; }
  protected:
   wxBitmap**	Bitmaps;
-  unsigned int	Data[3];
+  unsigned int	Data[4];
 DECLARE_EVENT_TABLE()
 
 };
