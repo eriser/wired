@@ -523,7 +523,7 @@ void					SequencerGui::OnPaint(wxPaintEvent &event)
 
 void					SequencerGui::OnSize(wxSizeEvent &event)
 {
-  printf(" FUCK SIZE WIDTH %d HEIGTH %d\n", GetSize().x, GetSize().y);
+  printf("SIZE WIDTH %d HEIGTH %d\n", GetSize().x, GetSize().y);
   Layout();
   SetScrolling();
   AdjustHScrolling();
