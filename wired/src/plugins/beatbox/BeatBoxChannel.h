@@ -9,7 +9,6 @@
 #include "WaveFile.h"
 #include "DownButton.h"
 #include "KnobCtrl.h"
-#include "HintedKnob.h"
 #include "CycleKnob.h"
 #include "Polyphony.h"
 
@@ -164,6 +163,14 @@ class BeatBoxChannel : public wxWindow
   void		OnVelChange(wxScrollEvent& event);
   void		OnPolyphonyChange(wxCommandEvent& e);
   
+  void		SetLev(int lev);
+  void		SetPan(int pan);
+  void		SetStart(int start);
+  void		SetEnd(int end);
+  void		SetPitch(int pitch);
+  void		SetVel(int vel);
+  void		SetPolyphony(int voices);
+  
   bool		IsSolo;
   
   void		Reset(void);
@@ -196,7 +203,24 @@ class BeatBoxChannel : public wxWindow
   
   WaveFile*	Wave;
   //Polyphony	*Voices;
-
+  
+  // MIDI Controls
+  int		MidiVolume[3];
+  int		MidiPan[3];
+  int		MidiStart[3];
+  int		MidiEnd[3];
+  int		MidiPoly[3];
+  int		MidiPitch[3];
+  int		MidiVel[3];
+  
+  void OnLevController(wxMouseEvent& event);
+  void OnPanController(wxMouseEvent& event);
+  void OnStartController(wxMouseEvent& event);
+  void OnEndController(wxMouseEvent& event);
+  void OnPitchController(wxMouseEvent& event);
+  void OnVelController(wxMouseEvent& event);
+  void OnPolyController(wxMouseEvent& event);
+  
  protected:
   WiredBeatBox*	DRM31;
   string        DataDir;
@@ -207,12 +231,12 @@ class BeatBoxChannel : public wxWindow
   DownButton*	SoloButton;
   DownButton*	OpenFile;
   DownButton*	SelectionButton;
-  HintedKnob*	KnobLev;
-  HintedKnob*	KnobPan;
-  HintedKnob*	KnobStart;
-  HintedKnob*	KnobEnd;
-  HintedKnob*	KnobPitch;
-  HintedKnob*	KnobVel;
+  KnobCtrl*	KnobLev;
+  KnobCtrl*	KnobPan;
+  KnobCtrl*	KnobStart;
+  KnobCtrl*	KnobEnd;
+  KnobCtrl*	KnobPitch;
+  KnobCtrl*	KnobVel;
   CycleKnob*	PolyKnob;
 DECLARE_EVENT_TABLE()
 };

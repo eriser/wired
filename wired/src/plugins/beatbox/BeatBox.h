@@ -18,13 +18,13 @@
 #include "KnobCtrl.h"
 #include "BeatBoxView.h"
 //#include "Settings.h"
-#include "HintedKnob.h"
 #include "StaticPosKnob.h"
 #include "CycleKnob.h"
+#include "midi.h"
 
 using namespace std;
 
-#define PLUGIN_NAME		"DRM-31"
+#define PLUGIN_NAME		"DRUM-31"
 
 #define BEATBOX_BG		"plugins/beatbox/beatbox_bg.png"
 #define BEATBOX_MINI_BG		"plugins/beatbox/drm31.bmp"
@@ -94,8 +94,6 @@ using namespace std;
 #define NB_CHAN 11
 
 #define IS_DENORMAL(f) (((*(unsigned int *)&f)&0x7f800000)==0)
-
-
 #define undenormalise(sample) \
   if(((*(unsigned int*)&sample)&0x7f800000)==0) sample=0.0f
 
@@ -196,9 +194,15 @@ class WiredBeatBox : public Plugin
   unsigned int		EditedPattern;
   unsigned int		EditedBank;
   
+  void			OnVolumeController(wxMouseEvent& event);
+  int			ChanMidiNotes[NB_CHAN];
+  void			ProcessMidiControls(int data[3]);
+  void			CheckExistingControllerData(int data[3]);
+  int			MidiVolume[3];
+  
  protected:
   wxMutex		PatternMutex;
-  
+  wxMutex		MidiMutex;
   BeatBoxView*		View;
   void			OnViewAction(wxCommandEvent& event);
   int			VoicesCount[NB_CHAN];
@@ -210,8 +214,8 @@ class WiredBeatBox : public Plugin
   bool			Playing;
   bool			SeqPlaying;
   bool			AutoPlay;
-  HintedKnob*		MVol;
-  //KnobCtrl*		MVol;
+
+  KnobCtrl*		MVol;
   void			ReCalcStepsSigCoef(void);
   void			UpdateSteps(unsigned int bank, 
 				    unsigned int track);
@@ -273,8 +277,7 @@ class WiredBeatBox : public Plugin
   BeatButton**		Beat;
   DownButton*		LoadKit;
   
-  int			ChanMidiNotes[12];
-  
+    
   wxBitmap*		PositionOn;
   wxBitmap*		PositionOff;
   wxImage**		Imgs;
