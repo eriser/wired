@@ -312,6 +312,19 @@ void BeatBoxScrollView::PasteNotes(wxCommandEvent& WXUNUSED(event))
 
 void BeatBoxScrollView::SelectAllNotes(wxCommandEvent& WXUNUSED(event))
 {
+  ClearSelected();
+  for (list<BeatNote*>::iterator note = 
+	 ViewPtr->TrackView->BeatTracks[ViewPtr->TrackView->SelectedTrack]->
+	 Channel->Rythms[ViewPtr->DRM31->EditedBank]
+	                [ViewPtr->DRM31->EditedPattern].begin();
+       note != 
+	 ViewPtr->TrackView->BeatTracks[ViewPtr->TrackView->SelectedTrack]->
+	 Channel->Rythms[ViewPtr->DRM31->EditedBank]
+	                [ViewPtr->DRM31->EditedPattern].end();
+       note++)
+    {
+      SelectNote(*note);
+    }
 }
 
 void BeatBoxScrollView::OnPaint(wxPaintEvent&event)
@@ -701,7 +714,12 @@ void BeatBoxScrollView::OnLeftDown(wxMouseEvent& event)
   
   ClickPosY = event.m_y;
   ClickPosX = event.m_x;
+  
   long track = (event.m_y + ViewPtr->YScroll) / ViewPtr->TrackHeight;
+  ViewPtr->TrackView->SelectedTrack = track;
+  ViewPtr->TrackView->Refresh();
+  
+
   double ypos = (event.m_y + ViewPtr->YScroll) % ViewPtr->TrackHeight;
   
   double vel = floor(static_cast<double>(((ViewPtr->TrackHeight - ypos) / ViewPtr->TrackHeight) * 1.30) * 100) / 100;
@@ -772,6 +790,10 @@ void BeatBoxScrollView::OnLeftDown(wxMouseEvent& event)
 
 void BeatBoxScrollView::OnRightDown(wxMouseEvent& event)
 {
+  ViewPtr->TrackView->SelectedTrack = 
+    (event.m_y + ViewPtr->YScroll) / ViewPtr->TrackHeight;
+  ViewPtr->TrackView->Refresh();
+  
   PopupMenu(PopMenu, wxPoint(event.m_x, event.m_y));
 }
 
@@ -1059,11 +1081,19 @@ void BeatBoxView::OnSubdivChange(wxCommandEvent& WXUNUSED(event))
 
 void BeatBoxView::OnPosChange(wxCommandEvent& WXUNUSED(event))
 {
+  if (!BeatView->SelectedNote)
+    return;
+  wxString s = PosTextCtrl->GetValue();
   
 }
 
 void BeatBoxView::OnVelChange(wxCommandEvent& WXUNUSED(event))
-{}
+{
+  if (!BeatView->SelectedNote)
+    return;
+  wxString s = VelTextCtrl->GetValue();
+
+}
 
 void BeatBoxView::OnMagnetism(wxCommandEvent& WXUNUSED(event))
 {
