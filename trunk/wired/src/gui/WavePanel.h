@@ -74,10 +74,10 @@ class WavePanel : public wxPanel
 //  void				OnGain(wxCommandEvent &event);
   
 
-  wxComboBox 		*combobox;
-  wxScrollBar		*sbh;
+  wxComboBox 		        *combobox;
+  wxScrollBar		        *sbh;
   wxToolBar			*Toolbar;
-  WaveEditor        *w;
+  WaveEditor                    *w;
 //  wxMenu			*PopMenu;
 //  wxMenu			*SubMenuEffect;
 
