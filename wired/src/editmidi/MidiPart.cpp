@@ -232,6 +232,8 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 	  Refresh(true);
 	  em->ma->SetNotes(Notes);
 	  em->ma->Refresh(true);
+
+	  SeqPanel->UpdateMidiPattern(em->midi_pattern);
 	}
       return;
     }
@@ -298,6 +300,7 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 	  Refresh(true);
 	}
       selected = NULL;
+      SeqPanel->UpdateMidiPattern(em->midi_pattern);
     }
   else
     if (tool == ID_TOOL_EDIT_MIDIPART)
