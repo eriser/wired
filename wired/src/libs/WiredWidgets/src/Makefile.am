@@ -26,4 +26,8 @@ libWiredWidgets_la_SOURCES = 			\
 		HintedFader.cpp		\
 		HintedFader.h		\
 		HintedKnob.cpp		\
-		HintedKnob.h
+		HintedKnob.h		\
+		StaticPosKnob.cpp	\
+		StaticPosKnob.h		\
+		CycleKnob.cpp		\
+		CycleKnob.h
