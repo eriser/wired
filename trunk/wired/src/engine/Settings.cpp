@@ -41,7 +41,9 @@ Settings::Settings() :
 
   DataDir = INSTALL_PREFIX;
   DataDir += WIRED_DATADIR;
-
+  
+  cout << "[SETTINGS] DataDir=" << DataDir << endl;
+  
   f.Assign(DataDir.c_str());
   if (!f.DirExists()) // if not found try /usr
     {
@@ -58,9 +60,11 @@ Settings::Settings() :
 	    }
 	}
     }
+  cout << "[SETTINGS] DataDir=" << DataDir << endl;
 
   f.AssignHomeDir();
   f.AppendDir(WIRED_DIRECTORY);
+  
   if (f.Mkdir(0755, wxPATH_MKDIR_FULL))
     {
       conf = new wxConfig("Wired", "P31", WIRED_CONF, WIRED_CONF, wxCONFIG_USE_LOCAL_FILE);  
@@ -72,6 +76,8 @@ Settings::Settings() :
 	   << endl;
       throw; // FIXME add a decent object to throw
     }
+  cout << "[SETTINGS] DataDir=" << DataDir << endl;
+
 }
 
 Settings::~Settings()

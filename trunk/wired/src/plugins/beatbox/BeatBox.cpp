@@ -1104,8 +1104,9 @@ long WiredBeatBox::Save(int fd)
 		     Channels[i]->Rythms[ps].begin();
 		   bn != Channels[i]->Rythms[ps].end(); bn++)
 		{
-		  cout << "note pos: " << (*bn)->Position;
-		  printf(" == %f\n", (*bn)->Position);
+		  //cout << "note pos: " << (*bn)->Position;
+		  printf("note pos=%f; state=%d\n", 
+			 (*bn)->Position,(*bn)->State);
 		  size += write(fd, &((*bn)->State), sizeof(unsigned char));
 		  size += 
 		    write(fd, &((*bn)->Position), sizeof (double));
@@ -1161,10 +1162,12 @@ void WiredBeatBox::Load(int fd, long size)
 	{
 	  size -= read(fd, &len, sizeof(long));
 	  //printf("list %d, notes: %d\n", ps,len);
-	  for (long i = 0; i < len; i++)
-	    {
+          for (long i = 0; i < len; i++)
+            {
 	      size -= read(fd, &state, sizeof(unsigned char));
-	      size -= read(fd, &pos, sizeof(double));
+              size -= read(fd, &pos, sizeof(double));
+	      printf("note pos=%f; state=%d\n", 
+		     pos,state);
 	      note = 
 		new BeatNote(pos, state, 
 			     static_cast<double>

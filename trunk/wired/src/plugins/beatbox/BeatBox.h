@@ -22,10 +22,9 @@
 
 using namespace std;
 
-#define PLUGIN_NAME "WiredBeatBox v0.0.1"
+#define PLUGIN_NAME		"WiredBeatBox"
 
 #define BEATBOX_BG		"plugins/beatbox/beatbox_bg.png"
-
 #define BEATBTN_UNCLICKED	"plugins/beatbox/beatbtn_unclicked.png"
 #define BEATBTN_MEDIUM		"plugins/beatbox/beatbtn_medium.png"
 #define BEATBTN_VLOW		"plugins/beatbox/beatbtn_vlow.png"

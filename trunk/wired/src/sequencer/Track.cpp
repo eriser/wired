@@ -35,7 +35,9 @@ Track::Track(SeqTrack *n1, SeqTrackPattern *n2, char typ)
   Index = 0;
   Type = typ;
   if (IsAudioTrack())
-    Output = Mix->AddStereoOutputChannel("MASTER");
+    {
+      Output = Mix->AddStereoOutputChannel(true);
+    }
   else
     Output = 0x0;
 

@@ -5,8 +5,7 @@
 #include "MainWindow.h"
 #include "Colour.h"
 #include "Settings.h"
-
-//#include "MixerGui.h"
+#include "ChannelGui.h"
 
 extern SequencerGui *SeqPanel;
 
@@ -23,6 +22,7 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   //  wxTextAttr					attr;  
 
   Index = index;
+  ChanGui = 0X0;
   Connected = 0x0;
   ConnectedRackTrack = 0x0;
   IsAudio = audio;
@@ -43,8 +43,8 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
     else
     cout << "SEQTRACK helas pas d output" << endl;
   */
-  Text = new wxTextCtrl(this, SeqTrack_OnClick, s, wxPoint(6, 8), 
-			wxSize(TRACK_WIDTH - 38, 18));
+  Text = new wxTextCtrl(this, SeqTrack_OnNameChange, s, wxPoint(6, 8), 
+			wxSize(TRACK_WIDTH - 38, 18), wxTE_PROCESS_ENTER);
   Text->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
 
   wxImage *rec_up = new wxImage(string(WiredSettings->DataDir + string(REC_UP)).c_str(), wxBITMAP_TYPE_PNG);
@@ -220,6 +220,19 @@ void SeqTrack::SetSelected(bool sel)
   Refresh();
 }
 
+void SeqTrack::OnNameChange(wxCommandEvent& event)
+{
+  if (ChanGui)
+    ChanGui->SetLabel(Text->GetValue());
+}
+
+void SeqTrack::SetName(const wxString& name)
+{
+  Text->SetValue(name);
+  if (ChanGui)
+    ChanGui->SetLabel(name);
+}
+
 void SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
 {
   int k = 0;
@@ -331,6 +344,7 @@ BEGIN_EVENT_TABLE(SeqTrack, wxControl)
   EVT_COMMAND(SeqTrack_ConnectTo, wxEVT_COMMAND_BUTTON_CLICKED, SeqTrack::OnConnectTo)
   EVT_COMMAND(SeqTrack_OnClick, wxEVT_COMMAND_BUTTON_CLICKED, SeqTrack::OnClick)
   EVT_MENU(SeqTrack_ConnectSelected, SeqTrack::OnConnectSelected)
+  EVT_TEXT_ENTER(SeqTrack_OnNameChange, SeqTrack::OnNameChange)
   EVT_CHOICE(SeqTrack_DeviceChoice, SeqTrack::OnDeviceChoice)
   EVT_PAINT(SeqTrack::OnPaint)
   EVT_LEFT_DOWN(SeqTrack::OnMouseClick)

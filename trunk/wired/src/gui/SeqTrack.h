@@ -13,6 +13,7 @@ using namespace std;
 #include "Rack.h"
 #include "DownButton.h"
 #include "VUMCtrl.h"
+//#include "MixerGui.h"
 
 #define NONE_SELECTED_ID	999
 
@@ -23,6 +24,8 @@ using namespace std;
 #define REC_DOWN		"ihm/seqtrack/rec_down.png"
 #define MUTE_UP			"ihm/seqtrack/mute_up.png"
 #define MUTE_DOWN		"ihm/seqtrack/mute_down.png"
+
+class ChannelGui;
 
 class SeqTrack: public wxControl
 {
@@ -47,6 +50,7 @@ class SeqTrack: public wxControl
   void					SetRecording(bool rec);
   void					SetMute(bool mut);
   void					SetDeviceId(long devid);
+  void					OnNameChange(wxCommandEvent& event);
 
   long					Index;
 
@@ -59,6 +63,9 @@ class SeqTrack: public wxControl
   bool					IsAudio;
 
   wxTextCtrl				*Text;
+  
+  ChannelGui*				ChanGui;
+  void					SetName(const wxString&);
 
  protected:
   ChoiceButton				*Image;
@@ -80,7 +87,8 @@ enum
   SeqTrack_ConnectSelected,
   SeqTrack_DeviceChoice,
   SeqTrack_Record,
-  SeqTrack_Mute
+  SeqTrack_Mute,
+  SeqTrack_OnNameChange
 };
 
 extern int AudioTrackCount;

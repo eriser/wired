@@ -111,10 +111,10 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   files->InsertColumn(1, "Size", wxLIST_FORMAT_RIGHT);
   files->SetColumnWidth(1, 58);
   if (!akai)
-  {
-    files->InsertColumn(2, "Modified");
-    files->SetColumnWidth(2, 180);
-  }
+    {
+      files->InsertColumn(2, "Modified");
+      files->SetColumnWidth(2, 180);
+    }
   else
   {
     files->InsertColumn(2, "Type");
@@ -200,9 +200,9 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   	btopen->Disable();
   }
   if (!akai)
-  {
-  	if (exts == NULL)
-  		LoadSoundExt();
+    {
+      if (exts == NULL)
+	LoadSoundExt();
   	else
   	{
 	  for (unsigned int i = 0; i < exts->size(); i++)
@@ -241,11 +241,12 @@ void FileLoader::LoadSoundExt()
 {
   type->Append(_T("will be replaced by allfiles at the end of the function"));
   string *allext = NULL;
-
+  
   string extfile = WiredSettings->ConfDir;
   extfile += EXT_FILE;
-
+  
   ifstream f(extfile.c_str());
+
   string line;
   unsigned int i, j;
 

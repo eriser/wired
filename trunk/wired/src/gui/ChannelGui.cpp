@@ -4,6 +4,7 @@
 #include <math.h>
 #include "ChannelGui.h"
 #include "Colour.h"
+#include "SeqTrack.h"
 
 BEGIN_EVENT_TABLE(ChannelGui, wxPanel)
   EVT_COMMAND_SCROLL(FaderLeftId, ChannelGui::OnFaderLeft)
@@ -25,12 +26,13 @@ END_EVENT_TABLE()
 
 
 ChannelGui::ChannelGui( Channel *channel, wxImage *img_bg, wxImage *img_fg,
-			  wxWindow* parent, wxWindowID id,
-			const wxPoint& pos, const wxSize& size )
+			wxWindow* parent, wxWindowID id,
+			const wxPoint& pos, const wxSize& size, 
+			const wxString& label )
   : wxPanel( parent, id, pos, size )
 {
   
-  ConnectedTrack = 0x0;
+  ConnectedSeqTrack = 0x0;
   
   SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);
   
@@ -72,7 +74,7 @@ ChannelGui::ChannelGui( Channel *channel, wxImage *img_bg, wxImage *img_fg,
       VolumeRight = new wxStaticText(this, -1, "100", wxPoint(75, 90));
       VolumeRight->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));
       
-      Label = new wxStaticText(this, -1, Chan->Label, wxPoint(20, 0));
+      Label = new wxStaticText(this, -1, label, wxPoint(20, 0));
       //Label->SetForegroundColour(*wxWHITE);
       Label->SetForegroundColour(*wxBLACK);
       Label->SetFont(wxFont(8, wxBOLD, wxBOLD, wxBOLD));//wxNORMAL, wxNORMAL));
@@ -194,11 +196,11 @@ void ChannelGui::SetLabel(const wxString& label)
     Label->SetLabel(label);
 }
 
-void ChannelGui::SetOpt(Track* t)
+void ChannelGui::SetOpt(SeqTrack* st)
 {
-  ConnectedTrack = t;
+  ConnectedSeqTrack = st;
   
-  SetLabel(t->TrackOpt->Text->GetValue());
+  //SetLabel(st->Text->GetValue());
 }
 
 void ChannelGui::UpdateScreen()
@@ -214,9 +216,9 @@ void ChannelGui::UpdateScreen()
 ( ( (20.f * (float)log10(lrms) + 96.f) / 96.f ) * 100.f) ));
   VumRight->SetValue( (long)(
 ( ( (20.f * (float)log10(rrms) + 96.f) / 96.f ) * 100.f) ));
-  if (ConnectedTrack)
+  if (ConnectedSeqTrack)
     {
-      ConnectedTrack->TrackOpt->SetVuValue(VumLeft->GetValue());
+      ConnectedSeqTrack->SetVuValue(VumLeft->GetValue());
     }
 }
 
@@ -280,9 +282,9 @@ MasterChannelGui::MasterChannelGui( Channel *channel, wxImage *img_bg,
 				    wxImage *img_fg, wxWindow* parent, 
 				    wxWindowID id, const wxPoint& pos, 
 				    const wxSize& size )
-  : ChannelGui(channel, img_bg, img_fg, parent, id, pos, size)
+  : ChannelGui(channel, img_bg, img_fg, parent, id, pos, size, "MASTER")
 {
-  
+  //  Label = new wxStaticText(this, -1, "MASTER", wxPoint(20, 0));
 }
 
 MasterChannelGui::~MasterChannelGui()
