@@ -137,6 +137,10 @@ class Plugin: public wxWindow
   /* Called when the sample rate of the host changes (it is also called after 
      initialization of the plugin */
   virtual void	 SetSamplingRate(double rate) {}
+  /* Called by the host when the BPM changes */
+  virtual void   SetBPM(float bpm) {}
+  /* Called by the host when the signature changes */
+  virtual void   SetSignature(int numerator, int denominator) {}
 
   /* This is were you do your processing. 'input' is the data you have to process (or
    not if you are making an instrument) and 'output' whre you should place the

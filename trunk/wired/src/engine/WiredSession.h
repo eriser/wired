@@ -111,7 +111,7 @@ typedef struct  s_MidiEvent
 class WiredSession
 {
  public:
-  WiredSession(string filename);
+  WiredSession(string filename, string audiodir = "");
   ~WiredSession();
 
   bool		Load();

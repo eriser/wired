@@ -46,7 +46,6 @@ Plugin *RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin *co
   xpos = Parent->GetXPos(Index);
   ypos = GetYPos();
 
-  cout << "xpos: " << xpos << "; ypos: " << ypos << endl;
   /*  if (connect_to)
     {
       if (Units - connect_to->GetUnitsX() >= plug->GetUnitsX())
@@ -144,7 +143,6 @@ void Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
 {
   RackTrack *t;
 
-  cout << "RackTracks.size: " << RackTracks.size() << endl;
   t = new RackTrack(this, RackTracks.size());
   t->AddRack(startinfo, p);
 
@@ -364,7 +362,6 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
     
   else if(event->LeftUp() && WasDragging)
     {
-      cout << "LEFT UPPPP" << endl;
       WasDragging = false;
       SeqMutex.Lock();
 

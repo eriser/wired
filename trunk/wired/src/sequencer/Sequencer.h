@@ -54,6 +54,7 @@ class Sequencer : public wxThread
   void					AddNote(Track *t, MidiEvent &event);
   void					SetBPM(float bpm);
   void					SetSigNumerator(int signum);
+  void					SetSigDenominator(int dennum);
   void					SetCurrentPos(double pos);
   void					DeletePattern(Pattern *p);
   void					PrepareTrackForRecording(Track *T);

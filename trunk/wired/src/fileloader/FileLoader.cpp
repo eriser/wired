@@ -49,6 +49,8 @@ using namespace std;
 #define DELFAVORITES_ID		2011
 #define DELMRU_ID		2012
 
+string  OldPath; // Used to store last visited path
+
 BEGIN_EVENT_TABLE(FileLoader, wxDialog)
   EVT_TREE_ITEM_EXPANDING(FOLDER_ID, FileLoader::OnExpandFolder)
   EVT_TREE_ITEM_COLLAPSING(FOLDER_ID, FileLoader::OnCollapseFolder)
@@ -217,9 +219,15 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   	}
   	LoadFolders();
   	ListDirectories(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
-  	char cwd[PATH_MAX];
-  	getcwd(cwd, PATH_MAX);
-  	GotoDir(cwd);
+
+	if (OldPath.empty())
+	  {
+	    char cwd[PATH_MAX];
+	    getcwd(cwd, PATH_MAX);
+	    GotoDir(cwd);
+	  }
+	else
+	  GotoDir((char *)OldPath.c_str());
   }
   else
   {
@@ -323,6 +331,11 @@ void FileLoader::SaveFolders()
 	for (int i = 0; i < mru->GetCount(); i++)
 		f2 << mru->GetString(i) << "\n";
 	f2.close();
+	
+	wxTreeItemId item = folder->GetSelection();
+	TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+	if (path)
+	  OldPath = path->GetPath();	    
 }
 
 FileLoader::~FileLoader()

@@ -648,7 +648,6 @@ void					SequencerGui::DeleteSelectedPatterns()
 	    break;
 	  }
       Seq->DeletePattern(*i);
-      cout << "deleting pattern: " << *i << endl;
     }
   SelectedItems.clear();
 }
@@ -859,7 +858,6 @@ void					SequencerGui::OnColorBoxClick(wxCommandEvent &event)
 
 void					SequencerGui::SetBeginLoopPos(double pos)
 {
-  cout << "heyho" << endl;
   BeginLoopCursor->SetPos(pos);
 }
 
