@@ -1,85 +1,7 @@
-#include <math.h>
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
-
-#include "Plugin.h"
-#include "FaderCtrl.h"
-#include "StaticBitmap.h"
-#include "DownButton.h"
-
-#define PLUGIN_NAME	"Delay"
+#include "DelayPlug.h"
+#include "midi.h"
 
 static PlugInitInfo info;
-
-class DelayPlugin: public Plugin
-{
- public:
-  DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo);
-  ~DelayPlugin();
-
-  void	 Init();
-  void	 Process(float **input, float **output, long sample_length);
-  void	 CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
-  
-  bool	 IsAudio();
-  bool	 IsMidi();
-
-  std::string DefaultName() { return "Delay"; }
-
-  void	 OnBypass(wxCommandEvent &e);  
-  void	 OnDelayTime(wxScrollEvent &e);  
-  void   OnFeedback(wxScrollEvent &e);  
-  void   OnDryWet(wxScrollEvent &event);
-  void   OnPaint(wxPaintEvent &event);
-
-  wxBitmap	*GetBitmap();
-
-  float		DelayTime;
-  float		Feedback;
-  float		WetLevel;
-  float		DryLevel;
-  
- protected:
-  bool	   Bypass;
-
-  wxBitmap *bmp;   
-
-  FaderCtrl *TimeFader;
-  FaderCtrl *FeedbackFader;
-  FaderCtrl *DryWetFader;
-  wxImage *img_fg;
-  wxImage *img_bg;
-  wxBitmap *TpBmp;
-  wxImage *bypass_on;
-  wxImage *bypass_off;
-  wxImage *liquid_on;;
-  wxImage *liquid_off;;
-  StaticBitmap *Liquid;
-  DownButton *BypassBtn;
-
-  float *DelayBuffer;
-  float *BufStart[2];
-  float *BufEnd[2];
-  float *BufPtr[2];
-
-  wxMutex DelayMutex;
-
-  void AllocateMem();
-
-  DECLARE_EVENT_TABLE()  
-};
-
-enum
-  {
-    Delay_Bypass = 1,
-    Delay_Time,
-    Delay_Feedback,
-    Delay_DryWet,
-  };
-
-/******** DelayPlugin Implementation *********/
 
 BEGIN_EVENT_TABLE(DelayPlugin, wxWindow)
   EVT_BUTTON(Delay_Bypass, DelayPlugin::OnBypass)
@@ -88,15 +10,6 @@ BEGIN_EVENT_TABLE(DelayPlugin, wxWindow)
   EVT_COMMAND_SCROLL(Delay_DryWet, DelayPlugin::OnDryWet)
   EVT_PAINT(DelayPlugin::OnPaint)
 END_EVENT_TABLE()
-
-#define IMG_DL_BG	"plugins/delay/delay_bg.png"
-#define IMG_DL_BMP	"plugins/delay/DelayPlug.bmp"
-#define IMG_DL_FADER_BG	"plugins/delay/fader_bg.png"
-#define IMG_DL_FADER_FG	"plugins/delay/fader_button.png"
-#define IMG_LIQUID_ON	"plugins/delay/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF	"plugins/delay/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON	"plugins/delay/bypass_button_down.png"
-#define IMG_BYPASS_OFF	"plugins/delay/bypass_button_up.png"
 
 DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   : Plugin(startinfo, initinfo), Bypass(false)
@@ -132,7 +45,7 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 		       wxBITMAP_TYPE_PNG );
   
   TimeFader = new 
-    FaderCtrl(this, Delay_Time, img_bg, img_fg, 0, 5000, 1000,
+    FaderCtrl(this, Delay_Time, img_bg, img_fg, 0, MAX_TIME, 1000,
 	      wxPoint(73, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
   FeedbackFader = new 
     FaderCtrl(this, Delay_Feedback, img_bg, img_fg, 0, 100, 50,
@@ -142,6 +55,29 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 	      wxPoint(149, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
   
   SetBackgroundColour(wxColour(237, 237, 237));
+
+  // Midi automation defaults
+  MidiTime[0] = M_CONTROL;
+  MidiTime[1] = 0xA;
+  MidiFeedback[0] = M_CONTROL;
+  MidiFeedback[1] = 0xB;
+  MidiDryWet[0] = M_CONTROL;
+  MidiDryWet[1] = 0xC;
+  MidiBypass[0] = -1;
+  MidiBypass[1] = -1;
+  
+  Connect(Delay_Bypass, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&DelayPlugin::OnBypassController);    
+  Connect(Delay_Time, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&DelayPlugin::OnTimeController); 
+  Connect(Delay_Feedback, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&DelayPlugin::OnFeedbackController);    
+  Connect(Delay_DryWet, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&DelayPlugin::OnDryWetController);    
 }
 
 DelayPlugin::~DelayPlugin()
@@ -230,6 +166,89 @@ void DelayPlugin::Process(float **input, float **output, long sample_length)
   DelayMutex.Unlock();
 }
 
+void DelayPlugin::ProcessEvent(WiredEvent &event)
+{
+  DelayMutex.Lock();
+
+  if ((MidiTime[0] == event.MidiData[0]) && (MidiTime[1] == event.MidiData[1]))
+    {
+      float step = MAX_TIME / 127.f;
+
+      DelayTime = event.MidiData[2] * step;
+      TimeFader->SetValue((long)DelayTime);
+    }
+  else if ((MidiFeedback[0] == event.MidiData[0]) && (MidiFeedback[1] == event.MidiData[1]))
+    {
+      float step = 100.f / 127.f;
+      
+      Feedback = event.MidiData[2] * step;
+      FeedbackFader->SetValue((long)Feedback);
+      Feedback /= 100.f;
+    }
+  else if ((MidiDryWet[0] == event.MidiData[0]) && (MidiDryWet[1] == event.MidiData[1]))
+    {
+      float step = 100.f / 127.f;
+      
+      DryWetFader->SetValue((long)(event.MidiData[2] * step)); 
+      DryLevel = (100 - DryWetFader->GetValue()) / 100.f;
+      WetLevel = DryWetFader->GetValue() / 100.f;
+    }
+  else if ((MidiBypass[0] == event.MidiData[0]) && (MidiBypass[1] == event.MidiData[1]))
+    {
+      if (event.MidiData[2])
+	{
+	  BypassBtn->SetOn();
+	  Bypass = true;
+	  // *** Known bug : something generates a X async reply 
+	  Liquid->SetBitmap(wxBitmap(liquid_off));
+	}
+      else
+	{
+	  BypassBtn->SetOff();
+	  Bypass = false;
+	  // *** Known bug : something generates a X async reply 
+	  Liquid->SetBitmap(wxBitmap(liquid_on));
+	}
+    }
+
+  DelayMutex.Unlock();
+}
+
+void DelayPlugin::Load(int fd, long size)
+{
+  DelayMutex.Lock();
+
+  if (size)
+    {
+      read(fd, &DelayTime, sizeof (DelayTime));
+      read(fd, &Feedback, sizeof (Feedback));
+      read(fd, &DryLevel, sizeof (DryLevel));
+      read(fd, &WetLevel, sizeof (WetLevel));
+      read(fd, MidiBypass, sizeof (int[2]));
+      read(fd, MidiTime, sizeof (int[2]));
+      read(fd, MidiFeedback, sizeof (int[2]));
+      read(fd, MidiDryWet, sizeof (int[2]));
+    }
+
+  DelayMutex.Unlock();
+}
+
+long DelayPlugin::Save(int fd)
+{
+  long size;
+
+  size = write(fd, &DelayTime, sizeof (DelayTime));
+  size += write(fd, &Feedback, sizeof (Feedback));
+  size += write(fd, &DryLevel, sizeof (DryLevel));
+  size += write(fd, &WetLevel, sizeof (WetLevel));
+  size += write(fd, MidiBypass, sizeof (int[2]));
+  size += write(fd, MidiTime, sizeof (int[2]));
+  size += write(fd, MidiFeedback, sizeof (int[2]));
+  size += write(fd, MidiDryWet, sizeof (int[2]));
+  
+  return (size);
+}
+
 bool DelayPlugin::IsAudio()
 {
   return (true);
@@ -296,6 +315,90 @@ void DelayPlugin::OnPaint(wxPaintEvent &WXUNUSED(event))
 	      wxCOPY, FALSE);      
       upd++;
     }
+}
+
+void DelayPlugin::CheckExistingControllerData(int MidiData[3])
+{
+  if ((MidiBypass[0] == MidiData[0]) && (MidiBypass[1] == MidiData[1]))
+    MidiBypass[0] = -1;
+  else if ((MidiTime[0] == MidiData[0]) && (MidiTime[1] == MidiData[1]))
+    MidiTime[0] = -1;
+  else if ((MidiFeedback[0] == MidiData[0]) && (MidiFeedback[1] == MidiData[1]))
+    MidiFeedback[0] = -1;
+  else if ((MidiDryWet[0] == MidiData[0]) && (MidiDryWet[1] == MidiData[1]))
+    MidiDryWet[0] = -1;
+}
+
+void DelayPlugin::OnBypassController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      DelayMutex.Lock();
+
+      CheckExistingControllerData(midi_data);      
+      MidiBypass[0] = midi_data[0];
+      MidiBypass[1] = midi_data[1];
+
+      DelayMutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void DelayPlugin::OnTimeController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      DelayMutex.Lock();
+
+      CheckExistingControllerData(midi_data);      
+      MidiTime[0] = midi_data[0];
+      MidiTime[1] = midi_data[1];
+
+      DelayMutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void DelayPlugin::OnFeedbackController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      DelayMutex.Lock();
+
+      CheckExistingControllerData(midi_data);      
+      MidiFeedback[0] = midi_data[0];
+      MidiFeedback[1] = midi_data[1];
+
+      DelayMutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void DelayPlugin::OnDryWetController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      DelayMutex.Lock();
+
+      CheckExistingControllerData(midi_data);      
+      MidiDryWet[0] = midi_data[0];
+      MidiDryWet[1] = midi_data[1];
+
+      DelayMutex.Unlock();
+    }
+  delete midi_data;
 }
 
 /******** Main and mandatory library functions *********/
