@@ -821,6 +821,7 @@ void LoopSampler::Load(int fd, long size)
   ReleaseFader->SetValue((long)(Release * 100.f));
   OctaveKnob->SetValue((long)(Octave + 4));
   PitchKnob->SetValue((long)(Pitch * 100.f));
+
   if (Invert)
     InvertBtn->SetOn();
   else
@@ -910,51 +911,58 @@ long LoopSampler::Save(int fd)
       len = Wave->Filename.size();
       size = write(fd, &len, sizeof (len));
       size += write(fd, Wave->Filename.c_str(), len);
-      size += write(fd, &BarCount, sizeof (BarCount));
-      size += write(fd, &BeatCount, sizeof (BeatCount));
-      size += write(fd, &Volume, sizeof (Volume));
-      size += write(fd, &Attack, sizeof (Attack));
-      size += write(fd, &Decay, sizeof (Decay));
-      size += write(fd, &Sustain, sizeof (Sustain));
-      size += write(fd, &Release, sizeof (Release));
-      size += write(fd, &Octave, sizeof (Octave));
-      size += write(fd, &Pitch, sizeof (Pitch));
-      size += write(fd, &Invert, sizeof (Invert));
-      size += write(fd, &Tempo, sizeof (Tempo));
-      size += write(fd, &(LoopInfo.Start), sizeof (LoopInfo.Start));
-      size += write(fd, &(LoopInfo.End), sizeof (LoopInfo.End));      
-
-      len = Slices.size();
-      size += write(fd, &len, sizeof (len));
-      list<Slice *>::iterator i;
-      for (i = Slices.begin(); i != Slices.end(); i++)
-	{
-	  size += write(fd, &(*i)->Position, sizeof ((*i)->Position));
-	  size += write(fd, &(*i)->EndPosition, sizeof ((*i)->EndPosition));
-	  size += write(fd, &(*i)->Bar, sizeof ((*i)->Bar));
-	  size += write(fd, &(*i)->Note, sizeof ((*i)->Note));
-	  size += write(fd, &(*i)->Pitch, sizeof ((*i)->Pitch));
-	  size += write(fd, &(*i)->Volume, sizeof ((*i)->Volume));
-	  size += write(fd, &(*i)->AffectMidi, sizeof ((*i)->AffectMidi));
-	  size += write(fd, &(*i)->Invert, sizeof ((*i)->Invert));
-	}
-
-      // Midi automation
-      size += write(fd, MidiVolume, sizeof (int[2]));
-      size += write(fd, MidiAttack, sizeof (int[2]));
-      size += write(fd, MidiDecay, sizeof (int[2]));
-      size += write(fd, MidiSustain, sizeof (int[2]));
-      size += write(fd, MidiRelease, sizeof (int[2]));
-      size += write(fd, MidiOctave, sizeof (int[2]));
-      size += write(fd, MidiPitch, sizeof (int[2]));
-      size += write(fd, MidiTempo, sizeof (int[2]));
-      size += write(fd, MidiInvert, sizeof (int[2]));
-      size += write(fd, MidiSliceNote, sizeof (int[2]));
-      size += write(fd, MidiSlicePitch, sizeof (int[2]));
-      size += write(fd, MidiSliceVol, sizeof (int[2]));
-      size += write(fd, MidiSliceAffect, sizeof (int[2]));
-      size += write(fd, MidiSliceInvert, sizeof (int[2]));
     }
+  else
+    {
+      len = 0;
+      size = write(fd, &len, sizeof (len));
+    }
+  size += write(fd, &BarCount, sizeof (BarCount));
+  size += write(fd, &BeatCount, sizeof (BeatCount));
+  size += write(fd, &Volume, sizeof (Volume));
+  size += write(fd, &Attack, sizeof (Attack));
+  size += write(fd, &Decay, sizeof (Decay));
+  size += write(fd, &Sustain, sizeof (Sustain));
+  size += write(fd, &Release, sizeof (Release));
+  size += write(fd, &Octave, sizeof (Octave));
+  size += write(fd, &Pitch, sizeof (Pitch));
+  size += write(fd, &Invert, sizeof (Invert));
+
+  size += write(fd, &Tempo, sizeof (Tempo));
+  size += write(fd, &(LoopInfo.Start), sizeof (LoopInfo.Start));
+  size += write(fd, &(LoopInfo.End), sizeof (LoopInfo.End));      
+  
+  len = Slices.size();
+  size += write(fd, &len, sizeof (len));
+  list<Slice *>::iterator i;
+  for (i = Slices.begin(); i != Slices.end(); i++)
+    {
+      size += write(fd, &(*i)->Position, sizeof ((*i)->Position));
+      size += write(fd, &(*i)->EndPosition, sizeof ((*i)->EndPosition));
+      size += write(fd, &(*i)->Bar, sizeof ((*i)->Bar));
+      size += write(fd, &(*i)->Note, sizeof ((*i)->Note));
+      size += write(fd, &(*i)->Pitch, sizeof ((*i)->Pitch));
+      size += write(fd, &(*i)->Volume, sizeof ((*i)->Volume));
+      size += write(fd, &(*i)->AffectMidi, sizeof ((*i)->AffectMidi));
+      size += write(fd, &(*i)->Invert, sizeof ((*i)->Invert));
+    }
+  
+  // Midi automation
+  size += write(fd, MidiVolume, sizeof (int[2]));
+  size += write(fd, MidiAttack, sizeof (int[2]));
+  size += write(fd, MidiDecay, sizeof (int[2]));
+  size += write(fd, MidiSustain, sizeof (int[2]));
+  size += write(fd, MidiRelease, sizeof (int[2]));
+  size += write(fd, MidiOctave, sizeof (int[2]));
+  size += write(fd, MidiPitch, sizeof (int[2]));
+  size += write(fd, MidiTempo, sizeof (int[2]));
+  size += write(fd, MidiInvert, sizeof (int[2]));
+  size += write(fd, MidiSliceNote, sizeof (int[2]));
+  size += write(fd, MidiSlicePitch, sizeof (int[2]));
+  size += write(fd, MidiSliceVol, sizeof (int[2]));
+  size += write(fd, MidiSliceAffect, sizeof (int[2]));
+  size += write(fd, MidiSliceInvert, sizeof (int[2]));
+
   return (size);
 }
 
@@ -1299,6 +1307,7 @@ void LoopSampler::OnInvert(wxCommandEvent &event)
 
   Mutex.Lock();
 
+  Invert = !Invert;
   for (i = Slices.begin(); i != Slices.end(); i++)
     (*i)->Invert = !(*i)->Invert;
 
