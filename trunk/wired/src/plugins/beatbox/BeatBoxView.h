@@ -74,6 +74,7 @@ class BeatBoxScrollView : public wxScrolledWindow
   ~BeatBoxScrollView();
   
   void OnPaint(wxPaintEvent& event);
+  void OnLeftDown(wxMouseEvent& event);
  protected:
   BeatBoxView* ViewPtr;
 DECLARE_EVENT_TABLE()
