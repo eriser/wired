@@ -8,6 +8,8 @@
 #include "Settings.h"
 #include "FileLoader.h"
 #include "MainWindow.h"
+#include "MidiThread.h"
+#include "MidiController.h"
 
 #include <string>
 #include <iostream>
@@ -139,6 +141,23 @@ long HostCallback(Plugin *plug, long param, void *value)
       {
 	Seq->AddMidiPattern((list<SeqCreateEvent *> *)value, plug);
 	break;
+      }
+    case  wiredShowMidiController :
+      {
+	MidiMutex.Lock();
+	Controller = new MidiController(plug);
+	MidiMutex.Unlock();
+
+	Controller->ShowModal();
+	int *midi_msg = *(int **)value;
+	midi_msg[0] = Controller->Channel;
+	midi_msg[1] = Controller->Controller;
+	midi_msg[2] = Controller->Value;
+
+	MidiMutex.Lock();
+	delete Controller;
+	Controller = 0x0;
+	MidiMutex.Unlock();
       }
     default:
       return (-1);

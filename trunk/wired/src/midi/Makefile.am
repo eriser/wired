@@ -15,5 +15,7 @@ libmidi_a_SOURCES = 			\
 		MidiInDevice.h		\
 		MidiThread.cpp		\
 		MidiThread.h		\
-		midi.h
+		midi.h			\
+		MidiController.cpp	\
+		MidiController.h
 

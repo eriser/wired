@@ -236,6 +236,8 @@ protected:
   void OnSendSeqHelp(wxMouseEvent &event);
   void OnOptViewHelp(wxMouseEvent &event);
 
+  void OnOctaveController(wxMouseEvent &event);
+
   void SetTempo();
 
   DECLARE_EVENT_TABLE()

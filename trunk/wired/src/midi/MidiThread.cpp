@@ -1,6 +1,7 @@
 #include "MidiThread.h"
 #include "Sequencer.h"
 #include "Settings.h"
+#include "MidiController.h"
 
 wxMutex MidiMutex;
 wxMutex MidiDeviceMutex;
@@ -159,6 +160,11 @@ void MidiThread::AnalyzeMidi(int id)
     }
 
   MidiMutex.Lock();
-  Seq->AddMidiEvent(id, midi_msg);
+
+  if (Controller)
+    Controller->ProcessMidi(midi_msg);
+  else
+    Seq->AddMidiEvent(id, midi_msg);
+
   MidiMutex.Unlock();
 }

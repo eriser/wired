@@ -168,7 +168,10 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   Connect(LoopSampler_Octave, wxEVT_ENTER_WINDOW,
 	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&LoopSampler::OnOctaveHelp);  
+	  (wxMouseEventFunction)&LoopSampler::OnOctaveHelp); 
+  Connect(LoopSampler_Octave, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnOctaveController);  
   Connect(LoopSampler_Pitch, wxEVT_ENTER_WINDOW,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&LoopSampler::OnPitchHelp);  
@@ -1123,6 +1126,18 @@ void LoopSampler::OnPaint(wxPaintEvent &event)
 	      wxCOPY, FALSE);      
       upd++;
     }
+}
+
+void LoopSampler::OnOctaveController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      cout << "OK !" << endl;
+    }
+  delete midi_data;
 }
 
 /******** Main and mandatory library functions *********/
