@@ -310,7 +310,10 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 	    end = 0;
 
 	  if (length <= 0)
-	    n->End = true;
+	    {
+	      //cout << "length < 0!!!" << endl;
+	      n->End = true;
+	    }
 	 
 	  Wave->SetPitch((n->SliceNote->Pitch + Pitch) / 2.f);
 	  Wave->SetInvert(n->SliceNote->Invert);
@@ -344,8 +347,9 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 	      // "else" doesn't work here, very strange, probably a compiler optimisation bug
 	      if (n->Position >= n->SliceNote->EndPosition) 
 		{
-		  if ((retTouchL < sample_length) && (retTouchR < sample_length))
+		  if ((retTouchL == 0/* < sample_length*/) && (retTouchR == 0/*< sample_length*/))
 		    {
+		      cout << "ret touchL :" << retTouchL << ", ret touchR: "<< retTouchR << endl;
 		      n->End = true;
 		      n->SliceNote->LeftTouch->clear();
 		      n->SliceNote->RightTouch->clear();

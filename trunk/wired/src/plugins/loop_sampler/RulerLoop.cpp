@@ -11,7 +11,7 @@ END_EVENT_TABLE()
   
 RulerLoop::RulerLoop(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 		     const wxSize &size)
-  : wxWindow(parent, id, pos, size, wxSIMPLE_BORDER)
+  : wxWindow(parent, id, pos, size, wxNO_BORDER)
 {
   MesCount = 4;
   Beats = 4;
