@@ -194,16 +194,14 @@ class WiredBeatBox : public Plugin
   void			OnVolumeController(wxMouseEvent& event);
   void			OnStepsController(wxMouseEvent& event);
   
-  int			BankMidiNotes[NUM_BANKS];
-  int			PatternMidiNotes[NUM_PATTERNS];
-  
-  int			ChanMidiNotes[NB_CHAN];
   void			ProcessMidiControls(int data[3]);
   void			CheckExistingControllerData(int data[3]);
+  
+  int			BanksMidiNotes[NUM_BANKS];
+  int			PatternsMidiNotes[NUM_PATTERNS];
+  int			ChanMidiNotes[NB_CHAN];
   int			MidiVolume[3];
   int			MidiSteps[3];
-  int			MidiBank[3];
-  int			MidiTrack[3];
   
  protected:
   bool			OnLoading;
