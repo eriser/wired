@@ -2,17 +2,19 @@
 // Under the GNU General Public License
 
 #include <math.h>
+#include <iostream>
+#include "SequencerGui.h"
+#include "Track.h"
 #include "Sequencer.h"
 #include "Ruler.h"
 #include "Cursor.h"
 #include "ColoredLine.h"
+#include "ColoredBox.h"
 #include "Colour.h"
-#include "SequencerGui.h"
 #include "Transport.h"
 #include "HelpPanel.h"
 #include "SelectionZone.h"
 #include "MixerGui.h"
-#include <iostream>
 #include "WaveFile.h"
 #include "WaveView.h"
 
@@ -236,12 +238,11 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   : wxPanel(parent, -1, pos, size, wxSIMPLE_BORDER | wxWS_EX_PROCESS_IDLE)
 {
   wxSize				s;
-  wxBoxSizer				*row_1;
-  wxBoxSizer				*row_2;
-  wxBoxSizer				*row_3;
-  wxBoxSizer				*row_4;
-  wxBoxSizer				*col_1;
-  wxBoxSizer				*globz;
+  wxBoxSizer				*zer_1;
+  wxBoxSizer				*zer_2;
+  wxBoxSizer				*zer_3;
+  wxBoxSizer				*zer_4;
+  wxBoxSizer				*zer_5;
   wxString				combo_choices[NB_COMBO_CHOICES];
   long					c;
 
@@ -252,25 +253,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   DoCut = false;
   SetBackgroundColour(CL_DEFAULT_BACKGROUND);
   SetForegroundColour(CL_DEFAULT_FOREGROUND);
-  VertScrollBar = new wxScrollBar(this, ID_SEQ_SCROLLING, wxPoint(-1, 0), 
-			      wxSize(-1, -1), wxSB_VERTICAL);
-  s = VertScrollBar->GetSize();
-  VertScrollBar->Move(wxPoint(size.x - s.x, 0));
-  SeqView = new SequencerView(this, wxPoint(0, 0), 
-			      wxSize(size.x - TRACK_WIDTH - s.x, size.y - RULER_HEIGHT));
-  HorizScrollBar = new wxScrollBar(this, ID_SEQ_SCROLLING, 
-				   wxPoint(TRACK_WIDTH, SeqView->GetClientSize().y), 
-				   wxSize(SeqView->GetClientSize().x, -1), 
-				   wxSB_HORIZONTAL);
-  TrackView = new wxScrolledWindow(this, ID_TRACK_VIEW, wxPoint(0, RULER_HEIGHT), 
-				   wxSize(TRACK_WIDTH, size.y - RULER_HEIGHT), wxSUNKEN_BORDER);
-  VertZoomSlider = new wxSlider(this, ID_SEQ_VSLIDER, 100, 100, 400, wxPoint(0, 0), 
-				wxSize(TRACK_WIDTH, RULER_HEIGHT));
-  HoriZoomSlider = new wxSlider(this, ID_SEQ_HSLIDER, 100, 25, 400, 
-				wxPoint(0, SeqView->GetClientSize().y + RULER_HEIGHT),
-				wxSize(TRACK_WIDTH, 16));
-  RulerPanel = new Ruler(this, ID_SEQ_RULER, wxPoint(TRACK_WIDTH, 0), 
-			 wxSize(size.x - TRACK_WIDTH - s.x, RULER_HEIGHT));
   Toolbar = new wxToolBar(this, -1, wxPoint(-1, -1), wxSize(-1, TOOLS_HEIGHT), wxTB_FLAT);
   Toolbar->AddRadioTool(ID_SEQ_MOVE, "Move", wxBitmap(string(WiredSettings->DataDir + string(HAND_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(HAND_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "Move Pattern", "Move Pattern", NULL);
   Toolbar->AddRadioTool(ID_SEQ_EDIT, "Draw", wxBitmap(string(WiredSettings->DataDir + string(DRAW_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(DRAW_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "Draw Pattern", "Draw Pattern", NULL);
@@ -278,7 +260,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Toolbar->AddRadioTool(ID_SEQ_SPLIT, "Split", wxBitmap(string(WiredSettings->DataDir + string(SPLIT_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "Split Pattern", "Split Pattern", NULL);
   Toolbar->AddSeparator();
   Toolbar->AddCheckTool(ID_SEQ_MAGNET, "Magnet", wxBitmap(string(WiredSettings->DataDir + string(MAGN_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(MAGN_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "", "", NULL);
-
   for (c = 0; c < NB_COMBO_CHOICES; c++)
     combo_choices[c] = ComboChoices[c].s;
   MagnetQuant = new wxComboBox(Toolbar, ID_SEQ_COMBO_MAGNET, DEFAULT_MAGNETISM_COMBO_VALUE, 
@@ -286,10 +267,33 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Toolbar->AddControl(MagnetQuant);
   Toolbar->AddSeparator();
   Toolbar->AddTool(ID_SEQ_COLOR, "Color", wxBitmap(string(WiredSettings->DataDir + string(COLOR_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(COLOR_DOWN)).c_str(), wxBITMAP_TYPE_PNG));
-
   Toolbar->Realize();
   Toolbar->ToggleTool(ID_SEQ_MAGNET, MAGNETISM);
   //SetToolBar(Toolbar);
+  VertScrollBar = new wxScrollBar(this, ID_SEQ_SCROLLING, wxPoint(-1, 0), 
+			      wxSize(-1, -1), wxSB_VERTICAL);
+  s = VertScrollBar->GetSize();
+  VertScrollBar->Move(wxPoint(size.x - s.x, 0));
+  cout << "PUTTING SEQVIEW AT POS " << (TRACK_WIDTH) << " " << (RULER_HEIGHT + TOOLS_HEIGHT) << " SIZE " << (size.x - TRACK_WIDTH - s.x) << " " << (size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT)) << " " << endl;
+  SeqView = new SequencerView(this, wxPoint(TRACK_WIDTH, RULER_HEIGHT + TOOLS_HEIGHT), 
+			      wxSize(size.x - TRACK_WIDTH - s.x, size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT)));
+  HorizScrollBar = new wxScrollBar(this, ID_SEQ_SCROLLING, 
+				   wxPoint(TRACK_WIDTH, SeqView->GetClientSize().y + TOOLS_HEIGHT), 
+				   wxSize(SeqView->GetClientSize().x, RULER_HEIGHT), 
+				   wxSB_HORIZONTAL);
+  TrackView = new wxScrolledWindow(this, ID_TRACK_VIEW, wxPoint(0, RULER_HEIGHT + TOOLS_HEIGHT), 
+				   wxSize(TRACK_WIDTH, size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT)), wxSUNKEN_BORDER);
+  VertZoomSlider = new wxSlider(this, ID_SEQ_VSLIDER, 100, 100, 400, wxPoint(0, TOOLS_HEIGHT), 
+				wxSize(TRACK_WIDTH, RULER_HEIGHT));
+  HoriZoomSlider = new wxSlider(this, ID_SEQ_HSLIDER, 100, 25, 400, 
+				wxPoint(0, SeqView->GetClientSize().y + RULER_HEIGHT + TOOLS_HEIGHT),
+				wxSize(TRACK_WIDTH, RULER_HEIGHT));
+  cout << "youpi youpla " << size.x << endl;
+  cout << "bada_boom " << size.y << endl;
+  cout << "MAIS !! " << (size.x - TRACK_WIDTH - s.x) << " grr " << endl;
+  cout << "ET !! " << (size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT)) << " grr " << endl;
+  RulerPanel = new Ruler(this, ID_SEQ_RULER, wxPoint(TRACK_WIDTH, TOOLS_HEIGHT), 
+			 wxSize(size.x - TRACK_WIDTH - s.x, RULER_HEIGHT));
   ColorDialogBox = new wxColourDialog(this, 0);
   BrushColor = CL_DEFAULT_SEQ_BRUSH;
   ColorBox = new ColoredBox(this, ID_SEQ_COLORBOX, wxPoint(Toolbar->GetSize().x + COLORBOX_MARGINS, COLORBOX_MARGINS),
@@ -297,6 +301,35 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
 			    CL_DEFAULT_SEQ_BRUSH, CL_DEFAULT_SEQ_PEN);
   Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
   /* Sizers */
+  zer_5 = new wxBoxSizer(wxVERTICAL);
+  zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND, 0);
+  zer_5->Add(SeqView, 1, wxALL | wxEXPAND, 0);
+  zer_5->Add(HorizScrollBar, 0, wxALL | wxEXPAND, 0);
+  zer_4 = new wxBoxSizer(wxVERTICAL);
+  zer_4->Add(VertZoomSlider, 0, wxALL, 0);
+  zer_4->Add(TrackView, 1, wxALL | wxEXPAND, 0);
+  zer_4->Add(HoriZoomSlider, 0, wxALL, 0);
+  zer_3 = new wxBoxSizer(wxHORIZONTAL);
+  zer_3->Add(zer_4, 0, wxEXPAND | wxALL, 0);
+  zer_3->Add(zer_5, 1, wxEXPAND | wxALL, 0);
+  zer_2 = new wxBoxSizer(wxVERTICAL);
+  zer_2->Add(Toolbar, 0, wxALL | wxEXPAND, 0);
+  zer_2->Add(zer_3, 1, wxEXPAND | wxALL, 0);
+  zer_1 = new wxBoxSizer(wxHORIZONTAL);
+  zer_1->Add(zer_2, 1, wxEXPAND | wxALL, 0);
+  zer_1->Add(VertScrollBar, 0, wxALL | wxEXPAND , 0);
+  SetSizer(zer_1);
+
+  if (RulerPanel->GetSize().y > RULER_HEIGHT)
+    {
+      cout << "GTK BUGFIX NEEDED " << endl;
+      RulerPanel->SetSize(RulerPanel->GetSize().x, RULER_HEIGHT);
+      cout << " moving seqview from " << SeqView->GetPosition().x << " " <<  SeqView->GetPosition().y << " to the right place ..." << endl;
+      SeqView->Move(TRACK_WIDTH, RULER_HEIGHT + TOOLS_HEIGHT);
+      SeqView->SetSize(size.x - TRACK_WIDTH - s.x, size.y - (2 * RULER_HEIGHT + TOOLS_HEIGHT));
+      zer_5->SetMinSize(zer_5->GetMinSize().x, RULER_HEIGHT * 2 + SeqView->GetSize().y);
+    }
+  /*
   row_1 = new wxBoxSizer(wxHORIZONTAL);
   row_1->Add(Toolbar, 1, wxALL, 0); 
   row_2 = new wxBoxSizer(wxHORIZONTAL);
@@ -322,6 +355,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   globz->Add(VertScrollBar, 0, wxALL | wxEXPAND , 0); 
 
   SetSizer(globz);
+  */
 
   SeqView->SetScrollRate(10, 10);
   SeqView->SetBackgroundColour(CL_SEQVIEW_BACKGROUND);

@@ -2,15 +2,16 @@
 // Under the GNU General Public License#include "HostCallback.h"
 
 #include <math.h>
-#include "AudioPattern.h"
+#include <wx/filename.h>
 #include "SequencerGui.h"
 #include "Sequencer.h"
 #include "Colour.h"
 #include "OptionPanel.h"
 #include "Mixer.h"
-#include <wx/filename.h>
 #include "AudioCenter.h"
 #include "WiredSession.h"
+#include "ColoredBox.h"
+#include "AudioPattern.h"
 
 static long		audio_pattern_count = 1;
 extern WiredSession	*CurrentSession;

@@ -9,8 +9,8 @@
 #include "Sequencer.h"
 #include "Ruler.h"
 #include "ColoredLine.h"
-#include "Cursor.h"
 #include "SequencerGui.h"
+#include "Cursor.h"
 
 /*
 ** Constructeurs d'un curseur :

@@ -2,20 +2,17 @@
 // Under the GNU General Public License
 
 #include <math.h>
-#include "MainWindow.h"
+#include "SequencerGui.h"
+#include "Sequencer.h"
 #include "Colour.h"
+#include "Cursor.h"
 #include "Ruler.h"
-
-BEGIN_EVENT_TABLE(Ruler, wxWindow)
-  EVT_LEFT_DOWN(Ruler::OnMouseEvent) 
-  EVT_PAINT(Ruler::OnPaint)
-END_EVENT_TABLE()
 
 Ruler::Ruler(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 	     const wxSize &size)
-  : wxWindow(parent, id, pos, size, wxRAISED_BORDER)
+  : wxWindow(parent, id, pos, size, wxRAISED_BORDER) 
 {
-
+  printf("youpi ROFL %d\n", GetSize().y);
 }
 
 Ruler::~Ruler()
@@ -39,6 +36,11 @@ void		Ruler::OnPaint(wxPaintEvent &event)
 
   PrepareDC(dc);
   size = GetSize();
+  if (size.y > RULER_HEIGHT)
+    {
+      printf("BUFGIFX NEEDED HEIGHT OF %d INSTEAD OF %d\n", size.y, RULER_HEIGHT);
+      //      SetSize(size.x, RULER_HEIGHT);
+    }
   dc.SetPen(wxPen(CL_RULER_BACKGROUND, 1, wxSOLID));
   dc.SetBrush(wxBrush(CL_RULER_BACKGROUND));
   dc.SetTextForeground(CL_RULER_PATTERNNUM);
@@ -86,3 +88,7 @@ long		Ruler::GetXScroll()
   return (XScroll);
 }
 
+BEGIN_EVENT_TABLE(Ruler, wxWindow)
+  EVT_LEFT_DOWN(Ruler::OnMouseEvent) 
+  EVT_PAINT(Ruler::OnPaint)
+END_EVENT_TABLE()

@@ -2,13 +2,13 @@
 // Under the GNU General Public License
 
 #include <math.h>
-#include "MidiPattern.h"
+#include <vector>
 #include "SequencerGui.h"
 #include "Sequencer.h"
 #include "Colour.h"
 #include "OptionPanel.h"
-#include <vector>
-
+#include "ColoredBox.h"
+#include "MidiPattern.h"
 
 BEGIN_EVENT_TABLE(MidiPattern, wxWindow)
   EVT_PAINT(MidiPattern::OnPaint)
