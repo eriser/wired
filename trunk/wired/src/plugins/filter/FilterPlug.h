@@ -79,7 +79,7 @@ class FilterPlugin: public Plugin
 
   KnobCtrl  *FilterSelect;
 
-#define FILTER_SIZE	5		// 3 inputs, 2 outpus
+#define FILTER_SIZE	5		// 3 inputs, 2 outputs
   float	History[2][FILTER_SIZE];
   float	Coefs[FILTER_SIZE];
   float	Reamp;

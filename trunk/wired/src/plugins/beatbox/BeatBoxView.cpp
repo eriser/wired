@@ -31,6 +31,7 @@ END_EVENT_TABLE()
 #define BGVIEW_COLOUR		wxColour(242,242,255)
 #define BGRULER_COLOUR		wxColour(237,237,242)
 #define SCROLLBAR_COLOUR	wxColour(142,142,169)
+#define RULERTEXT_HEIGHT	6
 
 Ruler::Ruler(wxWindow *parent, wxWindowID id, 
 	     const wxPoint &pos, const wxSize &size,
@@ -54,6 +55,7 @@ void Ruler::OnPaint(wxPaintEvent& event)
   size = GetSize();
   dc.SetPen(wxPen(BORDER_COLOUR, 1, wxSOLID));
   dc.SetBrush(wxBrush(BGRULER_COLOUR));
+  dc.SetFont(wxFont(RULERTEXT_HEIGHT, wxDEFAULT, wxNORMAL, wxNORMAL));
   dc.SetTextForeground(TEXT_COLOUR);
   dc.DrawRoundedRectangle(0, 0, size.x, size.y, 3);
   dc.SetPen(wxPen(BAR_COLOUR, 1, wxSOLID));
@@ -890,19 +892,30 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
 			    NB_COMBO_CHOICES, choices);
   
     
-  PosTextCtrl = new wxTextCtrl(ToolBar, ID_PosTextCtrl, _T("pos"),
+  //PosTextCtrl = new wxTextCtrl(ToolBar, ID_PosTextCtrl, _T("pos"),
+  PosTextCtrl = new wxTextCtrl(ToolBar, ID_PosTextCtrl, _T("POS"),
 			       wxPoint(-1,-1), wxSize(48, -1));
-  VelTextCtrl = new wxTextCtrl(ToolBar, ID_VelTextCtrl, _T("----"),
+  VelTextCtrl = new wxTextCtrl(ToolBar, ID_VelTextCtrl, _T("--------------"),
 				  wxPoint(-1,-1), wxSize(48, -1));
   
   wxString params[NB_PARAMS_CHOICES];
-  params[0].Printf("level");
+  /*
+    params[0].Printf("level");
   params[1].Printf("velocity");
   params[2].Printf("pitch");
   params[3].Printf("pan");
   params[4].Printf("start");
   params[5].Printf("end");
-  ParamsCombo = new wxComboBox(ToolBar, ID_ParamsCombo, _T("level"), 
+  */
+  params[0].Printf("LEVEL");
+  params[1].Printf("VELOCITY");
+  params[2].Printf("PITCH");
+  params[3].Printf("PAN");
+  params[4].Printf("START");
+  params[5].Printf("END");
+  
+  //ParamsCombo = new wxComboBox(ToolBar, ID_ParamsCombo, _T("level"), 
+  ParamsCombo = new wxComboBox(ToolBar, ID_ParamsCombo, _T("LEVEL"), 
 			       wxPoint(-1, -1), wxSize(96, -1), 
 			       NB_PARAMS_CHOICES, params);
     

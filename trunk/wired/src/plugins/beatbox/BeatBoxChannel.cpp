@@ -53,10 +53,10 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   Params[STA] = 0.0f;
   Params[END] = 1.0f;
   
-  Start = 0.f;
-  End = 1.f;
-  Lev = Vel = Pitch = 1.0f;
-  Pan[0] = Pan[1] = 1.0f;
+  //Start = 0.f;
+  //End = 1.f;
+  //Lev = Vel = Pitch = 1.0f;
+  //Pan[0] = Pan[1] = 1.0f;
   Reversed = false;
   Muted = false;
   IsSolo = false;
@@ -186,7 +186,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		     0, 100, 0, 1,
 		     wxPoint(8, 138), wxSize(9,9), 
 		     this->GetParent(), GetPosition());
-      KnobStart->SetValue(50); // why?
+      KnobStart->SetValue(0);
       
       KnobEnd = 
 	new KnobCtrl(this, BC_End, bmp1, bmp2, 
@@ -462,7 +462,7 @@ void BeatBoxChannel::OnPanChange(wxScrollEvent& WXUNUSED(event))
   float panl;
   float panr;
   float pan = KnobPan->GetValue() / 100.0f;
-  
+  /*
   if (val == 50)
     panl = panr = 1.f;
   else if (val < 50)
@@ -475,11 +475,11 @@ void BeatBoxChannel::OnPanChange(wxScrollEvent& WXUNUSED(event))
       panr = 1.f;
       panl = (100 - ((val-50)*2)) / 100.f;
     }
-  
+  */
   //PatternMutex->Lock();
   Params[PAN] = pan;
-  Pan[0] = panl;
-  Pan[1] = panr;
+  //Pan[0] = panl;
+  //Pan[1] = panr;
   //PatternMutex->Unlock();
 }
 
@@ -498,7 +498,7 @@ void BeatBoxChannel::OnEndChange(wxScrollEvent& WXUNUSED(event))
 {
   float end = static_cast<float>(KnobEnd->GetValue()/100.0f);
   //PatternMutex->Lock();
-  End = end;
+  Params[END] = end;
   //  PatternMutex->Unlock();
 
 }
@@ -663,12 +663,10 @@ void BeatBoxChannel::SetWaveFile(WaveFile* wave)
   
   
   PatternMutex->Lock();
-  //cout <<"SetWaveFile lock" << endl;
-
   tmp = Wave;//delete Wave;
   Wave = wave;
   PatternMutex->Unlock();
-  //cout <<"SetWaveFile unlock" << endl;
+  
   if (tmp)
     delete tmp;
 
@@ -703,31 +701,10 @@ void BeatBoxChannel::SetLev(int lev)
 
 void BeatBoxChannel::SetPan(int pan)
 {
-  int val = pan;
-  float panl;
-  float panr;
   float fpan = pan / 100.0f;
-  
-  if (val == 50)
-    panl = panr = 1.f;
-  else if (val < 50)
-    {
-      panl = 1.f;
-      panr = val * 2 / 100.f;
-    }
-  else
-    {
-      panr = 1.f;
-      panl = (100 - ((val-50)*2)) / 100.f;
-    }
-    
   //PatternMutex->Lock();
-  
   Params[PAN] = fpan;
-  Pan[0] = panl;
-  Pan[1] = panr;
   //PatternMutex->Unlock();
-  
   KnobPan->SetValue(pan);
 }
 
@@ -736,7 +713,6 @@ void BeatBoxChannel::SetStart(int start)
   float s = start / 100.f;
   //PatternMutex->Lock();
   Params[STA] = s;
-  //Start = s;
   //PatternMutex->Unlock();
   KnobStart->SetValue(start);
 }
@@ -747,7 +723,6 @@ void BeatBoxChannel::SetEnd(int end)
   float e = end/100.f;
   //PatternMutex->Lock();
   Params[END] = e;
-  //End = e;
   //PatternMutex->Unlock();
   KnobEnd->SetValue(end);
 }
@@ -756,7 +731,7 @@ void BeatBoxChannel::SetPitch(int pitch)
 {
   float p = pitch/100.f;
   //PatternMutex->Lock();
-  Pitch = p;
+  Params[PIT] = p;
   //PatternMutex->Unlock();
   KnobPitch->SetValue(pitch);
 }
@@ -766,7 +741,6 @@ void BeatBoxChannel::SetVel(int vel)
   float v = vel/100.f;
   //PatternMutex->Lock();
   Params[VEL] = v;
-  //Vel = v;
   //PatternMutex->Unlock();
   KnobVel->SetValue(vel);
 }

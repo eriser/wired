@@ -667,28 +667,42 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
       
       SamplesPerBar[SelectedBank][SelectedPattern] =
 	static_cast<long>
-	((static_cast<double>(OldSamplesPerBar * StepsSigCoef[SelectedBank][SelectedPattern])));
-      BarsPerSample[SelectedBank][SelectedPattern] = OldBarsPerSample / StepsSigCoef[SelectedBank][SelectedPattern];
+	((static_cast<double>
+	  (OldSamplesPerBar * StepsSigCoef[SelectedBank][SelectedPattern])));
+      BarsPerSample[SelectedBank][SelectedPattern] = 
+	OldBarsPerSample / StepsSigCoef[SelectedBank][SelectedPattern];
       
       if (SelectedBank != NewSelectedBank || 
 	  SelectedPattern != NewSelectedPattern)
 	{
 	  SamplesPerBar[NewSelectedBank][NewSelectedPattern] =
-	    static_cast<long>((static_cast<double>(OldSamplesPerBar * StepsSigCoef[NewSelectedBank][NewSelectedPattern])));
+	    static_cast<long>
+	    ((static_cast<double>
+	      (OldSamplesPerBar * 
+	       StepsSigCoef[NewSelectedBank][NewSelectedPattern])));
 	  BarsPerSample[NewSelectedBank][NewSelectedPattern] =
 	    OldBarsPerSample/StepsSigCoef[NewSelectedBank][NewSelectedPattern];
 	}
     }
   
-  double bar_pos = fmod( (GetBarPos() / StepsSigCoef[SelectedBank][SelectedPattern]), 1.0 );
-  double bar_end = static_cast<double>(bar_pos + static_cast<double>(sample_length * BarsPerSample[SelectedBank][SelectedPattern]));
+  double bar_pos = fmod( (GetBarPos() / 
+			  StepsSigCoef[SelectedBank][SelectedPattern]), 1.0 );
+  double bar_end = 
+    static_cast<double>
+    (bar_pos + static_cast<double>
+     (sample_length * BarsPerSample[SelectedBank][SelectedPattern]));
   
   double new_bar_end, new_bar_pos;
   if (SelectedBank != NewSelectedBank || 
       SelectedPattern != NewSelectedPattern)
     {
-      new_bar_pos = fmod( (GetBarPos() / StepsSigCoef[NewSelectedBank][NewSelectedPattern]), 1.0 );
-      new_bar_end = static_cast<double>(new_bar_pos + static_cast<double>(sample_length * BarsPerSample[NewSelectedBank][NewSelectedPattern]));
+      new_bar_pos = 
+	fmod( (GetBarPos() / 
+	       StepsSigCoef[NewSelectedBank][NewSelectedPattern]), 1.0 );
+      new_bar_end =
+	static_cast<double>
+	(new_bar_pos + static_cast<double>
+	 (sample_length * BarsPerSample[NewSelectedBank][NewSelectedPattern]));
     }
   else
     {
@@ -764,9 +778,13 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	   Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames() ||
 	   (*bn)->OffSet >= (*bn)->SEnd )
 	{
-	  cout << "[DRM31] Offset > Wave Frames, maybe normal" <<endl;
+	  cout << "[DRM31] " << "note offset: " << (*bn)->OffSet
+	       << " / frames " << (*bn)->SEnd
+	       << " Offset > Wave Frames, maybe normal" <<endl;
 	  //memset((*bn)->Buffer[0], 0, sample_length * sizeof(float));
 	  //memset((*bn)->Buffer[1], 0, sample_length * sizeof(float));
+	  //if ((*bn)->Buffer)
+	  //cout << "note before " << (*bn)->Params[VEL] << endl;
 	  bn++;
 	  continue;
 	}
@@ -832,9 +850,9 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
 	    }
 	  
 	  (*bn)->Buffer[0][i] *= 
-	    Channels[(*bn)->NumChan]->Lev * curvel * (*bn)->Pan[0];
+	    (*bn)->Params[LEV] * curvel * (*bn)->Pan[0];
 	  (*bn)->Buffer[1][i] *= 
-	    Channels[(*bn)->NumChan]->Lev * curvel * (*bn)->Pan[1];
+	    (*bn)->Params[LEV] * curvel * (*bn)->Pan[1];
 	  
 	  curvel -= velstep;
 	  //printf("curvel=%f\n", curvel);
@@ -863,7 +881,8 @@ void WiredBeatBox::Process(float** WXUNUSED(input), float **output, long sample_
     {
       if ( !(Channels[(*bn)->NumChan]->Wave) || 
 	   ((*bn)->OffSet >= 
-	    Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames()) )
+	    Channels[(*bn)->NumChan]->Wave->GetNumberOfFrames()) ||
+	   ((*bn)->OffSet >= ((*bn)->SEnd)) )
 	{
 	  
 	  //Channels[(*bn)->NumChan]->PlayButton->SetOff();
@@ -994,6 +1013,7 @@ inline void WiredBeatBox::SetNoteAttr(BeatNoteToPlay* note, BeatBoxChannel* c)
   note->SEnd = 
     static_cast<unsigned long>
     (floor(c->Wave->GetNumberOfFrames() * note->Params[END]));
+  cout << "SetNoteAttr: offset && end: " << note->OffSet << " && " << note->SEnd << endl;
   /*
     if (note->OffSet > note->SEnd)
     {

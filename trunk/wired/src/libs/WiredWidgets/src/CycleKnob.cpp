@@ -4,6 +4,7 @@ BEGIN_EVENT_TABLE(CycleKnob, wxWindow)
   EVT_MOTION(CycleKnob::OnMotionEvent) 
   EVT_PAINT(CycleKnob::OnPaint)
   EVT_LEFT_DOWN(CycleKnob::OnLeftDown)
+  EVT_RIGHT_DOWN(CycleKnob::OnRightDown)
   EVT_LEFT_UP(CycleKnob::OnLeftUp)
   EVT_KEY_DOWN(CycleKnob::OnKeyDown)
 END_EVENT_TABLE()
@@ -93,6 +94,11 @@ void CycleKnob::OnMotionEvent(wxMouseEvent &event)
       e.SetEventObject(this);
       wxPostEvent(GetParent(), e);
     }
+}
+
+void CycleKnob::OnRightDown(wxMouseEvent& event)
+{
+  wxPostEvent(GetParent(), event);
 }
 
 void CycleKnob::OnLeftDown(wxMouseEvent& event)

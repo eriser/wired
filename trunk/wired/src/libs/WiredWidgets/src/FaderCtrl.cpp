@@ -21,20 +21,23 @@
 BEGIN_EVENT_TABLE(FaderCtrl, wxWindow)
   EVT_MOTION(FaderCtrl::OnMouseEvent) 
   EVT_PAINT(FaderCtrl::OnPaint)
-  EVT_LEFT_DOWN(FaderCtrl::OnMouseEvent)
+  EVT_LEFT_DOWN(FaderCtrl::OnLeftDown)
+  EVT_LEFT_UP(FaderCtrl::OnLeftUp)
   EVT_RIGHT_DOWN(FaderCtrl::OnMouseEvent)
   EVT_KEY_DOWN(FaderCtrl::OnKeyDown)
+  EVT_KEY_UP(FaderCtrl::OnKeyUp)
   EVT_ENTER_WINDOW(FaderCtrl::OnEnterWindow)
+  EVT_LEAVE_WINDOW(FaderCtrl::OnLeaveWindow)
 END_EVENT_TABLE()
 
   
 FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id, 
-		       wxImage *img_bg, wxImage  *img_fg,
-		       long begin_value, long end_value, long val,
-		       const wxPoint &pos, const wxSize &size)
-    : wxWindow(parent, id, pos, 
-	       wxSize(img_fg->GetWidth(), img_bg->GetHeight())),
-      Value(val), BeginValue(begin_value), EndValue(end_value)
+		     wxImage *img_bg, wxImage  *img_fg,
+		     long begin_value, long end_value, long val,
+		     const wxPoint &pos, const wxSize &size)
+  : wxWindow(parent, id, pos, 
+	     wxSize(img_fg->GetWidth(), img_bg->GetHeight())),
+    Value(val), BeginValue(begin_value), EndValue(end_value)
 { 
   coeff = (end_value - begin_value) / (double)(img_bg->GetHeight() - img_fg->GetHeight());
   bg = new wxBitmap(img_bg, -1);
@@ -42,6 +45,32 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
   tmp_fg->SetMask(new wxMask(*tmp_fg, *wxWHITE));
   fg = new StaticBitmap(this, -1,*tmp_fg,wxPoint(0,(int)(Value  / coeff)), wxSize(img_fg->GetWidth(), img_fg->GetHeight()));
   SetValue(val);
+  Label = 0x0;
+}
+
+FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id, 
+		     wxImage *img_bg, wxImage  *img_fg,
+		     long begin_value, long end_value, long val,
+		     const wxPoint &pos, const wxSize &size,
+		     wxWindow* hintparent, const wxPoint &hintpos)
+  : wxWindow(parent, id, pos, 
+	     wxSize(img_fg->GetWidth(), img_bg->GetHeight())),
+    Value(val), BeginValue(begin_value), EndValue(end_value)
+{ 
+  coeff = (end_value - begin_value) / (double)(img_bg->GetHeight() - img_fg->GetHeight());
+  bg = new wxBitmap(img_bg, -1);
+  tmp_fg = new wxBitmap(img_fg, -1);
+  tmp_fg->SetMask(new wxMask(*tmp_fg, *wxWHITE));
+  fg = new StaticBitmap(this, -1,*tmp_fg,wxPoint(0,(int)(Value  / coeff)), wxSize(img_fg->GetWidth(), img_fg->GetHeight()));
+  SetValue(val);
+  
+  wxString s;
+  s.Printf("%d", val);
+  Label = new Hint(hintparent, -1, s, 
+		   wxPoint( hintpos.x + GetSize().x, hintpos.y + GetSize().y ),
+		   wxDefaultSize, *wxWHITE, *wxBLACK);
+  Label->Show(false);
+  
 }
 
 FaderCtrl::~FaderCtrl()
@@ -57,6 +86,29 @@ void FaderCtrl::OnPaint(wxPaintEvent &event)
   
   memDC.SelectObject(*bg);
   dc.Blit(0, 0, bg->GetWidth(), bg->GetHeight(), &memDC, 0, 0, wxCOPY, FALSE);
+}
+
+void FaderCtrl::OnLeftDown(wxMouseEvent& event)
+{
+  if (Label)
+    {
+      Label->Show(true);
+      wxString s;
+      s.Printf("%d", GetValue());
+      Label->SetLabel(s);
+    }
+  OnMouseEvent(event);
+}
+
+void FaderCtrl::OnLeftUp(wxMouseEvent& WXUNUSED(event))
+{
+  if (Label)
+    {
+      Label->Show(false);
+      /*wxString s;
+      s.Printf("%d", GetValue());
+      Label->SetLabel(s);*/
+    }
 }
 
 void FaderCtrl::OnMouseEvent(wxMouseEvent &event)
@@ -111,6 +163,12 @@ void FaderCtrl::OnMouseEvent(wxMouseEvent &event)
     }
   else if (event.RightDown())
     wxPostEvent(GetParent(), event);
+  if (Label)
+    {
+      wxString s;
+      s.Printf("%d", GetValue());
+      Label->SetLabel(s);
+    }
 }
 
 
@@ -133,6 +191,15 @@ void FaderCtrl::SetValue(int val)
   // cout << "coeff = " << int(coeff) << endl;
 }
 
+
+void FaderCtrl::OnKeyUp(wxKeyEvent& event)
+{
+  if (Label)
+    {
+      Label->Show(false);
+    }
+}
+
 void FaderCtrl::OnKeyDown(wxKeyEvent& event)
 {
   if(event.GetKeyCode() == WXK_UP)
@@ -151,10 +218,24 @@ void FaderCtrl::OnKeyDown(wxKeyEvent& event)
       e.SetEventObject(this);
       GetEventHandler()->ProcessEvent(e);
     }
+  if (Label)
+    {
+      Label->Show(true);
+      wxString s;
+      s.Printf("%d", GetValue());
+      Label->SetLabel(s);
+    }
 }
 
 void FaderCtrl::OnEnterWindow(wxMouseEvent &event)
 {
+  wxPostEvent(GetParent(), event);
+}
+
+void FaderCtrl::OnLeaveWindow(wxMouseEvent &event)
+{
+  if (Label)
+    Label->Show(false);
   wxPostEvent(GetParent(), event);
 }
 

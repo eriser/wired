@@ -22,6 +22,7 @@ class CycleKnob : public wxWindow
   virtual void OnMotionEvent(wxMouseEvent &event);
   virtual void OnLeftUp(wxMouseEvent &event);
   virtual void OnLeftDown(wxMouseEvent &event);
+  virtual void OnRightDown(wxMouseEvent &event);
   virtual void OnKeyDown(wxKeyEvent& event);
   
   int GetValue();
