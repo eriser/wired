@@ -308,8 +308,13 @@ class WiredBeatBox : public Plugin
   void			OnEditHelp(wxMouseEvent& event);
   void			OnPatternsSelectionHelp(wxMouseEvent& event);
   void			OnSaveLoadHelp(wxMouseEvent& event);
+  
 
-
+  /* graphical updates relatives */
+  void			Update();
+  bool			AskUpdateSteps;
+  
+  
 DECLARE_EVENT_TABLE()
 };
 

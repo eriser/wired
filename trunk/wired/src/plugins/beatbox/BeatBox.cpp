@@ -37,6 +37,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   OnLoading = false;
   
+  AskUpdateSteps = false;
+  
   /* Master Volume */
   wxImage* mini_bmp = 
     new wxImage(_T(string(GetDataDir() + string(BEATBOX_MINI_BG)).c_str()), 
@@ -954,6 +956,8 @@ inline void WiredBeatBox::ProcessMidiControls(int data[3])
       PatternMutex.Lock();
       UpdateStepsDeps(data[2]/2);
       PatternMutex.Unlock();
+      AskUpdateSteps = true;
+      AskUpdate();
     }
   else 
     {
@@ -1575,7 +1579,7 @@ void WiredBeatBox::OnSavePatch(wxCommandEvent& WXUNUSED(e))
 		    S_IRUSR | S_IWUSR);
       if (fd < 0)
 	{
-	  cout << "Couldnt open( "<<selfile << " )" << endl;
+	  cout << "[WIREDBEATBOX] Couldnt open file: "<<selfile << " )" << endl;
 	  //close(fd);
 	  return;
 	}
@@ -1628,11 +1632,6 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
       fstat(fd, &st);
       cout << "file length: " << st.st_size << endl;
       
-      /*
-	long test = 31;
-      read(fd, &test, sizeof(long));
-      cout << "TEST " << test << endl;
-      */
       wxProgressDialog *Progress = 
 	new wxProgressDialog("Loading patch file", "Please wait...", 
 			     100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
@@ -1640,8 +1639,145 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
       Progress->Update(1);
       Progress->Update(55);
       
-      Load(fd, st.st_size);
+      //Load(fd, st.st_size);
+      //      {
       
+	int res;
+	long len;
+	int bank,  ps;
+	unsigned int state = 0;
+	double pos = 0;
+	BeatNote* note;
+	WaveFile* w;
+	long size = st.st_size;
+	int sig_index, steps = 0;
+  
+	cout << "reading steps/signatures params" << endl;
+	for (bank = 0; bank < 5; bank++)
+	  for (ps = 0; ps < 8; ps++)
+	    {
+	      /*cout << "load: reading params begin for bank: " 
+		<< bank << " " << ps << endl;
+	      */
+	      cout << "size to read " << size << endl;
+	      if ((res = read(fd, &sig_index, sizeof (int))) < 0)
+		{
+		  cout << errno << endl;
+		  switch (errno)
+		    {
+		    case EINTR:
+		      cout << "1"<< endl;
+		break;
+		    case EAGAIN:
+		      cout << "2"<< endl;
+		      break;
+		    case EIO:
+		      cout << "3"<< endl;
+		      break;
+		    case EISDIR:
+		      cout << "4"<< endl;
+		break;
+	      case EBADF:
+		cout << "5"<< endl;
+		break;
+	      case EINVAL:
+		cout << "6"<< endl;
+		break;
+	      case EFAULT:
+		cout << "7"<< endl;
+		break;
+	      default:
+		cout << "default" << endl;
+		break;
+	      }
+		}
+	      else
+		size -= res;
+	      cout << "size to read " << size << endl;
+	      size -= read(fd, &steps, sizeof (int));
+	      cout << "size to read " << size << endl;
+	      cout << sig_index << " " << steps << endl;
+	      Steps[bank][ps] = steps;
+	      SigIndex[bank][ps] = sig_index;
+	      SignatureDen[bank][ps] = SigDen[sig_index];
+	      Signature[bank][ps] = Signatures[sig_index];
+	    }
+	cout << "reading channels" << endl;
+	for (int i = 0; i < NB_CHAN; i++)
+	  {
+	    size -= read(fd, &len, sizeof(len));
+	    cout << "load: channels["<< i << "] loads wavename len "<< len << endl;
+	    if (len > 0 && len < 255)
+	      {
+		char wave[len+1];
+		size -= read(fd, &wave, len*sizeof(char));
+		wave[len] = '\0';
+		cout << "load: " << wave << endl;
+		try 
+		  {
+		    w = new WaveFile(string(wave), true);
+		  }
+		catch (...)
+		  {
+		    cout << "[DRM31] Could not load WaveFile: " << wave << endl;
+		  }
+		Channels[i]->SetWaveFile(w);
+	      }
+	    
+	    
+	    cout << "load: reading channel parameters" << endl;
+	    int p;
+	    for (p = 0; p < NB_PARAMS; p++)
+	      size -= read(fd, &(Channels[i]->Params[p]), sizeof(float));
+      
+	    
+	    cout << "load: reading notes" << endl;
+	    for (bank = 0; bank < 5; bank++)
+	      for (ps = 0; ps < 8; ps++)
+		{
+		  size -= read(fd, &len, sizeof(len));
+		  if (len)
+	      cout << "reading "<< len << " notes for rythm["<< bank 
+		   << "][" << ps << "]" 
+		   << endl;
+		  
+	    while (len)
+	      {
+		size -= read(fd, &state, sizeof(unsigned int));
+		size -= read(fd, &pos, sizeof(double));
+		//printf("note pos=%f; state=%d\n", pos,state);
+		
+		note = 
+		  new BeatNote(i, pos, state, 
+			       0.0);
+		for (p = 0; p < NB_PARAMS; p++ )
+		  size -=
+		    read(fd, &(note->Params[p]), sizeof (float));
+		size -=
+		  read(fd, &p, sizeof (int));
+		note->Reversed = p ? true : false;
+		
+		Channels[i]->Rythms[bank][ps].push_back(note);
+		len--;
+	      }
+	    
+	    
+	  }
+    }
+  
+  
+  SelectedChannel = Channels[0];
+  ReCalcStepsSigCoef();
+  UpdateSteps(0,0);
+  SetPatternList();
+  
+  printf("size:%d\n", size);
+
+  //  }
+
+
+
+
       Progress->Update(75);
       Progress->Update(100);
       
@@ -1982,9 +2118,6 @@ inline void WiredBeatBox::UpdateStepsDeps(unsigned int steps)
     OldBarsPerSample / StepsSigCoef[EditedBank][EditedPattern];
   UpdateNotesPositions(EditedBank, EditedPattern);
   //PatternMutex.Unlock();
-  UpdateSteps(EditedBank, EditedPattern);
-  if (View)
-    View->Refresh();
   
 }
 
@@ -2128,6 +2261,17 @@ void WiredBeatBox::OnStepsController(wxMouseEvent& WXUNUSED(event))
       //Mutex.Unlock();
     }
   delete midi_data;
+}
+
+void WiredBeatBox::Update()
+{
+  if (AskUpdateSteps)
+    {
+      AskUpdateSteps = false;
+      UpdateSteps(EditedBank, EditedPattern);
+      if (View)
+	View->Refresh();
+    }
 }
 
 /******** Main and mandatory library functions *********/
