@@ -94,6 +94,7 @@ END_EVENT_TABLE()
   VolumeFader = new FaderCtrl(this, Sampler_Volume, fader_bg, fader_fg, 0, 127, 100,
       wxPoint(2, 62), wxSize(28, 76));
 
+  AkaiPrefix = _T("");
 }
 
 AkaiSampler::~AkaiSampler()
@@ -204,11 +205,38 @@ void AkaiSampler::Load(int fd, long size)
     str = (char *)malloc(len + 1);
     count += read(fd, str, len);
     str[len] = 0;
-    WaveFile *w = new WaveFile(string(str));
-    cerr << "[WiredSampler] Loaded wav " << wxString(_T(str)) << endl;
+    wxString s(_T(str));
+    wxString s2;
+    ASamplerSample *ass = NULL; 
+    if (s.StartsWith("[AKAI]", &s2))
+    {
+	    wxString dev(s2.SubString(0, s2.Find(':')));
+	    s2 = s2.SubString(s2.Find(':') + 1, s2.size() - s2.Find(':'));
+	    wxString path = s2.SubString(10, s2.size() - 10);
+	    int pos = path.Find('/');
+	    int part = path.SubString(0, pos).c_str()[0] - 64;
+	    path = path.SubString(pos, path.size() - pos);
+	    int opos = path.Find('/', true);
+	    wxString name = path.SubString(opos, path.size() - opos);
+	    path = path.SubString(1, opos - 2);
+      wxString prefix = s.SubString(6, opos);
+      cout << "device: " << dev << "; part: " << part << "; path: " << path << "; filename: " << name << endl;
+      cout << "AkaiPrefix: " << AkaiPrefix << endl;
+	    t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
+	    if (sample != NULL)
+        ass = new ASamplerSample(sample, prefix, id);
+      free(sample);
+    }
+    else
+      ass = new ASamplerSample(new WaveFile(string(str)), id);
+    if (ass)
+    {
+      cerr << "[WiredSampler] Loaded wav " << wxString(_T(str)) << endl;
+      Samples->List->AddEntry(smpname, (void *)ass);
+    }
+    else
+      cerr << "[WiredSampler] Error loading wav " << wxString(_T(str)) << endl;
     free(str);
-    ASamplerSample *ass = new ASamplerSample(w, id);
-    Samples->List->AddEntry(smpname, (void *)ass);
   }
   count += read(fd, &nbent, sizeof(nbent));
   cerr << "[WiredSampler] Loading " << nbent << " keygroups..." << endl;
@@ -336,7 +364,7 @@ void AkaiSampler::LoadProgram()
       samplename << group->num;
       wxString groupname = "AkaiKeygroup #";
       groupname << group->num;
-      ASamplerSample *ass = new ASamplerSample(group->zone_sample[0]);
+      ASamplerSample *ass = new ASamplerSample(group->zone_sample[0], AkaiPrefix);
       Samples->List->AddEntry(group->zone_sample[0]->name, (void *)ass);
       ASamplerKeygroup *askg = new ASamplerKeygroup(group->lowkey, group->highkey);
       Keygroups->List->AddEntry(groupname, (void *)askg);
@@ -354,6 +382,7 @@ void AkaiSampler::DeleteProgram()
     //delete 
     free(AkaiProgram);
     AkaiProgram = 0x0;
+    AkaiPrefix = _T("");
   }
 }
 
@@ -401,7 +430,7 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
         length = end - n->Delta;
       else
         end = 0;
-
+      n->Key->Wave->SetPitch(n->Key->Pitch);
       n->Key->Wave->Read(n->Buffer, n->Position, length, n->Delta, &(n->Position));
 
       if (n->Volume != 1.f)
@@ -544,7 +573,15 @@ void AkaiSampler::OnOpenFile(wxCommandEvent &event)
         opos = pos + 1;
       mName = mFilename.substr(opos, mFilename.size() - opos);
       mFilename = mFilename.substr(1, opos - 2);
+      AkaiPrefix = "[AKAI]";
+      AkaiPrefix += mDevice.c_str();
+      AkaiPrefix += ':';
+      AkaiPrefix += ((char)mPart + 64);
+      AkaiPrefix += '/';
+      AkaiPrefix += mName.c_str();
+      AkaiPrefix += '/';
       cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; filename: " << mFilename << endl;
+      cout << "AkaiPrefix: " << AkaiPrefix << endl;
       Progress->Update(20);
       if (!(AkaiProgram = akaiLoadProgram((char *)mDevice.c_str(), mPart,
               (char *)mFilename.c_str(),
