@@ -135,6 +135,7 @@ void					*MidiThread::Entry()
 
 void					MidiThread::AnalyzeMidi(int id)
 {
+  /*
   if ((midi_msg[0] == M_START) || (midi_msg[0] == M_CONT))
     {
       cout << "[MIDITHREAD] Received PLAY or CONTINUE" << endl;
@@ -143,23 +144,22 @@ void					MidiThread::AnalyzeMidi(int id)
     {
       cout << "[MIDITHREAD] Received STOP" << endl;
     }
-  /*  else if (Controller)
-      Controller->ProcessMidi(midi_msg[0], midi_msg[1], midi_msg[2]); */
   else if ((STATUS(midi_msg[0]) == M_NOTEON1) ||  (STATUS(midi_msg[0]) == M_NOTEON2))
     {
       cout << "[MIDITHREAD] Received NOTE ON" << endl;
-      //BeatSeq->ProcessMidi(CHANNEL(midi_msg[0]), midi_msg[1], midi_msg[2]);
     }
   else if (STATUS(midi_msg[0]) == M_CONTROL)
     {
       cout << "[MIDITHREAD] Received CONTROL" << endl;
-      //ParamWin->ProcessMidi(CHANNEL(midi_msg[0]), midi_msg[1], midi_msg[2]);
-      // cout << "Controller number " << midi_msg[1] << " has value " << midi_msg[2] << endl;
     }
+  */
+
   MidiMutex.Lock();
+
   if (Controller)
     Controller->ProcessMidi(midi_msg);
   else
     Seq->AddMidiEvent(id, midi_msg);
+
   MidiMutex.Unlock();
 }

@@ -493,7 +493,7 @@ void					Sequencer::AddMidiEvent(int id, MidiType midi_msg[3])
   MidiEvent				*msg;
 
   msg = new MidiEvent(id, CurrentPos, midi_msg);
-  printf("[SEQ] Received midi in for id %d : %2x %2x %2x\n", msg->Id, msg->Msg[0], msg->Msg[1], msg->Msg[2]);
+  // printf("[SEQ] Received midi in for id %d : %2x %2x %2x\n", msg->Id, msg->Msg[0], msg->Msg[1], msg->Msg[2]);
   MidiEvents.push_back(msg);
 }
 
