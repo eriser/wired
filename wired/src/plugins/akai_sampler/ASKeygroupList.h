@@ -16,31 +16,49 @@ using namespace std;
 
 class ASamplerKeygroup;
 
+extern unsigned long sampleid;
+extern unsigned long keygroupid;
+
 class ASamplerSample
 {
   public:
-    ASamplerSample(WaveFile *w)
+    ASamplerSample(WaveFile *w, unsigned long id = 0)
     {
       this->w = w;
       this->askg = NULL;
       this->Position = 0;
+      if (!id)
+        id = sampleid++;
+      else
+        if (id > sampleid)
+          sampleid = id + 1;
+      this->id = id;
     }
 
-    ASamplerSample(t_akaiSample *smp)
+    ASamplerSample(t_akaiSample *smp, unsigned long id = 0)
     {
       this->w = new WaveFile(smp->buffer, smp->size, 2, smp->rate);
+      w->Filename = smp->name;
       this->askg = NULL;
       this->Position = smp->start / 2;
+      if (!id)
+        id = sampleid++;
+      else
+        if (id > sampleid)
+          sampleid = id + 1;
+      this->id = id;
     }
 
     void SetKeygroup(ASamplerKeygroup *askg) { this->askg = askg; }
     ASamplerKeygroup *GetKeygroup() { return askg; }
     WaveFile *GetSample() { return w; }
     long GetPosition() { return Position; }
+    unsigned long GetID() { return id; }
   private:
     WaveFile *w;
     ASamplerKeygroup *askg;
     long Position;
+    unsigned long id;
 };
 
 class ASamplerKey
@@ -49,14 +67,12 @@ class ASamplerKey
     ASamplerKey(WaveFile *w, long pos = 0, float pitch = 1.f) :
       Pitch(pitch)
     {
-      Wave = w->Clone();
-      Wave->SetPitch(pitch);
+      Wave = w;
       Position = pos;
     }
 
     ~ASamplerKey()
     {
-      delete Wave;
     }
 
     WaveFile  *Wave;
@@ -69,19 +85,35 @@ class ASamplerKey
 class ASamplerKeygroup
 {
   public:
-    ASamplerKeygroup(int lo, int hi) { lokey = lo; hikey = hi; smp = NULL; }
+    ASamplerKeygroup(int lo, int hi, unsigned long id = 0)
+    {
+      lokey = lo;
+      hikey = hi;
+      smp = NULL;
+      if (!id)
+        id = keygroupid++;
+      else
+        if (id > keygroupid)
+          keygroupid = id + 1;
+      this->id = id;
+    }
     void SetSample(ASamplerSample *s) { smp = s; }
+    ASamplerSample *GetSample() { return smp; }
     int HasKey(int key) { return ((key >= lokey) && (key <= hikey)); }
+    unsigned long GetID() { return id; }
     ASamplerKey *GetKey(int num)
     {
       if (!smp)
         return NULL;
       return new ASamplerKey(smp->GetSample(), smp->GetPosition(), powf(2.f, static_cast<float>(num - lokey) / 12.f)); 
     }
+    int GetLowKey() { return lokey; }
+    int GetHighKey() { return hikey; }
   private:
     ASamplerSample *smp;
     int lokey;
     int hikey;
+    unsigned long id;
 };
 
 class ASKeygroupList : public ASPlugin

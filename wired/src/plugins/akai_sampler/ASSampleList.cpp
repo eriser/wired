@@ -11,6 +11,7 @@ BEGIN_EVENT_TABLE(ASSampleList, wxWindow)
 END_EVENT_TABLE()
 
 ASSampleList *Samples = NULL;
+unsigned long sampleid = 1;
 
 ASSampleList::ASSampleList(wxString Name) :
   ASPlugin(Name)
