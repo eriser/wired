@@ -132,7 +132,7 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
   submenu = new wxMenu();
   instr_menu = new wxMenu();
   effects_menu  = new wxMenu();
-  AddPlugToMenu();
+  
   menu->Append(ID_MENU_ADD, _T("Add"), submenu);
   submenu->Append(ID_INSTR_MENU, _T("&Instruments"), instr_menu);
   submenu->Append(ID_EFFECTS_MENU, _T("&Effects"), effects_menu);
@@ -430,6 +430,7 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
    if(event->RightDown())
      {
        SetSelected(plug);
+       AddPlugToMenu();
        wxPoint p(event->GetPosition().x + plug->GetPosition().x, event->GetPosition().y + plug->GetPosition().y);
        PopupMenu(menu, p.x, p.y);
      }   
