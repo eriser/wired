@@ -56,6 +56,8 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack) 
   EVT_MENU(MainWin_Undo, MainWindow::OnUndo) 
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
+  EVT_MENU(MainWin_SwitchRack,  MainWindow::OnSwitchRackOptViewEvent)
+  EVT_MENU(MainWin_SwitchSeq,  MainWindow::OnSwitchSeqOptViewEvent)
   EVT_MENU(MainWin_FullScreen,  MainWindow::OnFullScreen)
   EVT_MENU(MainWin_About, MainWindow::OnAbout)
   EVT_MENU(MainWin_IntHelp, MainWindow::OnIntegratedHelp)
@@ -215,11 +217,15 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   HelpMenu->Append(MainWin_IntHelp, "&Show Integrated Help");
   HelpMenu->Append(MainWin_About, "&About...");
   
+  WindowMenu->Append(MainWin_SwitchRack, "Switch &Rack/Optional view\tTAB");
+  WindowMenu->Append(MainWin_SwitchSeq, "Switch &Sequencer/Optional view\tCtrl+TAB");
+  WindowMenu->AppendSeparator();
   WindowMenu->AppendCheckItem(MainWin_FloatTransport, "Floating Transport");
   WindowMenu->AppendCheckItem(MainWin_FloatSequencer, "Floating Sequencer");
   WindowMenu->AppendCheckItem(MainWin_FloatRacks, "Floating Racks");
-  WindowMenu->AppendCheckItem(MainWin_FloatView, "Floating View");
-  WindowMenu->Append(MainWin_FullScreen, "&Fullscreen");
+  WindowMenu->AppendCheckItem(MainWin_FloatView, "Floating Optional View");
+  WindowMenu->AppendSeparator();
+  WindowMenu->AppendCheckItem(MainWin_FullScreen, "&Fullscreen");
   
   MenuBar->Append(FileMenu, "&File");
   MenuBar->Append(EditMenu, "&Edit");
@@ -271,6 +277,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   LoadPlugins();
 
   RackModeView = true;
+  SeqModeView = true;
 
   // Taille minimum de la fenetre
   SetSizeHints(400, 300);
@@ -886,15 +893,30 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
     }
 }
 
-void					MainWindow::OnSwitchRackOptView()
+void MainWindow::OnSwitchRackOptViewEvent(wxCommandEvent &event)
 {
+  SwitchRackOptView();
+}
+
+void MainWindow::OnSwitchSeqOptViewEvent(wxCommandEvent &event)
+{
+  SwitchSeqOptView();
+}
+
+void					MainWindow::SwitchRackOptView()
+{
+  if (!SeqModeView)
+    SwitchSeqOptView();
+
   RackModeView = !RackModeView;
   if (RackModeView)
     {
+      OptPanel->Show(false);
       OptPanel->SetSize(wxSize(470, 150));
       OptPanel->Reparent(this);
       
       RackPanel->Reparent(split);      
+      OptPanel->Show(true);
       //split->SplitHorizontally(RackPanel, SeqPanel);
       split->ReplaceWindow(OptPanel, RackPanel);
 
@@ -921,6 +943,55 @@ void					MainWindow::OnSwitchRackOptView()
       BottomSizer = new wxBoxSizer(wxHORIZONTAL);
       BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
       BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL, 2); 
+  
+      TopSizer = new wxBoxSizer(wxVERTICAL);
+      
+      TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
+      TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
+      SetSizer(TopSizer);
+    }
+}
+
+void					MainWindow::SwitchSeqOptView()
+{
+  if (!RackModeView)
+    SwitchRackOptView();
+
+  SeqModeView = !SeqModeView;
+  if (SeqModeView)
+    {
+      OptPanel->Show(false);
+      OptPanel->SetSize(wxSize(470, 150));
+      OptPanel->Reparent(this);
+      
+      SeqPanel->Reparent(split);      
+      OptPanel->Show(true);
+      //split->SplitHorizontally(SeqPanel, SeqPanel);
+      split->ReplaceWindow(OptPanel, SeqPanel);
+
+      BottomSizer = new wxBoxSizer(wxHORIZONTAL);
+      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
+      BottomSizer->Add(OptPanel, 1, wxEXPAND | wxALL, 2); 
+  
+      TopSizer = new wxBoxSizer(wxVERTICAL);
+      
+      TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
+      TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
+      SetSizer(TopSizer);
+    }
+  else
+    {
+      SeqPanel->SetSize(wxSize(470, 150));
+      SeqPanel->Reparent(this);
+      SeqPanel->SetPosition(wxPoint(306, 452));
+      
+      OptPanel->Reparent(split);
+      split->ReplaceWindow(SeqPanel, OptPanel);
+      //split->SplitHorizontally(OptPanel, SeqPanel);
+
+      BottomSizer = new wxBoxSizer(wxHORIZONTAL);
+      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
+      BottomSizer->Add(SeqPanel, 1, wxEXPAND | wxALL, 2); 
   
       TopSizer = new wxBoxSizer(wxVERTICAL);
       

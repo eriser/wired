@@ -69,6 +69,7 @@ void WaveLoop::OnSliceMove(wxCommandEvent &event)
       g = (SliceGui *)((*i)->Data);
       if ((*i)->Data == event.GetClientData())
 	{
+	  cout << "okkkkk" << endl;
 	  g->SetPosition(wxPoint(event.GetInt() + g->GetPosition().x, 
 				 -1));
 	  for (j = Slices->begin(); j != Slices->end(); j++)

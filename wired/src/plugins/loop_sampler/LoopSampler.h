@@ -118,7 +118,7 @@ protected:
   float ReleaseCoef;
   float Envelope;
 
-  int	 BarCount;
+  double BarCount;
   int	 BeatCount;
   float	 Volume;
   float	 Attack;
