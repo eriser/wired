@@ -175,20 +175,6 @@ void				ASPlugPanel::OnDetachPlugClick(wxCommandEvent &event)
 
 void				ASPlugPanel::OnClosePlugClick(wxCommandEvent &event)
 {
-  vector<ASPlug *>::iterator	i;
-  
-  if (CurrentPlug && (CurrentPlug->Type != ID_TOOL_MIXER_OPTIONPANEL) 
-      && (CurrentPlug->Type != ID_TOOL_HELP_OPTIONPANEL))
-    {
-      for (i = PlugsList.begin(); i != PlugsList.end(); i++)
-	if (*i == CurrentPlug)
-	  {	    
-	    PlugsList.erase(i);
-	    break;
-	  }     
-      delete CurrentPlug;
-      ShowLastPlug();
-    }
 }
 
 void				ASPlugPanel::OnSelectPlug(wxCommandEvent &event)
