@@ -22,6 +22,7 @@ BEGIN_EVENT_TABLE(FaderCtrl, wxWindow)
   EVT_MOTION(FaderCtrl::OnMouseEvent) 
   EVT_PAINT(FaderCtrl::OnPaint)
   EVT_LEFT_DOWN(FaderCtrl::OnMouseEvent)
+  EVT_RIGHT_DOWN(FaderCtrl::OnMouseEvent)
   EVT_KEY_DOWN(FaderCtrl::OnKeyDown)
   EVT_ENTER_WINDOW(FaderCtrl::OnEnterWindow)
 END_EVENT_TABLE()
@@ -108,6 +109,8 @@ void FaderCtrl::OnMouseEvent(wxMouseEvent &event)
 	  GetEventHandler()->ProcessEvent(e);
 	}
     }
+  else if (event.RightDown())
+    wxPostEvent(GetParent(), event);
 }
 
 

@@ -150,7 +150,7 @@ long HostCallback(Plugin *plug, long param, void *value)
 
 	Controller->ShowModal();
 	int *midi_msg = *(int **)value;
-	midi_msg[0] = Controller->Channel;
+	midi_msg[0] = Controller->Type;
 	midi_msg[1] = Controller->Controller;
 	midi_msg[2] = Controller->Value;
 
