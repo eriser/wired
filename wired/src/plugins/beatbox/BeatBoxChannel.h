@@ -52,14 +52,14 @@ class BeatNote
       State = state;
       Position = pos;
       BarPos = bpos;
-      Start = End = Len = Pitch = Vel = Lev = 1.0f;
+      Start = End = Pitch = Vel = Lev = 1.0f;
     }
   ~BeatNote() {}
   
   double	Position;
   double	BarPos;
   bool		Reversed;
-  float		Start, End, Len;
+  float		Start, End;
   float		Vel, Pitch, Lev;
   unsigned int  State;
 };
@@ -80,7 +80,6 @@ class BeatNoteToPlay
       Lev = bn->Lev;
       Start = bn->Start;
       End = bn->End;
-      Len = bn->Len;
       Reversed = bn->Reversed;
       Delta = delta;
       OffSet = 0;
@@ -94,7 +93,7 @@ class BeatNoteToPlay
   int		NoteNum;
   unsigned int	NumChan;
   long		OffSet;
-  float		Start, End, Len;
+  float		Start, End;
   float		Vel, Pitch, Lev;
   bool		Reversed;
   float**	Buffer;
@@ -117,6 +116,20 @@ class BeatBoxChannel : public wxWindow
   void		OnEnterWindow(wxMouseEvent& event);
   void		OnLeave(wxMouseEvent& event);
   
+  void		OnSelectHelp(wxMouseEvent& event);
+  void		OnLoadHelp(wxMouseEvent& event);
+  void		OnReverseHelp(wxMouseEvent& event);
+  void		OnMuteHelp(wxMouseEvent& event);
+  void		OnSoloHelp(wxMouseEvent& event);
+  void		OnPlayHelp(wxMouseEvent& event);
+  void		OnLevHelp(wxMouseEvent& event);
+  void		OnBalHelp(wxMouseEvent& event);
+  void		OnStaHelp(wxMouseEvent& event);
+  void		OnEndHelp(wxMouseEvent& event);
+  void		OnPitHelp(wxMouseEvent& event);
+  void		OnVelHelp(wxMouseEvent& event);
+  void		OnPolHelp(wxMouseEvent& event);
+  
   void		OnSelectChannel(wxCommandEvent& event);
   void		OnLoadSound(wxCommandEvent& event);
   void		OnPlaySound(wxCommandEvent& event);
@@ -128,7 +141,6 @@ class BeatBoxChannel : public wxWindow
   void		OnBalChange(wxScrollEvent& event);
   void		OnStartChange(wxScrollEvent& event);
   void		OnEndChange(wxScrollEvent& event);
-  void		OnLenChange(wxScrollEvent& event);
   void		OnPitchChange(wxScrollEvent& event);
   void		OnVelChange(wxScrollEvent& event);
   void		OnPolyphonyChange(wxCommandEvent& e);
@@ -157,7 +169,7 @@ class BeatBoxChannel : public wxWindow
   bool		Selected;
   bool		Reversed;
   float		Lev, Pitch, Vel;
-  float		Start, End, Len;
+  float		Start, End;
   
   list<BeatNote*>*
     Rythms;
@@ -180,7 +192,6 @@ class BeatBoxChannel : public wxWindow
   HintedKnob*	KnobBal;
   HintedKnob*	KnobStart;
   HintedKnob*	KnobEnd;
-  HintedKnob*	KnobLen;
   HintedKnob*	KnobPitch;
   HintedKnob*	KnobVel;
   CycleKnob*	PolyKnob;
@@ -190,17 +201,15 @@ DECLARE_EVENT_TABLE()
 enum
   {
     BC_Select = 1,
-    BC_OnLoadSound,
-    BC_Velocity,
+    BC_LoadSound,
     BC_ReverseSound,
     BC_Mute,
     BC_Solo,
-    BC_OnPlaySound,
+    BC_PlaySound,
     BC_Lev,
     BC_Bal,
     BC_Sta,
     BC_End,
-    BC_Len,
     BC_Pit,
     BC_Vel,
     BC_Pol

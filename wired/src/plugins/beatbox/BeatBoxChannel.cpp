@@ -13,22 +13,21 @@ BEGIN_EVENT_TABLE(BeatBoxChannel, wxWindow)
   EVT_MOTION(BeatBoxChannel::OnMouseEvent)
   EVT_ENTER_WINDOW(BeatBoxChannel::OnEnterWindow)
   EVT_LEAVE_WINDOW(BeatBoxChannel::OnLeave)
-
+  
   EVT_COMMAND_SCROLL(BC_Lev, BeatBoxChannel::OnLevChange)
   EVT_COMMAND_SCROLL(BC_Bal, BeatBoxChannel::OnBalChange)
   EVT_COMMAND_SCROLL(BC_Sta, BeatBoxChannel::OnStartChange)
   EVT_COMMAND_SCROLL(BC_End, BeatBoxChannel::OnEndChange)
-  EVT_COMMAND_SCROLL(BC_Len, BeatBoxChannel::OnLenChange)
   EVT_COMMAND_SCROLL(BC_Pit, BeatBoxChannel::OnPitchChange)
   EVT_COMMAND_SCROLL(BC_Vel, BeatBoxChannel::OnVelChange)
   
   EVT_BUTTON(BC_Pol, BeatBoxChannel::OnPolyphonyChange)
   EVT_BUTTON(BC_Select, BeatBoxChannel::OnSelectChannel)
-  EVT_BUTTON(BC_OnLoadSound, BeatBoxChannel::OnLoadSound)
+  EVT_BUTTON(BC_LoadSound, BeatBoxChannel::OnLoadSound)
   EVT_BUTTON(BC_ReverseSound, BeatBoxChannel::ReverseSound)
   EVT_BUTTON(BC_Mute, BeatBoxChannel::OnMute)
   EVT_BUTTON(BC_Solo, BeatBoxChannel::OnSolo)
-  EVT_BUTTON(BC_OnPlaySound, BeatBoxChannel::OnPlaySound)
+  EVT_BUTTON(BC_PlaySound, BeatBoxChannel::OnPlaySound)
 END_EVENT_TABLE()
 
 
@@ -44,7 +43,6 @@ inline BeatNoteToPlay::BeatNoteToPlay(int notenum, float vel,
       Pitch = c->Pitch;
       Start = c->Start;
       End = c->End;
-      Len = c->Len;
       Reversed = c->Reversed;
       Buffer = b;
       OffSet = 0;
@@ -64,7 +62,6 @@ BeatNoteToPlay::BeatNoteToPlay(BeatBoxChannel* c, float** buf)
   NumChan = c->Id;
   NoteNum = 0;
   Start = c->Start;
-  Len = c->Len;
   End = c->End;
   Pitch = c->Pitch;
   Vel = c->Vel;
@@ -100,7 +97,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   DRM31 = drm31;
   
   Start = 0.f;
-  End = Len = 1.f;
+  End = 1.f;
   Lev = Vel = Pitch = 1.0f;
   Reversed = false;
   Muted = false;
@@ -125,7 +122,6 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   WaveLabel->SetForegroundColour(*wxWHITE);
   WaveLabel->Show();
   
-  
   /* Channels Buttons */
   wxImage* bmp_su = 
     new wxImage(string(DataDir + string(SELECT_UP)).c_str(),
@@ -146,13 +142,10 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
     new wxImage(string(DataDir + string(CH_PLAY_DO)).c_str(),
 		wxBITMAP_TYPE_PNG);
   if (bmp_pu && bmp_pd)
-    PlayButton = new DownButton( this, BC_OnPlaySound, 
+    PlayButton = new DownButton( this, BC_PlaySound, 
 				 wxPoint(28,34), 
 				 wxSize(21,18),
 				 bmp_pu, bmp_pd, true );
-  
-  
-  
   
   wxImage *bmp1 = 
     new wxImage(string(DataDir + string(CH_LOAD_UP)).c_str(),
@@ -161,7 +154,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
     new wxImage(string(DataDir + string(CH_LOAD_DO)).c_str(),
 		wxBITMAP_TYPE_PNG);
   if (bmp1 && bmp2)
-    new DownButton( this, BC_OnLoadSound, 
+    new DownButton( this, BC_LoadSound, 
 		    wxPoint(2,34), 
 		    wxSize(14,15),
 		    bmp1, bmp2, true );
@@ -188,7 +181,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
     SoloButton = 
       new DownButton( this, BC_Solo, wxPoint(33, 18), wxSize(14,14), 
 		      bmp1, bmp2, false );
-
+  
   bmp1 =
     new wxImage(string(DataDir + string(MUTE_UP)).c_str(),
 		wxBITMAP_TYPE_PNG);
@@ -213,7 +206,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   
   bmp1 = new wxImage(string(DataDir + string(CH_KNOB_PAN_CENTER)).c_str(),
 		     wxBITMAP_TYPE_PNG);
- 
+  
   if (bmp1 && bmp2)
     KnobBal = 
       new HintedKnob(this, BC_Bal, this->GetParent(), bmp1, bmp2, 
@@ -221,7 +214,6 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		     wxPoint(18,92), wxSize(15,16), 
 		     GetPosition() + wxPoint(40,110));
   
- 
   bmp1 = new wxImage(string(DataDir + string(CH_KNOB_CENTER)).c_str(),
 		     wxBITMAP_TYPE_PNG);
   if (bmp1 && bmp2)
@@ -236,12 +228,6 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
 		       0, 100, 100, 1,
 		       wxPoint(34,138), wxSize(9,9), 
 		       GetPosition() + wxPoint(32,114));
-      /*  KnobLen = 
-	new HintedKnob(this, BC_Len, this->GetParent(), bmp1, bmp2,
-		       0, 100, 100, 1,
-		       wxPoint(16, 127), wxSize(8,8), 
-		       GetPosition() + wxPoint(24,135));
-      */
       KnobPitch = 
 	new HintedKnob(this, BC_Pit, this->GetParent(), bmp1, bmp2, 
 		       0, 127, 100, 1,
@@ -268,6 +254,55 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   VoicesLabel->SetFont(wxFont(8, wxBOLD, wxBOLD, wxBOLD));
   VoicesLabel->SetForegroundColour(*wxWHITE);
   VoicesLabel->Show();
+
+  /* Help */
+  
+  /*
+    Connect(GetId(), wxEVT_ENTER_WINDOW,
+    (wxObjectEventFunction)(wxEventFunction) 
+    (wxMouseEventFunction)&BeatBoxChannel::OnEnterWindow);
+  */
+  
+  Connect(BC_Select, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnSelectHelp);
+  Connect(BC_LoadSound, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnLoadHelp);
+  Connect(BC_ReverseSound, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnReverseHelp);
+  Connect(BC_Mute, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnMuteHelp);
+  Connect(BC_Solo, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnSoloHelp);
+  Connect(BC_PlaySound, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnPlayHelp);
+  Connect(BC_Lev, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnLevHelp);
+  Connect(BC_Bal, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnBalHelp);
+  Connect(BC_Sta, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnStaHelp);
+  Connect(BC_End, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnEndHelp);
+  Connect(BC_Pit, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnPitHelp);
+  Connect(BC_Vel, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnVelHelp);
+  Connect(BC_Pol, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&BeatBoxChannel::OnPolHelp);
+  
 }
 
 BeatBoxChannel::~BeatBoxChannel()
@@ -319,15 +354,6 @@ void BeatBoxChannel::OnEndChange(wxScrollEvent& WXUNUSED(event))
   End = end;
   PatternMutex->Unlock();
 
-}
-
-void BeatBoxChannel::OnLenChange(wxScrollEvent& WXUNUSED(event))
-{
-  float len = static_cast<float>(KnobLen->GetValue()/100.0f);
-  PatternMutex->Lock();
-  Len = len;
-  PatternMutex->Unlock();
-  
 }
 
 void BeatBoxChannel::OnPitchChange(wxScrollEvent& WXUNUSED(event))
@@ -545,10 +571,89 @@ void BeatBoxChannel::OnMouseEvent(wxMouseEvent& event)
 
 void BeatBoxChannel::OnEnterWindow(wxMouseEvent& event)
 { 
+  cout << "entering channel" << endl;
   wxPostEvent(GetParent(), event);
 }
 
 void BeatBoxChannel::OnLeave(wxMouseEvent& event)
 {
   wxPostEvent(GetParent(), event);
+}
+
+void BeatBoxChannel::OnSelectHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Use this button to display and edit the tracker associated to this channel");
+}
+
+void BeatBoxChannel::OnLoadHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Use this button to open the sound file browser");
+}
+
+void BeatBoxChannel::OnReverseHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Invert playing order of samples");
+}
+
+void BeatBoxChannel::OnMuteHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Mute the channel");
+}
+
+void BeatBoxChannel::OnSoloHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Mute all other channels");
+}
+
+void BeatBoxChannel::OnPlayHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Play the sound instantaneously");
+}
+
+void BeatBoxChannel::OnLevHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Set level of the channel");
+}
+
+void BeatBoxChannel::OnBalHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Pan left - right");
+}
+
+void BeatBoxChannel::OnStaHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Set the starting point of the playing sound");
+}
+
+void BeatBoxChannel::OnEndHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Set the ending point of the playing sound");
+}
+
+void BeatBoxChannel::OnPitHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Set channel's pitch");
+}
+
+void BeatBoxChannel::OnVelHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Set channel's velocity");
+}
+
+void BeatBoxChannel::OnPolHelp(wxMouseEvent& event)
+{
+  if (DRM31->HelpMode)
+    DRM31->SendHelp("Set the number of voices for this channel");
 }
