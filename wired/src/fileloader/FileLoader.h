@@ -30,7 +30,6 @@
 #include "akai.h"
 #include "Settings.h"
 
-using namespace std;
 using std::string;
 using std::vector;
 
@@ -83,8 +82,6 @@ class FileLoader: public wxDialog
 
   void OnDeleteRecent(wxCommandEvent &e);
 
-  void OnKeyDown(wxKeyEvent &e);
-
   void ListDirectories(wxTreeItemId);
   void ListFiles(string);
   void ListAkaiCD(wxTreeItemId);
@@ -121,11 +118,10 @@ class FileLoader: public wxDialog
   wxBitmapButton *favdel;
   bool		akai;
   bool		save;
-  akaiImage *img;
+  int		akaifd;
 
   string	favdir;
   string	mrudir;
-  string  OldPath;
 
   DECLARE_EVENT_TABLE()
 };

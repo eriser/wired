@@ -94,24 +94,21 @@ cImportAkaiAction::cImportAkaiAction (string path, bool kind)
 
 void cImportAkaiAction::Do ()
 {
-  akaiImage *img = new akaiImage(mDevice);
-  akaiSample *smp = img->getSample(mPart + "/" + mPath + "/" + mName);
-  //t_akaiSample *sample = akaiGetSampleByName((char *)mDevice.c_str(), mPart, (char *)mPath.c_str(), (char *)mName.c_str());
-  if (smp != NULL)
+  t_akaiSample *sample = akaiGetSampleByName((char *)mDevice.c_str(), mPart, (char *)mPath.c_str(), (char *)mName.c_str());
+  if (sample != NULL)
   {
     try
       {
-	       WaveFile *w = new WaveFile(smp->getSample(), smp->getSize(), 2, smp->getRate());
-	       Track *t = SeqPanel->AddTrack(true);
-	       t->AddPattern(w);
+	WaveFile *w = new WaveFile(sample->buffer, sample->size, 2, sample->rate);
+	Track *t = SeqPanel->AddTrack(true);
+	t->AddPattern(w);
       }
     catch (...)
       {	
 	; // FIXME we want to do something here ..
       }
-    delete smp;
+    delete sample;
   }
-  delete img;
   NotifyActionManager();
 }
    
