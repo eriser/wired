@@ -14,10 +14,6 @@
 static wxString EFFECTSNAMES[NB_EFFECTS] = {
   ASEnvel::GetFXName(),
   ASLoop::GetFXName(),
-  /*
-  _T("Enveloppe"),
-  _T("Looping")
-  */
 };
 // FIN DES EFFETS
 
@@ -475,7 +471,11 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
       else
         end = 0;
       n->Key->ass->GetSample()->SetPitch(n->Key->Pitch);
+      long pos = n->Position;
       n->Key->ass->GetSample()->Read(n->Buffer, n->Position, length, n->Delta, &(n->Position));
+      ASPlugin *p = n->Key->ass->GetEffect();
+      if (p)
+        p->Process(n->Buffer, 2, pos, length);
 
       if (n->Volume != 1.f)
         for (chan = 0; chan < 2; chan++)
@@ -731,6 +731,36 @@ void AkaiSampler::OnKgroupButton(wxCommandEvent &event)
   }
 }
 
+void AkaiSampler::OnSelectEffect(wxCommandEvent &event)
+{
+  ASListEntry *e = Samples->List->GetSelected();
+  if (e)
+  {
+    ASamplerSample *ass = (ASamplerSample *)(e->GetEntry());
+    ASPlugin *p;
+    switch (event.GetId())
+    {
+      case 1:
+        // Enveloppe
+        p = new ASEnvel(EFFECTSNAMES[0] + " for " + e->GetName());
+        break;
+      case 2:
+        // Looping
+        p = new ASLoop(EFFECTSNAMES[1] + " for " + e->GetName());
+        break;
+      default:
+        p = NULL;
+    }
+    if (p)
+    {
+      p->SetSample(ass);
+      ass->SetEffect(p);
+      PlugPanel->AddPlug(p);
+      PlugPanel->ShowPlugin(p);
+    }
+  }
+}
+
 void AkaiSampler::OnEffectButton(wxCommandEvent &event)
 {
   ASListEntry *e = Samples->List->GetSelected();
@@ -740,12 +770,19 @@ void AkaiSampler::OnEffectButton(wxCommandEvent &event)
     ASPlugin *p = ass->GetEffect();
     if (!p)
     {
-      p = new ASLoop(wxString("Looping for ") + e->GetName());
-      p->SetSample(ass);
-      ass->SetEffect(p);
-      PlugPanel->AddPlug(p);
+      wxMenu *menu = new wxMenu();
+      for (int k = 1; k <= NB_EFFECTS; k++)
+      {
+        menu->Append(k, EFFECTSNAMES[k - 1]);
+        Connect(k, wxEVT_COMMAND_MENU_SELECTED,
+            (wxObjectEventFunction)(wxEventFunction)
+            (wxCommandEventFunction)&AkaiSampler::OnSelectEffect);
+      }
+      wxPoint pt(((wxWindow *)event.GetEventObject())->GetPosition());
+      PopupMenu(menu, pt.x, pt.y);
     }
-    PlugPanel->ShowPlugin(p);
+    if (p)
+      PlugPanel->ShowPlugin(p);
   }
 }
 

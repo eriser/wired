@@ -30,3 +30,7 @@ void ASPlugin::OnAttach(wxWindow *w)
 void ASPlugin::OnDetach(wxWindow *w)
 {
 }
+
+void ASPlugin::Process(float **buf, int nbchan, int pos, long len)
+{
+}

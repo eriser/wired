@@ -15,6 +15,7 @@ class ASPlugin : public wxPanel
     virtual void OnDetach(wxWindow *);
     void SetPlugin(Plugin *p) { this->p = p; }
     void SetSample(class ASamplerSample *ass) { this->ass = ass; }
+    virtual void Process(float **buf, int nbchan, int pos, long len);
     static const wxString GetFXName() { return "ASPlugin"; }
   protected:
     Plugin *p;

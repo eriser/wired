@@ -53,10 +53,15 @@ void ASLoop::OnPaint(wxPaintEvent &e)
   if (wv && ass)
   {
     wv->OnPaint(e);
-    wxMemoryDC *mdc = wv->GetWaveDC();
+    wxMemoryDC mdc;
+    wxBitmap *bmp = wv->GetBitmap();
     wxPaintDC dc(this);
     dc.BeginDrawing();
-    dc.Blit(0, 0, GetSize().GetWidth(), GetSize().GetHeight(), mdc, 0, 0, wxCOPY, FALSE);
+    if (bmp)
+    {
+      mdc.SelectObject(*bmp);
+      dc.Blit(0, 0, GetSize().GetWidth(), GetSize().GetHeight(), &mdc, 0, 0, wxCOPY, FALSE);
+    }
     int x;
     dc.SetPen(wxPen(wxColor(0x00, 0x00, 0xFF), 2));
     x = (GetSize().GetWidth() * ass->GetLoopStart()) / ass->GetSample()->GetNumberOfFrames();
