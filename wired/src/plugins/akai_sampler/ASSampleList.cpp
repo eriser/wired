@@ -74,21 +74,8 @@ void  ASSampleList::OnAddSample(wxCommandEvent &e)
     ASamplerSample *ass = new ASamplerSample(w);
     List->AddEntry(wxString(s.substr(i, s.length() - i).c_str()), ass);
     ASamplerKeygroup *askg = new ASamplerKeygroup(fk, fk + 11);
-    wxString s = "Keygroup ";
-    int oct = fk / 12 - 2;
-    int note = fk % 12;
-    wxString notes[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-    s += notes[note];
-    s += ' ';
-    s << oct;
-    s += " - ";
-    oct = (fk + 11) / 12 - 2;
-    note = (fk + 11) % 12;
-    s += notes[note];
-    s += ' ';
-    s << oct;
     fk += 12;
-    Keygroups->List->AddEntry(s, askg);
+    Keygroups.push_back(askg);
     askg->SetSample(ass);
     ass->SetKeygroup(askg);
   }

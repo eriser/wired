@@ -41,7 +41,6 @@ class ASamplerSample
       this->loopcount = -1;
       this->loopstart = 0;
       this->loopend = w->GetNumberOfFrames();
-      this->effect = NULL;
     }
 
     ASamplerSample(t_akaiSample *smp, wxString AkaiPrefix, unsigned long id = 0)
@@ -58,9 +57,13 @@ class ASamplerSample
           sampleid = id + 1;
       this->id = id;
       this->loopcount = smp->loop_times;
-      this->loopstart = smp->loop_start / 2;
-      this->loopend = smp->loop_len / 2;
-      this->effect = NULL;
+      if (loopcount == 9999)
+        loopcount = -1;
+      this->loopstart = smp->loop_len / 2;
+      this->loopend = smp->loop_start / 2;
+      if (loopend > w->GetNumberOfFrames())
+        loopend = w->GetNumberOfFrames();
+      cout << "[WiredSampler] AKAI Sample Loaded, loopcount= " << loopcount << " loopstart= " << loopstart << " loopend= " << loopend << endl;
     }
 
     void SetKeygroup(ASamplerKeygroup *askg) { this->askg = askg; }
@@ -76,8 +79,8 @@ class ASamplerSample
     void SetLoopCount(int count) { loopcount = count; }
     void SetLoopStart(long start) { loopstart = start; }
     void SetLoopEnd(long end) { loopend = end; }
-    void SetEffect(ASPlugin *effect) { this->effect = effect; }
-    ASPlugin *GetEffect() { return effect; }
+    void AddEffect(ASPlugin *effect) { this->effects.push_back(effect); }
+    vector<ASPlugin *> GetEffects() { return effects; }
   private:
     WaveFile *w;
     ASamplerKeygroup *askg;
@@ -87,7 +90,7 @@ class ASamplerSample
     long loopstart;
     long loopend;
     int loopcount;
-    ASPlugin *effect;
+    vector<ASPlugin *> effects;
 };
 
 class ASamplerKey
@@ -148,6 +151,7 @@ class ASamplerKeygroup
     unsigned long id;
 };
 
+/*
 class ASKeygroupList : public ASPlugin
 {
   public:
@@ -164,8 +168,10 @@ class ASKeygroupList : public ASPlugin
 
   DECLARE_EVENT_TABLE()
 };
+*/
 
-extern ASKeygroupList *Keygroups;
+//extern ASKeygroupList *Keygroups;
+extern vector <ASamplerKeygroup*> Keygroups;
 
 /*
 enum 

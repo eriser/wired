@@ -37,6 +37,9 @@ enum
   };
 
 class ASPlug;
+class ASPlugPanel;
+
+extern ASPlugPanel *PlugPanel;
 
 class ASPlugFrame: public wxFrame
 {
@@ -47,7 +50,7 @@ class ASPlugFrame: public wxFrame
 
  public:
   ASPlugFrame(ASPlug *t, wxString s) :
-    wxFrame(0x0, -1, s, wxDefaultPosition, wxSize(400, 200)),
+    wxFrame(NULL, -1, s, wxDefaultPosition, wxSize(400, 200)),
     Plug(t) 
     {
       Connect(GetId(), wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)(wxEventFunction)
@@ -113,6 +116,5 @@ class ASPlugPanel: public wxPanel
   DECLARE_EVENT_TABLE()
 };
 
-extern ASPlugPanel *PlugPanel;
 
 #endif
