@@ -29,7 +29,7 @@ class MidiPattern: public Pattern
   
   vector<MidiEvent *>	Events;
   list<MidiEvent *>	temp;
-  list<MidiEvent *>	RecordingEvents;  // Evenements en train d'etre record (attente d'un NOTE OFF)
+  list<MidiEvent *>	RecordingEvents;  // Events being record (waits for NOTE OFF)
 
  protected:
   void			Init();
@@ -41,7 +41,8 @@ class MidiPattern: public Pattern
   void			OnMoveToCursorClick(wxCommandEvent &e);
   void			OnPaint(wxPaintEvent &e);
   
-  wxColour		BorderColour;
+  wxColour		DrawColour;	// Colour used for drawing
+  wxColour		Colour;		// Keeps original pattern color
   wxBitmap		*Bmp;
   wxMemoryDC		memDC;
 

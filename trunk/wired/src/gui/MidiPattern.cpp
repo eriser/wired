@@ -21,7 +21,6 @@ MidiPattern::MidiPattern(double pos, double endpos, long trackindex)
   : Pattern(pos, endpos, trackindex)//,
   //    wxWindow(SeqPanel->SeqView, -1, Pattern::GetPosition(), Pattern::GetSize())
 {
-  cout << "Endpos: " << EndPosition << endl;
   Init();
 }
 
@@ -49,10 +48,12 @@ void				MidiPattern::Init()
   wxString	s;
 
   s.Printf("Midi Pattern %d", midi_pattern_count++);
+  DrawColour = CL_MIDI_DRAW;
+  Colour = DrawColour;
   Name = s.c_str();
   ppqn = 1;
   Bmp = 0x0;
-  BorderColour = CL_WAVE_DRAW;
+
   Connect(GetId(), wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &MidiPattern::OnMotion);
   Connect(GetId(), wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
@@ -76,9 +77,11 @@ void				MidiPattern::SetSelected(bool sel)
 {
   Pattern::SetSelected(sel);
   if (sel)
-    BorderColour = CL_PATTERN_SEL;
+    DrawColour = CL_PATTERN_SEL;
   else
-    BorderColour = CL_PATTERN_NORM;
+    DrawColour = Colour;
+
+  DrawMidi();
   wxWindow::Refresh(true);
 }
 
@@ -99,6 +102,15 @@ void				MidiPattern::OnClick(wxMouseEvent &e)
     {
       /* SPLIT MIDI PATTERN CODE HERE */
     }
+  else if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
+      {
+	Colour = SeqPanel->ColorBox->GetColor();
+	DrawColour = Colour;
+
+	DrawMidi();
+	Refresh();
+      }
+
 }
 
 void				MidiPattern::OnDoubleClick(wxMouseEvent &e)
@@ -208,11 +220,11 @@ void				MidiPattern::DrawMidi()
   Bmp = new wxBitmap(size_x, size_y);
   memDC.SelectObject(*Bmp);
 
-  memDC.SetPen(BorderColour);
+  memDC.SetPen(DrawColour);
   memDC.SetBrush(CL_SEQ_BACKGROUND);
   memDC.DrawRectangle(0, 0, size_x, size_y);
 
-  memDC.SetPen(CL_MIDI_DRAW);
+  //memDC.SetPen(DrawColour);
 
   inc = size_y / 127.f;
 
@@ -230,7 +242,7 @@ void				MidiPattern::OnPaint(wxPaintEvent &e)
   wxSize			s = wxWindow::GetSize();
   wxRegionIterator		region;
  
-  dc.SetPen(BorderColour);
+  dc.SetPen(DrawColour);
   if (Bmp)
     {
       for(region = GetUpdateRegion(); region; region++)
