@@ -2,7 +2,6 @@
 #include "midi.h"
 #include <stdio.h>
 #include <math.h>
-#include "FileLoader.h"
 #include <wx/progdlg.h>
 #include "ASPlugPanel.h"
 #include "ASEnvel.h"
@@ -327,14 +326,14 @@ void AkaiSampler::ProcessEvent(WiredEvent &event)
 
 void AkaiSampler::OnOpenFile(wxCommandEvent &event)
 {
-  FileLoader *dlg = new FileLoader(this, -1, "Load AKAI patch", true, false, NULL);
-  if (dlg->ShowModal() == wxID_OK)
+  //  FileLoader *dlg = new FileLoader(this, -1, "Load AKAI patch", true, false, NULL);
+  string s = OpenFileLoader("Load AKAI program", 0x0, true);
+  if (!s.empty()) //dlg->ShowModal() == wxID_OK)
   {
-    string filename = dlg->GetSelectedFile();
-    dlg->Destroy();
+    string filename = s; //dlg->GetSelectedFile();
+    //dlg->Destroy();
 
-
-    wxProgressDialog *Progress = new wxProgressDialog("Loading AKAI patch",
+    wxProgressDialog *Progress = new wxProgressDialog("Loading AKAI program",
         "Please wait...",
         100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
         | wxPD_REMAINING_TIME);
@@ -372,12 +371,12 @@ void AkaiSampler::OnOpenFile(wxCommandEvent &event)
     }
     catch (...)
     {
-      cout << "[SAMPLER] Cannot open AKAI patch !" << endl;
+      cout << "[SAMPLER] Cannot open AKAI program !" << endl;
     }
     delete Progress;
   }
-  else
-    dlg->Destroy();
+  //  else
+  //  dlg->Destroy();
 }
 
 void AkaiSampler::OnVolume(wxScrollEvent &event)
