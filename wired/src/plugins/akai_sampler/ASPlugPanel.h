@@ -98,17 +98,17 @@ class ASPlugPanel: public wxPanel
 
   wxBoxSizer			*TopSizer;
 
-  DownButton			*ListPlugBtn;
+//  DownButton			*ListPlugBtn;
   DownButton			*DetachPlugBtn;
-  DownButton			*ClosePlugBtn;
+//  DownButton			*ClosePlugBtn;
 
   vector<ASPlug *>		PlugsList;
   ASPlug        *CurrentPlug;
 
-  void				OnListPlugClick(wxCommandEvent &event);
+//  void				OnListPlugClick(wxCommandEvent &event);
   void				OnDetachPlugClick(wxCommandEvent &event);
-  void				OnClosePlugClick(wxCommandEvent &event);
-  void				OnSelectPlug(wxCommandEvent &event);
+//  void				OnClosePlugClick(wxCommandEvent &event);
+//  void				OnSelectPlug(wxCommandEvent &event);
 
   DECLARE_EVENT_TABLE()
 };

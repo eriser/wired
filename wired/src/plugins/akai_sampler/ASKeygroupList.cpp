@@ -3,9 +3,11 @@
 #include "ASSampleList.h"
 
 BEGIN_EVENT_TABLE(ASKeygroupList, wxWindow)
+  /*
   EVT_BUTTON(ASKeygroupList_AddKeygroup, ASKeygroupList::OnAddKeygroup)
   EVT_BUTTON(ASKeygroupList_DelKeygroup, ASKeygroupList::OnDelKeygroup)
   EVT_BUTTON(ASKeygroupList_EditKeygroup, ASKeygroupList::OnEditKeygroup)
+  */
   EVT_SIZE(ASKeygroupList::OnResize)
 END_EVENT_TABLE()
 
@@ -17,7 +19,7 @@ ASKeygroupList::ASKeygroupList(wxString Name) :
   ASPlugin(Name)
 {
   List = NULL;
-  p = NULL;
+  List = new ASList(this, -1, wxPoint(0, 0), GetSize());
 }
 
 ASKeygroupList::~ASKeygroupList()
@@ -35,19 +37,20 @@ wxWindow *ASKeygroupList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
   Reparent(panel);
   SetSize(sz);
   Move(pt);
-  List = new ASList(this, -1, wxPoint(0, 0), sz);
+  List->SetSize(sz);
   /*
   wxImage *btadd = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_ADD_KEYGROUP)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *btdel = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_DEL_KEYGROUP)).c_str(), wxBITMAP_TYPE_PNG);
   List->AddControl(new wxBitmapButton(List, ASKeygroupList_AddKeygroup, wxBitmap(btadd)));
   List->AddControl(new wxBitmapButton(List, ASKeygroupList_DelKeygroup, wxBitmap(btdel)));
-  */
   wxImage *btassign = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_EDIT_KEYGROUP)).c_str(), wxBITMAP_TYPE_PNG);
   List->AddControl(new wxBitmapButton(List, ASKeygroupList_EditKeygroup, wxBitmap(btassign)));
+  */
   Show(true);
   return this;
 }
 
+/*
 void  ASKeygroupList::OnAddKeygroup(wxCommandEvent &e)
 {
   wxString keys[128];
@@ -104,7 +107,7 @@ void  ASKeygroupList::OnEditKeygroup(wxCommandEvent &e)
   aske->Raise();
   aske->Show();
 }
-
+*/
  
 ASamplerKeygroup *ASKeygroupList::FindKeygroup(int key)
 {

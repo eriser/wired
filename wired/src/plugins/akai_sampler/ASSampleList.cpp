@@ -4,24 +4,11 @@
 #include "ASKeygroupEditor.h"
 #include "WaveFile.h"
 
-// ICI METTRE TOUS LES EFFETS
-
-#include "ASEnvel.h"
-#include "ASLoop.h"
-
-#define NB_EFFECTS 2
-static wxString EFFECTSNAMES[NB_EFFECTS] = {
-  _T("Enveloppe"),
-  _T("Looping")
-};
-
-// FIN DES EFFETS
-
 BEGIN_EVENT_TABLE(ASSampleList, wxWindow)
   EVT_BUTTON(ASSampleList_AddSample, ASSampleList::OnAddSample)
   EVT_BUTTON(ASSampleList_DelSample, ASSampleList::OnDelSample)
-  EVT_BUTTON(ASSampleList_AssignSample, ASSampleList::OnAssignSample)
-  EVT_BUTTON(ASSampleList_EffectSample, ASSampleList::OnEffectSample)
+//  EVT_BUTTON(ASSampleList_AssignSample, ASSampleList::OnAssignSample)
+//  EVT_BUTTON(ASSampleList_EffectSample, ASSampleList::OnEffectSample)
   EVT_SIZE(ASSampleList::OnResize)
 END_EVENT_TABLE()
 
@@ -33,7 +20,7 @@ ASSampleList::ASSampleList(wxString Name) :
 {
   List = NULL;
   p = NULL;
-  pp = NULL;
+//  pp = NULL;
 }
 
 ASSampleList::~ASSampleList()
@@ -52,14 +39,23 @@ wxWindow *ASSampleList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
   SetSize(sz);
   Move(pt);
   List = new ASList(this, -1, wxPoint(0, 0), sz);
-  wxImage *btadd = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_ADD_SAMPLE)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *btdel = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_DEL_SAMPLE)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *btadd_up = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_ADD_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *btdel_up = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_DEL_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *btadd_down = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_ADD_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *btdel_down = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_DEL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  /*
   wxImage *btassign = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_ASSIGN_SAMPLE)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *bteffect = new wxImage(string(p->GetDataDir() + string(IMAGE_BT_EFFECT_SAMPLE)).c_str(), wxBITMAP_TYPE_PNG);
-  List->AddControl(new wxBitmapButton(List, ASSampleList_AddSample, wxBitmap(btadd)));
-  List->AddControl(new wxBitmapButton(List, ASSampleList_DelSample, wxBitmap(btdel)));
+  */
+  //List->AddControl(new wxBitmapButton(List, ASSampleList_AddSample, wxBitmap(btadd)));
+  //List->AddControl(new wxBitmapButton(List, ASSampleList_DelSample, wxBitmap(btdel)));
+
+  List->AddControl(new DownButton(List, ASSampleList_AddSample, wxPoint(0, 0), wxSize(12, 12), btadd_up, btadd_down, true));
+  List->AddControl(new DownButton(List, ASSampleList_DelSample, wxPoint(0, 0), wxSize(12, 12), btdel_up, btdel_down, true));
+  /*
   List->AddControl(new wxBitmapButton(List, ASSampleList_AssignSample, wxBitmap(btassign)));
   List->AddControl(new wxBitmapButton(List, ASSampleList_EffectSample, wxBitmap(bteffect)));
+  */
   Show(true);
   return this;
 }
@@ -100,16 +96,15 @@ void  ASSampleList::OnAddSample(wxCommandEvent &e)
   
 void  ASSampleList::OnDelSample(wxCommandEvent &e)
 {
-  vector<ASListEntry *> v;
-  v = List->GetSelected();
-  vector<ASListEntry *>::iterator i;
-  for (i = v.begin(); i != v.end(); i++)
+  ASListEntry *ent;
+  ent = List->GetSelected();
+  if (ent)
   {
-    List->DelEntry((*i)->GetEntry());
-    delete (ASamplerSample *)(*i)->GetEntry();
+    List->DelEntry(ent->GetEntry());
+    delete (ASamplerSample *)ent->GetEntry();
   }
 }
-
+/*
 void  ASSampleList::OnAssignSample(wxCommandEvent &e)
 {
   vector<ASListEntry *> v;
@@ -183,3 +178,4 @@ void  ASSampleList::OnEffectSample(wxCommandEvent &e)
   wxPoint p(((wxWindow *)e.GetEventObject())->GetPosition());
   PopupMenu(menu, p.x, p.y);
 }
+*/

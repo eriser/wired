@@ -75,7 +75,7 @@ void ASListEntry::OnPaint(wxPaintEvent &e)
 
 void ASListEntry::OnClick(wxMouseEvent &e)
 {
-  selected = !selected;
+  ((ASList *)GetParent()->GetParent()->GetParent())->SetSelected(this);
   Refresh();
 }
 
@@ -134,20 +134,31 @@ void ASList::Repos()
   sw->SetScrollbars(10, 10, list->GetSize().GetWidth() / 10 - 2, list->GetSize().GetHeight() / 10, 0, 0, true);
 }
 
-vector<ASListEntry *> ASList::GetSelected()
+void ASList::SetSelected(ASListEntry *sel)
 {
-  vector<ASListEntry*> v;
+  vector<ASListEntry*>::iterator i;
+  for (i = entries.begin(); i != entries.end(); i++)
+    if ((*i) == sel)
+      (*i)->SetSelected(true);
+    else
+      (*i)->SetSelected(false);
+}
+
+ASListEntry * ASList::GetSelected()
+{
   vector<ASListEntry*>::iterator i;
   for (i = entries.begin(); i != entries.end(); i++)
     if ((*i)->IsSelected())
-      v.push_back(*i);
-  return v;
+      return (*i);
+  return NULL;
 }
 
 ASListEntry *ASList::AddEntry(wxString name, void *entry)
 {
   ASListEntry *asle = new ASListEntry(list, (int)entries.size(), wxPoint(0, ITEMHEIGHT * entries.size()), wxSize(GetSize().GetWidth(), ITEMHEIGHT), name, entry);
   entries.push_back(asle);
+  if (GetSelected() == NULL)
+    asle->SetSelected(true);
   Repos();
   Refresh();
   return asle;
@@ -162,13 +173,16 @@ void ASList::DelEntry(void *entry)
     {
       (*i)->Destroy();
       entries.erase(i);
+      if (GetSelected() == NULL)
+        if (entries.size())
+          entries[0]->SetSelected(true);
       Repos();
       Refresh();
       return;
     }
 }
 
-void  ASList::AddControl(wxControl *control)
+void  ASList::AddControl(wxWindow *control)
 {
   control->Reparent(buttons);
   control->SetSize(bpos.x, bpos.y, BUTTONSHEIGHT - 4, BUTTONSHEIGHT - 4);
