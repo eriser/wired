@@ -31,7 +31,7 @@ ASEnvelSeg::~ASEnvelSeg()
 int ASEnvelSeg::IsCtrlPoint(wxPoint p, int precision)
 {
   for (unsigned int i = 0; i < nbpts; i++)
-    if ((abs(p.x - ratiox * points[i].x) <= precision) && (abs(p.y - ratioy * points[i].y) <= precision))
+    if ((abs((int)(p.x - ratiox * points[i].x) <= precision)) && (abs((int)(p.y - ratioy * points[i].y)) <= precision))
       return i;
   return -1;
 }
