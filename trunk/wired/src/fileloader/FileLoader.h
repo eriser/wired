@@ -125,6 +125,7 @@ class FileLoader: public wxDialog
 
   string	favdir;
   string	mrudir;
+  string  OldPath;
 
   DECLARE_EVENT_TABLE()
 };

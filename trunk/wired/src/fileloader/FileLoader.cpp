@@ -23,9 +23,6 @@
 #include <unistd.h>
 #include <wx/file.h>
 #include <wx/filename.h>
-
-using namespace std;
-
 #include "FileLoader.h"
 #include "icon5.xpm"
 #include "icon3.xpm"
@@ -48,8 +45,6 @@ using namespace std;
 #define MRU_ID			2010
 #define DELFAVORITES_ID		2011
 #define DELMRU_ID		2012
-
-string  OldPath(""); // Used to store last visited path
 
   BEGIN_EVENT_TABLE(FileLoader, wxDialog)
   EVT_TREE_ITEM_EXPANDING(FOLDER_ID, FileLoader::OnExpandFolder)
