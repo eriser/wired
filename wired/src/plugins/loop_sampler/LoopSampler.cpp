@@ -880,10 +880,9 @@ void LoopSampler::Load(int fd, long size)
       read(fd, &(s->AffectMidi), sizeof (s->AffectMidi));
       read(fd, &(s->Invert), sizeof (s->Invert));
 
-      s->SetNote(s->Note);
-      cout << "Slice note: " << s->Note << endl;
       s->SetOctave(Octave);
-
+      s->SetNote(s->Note);
+ 
       Slices.push_back(s);
     }  
 
@@ -1093,49 +1092,107 @@ wxBitmap *LoopSampler::GetBitmap()
 }
 
 void LoopSampler::OnOpenFile(wxCommandEvent &event)
-{  
-  //FileLoader *dlg = new FileLoader(this, -1, "Loading sound file", false, false, NULL);
-  string s = OpenFileLoader("Loading sound file", 0x0);
-  if (!s.empty())//dlg->ShowModal() == wxID_OK)
-    {
-      string selfile = s;//dlg->GetSelectedFile();
-      //      dlg->Destroy();
+{
+  vector<string> exts;  
 
-      WaveFile *w;
+  exts.push_back("wav\tMicrosoft WAV format (*.wav)");
+  exts.push_back("wls\tLoop Sampler patch (*.wls)");
+  exts.push_back("aif\tApple/SGI AIFF format (*.aif)");
+  exts.push_back("au;snd\tSun/NeXT AU format (*.au; *.snd)");
+  exts.push_back("svx\tAmiga IFF / SVX8 / SV16 format (*.svx)");
+  exts.push_back("paf;fap\tEnsoniq PARIS format (*.paf; *.fap)");
+  exts.push_back("nist\tSphere NIST format (*.nist)");
+  exts.push_back("ircam;sf\tBerkeley/IRCAM/CARL format (*.ircam; *.sf)");
+  exts.push_back("voc\tCreative Labs VOC format (*.voc)");
+  exts.push_back("w64\tSonic Foundry's 64 bit RIFF/WAV format (*.w64)");
+  exts.push_back("raw\tRAW PCM data format (*.raw)");
+  exts.push_back("mat4;mat\tMatlab (tm) V4.2 / GNU Octave 2.0 format (*.mat4; *.mat)");
+  exts.push_back("mat5\tMatlab (tm) V5 / GNU Octave 2.1 format (*.mat5)");
+  exts.push_back("pvf\tPortable Voice Format (*.pvf)");
+  exts.push_back("xi\tFastracker 2 format (*.xi)");
+
+  string s = OpenFileLoader("Loading sound file", &exts);
+  if (!s.empty())
+    {
+      string selfile = s;
 
       wxProgressDialog *Progress = new wxProgressDialog("Loading wave file", "Please wait...", 
 							100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
                                                         | wxPD_REMAINING_TIME);
       Progress->Update(1);
-      try
+      
+      wxFileName f(s.c_str());
+      if (f.GetExt().CompareTo("wls"))
 	{
-	  w = new WaveFile(selfile, true);
-	  if (View)
-	    CloseOptionalView();
-          Progress->Update(60);
-          SetWaveFile(w);
-          Progress->Update(99);
-	  ShowOptionalView();
-		}
-      catch (...)
+	  WaveFile *w;
+	  try
+	    {
+	      w = new WaveFile(selfile, true);
+	      if (View)
+		CloseOptionalView();
+	      Progress->Update(60);
+	      SetWaveFile(w);
+	      Progress->Update(99);
+	      ShowOptionalView();
+	    }
+	  catch (...)
+	    {
+	      cout << "[LOOPSAMPLER] Cannot open wave file !" << endl;
+	    }
+
+	  BeatDialog *dlg = new BeatDialog(this);
+	  if (dlg->ShowModal() == wxID_OK)
+	    {
+	      BeatCount = dlg->BeatCtrl->GetValue();
+	      wxString s;      
+	      s.Printf("%d", BeatCount);
+	      MesCountLabel->SetLabel(s);
+	      SetBarCoeff();
+	      if (View)
+		View->SetBeats(GetSigNumerator(), BeatCount);
+	      if (Tempo)
+		SetTempo();
+	    }
+	  dlg->Destroy();
+	}
+      else 
 	{
-	  cout << "[LOOPSAMPLER] Cannot open wave file !" << endl;
+	  int fd;
+
+	  cout << "[LOOPSAMPLER] Opening patch" << endl;
+	  if ((fd = open(s.c_str(), O_RDONLY)) > -1)
+	    {
+	      struct stat st;
+	      fstat(fd, &st);
+	      cout << "file length: " << st.st_size << endl;	      
+	      Load(fd, st.st_size);
+	    }
+	  else 
+	    cout << "[LOOPSAMPLER] Could not open file: " << s << endl;
 	}
       delete Progress;
-      BeatDialog *dlg = new BeatDialog(this);
-      if (dlg->ShowModal() == wxID_OK)
+    }
+}
+
+void LoopSampler::OnSaveFile(wxCommandEvent &event)
+{
+  int fd;
+  vector<string> exts;
+  string s;
+
+  exts.push_back("wls\tLoop Sampler patch (*.wls)");
+  s = SaveFileLoader("Save Loop Sampler patch", &exts);
+
+  if (!s.empty())
+    {
+      wxFileName f(s.c_str());
+      if (!f.HasExt())
+	s = s + ".wls";
+      if ((fd = open(s.c_str(), O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR)) > -1)
 	{
-	  BeatCount = dlg->BeatCtrl->GetValue();
-	  wxString s;      
-	  s.Printf("%d", BeatCount);
-	  MesCountLabel->SetLabel(s);
-	  SetBarCoeff();
-	  if (View)
-	    View->SetBeats(GetSigNumerator(), BeatCount);
-	  if (Tempo)
-	    SetTempo();
+	  cout << "[LOOPSAMPLER] Patch saved: " << Save(fd) << " bytes" << endl;
+	  close(fd);
 	}
-      dlg->Destroy();
     }
 }
 
@@ -1261,11 +1318,6 @@ void LoopSampler::OnPolyDown(wxCommandEvent &event)
     }
 }
 
-void LoopSampler::OnSaveFile(wxCommandEvent &event)
-{
-
-}
-
 void LoopSampler::OnPlay(wxCommandEvent &event)
 {
   Mutex.Lock();
@@ -1322,6 +1374,7 @@ void LoopSampler::OnToSeqTrack(wxCommandEvent &event)
 	  if ((i == Slices.end()) && Tempo)
 	    {
 	      e->EndPosition = BarCount;
+	      f->Position = BarCount;
 	      f->EndPosition = BarCount;
 	    }
 	}      
