@@ -99,15 +99,15 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   /* Toolbar Gauche */
     
   ShowOptBtn = new DownButton(this, LoopSampler_ShowOpt, 
-			      wxPoint(346, 39), wxSize(28, 28), opt_up, opt_down, true);
+			      wxPoint(346, 39), wxSize(27, 28), opt_up, opt_down, true);
   PlayBtn = new DownButton(this, LoopSampler_Play, 
-			   wxPoint(219, 39), wxSize(28, 28), play_up, play_down, false);
+			   wxPoint(219, 39), wxSize(27, 28), play_up, play_down, false);
   ToSeqTrackBtn = new DownButton(this, LoopSampler_ToSeqTrack, 
-				 wxPoint(314, 39), wxSize(28, 28), seq_up, seq_down, true);
+				 wxPoint(314, 39), wxSize(27, 28), seq_up, seq_down, true);
   SaveBtn = new DownButton(this, LoopSampler_Save, 
-			   wxPoint(283, 39), wxSize(28, 28), save_up, save_down, true);
+			   wxPoint(283, 39), wxSize(27, 28), save_up, save_down, true);
   OpenBtn = new DownButton(this, LoopSampler_Open, 
-			   wxPoint(251, 39), wxSize(28, 28), open_up, open_down, true);
+			   wxPoint(251, 39), wxSize(27, 28), open_up, open_down, true);
 
   /* Toolbar Haut */
   
@@ -116,7 +116,7 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   s.Printf("%d", BeatCount);
 
-  MesCountLabel = new wxStaticText(this, -1, s, wxPoint(288, 89), wxSize(-1, 12));
+  MesCountLabel = new wxStaticText(this, -1, s, wxPoint(288, 87), wxSize(-1, 12));
   MesCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
 
   MesUpBtn = new HoldButton(this, LoopSampler_MesUp, wxPoint(268, 86), wxSize(13, 9), 
@@ -125,7 +125,7 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 			      down_up, down_down);
 
   s.Printf("%d", PolyphonyCount);
-  PolyCountLabel = new wxStaticText(this, -1, s, wxPoint(288, 108), wxSize(-1, 12));
+  PolyCountLabel = new wxStaticText(this, -1, s, wxPoint(288, 111), wxSize(-1, 12));
   PolyCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   PolyCountLabel->SetLabel(s);
 
@@ -146,17 +146,17 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
 
   AttackFader = new FaderCtrl(this, LoopSampler_Attack, fader_bg, fader_fg, 0, 1000, 0, 
-			      wxPoint(51, 56), wxSize(23, 132));
+			      wxPoint(51, 56), wxSize(26, 132));
 
   DecayFader = new FaderCtrl(this, LoopSampler_Decay, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(89, 56), wxSize(23, 132));
+                             wxPoint(89, 56), wxSize(26, 132));
 
   SustainFader = new FaderCtrl(this, LoopSampler_Sustain, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(127, 56), wxSize(23, 132));
+                             wxPoint(127, 56), wxSize(26, 132));
 
 
   ReleaseFader = new FaderCtrl(this, LoopSampler_Release, fader_bg, fader_fg, 0, 127, 100, 
-                             wxPoint(166, 56), wxSize(23, 132));
+                             wxPoint(166, 56), wxSize(26, 132));
 
   /* Global tuning */
 
@@ -825,6 +825,8 @@ void LoopSampler::Load(int fd, long size)
   read(fd, &Invert, sizeof (Invert));
   read(fd, &Tempo, sizeof (Tempo));
 
+  Octave--;
+
   wxString str;
 
   str.Printf("%d", BeatCount);
@@ -1294,12 +1296,12 @@ void LoopSampler::OnToSeqTrack(wxCommandEvent &event)
 
       double d = GetBarsPerSample();
       
-      for (i = Slices.begin(); i != Slices.end(); i++)
+      for (i = Slices.begin(); i != Slices.end();)
 	{
 	  // Note on
 	  e = new SeqCreateEvent;
 	  e->Position = (*i)->Bar;
-	  e->EndPosition = (*i)->EndPosition * d;
+	  e->EndPosition = (*i)->EndPosition * d;;
 	  e->MidiMsg[0] = 0x90;
 	  //e->MidiMsg[0] &= 0xF0;
 	  e->MidiMsg[1] = (*i)->AffectMidi;
@@ -1314,6 +1316,10 @@ void LoopSampler::OnToSeqTrack(wxCommandEvent &event)
 	  e->MidiMsg[1] = (*i)->AffectMidi;
 	  e->MidiMsg[2] = 0;
 	  l.push_back(e);
+	  i++;
+	  //cout << "Barcount : " << BarCount << endl;
+	  if ((i == Slices.end()) && Tempo)
+	    e->EndPosition = BarCount;
 	}      
       CreateMidiPattern(&l);
       for (j = l.begin(); j != l.end(); j++)
