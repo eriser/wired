@@ -10,6 +10,7 @@ ASPlugin::ASPlugin(class AkaiSampler *as, wxString Name) :
   this->Name = Name;
   this->ass = NULL;
   Show(false);
+  this->type = GetFXName();
 }
 
 ASPlugin::~ASPlugin()

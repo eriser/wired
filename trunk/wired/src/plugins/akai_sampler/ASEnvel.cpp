@@ -31,7 +31,7 @@ ASEnvelSeg::~ASEnvelSeg()
 int ASEnvelSeg::IsCtrlPoint(wxPoint p, int precision)
 {
   for (unsigned int i = 0; i < nbpts; i++)
-    if ((abs((int)(p.x - ratiox * points[i].x) <= precision)) && (abs((int)(p.y - ratioy * points[i].y)) <= precision))
+    if ((abs((int)(p.x - ratiox * points[i].x)) <= precision) && (abs((int)(p.y - ratioy * points[i].y)) <= precision))
       return i;
   return -1;
 }
@@ -113,9 +113,16 @@ void ASEnvelSeg::SetPoint(int n, wxPoint p)
     if ((n > 0) && (n < nbpts - 1))
       points[n].x = (int)(p.x / ratiox);
     points[n].y = (int)(p.y / ratioy);
+    if (points[n].x < 0)
+      points[n].x = 0;
+    if (points[n].x > wl)
+      points[n].x = wl;
+    if (points[n].y < 0)
+      points[n].y = 0;
+    if (points[n].y > 800)
+      points[n].y = 800;
   }
 }
-
 
 wxPoint ASEnvelSeg::GetPoint(int n)
 {
@@ -138,6 +145,26 @@ float ASEnvelSeg::GetCoef(long pos)
     }
   }
   return 0;
+}
+
+vector<wxPoint> ASEnvelSeg::GetPoints()
+{
+  vector<wxPoint> pts;
+  for (int i = 0; i < nbpts; i++)
+    pts.push_back(wxPoint(points[i].x, points[i].y));
+  return pts;
+}
+
+void ASEnvelSeg::SetPoints(vector<wxPoint> pts)
+{
+  free(points);
+  nbpts = pts.size();
+  points = (t_pt *)malloc(sizeof(t_pt) * nbpts);
+  for (int i = 0; i < nbpts; i++)
+  {
+    points[i].x = pts[i].x;
+    points[i].y = pts[i].y;
+  }
 }
 
 BEGIN_EVENT_TABLE(ASEnvel, wxWindow)
@@ -165,6 +192,7 @@ ASEnvel::ASEnvel(class AkaiSampler *as, wxString Name) :
   ZoomX = 1;
   sbx = NULL;
   sby = NULL;
+  type = ASEnvel::GetFXName();
 }
 
 ASEnvel::~ASEnvel()
@@ -180,14 +208,12 @@ wxWindow *ASEnvel::CreateView(wxPanel *p, wxPoint &pt, wxSize &sz)
   Reparent(p);
   SetSize(sz);
   Move(pt);
-
   if (!seg && ass)
     seg = new ASEnvelSeg(ass->GetSample()->GetNumberOfFrames(), wxSize(sz.GetWidth(), sz.GetHeight()));
   else if (seg)
     seg->SetSize(wxSize(sz.GetWidth(), sz.GetHeight()));
-  wv = new ASWaveView(this, -1, wxPoint(0, 0), wxSize((int)(sz.GetWidth() * ZoomX), (int)(sz.GetHeight() * ZoomY)));
+  wv = new ASWaveView(wxSize((int)(sz.GetWidth() * ZoomX), (int)(sz.GetHeight() * ZoomY)));
   wv->SetBrushColor(wxColor(0, 0, 0));
-  wv->Show(false);
   if (ass)
     wv->SetSample(ass->GetSample());
   sbx = new wxScrollBar(this, ID_SB_X, wxPoint(ZSX, sz.GetHeight() - SBS), wxSize(sz.GetWidth() - SBS * 2 - ZSX, SBS), wxSB_HORIZONTAL);
@@ -266,16 +292,16 @@ void ASEnvel::MovePt(wxPoint p)
     if ((av.x != -1) && ((sbx->GetThumbPosition() + p.x - SBS) / ZoomX > av.x + 4) && (ap.x != -1) && ((sbx->GetThumbPosition() + p.x - SBS) / ZoomX < ap.x - 4))
     {
       if (sby->GetThumbPosition() + p.y < ZoomY * GetSize().GetHeight() / 2)
-        seg->SetPoint(dragging, wxPoint((sbx->GetThumbPosition() + p.x - SBS) / ZoomX, (ZoomY * GetSize().GetHeight() / 2 - p.y - sby->GetThumbPosition()) / ZoomY));
+        seg->SetPoint(dragging, wxPoint((sbx->GetThumbPosition() + p.x - SBS) / ZoomX, GetSize().GetHeight() / 2 - (p.y + sby->GetThumbPosition()) / ZoomY));
       else
-        seg->SetPoint(dragging, wxPoint((sbx->GetThumbPosition() + p.x - SBS) / ZoomX, (-ZoomY * GetSize().GetHeight() / 2 + p.y + sby->GetThumbPosition())/ ZoomY));
+        seg->SetPoint(dragging, wxPoint((sbx->GetThumbPosition() + p.x - SBS) / ZoomX, -GetSize().GetHeight() / 2 + (p.y + sby->GetThumbPosition()) / ZoomY));
     }
     else if ((av.x == -1) || (ap.x == -1))
     {
       if (sby->GetThumbPosition() + p.y < ZoomY * GetSize().GetHeight() / 2)
-        seg->SetPoint(dragging, wxPoint(seg->GetPoint(dragging).x, (ZoomY * GetSize().GetHeight() / 2 - p.y - sby->GetThumbPosition()) / ZoomY));
+        seg->SetPoint(dragging, wxPoint(seg->GetPoint(dragging).x, GetSize().GetHeight() / 2 - (p.y + sby->GetThumbPosition()) / ZoomY));
       else
-        seg->SetPoint(dragging, wxPoint(seg->GetPoint(dragging).x, (-ZoomY * GetSize().GetHeight() / 2 + p.y + sby->GetThumbPosition()) / ZoomY));
+        seg->SetPoint(dragging, wxPoint(seg->GetPoint(dragging).x, GetSize().GetHeight() / 2 + (p.y + sby->GetThumbPosition()) / ZoomY));
     }
     if (wv)
       wv->SetEnvel(seg);
@@ -332,10 +358,10 @@ void ASEnvel::OnLeftDown(wxMouseEvent &e)
 {
   if (seg)
   {
-    if (e.GetPosition().y  + sby->GetThumbPosition() < ZoomY * GetSize().GetHeight() / 2)
-      dragging = seg->IsCtrlPoint(wxPoint((sbx->GetThumbPosition() + e.GetPosition().x - SBS) / ZoomX, (ZoomY * GetSize().GetHeight() / 2 - e.GetPosition().y - sby->GetThumbPosition()) / ZoomY), 8);
+    if (e.GetY() + sby->GetThumbPosition() < ZoomY * GetSize().GetHeight() / 2)
+      dragging = seg->IsCtrlPoint(wxPoint((sbx->GetThumbPosition() + e.GetX() - SBS) / ZoomX, GetSize().GetHeight() / 2 - (e.GetY() + sby->GetThumbPosition()) / ZoomY), 8);
     else
-      dragging = seg->IsCtrlPoint(wxPoint((sbx->GetThumbPosition() + e.GetPosition().x - SBS) / ZoomX, (- ZoomY * GetSize().GetHeight() / 2 + e.GetPosition().y + sby->GetThumbPosition()) / ZoomY), 8);
+      dragging = seg->IsCtrlPoint(wxPoint((sbx->GetThumbPosition() + e.GetX() - SBS) / ZoomX, -GetSize().GetHeight() / 2 + (e.GetY() + sby->GetThumbPosition()) / ZoomY), 8);
     if (dragging != -1)
       MovePt(e.GetPosition());
   }
@@ -352,17 +378,17 @@ void ASEnvel::OnRightDown(wxMouseEvent &e)
 
   if (seg)
   {
-    if (sby->GetThumbPosition() + e.GetPosition().y < ZoomY * GetSize().GetHeight() / 2)
-      pt = seg->IsCtrlPoint(wxPoint((sbx->GetThumbPosition() + e.GetPosition().x - SBS) / ZoomX, (ZoomY * GetSize().GetHeight() / 2 - e.GetPosition().y - sby->GetThumbPosition()) / ZoomY), 8);
+    if (sby->GetThumbPosition() + e.GetY() < ZoomY * GetSize().GetHeight() / 2)
+      pt = seg->IsCtrlPoint(wxPoint((sbx->GetThumbPosition() + e.GetX() - SBS) / ZoomX, GetSize().GetHeight() / 2 - (e.GetY() + sby->GetThumbPosition()) / ZoomY), 8);
     else
-      pt = seg->IsCtrlPoint(wxPoint((sbx->GetThumbPosition() + e.GetPosition().x - SBS) / ZoomX, (- ZoomY * GetSize().GetHeight() / 2 + e.GetPosition().y + sby->GetThumbPosition()) / ZoomY), 8);
+      pt = seg->IsCtrlPoint(wxPoint((sbx->GetThumbPosition() + e.GetX() - SBS) / ZoomX, -GetSize().GetHeight() / 2 + (e.GetY() + sby->GetThumbPosition()) / ZoomY), 8);
     if (pt != -1)
       seg->DelPoint(pt);
     else
-      if (e.GetPosition().y + sby->GetThumbPosition() < ZoomY * GetSize().GetHeight() / 2)
-        seg->AddPoint(wxPoint((sbx->GetThumbPosition() + e.GetPosition().x - SBS) / ZoomX, (ZoomY * GetSize().GetHeight() / 2 - e.GetPosition().y - sby->GetThumbPosition()) / ZoomY));
+      if (e.GetY() + sby->GetThumbPosition() < ZoomY * GetSize().GetHeight() / 2)
+        seg->AddPoint(wxPoint((sbx->GetThumbPosition() + e.GetX() - SBS) / ZoomX, GetSize().GetHeight() / 2 - (e.GetY() + sby->GetThumbPosition()) / ZoomY));
       else
-        seg->AddPoint(wxPoint((sbx->GetThumbPosition() + e.GetPosition().x - SBS) / ZoomX, (-ZoomY *  GetSize().GetHeight() / 2 + e.GetPosition().y + sby->GetThumbPosition()) / ZoomY));
+        seg->AddPoint(wxPoint((sbx->GetThumbPosition() + e.GetX() - SBS) / ZoomX, -GetSize().GetHeight() / 2 + (e.GetY() + sby->GetThumbPosition()) / ZoomY));
     if (wv)
       wv->SetEnvel(seg);
     FillGrid();
@@ -405,4 +431,42 @@ void ASEnvel::OnStopDragThumb(wxScrollEvent &e)
   thumbdrag = false;
   wxSizeEvent ev(GetSize());
   OnResize(ev);
+}
+
+void ASEnvel::Load(int fd, long len)
+{
+  if (!len)
+    return;
+  read(fd, &len, sizeof(len));
+  vector<wxPoint> pts;
+  for (int i = 0; i < len; i++)
+  {
+    wxPoint p(-1, -1);
+    read(fd, &p.x, sizeof(p.x));
+    read(fd, &p.y, sizeof(p.y));
+    pts.push_back(p);
+  }
+  if (!seg)
+    return;
+  seg->SetPoints(pts);
+  if (wv)
+    wv->SetEnvel(seg);
+  FillGrid();
+  Refresh();
+}
+
+long ASEnvel::Save(int fd)
+{
+  long count = 0;
+  if (!seg)
+    return 0;
+  vector<wxPoint> pts = seg->GetPoints();
+  long len = pts.size();
+  count += write(fd, &len, sizeof(len));
+  for (int i = 0; i < len; i++)
+  {
+    count += write(fd, &pts[i].x, sizeof(pts[i].x));
+    count += write(fd, &pts[i].y, sizeof(pts[i].y));
+  }
+  return count; 
 }

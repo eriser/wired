@@ -16,7 +16,7 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, WaveFile *w, unsigned long
     if (id > as->sampleid)
       as->sampleid = id + 1;
   this->id = id;
-  this->loopcount = -1;
+  this->loopcount = 1;
   this->loopstart = 0;
   this->loopend = w->GetNumberOfFrames();
 }
@@ -27,24 +27,24 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akai
   {
     if (smpL->rate != smpR->rate)
       cerr << "[WiredSampler] error mixing sample, stereo tracks have not the same rate !" << endl;
-    short *data = new short[smpL->size + smpR->size];
-    for (int i = 0; i < smpL->size; i++)
+    short *data = new short[smpL->end + smpR->end];
+    for (int i = 0; i < smpL->end; i++)
       data[i] = smpL->buffer[i];
-    for (int i = 0; i < smpR->size; i++)
+    for (int i = 0; i < smpR->end; i++)
       data[smpL->size + i] = smpR->buffer[i];
-    this->w = new WaveFile(data, smpL->size + smpR->size, 2, smpL->rate);
+    this->w = new WaveFile(data, smpL->end + smpR->end, 2, smpL->rate);
     w->Filename = AkaiPrefix + smpL->name + "/" + smpR->name;
     free(data);
     this->Position = smpL->start;
-    this->loopstart = smpL->loop_len;
+    this->loopstart = smpL->loop_start - smpL->loop_len;
     this->loopend = smpL->loop_start;
   }
   else
   {
-    this->w = new WaveFile(smpL->buffer, smpL->size, 2, smpL->rate);
+    this->w = new WaveFile(smpL->buffer, smpL->end, 2, smpL->rate);
     w->Filename = AkaiPrefix + smpL->name;
     this->Position = smpL->start;
-    this->loopstart = smpL->loop_len;
+    this->loopstart = smpL->loop_start - smpL->loop_len;
     this->loopend = smpL->loop_start;
   }
   this->askg = NULL;

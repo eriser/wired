@@ -21,9 +21,19 @@ class ASLoop : public ASPlugin
     void OnRightDown(wxMouseEvent &e);
     void OnLeftUp(wxMouseEvent &e);
     void SetSample(ASamplerSample *ass);
-    static const wxString GetFXName() { return "Looping"; }
+    void OnScroll(wxScrollEvent &);
+    void OnDragThumb(wxScrollEvent &);
+    void OnStopDragThumb(wxScrollEvent &);
+    static wxString GetFXName() { return "Looping"; }
   private:
     ASWaveView *wv;
+    int ZoomX;
+    int ZoomY;
+    wxScrollBar *sbx;
+    wxScrollBar *sby;
+    wxSlider *zx;
+    wxSlider *zy;
+    bool thumbdrag;
   public:
   DECLARE_EVENT_TABLE()
 };

@@ -2,41 +2,43 @@
 #include "Settings.h"
 #include "ASEnvel.h"
 
-ASWaveView::ASWaveView(wxWindow *parent, int id, wxPoint pt, wxSize sz) : WaveView(parent, id, pt, sz, true, false)
+ASWaveView::ASWaveView(wxSize sz) : 
+  WaveDrawer(sz, true, false)
 {
   env = NULL;
-}
-
-void ASWaveView::SetSample(WaveFile *w)
-{
-  WaveView::SetWave(w);
+  size = sz;
+  DrawData = NULL;
+  Wave = NULL;
 }
 
 void ASWaveView::SetSize(wxSize sz)
 {
-  WaveView::SetSize(sz);
+  size = sz;
+  if (Wave)
+    SetDrawing(size);
 }
 
-void ASWaveView::OnPaint(wxPaintEvent &e)
+void ASWaveView::SetSample(WaveFile *w)
 {
+  SetWave(w, size);
 }
 
 void ASWaveView::RedrawBitmap(wxSize s)
 {
   long					coeff;
 
-  coeff = s.y / 2;
+  coeff = s.GetHeight() / 2;
   if (Bmp)
     delete Bmp;
-  Bmp = new wxBitmap(s.x, s.y);
+  Bmp = new wxBitmap(s.GetWidth(), s.GetHeight());
   memDC.SelectObject(*Bmp);
   memDC.SetPen(PenColor);
   if (!Transparent)
     memDC.SetBrush(BrushColor);
   else
     memDC.SetBrush(*wxTRANSPARENT_BRUSH);
-  memDC.DrawRectangle(0, 0, s.x, s.y);
-  for (int i = 0; i < s.x; i++)
+  memDC.DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
+  for (int i = 0; i < s.GetWidth(); i++)
     memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
 }
 
@@ -82,7 +84,7 @@ void ASWaveView::SetDrawing(wxSize s)
         }
         val = cur / (NumberOfChannels + inc);
         val = 10 * log10(val);
-        // The smallest value we will see is -45.15 (10*log10(1/32768))
+        // The smallest value we will see is -43.15 (10*log10(1/32768))
         val = (val + 45.f) / 45.f;
         if (val < 0.f)
           val = 0.f;

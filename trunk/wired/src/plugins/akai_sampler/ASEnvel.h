@@ -22,6 +22,8 @@ class ASEnvelSeg
     void SetSize(wxSize sz) { size = sz; ratiox = ((double)size.GetWidth()) / wl; ratioy = ((double)size.GetHeight()) / 2000.0f; }
     void SetWaveLen(unsigned long wavelen) { wl = wavelen; ratiox = ((double)size.GetWidth()) / wl; }
     wxPoint GetPoint(int n);
+    vector<wxPoint> GetPoints();
+    void SetPoints(vector<wxPoint>);
     float GetCoef(long);
   private:
     unsigned int nbpts;
@@ -51,7 +53,9 @@ class ASEnvel : public ASPlugin
     void OnDragThumb(wxScrollEvent &);
     void OnStopDragThumb(wxScrollEvent &);
     void Process(float **, int, int, long);
-    static const wxString GetFXName() { return "Envelope"; }
+    void Load(int, long);
+    long Save(int);
+    static wxString GetFXName() { return "Envelope"; }
   private:
     void MovePt(wxPoint);
     wxBitmap *Grid;
