@@ -75,7 +75,7 @@ void				SelectionZone::UpdateZone(long x, long y)
     }
   else
     {
-      State = State | STATE_X_REVERSED;
+      State |= (unsigned char) STATE_X_REVERSED;
       x_yop = x;
       width = x_pos - x;
     }
@@ -87,7 +87,7 @@ void				SelectionZone::UpdateZone(long x, long y)
     }
   else
     {
-      State = State | STATE_Y_REVERSED;
+      State |= (unsigned char) STATE_Y_REVERSED;
       y_yop = y;
       height = y_pos - y;
     }

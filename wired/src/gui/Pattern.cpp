@@ -136,6 +136,11 @@ void					Pattern::OnClick(wxMouseEvent &e)
   */
 }
 
+void					Pattern::OnLeftUp(wxMouseEvent &e)
+{
+  
+}
+
 void					Pattern::OnDoubleClick(wxMouseEvent &e)
 {
   OnClick(e);
@@ -150,16 +155,24 @@ void					Pattern::OnRightClick(wxMouseEvent &e)
   SeqPanel->SeqView->OnRightClick(e);
 }
 
+void					Pattern::XMove(double Motion)
+{
+  if ((Position = Position + Motion) > 0)
+    if (SeqPanel->Magnetism & PATTERN_MASK)
+      Position = round(Position * SeqPanel->PatternMagnetism) / SeqPanel->PatternMagnetism;
+  Move(SetPos(Position, TrackIndex));
+}
+
 void					Pattern::OnMotion(wxMouseEvent &e)
 {
-  
+  vector<Pattern *>::iterator		p;
   long					x;
   long					y;
   long					max;
   double				z;
   double				mes;
-
-  if ((SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->Wave != this))
+  
+  if (IsSelected() && (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->Wave != this))
     {
       SeqMutex.Lock();
       if ((x = (e.GetPosition().x - m_click.x)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->HoriZoomFactor)))
@@ -172,12 +185,12 @@ void					Pattern::OnMotion(wxMouseEvent &e)
       else
 	if (y < -max)
 	  y = -max;
-      //printf("(X = %d) (Y = %d)\n", x, y);
-      if ((Position = Position + (x / (mes = MEASURE_WIDTH * SeqPanel->HoriZoomFactor))) > 0)
-	if (SeqPanel->Magnetism & PATTERN_MASK)
-	  Position = round(Position * SeqPanel->PatternMagnetism) / SeqPanel->PatternMagnetism;
-      Move(SetPos(Position, TrackIndex));
-      
+      z = x / (mes = MEASURE_WIDTH * SeqPanel->HoriZoomFactor);
+      if (SeqPanel->SelectedItems.size() == 1)
+	XMove(z);
+      else
+	for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end(); p++)
+	  (*p)->XMove(z);
       if ((x < 0) && (Position <= SeqPanel->FirstMeasure))
 	{
 // 	  if ((x = (long) floor(((Position / SeqPanel->PatternMagnetism) * (SeqPanel->HorizScrollBar->GetRange() - HSCROLL_THUMB_WIDTH)) / Seq->EndPos)) > 0)

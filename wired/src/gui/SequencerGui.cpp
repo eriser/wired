@@ -46,7 +46,7 @@ SequencerView::~SequencerView()
 
 void					SequencerView::OnClick(wxMouseEvent &e)
 {
-  SeqPanel->SelectItem(0x0, false);
+  SeqPanel->SelectItem(0x0, e.ShiftDown());
   if (!TheZone->IsVisible())
     TheZone->SetZone(e.m_x, e.m_y, 2, 2);
 }
@@ -57,11 +57,11 @@ void					SequencerView::OnMotion(wxMouseEvent &e)
     if (TheZone->IsVisible())
       {
 	TheZone->UpdateZone(e.m_x, e.m_y);
-	SelectZonePatterns();
+	SelectZonePatterns(e.ShiftDown());
       }
 }
 
-void					SequencerView::SelectZonePatterns()
+void					SequencerView::SelectZonePatterns(bool shift)
 {
   vector<Track *>::iterator		t;
   vector<Pattern *>::iterator		p;
@@ -93,22 +93,27 @@ void					SequencerView::SelectZonePatterns()
     }
   for (t = Seq->Tracks.begin(); t != Seq->Tracks.end(); t++)
     for (p = (*t)->TrackPattern->Patterns.begin(); p != (*t)->TrackPattern->Patterns.end(); p++)
-      if (((*p)->GetPosition() >= x1) && ((*p)->GetEndPosition() <= x2) &&
-	  (((*p)->GetTrackIndex() * TRACK_HEIGHT * SeqPanel->VertZoomFactor) >= y1) &&
-	  ((((*p)->GetTrackIndex() + 1) * TRACK_HEIGHT * SeqPanel->VertZoomFactor) <= y2))
+      /******* OLD TEST FULL ZONE INCLUSION *******
+       if (((*p)->GetPosition() >= x1) && ((*p)->GetEndPosition() <= x2) &&
+	(((*p)->GetTrackIndex() * TRACK_HEIGHT * SeqPanel->VertZoomFactor) >= y1) &&
+	((((*p)->GetTrackIndex() + 1) * TRACK_HEIGHT * SeqPanel->VertZoomFactor) <= y2))
+       ****** OLD TEST FULL ZONE INCLUSION ********/
+      if ((((*p)->GetPosition() > x2) || ((*p)->GetEndPosition() < x1)) ||
+	  ((((*p)->GetTrackIndex() * TRACK_HEIGHT * SeqPanel->VertZoomFactor) > y2) ||
+	   ((((*p)->GetTrackIndex() + 1) * TRACK_HEIGHT * SeqPanel->VertZoomFactor) < y1)))
 	{
-	  if (!(*p)->IsSelected())
+	  if (!shift && (*p)->IsSelected())
 	    {
-	      (*p)->SetSelected(true);
-	      SeqPanel->SelectedItems.push_back(*p);
+	      (*p)->SetSelected(false);
+	      for (i = SeqPanel->SelectedItems.begin(); (i != SeqPanel->SelectedItems.end()) && (*i != *p); i++);
+	      SeqPanel->SelectedItems.erase(i);
 	    }
 	}
       else
-	if ((*p)->IsSelected())
+	if (!(*p)->IsSelected())
 	  {
-	    (*p)->SetSelected(false);
-	    for (i = SeqPanel->SelectedItems.begin(); (i != SeqPanel->SelectedItems.end()) && (*i != *p); i++);
-	    SeqPanel->SelectedItems.erase(i);
+	    (*p)->SetSelected(true);
+	    SeqPanel->SelectedItems.push_back(*p);
 	  }
 }
 
@@ -684,7 +689,7 @@ void					SequencerGui::SelectItem(Pattern *p, bool shift)
 {
   vector<Pattern *>::iterator		i;
 
-  if (!shift || !p)
+  if (!shift)
     {
       for (i = SelectedItems.begin(); i != SelectedItems.end(); i++)
 	if ((*i)->IsSelected())
