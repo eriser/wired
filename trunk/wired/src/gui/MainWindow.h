@@ -59,7 +59,9 @@ class MainWindow: public wxFrame
   void OnFloatTransport(wxCommandEvent &event);
   void OnFloatSequencer(wxCommandEvent &event);
   void OnFloatRack(wxCommandEvent &event);
-  void OnSwitchRackOptView();
+
+  void OnSwitchRackOptViewEvent(wxCommandEvent &event);
+  void OnSwitchSeqOptViewEvent(wxCommandEvent &event);
   void OnFullScreen(wxCommandEvent &event);
   void OnAbout(wxCommandEvent &event);
   void OnIntegratedHelp(wxCommandEvent &event);
@@ -76,10 +78,12 @@ class MainWindow: public wxFrame
   void OnRedo(wxCommandEvent &event);
 
   void OnSpaceKey();
-  
+  void SwitchRackOptView();
+  void SwitchSeqOptView();  
  private:
   int PluginMenuIndexCount;			
   bool RackModeView;
+  bool SeqModeView;
 
   /* Config files */
   wxTextFile	PluginsConfFile;
@@ -150,7 +154,9 @@ enum
   MainWin_FullScreen,
   MainWin_SeqTimer,
   MainWin_FileLoader,
-  MainWin_IntHelp
+  MainWin_IntHelp,
+  MainWin_SwitchRack,
+  MainWin_SwitchSeq
 };
 
 extern MainWindow		*MainWin;

@@ -35,7 +35,7 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 {
   HelpMode = false;
   BeatCount = GetSigNumerator();
-  BarCount = (long)((double)BeatCount / (double)GetSigNumerator());
+  BarCount = ((double)BeatCount / (double)GetSigNumerator());
   PolyphonyCount = 7;
   Playing = false;
   AutoPlaying = false;
@@ -476,7 +476,6 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 
 	  while (!(n->End) && ((curL < length) || (curR < length)))
 	    {
-	      cout << "slice : " << n << ", pos: " << n->Position << ", curL: " << curL << endl;
 	      do
 		{
 		  retTouchL = n->SliceNote->LeftTouch->receiveSamples(n->Buffer[0] + curL +
@@ -490,8 +489,12 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 		}
 	      while ((retTouchL || retTouchR) && ((curL < length) || (curR < length)));
 
+	      //	      cout << "NOTE : " << n << ", pos: " << n->Position << ", curL: " << curL	      
+	      //   << "; retL: " << retTouchL << "; retR: " << retTouchR << endl;
+
 	      if (n->Position < n->SliceNote->EndPosition)
 		{
+		  //		  cout << "POS: " << n->Position << "; ENDPOS: " << n->SliceNote->EndPosition << endl;
 		  Wave->Read(read_buf, n->Position, length, 0, &(n->Position));
 		  n->SliceNote->LeftTouch->putSamples(read_buf[0], length);
 		  n->SliceNote->RightTouch->putSamples(read_buf[1], length);
@@ -744,7 +747,7 @@ void LoopSampler::Load(int fd, long size)
   char s[len + 1];
   read(fd, s, len);
   s[len] = 0;
-  read(fd, &BarCount, sizeof (BarCount));//??
+  read(fd, &BarCount, sizeof (BarCount));
   read(fd, &BeatCount, sizeof (BeatCount));
   read(fd, &Volume, sizeof (Volume));
   read(fd, &Attack, sizeof (Attack));
@@ -950,7 +953,7 @@ void LoopSampler::SetBarCoeff()
 
   if (!Wave)
     return;
-  BarCount = (long)((double)BeatCount / (double)GetSigNumerator());
+  BarCount = ((double)BeatCount / (double)GetSigNumerator());
   coeff = BarCount / (double)Wave->GetNumberOfFrames();
   for (i = Slices.begin(); i != Slices.end(); i++)
     (*i)->Bar = (*i)->Position * coeff;

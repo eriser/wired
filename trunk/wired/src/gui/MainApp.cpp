@@ -61,9 +61,12 @@ int MainApp::FilterEvent(wxEvent& event)
 	  Frame->OnSpaceKey();
 	  return (true);
 	}
-      if (((wxKeyEvent &)event).GetKeyCode() == WXK_TAB)
-	{
-	  Frame->OnSwitchRackOptView();
+      else if (((wxKeyEvent &)event).GetKeyCode() == WXK_TAB)
+	{ 
+	  if (((wxKeyEvent &)event).ShiftDown()) 
+	    Frame->SwitchSeqOptView();
+	  else
+	    Frame->SwitchRackOptView();
 	  return (true);
 	}
     }
