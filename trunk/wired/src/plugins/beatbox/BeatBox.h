@@ -144,6 +144,7 @@ class WiredBeatBox : public Plugin
   int		GetSig(void);
   
   void		SetHelpMode(bool on) { HelpMode = true; }
+  bool		HelpMode;
   
  protected:
   wxMutex		PatternMutex;
@@ -216,11 +217,11 @@ class WiredBeatBox : public Plugin
   wxBitmap*		bmp;
   wxBitmap*		BgBmp;
   
-  bool			HelpMode;
   void			OnHelp(wxMouseEvent& event);
   void			OnPlayHelp(wxMouseEvent& event);
   void			OnPatternHelp(wxMouseEvent& event);
   void			OnMasterLevHelp(wxMouseEvent& event);
+  void			OnChannelHelp(wxMouseEvent& event);
 
 DECLARE_EVENT_TABLE()
 };

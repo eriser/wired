@@ -397,6 +397,10 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   /* Help */
   HelpMode = false;
   
+  Connect(BB_Channel, wxEVT_ENTER_WINDOW,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredBeatBox::OnChannelHelp);
+    
   Connect(BB_OnPlayClick, wxEVT_ENTER_WINDOW,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&WiredBeatBox::OnPlayHelp);
@@ -411,7 +415,6 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   /*
   Connect(BB_OnEditClick, );
-  Connect(BB_Channel);
   Connect(BB_OnPatternSelectors);
   Connect(BB_OnBankChange);
   Connect(BB_OnStepsChange);
@@ -420,6 +423,12 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Connect(BB_OnLoadPatch);
   Connect(BB_OnSavePatch);
   */
+}
+
+void WiredBeatBox::OnChannelHelp(wxMouseEvent& WXUNUSED(event))
+{
+  if (HelpMode)
+    SendHelp("One of the 11 channels available, each channel can load a soundfile and can contain up to 40 different rythms providing fine tunings for them");
 }
 
 void WiredBeatBox::OnPlayHelp(wxMouseEvent& WXUNUSED(event))
@@ -442,7 +451,6 @@ void WiredBeatBox::OnHelp(wxMouseEvent& WXUNUSED(event))
 
 void WiredBeatBox::OnMasterLevHelp(wxMouseEvent& WXUNUSED(event))
 {
-  cout << "MasterLevHelp !!" << endl;
   if (HelpMode)
     SendHelp("This knob sets the master level output of the DRM31 plugin");
 }
@@ -756,7 +764,6 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	  note->Pitch *= c->Pitch;
 	  note->Start *= c->Start;
 	  note->End *= c->End;
-	  note->Len *= c->Len;
 	  note->Reversed = c->Reversed;
 	  
 	  note->OffSet =
@@ -796,7 +803,6 @@ inline void WiredBeatBox::GetNotesFromChannel(BeatBoxChannel* c,
 	  note->Pitch *= c->Pitch;
 	  note->Start *= c->Start;
 	  note->End *= c->End;
-	  note->Len *= c->Len;
 	  note->Reversed |= c->Reversed;
 	  
 	  note->OffSet =
