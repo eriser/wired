@@ -20,6 +20,7 @@
 //using namespace std;
 BEGIN_EVENT_TABLE(DownButton, wxWindow)
   EVT_LEFT_DOWN(DownButton::OnMouseEvent) 
+  EVT_RIGHT_DOWN(DownButton::OnMouseEvent) 
   EVT_LEFT_UP(DownButton::OnLeftUp) 
   EVT_LEAVE_WINDOW(DownButton::OnLeave) 
   EVT_PAINT(DownButton::OnPaint)
@@ -81,6 +82,8 @@ void DownButton::OnMouseEvent(wxMouseEvent &event)
 	  GetEventHandler()->ProcessEvent(event);
         }      
     }
+  if (event.RightDown())
+    wxPostEvent(GetParent(), event);
 }
 
 void DownButton::OnLeftUp(wxMouseEvent &event)

@@ -26,7 +26,7 @@ MidiController::MidiController(wxWindow *parent) :
   ValueText = new wxStaticText(this, -1, "Value:", wxPoint(52, 114));
   ValueCtrl = new wxSpinCtrl(this, -1, "0", wxPoint(52, 130));
 
-  Channel = 0;
+  Type = 0;
 }
 
 MidiController::~MidiController()
@@ -45,17 +45,12 @@ MidiController::~MidiController()
 void MidiController::ProcessMidi(int midi_msg[3])
 {
   Note = false;
-  if ((STATUS(midi_msg[0]) == M_NOTEON1) ||  (STATUS(midi_msg[0]) == M_NOTEON2))
-    {
-      Note = true;
-      ChannelCtrl->SetValue(CHANNEL(midi_msg[0]));
-    }
-  else if (STATUS(midi_msg[0]) != M_CONTROL)
-    ChannelCtrl->SetValue(CHANNEL(midi_msg[0]));
-  ChannelCtrl->SetValue(CHANNEL(midi_msg[0]));
+  if ((STATUS(midi_msg[0]) == M_NOTEON1) ||  (STATUS(midi_msg[0]) == M_NOTEON2))    
+    Note = true;
+  ChannelCtrl->SetValue(CHANNEL(midi_msg[0]) + 1);
   ControllerCtrl->SetValue(midi_msg[1]);   
   ValueCtrl->SetValue(midi_msg[2]);
-  Channel = CHANNEL(midi_msg[0]);
+  Type = midi_msg[0];
   Controller = midi_msg[1];
   Value = midi_msg[2];
 }
@@ -67,7 +62,7 @@ void MidiController::OnOkBtnClick(wxCommandEvent &event)
 
 void MidiController::OnCancelBtnClick(wxCommandEvent &event)
 {
-  Channel = -1;
+  Type = -1;
   EndModal(0);
 }
 

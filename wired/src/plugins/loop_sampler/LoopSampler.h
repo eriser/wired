@@ -130,6 +130,21 @@ protected:
   bool	 Invert;
   bool	 Tempo;
 
+  int	 MidiVolume[2];
+  int	 MidiAttack[2];
+  int	 MidiDecay[2];
+  int	 MidiSustain[2];
+  int	 MidiRelease[2];
+  int	 MidiOctave[2];
+  int	 MidiPitch[2];
+  int	 MidiTempo[2];
+  int	 MidiInvert[2];
+  int	 MidiSliceNote[2];
+  int	 MidiSlicePitch[2];
+  int	 MidiSliceVol[2];
+  int	 MidiSliceAffect[2];
+  int	 MidiSliceInvert[2];
+
   unsigned int PolyphonyCount;
 
   bool	 Playing;
@@ -236,9 +251,19 @@ protected:
   void OnSendSeqHelp(wxMouseEvent &event);
   void OnOptViewHelp(wxMouseEvent &event);
 
+  void OnVolumeController(wxMouseEvent &event);
+  void OnAttackController(wxMouseEvent &event);
+  void OnDecayController(wxMouseEvent &event);
+  void OnSustainController(wxMouseEvent &event);
+  void OnReleaseController(wxMouseEvent &event);
   void OnOctaveController(wxMouseEvent &event);
+  void OnPitchController(wxMouseEvent &event);
+  void OnTempoController(wxMouseEvent &event);
+  void OnInvertController(wxMouseEvent &event);
 
   void SetTempo();
+  void ProcessMidiControls(int MidiData[3]);
+  void CheckExistingControllerData(int MidiData[3]);
 
   DECLARE_EVENT_TABLE()
 };

@@ -165,13 +165,10 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   TempoBtn = new DownButton(this, LoopSampler_Tempo, wxPoint(263, 135)/*wxPoint(328, 135)*/, wxSize(28, 28), btn_down, btn_up, false);
 
   /* Help events */
-  
+
   Connect(LoopSampler_Octave, wxEVT_ENTER_WINDOW,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&LoopSampler::OnOctaveHelp); 
-  Connect(LoopSampler_Octave, wxEVT_RIGHT_DOWN,
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&LoopSampler::OnOctaveController);  
   Connect(LoopSampler_Pitch, wxEVT_ENTER_WINDOW,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&LoopSampler::OnPitchHelp);  
@@ -197,6 +194,64 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&LoopSampler::OnOptViewHelp);  
 
+  /* Default MIDI automation */
+
+  Connect(LoopSampler_Volume, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnVolumeController);    
+  Connect(LoopSampler_Attack, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnAttackController);    
+  Connect(LoopSampler_Decay, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnDecayController);    
+  Connect(LoopSampler_Sustain, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnSustainController);    
+  Connect(LoopSampler_Release, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnReleaseController);    
+  Connect(LoopSampler_Octave, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnOctaveController);  
+  Connect(LoopSampler_Pitch, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnPitchController);  
+  Connect(LoopSampler_Tempo, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnTempoController);  
+  Connect(LoopSampler_Invert, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&LoopSampler::OnInvertController);  
+
+  MidiVolume[0] = M_CONTROL;
+  MidiVolume[1] = 0x7;
+  MidiAttack[0] = M_CONTROL;
+  MidiAttack[1] = 0xA;
+  MidiDecay[0] = M_CONTROL;
+  MidiDecay[1] = 0xB;
+  MidiSustain[0] = M_CONTROL;
+  MidiSustain[1] = 0xC;
+  MidiRelease[0] = M_CONTROL;
+  MidiRelease[1] = 0xD;
+  MidiOctave[0] = M_CONTROL;
+  MidiOctave[1] = 0xE;
+  MidiPitch[0] = M_CONTROL;
+  MidiPitch[1] = 0xF;
+  MidiTempo[0] = -1;
+  MidiTempo[1] = -1;
+  MidiInvert[0] = -1;
+  MidiInvert[1] = -1;
+  MidiSliceNote[0] = M_CONTROL;
+  MidiSliceNote[1] = 0x10;
+  MidiSlicePitch[0] = M_CONTROL;
+  MidiSlicePitch[1] = 0x11;
+  MidiSliceVol[0] = -1;
+  MidiSliceVol[1] = -1;;
+  MidiSliceAffect[0] = -1;
+  MidiSliceAffect[1] = -1;
+  MidiSliceInvert[0] = -1;
+  MidiSliceInvert[1] = -1;
 }
 
 LoopSampler::~LoopSampler()
@@ -253,25 +308,25 @@ void LoopSampler::OnHelp(wxMouseEvent &event)
 void LoopSampler::OnOctaveHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("This knob sets the octave of the loaded sample. It will use a pitch shifting algorithm to achieve that effect.");
+    SendHelp("This knob sets the octave of the loaded sample. It will use a pitch shifting algorithm to achieve that effect. Right click on it to set the MIDI automation controller.");
 }
 
 void LoopSampler::OnPitchHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Changes the pitch (speed) of the whole loaded sample.");
+    SendHelp("Changes the pitch (speed) of the whole loaded sample. Right click on it to set the MIDI automation controller.");
 }
 
 void LoopSampler::OnAutoStretchHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Stretch the whole sample that it synchronizes with the sequencer BPM");
+    SendHelp("Stretch the whole sample that it synchronizes with the sequencer BPM Right click on it to set the MIDI automation controller.");
 }
 
 void LoopSampler::OnInvertHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Inverts the sample audio data.");
+    SendHelp("Inverts the sample audio data. Right click on it to set the MIDI automation controller.");
 }
 
 
@@ -304,8 +359,6 @@ void LoopSampler::OnOptViewHelp(wxMouseEvent &event)
   if (HelpMode)
     SendHelp("Shows Loop Sampler's optional view.");
 }
-
-
 
 void LoopSampler::SetBufferSize(long size) 
 {
@@ -573,17 +626,61 @@ void LoopSampler::ProcessEvent(WiredEvent &event)
 	  
 	  Mutex.Unlock();
 	}
-    }  
-  else if (event.MidiData[0] == M_CONTROL)
-    {
-      if (event.MidiData[1] == 0x7) // main volume
-	{
-	  Volume = event.MidiData[2] / 100.f;
-	  VolumeFader->SetValue(event.MidiData[2]);
-	  Workshop.SetVolume(Volume);
-	}	
     }
+  ProcessMidiControls(event.MidiData);
 //  printf("[LOOPSAMPLER] Got midi in : %2x %2x %2x\n", event.MidiData[0], event.MidiData[1], event.MidiData[2]);
+}
+
+void LoopSampler::ProcessMidiControls(int MidiData[3])
+{
+  Mutex.Lock();
+
+  // else if (event.MidiData[0] == M_CONTROL)
+
+  if ((MidiVolume[0] == MidiData[0]) && (MidiVolume[1] == MidiData[1]))
+    {
+      Volume = MidiData[2] / 100.f;
+      VolumeFader->SetValue(MidiData[2]);
+      Workshop.SetVolume(Volume);
+    }
+  else if ((MidiAttack[0] == MidiData[0]) && (MidiAttack[1] == MidiData[1]))
+    {
+      AttackCoef = MidiData[2] / 100.f;
+      AttackFader->SetValue(MidiData[2] * 10);
+    }
+  else if ((MidiOctave[0] == MidiData[0]) && (MidiOctave[1] == MidiData[1]))
+    {
+      OctaveKnob->SetValue(MidiData[2] / 10 - 1);
+      Octave = OctaveKnob->GetValue() - 4;
+      
+      list<Slice *>::iterator k;
+      for (k = Slices.begin(); k != Slices.end(); k++)  
+	(*k)->SetOctave(Octave);     
+    }
+  else if ((MidiPitch[0] == MidiData[0]) && (MidiPitch[1] == MidiData[1]))
+    {
+      PitchKnob->SetValue((int)(MidiData[2] * 1.574f)); // 1.574 = 200 / 127
+      Pitch = PitchKnob->GetValue() / 100.f;
+    }
+  else if ((MidiTempo[0] == MidiData[0]) && (MidiTempo[1] == MidiData[1]))
+    {
+      if (MidiData[2])
+	TempoBtn->SetOn();
+      else
+	TempoBtn->SetOff();
+      SetTempo();
+    }
+  else if ((MidiInvert[0] == MidiData[0]) && (MidiInvert[1] == MidiData[1]))
+    {
+      if (MidiData[2])
+	InvertBtn->SetOn();
+      else
+	InvertBtn->SetOff();
+      list<Slice *>::iterator i;
+      for (i = Slices.begin(); i != Slices.end(); i++)
+	(*i)->Invert = !(*i)->Invert;
+    }
+  Mutex.Unlock();
 }
 
 wxWindow *LoopSampler::CreateView(wxWindow *zone, wxPoint &pos, wxSize &size)
@@ -720,6 +817,21 @@ void LoopSampler::Load(int fd, long size)
       Slices.push_back(s);
     }  
 
+  read(fd, MidiVolume, sizeof (int[2]));
+  read(fd, MidiAttack, sizeof (int[2]));
+  read(fd, MidiDecay, sizeof (int[2]));
+  read(fd, MidiSustain, sizeof (int[2]));
+  read(fd, MidiRelease, sizeof (int[2]));
+  read(fd, MidiOctave, sizeof (int[2]));
+  read(fd, MidiPitch, sizeof (int[2]));
+  read(fd, MidiTempo, sizeof (int[2]));
+  read(fd, MidiInvert, sizeof (int[2]));
+  read(fd, MidiSliceNote, sizeof (int[2]));
+  read(fd, MidiSlicePitch, sizeof (int[2]));
+  read(fd, MidiSliceVol, sizeof (int[2]));
+  read(fd, MidiSliceAffect, sizeof (int[2]));
+  read(fd, MidiSliceInvert, sizeof (int[2]));
+
   if (Tempo)
     {
       TempoBtn->SetOn();
@@ -770,6 +882,22 @@ long LoopSampler::Save(int fd)
 	  size += write(fd, &(*i)->AffectMidi, sizeof ((*i)->AffectMidi));
 	  size += write(fd, &(*i)->Invert, sizeof ((*i)->Invert));
 	}
+
+      // Midi automation
+      size += write(fd, MidiVolume, sizeof (int[2]));
+      size += write(fd, MidiAttack, sizeof (int[2]));
+      size += write(fd, MidiDecay, sizeof (int[2]));
+      size += write(fd, MidiSustain, sizeof (int[2]));
+      size += write(fd, MidiRelease, sizeof (int[2]));
+      size += write(fd, MidiOctave, sizeof (int[2]));
+      size += write(fd, MidiPitch, sizeof (int[2]));
+      size += write(fd, MidiTempo, sizeof (int[2]));
+      size += write(fd, MidiInvert, sizeof (int[2]));
+      size += write(fd, MidiSliceNote, sizeof (int[2]));
+      size += write(fd, MidiSlicePitch, sizeof (int[2]));
+      size += write(fd, MidiSliceVol, sizeof (int[2]));
+      size += write(fd, MidiSliceAffect, sizeof (int[2]));
+      size += write(fd, MidiSliceInvert, sizeof (int[2]));
     }
   return (size);
 }
@@ -916,7 +1044,7 @@ void LoopSampler::OnOctave(wxScrollEvent &event)
 {
   Mutex.Lock();
 
-  Octave = OctaveKnob->GetValue() - 4;//powf(2, OctaveKnob->GetValue() - 4);
+  Octave = OctaveKnob->GetValue() - 4;
 
   list<Slice *>::iterator k;
   for (k = Slices.begin(); k != Slices.end(); k++)  
@@ -1128,6 +1256,128 @@ void LoopSampler::OnPaint(wxPaintEvent &event)
     }
 }
 
+void LoopSampler::CheckExistingControllerData(int MidiData[3])
+{
+  if ((MidiVolume[0] == MidiData[0]) && (MidiVolume[1] == MidiData[1]))
+    MidiVolume[0] = -1;
+  else if ((MidiAttack[0] == MidiData[0]) && (MidiAttack[1] == MidiData[1]))
+    MidiAttack[0] = -1;
+  else if ((MidiDecay[0] == MidiData[0]) && (MidiDecay[1] == MidiData[1]))
+    MidiDecay[0] = -1;
+  else if ((MidiSustain[0] == MidiData[0]) && (MidiSustain[1] == MidiData[1]))
+    MidiSustain[0] = -1;
+  else if ((MidiRelease[0] == MidiData[0]) && (MidiRelease[1] == MidiData[1]))
+    MidiRelease[0] = -1;
+  else if ((MidiOctave[0] == MidiData[0]) && (MidiOctave[1] == MidiData[1]))
+    MidiOctave[0] = -1;
+  else if ((MidiPitch[0] == MidiData[0]) && (MidiPitch[1] == MidiData[1]))
+    MidiPitch[0] = -1;
+  else if ((MidiTempo[0] == MidiData[0]) && (MidiTempo[1] == MidiData[1]))
+    MidiTempo[0] = -1;
+  else if ((MidiInvert[0] == MidiData[0]) && (MidiInvert[1] == MidiData[1]))
+    MidiInvert[0] = -1;
+  else if ((MidiSliceNote[0] == MidiData[0]) && (MidiSliceNote[1] == MidiData[1]))
+    MidiSliceNote[0] = -1;
+  else if ((MidiSlicePitch[0] == MidiData[0]) && (MidiSlicePitch[1] == MidiData[1]))
+    MidiSlicePitch[0] = -1;
+  else if ((MidiSliceVol[0] == MidiData[0]) && (MidiSliceVol[1] == MidiData[1]))
+    MidiSliceVol[0] = -1;
+  else if ((MidiSliceAffect[0] == MidiData[0]) && (MidiSliceAffect[1] == MidiData[1]))
+    MidiSliceAffect[0] = -1;
+  else if ((MidiSliceInvert[0] == MidiData[0]) && (MidiSliceInvert[1] == MidiData[1]))
+    MidiSliceInvert[0] = -1;
+}
+
+void LoopSampler::OnVolumeController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);      
+      MidiVolume[0] = midi_data[0];
+      MidiVolume[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void LoopSampler::OnAttackController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);
+      MidiAttack[0] = midi_data[0];
+      MidiAttack[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void LoopSampler::OnDecayController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);
+      MidiDecay[0] = midi_data[0];
+      MidiDecay[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void LoopSampler::OnSustainController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);
+      MidiSustain[0] = midi_data[0];
+      MidiSustain[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void LoopSampler::OnReleaseController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);
+      MidiRelease[0] = midi_data[0];
+      MidiRelease[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
 void LoopSampler::OnOctaveController(wxMouseEvent &event)
 {
   int *midi_data;
@@ -1135,7 +1385,67 @@ void LoopSampler::OnOctaveController(wxMouseEvent &event)
   midi_data = new int[3];
   if (ShowMidiController(&midi_data))
     {
-      cout << "OK !" << endl;
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);
+      MidiOctave[0] = midi_data[0];
+      MidiOctave[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void LoopSampler::OnPitchController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);
+      MidiPitch[0] = midi_data[0];
+      MidiPitch[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void LoopSampler::OnTempoController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);
+      MidiTempo[0] = midi_data[0];
+      MidiTempo[1] = midi_data[1];
+
+      Mutex.Unlock();
+    }
+  delete midi_data;
+}
+
+void LoopSampler::OnInvertController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      Mutex.Lock();
+
+      CheckExistingControllerData(midi_data);
+      MidiInvert[0] = midi_data[0];
+      MidiInvert[1] = midi_data[1];
+
+      Mutex.Unlock();
     }
   delete midi_data;
 }

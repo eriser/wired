@@ -20,7 +20,7 @@ class MidiController : public wxDialog
   
   void ProcessMidi(int midi_msg[3]);
  
-  int Channel; 
+  int Type; 
   int Controller;
   int Value;
   
