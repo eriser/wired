@@ -73,6 +73,7 @@ class				Rack: public wxScrolledWindow
 
   void				HandleMouseEvent(Plugin *plug, wxMouseEvent *event);
   void				HandleKeyEvent(Plugin *plug, wxKeyEvent *event);
+  void				HandlePaintEvent(Plugin *plug, wxPaintEvent *event);
   
   list<RackTrack *>		RackTracks;
 

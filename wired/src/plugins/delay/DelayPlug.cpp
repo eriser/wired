@@ -302,7 +302,7 @@ void DelayPlugin::OnDryWet(wxScrollEvent &WXUNUSED(e))
   cout << "DryLevel: " << DryLevel << "; WetLevel: " << WetLevel << endl;
 }
 
-void DelayPlugin::OnPaint(wxPaintEvent &WXUNUSED(event))
+void DelayPlugin::OnPaint(wxPaintEvent &event)
 {
   wxMemoryDC memDC;
   wxPaintDC dc(this);
@@ -315,6 +315,7 @@ void DelayPlugin::OnPaint(wxPaintEvent &WXUNUSED(event))
 	      wxCOPY, FALSE);      
       upd++;
     }
+  Plugin::OnPaintEvent(event);
 }
 
 void DelayPlugin::CheckExistingControllerData(int MidiData[3])

@@ -390,14 +390,17 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
   }
   */
    if(event->LeftDown())
-    {
-      //    plug->Show(false); a voir
-      // plug->Show(true); a voir
-      OldX = event->GetPosition().x;
-      OldY = event->GetPosition().y;
-      SetSelected(plug);
-      new_x = (event->GetPosition().x + plug->GetPosition().x);
-      new_y = (event->GetPosition().y + plug->GetPosition().y);
+     {
+       OldX = event->GetPosition().x;
+       OldY = event->GetPosition().y;
+
+       Plugin *oldplug = selectedPlugin;	 
+       SetSelected(plug);       
+       if (oldplug)
+	 oldplug->Refresh();
+       
+       new_x = (event->GetPosition().x + plug->GetPosition().x);
+       new_y = (event->GetPosition().y + plug->GetPosition().y);
     }
     
   else if(event->LeftUp() && WasDragging)
@@ -412,6 +415,20 @@ void Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
       ResizeTracks();
       WasDragging = false;
     }      
+}
+
+void Rack::HandlePaintEvent(Plugin *plug, wxPaintEvent *event)
+{
+  if (selectedPlugin == 0x0)
+    return;
+  if (selectedPlugin == plug)
+    {
+      wxPaintDC dc(selectedPlugin);
+      PrepareDC(dc);
+      dc.SetPen(wxPen(wxColour(255,0,0), 3, wxSOLID));
+      dc.SetBrush(*wxTRANSPARENT_BRUSH);
+      dc.DrawRectangle(0,0, selectedPlugin->GetSize().x, selectedPlugin->GetSize().y);
+    }
 }
 
 bool Rack::DndGetDest(list<RackTrack *>::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y, Plugin *plug)
@@ -507,18 +524,12 @@ void Rack::OnClick(wxMouseEvent &event)
 
 void Rack::OnPaint(wxPaintEvent &event)
 {
-  if(selectedPlugin != 0x0){
-  wxClientDC dc(selectedPlugin);
-  PrepareDC(dc);
-  dc.SetPen(wxPen(wxColour(255,0,0), 3, wxSOLID));
-  dc.SetBrush(*wxTRANSPARENT_BRUSH);
-  dc.DrawRectangle(0,0, selectedPlugin->GetSize().x, selectedPlugin->GetSize().y);
-  }
+
 }
 
 
 BEGIN_EVENT_TABLE(Rack, wxScrolledWindow)
-  EVT_PAINT(Rack::OnPaint)
+  //  EVT_PAINT(Rack::OnPaint)
   EVT_ENTER_WINDOW(Rack::OnHelp)
   EVT_LEFT_DOWN(Rack::OnClick)
   EVT_RIGHT_DOWN(Rack::OnClick)

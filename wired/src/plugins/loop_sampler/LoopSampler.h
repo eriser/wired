@@ -13,6 +13,7 @@
 #include "Slice.h"
 #include "Polyphony.h"
 #include "KnobCtrl.h"
+#include "CycleKnob.h"
 
 using namespace std;
 
@@ -46,6 +47,9 @@ using namespace std;
 #define IMG_LS_FADER_VOL_FG  "plugins/loopsampler/loop_fader_vol_button.png"
 #define IMG_LS_KNOB_BG  "plugins/loopsampler/knob_bg.png"
 #define IMG_LS_KNOB_FG  "plugins/loopsampler/knob_fg.png"
+#define IMG_LS_KNOB_1  "plugins/loopsampler/loop_knob_1.png"
+#define IMG_LS_KNOB_2  "plugins/loopsampler/loop_knob_2.png"
+#define IMG_LS_KNOB_3  "plugins/loopsampler/loop_knob_3.png"
 
 class LoopNote
 {
@@ -222,8 +226,8 @@ protected:
   FaderCtrl *SustainFader;
   FaderCtrl *ReleaseFader;
 
-  KnobCtrl   *OctaveKnob;
-  KnobCtrl   *PitchKnob;
+  CycleKnob  *OctaveKnob;
+  KnobCtrl  *PitchKnob;
 
   DownButton *InvertBtn;
   DownButton *TempoBtn;

@@ -914,6 +914,7 @@ void					MainWindow::SwitchRackOptView()
       split->ReplaceWindow(RackPanel, OptPanel);
       //split->SplitHorizontally(OptPanel, SeqPanel);
 
+
       BottomSizer = new wxBoxSizer(wxHORIZONTAL);
       BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
       BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL, 2); 
@@ -923,6 +924,8 @@ void					MainWindow::SwitchRackOptView()
       TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
       TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
       SetSizer(TopSizer);
+
+      RackPanel->SetSize(wxSize(470, 150));
     }
 }
 

@@ -1076,7 +1076,7 @@ inline void WiredBeatBox::UpdateNotesPositions(unsigned int bank,
 }
 
 
-void WiredBeatBox::OnPaint(wxPaintEvent& WXUNUSED(event))
+void WiredBeatBox::OnPaint(wxPaintEvent &event)
 {
   wxMemoryDC memDC;
   wxPaintDC dc(this);
@@ -1089,6 +1089,7 @@ void WiredBeatBox::OnPaint(wxPaintEvent& WXUNUSED(event))
 	      upd.GetX(), upd.GetY(), wxCOPY, FALSE);      
       upd++;
     }
+  Plugin::OnPaintEvent(event);
 }
 
 

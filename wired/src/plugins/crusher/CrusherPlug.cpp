@@ -207,7 +207,7 @@ void CrusherPlugin::OnFreq(wxScrollEvent &WXUNUSED(e))
   cout << "Freq: " << Freq << "; NormFreq: " << NormFreq << endl;
 }
 
-void CrusherPlugin::OnPaint(wxPaintEvent &WXUNUSED(event))
+void CrusherPlugin::OnPaint(wxPaintEvent &event)
 {
   wxMemoryDC memDC;
   wxPaintDC dc(this);
@@ -220,6 +220,7 @@ void CrusherPlugin::OnPaint(wxPaintEvent &WXUNUSED(event))
 	      wxCOPY, FALSE);      
       upd++;
     }
+  Plugin::OnPaintEvent(event);
 }
 
 /******** Main and mandatory library functions *********/

@@ -535,6 +535,8 @@ void AkaiSampler::OnPaint(wxPaintEvent &event)
      upd++;
      }
      */
+
+  Plugin::OnPaintEvent(event);
 }
 
 void AkaiSampler::ProcessEvent(WiredEvent &event)
