@@ -58,8 +58,8 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libWiredLoopSampler_la_DEPENDENCIES =
 am_libWiredLoopSampler_la_OBJECTS = LoopSampler.lo LoopSamplerView.lo \
-	WaveLoop.lo RulerLoop.lo Slice.lo Polyphony.lo Plugin.lo \
-	WaveView.lo WaveDrawer.lo Settings.lo WaveFile.lo
+	WaveLoop.lo RulerLoop.lo Slice.lo SliceGui.lo Polyphony.lo \
+	Plugin.lo WaveView.lo WaveDrawer.lo Settings.lo WaveFile.lo
 libWiredLoopSampler_la_OBJECTS = $(am_libWiredLoopSampler_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/src/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -180,6 +180,7 @@ libWiredLoopSampler_la_SOURCES = \
 			WaveLoop.cpp			\
 			RulerLoop.cpp			\
 			Slice.cpp			\
+			SliceGui.cpp			\
 			../../redist/Polyphony.cpp	\
 			../../redist/Plugin.cpp		\
 			../../gui/WaveView.cpp		\
@@ -264,6 +265,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RulerLoop.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Settings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Slice.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SliceGui.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WaveDrawer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WaveFile.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WaveLoop.Plo@am__quote@

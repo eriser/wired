@@ -71,21 +71,21 @@ class LoopSampler: public Plugin
   LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo);
   ~LoopSampler();
 
-  void   Play();
-  void   Stop();
+  void   Play(); //locks mutex
+  void   Stop(); //locks mutex
 
-  void	 Load(int fd, long size);
+  void	 Load(int fd, long size); //locks mutex
   long	 Save(int fd);
 
-  void	 SetBufferSize(long size);
-  void	 SetSamplingRate(double rate);
-  void   SetBPM(float bmp);
-  void	 SetSignature(int num, int den);
+  void	 SetBufferSize(long size); //locks mutex
+  void	 SetSamplingRate(double rate); //locks mutex
+  void   SetBPM(float bmp); //locks mutex
+  void	 SetSignature(int num, int den); //locks mutex
 
   std::string DefaultName() { return "LoopSampler"; }
 
-  void   Process(float **input, float **output, long sample_length);
-  void   ProcessEvent(WiredEvent &event);
+  void   Process(float **input, float **output, long sample_length); //locks mutex
+  void   ProcessEvent(WiredEvent &event); //locks mutex
 
   void	 CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
 
@@ -98,7 +98,7 @@ class LoopSampler: public Plugin
   bool	 IsAudio();
   bool	 IsMidi();
 
-  void	 SetWaveFile(WaveFile *w);
+  void	 SetWaveFile(WaveFile *w); //locks mutex
   void	 SetBarCoeff();
   
   wxBitmap *GetBitmap();
@@ -210,19 +210,19 @@ protected:
 
   void OnOpenFile(wxCommandEvent &event);
   void OnSaveFile(wxCommandEvent &event);
-  void OnPlay(wxCommandEvent &event);
+  void OnPlay(wxCommandEvent &event); //locks mutex
   void OnToSeqTrack(wxCommandEvent &event);
   void OnShowView(wxCommandEvent &event);
-  void OnMesUp(wxCommandEvent &event);
-  void OnMesDown(wxCommandEvent &event);
-  void OnPolyUp(wxCommandEvent &event);
-  void OnPolyDown(wxCommandEvent &event);
-  void OnTempo(wxCommandEvent &event);
-  void OnInvert(wxCommandEvent &event);
-  void OnOctave(wxScrollEvent &event);
-  void OnPitch(wxScrollEvent &event);
-  void OnVolume(wxScrollEvent &event);
-  void OnAttack(wxScrollEvent &event);
+  void OnMesUp(wxCommandEvent &event); //locks mutex
+  void OnMesDown(wxCommandEvent &event); //locks mutex
+  void OnPolyUp(wxCommandEvent &event); //locks mutex
+  void OnPolyDown(wxCommandEvent &event); //locks mutex
+  void OnTempo(wxCommandEvent &event); // locks mutex
+  void OnInvert(wxCommandEvent &event); //locks mutex
+  void OnOctave(wxScrollEvent &event); //locks mutex
+  void OnPitch(wxScrollEvent &event); //locks mutex
+  void OnVolume(wxScrollEvent &event); //locks mutex
+  void OnAttack(wxScrollEvent &event); //locks mutex
   void OnPaint(wxPaintEvent &event);
 
   void OnHelp(wxMouseEvent &event);

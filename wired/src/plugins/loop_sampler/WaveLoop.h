@@ -4,9 +4,9 @@
 #ifndef __WAVELOOP_H__
 #define __WAVELOOP_H__
 
-#include <wx/statline.h>
 #include "WaveView.h"
 #include "Slice.h"
+#include "SliceGui.h"
 
 #define wxEVT_SLICE_SELECTED	31310031
 
@@ -33,6 +33,8 @@ class WaveLoop: public WaveView
   void OnClick(wxMouseEvent &event);
   void OnSize(wxSizeEvent &event);
   void OnPaint(wxPaintEvent &event);
+  void OnSliceBtnSelected(wxCommandEvent &event);
+  void OnSliceMove(wxCommandEvent &event);
 
   double BarCoeff;
   int  NoteNumber;
