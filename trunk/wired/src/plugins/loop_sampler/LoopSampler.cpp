@@ -219,7 +219,8 @@ LoopSampler::~LoopSampler()
 }
 
 void LoopSampler::SetBufferSize(long size) 
-{ 
+{
+  cout << "[LOOPSAMPLER] Buffer size is now: " << size << endl;
   Workshop.SetBufferSize(size);
   Workshop.SetPolyphony(PolyphonyCount);
 
@@ -237,6 +238,8 @@ void LoopSampler::SetBufferSize(long size)
 
 void LoopSampler::SetSamplingRate(double rate) 
 { 
+  cout << "[LOOPSAMPLER] Sampling rate is now: " << rate << endl;
+
   SamplingRate = rate; 
   if (AttackMs)
     {
