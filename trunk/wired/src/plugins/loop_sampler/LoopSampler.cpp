@@ -160,8 +160,14 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   /* Global tuning */
 
-  OctaveKnob = new KnobCtrl(this, LoopSampler_Octave, knob_bg, knob_fg, 0, 8, 4, 1,
-			    wxPoint(233, 133), wxSize(23, 23));
+  wxImage *imgs[3];
+  imgs[0] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_1)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[1] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_2)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[2] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_3)).c_str(), wxBITMAP_TYPE_PNG);
+
+  OctaveKnob = new CycleKnob(this, LoopSampler_Octave, 3, imgs, 1, 0, 8, 4,
+			    wxPoint(233, 133), wxSize(23, 23));//new KnobCtrl(this, LoopSampler_Octave, knob_bg, knob_fg, 0, 8, 4, 1,
+    //    wxPoint(233, 133), wxSize(23, 23));
   PitchKnob = new KnobCtrl(this, LoopSampler_Pitch, knob_bg, knob_fg, 1, 200, 100, 1,
 			   wxPoint(311, 133), wxSize(23, 23));
 
@@ -1321,6 +1327,8 @@ void LoopSampler::OnPaint(wxPaintEvent &event)
 	      wxCOPY, FALSE);      
       upd++;
     }
+
+  Plugin::OnPaintEvent(event);
 }
 
 void LoopSampler::CheckExistingControllerData(int MidiData[3])

@@ -20,6 +20,8 @@ Plugin::Plugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
           &Plugin::OnMouseEvent);
   Connect(wxID_ANY, wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)
 	 &Plugin::OnMouseEvent);
+  //  Connect(wxID_ANY, wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)
+  //	 &Plugin::OnPaintEvent);
 }
 
 Plugin::~Plugin() 
@@ -35,6 +37,11 @@ void Plugin::OnMouseEvent(wxMouseEvent &event)
 void Plugin::OnKeyEvent(wxKeyEvent &event)
 {
   SendKeyEvent(event);
+}
+
+void Plugin::OnPaintEvent(wxPaintEvent &event)
+{
+  SendPaintEvent(event);
 }
 
 // Time events
@@ -107,6 +114,11 @@ void Plugin::SendKeyEvent(wxKeyEvent &event)
 void Plugin::SendClickEvent(wxMouseEvent &event)
 {
   StartInfo.HostCallback(this, wiredSendClickEvent, (void *)&event);  
+}
+
+void Plugin::SendPaintEvent(wxPaintEvent &event)
+{
+  StartInfo.HostCallback(this, wiredSendPaintEvent, (void *)&event);  
 }
 
 bool Plugin::ShowMidiController(int *MidiData[3])

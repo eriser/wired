@@ -86,6 +86,7 @@ enum
     wiredSendMouseEvent,
     wiredSendKeyEvent,
     wiredSendClickEvent,
+    wiredSendPaintEvent,
     wiredShowOptionalView,
     wiredCloseOptionalView,
     wiredOpenFileLoader,
@@ -188,6 +189,8 @@ class Plugin: public wxWindow
   virtual void	OnKeyEvent(wxKeyEvent &event);
   /* Used to know if a mouse event occured. No need to overload */
   virtual void  OnMouseEvent(wxMouseEvent &event);
+  /* Used to know if a paint event occured. No need to overload */
+  virtual void  OnPaintEvent(wxPaintEvent &event);
 
   // Time events
   /* Returns current BPM (tempo) */
@@ -221,6 +224,8 @@ class Plugin: public wxWindow
   void SendKeyEvent(wxKeyEvent &event);
   /* Tells the host that the plugin got selected */
   void SendClickEvent(wxMouseEvent &event);
+  /* Tells the host that the plugin needs to be paint */
+  void SendPaintEvent(wxPaintEvent &event);
   /* Shows MIDI controller change window, if returns true,
      MidiData will be filled by the MIDI data received (you need to pass a valid pointer
      to a int[3] variable */

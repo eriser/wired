@@ -96,7 +96,7 @@ WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
 //	col->Add(sbv, 1, wxALL | wxEXPAND, 5);
 	
 //	SetSizer(col);
-	SetSizer(row_1);
+//	SetSizer(row_1);
 	
 	PopMenu = new wxMenu();  
  
@@ -202,6 +202,7 @@ void WaveEditor::OnSize(wxSizeEvent &event)
 {
   wxSize				s = GetSize();
   
+  /*
   cout << " WaveEditor -- Onsize" << endl;
   if (Data || (Wave && !Wave->LoadedInMem))
     {
@@ -212,6 +213,7 @@ void WaveEditor::OnSize(wxSizeEvent &event)
 	  Refresh();
     }  		
   cout << " WaveEditor -- End Onsize" << endl;
+  */
 }
 
 

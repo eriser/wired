@@ -59,6 +59,11 @@ long					HostCallback(Plugin *plug, long param, void *value)
 	RackPanel->HandleMouseEvent(plug, (wxMouseEvent *)value);
 	break;
       }
+    case wiredSendPaintEvent :
+      {
+	RackPanel->HandlePaintEvent(plug, (wxPaintEvent *)value);
+	break;
+      }
     case wiredGetBpm :      
       {
 	*(float *)value = Seq->BPM;

@@ -109,6 +109,7 @@ void SynthPlugin::OnPaint(wxPaintEvent &event)
       dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), wxCOPY, FALSE);      
       upd++;
     }
+  Plugin::OnPaintEvent(event);
 }
 
 void SynthPlugin::Process(float **input, float **output, long sample_length)
