@@ -47,7 +47,7 @@ void				AudioPattern::Init()
   wxString			s;
 
   Pattern::PenColor = CL_PATTERN_NORM;
-  s.Printf("Audio Pattern %d", audio_pattern_count++);
+  s.Printf("T%d A%d", TrackIndex + 1, audio_pattern_count++);
   Name = s.c_str();
   LastBlock = -1;  
   RecordWave = 0;
@@ -316,6 +316,7 @@ void					AudioPattern::OnPaint(wxPaintEvent &e)
   wxRegionIterator			region(GetUpdateRegion());
 
   WaveDrawer::OnPaint(dc, GetSize(), region);
+  Pattern::DrawName(dc, GetSize());
 }
 
 void					AudioPattern::OnSize(wxSizeEvent &e)

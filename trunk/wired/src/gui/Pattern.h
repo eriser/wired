@@ -7,9 +7,14 @@
 using namespace std;
 
 #include <string>
+#include <wx/string.h>
 #include <wx/wx.h>
 
 #define PATTERN_DRAG_SCROLL_UNIT		(MEASURE_WIDTH + 1)
+#define PATTERN_NAME_WIDTH			(42)
+#define PATTERN_NAME_HEIGHT			(10)
+#define PATTERN_NAME_MARGINS			(3)
+#define PATTERN_NAME_OFFSET			(2)
 
 class Pattern : public wxWindow
 {
@@ -18,6 +23,7 @@ class Pattern : public wxWindow
   virtual void				OnDoubleClick(wxMouseEvent &e);
   virtual void				OnRightClick(wxMouseEvent &e);
   virtual void				OnMotion(wxMouseEvent &e);
+  void					DrawName(wxPaintDC &dc, wxSize s);
 
   wxPoint				m_pos;
   wxSize				m_size;
@@ -28,9 +34,10 @@ class Pattern : public wxWindow
   double				Length;
   long					TrackIndex;
   bool					Selected;
-  string				Name;
+  wxString				Name;
   wxColour				PenColor;
   wxColour				BrushColor;
+
 
  public:
   Pattern(double pos, double endpos, long trackindex);
@@ -56,8 +63,8 @@ class Pattern : public wxWindow
   double				SetPosition(double p) { Position = p; }
   double				GetPosition() { return (Position); }
   double				GetEndPosition() { return (EndPosition); }
-  string				GetName() { return (Name); }
-  void					SetName(string n) { Name = n; }
+  wxString				GetName() { return (Name); }
+  void					SetName(wxString n) { Name = n; }
   long					GetTrackIndex() { return (TrackIndex); }
   void					SetTrackIndex(long t) { TrackIndex = t; }
 };

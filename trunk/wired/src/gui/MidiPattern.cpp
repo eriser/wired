@@ -47,7 +47,7 @@ void				MidiPattern::Init()
 {
   wxString	s;
 
-  s.Printf("Midi Pattern %d", midi_pattern_count++);
+  s.Printf("T%d M%d", TrackIndex + 1, midi_pattern_count++);
   PenColor = CL_MIDI_DRAW;
   Colour = PenColor;
   Name = s.c_str();
@@ -259,5 +259,6 @@ void				MidiPattern::OnPaint(wxPaintEvent &e)
   else
     dc.SetBrush(CL_SEQ_BACKGROUND);
   dc.DrawRectangle(0, 0, s.x, s.y);
+  Pattern::DrawName(dc, s);
 }
 
