@@ -1,4 +1,4 @@
-SUBDIRS = beatbox compressor crusher delay filter loop_sampler akai_sampler test reverb chorus
+SUBDIRS = beatbox compressor crusher delay filter loop_sampler akai_sampler test reverb chorus wahwah
 
 LDFLAGS = $(shell wx-config --libs)  -g3 -O3
 
