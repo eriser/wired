@@ -113,6 +113,7 @@ AC_CONFIG_FILES([Makefile
 		src/plugins/reverb/Makefile
 		src/plugins/synth/Makefile
 		src/plugins/chorus/Makefile
+		src/plugins/wahwah/Makefile
 		src/plugins/test/Makefile
 		src/redist/Makefile
 		src/sequencer/Makefile
@@ -140,6 +141,7 @@ AC_CONFIG_FILES([Makefile
 		src/data/plugins/filter/Makefile
 		src/data/plugins/loopsampler/Makefile
 		src/data/plugins/reverb/Makefile
+		src/data/plugins/wahwah/Makefile
 		src/data/plugins/chorus/Makefile
 		src/conf/Makefile])
 
