@@ -177,7 +177,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-SUBDIRS = beatbox compressor crusher delay filter loop_sampler akai_sampler test reverb
+SUBDIRS = beatbox compressor crusher delay filter loop_sampler akai_sampler test reverb chorus
 
 #DEPS_LIBS = -L../libs/WiredWidgets/src/ -lWiredWidgets
 noinst_LIBRARIES = libplugins.a
