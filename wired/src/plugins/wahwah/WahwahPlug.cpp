@@ -1,7 +1,7 @@
 // Copyright (C) 2005 by Wired Team
 // Under the GNU General Public License
 
-#include "wahwah.h"
+#include "WahwahPlug.h"
 
 #define lfoskipsamples 30
 
