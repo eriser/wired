@@ -66,12 +66,12 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) \
+LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
 	$(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(libWiredBeatBox_la_SOURCES)
 DIST_SOURCES = $(libWiredBeatBox_la_SOURCES)
 ETAGS = etags
@@ -81,6 +81,7 @@ ACLOCAL = @ACLOCAL@
 AMDEP_FALSE = @AMDEP_FALSE@
 AMDEP_TRUE = @AMDEP_TRUE@
 AMTAR = @AMTAR@
+AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -103,6 +104,8 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+F77 = @F77@
+FFLAGS = @FFLAGS@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -127,8 +130,10 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
+ac_ct_F77 = @ac_ct_F77@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
@@ -286,46 +291,46 @@ distclean-compile:
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
 Polyphony.lo: ../../redist/Polyphony.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Polyphony.lo -MD -MP -MF "$(DEPDIR)/Polyphony.Tpo" -c -o Polyphony.lo `test -f '../../redist/Polyphony.cpp' || echo '$(srcdir)/'`../../redist/Polyphony.cpp; \
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Polyphony.lo -MD -MP -MF "$(DEPDIR)/Polyphony.Tpo" -c -o Polyphony.lo `test -f '../../redist/Polyphony.cpp' || echo '$(srcdir)/'`../../redist/Polyphony.cpp; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/Polyphony.Tpo" "$(DEPDIR)/Polyphony.Plo"; else rm -f "$(DEPDIR)/Polyphony.Tpo"; exit 1; fi
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../../redist/Polyphony.cpp' object='Polyphony.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Polyphony.lo `test -f '../../redist/Polyphony.cpp' || echo '$(srcdir)/'`../../redist/Polyphony.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Polyphony.lo `test -f '../../redist/Polyphony.cpp' || echo '$(srcdir)/'`../../redist/Polyphony.cpp
 
 Plugin.lo: ../../redist/Plugin.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Plugin.lo -MD -MP -MF "$(DEPDIR)/Plugin.Tpo" -c -o Plugin.lo `test -f '../../redist/Plugin.cpp' || echo '$(srcdir)/'`../../redist/Plugin.cpp; \
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Plugin.lo -MD -MP -MF "$(DEPDIR)/Plugin.Tpo" -c -o Plugin.lo `test -f '../../redist/Plugin.cpp' || echo '$(srcdir)/'`../../redist/Plugin.cpp; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/Plugin.Tpo" "$(DEPDIR)/Plugin.Plo"; else rm -f "$(DEPDIR)/Plugin.Tpo"; exit 1; fi
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../../redist/Plugin.cpp' object='Plugin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Plugin.lo `test -f '../../redist/Plugin.cpp' || echo '$(srcdir)/'`../../redist/Plugin.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Plugin.lo `test -f '../../redist/Plugin.cpp' || echo '$(srcdir)/'`../../redist/Plugin.cpp
 
 WaveView.lo: ../../gui/WaveView.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT WaveView.lo -MD -MP -MF "$(DEPDIR)/WaveView.Tpo" -c -o WaveView.lo `test -f '../../gui/WaveView.cpp' || echo '$(srcdir)/'`../../gui/WaveView.cpp; \
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT WaveView.lo -MD -MP -MF "$(DEPDIR)/WaveView.Tpo" -c -o WaveView.lo `test -f '../../gui/WaveView.cpp' || echo '$(srcdir)/'`../../gui/WaveView.cpp; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/WaveView.Tpo" "$(DEPDIR)/WaveView.Plo"; else rm -f "$(DEPDIR)/WaveView.Tpo"; exit 1; fi
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../../gui/WaveView.cpp' object='WaveView.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o WaveView.lo `test -f '../../gui/WaveView.cpp' || echo '$(srcdir)/'`../../gui/WaveView.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o WaveView.lo `test -f '../../gui/WaveView.cpp' || echo '$(srcdir)/'`../../gui/WaveView.cpp
 
 WaveDrawer.lo: ../../gui/WaveDrawer.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT WaveDrawer.lo -MD -MP -MF "$(DEPDIR)/WaveDrawer.Tpo" -c -o WaveDrawer.lo `test -f '../../gui/WaveDrawer.cpp' || echo '$(srcdir)/'`../../gui/WaveDrawer.cpp; \
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT WaveDrawer.lo -MD -MP -MF "$(DEPDIR)/WaveDrawer.Tpo" -c -o WaveDrawer.lo `test -f '../../gui/WaveDrawer.cpp' || echo '$(srcdir)/'`../../gui/WaveDrawer.cpp; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/WaveDrawer.Tpo" "$(DEPDIR)/WaveDrawer.Plo"; else rm -f "$(DEPDIR)/WaveDrawer.Tpo"; exit 1; fi
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../../gui/WaveDrawer.cpp' object='WaveDrawer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o WaveDrawer.lo `test -f '../../gui/WaveDrawer.cpp' || echo '$(srcdir)/'`../../gui/WaveDrawer.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o WaveDrawer.lo `test -f '../../gui/WaveDrawer.cpp' || echo '$(srcdir)/'`../../gui/WaveDrawer.cpp
 
 Settings.lo: ../../engine/Settings.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Settings.lo -MD -MP -MF "$(DEPDIR)/Settings.Tpo" -c -o Settings.lo `test -f '../../engine/Settings.cpp' || echo '$(srcdir)/'`../../engine/Settings.cpp; \
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Settings.lo -MD -MP -MF "$(DEPDIR)/Settings.Tpo" -c -o Settings.lo `test -f '../../engine/Settings.cpp' || echo '$(srcdir)/'`../../engine/Settings.cpp; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/Settings.Tpo" "$(DEPDIR)/Settings.Plo"; else rm -f "$(DEPDIR)/Settings.Tpo"; exit 1; fi
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../../engine/Settings.cpp' object='Settings.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Settings.lo `test -f '../../engine/Settings.cpp' || echo '$(srcdir)/'`../../engine/Settings.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Settings.lo `test -f '../../engine/Settings.cpp' || echo '$(srcdir)/'`../../engine/Settings.cpp
 
 WaveFile.lo: ../../audio/WaveFile.cpp
-@am__fastdepCXX_TRUE@	if $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT WaveFile.lo -MD -MP -MF "$(DEPDIR)/WaveFile.Tpo" -c -o WaveFile.lo `test -f '../../audio/WaveFile.cpp' || echo '$(srcdir)/'`../../audio/WaveFile.cpp; \
+@am__fastdepCXX_TRUE@	if $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT WaveFile.lo -MD -MP -MF "$(DEPDIR)/WaveFile.Tpo" -c -o WaveFile.lo `test -f '../../audio/WaveFile.cpp' || echo '$(srcdir)/'`../../audio/WaveFile.cpp; \
 @am__fastdepCXX_TRUE@	then mv -f "$(DEPDIR)/WaveFile.Tpo" "$(DEPDIR)/WaveFile.Plo"; else rm -f "$(DEPDIR)/WaveFile.Tpo"; exit 1; fi
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../../audio/WaveFile.cpp' object='WaveFile.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o WaveFile.lo `test -f '../../audio/WaveFile.cpp' || echo '$(srcdir)/'`../../audio/WaveFile.cpp
+@am__fastdepCXX_FALSE@	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o WaveFile.lo `test -f '../../audio/WaveFile.cpp' || echo '$(srcdir)/'`../../audio/WaveFile.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
