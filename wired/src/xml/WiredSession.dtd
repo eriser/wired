@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!ELEMENT WorkingDir (CDATA)>
+
+<!--Sequenceur-->
+<!ELEMENT Sequencer (BPM,SigNumerator,SigDenominator,CurrentPos,EndPos,BeginLoop,EndLoop)+>
+<!ELEMENT BPM (CDATA)>
+<!ELEMENT SigNumerator (CDATA)>
+<!ELEMENT SigDenominator (CDATA)>
+<!ELEMENT CurrentPos (CDATA)>
+<!ELEMENT BeginLoop (CDATA)>
+<!ELEMENT EndLoop (CDATA)>
+
+<!--Tracks-->
+<!ELEMENT Track (DeviceId+,Plugin*,Name+,Pattern*)>
+<!ELEMENT DeviceId (CDATA)> 
+
+<!--Patterns-->
+<!ELEMENT Pattern (StartPos+,EndPos+,Name+,PatternData*)> 
+<!ELEMENT PatternData (PatternAudio|PatternMIDIData)+>
+<!ELEMENT PatternAudioData (StartPos,EndPos,FileName)+>
+<!ELEMENT PatternMIDIData (PPQN+,PatternMIDIEvents*)>
+<!ELEMENT PatternMIDIEvents (StartPos,EndPos,MIDIMessage)+>
+<!ELEMENT FileName (CDATA)>
+<!ELEMENT PPQN (CDATA)>
+<!ELEMENT MIDIMessage (CDATA)>
+
+<!--Plugins-->
+<!ELEMENT Plugin (PluginId,Name,Width?,Height?,PluginData*)>
+<!ELEMENT PluginId (CDATA)> 
+<!ELEMENT PluginData (ParamName,ParamValue)>
+<!ELEMENT ParamName (CDATA)> 
+<!ELEMENT ParamValue (#PCDATA)> 
+
+<!--Common Elements-->
+
+<!ELEMENT StartPos (CDATA)> 
+<!ELEMENT EndPos (CDATA)> 
+<!ELEMENT Name (CDATA)> 
+<!ELEMENT Width (CDATA)> 
+<!ELEMENT Height (CDATA)> 
+
+<!--Attributs-->
+<!ATTLIST Track TrackType (Audio|MIDI) #REQUIRED 
+				Muted (true|false) #REQUIRED  
+				Recording (true|false) #REQUIRED>
+<!ATTLIST Sequencer Loop (true|false) #REQUIRED 
+					Click (true|false) #REQUIRED>
