@@ -61,6 +61,8 @@ AC_PROG_MAKE_SET
 #AC_CHECK_LIB([SoundTouch], [main])
 #AC_CHECK_LIB([ltdl], [lt_dlopen])
 
+AC_CHECK_LIB([xml2], [xmlParseMemory], [ XML2F='yes' ], AC_MSG_ERROR([Couldn't find libxml2 ]))
+
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
@@ -143,6 +145,7 @@ AC_CONFIG_FILES([Makefile
 		src/data/plugins/reverb/Makefile
 		src/data/plugins/wahwah/Makefile
 		src/data/plugins/chorus/Makefile
-		src/conf/Makefile])
+		src/conf/Makefile
+		src/xml/Makefile])
 
 AC_OUTPUT
