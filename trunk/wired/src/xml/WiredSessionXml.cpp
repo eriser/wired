@@ -1,4 +1,4 @@
-#include "WiredSessionXML.h"
+#include "WiredSessionXml.h"
 
 //extern std::vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo				StartInfo;
@@ -162,22 +162,21 @@ bool			WiredSessionXml::SaveTrack(Track* TrackInfo)
 				SavePattern(*Piter, TrackInfo->IsAudioTrack());
 			}
 	}
+	SaveTrackPlugins(TrackInfo);
 	Res += this->EndElement();
 	return Res == 0;
 }
 
 bool			WiredSessionXml::SaveTrackPlugins(Track* TrackInfo)
 {
-	RackIter	IterRack;
 	PluginIter	IterPlugins;
+	RackTrack	*Plugins = TrackInfo->TrackOpt->ConnectedRackTrack;
 	
-	for (IterRack = RackPanel->RackTracks.begin(); IterRack != RackPanel->RackTracks.end(); IterRack++)
-	{
-		for (IterPlugins = (*IterRack)->Racks.begin(); IterPlugins != (*IterRack)->Racks.end(); IterPlugins++)
-		{
-			SavePlugin(*IterPlugins);
-		}
-	}
+	if (Plugins == NULL)
+		return true;
+	for (IterPlugins = Plugins->Racks.begin(); IterPlugins != Plugins->Racks.end(); IterPlugins++)
+		SavePlugin(*IterPlugins);
+	return true;
 }
 
 bool			WiredSessionXml::SavePlugin(Plugin* PluginInfo)
