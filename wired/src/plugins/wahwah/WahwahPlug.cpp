@@ -19,7 +19,7 @@ END_EVENT_TABLE()
 EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   : Plugin(startinfo, initinfo)
 {
-  cout << "WahWah - Construction" << endl;
+  //cout << "WahWah - Construction" << endl;
   Init();
 
   wxImage *tr_bg = 
@@ -55,7 +55,7 @@ void		EffectWahwah::Init()
   // ResFader->SetValue(TO_GUI_RES(DEFAULT_RES));
   // Should not segfault
 
-  cout << "WahWah - Initialisation" << endl;
+  //cout << "WahWah - Initialisation" << endl;
   LeftChannel.SetValues(DEFAULT_FLOAT_FREQ, DEFAULT_STARTPHASE, DEFAULT_FLOAT_DEPTH, 
 			DEFAULT_FLOAT_FREQOFS, DEFAULT_FLOAT_RES);
   RightChannel.SetValues(DEFAULT_FLOAT_FREQ, DEFAULT_STARTPHASE, DEFAULT_FLOAT_DEPTH, 
