@@ -93,7 +93,7 @@ void ChorusPlugin::AllocateMem()
 
 void ChorusPlugin::Process(float **input, float **output, long sample_length)
 {
-  unsigned long c1;
+  long c1;
 
   ChorusMutex.Lock();
 
