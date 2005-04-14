@@ -186,7 +186,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->Append(MainWin_Open, "&Open...\tCtrl-O");
   FileMenu->Append(MainWin_Save, "&Save\tCtrl-S");
   FileMenu->Append(MainWin_SaveAs, "Save &as...\tF12");
-  FileMenu->Append(MainWin_SaveAsXml, "Save &as Xml...");
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_ImportWave, "&Import Wave file...");
   FileMenu->Append(MainWin_ImportMIDI, "&Import MIDI file...");
@@ -440,8 +439,9 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
 
 void					MainWindow::OnSave(wxCommandEvent &event)
 {
-  if (!CurrentSession->FileName.empty())
-    CurrentSession->Save();
+	std::string			DocumentName = CurrentXmlSession->GetDocumentName();
+  if (!DocumentName.empty())
+    CurrentXmlSession->Save();
   else
     OnSaveAs(event);
 }
@@ -451,7 +451,7 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   vector<string>			exts;
   FileLoader				*dlg;
   
-  exts.insert(exts.begin(), "wrd\tWired session file (*.wrd)");
+  exts.insert(exts.begin(), "xml\tWired session file (*.xml)");
   dlg = new FileLoader(this, MainWin_FileLoader, "Save session", false, true, &exts);
   if (dlg->ShowModal() == wxID_OK)
     {
@@ -459,53 +459,22 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 
       wxFileName f(selfile.c_str());
       if (!f.HasExt())
-	selfile = selfile + WIRED_FILE_EXT;
+	selfile = selfile + XML_EXTENSION;
       cout << "[MAINWIN] User saves to " << selfile << endl;
 
       string audiodir;
       
-      if (CurrentSession)
+      if (CurrentXmlSession)
 	{
-	  audiodir = CurrentSession->AudioDir;
-	  delete CurrentSession;
+	  audiodir = CurrentXmlSession->GetAudioDir();
+	  delete CurrentXmlSession;
 	}
-      CurrentSession = new WiredSession(selfile, audiodir);
-      CurrentSession->Save();
+      CurrentXmlSession = new WiredSessionXml(selfile, audiodir);
+      CurrentXmlSession->Save();
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
   dlg->Destroy();
-}
-
-void					MainWindow::OnSaveAsXml(wxCommandEvent &event)
-{
-	vector<string>			exts;
-	FileLoader				*dlg;
-  
-	exts.insert(exts.begin(), "xml\tWired session file (*.xml)");
-	dlg = new FileLoader(this, MainWin_FileLoader, "Save session (Xml)", false, true, &exts);
-	if (dlg->ShowModal() == wxID_OK)
-	{
-		string selfile = dlg->GetSelectedFile();    
-
-		wxFileName f(selfile.c_str());
-		if (!f.HasExt())
-			selfile = selfile + XML_EXTENSION;
-		cout << "[MAINWIN] User saves to " << selfile << endl;
-
-		string audiodir;
-
-		if (CurrentXmlSession)
-		{
-			// audiodir = CurrentXmlSession->;
-			delete CurrentXmlSession;
-		}
-		CurrentXmlSession = new WiredSessionXml(selfile, audiodir);
-		CurrentXmlSession->Save();
-	}
-	else
-		cout << "[MAINWIN] User cancels open dialog" << endl;
-	dlg->Destroy();
 }
 
 void					MainWindow::OnImportWave(wxCommandEvent &event)
@@ -1341,7 +1310,6 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_New, MainWindow::OnNew)
   EVT_MENU(MainWin_Save, MainWindow::OnSave)
   EVT_MENU(MainWin_SaveAs, MainWindow::OnSaveAs)
-  EVT_MENU(MainWin_SaveAsXml, MainWindow::OnSaveAsXml)
   //EVT_MENU(MainWin_ImportWave, MainWindow::OnImportWave)
   EVT_MENU(MainWin_ImportMIDI, MainWindow::OnImportMIDI)
   EVT_MENU(MainWin_ImportAKAI, MainWindow::OnImportAKAI)
