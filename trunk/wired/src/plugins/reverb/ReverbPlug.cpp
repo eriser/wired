@@ -20,24 +20,38 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Init();
 
   wxImage *tr_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_RV_BG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(string(GetDataDir() + string(IMG_RV_BG)).c_str(), 
+		wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
   
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_RV_BMP)).c_str(), wxBITMAP_TYPE_BMP); 
-
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_BG)).c_str(),wxBITMAP_TYPE_PNG);
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_FG)).c_str(),wxBITMAP_TYPE_PNG);
+  bmp = new wxBitmap(string(GetDataDir() + string(IMG_RV_BMP)).c_str(), 
+		     wxBITMAP_TYPE_BMP); 
+  img_bg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_BG)).c_str(),
+		       wxBITMAP_TYPE_PNG);
+  img_fg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_FG)).c_str(),
+		       wxBITMAP_TYPE_PNG);
   
 
-  SelrevKnob = new FaderCtrl(this, Reverb_Selrev, img_bg, img_fg, 0, 2, 0,
-			      wxPoint(18, 8), wxSize(23, 23));
-  
-  DecayKnob = new FaderCtrl(this, Reverb_Decay, img_bg, img_fg, 0, 30, 3,
-			      wxPoint(50, 8), wxSize(23, 23));
-  
+  // bypass button's stuff
+
+  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
+			  wxBITMAP_TYPE_PNG);
+  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+
+  // Knobs' background
+
+  SelrevKnob = 
+    new FaderCtrl(this, Reverb_Selrev, img_bg, img_fg, 0, 2, 0,
+		  wxPoint(73, 11), wxSize(img_bg->GetWidth() - 3, 
+					  img_bg->GetHeight()));  
+  DecayKnob = 
+    new FaderCtrl(this, Reverb_Decay, img_bg, img_fg, 0, 30, 3,
+		  wxPoint(110, 11), wxSize(img_bg->GetWidth() - 3, 
+					   img_bg->GetHeight()));
   MixKnob = new FaderCtrl(this, Reverb_Mix, img_bg, img_fg, 0, 100, 50,
-			      wxPoint(100, 8), wxSize(23, 23));
-  
+			  wxPoint(149, 11), wxSize(img_bg->GetWidth() - 3, 
+						   img_bg->GetHeight()));
   SetBackgroundColour(wxColour(237, 237, 237));
 }
 

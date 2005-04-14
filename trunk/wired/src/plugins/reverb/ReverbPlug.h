@@ -13,6 +13,7 @@
 #include "Plugin.h"
 #include "KnobCtrl.h"
 #include "FaderCtrl.h"
+#include "DownButton.h"
 
 #include "NRev.h"
 #include "JCRev.h"
@@ -26,6 +27,10 @@
 #define IMG_RV_FADER_FG	"plugins/filter/fader_fg.png"
 #define IMG_RV_KNOB_BG	"plugins/reverb/knob_bg.png"
 #define IMG_RV_KNOB_FG	"plugins/reverb/knob_fg.png"
+#define IMG_LIQUID_ON	"plugins/delay/liquid-cristal_play.png"
+#define IMG_LIQUID_OFF	"plugins/delay/liquid-cristal_stop.png"
+#define IMG_BYPASS_ON	"plugins/delay/bypass_button_down.png"
+#define IMG_BYPASS_OFF	"plugins/delay/bypass_button_up.png"
 #define EFFECT_MIX	100.f
 
 typedef struct s_param
@@ -79,6 +84,14 @@ class ReverbPlugin: public Plugin
   wxImage *img_fg;
   wxImage *img_bg;
   wxBitmap *TpBmp;
+
+  wxImage *bypass_on;
+  wxImage *bypass_off;
+  wxImage *liquid_on;
+  wxImage *liquid_off;
+
+  StaticBitmap *Liquid;
+  DownButton *BypassBtn;
 
   DECLARE_EVENT_TABLE()  
 
