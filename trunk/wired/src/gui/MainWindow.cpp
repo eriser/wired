@@ -7,6 +7,7 @@
 #include <wx/splitter.h>
 #include <wx/progdlg.h>
 #include <wx/filename.h>
+#include <algorithm>
 #include "SequencerGui.h"
 #include "HostCallback.h"
 #include "FileLoader.h"
@@ -183,7 +184,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   
   FileMenu->Append(MainWin_New, "&New\tCtrl-N");
   FileMenu->Append(MainWin_Open, "&Open...\tCtrl-O");
-  FileMenu->Append(MainWin_OpenXml, "&Open Xml...");
   FileMenu->Append(MainWin_Save, "&Save\tCtrl-S");
   FileMenu->Append(MainWin_SaveAs, "Save &as...\tF12");
   FileMenu->Append(MainWin_SaveAsXml, "Save &as Xml...");
@@ -406,30 +406,6 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
   FileLoader				*dlg;
   
   exts.insert(exts.begin(), "wrd\tWired session file (*.wrd)");
-  dlg = new FileLoader(this, MainWin_FileLoader, "Open session", false, false, &exts);
-  if (dlg->ShowModal() == wxID_OK)
-    {
-      string selfile = dlg->GetSelectedFile();    
-
-      cout << "[MAINWIN] User opens " << selfile << endl;
-      if (!NewSession())
-	{
-	  dlg->Destroy();
-	  return;
-	}
-      CurrentSession = new WiredSession(selfile);
-      CurrentSession->Load();
-    }
-  else
-    cout << "[MAINWIN] User cancels open dialog" << endl;
-  dlg->Destroy();
-}
-
-void					MainWindow::OnOpenXml(wxCommandEvent &event)
-{
-  vector<string>			exts;
-  FileLoader				*dlg;
-  
   exts.insert(exts.begin(), "xml\tWired session file (*.xml)");
   dlg = new FileLoader(this, MainWin_FileLoader, "Open session", false, false, &exts);
   if (dlg->ShowModal() == wxID_OK)
@@ -442,8 +418,20 @@ void					MainWindow::OnOpenXml(wxCommandEvent &event)
 	  dlg->Destroy();
 	  return;
 	}
-      CurrentXmlSession = new WiredSessionXml(selfile);
-      CurrentXmlSession->Load();
+		if (selfile.size() > 4)
+		{
+			transform(selfile.begin(), selfile.end(), selfile.begin(), (int(*)(int))tolower);
+			if (!selfile.substr(selfile.find_last_of('.')).compare(XML_EXTENSION))
+			{
+	    	  CurrentXmlSession = new WiredSessionXml(selfile);
+	    	  CurrentXmlSession->Load();
+			}
+			else
+			{
+		      CurrentSession = new WiredSession(selfile);
+		      CurrentSession->Load();
+			}
+		}
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
@@ -1360,7 +1348,6 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_ExportWave, MainWindow::OnExportWave)
   EVT_MENU(MainWin_Settings, MainWindow::OnSettings)
   EVT_MENU(MainWin_Open, MainWindow::OnOpen)
-  EVT_MENU(MainWin_OpenXml, MainWindow::OnOpenXml)
   EVT_MENU(MainWin_DeleteRack, MainWindow::OnDeleteRack)
   EVT_MENU(MainWin_AddTrackAudio, MainWindow::OnAddTrackAudio)
   EVT_MENU(MainWin_AddTrackMidi, MainWindow::OnAddTrackMidi)
