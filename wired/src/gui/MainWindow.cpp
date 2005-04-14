@@ -36,6 +36,7 @@
 #include "../engine/WiredSession.h"
 #include "../midi/MidiThread.h"
 #include "../plugins/PluginLoader.h"
+#include "../xml/WiredSessionXml.h"
 
 Rack					*RackPanel;
 SequencerGui				*SeqPanel;
@@ -47,6 +48,7 @@ Transport				*TransportPanel;
 PlugStartInfo				StartInfo;
 vector<PluginLoader *>			LoadedPluginsList;
 WiredSession				*CurrentSession;
+WiredSessionXml				*CurrentXmlSession;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
@@ -181,8 +183,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   
   FileMenu->Append(MainWin_New, "&New\tCtrl-N");
   FileMenu->Append(MainWin_Open, "&Open...\tCtrl-O");
+  FileMenu->Append(MainWin_OpenXml, "&Open Xml...");
   FileMenu->Append(MainWin_Save, "&Save\tCtrl-S");
   FileMenu->Append(MainWin_SaveAs, "Save &as...\tF12");
+  FileMenu->Append(MainWin_SaveAsXml, "Save &as Xml...");
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_ImportWave, "&Import Wave file...");
   FileMenu->Append(MainWin_ImportMIDI, "&Import MIDI file...");
@@ -363,7 +367,7 @@ void					MainWindow::OnNew(wxCommandEvent &event)
 
 bool					MainWindow::NewSession()
 {
-  // une session existe déja, demande de confirmation d'enregistrement
+  // une session existe d?ja, demande de confirmation d'enregistrement
 
   wxMessageDialog			msg(this, "Save current session ?", "Wired", 
 					    wxYES_NO | wxCANCEL | wxICON_QUESTION);
@@ -421,6 +425,31 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
   dlg->Destroy();
 }
 
+void					MainWindow::OnOpenXml(wxCommandEvent &event)
+{
+  vector<string>			exts;
+  FileLoader				*dlg;
+  
+  exts.insert(exts.begin(), "xml\tWired session file (*.xml)");
+  dlg = new FileLoader(this, MainWin_FileLoader, "Open session", false, false, &exts);
+  if (dlg->ShowModal() == wxID_OK)
+    {
+      string selfile = dlg->GetSelectedFile();    
+
+      cout << "[MAINWIN] User opens " << selfile << endl;
+      if (!NewSession())
+	{
+	  dlg->Destroy();
+	  return;
+	}
+      CurrentXmlSession = new WiredSessionXml(selfile);
+      CurrentXmlSession->Load();
+    }
+  else
+    cout << "[MAINWIN] User cancels open dialog" << endl;
+  dlg->Destroy();
+}
+
 void					MainWindow::OnSave(wxCommandEvent &event)
 {
   if (!CurrentSession->FileName.empty())
@@ -458,6 +487,37 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
   dlg->Destroy();
+}
+
+void					MainWindow::OnSaveAsXml(wxCommandEvent &event)
+{
+	vector<string>			exts;
+	FileLoader				*dlg;
+  
+	exts.insert(exts.begin(), "xml\tWired session file (*.xml)");
+	dlg = new FileLoader(this, MainWin_FileLoader, "Save session (Xml)", false, true, &exts);
+	if (dlg->ShowModal() == wxID_OK)
+	{
+		string selfile = dlg->GetSelectedFile();    
+
+		wxFileName f(selfile.c_str());
+		if (!f.HasExt())
+			selfile = selfile + XML_EXTENSION;
+		cout << "[MAINWIN] User saves to " << selfile << endl;
+
+		string audiodir;
+
+		if (CurrentXmlSession)
+		{
+			// audiodir = CurrentXmlSession->;
+			delete CurrentXmlSession;
+		}
+		CurrentXmlSession = new WiredSessionXml(selfile, audiodir);
+		CurrentXmlSession->Save();
+	}
+	else
+		cout << "[MAINWIN] User cancels open dialog" << endl;
+	dlg->Destroy();
 }
 
 void					MainWindow::OnImportWave(wxCommandEvent &event)
@@ -1293,12 +1353,14 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_New, MainWindow::OnNew)
   EVT_MENU(MainWin_Save, MainWindow::OnSave)
   EVT_MENU(MainWin_SaveAs, MainWindow::OnSaveAs)
+  EVT_MENU(MainWin_SaveAsXml, MainWindow::OnSaveAsXml)
   //EVT_MENU(MainWin_ImportWave, MainWindow::OnImportWave)
   EVT_MENU(MainWin_ImportMIDI, MainWindow::OnImportMIDI)
   EVT_MENU(MainWin_ImportAKAI, MainWindow::OnImportAKAI)
   EVT_MENU(MainWin_ExportWave, MainWindow::OnExportWave)
   EVT_MENU(MainWin_Settings, MainWindow::OnSettings)
   EVT_MENU(MainWin_Open, MainWindow::OnOpen)
+  EVT_MENU(MainWin_OpenXml, MainWindow::OnOpenXml)
   EVT_MENU(MainWin_DeleteRack, MainWindow::OnDeleteRack)
   EVT_MENU(MainWin_AddTrackAudio, MainWindow::OnAddTrackAudio)
   EVT_MENU(MainWin_AddTrackMidi, MainWindow::OnAddTrackMidi)
