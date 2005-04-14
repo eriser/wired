@@ -38,6 +38,7 @@ public:
 	~WiredXml();
 	WiredXml			operator=(const WiredXml& right);
 	WiredXml			Clone();
+	const std::string&	GetDocumentName();
 protected:
 	bool				OpenDocument(const std::string& FileName);
 	bool				OpenDtd(const std::string& FileName);

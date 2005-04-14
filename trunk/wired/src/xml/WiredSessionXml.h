@@ -55,6 +55,9 @@
 #define STR_AUDIO "Audio"
 #define STR_MIDI "MIDI"
 
+
+// Defines under are nodes ID, referenced in WiredSession.dtd
+
 #define	STR_ROOT_NODE_NAME "Wired-Project"
 
 #define STR_WORKING_DIR	"WorkingDir"
@@ -99,6 +102,7 @@
 #define STR_END_POS "EndPos"
 #define STR_DEVIDE_ID "DeviceId"
 #define STR_FILENAME "FileName"
+
 
 
 typedef std::vector<Track *>::iterator 		TrackIter;
@@ -151,7 +155,7 @@ typedef struct	s_PluginXml
 	WiredPluginData	Data;
 } t_PluginXml;
 
-class WiredSessionXml : WiredXml
+class WiredSessionXml : public WiredXml
 {
 public:
 	WiredSessionXml() {;}
@@ -165,6 +169,7 @@ public:
 	bool					Save();
 	bool					CreateFile();
 	void					Dumpfile(const std::string& FileName);
+	const std::string&		GetAudioDir();
 private:
 	bool					SaveSeq(); // Saving Sequenceur infos to XML File
 	bool					SaveTrack(Track* TrackInfo); // Saving Track infos to XML File
