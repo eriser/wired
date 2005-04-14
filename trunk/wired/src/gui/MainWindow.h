@@ -29,6 +29,7 @@ using namespace std;
 typedef	struct s_PlugStartInfo		PlugStartInfo;
 class					PluginLoader;
 class					WiredSession;
+class					WiredSessionXml;
 
 class					MainWindow: public wxFrame
 {
@@ -38,9 +39,11 @@ class					MainWindow: public wxFrame
   void					OnClose(wxCloseEvent &event);
   void					OnQuit(wxCommandEvent &event);
   void					OnOpen(wxCommandEvent &event);
+  void					OnOpenXml(wxCommandEvent &event);
   void					OnNew(wxCommandEvent &event);
   void					OnSave(wxCommandEvent &event);
   void					OnSaveAs(wxCommandEvent &event);
+  void					OnSaveAsXml(wxCommandEvent &event);
   void					OnImportWave(wxCommandEvent &event);
   void					OnImportMIDI(wxCommandEvent &event);
   void					OnImportAKAI(wxCommandEvent &event);
@@ -130,8 +133,10 @@ enum
   MainWin_Quit = 42,
   MainWin_New,
   MainWin_Open,
+  MainWin_OpenXml,
   MainWin_Save,
   MainWin_SaveAs,
+  MainWin_SaveAsXml,
   MainWin_ImportWave,
   MainWin_ImportMIDI,
   MainWin_ImportAKAI,
