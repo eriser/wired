@@ -176,7 +176,10 @@ bool			WiredSessionXml::SaveTrackPlugins(Track* TrackInfo)
 	if (PluginsConnected == NULL)
 		return true;
 	for (IterPlugins = PluginsConnected->Racks.begin(); IterPlugins != PluginsConnected->Racks.end(); IterPlugins++)
-		SavePlugin(*IterPlugins);
+	{
+		if (*IterPlugins == TrackInfo->TrackOpt->Connected)
+			SavePlugin(*IterPlugins);
+	}
 	return true;
 }
 
@@ -329,7 +332,7 @@ bool			WiredSessionXml::ParseWiredSession()
 	{
 		std::string 	Name = GetNodeName();
 		
-		std::cout << "[ParesWiredSession] Node Name == " << Name.c_str() << std::endl;
+		//std::cout << "[ParesWiredSession] Node Name == " << Name.c_str() << std::endl;
 		if (Name.compare(STR_ROOT_NODE_NAME) == 0)
 		{
 			HasFoundProject = true;
@@ -414,7 +417,7 @@ void			WiredSessionXml::LoadSeq()
 			break;
 		Read();
 		Value = GetNodeValue();
-		std::cout << "[LoadSeq] NodeName == {" << Buffer.c_str() << "} Value == {" << Value << "}" << std::endl;
+		//std::cout << "[LoadSeq] NodeName == {" << Buffer.c_str() << "} Value == {" << Value << "}" << std::endl;
 		if (Buffer.compare(STR_BPM) == 0)
 		{
 			Seq->SetBPM(atof(Value));
@@ -512,7 +515,7 @@ void			WiredSessionXml::LoadTrack(int Number)
 		}
 		else
 			continue;
-		std::cout << "[LoadTrack] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
+		//std::cout << "[LoadTrack] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
 		Read();
 	}
 }
@@ -562,7 +565,7 @@ void			WiredSessionXml::LoadPlugin(Track* TrackInfo)
 		}
 		else
 			continue;
-		std::cout << "[LoadPlugin] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
+		//std::cout << "[LoadPlugin] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
 		Read();
 	}
 	LoadTrackPlugin(TrackInfo, &Plugin);
@@ -591,7 +594,8 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 		cout << "[WIREDSESSION] Plugin with Id  " << PluginInfo->Id.c_str() << " is not loaded" << endl;     
     if (NewPlugin)
 		NewPlugin->Name = PluginInfo->Name;
-	NewPlugin->Load(PluginInfo->Data);		
+	NewPlugin->Load(PluginInfo->Data);
+	TrackInfo->TrackOpt->ConnectTo(NewPlugin);
 
 }
 
@@ -671,7 +675,7 @@ void			WiredSessionXml::LoadPattern(Track *AddedTrack, int TrackNumber)
 		}
 		else
 			continue;
-		std::cout << "[LoadPattern] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
+		//std::cout << "[LoadPattern] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
 		Read();
 	}
 }
@@ -718,7 +722,7 @@ void			WiredSessionXml::LoadPatternAudio(Track *AddedTrack, t_PatternXml *InfoPa
 		}
 		else
 			continue;
-		std::cout << "[LoadPatternAudio] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
+		//std::cout << "[LoadPatternAudio] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
 		Read();
 	}
 	if (APatternInfo.FileName.size() > 0)
@@ -755,7 +759,7 @@ void			WiredSessionXml::LoadPatternMIDI(Track *AddedTrack, t_PatternXml *InfoPat
 			break;
 		Read();
 		Value = GetNodeValue();		
-		std::cout << "[LoadPatternMIDI] NodeName == {" << Buffer.c_str() << "} Value == {" << Value << "}" << std::endl;
+		//std::cout << "[LoadPatternMIDI] NodeName == {" << Buffer.c_str() << "} Value == {" << Value << "}" << std::endl;
 	}
 }
 
@@ -792,4 +796,9 @@ void			WiredSessionXml::Dumpfile(const std::string& FileName)
 		std::cout << "[WIREDSESSION] Unable to load file {" 
 			<< _DocumentFileName.c_str() << "}" << std::endl;
 	}
+}
+
+const std::string&			WiredSessionXml::GetAudioDir()
+{
+	return _WorkingDir;
 }

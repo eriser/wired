@@ -347,3 +347,8 @@ int						WiredXml::GetNodeType()
 		return xmlTextReaderNodeType(_DocumentFile);
 	return 0;
 }
+
+const std::string&		WiredXml::GetDocumentName()
+{
+	return _DocumentFileName;
+}
