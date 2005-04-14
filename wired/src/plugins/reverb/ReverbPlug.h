@@ -21,7 +21,7 @@
 
 #define PLUGIN_NAME	"Reverb"
 
-#define IMG_RV_BG	"plugins/reverb/reverb.png"
+#define IMG_RV_BG	"plugins/reverb/reverb_bg.png"
 #define IMG_RV_BMP	"plugins/reverb/ReverbPlug.bmp"
 #define IMG_RV_FADER_BG	"plugins/filter/fader_bg.png"
 #define IMG_RV_FADER_FG	"plugins/filter/fader_fg.png"
