@@ -47,8 +47,11 @@ bool					WiredXml::OpenDocument(const std::string& FileName)
 	if ((fd = open(_DocumentFileName.c_str(), FLAGS_OPEN_RDONLY)) != INVALID_FD)
 	{
 		close(fd);
-		_DocumentFile = xmlReaderForFile(_DocumentFileName.c_str(), NULL, 
-										XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
+		
+		//TODO Don't bypass document validation
+		//_DocumentFile = xmlReaderForFile(_DocumentFileName.c_str(), NULL, 
+		//								XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
+		_DocumentFile = xmlReaderForFile(_DocumentFileName.c_str(), NULL, NULL);
 		if (_DocumentFile != NULL)
 			return true;
 	}
@@ -57,6 +60,8 @@ bool					WiredXml::OpenDocument(const std::string& FileName)
 
 bool					WiredXml::OpenDtd(const std::string& FileName)
 {
+	//TODO Add the Dtd to the project ressource
+	return true;
 	int					fd;
 
 	if (FileName.size() > 0)
@@ -73,6 +78,8 @@ bool					WiredXml::OpenDtd(const std::string& FileName)
 
 bool					WiredXml::ValidDocument()
 {
+	//TODO Manage the document validation
+	return true;
 	xmlValidCtxtPtr 	ctxt;
 	
 	bool				Valid = false;

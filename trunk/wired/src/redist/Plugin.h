@@ -5,6 +5,7 @@
 #include <string> 
 #include <list> 
 #include <vector>
+#include <map>
 
 class Plugin;
 
@@ -107,6 +108,27 @@ enum
     wiredCreateMidiPattern
   };
 
+/* Parameter class, used for Wired with Xml compatibility. 
+  The only two methods you must know are SaveValue and LoadValue. */
+
+
+typedef std::map<std::string, char *> PluginParams;
+
+class WiredPluginData
+{
+public:
+	WiredPluginData() {;}
+	~WiredPluginData() {_Data.clear();}
+	WiredPluginData(const WiredPluginData& copy) {*this = copy;}
+	WiredPluginData			operator=(const WiredPluginData& right);
+
+	bool			SaveValue(const std::string& Name, char *Value);
+	char			*LoadValue(const std::string& Name);
+	PluginParams	*GetParamsStack();
+private:
+	PluginParams			_Data;
+};
+
 /* This is the Plugin class you should derive from to create your own plugins.
    DO NOT MODIFY THIS FILE, JUST CREATE A DERIVATE CLASS FROM IT, OVERLOADING THE
    VIRTUAL FUNCTIONS YOU NEED. */
@@ -130,9 +152,15 @@ class Plugin: public wxWindow
      where the plugin should read 'size' bytes of data. */
   virtual void	 Load(int fd, long size) {}
 
+  // ...and the xml-compatible one...  
+  virtual void	 Load(WiredPluginData& Datas){}
+
   /* Called by the host when the plugin needs to save its parameters. This function 
      should return the size of the data that was written in file descriptor 'fd' */
   virtual long	 Save(int fd) { return (0); }
+  
+  // ...and the xml-compatible one...
+  virtual void	 Save(WiredPluginData& Datas) {}
 
   /* Called when the buffer size of the host changes (it is also called after 
      initialization of the plugin */

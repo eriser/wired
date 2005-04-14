@@ -32,6 +32,8 @@
 #include "../gui/Transport.h"
 #include "../engine/AudioCenter.h"
 
+//For Windows future ...
+
 //#ifdefined	WIN32
 //#include <io.h>
 //#include <direct.h>
@@ -136,27 +138,9 @@ typedef struct  s_MidiPatternXml
 	std::vector<MidiEvent *>	Events;
 } t_MidiPatternXml;
 
-typedef std::map<std::string, char *> PluginParams;
 typedef std::map<std::string, char *>::iterator PluginParamsIter;
 
 extern int errno;
-
-
-class WiredPluginData
-{
-public:
-	WiredPluginData() {;}
-	~WiredPluginData() {_Data.clear();}
-	WiredPluginData(const WiredPluginData& copy) {*this = copy;}
-	WiredPluginData			operator=(const WiredPluginData& right);
-
-	bool					SaveValue(const std::string& Name, char *Value);
-	char					*LoadValue(const std::string& Name);
-	PluginParams			*GetParamsStack();
-private:
-	PluginParams			_Data;
-};
-
 
 typedef struct	s_PluginXml
 {
@@ -166,7 +150,6 @@ typedef struct	s_PluginXml
 	int				Height;
 	WiredPluginData	Data;
 } t_PluginXml;
-
 
 class WiredSessionXml : WiredXml
 {
@@ -194,7 +177,7 @@ private:
 	void					LoadSeq();
 	void					LoadTrack(int Number);
 	void					LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInfo);
-	void					LoadPlugin();
+	void					LoadPlugin(Track* TrackInfo);
 	void					LoadPluginData(t_PluginXml *Params);
 	void					LoadPattern(Track *AddedTrack, int TrackNumber);
 	void					LoadPatternAudio(Track *AddedTrack, t_PatternXml *InfoPattern);
