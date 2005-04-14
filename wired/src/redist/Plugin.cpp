@@ -225,3 +225,38 @@ bool Plugin::CreateMidiPattern(std::list<SeqCreateEvent *> *l)
   else
     return (false);
 }
+
+// WiredPluginData class implementation, used for Plugin parameters
+
+WiredPluginData	WiredPluginData::operator=(const WiredPluginData& right)
+{
+	if (this != &right)
+	{
+		_Data = right._Data;
+	}
+	return *this;
+}
+
+bool			WiredPluginData::SaveValue(const std::string& Name, char *Value)
+{
+	if (_Data.find(Name) == _Data.end())
+	{
+		_Data[Name] = Value;
+		return true;
+	}
+	return false;
+}
+
+char			*WiredPluginData::LoadValue(const std::string& Name)
+{
+	if (_Data.find(Name) != _Data.end())
+		return _Data[Name];
+	return NULL;
+}
+
+PluginParams	*WiredPluginData::GetParamsStack()
+{
+	if (_Data.empty() == false)
+		return &_Data;
+	return NULL;
+}

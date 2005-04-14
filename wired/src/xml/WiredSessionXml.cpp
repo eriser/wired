@@ -1,7 +1,8 @@
 #include "WiredSessionXml.h"
 
-//extern std::vector<PluginLoader *>	LoadedPluginsList;
+extern std::vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo				StartInfo;
+
 
 WiredSessionXml::~WiredSessionXml()
 {
@@ -170,11 +171,11 @@ bool			WiredSessionXml::SaveTrack(Track* TrackInfo)
 bool			WiredSessionXml::SaveTrackPlugins(Track* TrackInfo)
 {
 	PluginIter	IterPlugins;
-	RackTrack	*Plugins = TrackInfo->TrackOpt->ConnectedRackTrack;
-	
-	if (Plugins == NULL)
+	RackTrack	*PluginsConnected = TrackInfo->TrackOpt->ConnectedRackTrack;
+
+	if (PluginsConnected == NULL)
 		return true;
-	for (IterPlugins = Plugins->Racks.begin(); IterPlugins != Plugins->Racks.end(); IterPlugins++)
+	for (IterPlugins = PluginsConnected->Racks.begin(); IterPlugins != PluginsConnected->Racks.end(); IterPlugins++)
 		SavePlugin(*IterPlugins);
 	return true;
 }
@@ -185,13 +186,11 @@ bool			WiredSessionXml::SavePlugin(Plugin* PluginInfo)
 	WiredPluginData		Params;
 	PluginParamsIter	IterParam;
 	char				Buffer[20];
-	
-	//TODO Replace with the Xml Version...
-	//PluginInfo->Save(Params);
-
+		
+	PluginInfo->Save(Params);
 	Res += this->StartElement(std::string(STR_PLUGIN));
 	Res += this->StartElement(std::string(STR_PLUGIN_ID));
-	Res += this->WriteString(std::string(PluginInfo->InitInfo->UniqueId));
+	Res += this->WriteString(std::string(PluginInfo->InitInfo->UniqueId).substr(0, 4));
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_NAME));
 	Res += this->WriteString(PluginInfo->Name);
@@ -508,7 +507,8 @@ void			WiredSessionXml::LoadTrack(int Number)
 		}
 		else if (Buffer.compare(STR_PLUGIN) == 0)
 		{
-			//TODO Implement multiple plugins stack
+			LoadPlugin(NewTrack);
+			continue;
 		}
 		else
 			continue;
@@ -517,7 +517,7 @@ void			WiredSessionXml::LoadTrack(int Number)
 	}
 }
 
-void			WiredSessionXml::LoadPlugin()
+void			WiredSessionXml::LoadPlugin(Track* TrackInfo)
 {
 	std::string		Buffer;
 	char 			*Value;
@@ -565,18 +565,34 @@ void			WiredSessionXml::LoadPlugin()
 		std::cout << "[LoadPlugin] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
 		Read();
 	}
+	LoadTrackPlugin(TrackInfo, &Plugin);
 }
 
 void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInfo)
 {
-	RackTrack	*NewRack;
-	Plugin 		*NewPlugin;
+	RackTrack								*NewRack;
+	Plugin 									*NewPlugin;
+	std::vector<PluginLoader *>::iterator 	it;
+	PluginLoader 							*p = 0x0;
 	
 	NewRack = RackPanel->AddTrack();
-	//NewPlugin = NewRack->AddRack(StartInfo, (*It));
-	NewPlugin->Name = PluginInfo->Name;
-	//TODO => Xml
-//	NewPlugin->Load(PluginInfo->Data);
+	for (it = LoadedPluginsList.begin(); it != LoadedPluginsList.end(); it++)
+		if (COMPARE_IDS((*it)->InitInfo.UniqueId, PluginInfo->Id.c_str()))
+		{
+			p = *it;
+			break;
+		}
+	if (p)
+	{
+	 	cout << "[WIREDSESSION] Creating rack for plugin: " << p->InitInfo.Name << endl;
+		NewPlugin = NewRack->AddRack(StartInfo, p);
+	}
+    else
+		cout << "[WIREDSESSION] Plugin with Id  " << PluginInfo->Id.c_str() << " is not loaded" << endl;     
+    if (NewPlugin)
+		NewPlugin->Name = PluginInfo->Name;
+	NewPlugin->Load(PluginInfo->Data);		
+
 }
 
 void			WiredSessionXml::LoadPluginData(t_PluginXml *Params)
@@ -776,37 +792,4 @@ void			WiredSessionXml::Dumpfile(const std::string& FileName)
 		std::cout << "[WIREDSESSION] Unable to load file {" 
 			<< _DocumentFileName.c_str() << "}" << std::endl;
 	}
-}
-
-WiredPluginData	WiredPluginData::operator=(const WiredPluginData& right)
-{
-	if (this != &right)
-	{
-		_Data = right._Data;
-	}
-	return *this;
-}
-
-bool			WiredPluginData::SaveValue(const std::string& Name, char *Value)
-{
-	if (_Data.find(Name) == _Data.end())
-	{
-		_Data[Name] = Value;
-		return true;
-	}
-	return false;
-}
-
-char			*WiredPluginData::LoadValue(const std::string& Name)
-{
-	if (_Data.find(Name) != _Data.end())
-		return _Data[Name];
-	return NULL;
-}
-
-PluginParams	*WiredPluginData::GetParamsStack()
-{
-	if (_Data.empty() == false)
-		return &_Data;
-	return NULL;
 }
