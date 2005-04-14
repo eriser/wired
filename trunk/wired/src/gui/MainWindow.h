@@ -42,7 +42,6 @@ class					MainWindow: public wxFrame
   void					OnNew(wxCommandEvent &event);
   void					OnSave(wxCommandEvent &event);
   void					OnSaveAs(wxCommandEvent &event);
-  void					OnSaveAsXml(wxCommandEvent &event);
   void					OnImportWave(wxCommandEvent &event);
   void					OnImportMIDI(wxCommandEvent &event);
   void					OnImportAKAI(wxCommandEvent &event);
@@ -134,7 +133,6 @@ enum
   MainWin_Open,
   MainWin_Save,
   MainWin_SaveAs,
-  MainWin_SaveAsXml,
   MainWin_ImportWave,
   MainWin_ImportMIDI,
   MainWin_ImportAKAI,
