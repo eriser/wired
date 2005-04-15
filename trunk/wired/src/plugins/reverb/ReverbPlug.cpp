@@ -2,12 +2,14 @@
 // Under the GNU General Public License
 
 #include "ReverbPlug.h"
+#include "midi.h"
 
 static PlugInitInfo info;
 
 /******** ReverbPlugin Implementation *********/
 
 BEGIN_EVENT_TABLE(ReverbPlugin, wxWindow)
+  EVT_BUTTON(Reverb_Bypass, ReverbPlugin::OnBypass)
   EVT_COMMAND_SCROLL(Reverb_Selrev, ReverbPlugin::OnSelrev)
   EVT_COMMAND_SCROLL(Reverb_Decay, ReverbPlugin::OnDecay)
   EVT_COMMAND_SCROLL(Reverb_Mix, ReverbPlugin::OnMix)
@@ -22,18 +24,26 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   wxImage *tr_bg = 
     new wxImage(string(GetDataDir() + string(IMG_RV_BG)).c_str(), 
 		wxBITMAP_TYPE_PNG);
-  TpBmp = new wxBitmap(tr_bg);
-  
+  TpBmp = new wxBitmap(tr_bg);  
   bmp = new wxBitmap(string(GetDataDir() + string(IMG_RV_BMP)).c_str(), 
 		     wxBITMAP_TYPE_BMP); 
   img_bg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_BG)).c_str(),
 		       wxBITMAP_TYPE_PNG);
   img_fg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_FG)).c_str(),
 		       wxBITMAP_TYPE_PNG);
+  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), 
+			  wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
+			   wxBITMAP_TYPE_PNG);
+  BypassBtn = new DownButton(this, Reverb_Bypass, wxPoint(21, 58),
+			     wxSize(bypass_on->GetWidth(), 
+				    bypass_on->GetHeight()),
+			     bypass_off, bypass_on);
   
-
   // bypass button's stuff
 
+  cout << string(GetDataDir() + string(IMG_LIQUID_ON)).c_str() << endl;
+  cout << string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str() << endl;
   liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
 			  wxBITMAP_TYPE_PNG);
   liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
@@ -52,6 +62,20 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   MixKnob = new FaderCtrl(this, Reverb_Mix, img_bg, img_fg, 0, 100, 50,
 			  wxPoint(149, 11), wxSize(img_bg->GetWidth() - 3, 
 						   img_bg->GetHeight()));
+  
+  Connect(Reverb_Bypass, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&ReverbPlugin::OnBypassController);    
+  Connect(Reverb_Selrev, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&ReverbPlugin::OnSelrev); 
+  Connect(Reverb_Decay, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&ReverbPlugin::OnDecay);    
+  Connect(Reverb_Mix, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&ReverbPlugin::OnMix); 
+
   SetBackgroundColour(wxColour(237, 237, 237));
 }
 
@@ -135,9 +159,42 @@ void ReverbPlugin::Process(float **input, float **output, long sample_length)
     }
 }
 
+void ReverbPlugin::OnBypass(wxCommandEvent &e)
+{
+  ReverbMutex.Lock();
+  Bypass = BypassBtn->GetOn();
+  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+  ReverbMutex.Unlock();
+}
+
+void ReverbPlugin::OnBypassController(wxMouseEvent &event)
+{
+  int *midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      ReverbMutex.Lock();
+
+      CheckExistingControllerData(midi_data);      
+      MidiBypass[0] = midi_data[0];
+      MidiBypass[1] = midi_data[1];
+
+      ReverbMutex.Unlock();
+    }
+  delete midi_data;
+}
+
+
 ReverbPlugin::~ReverbPlugin()
 {
+  delete img_bg;
+  delete img_fg;
 
+  delete bypass_on;
+  delete bypass_off;
+  delete liquid_on;
+  delete liquid_off;
 }
 
 bool ReverbPlugin::IsAudio()
@@ -177,6 +234,7 @@ void ReverbPlugin::OnMix(wxScrollEvent &e)
   Nreverb_stk.setEffectMix(MixKnob->GetValue() / EFFECT_MIX);
   cout << "Mix: " << MixKnob->GetValue() / EFFECT_MIX << endl;
 }
+
 
 void ReverbPlugin::OnPaint(wxPaintEvent &event)
 {

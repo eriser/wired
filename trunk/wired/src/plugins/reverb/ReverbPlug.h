@@ -27,10 +27,10 @@
 #define IMG_RV_FADER_FG	"plugins/filter/fader_fg.png"
 #define IMG_RV_KNOB_BG	"plugins/reverb/knob_bg.png"
 #define IMG_RV_KNOB_FG	"plugins/reverb/knob_fg.png"
-#define IMG_LIQUID_ON	"plugins/delay/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF	"plugins/delay/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON	"plugins/delay/bypass_button_down.png"
-#define IMG_BYPASS_OFF	"plugins/delay/bypass_button_up.png"
+#define IMG_LIQUID_ON	"plugins/reverb/liquid-cristal_play.png"
+#define IMG_LIQUID_OFF	"plugins/reverb/liquid-cristal_stop.png"
+#define IMG_BYPASS_ON	"plugins/reverb/bypass_button_down.png"
+#define IMG_BYPASS_OFF	"plugins/reverb/bypass_button_up.png"
 #define EFFECT_MIX	100.f
 
 typedef struct s_param
@@ -60,7 +60,9 @@ class ReverbPlugin: public Plugin
 
   void OnSelrev(wxScrollEvent &e);
   void OnDecay(wxScrollEvent &e);
-  void OnMix(wxScrollEvent &e);  
+  void OnMix(wxScrollEvent &e);
+  void OnBypass(wxCommandEvent &e);
+  void OnBypassController(wxMouseEvent &event);
 
   void OnPaint(wxPaintEvent &event);
 
@@ -68,38 +70,46 @@ class ReverbPlugin: public Plugin
   float		Wide;
   
  protected:
-  PRCRev    PRCreverb_stk;
-  JCRev     JCreverb_stk;
-  NRev	    Nreverb_stk;
-  int       rev_sel;
+  bool		Bypass;
+
+  int		MidiBypass[2];
+
+  PRCRev	PRCreverb_stk;
+  JCRev		JCreverb_stk;
+  NRev		Nreverb_stk;
+  int		rev_sel;
   
-  t_param param;
+  t_param	param;
 
-  wxBitmap *bmp;   
+  wxBitmap	*bmp;   
 
-  FaderCtrl *SelrevKnob;
-  FaderCtrl *DecayKnob;
-  FaderCtrl *MixKnob;
+  FaderCtrl	*SelrevKnob;
+  FaderCtrl	*DecayKnob;
+  FaderCtrl	*MixKnob;
  
-  wxImage *img_fg;
-  wxImage *img_bg;
-  wxBitmap *TpBmp;
+  wxImage	*img_fg;
+  wxImage	*img_bg;
+  wxBitmap	*TpBmp;
 
-  wxImage *bypass_on;
-  wxImage *bypass_off;
-  wxImage *liquid_on;
-  wxImage *liquid_off;
+  wxImage	*bypass_on;
+  wxImage	*bypass_off;
+  wxImage	*liquid_on;
+  wxImage	*liquid_off;
 
-  StaticBitmap *Liquid;
-  DownButton *BypassBtn;
+  StaticBitmap	*Liquid;
+  DownButton	*BypassBtn;
 
+  wxMutex	ReverbMutex;
+
+  void CheckExistingControllerData(int MidiData[3]);
+  
   DECLARE_EVENT_TABLE()  
-
 };
 
 enum
   {
-    Reverb_Selrev = 1,
+    Reverb_Bypass = 1,
+    Reverb_Selrev,
     Reverb_Decay,
     Reverb_Mix
   };
