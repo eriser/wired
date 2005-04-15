@@ -23,8 +23,8 @@
 
 #define IMG_RV_BG	"plugins/reverb/reverb_bg.png"
 #define IMG_RV_BMP	"plugins/reverb/ReverbPlug.bmp"
-#define IMG_RV_FADER_BG	"plugins/filter/fader_bg.png"
-#define IMG_RV_FADER_FG	"plugins/filter/fader_fg.png"
+#define IMG_RV_FADER_BG	"plugins/reverb/fader_bg.png"
+#define IMG_RV_FADER_FG	"plugins/reverb/fader_button.png"
 #define IMG_RV_KNOB_BG	"plugins/reverb/knob_bg.png"
 #define IMG_RV_KNOB_FG	"plugins/reverb/knob_fg.png"
 #define IMG_LIQUID_ON	"plugins/reverb/liquid-cristal_play.png"

@@ -42,8 +42,6 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   // bypass button's stuff
 
-  cout << string(GetDataDir() + string(IMG_LIQUID_ON)).c_str() << endl;
-  cout << string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str() << endl;
   liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
 			  wxBITMAP_TYPE_PNG);
   liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
