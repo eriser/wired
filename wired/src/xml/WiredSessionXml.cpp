@@ -209,11 +209,13 @@ bool			WiredSessionXml::SavePlugin(Plugin* PluginInfo)
 	if (Params.GetParamsStack() != NULL)
 		for (IterParam = Params.GetParamsStack()->begin(); IterParam != Params.GetParamsStack()->end(); IterParam++)
 		{
-			Res += this->StartElement(std::string(STR_PLUGIN_DATA));	
-			Res += this->WriteElement(std::string(STR_PLUGIN_DATA_PARAM_NAME), IterParam->first);
+			Res += this->StartElement(std::string(STR_PLUGIN_DATA));
+			Res += this->StartElement(std::string(STR_PLUGIN_DATA_PARAM_NAME));
+			Res += this->WriteString(IterParam->first);
+			Res += this->EndElement();
 			Res += this->StartElement(std::string(STR_PLUGIN_DATA_PARAM_VALUE));
-			Res += this->WriteCDATA(IterParam->second);
-			Res += this->EndElement();	
+			Res += this->WriteString(IterParam->second);
+			Res += this->EndElement();
 			Res += this->EndElement();
 		}
 	Res += this->EndElement();
@@ -562,6 +564,7 @@ void			WiredSessionXml::LoadPlugin(Track* TrackInfo)
 		else if (Buffer.compare(STR_PLUGIN_DATA) == 0)
 		{
 			LoadPluginData(&Plugin);
+			continue;
 		}
 		else
 			continue;
@@ -603,7 +606,7 @@ void			WiredSessionXml::LoadPluginData(t_PluginXml *Params)
 {
 	std::string		Buffer;
 	char 			*Value;
-	char			*ParamValue = NULL;
+	std::string		ParamValue;
 	std::string		ParamName;
 	
 	while (Read() == true)
@@ -623,12 +626,13 @@ void			WiredSessionXml::LoadPluginData(t_PluginXml *Params)
 			Read();
 			Value = GetNodeValue();
 			if (Value != NULL)
-				ParamValue = strdup(Value);
+				ParamValue = Value;
 		}
 		else
 			continue;
+		Read();
 	}
-	if (ParamValue != NULL && ParamName.size() > 0)
+	if (ParamValue.size() > 0 && ParamName.size() > 0)
 		Params->Data.SaveValue(ParamName, ParamValue);
 }
 
@@ -798,7 +802,7 @@ void			WiredSessionXml::Dumpfile(const std::string& FileName)
 	}
 }
 
-const std::string&			WiredSessionXml::GetAudioDir()
+std::string&	WiredSessionXml::GetAudioDir()
 {
 	return _WorkingDir;
 }

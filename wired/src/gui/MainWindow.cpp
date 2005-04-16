@@ -439,11 +439,16 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
 
 void					MainWindow::OnSave(wxCommandEvent &event)
 {
-	std::string			DocumentName = CurrentXmlSession->GetDocumentName();
-  if (!DocumentName.empty())
-    CurrentXmlSession->Save();
-  else
-    OnSaveAs(event);
+	if (CurrentXmlSession)
+	{
+		std::string			DocumentName(CurrentXmlSession->GetDocumentName());
+  		if (!DocumentName.empty())
+    		CurrentXmlSession->Save();
+       	else
+       		OnSaveAs(event);
+	}
+	else
+    	OnSaveAs(event);
 }
 
 void					MainWindow::OnSaveAs(wxCommandEvent &event)
@@ -1143,12 +1148,12 @@ void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
 
 void					MainWindow::OnChangeAudioDir(wxCommandEvent &event)
 {
-  assert(CurrentSession);
+  assert(CurrentXmlSession);
   
   wxDirDialog dir(this, "Choose the Audio file directory", 
 		  wxFileName::GetCwd());
   if (dir.ShowModal() == wxID_OK)
-    CurrentSession->AudioDir = dir.GetPath().c_str();    
+    CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str();    
 }
 
 void					MainWindow::OnUndo(wxCommandEvent &event)
