@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([Wired], [0.11], [wired@bloodshed.net])
+AC_INIT([Wired], [0.2], [wired@bloodshed.net])
 
 # Auxiliary files.
 #AC_CONFIG_AUX_DIR([config])
@@ -53,12 +53,13 @@ AC_PROG_MAKE_SET
 # FIXME: Replace `main' with a function in `-lportaudio':
 #AC_CHECK_LIB([portaudio], [main])
 # FIXME: Replace `main' with a function in `-lportmidi':
+
 # FIXME: Replace `main' with a function in `-lpthread':
 #AC_CHECK_LIB([pthread], [main])
 # FIXME: Replace `main' with a function in `-lsndfile':
-#AC_CHECK_LIB([sndfile], [main])
+AC_CHECK_LIB([sndfile], [sf_open], [LIBSNDFILE='yes'], AC_MSG_ERROR([Couldn't find libsndfile ]))
 # FIXME: Replace `main' with a function in `-lsndfile':
-#AC_CHECK_LIB([SoundTouch], [main])
+AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch ]))
 #AC_CHECK_LIB([ltdl], [lt_dlopen])
 
 AC_CHECK_LIB([xml2], [xmlParseMemory], [ XML2F='yes' ], AC_MSG_ERROR([Couldn't find libxml2 ]))
@@ -95,7 +96,7 @@ fi
 
 AC_CONFIG_FILES([Makefile
 		src/Makefile
-          	src/audio/Makefile
+        src/audio/Makefile
 		src/editmidi/Makefile
 		src/engine/Makefile
 		src/fileloader/Makefile
@@ -121,9 +122,9 @@ AC_CONFIG_FILES([Makefile
 		src/sequencer/Makefile
 		src/undo/Makefile
 		src/libs/Makefile
-                src/libs/WiredWidgets/Makefile
-                src/libs/WiredWidgets/src/Makefile
-                src/libs/WiredAkai/Makefile
+        src/libs/WiredWidgets/Makefile
+        src/libs/WiredWidgets/src/Makefile
+        src/libs/WiredAkai/Makefile
 		src/libs/WiredAkai/src/Makefile
 		src/data/Makefile
 		src/data/ihm/Makefile	
