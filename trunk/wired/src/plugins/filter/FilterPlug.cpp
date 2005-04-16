@@ -1,6 +1,8 @@
 #include "FilterPlug.h"
 #include "midi.h"
 #include <unistd.h>
+#include <sstream>
+#include <stdlib.h>
 
 /******** FilterPlugin Implementation *********/
 
@@ -218,6 +220,103 @@ long FilterPlugin::Save(int fd)
   Mutex.Unlock();
 
   return (size);
+}
+
+
+
+void	 	FilterPlugin::Load(WiredPluginData& Datas)
+{
+	int 	filter;
+	char	*buffer;
+
+	Mutex.Lock();
+
+	buffer = strdup(Datas.LoadValue(std::string(STR_FILTER)));
+	if (buffer != NULL)
+		filter = atoi(buffer);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_CUTOFF)));
+	if (buffer != NULL)
+		Cutoff = strtof(buffer, NULL);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_RESONANCE)));
+	if (buffer != NULL)
+		Res = strtof(buffer, NULL);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_BYPASS)));
+	if (buffer != NULL)
+		Bypass = atoi(buffer);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_BYPASS1)));
+	if (buffer != NULL)
+		MidiBypass[0] = atoi(buffer);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_BYPASS2)));
+	if (buffer != NULL)
+		MidiBypass[1] = atoi(buffer);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_CUTOFF1)));
+	if (buffer != NULL)
+		MidiCutoff[0] = atoi(buffer);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_CUTOFF2)));
+	if (buffer != NULL)
+		MidiCutoff[1] = atoi(buffer);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_RESONANCE1)));
+	if (buffer != NULL)
+		MidiRes[0] = atoi(buffer);
+	free(buffer);
+		buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_RESONANCE2)));
+	if (buffer != NULL)
+		MidiRes[1] = atoi(buffer);
+	free(buffer);
+
+	FilterSelect->SetValue(filter);
+	CutoffFader->SetValue((int)Cutoff);
+	ResFader->SetValue(int(Res * 100));
+
+	Mutex.Unlock();
+
+	wxCommandEvent e;
+	OnSelect(e);
+}
+
+void	 FilterPlugin::Save(WiredPluginData& Datas)
+{
+	std::ostringstream 	oss;
+
+	Mutex.Lock();
+	oss << FilterSelect->GetValue();
+	Datas.SaveValue(std::string(STR_FILTER), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << Cutoff;
+	Datas.SaveValue(std::string(STR_CUTOFF), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << Res;
+	Datas.SaveValue(std::string(STR_RESONANCE), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << Bypass;
+	Datas.SaveValue(std::string(STR_BYPASS), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiBypass[0];
+	Datas.SaveValue(std::string(STR_MIDI_BYPASS1), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiBypass[1];
+	Datas.SaveValue(std::string(STR_MIDI_BYPASS2), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiCutoff[0];
+	Datas.SaveValue(std::string(STR_MIDI_CUTOFF1), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiCutoff[1];
+	Datas.SaveValue(std::string(STR_MIDI_CUTOFF2), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiRes[0];
+	Datas.SaveValue(std::string(STR_MIDI_RESONANCE1), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiRes[1];
+	Datas.SaveValue(std::string(STR_MIDI_RESONANCE2), std::string(oss.str()));
+	Mutex.Unlock();
 }
 
 #define IS_DENORMAL(f) (((*(unsigned int *)&f)&0x7f800000)==0)
