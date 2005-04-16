@@ -112,7 +112,7 @@ enum
   The only two methods you must know are SaveValue and LoadValue. */
 
 
-typedef std::map<std::string, char *> PluginParams;
+typedef std::map<std::string, std::string> PluginParams;
 
 class WiredPluginData
 {
@@ -123,7 +123,8 @@ public:
 	WiredPluginData			operator=(const WiredPluginData& right);
 
 	bool			SaveValue(const std::string& Name, char *Value);
-	char			*LoadValue(const std::string& Name);
+	bool			SaveValue(const std::string& Name, std::string Value);
+	const char		*LoadValue(const std::string& Name);
 	PluginParams	*GetParamsStack();
 private:
 	PluginParams			_Data;
