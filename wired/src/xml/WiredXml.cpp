@@ -3,6 +3,7 @@
 WiredXml::WiredXml()
 {
 	_DocumentWriter = NULL;
+	_DocumentFileName = "";	
 	LIBXML_TEST_VERSION
 }
 
