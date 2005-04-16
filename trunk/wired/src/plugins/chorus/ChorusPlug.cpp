@@ -22,7 +22,6 @@
 #include <sstream>
 #include <string>
 
-
 ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   : Plugin(startinfo, initinfo)
 {
@@ -151,6 +150,48 @@ void ChorusPlugin::Load(int fd, long size)
 
 }
 
+void ChorusPlugin::Load(WiredPluginData& Datas)
+{
+	char	*buffer;
+	
+	buffer = strdup(Datas.LoadValue(std::string(STR_BASE_LENGHT)));
+	if (buffer != NULL)
+	{
+		BaseLength = atof(buffer);
+		BaseLengthFader->SetValue(int(BaseLength));
+		chorus1->setBaseLength(BaseLength);
+		chorus2->setBaseLength(BaseLength);
+	}
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_MODE_DEPTH)));
+	if (buffer != NULL)
+	{
+		ModDepth = atof(buffer);
+		ModDepthFader->SetValue(int(ModDepth * 100)); 
+		chorus1->setModDepth(ModDepth);
+		chorus2->setModDepth(ModDepth);
+	}
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_FREQUENCY)));
+	if (buffer != NULL)
+	{
+		Frequency = atof(buffer);
+		FrequencyFader->SetValue(int(Frequency * 1000));
+		chorus1->setModFrequency(Frequency);
+		chorus2->setModFrequency(Frequency);
+	}
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_EFFECT_MIX)));
+	if (buffer != NULL)
+	{
+		EffectMix = atof(buffer);
+		EffectMixFader->SetValue(int(100 - (EffectMix * 100)));
+		chorus1->setEffectMix(EffectMix);  
+		chorus2->setEffectMix(EffectMix);
+	}
+	free(buffer);
+}
+
 long ChorusPlugin::Save(int fd)
 {
   long size;
@@ -163,9 +204,22 @@ long ChorusPlugin::Save(int fd)
   return (size);
 }
 
+void ChorusPlugin::Save(WiredPluginData& Datas)
+{
+	std::ostringstream 	oss;
 
-
-
+	oss << BaseLength;
+	Datas.SaveValue(std::string(STR_BASE_LENGHT), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << ModDepth;
+	Datas.SaveValue(std::string(STR_MODE_DEPTH), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << Frequency;
+	Datas.SaveValue(std::string(STR_FREQUENCY), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << EffectMix;
+	Datas.SaveValue(std::string(STR_EFFECT_MIX), std::string(oss.str()));
+}
 
 bool ChorusPlugin::IsAudio()
 {
@@ -174,7 +228,7 @@ bool ChorusPlugin::IsAudio()
 
 bool ChorusPlugin::IsMidi()
 {
-  return (true);
+  return (false);
 }
 
 wxBitmap *ChorusPlugin::GetBitmap()
@@ -224,6 +278,8 @@ void ChorusPlugin::OnDryWet(wxScrollEvent &WXUNUSED(e))
   chorus1->setEffectMix(EffectMix);
   chorus2->setEffectMix(EffectMix);
   cout << "EffectMix: " << EffectMix << endl;
+  cout << "Delay: " << BaseLength << endl;
+  cout << "Frequency: " << Frequency << endl;
 }
 
 void ChorusPlugin::OnPaint(wxPaintEvent &WXUNUSED(event))

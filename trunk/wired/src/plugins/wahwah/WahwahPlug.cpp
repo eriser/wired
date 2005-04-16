@@ -2,6 +2,8 @@
 // Under the GNU General Public License
 
 #include "WahwahPlug.h"
+#include <sstream>
+#include <stdlib.h>
 
 #define lfoskipsamples 30
 
@@ -181,6 +183,68 @@ void		EffectWahwah::Process(float **input, float **output, long sample_length)
 {
   LeftChannel.ProcessSimpleMono(input[0], output[0], sample_length);
   RightChannel.ProcessSimpleMono(input[1], output[1], sample_length);
+}
+
+void		EffectWahwah::Load(WiredPluginData& Datas)
+{
+	char			*buffer;
+	t_plugParams	param;
+		
+	buffer = strdup(Datas.LoadValue(std::string(STR_RESOLUTION)));
+	if (buffer != NULL)
+		param.res = strtof(buffer, NULL);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_FREQUENCY)));
+	if (buffer != NULL)
+		param.freq = strtof(buffer, NULL);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_START_PHASE)));
+	if (buffer != NULL)
+		param.startphase = strtof(buffer, NULL);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_DEPTH)));
+	if (buffer != NULL)
+		param.depth = strtof(buffer, NULL);
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_FREQUENCY_OFS)));
+	if (buffer != NULL)
+		param.freqofs = strtof(buffer, NULL);
+	free(buffer);
+	ResFader->SetValue((int)(TO_GUI_RES(param.res)));
+	ResFader->SetValue((int)(TO_GUI_RES(param.res)));
+	FreqOfsFader->SetValue((int)(TO_GUI_FREQOFS(param.freqofs)));
+	FreqFader->SetValue((int)(TO_GUI_FREQ(param.freq)));
+	StartPhaseFader->SetValue((int)(param.startphase * M_PI));
+	DepthFader->SetValue((int)(TO_GUI_DEPTH(param.depth)));
+	LeftChannel.SetValues(param);
+	RightChannel.SetValues(param);
+	RightChannel.SetValues(param);
+}
+
+void		EffectWahwah::Save(WiredPluginData& Datas)
+{
+	t_plugParams	*params = LeftChannel.GetValues();
+	
+	if (params)
+	{
+		std::ostringstream 	oss;
+
+		oss << params->freq;
+		Datas.SaveValue(std::string(STR_FREQUENCY), std::string(oss.str()));
+		oss.seekp(ios_base::beg);
+		oss << params->startphase;
+		Datas.SaveValue(std::string(STR_START_PHASE), std::string(oss.str()));
+		oss.seekp(ios_base::beg);
+		oss << params->depth;
+		Datas.SaveValue(std::string(STR_DEPTH), std::string(oss.str()));
+		oss.seekp(ios_base::beg);
+		oss << params->freqofs;
+		Datas.SaveValue(std::string(STR_FREQUENCY_OFS), std::string(oss.str()));
+		oss.seekp(ios_base::beg);
+		oss << params->res;
+		Datas.SaveValue(std::string(STR_RESOLUTION), std::string(oss.str()));
+		oss.seekp(ios_base::beg);		
+	}
 }
 
 /******** Main and mandatory library functions *********/

@@ -6,8 +6,13 @@
 
 #define PLUGIN_NAME	"Chorus"
 
-static PlugInitInfo info;
+//Names used t stre and retreive parameters
+#define STR_BASE_LENGHT "BaseLength"
+#define STR_MODE_DEPTH "ModDepth"
+#define STR_FREQUENCY "Frequency"
+#define STR_EFFECT_MIX "EffectMix"
 
+static PlugInitInfo info;
 
 class		ChorusPlugin: public Plugin
 {
@@ -20,7 +25,9 @@ class		ChorusPlugin: public Plugin
   void		CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
 
   void		Load(int fd, long size);
+  void		Load(WiredPluginData& Datas);
   long		Save(int fd);
+  void		Save(WiredPluginData& Datas);
   
   bool		IsAudio();
   bool		IsMidi();
