@@ -44,6 +44,16 @@
 
 #define FILTER_SIZE		5		// 3 inputs, 2 outpus
 
+#define STR_FILTER "Filter"
+#define STR_CUTOFF "Cutoff"
+#define STR_RESONANCE "Resonance"
+#define STR_BYPASS "Bypass"
+#define STR_MIDI_BYPASS1 "MIDIBypass1"
+#define STR_MIDI_CUTOFF1 "MIDICutoff1"
+#define STR_MIDI_RESONANCE1 "MIDIResonance1"
+#define STR_MIDI_BYPASS2 "MIDIBypass2"
+#define STR_MIDI_CUTOFF2 "MIDICutoff2"
+#define STR_MIDI_RESONANCE2 "MIDIResonance2"
 
 static PlugInitInfo info;
 
@@ -60,6 +70,9 @@ class FilterPlugin: public Plugin
 
   void	 Load(int fd, long size);
   long   Save(int fd);
+  
+  void	 Load(WiredPluginData& Datas);
+  void	 Save(WiredPluginData& Datas);
   
   void  SetSamplingRate(double rate)
     { 
