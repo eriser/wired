@@ -241,18 +241,29 @@ bool			WiredPluginData::SaveValue(const std::string& Name, char *Value)
 {
 	if (_Data.find(Name) == _Data.end())
 	{
-		_Data[Name] = Value;
+		_Data[Name] = std::string(Value);
 		return true;
 	}
 	return false;
 }
 
-char			*WiredPluginData::LoadValue(const std::string& Name)
+bool			WiredPluginData::SaveValue(const std::string& Name, std::string Value)
+{
+	if (_Data.find(Name) == _Data.end())
+	{
+		_Data[Name] = Value;
+		return true;
+	}
+	return false;	
+}
+
+const char			*WiredPluginData::LoadValue(const std::string& Name)
 {
 	if (_Data.find(Name) != _Data.end())
-		return _Data[Name];
+		return _Data[Name].c_str();
 	return NULL;
 }
+
 
 PluginParams	*WiredPluginData::GetParamsStack()
 {
