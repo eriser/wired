@@ -142,7 +142,7 @@ typedef struct  s_MidiPatternXml
 	std::vector<MidiEvent *>	Events;
 } t_MidiPatternXml;
 
-typedef std::map<std::string, char *>::iterator PluginParamsIter;
+typedef std::map<std::string, std::string>::iterator PluginParamsIter;
 
 extern int errno;
 
@@ -169,7 +169,7 @@ public:
 	bool					Save();
 	bool					CreateFile();
 	void					Dumpfile(const std::string& FileName);
-	const std::string&		GetAudioDir();
+	std::string&			GetAudioDir();
 private:
 	bool					SaveSeq(); // Saving Sequenceur infos to XML File
 	bool					SaveTrack(Track* TrackInfo); // Saving Track infos to XML File
