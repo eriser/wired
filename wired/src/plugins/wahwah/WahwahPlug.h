@@ -61,6 +61,12 @@ typedef struct s_plugParams
   float res;
 }	       t_plugParams;
 
+#define STR_FREQUENCY "Frequency"
+#define STR_START_PHASE "StartPhase"
+#define STR_DEPTH "Depth"
+#define STR_FREQUENCY_OFS "FrequencyOFS"
+#define STR_RESOLUTION "Resolution"
+ 
 class Wahwah
 {
   public :
@@ -114,7 +120,8 @@ class EffectWahwah : public Plugin
   void	OnPaint(wxPaintEvent &event);
   void	Load(int fd, long size);
   long	Save(int fd);
-
+  void	Load(WiredPluginData& Datas);
+  void	Save(WiredPluginData& Datas);
 
   wxBitmap	*GetBitmap();
   float		Wide;
