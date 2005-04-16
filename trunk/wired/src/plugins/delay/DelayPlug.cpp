@@ -1,5 +1,6 @@
 #include "DelayPlug.h"
 #include "midi.h"
+#include <sstream>
 
 static PlugInitInfo info;
 
@@ -247,6 +248,106 @@ long DelayPlugin::Save(int fd)
   size += write(fd, MidiDryWet, sizeof (int[2]));
   
   return (size);
+}
+
+void DelayPlugin::Load(WiredPluginData& Datas)
+{
+	char		*buffer;
+	
+	DelayMutex.Lock();
+		
+	buffer = strdup(Datas.LoadValue(std::string(STR_DELAY_TIME)));
+	if (buffer != NULL)
+		DelayTime = strtof(buffer, NULL);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_FEEDBACK)));
+	if (buffer != NULL)
+		Feedback = strtof(buffer, NULL);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_DRY_LEVEL)));
+	if (buffer != NULL)
+		DryLevel = strtof(buffer, NULL);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_WET_LEVEL)));
+	if (buffer != NULL)
+		WetLevel = strtof(buffer, NULL);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_BYPASS1)));
+	if (buffer != NULL)
+		MidiBypass[0] = atoi(buffer);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_BYPASS2)));
+	if (buffer != NULL)
+		MidiBypass[1] = atoi(buffer);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_TIME1)));
+	if (buffer != NULL)
+		MidiTime[0] = atoi(buffer);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_TIME2)));
+	if (buffer != NULL)
+		MidiTime[1] = atoi(buffer);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_FEEDBACK1)));
+	if (buffer != NULL)
+		MidiFeedback[0] = atoi(buffer);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_FEEDBACK2)));
+	if (buffer != NULL)
+		MidiFeedback[1] = atoi(buffer);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_DRY_WET1)));
+	if (buffer != NULL)
+		MidiDryWet[0] = atoi(buffer);
+	free(buffer);	
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_DRY_WET2)));
+	if (buffer != NULL)
+		MidiDryWet[1] = atoi(buffer);
+	free(buffer);
+	
+	DelayMutex.Unlock();
+}
+
+void DelayPlugin::Save(WiredPluginData& Datas)
+{
+	std::ostringstream 	oss;
+
+	oss << DelayTime;
+	Datas.SaveValue(std::string(STR_DELAY_TIME), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << Feedback;
+	Datas.SaveValue(std::string(STR_FEEDBACK), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << DryLevel;
+	Datas.SaveValue(std::string(STR_DRY_LEVEL), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << WetLevel;
+	Datas.SaveValue(std::string(STR_WET_LEVEL), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiBypass[0];
+	Datas.SaveValue(std::string(STR_MIDI_BYPASS1), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiBypass[1];
+	Datas.SaveValue(std::string(STR_MIDI_BYPASS2), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiTime[0];
+	Datas.SaveValue(std::string(STR_MIDI_TIME1), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiTime[1];
+	Datas.SaveValue(std::string(STR_MIDI_TIME2), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiFeedback[0];
+	Datas.SaveValue(std::string(STR_MIDI_FEEDBACK1), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiFeedback[1];
+	Datas.SaveValue(std::string(STR_MIDI_FEEDBACK2), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiDryWet[0];
+	Datas.SaveValue(std::string(STR_MIDI_DRY_WET1), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << MidiDryWet[1];
+	Datas.SaveValue(std::string(STR_MIDI_DRY_WET2), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
 }
 
 bool DelayPlugin::IsAudio()
