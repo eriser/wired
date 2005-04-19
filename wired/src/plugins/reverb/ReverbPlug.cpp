@@ -114,6 +114,56 @@ long ReverbPlugin::Save(int fd)
     return 0;
 }
 
+void ReverbPlugin::Load(WiredPluginData& Datas)
+{
+	char		*buffer;
+	
+	ReverbMutex.Lock();
+	buffer = strdup(Datas.LoadValue(std::string(STR_REVERB_SELECTED)));
+	if (buffer != NULL)
+	{
+		rev_sel = atoi(buffer);
+		SelrevKnob->SetValue(rev_sel);
+		JCreverb_stk.setT60(rev_sel);
+		Nreverb_stk.setT60(rev_sel);
+	}
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_MIX_LEVEL)));
+	if (buffer != NULL)
+	{
+		float Mix = strtof(buffer, NULL);
+		MixKnob->SetValue((int)(Mix * EFFECT_MIX));
+		PRCreverb_stk.setEffectMix(Mix);
+		JCreverb_stk.setEffectMix(Mix);
+		Nreverb_stk.setEffectMix(Mix);
+	}
+	free(buffer);
+	buffer = strdup(Datas.LoadValue(std::string(STR_DECAY)));
+	if (buffer != NULL)
+	{
+		float Decay = strtof(buffer, NULL);
+		DecayKnob->SetValue((int)Decay);
+		PRCreverb_stk.setT60(Decay);
+	}
+	free(buffer);
+	ReverbMutex.Unlock();
+}
+
+void ReverbPlugin::Save(WiredPluginData& Datas)
+{
+	std::ostringstream 	oss;
+
+	oss << rev_sel;
+	Datas.SaveValue(std::string(STR_REVERB_SELECTED), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << (MixKnob->GetValue() / EFFECT_MIX);
+	Datas.SaveValue(std::string(STR_MIX_LEVEL), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+	oss << DecayKnob->GetValue();
+	Datas.SaveValue(std::string(STR_DECAY), std::string(oss.str()));
+	oss.seekp(ios_base::beg);
+}
+
 void ReverbPlugin::Init()
 {
   PRCreverb_stk.setT60(3);

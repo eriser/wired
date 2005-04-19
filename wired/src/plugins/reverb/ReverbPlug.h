@@ -33,6 +33,10 @@
 #define IMG_BYPASS_OFF	"plugins/reverb/bypass_button_up.png"
 #define EFFECT_MIX	100.f
 
+#define STR_REVERB_SELECTED "ReverbSelected"
+#define STR_MIX_LEVEL "MixLevel"
+#define STR_DECAY "Decay"
+
 typedef struct s_param
 {
   int		sel_rev;
@@ -52,6 +56,9 @@ class ReverbPlugin: public Plugin
   void	 CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
   void   Load(int fd, long size);
   long   Save(int fd);
+
+  void	 Load(WiredPluginData& Datas);
+  void	 Save(WiredPluginData& Datas);
 
   bool	 IsAudio();
   bool	 IsMidi();
