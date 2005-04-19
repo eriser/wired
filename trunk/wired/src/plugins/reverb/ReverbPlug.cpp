@@ -17,7 +17,7 @@ BEGIN_EVENT_TABLE(ReverbPlugin, wxWindow)
 END_EVENT_TABLE()
 
 ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
-  : Plugin(startinfo, initinfo)
+  : Plugin(startinfo, initinfo), Bypass(false)
 {
   Init();
 
@@ -129,31 +129,37 @@ void ReverbPlugin::Process(float **input, float **output, long sample_length)
 {
   int	i;
 
-  switch (rev_sel)
-    {
-    case 0 :
-      for (i = 0; i <sample_length; i++)
-	{
-	  output[0][i] = PRCreverb_stk.tick(input[0][i]);
-	  output[1][i] = PRCreverb_stk.tick(input[1][i]);
-	}
-      break;
-    case 1 :
-      for (i = 0; i <sample_length; i++)
-	{
+  if (!Bypass)
+    switch (rev_sel)
+      {
+      case 0 :
+	for (i = 0; i <sample_length; i++)
+	  {
+	    output[0][i] = PRCreverb_stk.tick(input[0][i]);
+	    output[1][i] = PRCreverb_stk.tick(input[1][i]);
+	  }
+	break;
+      case 1 :
+	for (i = 0; i <sample_length; i++)
+	  {
 	  output[0][i] = JCreverb_stk.tick(input[0][i]);
 	  output[1][i] = JCreverb_stk.tick(input[1][i]);
-	}
-      break;
-    case 2 :
-      for (i = 0; i <sample_length; i++)
-	{
-	  output[0][i] = Nreverb_stk.tick(input[0][i]);
-	  output[1][i] = Nreverb_stk.tick(input[1][i]);
-	}
-      break;
-    default :
-      break;
+	  }
+	break;
+      case 2 :
+	for (i = 0; i <sample_length; i++)
+	  {
+	    output[0][i] = Nreverb_stk.tick(input[0][i]);
+	    output[1][i] = Nreverb_stk.tick(input[1][i]);
+	  }
+	break;
+      default :
+	break;
+      }
+  else
+    {
+      memcpy(output[0], input[0], sample_length * sizeof(float));
+      memcpy(output[1], input[1], sample_length * sizeof(float));
     }
 }
 
