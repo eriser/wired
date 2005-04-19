@@ -39,6 +39,7 @@ class		ChorusPlugin: public Plugin
   void		OnDryWet(wxScrollEvent &event);
   void		OnChorusStage(wxScrollEvent &event);
   void		OnPaint(wxPaintEvent &event);
+  void		OnBypass(wxCommandEvent &e);
 
   wxBitmap	*GetBitmap();
 
@@ -54,6 +55,8 @@ class		ChorusPlugin: public Plugin
   double	EffectMix;
 
  protected:
+  bool		Bypass;
+
   wxBitmap	*bmp;   
 
   FaderCtrl	*FrequencyFader;
@@ -64,9 +67,13 @@ class		ChorusPlugin: public Plugin
   wxImage	*img_bg;
   wxBitmap	*TpBmp;
 
+  wxImage	*bypass_on;
+  wxImage	*bypass_off;
+  wxImage	*liquid_on;
+  wxImage	*liquid_off;
 
-
-
+  StaticBitmap	*Liquid;
+  DownButton	*BypassBtn;
   float		*DelayBuffer;
   float		*BufStart[2];
   float		*BufEnd[2];
@@ -81,7 +88,8 @@ class		ChorusPlugin: public Plugin
 
 enum
   {
-    Chorus_Time = 1,
+    Chorus_Bypass = 1,
+    Chorus_Time,
     Chorus_Feedback,
     Chorus_Stage,
     Chorus_DryWet,
@@ -90,17 +98,22 @@ enum
 /******** ChorusPlugin Implementation *********/
 
 BEGIN_EVENT_TABLE(ChorusPlugin, wxWindow)
-  EVT_COMMAND_SCROLL(Chorus_Time, ChorusPlugin::OnChorusTime)
-  EVT_COMMAND_SCROLL(Chorus_Feedback, ChorusPlugin::OnFeedback)
-  EVT_COMMAND_SCROLL(Chorus_Stage, ChorusPlugin::OnChorusStage)
-  EVT_COMMAND_SCROLL(Chorus_DryWet, ChorusPlugin::OnDryWet)
-  EVT_PAINT(ChorusPlugin::OnPaint)
+     EVT_BUTTON(Chorus_Bypass, ChorusPlugin::OnBypass)
+     EVT_COMMAND_SCROLL(Chorus_Time, ChorusPlugin::OnChorusTime)
+     EVT_COMMAND_SCROLL(Chorus_Feedback, ChorusPlugin::OnFeedback)
+     EVT_COMMAND_SCROLL(Chorus_Stage, ChorusPlugin::OnChorusStage)
+     EVT_COMMAND_SCROLL(Chorus_DryWet, ChorusPlugin::OnDryWet)
+     EVT_PAINT(ChorusPlugin::OnPaint)
 END_EVENT_TABLE()
 
-#define IMG_DL_BG	"plugins/chorus/chorus.png"
+#define IMG_DL_BG	"plugins/chorus/chorus_bg.png"
 #define IMG_DL_BMP	"plugins/chorus/ChorusPlug.bmp"
 #define IMG_DL_FADER_BG "plugins/chorus/fader_bg.png"
-#define IMG_DL_FADER_FG	"plugins/chorus/fader_fg.png"
+#define IMG_DL_FADER_FG	"plugins/chorus/fader_button.png"
+#define IMG_LIQUID_ON	"plugins/chorus/liquid-cristal_play.png"
+#define IMG_LIQUID_OFF	"plugins/chorus/liquid-cristal_stop.png"
+#define IMG_BYPASS_ON	"plugins/chorus/bypass_button_down.png"
+#define IMG_BYPASS_OFF	"plugins/chorus/bypass_button_up.png"
 #define SINERAW		"plugins/chorus/sinewave.raw"
 
 #define IS_DENORMAL(f) (((*(unsigned int *)&f)&0x7f800000)==0)

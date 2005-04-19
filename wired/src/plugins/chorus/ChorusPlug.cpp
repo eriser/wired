@@ -10,6 +10,7 @@
 
 #include "Plugin.h"
 #include "FaderCtrl.h"
+#include "DownButton.h"
 #include "WvIn.h"
 #include "WaveLoop.h"
 #include "Effect.h"
@@ -23,7 +24,7 @@
 #include <string>
 
 ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
-  : Plugin(startinfo, initinfo)
+  : Plugin(startinfo, initinfo), Bypass(false)
 {
   BufStart[0] = 0x0;
   BufStart[1] = 0x0;
@@ -38,15 +39,32 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 		       wxBITMAP_TYPE_PNG );
   img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(),
 		       wxBITMAP_TYPE_PNG );
+
+  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), 
+			  wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
+			   wxBITMAP_TYPE_PNG);
+  BypassBtn = new DownButton(this, Chorus_Bypass, wxPoint(21, 58),
+			     wxSize(bypass_on->GetWidth(), 
+				    bypass_on->GetHeight()),
+			     bypass_off, bypass_on);
+
+  //bypass button's stuff
+
+  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
+			  wxBITMAP_TYPE_PNG);
+  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+
   
-  FrequencyFader = new FaderCtrl(this, Chorus_Time, img_bg, img_fg, 0, 10, 3, 
-				 wxPoint(18, 8), wxSize(22,78));
+  // FrequencyFader = new FaderCtrl(this, Chorus_Time, img_bg, img_fg, 0, 10, 3, 
+// 				 wxPoint(18, 8), wxSize(22,78));
   BaseLengthFader = new FaderCtrl(this, Chorus_Feedback, img_bg, img_fg, 0, 10000, 5000,
-				  wxPoint(50, 8), wxSize(22,78));
+				  wxPoint(73, 11), wxSize(22,78));
   ModDepthFader = new FaderCtrl(this, Chorus_Stage, img_bg, img_fg, 0, 10, 3,
-				wxPoint(82, 8), wxSize(22,78));
+				wxPoint(110, 11), wxSize(22,78));
   EffectMixFader = new FaderCtrl(this, Chorus_DryWet, img_bg, img_fg, 0, 100, 50,
-				 wxPoint(142, 8), wxSize(22,78));  
+				 wxPoint(149, 11), wxSize(22,78));  
   SetBackgroundColour(wxColour(237, 237, 237));
 }
 
@@ -96,12 +114,25 @@ void ChorusPlugin::Process(float **input, float **output, long sample_length)
 
   ChorusMutex.Lock();
 
-  for (c1 = 0; c1 < sample_length; c1++)
+  if (!Bypass)
+    for (c1 = 0; c1 < sample_length; c1++)
+      {
+	output[0][c1] = chorus1->tick(input[0][c1]);
+	output[1][c1] = chorus2->tick(input[1][c1]);
+      }
+  else
     {
-      output[0][c1] = chorus1->tick(input[0][c1]);
-      output[1][c1] = chorus2->tick(input[1][c1]);
+      memcpy(output[0], input[0], sample_length * sizeof(float));
+      memcpy(output[1], input[1], sample_length * sizeof(float));
     }
+  ChorusMutex.Unlock();
+}
 
+void ChorusPlugin::OnBypass(wxCommandEvent &e)
+{
+  ChorusMutex.Lock();
+  Bypass = BypassBtn->GetOn();
+  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
   ChorusMutex.Unlock();
 }
 
