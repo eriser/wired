@@ -597,8 +597,8 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 		cout << "[WIREDSESSION] Plugin with Id  " << PluginInfo->Id.c_str() << " is not loaded" << endl;     
     if (NewPlugin)
 		NewPlugin->Name = PluginInfo->Name;
+	TrackInfo->TrackOpt->ConnectTo(NewPlugin);	
 	NewPlugin->Load(PluginInfo->Data);
-	TrackInfo->TrackOpt->ConnectTo(NewPlugin);
 
 }
 
