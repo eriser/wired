@@ -145,6 +145,8 @@ class EffectWahwah : public Plugin
   wxImage *img_bg;
   wxBitmap *TpBmp;
 
+  wxMutex	WahwahMutex;
+
   DECLARE_EVENT_TABLE()  
 
 };
