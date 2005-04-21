@@ -93,9 +93,9 @@ void ReverbPlugin::Load(int fd, long size)
       rev_sel = param.sel_rev;
       PRCreverb_stk.setT60(param.Decay);
       PRCreverb_stk.setEffectMix(param.Mix);
-      JCreverb_stk.setT60(param.sel_rev);
+      JCreverb_stk.setT60(param.Decay);
       JCreverb_stk.setEffectMix(param.Mix);
-      Nreverb_stk.setT60(param.sel_rev);
+      Nreverb_stk.setT60(param.Decay);
       Nreverb_stk.setEffectMix(param.Mix);
     }
 }
@@ -124,8 +124,6 @@ void ReverbPlugin::Load(WiredPluginData& Datas)
 	{
 		rev_sel = atoi(buffer);
 		SelrevKnob->SetValue(rev_sel);
-		JCreverb_stk.setT60(rev_sel);
-		Nreverb_stk.setT60(rev_sel);
 	}
 	free(buffer);
 	buffer = strdup(Datas.LoadValue(std::string(STR_MIX_LEVEL)));
@@ -144,6 +142,8 @@ void ReverbPlugin::Load(WiredPluginData& Datas)
 		float Decay = strtof(buffer, NULL);
 		DecayKnob->SetValue((int)Decay);
 		PRCreverb_stk.setT60(Decay);
+		JCreverb_stk.setT60(Decay);
+		Nreverb_stk.setT60(Decay);
 	}
 	free(buffer);
 	ReverbMutex.Unlock();
