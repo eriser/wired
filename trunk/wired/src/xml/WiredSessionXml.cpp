@@ -31,8 +31,6 @@ WiredSessionXml	WiredSessionXml::Clone()
 
 bool			WiredSessionXml::Load(const std::string& FileName)
 {
-	//Dumpfile(FileName);
-	//return true;
 	if (FileName != "")
 		_DocumentFileName = FileName;
 	if (OpenDocument(_DocumentFileName) == true)
@@ -75,11 +73,12 @@ bool			WiredSessionXml::Save()
 			StartElement(std::string(STR_WORKING_DIR));
 			WriteString((std::string)f.GetFullPath());
 			EndElement();
-			SaveSeq();
+			SaveSeq();			
 			for (Ts = Seq->Tracks.begin(); Ts != Seq->Tracks.end(); Ts++)
 			{
 				SaveTrack(*Ts);
 			}
+			SaveFreePlugins();
 			EndElement();
 			EndDocumentWriter(true, true);
 		}
@@ -89,8 +88,7 @@ bool			WiredSessionXml::Save()
 	return false;
 }
 
-//<!ATTLIST Sequencer Loop (true,false) #REQUIRED 
-//Click (true,false) #REQUIRED>
+
 bool			WiredSessionXml::SaveSeq()
 {
 	int			Res = 0;
@@ -183,6 +181,38 @@ bool			WiredSessionXml::SaveTrackPlugins(Track* TrackInfo)
 	return true;
 }
 
+bool			WiredSessionXml::IsPluginConnected(Plugin *Plug)
+{
+	TrackIter	Ts;
+			
+	for (Ts = Seq->Tracks.begin(); Ts != Seq->Tracks.end(); Ts++)
+	{
+		if ((*Ts)->TrackOpt->Connected != NULL)
+			return true;
+	}
+	return false;
+}
+
+bool				WiredSessionXml::SaveFreePlugins()
+{
+	PluginIter								IterPlugins;
+	bool									Result = false;
+	list<RackTrack *>::iterator 			It;
+
+	for (It = RackPanel->RackTracks.begin(); It != RackPanel->RackTracks.end(); It++)  
+	{
+		for (IterPlugins = (*It)->Racks.begin(); IterPlugins != (*It)->Racks.end(); IterPlugins++)  
+		{
+			if (IsPluginConnected(*IterPlugins) == false)
+			{
+				SavePlugin(*IterPlugins);
+				Result = true;
+			}
+		}
+	}
+	return true;
+}
+
 bool			WiredSessionXml::SavePlugin(Plugin* PluginInfo)
 {
 	int					Res = 0;
@@ -222,7 +252,7 @@ bool			WiredSessionXml::SavePlugin(Plugin* PluginInfo)
 	return Res == 0;
 }
 
-//<!ELEMENT Pattern (StartPos+,EndPos+,Name+,PatternData*)> 
+
 bool			WiredSessionXml::SavePattern(Pattern* PatternInfo, bool AudioTrack)
 {
 	int			Res = 0;
@@ -248,8 +278,6 @@ bool			WiredSessionXml::SavePattern(Pattern* PatternInfo, bool AudioTrack)
 	return Res == 0;
 }
 
-//<!ELEMENT PatternData (PatternAudio|PatternMIDIData)+>
-//<!ELEMENT PatternAudioData (StartPos,EndPos,FileName)+>
 bool			WiredSessionXml::SavePatternAudioData(AudioPattern* PatternInfo)
 {
 	int			Res = 0;
@@ -273,11 +301,6 @@ bool			WiredSessionXml::SavePatternAudioData(AudioPattern* PatternInfo)
 	return Res == 0;
 }
 
-//<!ELEMENT PatternData (PatternAudio|PatternMIDIData)+>
-//<!ELEMENT PatternMIDIData (PPQN,StartPos,EndPos,MIDIMessage)+>
-//<!ELEMENT FileName (#PCDATA)>
-//<!ELEMENT PPQN (#PCDATA)>
-//<!ELEMENT MIDIMessage (#PCDATA)>
 bool				WiredSessionXml::SavePatternMIDIData(MidiPattern* PatternInfo)
 {
 	int				Res = 0;
@@ -310,6 +333,7 @@ bool				WiredSessionXml::SavePatternMIDIData(MidiPattern* PatternInfo)
 	return Res == 0;
 }
 
+
 bool			WiredSessionXml::CreateFile()
 {
 	int			fd = INVALID_FD;
@@ -320,9 +344,10 @@ bool			WiredSessionXml::CreateFile()
 		close(fd);
 		return CreateDocument(_DocumentFileName);
 	}
-	std::cout << "[WiredSessionXml] Could not open file : " << strerror(errno) << std::endl;
+	std::cout << "[WIREDSESSION] Could not open file : " << strerror(errno) << std::endl;
 	return false;
 }
+
 
 bool			WiredSessionXml::ParseWiredSession()
 {
@@ -334,7 +359,6 @@ bool			WiredSessionXml::ParseWiredSession()
 	{
 		std::string 	Name = GetNodeName();
 		
-		//std::cout << "[ParesWiredSession] Node Name == " << Name.c_str() << std::endl;
 		if (Name.compare(STR_ROOT_NODE_NAME) == 0)
 		{
 			HasFoundProject = true;
@@ -348,9 +372,12 @@ bool			WiredSessionXml::ParseWiredSession()
 			LoadSeq();
 		else if (Name.compare(STR_TRACK) == 0 && IsInProject)
 			LoadTrack(TrackNumber++);
+		else if (Name.compare(STR_PLUGIN) == 0 && IsInProject)
+			LoadPlugin(NULL);
 	}
 	return HasFoundProject;
 }
+
 
 void			WiredSessionXml::LoadWorkingDir()
 {
@@ -364,10 +391,11 @@ void			WiredSessionXml::LoadWorkingDir()
 
 		f.MakeAbsolute(session_dir.GetPath());
 		_WorkingDir = f.GetFullPath();
-		cout << "[WIREDSESSIONXML] Audio dir: " << _WorkingDir.c_str() << endl;
+		cout << "[WIREDSESSION] Audio dir: " << _WorkingDir.c_str() << endl;
 	}	
 	Read();	
 }
+
 
 void			WiredSessionXml::LoadSeq()
 {
@@ -419,7 +447,6 @@ void			WiredSessionXml::LoadSeq()
 			break;
 		Read();
 		Value = GetNodeValue();
-		//std::cout << "[LoadSeq] NodeName == {" << Buffer.c_str() << "} Value == {" << Value << "}" << std::endl;
 		if (Buffer.compare(STR_BPM) == 0)
 		{
 			Seq->SetBPM(atof(Value));
@@ -428,7 +455,6 @@ void			WiredSessionXml::LoadSeq()
 		else if (Buffer.compare(STR_SIG_NUM) == 0)
 		{
 			Seq->SetSigNumerator(atoi(Value));
-			//TODO See what's happening here (SetSigNumerator seems to hanging on for some obscure reason)
 			TransportPanel->SetSigNumerator(atoi(Value));
 		}
 		else if (Buffer.compare(STR_SIG_DEN) == 0)
@@ -449,6 +475,7 @@ void			WiredSessionXml::LoadSeq()
 		Read();
 	}
 }
+
 
 void			WiredSessionXml::LoadTrack(int Number)
 {
@@ -517,10 +544,10 @@ void			WiredSessionXml::LoadTrack(int Number)
 		}
 		else
 			continue;
-		//std::cout << "[LoadTrack] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
 		Read();
 	}
 }
+
 
 void			WiredSessionXml::LoadPlugin(Track* TrackInfo)
 {
@@ -568,11 +595,11 @@ void			WiredSessionXml::LoadPlugin(Track* TrackInfo)
 		}
 		else
 			continue;
-		//std::cout << "[LoadPlugin] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
 		Read();
 	}
 	LoadTrackPlugin(TrackInfo, &Plugin);
 }
+
 
 void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInfo)
 {
@@ -597,10 +624,12 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 		cout << "[WIREDSESSION] Plugin with Id  " << PluginInfo->Id.c_str() << " is not loaded" << endl;     
     if (NewPlugin)
 		NewPlugin->Name = PluginInfo->Name;
-	TrackInfo->TrackOpt->ConnectTo(NewPlugin);	
+	if (TrackInfo != NULL)
+		TrackInfo->TrackOpt->ConnectTo(NewPlugin);	
 	NewPlugin->Load(PluginInfo->Data);
 
 }
+
 
 void			WiredSessionXml::LoadPluginData(t_PluginXml *Params)
 {
@@ -635,6 +664,7 @@ void			WiredSessionXml::LoadPluginData(t_PluginXml *Params)
 	if (ParamValue.size() > 0 && ParamName.size() > 0)
 		Params->Data.SaveValue(ParamName, ParamValue);
 }
+
 
 void			WiredSessionXml::LoadPattern(Track *AddedTrack, int TrackNumber)
 {
@@ -679,10 +709,10 @@ void			WiredSessionXml::LoadPattern(Track *AddedTrack, int TrackNumber)
 		}
 		else
 			continue;
-		//std::cout << "[LoadPattern] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
 		Read();
 	}
 }
+
 
 void			WiredSessionXml::LoadPatternAudio(Track *AddedTrack, t_PatternXml *InfoPattern)
 {
@@ -726,7 +756,6 @@ void			WiredSessionXml::LoadPatternAudio(Track *AddedTrack, t_PatternXml *InfoPa
 		}
 		else
 			continue;
-		//std::cout << "[LoadPatternAudio] NodeName == {" << Buffer.c_str() << "} Value == {" << (Value != NULL ? Value : "NULL") << "}" << std::endl;
 		Read();
 	}
 	if (APatternInfo.FileName.size() > 0)
@@ -742,12 +771,13 @@ void			WiredSessionXml::LoadPatternAudio(Track *AddedTrack, t_PatternXml *InfoPa
 			AddedTrack->AddPattern(Result);
 		}
 		else
-			cout << "[WIREDSESSIONXML] Could not open file: " 
+			cout << "[WIREDSESSION] Could not open file: " 
 				 << APatternInfo.FileName << endl;
 	}
 	else
-		cout << "[WIREDSESSIONXML] Invalid FileName" << endl;
+		cout << "[WIREDSESSION] Invalid FileName" << endl;
 }
+
 
 
 void			WiredSessionXml::LoadPatternMIDI(Track *AddedTrack, t_PatternXml *InfoPattern)
@@ -762,10 +792,10 @@ void			WiredSessionXml::LoadPatternMIDI(Track *AddedTrack, t_PatternXml *InfoPat
 		if (Buffer.compare(STR_PATTERN) == 0)
 			break;
 		Read();
-		Value = GetNodeValue();		
-		//std::cout << "[LoadPatternMIDI] NodeName == {" << Buffer.c_str() << "} Value == {" << Value << "}" << std::endl;
+		Value = GetNodeValue();
 	}
 }
+
 
 void			WiredSessionXml::Dumpfile(const std::string& FileName)
 {
@@ -801,6 +831,7 @@ void			WiredSessionXml::Dumpfile(const std::string& FileName)
 			<< _DocumentFileName.c_str() << "}" << std::endl;
 	}
 }
+
 
 std::string&	WiredSessionXml::GetAudioDir()
 {

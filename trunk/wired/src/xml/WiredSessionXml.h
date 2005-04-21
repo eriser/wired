@@ -177,6 +177,8 @@ private:
 	bool					SavePatternAudioData(AudioPattern* PatternInfo); //Saving Audio Pattern Data to XML File
 	bool					SavePatternMIDIData(MidiPattern* PatternInfo); //Saving MIDI Pattern Data to XML File
 	bool					SaveTrackPlugins(Track* TrackInfo);
+	bool					SaveFreePlugins(); // for plugins not attached to a track
+	bool					IsPluginConnected(Plugin *Plug);
 	bool					SavePlugin(Plugin* PluginInfo);
 	void					LoadWorkingDir();
 	void					LoadSeq();
