@@ -303,6 +303,7 @@ void ReverbPlugin::OnPaint(wxPaintEvent &event)
 	      wxCOPY, FALSE);      
       upd++;
     }
+  Plugin::OnPaintEvent(event);
 }
 
 /******** Main and mandatory library functions *********/
