@@ -164,6 +164,7 @@ void		EffectWahwah::OnPaint(wxPaintEvent &event)
 	      wxCOPY, FALSE);      
       upd++;
     }
+  Plugin::OnPaintEvent(event);
 }
 
 void		EffectWahwah::Load(int fd, long size)

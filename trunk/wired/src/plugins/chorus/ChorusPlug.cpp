@@ -313,7 +313,7 @@ void ChorusPlugin::OnDryWet(wxScrollEvent &WXUNUSED(e))
   cout << "Frequency: " << Frequency << endl;
 }
 
-void ChorusPlugin::OnPaint(wxPaintEvent &WXUNUSED(event))
+void ChorusPlugin::OnPaint(wxPaintEvent &event)
 {
   wxMemoryDC memDC;
   wxPaintDC dc(this);
@@ -326,6 +326,7 @@ void ChorusPlugin::OnPaint(wxPaintEvent &WXUNUSED(event))
 	      upd.GetX(), upd.GetY(), wxCOPY, FALSE);      
       upd++;
     }
+  Plugin::OnPaintEvent(event);
 }
 
 /******** Main and mandatory library functions *********/
