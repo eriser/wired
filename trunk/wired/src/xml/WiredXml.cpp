@@ -2,9 +2,16 @@
 
 WiredXml::WiredXml()
 {
+	std::cout << "WiredXmlConstructor" << std::endl;
 	_DocumentWriter = NULL;
+	_DocumentFile = NULL;
+	_DtdFile = NULL;
 	_DocumentFileName = "";	
-	LIBXML_TEST_VERSION
+	_DtdFileName = "";
+	_DocumentWriterName = "";
+	std::cout << "WiredXml test lib" << std::endl;
+	//LIBXML_TEST_VERSION
+	std::cout << "WiredXmlConstructor end" << std::endl;
 }
 
 WiredXml::WiredXml(const WiredXml& copy)
@@ -14,9 +21,13 @@ WiredXml::WiredXml(const WiredXml& copy)
 
 WiredXml::~WiredXml()
 {
+	std::cout << "[WiredXml] destructor 1" << std::endl;
 	CloseDocumentWriter();
+	std::cout << "[WiredXml] destructor 2" << std::endl;
 	CloseDocumentReader();
+	std::cout << "[WiredXml] destructor 3" << std::endl;
     xmlCleanupParser();
+    std::cout << "[WiredXml] destructor 4" << std::endl;
 }
 
 WiredXml				WiredXml::operator=(const WiredXml& right)
@@ -41,18 +52,19 @@ WiredXml				WiredXml::Clone()
 
 bool					WiredXml::OpenDocument(const std::string& FileName)
 {
-	int					fd;
+	int					fd = INVALID_FD;
 		
 	if (FileName.size() > 0)
 		_DocumentFileName = FileName;
-	if ((fd = open(_DocumentFileName.c_str(), FLAGS_OPEN_RDONLY)) != INVALID_FD)
+	fd = open(_DocumentFileName.c_str(), FLAGS_OPEN_RDONLY);
+	if (fd != INVALID_FD)
 	{
 		close(fd);
 		
 		//TODO Don't bypass document validation
 		//_DocumentFile = xmlReaderForFile(_DocumentFileName.c_str(), NULL, 
 		//								XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
-		_DocumentFile = xmlReaderForFile(_DocumentFileName.c_str(), NULL, NULL);
+		_DocumentFile = xmlReaderForFile(_DocumentFileName.c_str(), NULL, 0);
 		if (_DocumentFile != NULL)
 			return true;
 	}
@@ -335,6 +347,8 @@ bool					WiredXml::CloseDocumentReader()
 	if (_DocumentFile != NULL)
 	{
 		_DocumentFileName.erase();
+		if (xmlTextReaderIsValid(_DocumentFile))
+			xmlTextReaderClose(_DocumentFile);
 		xmlFreeTextReader(_DocumentFile);
 		_DocumentFile = NULL;	
 		return true;
