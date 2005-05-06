@@ -78,6 +78,11 @@ AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_C_VOLATILE
 
+# checks for options
+AC_ARG_ENABLE(dssi, 
+	[  --enable-dssi Enable or disable DSSI plugins support (default disabled)])
+
+
 # Checks for library functions.
 AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_LSTAT
@@ -94,9 +99,20 @@ else
         AC_DEFINE_UNQUOTED(INSTALL_PREFIX, "$prefix")
 fi
 
+
+if test x$enable_dssi = xyes;
+then
+ CFGDSSI=Yes
+ OPTION_DSSI="DSSI_ENABLED"
+ ALL_SRC="${ALL_SRC} src/dssi/Makefile"
+else
+ CFGDSSI=No
+ OPTION_DSSI="DSSI_DISABLED"
+fi
+
 AC_CONFIG_FILES([Makefile
 		src/Makefile
-        src/audio/Makefile
+		src/audio/Makefile
 		src/editmidi/Makefile
 		src/engine/Makefile
 		src/fileloader/Makefile
@@ -122,9 +138,9 @@ AC_CONFIG_FILES([Makefile
 		src/sequencer/Makefile
 		src/undo/Makefile
 		src/libs/Makefile
-        src/libs/WiredWidgets/Makefile
-        src/libs/WiredWidgets/src/Makefile
-        src/libs/WiredAkai/Makefile
+	        src/libs/WiredWidgets/Makefile
+	        src/libs/WiredWidgets/src/Makefile
+		src/libs/WiredAkai/Makefile
 		src/libs/WiredAkai/src/Makefile
 		src/data/Makefile
 		src/data/ihm/Makefile	
@@ -147,6 +163,7 @@ AC_CONFIG_FILES([Makefile
 		src/data/plugins/wahwah/Makefile
 		src/data/plugins/chorus/Makefile
 		src/conf/Makefile
-		src/xml/Makefile])
+		src/xml/Makefile
+		src/dssi/Makefile])
 
 AC_OUTPUT
