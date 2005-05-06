@@ -13,7 +13,8 @@ SUBDIRS =				\
 	plugins				\
 	data				\
 	conf				\
-	xml
+	xml				\
+	dssi
 
 DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so libs/WiredAkai/src/.libs/libWiredAkai.so -Lfileloader -lfileloader
 
@@ -39,4 +40,5 @@ wired_LDADD =				\
 	plugins/libplugins.a		\
 	redist/libredist.a		\
 	undo/libundo.a			\
-	xml/libwiredxml.a
+	xml/libwiredxml.a		\
+	dssi/libwireddssi.a
