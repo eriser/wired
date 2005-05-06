@@ -38,6 +38,7 @@
 #include "../midi/MidiThread.h"
 #include "../plugins/PluginLoader.h"
 #include "../xml/WiredSessionXml.h"
+#include "../dssi/WiredDSSI.h"
 
 Rack					*RackPanel;
 SequencerGui				*SeqPanel;
@@ -50,6 +51,7 @@ PlugStartInfo				StartInfo;
 vector<PluginLoader *>			LoadedPluginsList;
 WiredSession				*CurrentSession;
 WiredSessionXml				*CurrentXmlSession;
+WiredDSSI				*LoadedDSSIPlugins;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
@@ -58,6 +60,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   WiredSettings = new Settings(); // FIXME catch what we can here
 
   CurrentSession = new WiredSession("");
+  CurrentXmlSession = new WiredSessionXml("");
+  LoadedDSSIPlugins = new WiredDSSI();
   
   try
     {
@@ -285,6 +289,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   
   LoadPlugins();
 
+	LoadedDSSIPlugins->LoadPLugins(TYPE_PLUGINS_DSSI | TYPE_PLUGINS_LADSPA);
+
   RackPanel->AddPlugToMenu();
 
   RackModeView = true;
@@ -374,14 +380,20 @@ bool					MainWindow::NewSession()
   
   res = msg.ShowModal();
   if (res == wxID_YES)
-    CurrentSession->Save();
+  {
+  	wxCommandEvent evt;
+  	OnSave(evt);    //CurrentXmlSession->Save();
+  }
   else if (res == wxID_CANCEL)
     return (false);
-  delete CurrentSession;
-  CurrentSession = new WiredSession("");
+    cout << "[MAINWIN]  Closing old session 1" << endl;
+  delete CurrentXmlSession;
+  cout << "[MAINWIN]  Closing old session 2" << endl;
+  CurrentXmlSession = new WiredSessionXml("");
+  cout << "[MAINWIN]  Closing old session 3" << endl;
 
   Seq->Stop();
-
+  
   SeqMutex.Lock();
   
   WaveCenter.Clear();
@@ -390,11 +402,13 @@ bool					MainWindow::NewSession()
   Seq->PatternsToRefresh.clear();
   Seq->PatternsToResize.clear();
   Seq->TracksToRefresh.clear();
-
+cout << "[MAINWIN]  Closing old session 0.1" << endl;
   SeqPanel->DeleteAllTracks();
+  cout << "[MAINWIN]  Closing old session 0.2" << endl;
   RackPanel->DeleteAllRacks();
+  cout << "[MAINWIN]  Closing old session 0.2" << endl;
   OptPanel->DeleteTools();
-
+cout << "[MAINWIN]  Closing old session 0.3" << endl;
   SeqMutex.Unlock();
   return (true);
 }
@@ -404,9 +418,12 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
   vector<string>			exts;
   FileLoader				*dlg;
   
+  cout << "[MAINWIN] OnOpen 1" << endl;
   exts.insert(exts.begin(), "wrd\tWired session file (*.wrd)");
   exts.insert(exts.begin(), "xml\tWired session file (*.xml)");
+  cout << "[MAINWIN] OnOpen 2" << endl;
   dlg = new FileLoader(this, MainWin_FileLoader, "Open session", false, false, &exts);
+  cout << "[MAINWIN] OnOpen 3" << endl;
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();    
@@ -417,20 +434,29 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
 	  dlg->Destroy();
 	  return;
 	}
+		cout << "[MAINWIN]  Closing old session 0.1" << endl;
 		if (selfile.size() > 4)
 		{
 			transform(selfile.begin(), selfile.end(), selfile.begin(), (int(*)(int))tolower);
 			if (!selfile.substr(selfile.find_last_of('.')).compare(XML_EXTENSION))
 			{
+				cout << "[MAINWIN]  Closing old session" << endl;
+				if (CurrentXmlSession)				
+					delete CurrentXmlSession;
 	    	  CurrentXmlSession = new WiredSessionXml(selfile);
-	    	  CurrentXmlSession->Load();
+	    	  CurrentXmlSession->Load(selfile);
+	    	  cout << "[MAINWIN]  new session loaded" << endl;
 			}
 			else
 			{
+				cout << "[MAINWIN] Warning! Opening old format" << endl;
 		      CurrentSession = new WiredSession(selfile);
 		      CurrentSession->Load();
 			}
 		}
+		else
+			cout << "[MAINWIN] Invalid Filename" << endl;
+		
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
@@ -471,7 +497,14 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
       
       if (CurrentXmlSession)
 	{
-	  audiodir = CurrentXmlSession->GetAudioDir();
+	audiodir = std::string(CurrentXmlSession->GetAudioDir());
+	if (audiodir.size() == 0)
+	{
+		char	buffer[2048];
+		
+		getcwd(buffer, 2048);
+		audiodir = buffer;
+	}  	
 	  delete CurrentXmlSession;
 	}
       CurrentXmlSession = new WiredSessionXml(selfile, audiodir);
@@ -506,12 +539,12 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       int res = msg.ShowModal();
       if (res == wxID_YES)
 	{
-	  if (CurrentSession->AudioDir.empty())
+	  if (CurrentXmlSession->GetAudioDir().empty())
 	    {
 	      wxDirDialog dir(this, "Choose the Audio file directory", 
 			      wxFileName::GetCwd());
 	      if (dir.ShowModal() == wxID_OK)
-		CurrentSession->AudioDir = dir.GetPath().c_str(); 
+		CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str(); 
 	      else
 		res = wxID_CANCEL;		
 	    }
@@ -519,7 +552,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 	    {
 	      wxFileName fn(selfile.c_str());
 	      
-	      fn.SetPath(CurrentSession->AudioDir.c_str());		
+	      fn.SetPath(CurrentXmlSession->GetAudioDir().c_str());		
 	      if (!wxCopyFile(selfile.c_str(), fn.GetFullPath().c_str()))
 		{
 		  wxMessageDialog copymsg(this, 
