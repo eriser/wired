@@ -3,6 +3,7 @@
 
 #include "dssi.h"
 #include "ladspa.h"
+#include "../engine/AudioEngine.h"
 #include <stdlib.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -28,6 +29,22 @@ using namespace std;
 #define STR_DSSI_DESCRIPTOR_FUNCTION_NAME "dssi_descriptor"
 #define STR_LADSPA_DESCRIPTOR_FUNCTION_NAME "ladspa_descriptor"
 
+class	WiredLADSPAInstance
+{
+public:
+	WiredLADSPAInstance();
+	~WiredLADSPAInstance();
+	WiredLADSPAInstance(const WiredLADSPAInstance& copy);
+	WiredLADSPAInstance	operator=(const WiredLADSPAInstance& right);
+	bool				Init(const LADSPA_Descriptor* Descriptor);
+	bool				Load();
+	bool				ChangeActivateState(bool Activate = true);
+private:
+	void				UnLoad();
+	
+	LADSPA_Handle		_Handle;
+	LADSPA_Descriptor	*_Descriptor;
+};
 
 class	WiredDSSIPlugin
 {
@@ -41,7 +58,7 @@ public:
 	map<int, string>	GetPluginsList();
 	int					GetPluginType(int PluginId);
 	bool				Contains(int PluginId);
-	bool				CreatePlugin(int PluginId);
+	bool				CreatePlugin(int PluginId, WiredLADSPAInstance *Plugin);
 
 private:
 	string								_FileName;
@@ -72,7 +89,8 @@ private:
 	list<string>	SplitPath(string& Path);
 	void			LoadPluginsFromPath(const char *Dirs, int Type);
 
-	list<WiredDSSIPlugin*>	_Plugins;
+	list<WiredDSSIPlugin*>		_Plugins;
+	list<WiredLADSPAInstance*>	_LoadedPlugins;
 	map<int, int>			_IdTable;
 	int						_CurrentPluginIndex;
 };
