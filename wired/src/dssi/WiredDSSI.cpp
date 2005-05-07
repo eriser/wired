@@ -32,7 +32,7 @@ WiredDSSIPlugin		WiredDSSIPlugin::operator=(const WiredDSSIPlugin& right)
 	return *this;
 }
 
-bool				WiredDSSIPlugin::Load(const string& FileName)
+bool				WiredDSSIPlugin::Load(const string& FileName, int& FirstIndex)
 {
 	bool			Found = false;
 	
@@ -63,7 +63,7 @@ bool				WiredDSSIPlugin::Load(const string& FileName)
 			for (pos = 0; (CurrentDescriptor = _DSSIDescriptorFunction(pos)); pos++)
 			{
 				cout << "Adding DSSI Plugin {" << CurrentDescriptor->LADSPA_Plugin->Name << "}" << endl;
-				_DSSIDescriptors.insert(_DSSIDescriptors.end(), CurrentDescriptor);
+				_DSSIDescriptors[FirstIndex++] = CurrentDescriptor;
 			}
 		}
 		else if (_LADSPADescriptorFunction)
@@ -71,13 +71,34 @@ bool				WiredDSSIPlugin::Load(const string& FileName)
 			const LADSPA_Descriptor		*CurrentDescriptor;
 			
 			for (pos = 0; (CurrentDescriptor = _LADSPADescriptorFunction(pos)); pos++)
-			{
+			{				
 				cout << "Adding LADSPA Plugin {" << CurrentDescriptor->Name << "}" << endl;
-				_LADSPADescriptors.insert(_LADSPADescriptors.end(), CurrentDescriptor);
+				_LADSPADescriptors[FirstIndex++] = CurrentDescriptor;
 			}
 		}	
 	}
 	return Found;
+}
+
+map<int, string>	WiredDSSIPlugin::GetPluginsList()
+{
+	map<int, string>	Result;
+	
+	if (_LADSPADescriptorFunction)
+	{
+		map<int, const LADSPA_Descriptor*>::iterator	Iter;
+		
+		for (Iter = _LADSPADescriptors.begin(); Iter != _LADSPADescriptors.end(); Iter++)
+			Result[Iter->first] = Iter->second->Name;
+	}
+	else if (_DSSIDescriptorFunction)
+	{
+		map<int, const DSSI_Descriptor*>::iterator	Iter;
+		
+		for (Iter = _DSSIDescriptors.begin(); Iter != _DSSIDescriptors.end(); Iter++)
+			Result[Iter->first] = Iter->second->LADSPA_Plugin->Name;
+	}
+	return Result;
 }
 
 void				WiredDSSIPlugin::UnLoad()
@@ -89,9 +110,58 @@ void				WiredDSSIPlugin::UnLoad()
 	}
 }
 
+int					WiredDSSIPlugin::GetPluginType(int PluginId)
+{
+	int				Result = 0;
+	
+	if (_LADSPADescriptors.find(PluginId) != _LADSPADescriptors.end())
+		Result = Result | TYPE_PLUGINS_LADSPA;
+	else if (_DSSIDescriptors.find(PluginId) != _DSSIDescriptors.end())
+		Result = Result | TYPE_PLUGINS_DSSI;
+	else
+		return 0;
+	//TODO make it better
+	Result = Result | TYPE_PLUGINS_EFFECT;
+	
+	return Result;
+}
+
+bool				WiredDSSIPlugin::Contains(int PluginId)
+{
+	if (_LADSPADescriptorFunction)
+	{
+		if (_LADSPADescriptors.find(PluginId) != _LADSPADescriptors.end())
+			return true;
+	}
+	else if (_DSSIDescriptorFunction)
+	{
+		if (_DSSIDescriptors.find(PluginId) != _DSSIDescriptors.end())
+			return true;
+	}
+	return false;	
+}
+
+bool				WiredDSSIPlugin::CreatePlugin(int PluginId)
+{	
+	if (Contains(PluginId) == false)
+		return false;
+	if (_LADSPADescriptorFunction)
+	{
+		map<int, const LADSPA_Descriptor*>::iterator	Iter = _LADSPADescriptors.find(PluginId);
+		
+		cout << "Creating Rack for Plugin " << Iter->second->Name << endl;
+	}
+	else if (_DSSIDescriptorFunction)
+	{
+		map<int, const DSSI_Descriptor*>::iterator	Iter = _DSSIDescriptors.find(PluginId);
+		
+		cout << "Creating Rack for Plugin " << Iter->second->LADSPA_Plugin->Name << endl;
+	}
+}
+
 WiredDSSI::WiredDSSI()
 {
-	;
+	_CurrentPluginIndex = 0;
 }
 
 WiredDSSI::WiredDSSI(const WiredDSSI& copy)
@@ -117,6 +187,8 @@ WiredDSSI		WiredDSSI::operator=(const WiredDSSI& right)
 	if (this != &right)
 	{
 		_Plugins = right._Plugins;
+		_CurrentPluginIndex = right._CurrentPluginIndex;
+		_IdTable = right._IdTable;
 	}
 	return *this;
 }
@@ -163,7 +235,7 @@ void			WiredDSSI::LoadPlugins(const string& FileName)
 	//cout << "Trying to open file named {" << FileName.c_str() << "}" << endl;
 	WiredDSSIPlugin		*NewPlugin = new WiredDSSIPlugin();
 	
-	if (NewPlugin->Load(FileName))
+	if (NewPlugin->Load(FileName, _CurrentPluginIndex))
 		_Plugins.insert(_Plugins.end(), NewPlugin);
 	//else
 		//cout << "Could not open file" << endl;
@@ -182,4 +254,55 @@ list<string>	WiredDSSI::SplitPath(string& Path)
 			Result.insert(Result.end(), Buffer);
 	f.close();
 	return Result;
+}
+
+map<int, string>	WiredDSSI::GetPluginsList()
+{
+	map<int, string>					Result;
+	list<WiredDSSIPlugin*>::iterator	Iter;
+	map<int, string>::iterator			IterDescriptor;
+	map<int, string>					CurrentPluginList;
+
+	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
+	{
+		CurrentPluginList = (*Iter)->GetPluginsList();
+		for (IterDescriptor = CurrentPluginList.begin(); IterDescriptor != CurrentPluginList.end(); IterDescriptor++)
+			Result[IterDescriptor->first] = IterDescriptor->second;
+	}
+	return Result;
+}
+
+void				WiredDSSI::SetMenuItemId(int ModuleId, int MenuItemId)
+{
+	_IdTable[MenuItemId] = ModuleId;
+}
+
+int					WiredDSSI::GetPluginType(int PluginId)
+{
+	list<WiredDSSIPlugin*>::iterator	Iter;
+	int									Result = 0;
+
+	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
+	{
+		if ((Result = (*Iter)->GetPluginType(PluginId)))
+			break;
+	}
+	return Result;
+}
+void				WiredDSSI::CreatePlugin(int MenuItemId)
+{
+	list<WiredDSSIPlugin*>::iterator	Iter;
+	int									IdPlugin = 0;
+	
+	if (_IdTable.find(MenuItemId) == _IdTable.end())
+		return;
+	IdPlugin = _IdTable.find(MenuItemId)->second;
+	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
+	{
+		if ((*Iter)->Contains(IdPlugin))
+		{
+			(*Iter)->CreatePlugin(IdPlugin);
+			break;
+		}
+	}	
 }
