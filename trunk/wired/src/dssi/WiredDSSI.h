@@ -50,6 +50,7 @@ private:
 	map<int, const DSSI_Descriptor*>	_DSSIDescriptors;
 	LADSPA_Descriptor_Function			_LADSPADescriptorFunction;
 	map<int, const LADSPA_Descriptor*>	_LADSPADescriptors;
+	map<int, int>						_PluginsInfo;
 };
 
 class 	WiredDSSI
