@@ -289,9 +289,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   
   LoadPlugins();
 
-	LoadedDSSIPlugins->LoadPLugins(TYPE_PLUGINS_DSSI | TYPE_PLUGINS_LADSPA);
-
   RackPanel->AddPlugToMenu();
+
+  LoadExternalPlugins();
 
   RackModeView = true;
   SeqModeView = true;
@@ -807,6 +807,93 @@ void					MainWindow::LoadPlugins()
       if (PluginsConfFile.Eof())
 	break;
     }
+}
+
+void					MainWindow::LoadExternalPlugins()
+{ 
+  map<int, string>				PluginsList;
+  map<int, string>::iterator	IterPluginsList;
+  int							PluginInfo;
+  
+  CreateDSSIInstrMenu = NULL;
+  CreateLADSPAInstrMenu = NULL;
+  CreateDSSIEffectMenu = NULL;
+  CreateLADSPAEffectMenu = NULL;
+  LoadedDSSIPlugins->LoadPLugins(TYPE_PLUGINS_DSSI | TYPE_PLUGINS_LADSPA);
+  PluginsList = LoadedDSSIPlugins->GetPluginsList();
+  for (IterPluginsList = PluginsList.begin(); IterPluginsList != PluginsList.end(); IterPluginsList++)
+  {
+  	PluginInfo = LoadedDSSIPlugins->GetPluginType(IterPluginsList->first);
+
+  	LoadedDSSIPlugins->SetMenuItemId(IterPluginsList->first, 
+  		AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, IterPluginsList->second));
+  }
+	
+}
+
+int					MainWindow::AddPluginMenuItem(int Type, bool IsEffect, const string& MenuName)
+{
+	int				Id = PluginMenuIndexCount++;
+	wxMenuItem		*NewItem;
+	
+	if (IsEffect == true)
+	{
+		if (Type & TYPE_PLUGINS_DSSI)
+		{
+			if (!CreateDSSIEffectMenu)
+			{
+				CreateDSSIEffectMenu = new wxMenu();
+				CreateEffectMenu->Append(Id, "DSSI", CreateDSSIEffectMenu);
+				Id = PluginMenuIndexCount++;
+			}
+			NewItem = CreateDSSIEffectMenu->Append(Id, MenuName.c_str());
+		}
+		else if (Type & TYPE_PLUGINS_LADSPA)
+		{
+			if (!CreateLADSPAEffectMenu)
+			{
+				CreateLADSPAEffectMenu = new wxMenu();
+				CreateEffectMenu->Append(Id, "LADSPA", CreateLADSPAEffectMenu);
+				Id = PluginMenuIndexCount++;
+			}
+			NewItem = CreateLADSPAEffectMenu->Append(Id, MenuName.c_str());
+		}
+	}
+	else
+	{
+		if (Type & TYPE_PLUGINS_DSSI)
+		{
+			if (!CreateDSSIInstrMenu)
+			{
+				CreateDSSIInstrMenu = new wxMenu();
+				CreateInstrMenu->Append(Id, "DSSI", CreateDSSIInstrMenu);
+				Id = PluginMenuIndexCount++;
+			}
+			NewItem = CreateDSSIInstrMenu->Append(Id, MenuName.c_str());
+		}
+		else if (Type & TYPE_PLUGINS_LADSPA)
+		{
+			if (!CreateLADSPAInstrMenu)
+			{
+				CreateLADSPAInstrMenu = new wxMenu();
+				CreateInstrMenu->Append(Id, "LADSPA", CreateLADSPAInstrMenu);
+				Id = PluginMenuIndexCount++;
+			}
+			NewItem = CreateLADSPAInstrMenu->Append(Id, MenuName.c_str());
+		}
+	}
+	if (NewItem)
+		Connect(Id, wxEVT_COMMAND_MENU_SELECTED, 
+		      (wxObjectEventFunction)(wxEventFunction) 
+		      (wxCommandEventFunction)&MainWindow::OnCreateExternalPlugin);
+	return Id;
+}
+
+void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
+{
+	if (LoadedDSSIPlugins)
+		LoadedDSSIPlugins->CreatePlugin(event.GetId());
+	event.Skip();
 }
 
 void					MainWindow::OnCreateRackClick(wxCommandEvent &event)

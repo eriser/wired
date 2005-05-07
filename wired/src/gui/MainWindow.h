@@ -91,6 +91,11 @@ class					MainWindow: public wxFrame
   bool					RackModeView;
   bool					SeqModeView;
 
+  /* DSSI & LADSPA Plugins Menus */
+  void					LoadExternalPlugins();
+  int					AddPluginMenuItem(int Type, bool IsEffect, const string& MenuName);
+  void					OnCreateExternalPlugin(wxCommandEvent &event);
+
   /* Config files */
   wxTextFile				PluginsConfFile;
   
@@ -102,8 +107,12 @@ class					MainWindow: public wxFrame
   wxMenu				*ViewMenu;
   wxMenu				*SequencerMenu;
   wxMenu				*RacksMenu;
-  wxMenu				*CreateInstrMenu;      
+  wxMenu				*CreateInstrMenu;
+  wxMenu				*CreateDSSIInstrMenu;
+  wxMenu				*CreateLADSPAInstrMenu;
   wxMenu				*CreateEffectMenu;     
+  wxMenu				*CreateDSSIEffectMenu;     
+  wxMenu				*CreateLADSPAEffectMenu;     
   wxMenu				*HelpMenu;
   wxMenu				*WindowMenu;
 
