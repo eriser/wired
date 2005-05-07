@@ -351,7 +351,10 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   cout << "[MAINWIN] Unloading shared libraries..."<< endl;
   for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
     (*k)->Unload();
-
+    
+  cout << "[MAINWIN] Unloading external plugins..." << endl;
+  delete LoadedDSSIPlugins;
+  
   delete Audio;
 
   WiredSettings->Save();

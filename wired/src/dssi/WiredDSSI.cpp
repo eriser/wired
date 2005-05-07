@@ -1,5 +1,79 @@
 #include "WiredDSSI.h"
 
+WiredLADSPAInstance::WiredLADSPAInstance()
+{
+	_Handle = NULL;
+	_Descriptor = NULL;
+}
+
+WiredLADSPAInstance::~WiredLADSPAInstance()
+{
+	UnLoad();
+	_Descriptor = NULL;
+}
+
+WiredLADSPAInstance::WiredLADSPAInstance(const WiredLADSPAInstance& copy)
+{
+	*this = copy;
+}
+
+WiredLADSPAInstance		WiredLADSPAInstance::operator=(const WiredLADSPAInstance& right)
+{
+	if (this != &right)
+	{
+		_Handle = right._Handle;
+		_Descriptor = right._Descriptor;
+	}
+	return *this;
+}
+
+bool					WiredLADSPAInstance::Init(const LADSPA_Descriptor *Descriptor)
+{
+	UnLoad();
+	if (Descriptor)
+		_Descriptor = (LADSPA_Descriptor *)Descriptor;
+	else
+		return false;
+	return true;
+}
+
+bool					WiredLADSPAInstance::Load()
+{
+	if (_Descriptor)
+	{
+		UnLoad();
+		if ((_Handle = _Descriptor->instantiate(_Descriptor, Audio->OutputSampleFormat)))
+			return true;
+	}
+	return false;
+}
+
+void					WiredLADSPAInstance::UnLoad()
+{
+	if (_Handle && _Descriptor)
+	{
+		cout << "Unloading Plugin " << _Descriptor->Name << ".";
+		_Descriptor->cleanup(_Handle);
+		cout << ".";
+		_Handle = NULL;
+		cout << ".";
+		cout << "done" << endl;
+	}
+}
+
+bool					WiredLADSPAInstance::ChangeActivateState(bool Activate)
+{
+	if (_Handle && _Descriptor)
+	{
+		if (Activate)
+			_Descriptor->activate(_Handle);
+		else
+			_Descriptor->deactivate(_Handle);
+		return true;
+	}
+	return false;
+}
+
 WiredDSSIPlugin::WiredDSSIPlugin()
 {
 	_Handle = NULL;
@@ -161,22 +235,21 @@ bool				WiredDSSIPlugin::Contains(int PluginId)
 	return false;	
 }
 
-bool				WiredDSSIPlugin::CreatePlugin(int PluginId)
+bool				WiredDSSIPlugin::CreatePlugin(int PluginId, WiredLADSPAInstance* Plugin)
 {	
-	if (Contains(PluginId) == false)
+	if (Contains(PluginId) == false || Plugin == NULL)
 		return false;
+
+	const LADSPA_Descriptor	*Descriptor;
+
 	if (_LADSPADescriptorFunction)
-	{
-		map<int, const LADSPA_Descriptor*>::iterator	Iter = _LADSPADescriptors.find(PluginId);
-		
-		cout << "Creating Rack for Plugin " << Iter->second->Name << endl;
-	}
+		Descriptor = _LADSPADescriptors.find(PluginId)->second;
 	else if (_DSSIDescriptorFunction)
-	{
-		map<int, const DSSI_Descriptor*>::iterator	Iter = _DSSIDescriptors.find(PluginId);
-		
-		cout << "Creating Rack for Plugin " << Iter->second->LADSPA_Plugin->Name << endl;
-	}
+		Descriptor = _DSSIDescriptors.find(PluginId)->second->LADSPA_Plugin;
+	cout << "Creating Rack for Plugin " << Descriptor->Name << endl;
+	Plugin->Init(Descriptor);
+	return Plugin->Load();
+	return false;
 }
 
 WiredDSSI::WiredDSSI()
@@ -191,6 +264,15 @@ WiredDSSI::WiredDSSI(const WiredDSSI& copy)
 
 WiredDSSI::~WiredDSSI()
 {
+	list<WiredLADSPAInstance*>::iterator	IterLoaded;
+	WiredLADSPAInstance*					CurrentLoadedPlugin;
+	
+	for (IterLoaded = _LoadedPlugins.begin(); IterLoaded != _LoadedPlugins.end(); IterLoaded++)
+	{
+		CurrentLoadedPlugin = *IterLoaded;
+		delete CurrentLoadedPlugin;
+	}
+	
 	list<WiredDSSIPlugin*>::iterator	Iter;
 	WiredDSSIPlugin*					CurrentPlugin;
 	
@@ -209,6 +291,7 @@ WiredDSSI		WiredDSSI::operator=(const WiredDSSI& right)
 		_Plugins = right._Plugins;
 		_CurrentPluginIndex = right._CurrentPluginIndex;
 		_IdTable = right._IdTable;
+		_LoadedPlugins = right._LoadedPlugins;
 	}
 	return *this;
 }
@@ -321,7 +404,18 @@ void				WiredDSSI::CreatePlugin(int MenuItemId)
 	{
 		if ((*Iter)->Contains(IdPlugin))
 		{
-			(*Iter)->CreatePlugin(IdPlugin);
+			WiredLADSPAInstance		*NewPlugin = new WiredLADSPAInstance();
+			
+			if ((*Iter)->CreatePlugin(IdPlugin, NewPlugin))
+			{
+				cout << "Plugin successfully loaded" << endl;
+				_LoadedPlugins.insert(_LoadedPlugins.end(), NewPlugin);
+			}
+			else
+			{
+				cout << "Cannot load the Plugin" << endl;
+				delete NewPlugin;
+			}
 			break;
 		}
 	}	
