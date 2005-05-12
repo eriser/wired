@@ -137,6 +137,7 @@ private:
 class Plugin: public wxWindow
 {
  public:
+  Plugin(){}
   Plugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo);
   ~Plugin();
 
