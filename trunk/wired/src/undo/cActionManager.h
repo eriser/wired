@@ -24,56 +24,34 @@ class cActionManager
 private:
 	friend void cAction::NotifyActionManager();
 
-	// Type de listes geres par ce manager
-	enum tStackKind { UNDO, REDO };
+	enum tStackKind { UNDO, REDO };			// Type de listes geres par ce manager
 
-	// Liste des actions a annuler
-	tActionList mUndoList;
+	static	cActionManager* spSingleton;	// Pointer sur l'unique objet de cette classe
+	tActionList	mUndoList;					// Liste des actions potentiellement annulables
+	int			mUndoCount;					// Nombre d'actions potentiellement annulables
+	tActionList	mRedoList;					// Liste des actions potentielles a refaire
+    int			mRedoCount;					// Nombre d'actions potentielles a refaire
 
-    // Liste des actions a annuler
-	int mUndoCount;
+	cActionManager();						// Constructeur prive
+	
+	bool		CanUndo() const				// Verifie que des actions peuvent etre annulees
+				{ return (mUndoCount != 0);};
+	bool		CanRedo() const				// Verifie que des actions peuvent etre refaites
+				{ return (mRedoCount != 0);};
 
-	// Liste des actions a refaire
-	tActionList mRedoList;
-
-    // Liste des actions a annuler
-	int mRedoCount;
-
-	// Pointer sur l'unique objet de cette classe
-	static cActionManager* spSingleton;
-
-	// Constructeur prive
-	cActionManager();
-
-	// Ajoute une action dans la liste d'action a annuler ou a refaire
-	void RegisterActionManager (cAction* action) ;
-
-	// Verifie que des actions peuvent etre annulées
-	bool CanUndo() const
-	{ return (mUndoCount != 0); /*(mUndoList.empty() == false);*/ };
-
-	// Verifie que des actions peuvent etre refaites
-	bool CanRedo() const
-	{ return (mRedoCount != 0); /*(mRedoList.empty() == false);*/ };
-
-	// Supprime une action d'une liste d'elements
-	void AddAction(tStackKind stack, cAction& action);
-
-	// Supprime une action d'une liste d'elements
-	void RemoveTopAction(tStackKind stack);
+	void		AddAction(tStackKind stack, cAction& action);	// Ajoute une action d'une liste d'elements
+	void		RemoveTopAction(tStackKind stack);				// Supprime une action d'une liste d'elements
+	void		RegisterActionManager (cAction* action);		// Ajoute une action dans la liste d'action a annuler ou a refaire
+	void		DumptActionList(const tActionList& actionList, 
+								const std::string& listName);	// Debug - Dump un tActionList
 
 public:
-	// Destructeur 
-	~cActionManager();
-    
-	// Retourne l'instance unique de cette classe
-	static cActionManager& Global();
 
-	// Refait la derniere action annulee
-	bool Redo();
-
-	// Annule la derniere action effectuee
-	bool Undo();
+	~cActionManager();						// Destructeur 
+	static		cActionManager& Global();	// Retourne l'instance unique de cette classe
+	bool		Redo();						// Refait la derniere action annulee
+	bool		Undo();						// Annule la derniere action effectuee
+	void		Dump();						// Debug - Dump les donnees membres
 };
 
 

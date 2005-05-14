@@ -12,7 +12,7 @@ class cMultiplyAction;
 class cAdditionAction;
 
 // ----------------------------------------------------------------------------
-// Defintion classe cActionVisitor
+// Definition classe cActionVisitor
 // ----------------------------------------------------------------------------
 
 class cActionVisitor

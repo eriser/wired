@@ -21,50 +21,32 @@ class cActionManager;
 class cAction  
 {
 protected:
-	// Indique si l'objet est valide
-	// Par defaut sa valeur est FALSE
-	// Cet indicateur doit est force a TRUE 
-	// si l'initialisation de l'action s'est bien passe
-	bool mValid;
-
-	// Indique si l'action est rattache au gestionnaire des actions ou pas
-	bool mRegistered;
+	bool			mValid;						// Indique si l'objet est valide. Par defaut sa valeur est FALSE.
+												// Cet indicateur doit est force a TRUE si l'initialisation de 
+												// l'action s'est bien passe
+	bool			mRegistered;				// Indique si l'action est rattache au gestionnaire des actions ou pas
 
 public:
-	// Constructeur
-	cAction();
+	cAction();									// Constructeur
+	virtual ~cAction() {};						// Destructeur
+	
+	virtual bool	IsValid () const			// Indique si l'objet est valide ou pas
+					{ return mValid; };
 
-	// Destructeur
-	virtual ~cAction() 
-	{};
+	virtual bool	IsRegistered () const		// Indique si l'objet est connu du gestionnaire des actions
+					{ return mRegistered; };
 
-	// Indique si l'objet est valide ou pas
-	virtual bool IsValid () const
-	{ return mValid; };
+	virtual void	NotifyActionManager();		// Enregistre l'action courante dans la liste des actions gerees par le
+												// Undo/Redo Manager : cette methode est appelee apres l'execution 
+												// correcte de l'action, voir mehode Do()
+	virtual void	Do()						// Execute l'action a faire
+					{ NotifyActionManager(); };
 
-	// Indique si l'objet est connu du gestionnaire des actions
-	virtual bool IsRegistered () const
-	{ return mRegistered; };
-
-	// Enregistre l'action courante dans la liste des actions gerees par le
-	// Undo/Redo Manager : cette methode est appelee apres l'execution 
-	// correcte de l'action, voir mehode Do()
-	virtual void NotifyActionManager();
-
-	// Execute l'action a faire
-	virtual void Do()
-	{ NotifyActionManager(); };
-
-	// Annule l'action
-	virtual void Undo()
-	{};
-
-	// Refait l'action
-	virtual void Redo()
-	{ Do(); };
-
-	// Methode callbak
-	virtual void Accept (cActionVisitor& visitor);
+	virtual void	Undo() {};					// Annule l'action
+	virtual void	Redo() { Do(); };			// Refait l'action
+	virtual void	Accept						// Methode callbak
+					(cActionVisitor& visitor);
+	void			Dump(bool alone = true);	// Debug - Dump les donnees membres
 };
 
 #endif
