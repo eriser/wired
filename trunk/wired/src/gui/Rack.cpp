@@ -324,7 +324,7 @@ void				Rack::SetScrolling()
     }
 	x *= UNIT_W + UNIT_S;
 	SetVirtualSize(x, y);
-	Dump();
+	//Dump();
 }
 
 int					Rack::GetXPos(int index)

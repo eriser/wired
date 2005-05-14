@@ -64,7 +64,7 @@ void	cActionManager::RegisterActionManager(cAction* action)
 	{
 		AddAction( UNDO, *action );
 	}
-	Dump();
+	//Dump();
 }
 
 bool	cActionManager::Redo()
