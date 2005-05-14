@@ -183,7 +183,6 @@ Rack::~Rack()
 	cout << "error supression\n" <<endl;
       
     }
-      
 }
 
 void				Rack::InitContextMenu()
@@ -272,15 +271,15 @@ bool				Rack::RemoveTrack(const RackTrack* rackTrack)
 
 void				Rack::RemoveRackAndChannel(t_ListRackTrack::const_iterator	iter)
 {
-	wxMutexLocker lock(SeqMutex);
-	//SeqMutex.Lock();
+	//wxMutexLocker lock(SeqMutex);
+	SeqMutex.Lock();
 	UpdateConnectedSeqTracksFromDeletedRacks(iter);
 	(*iter)->RemoveRack();
 	(*iter)->RemoveChannel();
 	RackTracks.remove(*iter);
 	ResizeTracks();
 	SetScrolling();
-	//SeqMutex.Unlock();
+	SeqMutex.Unlock();
 }
 
 void				Rack::UpdateConnectedSeqTracksFromDeletedRacks(t_ListRackTrack::const_iterator	iterRackTrack)
@@ -612,9 +611,19 @@ inline void			Rack::OnDeleteClick()
 {
 	vector<PluginLoader *>::iterator	k;
   
-	wxMutexLocker m(SeqMutex);
+//	cout << "Coucou" << endl;
+//	wxMutexLocker m(SeqMutex);
 	if (selectedPlugin)
     {
+//	   	for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
+//		if (COMPARE_IDS((*k)->InitInfo.UniqueId, selectedPlugin->InitInfo->UniqueId))
+//		{
+//	    	cout << "[MAINWIN] Destroying plugin: " << selectedPlugin->Name << endl;
+//		    RemoveChild(selectedPlugin);
+//		    (*k)->Destroy(selectedPlugin);
+//	    	break;
+//		}
+//		DeleteRack(selectedPlugin);
     	for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
 			if (COMPARE_IDS((*k)->InitInfo.UniqueId, selectedPlugin->InitInfo->UniqueId))
 			{
@@ -622,11 +631,11 @@ inline void			Rack::OnDeleteClick()
 				cCreateEffectAction* action = new cCreateEffectAction(&StartInfo, *k, false);
 				action->Do();
 				return;
-				//RemoveChild(selectedPlugin);
-				//(*k)->Destroy(selectedPlugin);
-				//break;
+////				RemoveChild(selectedPlugin);
+////				(*k)->Destroy(selectedPlugin);
+////				break;
 			}
-			//DeleteRack(selectedPlugin);
+//			//DeleteRack(selectedPlugin);
     }
 }
 
