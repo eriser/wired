@@ -24,49 +24,50 @@ cActionManager& cActionManager::Global()
 	return *spSingleton;
 }
 
-void cActionManager::AddAction(tStackKind stack, cAction& action)
+void	cActionManager::AddAction(tStackKind stack, cAction& action)
 {
-  if (stack == UNDO)
-    {
-      mUndoList.push_front (&action);
-      mUndoCount++;
+	if (stack == UNDO)
+	{
+		mUndoList.push_front (&action);
+      	mUndoCount++;
     }
-  else
-    if (stack == REDO)
-      {
-	mRedoList.push_front (&action);
-	mRedoCount++;
-      }
+  	else
+    	if (stack == REDO)
+      	{
+			mRedoList.push_front (&action);
+			mRedoCount++;
+      	}
 }
 
-void cActionManager::RemoveTopAction(tStackKind stack)
+void	cActionManager::RemoveTopAction(tStackKind stack)
 {
-  if ( stack == REDO )
+  	if (stack == REDO)
     {
-      mRedoList.pop_front();
-      mRedoCount--;
+      	mRedoList.pop_front();
+      	mRedoCount--;
     }
-  else
-    if ( stack == UNDO )
-      {
-	mUndoList.pop_front();
-	mUndoCount--;
-      }
-  if ((mRedoCount < 1) && (!mRedoList.empty()))
-    mRedoList.clear();
-  if ((mUndoCount < 1) && (!mUndoList.empty()))
-    mUndoList.clear();
+  	else
+    	if (stack == UNDO)
+      	{
+			mUndoList.pop_front();
+			mUndoCount--;
+      	}
+  	if ((mRedoCount < 1) && (!mRedoList.empty()))
+    	mRedoList.clear();
+  	if ((mUndoCount < 1) && (!mUndoList.empty()))
+    	mUndoList.clear();
 }
 
-void cActionManager::RegisterActionManager(cAction* action) 
+void	cActionManager::RegisterActionManager(cAction* action) 
 { 
 	if (action->IsRegistered() == false)
 	{
 		AddAction( UNDO, *action );
 	}
+	Dump();
 }
 
-bool cActionManager::Redo()
+bool	cActionManager::Redo()
 { 
 	if (CanRedo())
 	{
@@ -80,7 +81,7 @@ bool cActionManager::Redo()
 	return false;
 }
 
-bool cActionManager::Undo()
+bool	cActionManager::Undo()
 { 
 	if (CanUndo())
 	{
@@ -92,4 +93,25 @@ bool cActionManager::Undo()
 		return true;
 	}
 	return false;
+}
+
+void	cActionManager::DumptActionList(const tActionList& actionList, const std::string& listName)
+{
+	tActionList::const_iterator	iter;
+	
+	std::cout << "  Dumping tActionList " << listName << std::endl;
+	for (iter = actionList.begin(); iter != actionList.end(); iter++)
+		(*iter)->Dump();
+	std::cout << "    size() : " << actionList.size() << std::endl;
+	std::cout << "  End Dumping tActionList" << std::endl;
+}
+
+void	cActionManager::Dump()
+{
+	std::cout << "Dumping cActionManager : " << spSingleton << std::endl;
+	DumptActionList(mUndoList, "mUndoList");
+	std::cout << "  int mUndoCount : " << mUndoCount << std::endl;
+	DumptActionList(mRedoList, "mRedoList");
+	std::cout << "  int mRedoCount : " << mRedoCount << std::endl;
+	std::cout << "End Dumping cActionManager" << std::endl;
 }

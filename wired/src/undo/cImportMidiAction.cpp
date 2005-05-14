@@ -7,6 +7,9 @@
 #include "../midi/MidiFile.h"
 #include "../gui/Rack.h"
 
+
+/********************   class cImportWaveActionion   ********************/
+
 cImportWaveAction::cImportWaveAction (string path, bool kind)
 {
   mTrackKindFlag = kind;
@@ -36,7 +39,8 @@ void cImportWaveAction::Undo ()
   SeqPanel->RemoveTrack(); 
 }
 
-/////////////////////////////////////////////////////////////////
+
+/********************   class cImportMidiAction   ********************/
 
 cImportMidiAction::cImportMidiAction (string path, bool kind)
 {
@@ -72,7 +76,8 @@ void cImportMidiAction::Undo ()
   SeqPanel->RemoveTrack(); 
 }
 
-/////////////////////////////////////////////////////////////////
+
+/********************   class cImportAkaiAction   ********************/
 
 cImportAkaiAction::cImportAkaiAction (string path, bool kind)
 {
@@ -123,36 +128,69 @@ void cImportAkaiAction::Undo ()
 }
 
 
-/////////////////////////////////////////////////////////////////
+/********************   class cCreateEffectAction   ********************/
 
-
-cCreateEffectAction::cCreateEffectAction (PlugStartInfo* startInfo, PluginLoader* plugLoader)
+cCreateEffectAction::cCreateEffectAction (PlugStartInfo* startInfo, PluginLoader* plugLoader, 
+											bool shouldAdd)
 {
   mPluginLoader = plugLoader;
   mStartInfo = startInfo;
+  mShouldAdd = shouldAdd;
+  mRackIndex = INVALID_VALUE;
 }
 
 void cCreateEffectAction::Do ()
 { 
-  if (mPluginLoader)
-    {
-      RackPanel->AddToSelectedTrack(*mStartInfo, mPluginLoader);
-      NotifyActionManager();
-    }
+	if (mShouldAdd == true)
+		AddRackEffect();	
+	else
+		RemoveRackEffect();
 }
    
 void cCreateEffectAction::Redo ()
 { 
-  Do();
+	Do();
 }
 
 void cCreateEffectAction::Undo ()
-{ 
-  RackPanel->RemoveFromSelectedTrack();
+{
+	if (mShouldAdd == true)
+		RemoveRackEffect();
+	else
+		AddRackEffect();
 }
 
+void cCreateEffectAction::AddRackEffect ()
+{ 
+	if (mPluginLoader)
+    {
+		mRackIndex = RackPanel->RackTracks.size();
+    	//RackPanel->AddToSelectedTrack(*mStartInfo, mPluginLoader);
+    	RackPanel->AddRackAndChannel(*mStartInfo, mPluginLoader);
+	    NotifyActionManager();
+    }
+}
 
-/////////////////////////////////////////////////////////////////
+void cCreateEffectAction::RemoveRackEffect ()
+{ 
+	if (mRackIndex < 0)
+		RackPanel->RemoveSelectedRackAndChannel();
+	else
+		RackPanel->RemoveTrack(mRackIndex);
+	NotifyActionManager();
+}
+
+void cCreateEffectAction::Dump()
+{
+	std::cout << "    Dumping cCreateEffectAction : "	<< this << std::endl;
+	std::cout << "      PluginLoader *mPluginLoader : " << mPluginLoader << std::endl;
+	std::cout << "      PlugStartInfo *mStartInfo : "	<< mStartInfo << std::endl;
+	std::cout << "      bool mShouldAdd : "	<< mShouldAdd << std::endl;
+	cAction::Dump();
+	std::cout << "      End Dumping cCreateEffectAction" << std::endl;
+}
+
+/********************   class cCreateRackAction   ********************/
 
 cCreateRackAction::cCreateRackAction (PlugStartInfo* startInfo, PluginLoader* plugLoader)
 {
