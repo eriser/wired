@@ -937,37 +937,26 @@ void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
     {
       cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name << endl;     
       // RackPanel->AddToSelectedTrack(StartInfo,  p);
-      cCreateEffectAction* action = new cCreateEffectAction(&StartInfo,  p);
+      cCreateEffectAction* action = new cCreateEffectAction(&StartInfo, p, true);
+      //cCreateEffectAction* action = new cCreateEffectAction(&StartInfo,  p);
       action->Do();
     }
 }
 
 void					MainWindow::OnDeleteRack(wxCommandEvent &event)
 {
-  vector<RackTrack *>::iterator		i;
-  vector<Plugin *>::iterator		j;
-  vector<PluginLoader *>::iterator	k;
-  
-  wxMutexLocker m(SeqMutex);
-  if (RackPanel->selectedPlugin)
-    {
-      /*  for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); 
-	  i++)
-	  for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
-	  {*/
-      for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
-	if (COMPARE_IDS((*k)->InitInfo.UniqueId, RackPanel->selectedPlugin->InitInfo->UniqueId))
-	  {
-	    cout << "[MAINWIN] Destroying plugin: " 
-		 << RackPanel->selectedPlugin->Name << endl;
-	    RackPanel->RemoveChild(RackPanel->selectedPlugin);
-	    (*k)->Destroy(RackPanel->selectedPlugin);
-	    break;
-	  }
-      RackPanel->DeleteRack(RackPanel->selectedPlugin);     
-    }
-  /* return;
-     } */
+	vector<PluginLoader *>::iterator	k;
+	
+	if (RackPanel->selectedPlugin)
+	{
+		for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
+			if (COMPARE_IDS((*k)->InitInfo.UniqueId, RackPanel->selectedPlugin->InitInfo->UniqueId))
+		  	{
+				cCreateEffectAction* action = new cCreateEffectAction(&StartInfo, *k, false);
+				action->Do();
+				return;
+		  	}
+	}
 }
 
 //#include <unistd.h>
