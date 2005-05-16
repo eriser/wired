@@ -51,8 +51,8 @@ typedef struct s_ladspa_port
 
 typedef struct s_gui_control
 {
-	t_gui_port		*Data;
-	t_ladspa_port	*Descriptor;
+	t_gui_port		Data;
+	t_ladspa_port	Descriptor;
 } t_gui_control;
 
 class	WiredLADSPAInstance : public Plugin
@@ -64,6 +64,7 @@ public:
 	WiredLADSPAInstance	operator=(const WiredLADSPAInstance& right);
 	bool				Init(const LADSPA_Descriptor* Descriptor);
 	bool				Load();
+	void				SetInfo(PlugInitInfo *Info);
 	bool				ChangeActivateState(bool Activate = true);
 
 	//<Wired Plugin Implementation>
@@ -79,7 +80,7 @@ public:
 	void				SetSignature(int numerator, int denominator);
 	void				ProcessEvent(WiredEvent &event);
 	bool				HasView();
-	wxWindow			*CreateView(wxWindow *zone, wxPoint &pos, wxSize &size);
+	wxWindow			*CreateView(wxWindow *zone, wxPoint &pos, wxSize &size){return NULL;}
 	void				DestroyView();
 	bool				IsAudio();
 	bool				IsMidi();
@@ -115,7 +116,8 @@ private:
 	list<t_ladspa_port>				_OutputAudioPluginsPorts;
 	list<t_ladspa_port>				_InputDataPluginsPorts;
 	list<t_ladspa_port>				_OutputDataPluginsPorts;
-	map<unsigned long, t_gui_port>	_GuiControls;								//Key == PortId; Value == PortData
+	map<unsigned long, t_gui_control>	_GuiControls;								//Key == PortId; Value == PortData
+	bool							_IsPlaying;
 };
 
 class	WiredDSSIPlugin
@@ -155,7 +157,8 @@ public:
 	map<int, string>	GetPluginsList();
 	void				SetMenuItemId(int ModuleId, int MenuItemId);
 	int					GetPluginType(int PluginId);
-	void				CreatePlugin(int MenuItemId);
+	WiredLADSPAInstance	*CreatePlugin(int MenuItemId);
+	void				DestroyPlugin(WiredLADSPAInstance *Plug);
 	
 private:
 	void			LoadPlugins(const string& FileName);
