@@ -116,8 +116,9 @@ private:
 	list<t_ladspa_port>				_OutputAudioPluginsPorts;
 	list<t_ladspa_port>				_InputDataPluginsPorts;
 	list<t_ladspa_port>				_OutputDataPluginsPorts;
-	map<unsigned long, t_gui_control>	_GuiControls;								//Key == PortId; Value == PortData
 	bool							_IsPlaying;
+protected:
+	map<unsigned long, t_gui_control>	_GuiControls;								//Key == PortId; Value == PortData
 };
 
 class	WiredDSSIPlugin

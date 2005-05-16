@@ -1,6 +1,6 @@
-	#include "WiredDSSI.h"
+#include "WiredDSSI.h"
 
-WiredLADSPAInstance::WiredLADSPAInstance()
+WiredLADSPAInstance::WiredLADSPAInstance() : Plugin()
 {
 	_Handle = NULL;
 	_Descriptor = NULL;
@@ -11,7 +11,6 @@ WiredLADSPAInstance::WiredLADSPAInstance()
 WiredLADSPAInstance::~WiredLADSPAInstance()
 {
 	UnLoad();
-	_Descriptor = NULL;
 }
 
 WiredLADSPAInstance::WiredLADSPAInstance(const WiredLADSPAInstance& copy) : Plugin()
@@ -32,6 +31,7 @@ WiredLADSPAInstance		WiredLADSPAInstance::operator=(const WiredLADSPAInstance& r
 		_Type = right._Type;
 		_Properties = right._Properties;
 		_GuiControls = right._GuiControls;
+		_IsPlaying = right._IsPlaying;
 	}
 	return *this;
 }
@@ -44,6 +44,19 @@ bool					WiredLADSPAInstance::Init(const LADSPA_Descriptor *Descriptor)
 	else
 		return false;
 	return true;
+}
+
+void					WiredLADSPAInstance::SetInfo(PlugInitInfo *Info)
+{
+	
+	Info->Name = Name;
+	if (_InputAudioPluginsPorts.size() > 0)
+		Info->Type = PLUG_IS_EFFECT;
+	else
+		Info->Type = PLUG_IS_INSTR;
+	Info->UnitsX = 1;
+	Info->UnitsY = 1;
+	InitInfo = Info;
 }
 
 bool					WiredLADSPAInstance::Load()
@@ -82,11 +95,13 @@ void					WiredLADSPAInstance::UnLoad()
 
 void					WiredLADSPAInstance::UnloadGUIPorts()
 {
-	map<unsigned long, t_gui_port>::iterator	Iter;
+	map<unsigned long, t_gui_control>::iterator	Iter;
 	
 	for (Iter = _GuiControls.begin(); Iter != _GuiControls.end(); Iter++)
-		if (Iter->second.Data != NULL)
-			delete Iter->second.Data;
+	{		
+		if (Iter->second.Data.Data != NULL)
+			delete Iter->second.Data.Data;
+	}
 }
 
 bool					WiredLADSPAInstance::ChangeActivateState(bool Activate)
@@ -107,7 +122,7 @@ void					WiredLADSPAInstance::UnLoadPorts()
 	_InputAudioPluginsPorts.clear();
 	_OutputAudioPluginsPorts.clear();
 	_InputDataPluginsPorts.clear();
-	_OutputDataPluginsPorts.clear();	
+	_OutputDataPluginsPorts.clear();
 }
 
 void					WiredLADSPAInstance::LoadPorts()
@@ -154,12 +169,17 @@ void					WiredLADSPAInstance::LoadPorts()
 
 void					WiredLADSPAInstance::AddGuiControl(t_ladspa_port *PortData)
 {
-	t_gui_port			NewGuiPort;
+	t_gui_control			NewGuiPort;
 
-	NewGuiPort.LowerBound = PortData->RangeHint.LowerBound;
-	NewGuiPort.UpperBound = PortData->RangeHint.UpperBound;
-	NewGuiPort.Data = new LADSPA_Data;
-	*(NewGuiPort.Data) = GetDefaultValue(&NewGuiPort, PortData->RangeHint.HintDescriptor);
+
+	NewGuiPort.Data.LowerBound = PortData->RangeHint.LowerBound;
+	NewGuiPort.Data.UpperBound = PortData->RangeHint.UpperBound;
+	NewGuiPort.Data.Data = new LADSPA_Data;
+	*(NewGuiPort.Data.Data) = GetDefaultValue(&NewGuiPort.Data, PortData->RangeHint.HintDescriptor);
+	NewGuiPort.Descriptor.Descriptor = PortData->Descriptor;
+	NewGuiPort.Descriptor.RangeHint = PortData->RangeHint;
+	NewGuiPort.Descriptor.Name = PortData->Name;
+	NewGuiPort.Descriptor.Id = PortData->Id;
 
 	_GuiControls[PortData->Id] = NewGuiPort;
 }
@@ -234,17 +254,19 @@ bool					WiredLADSPAInstance::IsLoaded()
 
 void	 				WiredLADSPAInstance::Process(float **input, float **output, long sample_length)
 {
-	if (IsLoaded() == false)
-		return;
-	if (_InputAudioPluginsPorts.empty() || _OutputAudioPluginsPorts.empty())
-		return;
-	if (LADSPA_IS_INPLACE_BROKEN(_Properties) && *input == *output)
-		return;
-	ChangeActivateState();
-	if (_InputAudioPluginsPorts.size() >= 2 && _OutputAudioPluginsPorts.size() >= 2)
-		ProcessStereo(input, output, sample_length);
+	if (IsLoaded() == false && _InputAudioPluginsPorts.empty() || _OutputAudioPluginsPorts.empty() && 
+		LADSPA_IS_INPLACE_BROKEN(_Properties) && *input == *output && _IsPlaying)
+	{	
+		if (_InputAudioPluginsPorts.size() >= 2 && _OutputAudioPluginsPorts.size() >= 2)
+			ProcessStereo(input, output, sample_length);
+		else
+			ProcessMono(input, output, sample_length);
+	}
 	else
-		ProcessMono(input, output, sample_length);
+	{
+		memcpy(output[0], input[0], sample_length * sizeof(float));
+		memcpy(output[1], input[1], sample_length * sizeof(float));
+	}
 }
 
 void					WiredLADSPAInstance::ConnectMonoInput(float *input, unsigned long PortId)
@@ -292,12 +314,14 @@ void					WiredLADSPAInstance::Init()
 
 void					WiredLADSPAInstance::Play()
 {
-	
+	_IsPlaying = true;
+	ChangeActivateState();
 }
 
 void					WiredLADSPAInstance::Stop()
 {
-	
+	_IsPlaying = false;	
+	ChangeActivateState(false);
 }
 
 unsigned long			WiredLADSPAInstance::GetPortId(list<t_ladspa_port>& PortList, int index)
@@ -341,7 +365,7 @@ void					WiredLADSPAInstance::Save(WiredPluginData& Datas)
 	{
 		if (_GuiControls.find(Iter->Id) != _GuiControls.end())
 		{
-			Buffer << *(_GuiControls[Iter->Id].Data);
+			Buffer << *(_GuiControls[Iter->Id].Data.Data);
 			Datas.SaveValue(Iter->Name, Buffer.str());
 			Buffer.clear();	
 		}
@@ -375,12 +399,7 @@ void					WiredLADSPAInstance::ProcessEvent(WiredEvent &event)
 
 bool					WiredLADSPAInstance::HasView()
 {
-	
-}
-
-wxWindow*				WiredLADSPAInstance::CreateView(wxWindow *zone, wxPoint &pos, wxSize &size)
-{
-	
+	return false;
 }
 
 void					WiredLADSPAInstance::DestroyView()
@@ -550,7 +569,7 @@ map<int, string>	WiredDSSIPlugin::GetPluginsList()
 	if (_LADSPADescriptorFunction)
 	{
 		map<int, const LADSPA_Descriptor*>::iterator	Iter;
-		
+
 		for (Iter = _LADSPADescriptors.begin(); Iter != _LADSPADescriptors.end(); Iter++)
 			Result[Iter->first] = Iter->second->Name;
 	}
@@ -659,13 +678,15 @@ WiredDSSI::~WiredDSSI()
 
 	for (IterLoaded = _LoadedPlugins.begin(); IterLoaded != _LoadedPlugins.end(); IterLoaded++)
 	{
+		cout << "before  delete  LADSPA" << endl;
 		CurrentLoadedPlugin = *IterLoaded;
 		delete CurrentLoadedPlugin;
+		cout << "after  delete  LADSPA" << endl;
 	}
 	
 	list<WiredDSSIPlugin*>::iterator	Iter;
 	WiredDSSIPlugin*					CurrentPlugin;
-	
+	cout << "before  delete  DSSI" << endl;
 	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
 	{
 		(*Iter)->UnLoad();
@@ -790,13 +811,13 @@ int					WiredDSSI::GetPluginType(int PluginId)
 	return Result;
 }
 
-void				WiredDSSI::CreatePlugin(int MenuItemId)
+WiredLADSPAInstance	*WiredDSSI::CreatePlugin(int MenuItemId)
 {
 	list<WiredDSSIPlugin*>::iterator	Iter;
 	int									IdPlugin = 0;
 	
 	if (_IdTable.find(MenuItemId) == _IdTable.end())
-		return;
+		return NULL;
 	IdPlugin = _IdTable.find(MenuItemId)->second;
 	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
 	{
@@ -808,6 +829,7 @@ void				WiredDSSI::CreatePlugin(int MenuItemId)
 			{
 				cout << "Plugin successfully loaded" << endl;
 				_LoadedPlugins.insert(_LoadedPlugins.end(), NewPlugin);
+				return NewPlugin;
 			}
 			else
 			{
@@ -817,4 +839,21 @@ void				WiredDSSI::CreatePlugin(int MenuItemId)
 			break;
 		}
 	}	
+	return NULL;
+}
+
+void				WiredDSSI::DestroyPlugin(WiredLADSPAInstance *Plug)
+{
+	list<WiredLADSPAInstance*>::iterator	Iter;
+	
+	for (Iter = _LoadedPlugins.begin(); Iter != _LoadedPlugins.end(); Iter++)
+	{
+		if (*Iter == Plug)
+		{
+			_LoadedPlugins.remove(Plug);
+			delete Plug;
+			break;	
+		}
+	}
+	cout << "Can't find plugin to unload" << endl;
 }
