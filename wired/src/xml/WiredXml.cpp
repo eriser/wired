@@ -2,16 +2,13 @@
 
 WiredXml::WiredXml()
 {
-	std::cout << "WiredXmlConstructor" << std::endl;
 	_DocumentWriter = NULL;
 	_DocumentFile = NULL;
 	_DtdFile = NULL;
 	_DocumentFileName = "";	
 	_DtdFileName = "";
 	_DocumentWriterName = "";
-	std::cout << "WiredXml test lib" << std::endl;
 	//LIBXML_TEST_VERSION
-	std::cout << "WiredXmlConstructor end" << std::endl;
 }
 
 WiredXml::WiredXml(const WiredXml& copy)
@@ -21,13 +18,9 @@ WiredXml::WiredXml(const WiredXml& copy)
 
 WiredXml::~WiredXml()
 {
-	std::cout << "[WiredXml] destructor 1" << std::endl;
 	CloseDocumentWriter();
-	std::cout << "[WiredXml] destructor 2" << std::endl;
 	CloseDocumentReader();
-	std::cout << "[WiredXml] destructor 3" << std::endl;
     xmlCleanupParser();
-    std::cout << "[WiredXml] destructor 4" << std::endl;
 }
 
 WiredXml				WiredXml::operator=(const WiredXml& right)
