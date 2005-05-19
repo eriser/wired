@@ -353,6 +353,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
     (*k)->Unload();
     
   cout << "[MAINWIN] Unloading external plugins..." << endl;
+  delete Seq;
   delete LoadedDSSIPlugins;
   
   delete Audio;
@@ -834,10 +835,10 @@ void					MainWindow::LoadExternalPlugins()
 	
 }
 
-int					MainWindow::AddPluginMenuItem(int Type, bool IsEffect, const string& MenuName)
+int						MainWindow::AddPluginMenuItem(int Type, bool IsEffect, const string& MenuName)
 {
-	int				Id = PluginMenuIndexCount++;
-	wxMenuItem		*NewItem;
+	int					Id = PluginMenuIndexCount++;
+	wxMenuItem			*NewItem;
 	
 	if (IsEffect == true)
 	{
@@ -895,8 +896,18 @@ int					MainWindow::AddPluginMenuItem(int Type, bool IsEffect, const string& Men
 void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
 {
 	if (LoadedDSSIPlugins)
-		LoadedDSSIPlugins->CreatePlugin(event.GetId());
-	event.Skip();
+	{
+		PluginLoader 	*NewPlugin = new PluginLoader(LoadedDSSIPlugins, event.GetId());
+		
+		LoadedPluginsList.push_back(NewPlugin);
+		//LoadedDSSIPlugins->CreatePlugin(event.GetId());
+		cout << "[MAINWIN] Creating rack for plugin: " << NewPlugin->InitInfo.Name << endl;
+      //      if ((plug = p->CreateRack(StartInfo)))
+      // RackPanel->AddTrack(StartInfo, p);
+      cCreateRackAction* action = new cCreateRackAction(&StartInfo, NewPlugin);
+      action->Do();
+      cout << "Rack creation ended" << endl;
+	}
 }
 
 void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
