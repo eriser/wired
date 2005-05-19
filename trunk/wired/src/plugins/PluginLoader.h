@@ -5,6 +5,7 @@
 #define __PLUGINLOADER_H__
 
 #include "Plugin.h"
+#include "../dssi/WiredDSSI.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ class				PluginLoader
 {
  public:
   PluginLoader(string filename);
+  PluginLoader(WiredDSSI *PlugMgr, int MenuItemId);
   ~PluginLoader();
 
   void				Unload();
@@ -32,6 +34,10 @@ class				PluginLoader
   init_t			init;
   create_t			create;
   destroy_t			destroy;
+  bool				External;
+  WiredLADSPAInstance	*ExternalPlug;
+  WiredDSSI			*PluginMgr;
+  int				IdMenuItem;
 };
 
 #endif

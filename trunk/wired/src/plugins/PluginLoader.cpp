@@ -5,9 +5,19 @@
 #include <dlfcn.h>
 #include "PluginLoader.h"
 
+PluginLoader::PluginLoader(WiredDSSI *PlugMgr, int MenuItemId)
+{
+	External = true;
+	PluginMgr = PlugMgr;
+	IdMenuItem = MenuItemId;
+	ExternalPlug = PluginMgr->CreatePlugin(IdMenuItem);
+	ExternalPlug->SetInfo(&InitInfo);
+}
+
 PluginLoader::PluginLoader(string filename) : 
   FileName(filename)
 {
+  External = false;
   handle = dlopen(filename.c_str(), RTLD_LAZY);
   if (!handle) 
     {
@@ -42,20 +52,32 @@ PluginLoader::PluginLoader(string filename) :
 
 PluginLoader::~PluginLoader()
 {
-  dlclose(handle);
+	if (External == false)
+		dlclose(handle);
+	else
+		;
 }
 
 Plugin *PluginLoader::CreateRack(PlugStartInfo &info)
 {
-  return (create(&info));
+	if (External == false)
+	  return (create(&info));
+	return (Plugin*) ExternalPlug;
 }
 
 void PluginLoader::Destroy(Plugin *todel)
 {
-  destroy(todel);
+	if (External == false)
+		destroy(todel);
+	else
+	{
+		PluginMgr->DestroyPlugin(ExternalPlug);
+		ExternalPlug = NULL;
+	}
 }
 
 void PluginLoader::Unload()
 {
-  dlclose(handle);
+	if (External == false)
+		dlclose(handle);
 }
