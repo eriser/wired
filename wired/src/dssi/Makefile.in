@@ -51,7 +51,9 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libwireddssi_a_AR = $(AR) $(ARFLAGS)
 libwireddssi_a_LIBADD =
-am_libwireddssi_a_OBJECTS = WiredDSSI.$(OBJEXT)
+am_libwireddssi_a_OBJECTS = WiredExternalPluginMgr.$(OBJEXT) \
+	WiredExternalPlugin.$(OBJEXT) \
+	WiredExternalPluginLADSPA.$(OBJEXT)
 libwireddssi_a_OBJECTS = $(am_libwireddssi_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/src/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -175,8 +177,12 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 noinst_LIBRARIES = libwireddssi.a
 libwireddssi_a_SOURCES = \
-		WiredDSSI.cpp		\
-		WiredDSSI.h		\
+		WiredExternalPluginMgr.cpp		\
+		WiredExternalPluginMgr.h		\
+		WiredExternalPlugin.cpp		\
+		WiredExternalPlugin.h		\
+		WiredExternalPluginLADSPA.cpp		\
+		WiredExternalPluginLADSPA.h		\
 		dssi.h			\
 		ladspa.h
 
@@ -227,7 +233,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WiredDSSI.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WiredExternalPlugin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WiredExternalPluginLADSPA.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WiredExternalPluginMgr.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
