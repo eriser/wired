@@ -75,6 +75,7 @@ class					MainWindow: public wxFrame
 
   void					OnUndo(wxCommandEvent &event);
   void					OnRedo(wxCommandEvent &event);
+  void					OnHistory(wxCommandEvent &event);
   void					OnCut(wxCommandEvent &event);
   void					OnCopy(wxCommandEvent &event);
   void					OnPaste(wxCommandEvent &event);
@@ -96,6 +97,9 @@ class					MainWindow: public wxFrame
   int					AddPluginMenuItem(int Type, bool IsEffect, const string& MenuName);
   void					OnCreateExternalPlugin(wxCommandEvent &event);
 
+  /* Undo Redo Menus */
+  void					CreateHistoryMenu();
+
   /* Config files */
   wxTextFile				PluginsConfFile;
   
@@ -104,6 +108,7 @@ class					MainWindow: public wxFrame
   wxMenuBar				*MenuBar;
   wxMenu				*FileMenu;
   wxMenu				*EditMenu;
+  wxMenu				*HistoryMenu;
   wxMenu				*ViewMenu;
   wxMenu				*SequencerMenu;
   wxMenu				*RacksMenu;
@@ -167,6 +172,7 @@ enum
   MainWin_FloatView,
   MainWin_Undo,
   MainWin_Redo,
+  MainWin_History, 
   MainWin_Delete,
   MainWin_SelectAll,
   MainWin_FullScreen,
@@ -174,7 +180,7 @@ enum
   MainWin_FileLoader,
   MainWin_IntHelp,
   MainWin_SwitchRack,
-  MainWin_SwitchSeq
+  MainWin_SwitchSeq 
 };
 
 extern MainWindow		*MainWin;
