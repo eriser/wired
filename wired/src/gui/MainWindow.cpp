@@ -38,7 +38,7 @@
 #include "../midi/MidiThread.h"
 #include "../plugins/PluginLoader.h"
 #include "../xml/WiredSessionXml.h"
-#include "../dssi/WiredDSSI.h"
+#include "../dssi/WiredExternalPluginMgr.h"
 
 Rack					*RackPanel;
 SequencerGui				*SeqPanel;
@@ -51,7 +51,7 @@ PlugStartInfo				StartInfo;
 vector<PluginLoader *>			LoadedPluginsList;
 WiredSession				*CurrentSession;
 WiredSessionXml				*CurrentXmlSession;
-WiredDSSI				*LoadedDSSIPlugins;
+WiredExternalPluginMgr		*LoadedExternalPlugins;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
@@ -61,7 +61,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   CurrentSession = new WiredSession("");
   CurrentXmlSession = new WiredSessionXml("");
-  LoadedDSSIPlugins = new WiredDSSI();
+  LoadedExternalPlugins = new WiredExternalPluginMgr();
   
   try
     {
@@ -353,8 +353,9 @@ void					MainWindow::OnClose(wxCloseEvent &event)
     (*k)->Unload();
     
   cout << "[MAINWIN] Unloading external plugins..." << endl;
+  Seq->Delete();
   delete Seq;
-  delete LoadedDSSIPlugins;
+  //delete LoadedExternalPlugins;
   
   delete Audio;
 
@@ -823,13 +824,13 @@ void					MainWindow::LoadExternalPlugins()
   CreateLADSPAInstrMenu = NULL;
   CreateDSSIEffectMenu = NULL;
   CreateLADSPAEffectMenu = NULL;
-  LoadedDSSIPlugins->LoadPLugins(TYPE_PLUGINS_DSSI | TYPE_PLUGINS_LADSPA);
-  PluginsList = LoadedDSSIPlugins->GetPluginsList();
+  LoadedExternalPlugins->LoadPLugins(TYPE_PLUGINS_DSSI | TYPE_PLUGINS_LADSPA);
+  PluginsList = LoadedExternalPlugins->GetPluginsList();
   for (IterPluginsList = PluginsList.begin(); IterPluginsList != PluginsList.end(); IterPluginsList++)
   {
-  	PluginInfo = LoadedDSSIPlugins->GetPluginType(IterPluginsList->first);
+  	PluginInfo = LoadedExternalPlugins->GetPluginType(IterPluginsList->first);
 
-  	LoadedDSSIPlugins->SetMenuItemId(IterPluginsList->first, 
+  	LoadedExternalPlugins->SetMenuItemId(IterPluginsList->first, 
   		AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, IterPluginsList->second));
   }
 	
@@ -895,9 +896,9 @@ int						MainWindow::AddPluginMenuItem(int Type, bool IsEffect, const string& Me
 
 void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
 {
-	if (LoadedDSSIPlugins)
+	if (LoadedExternalPlugins)
 	{
-		PluginLoader 	*NewPlugin = new PluginLoader(LoadedDSSIPlugins, event.GetId());
+		PluginLoader 	*NewPlugin = new PluginLoader(LoadedExternalPlugins, event.GetId());
 		
 		LoadedPluginsList.push_back(NewPlugin);
 		//LoadedDSSIPlugins->CreatePlugin(event.GetId());
