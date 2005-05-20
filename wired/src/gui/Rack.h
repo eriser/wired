@@ -45,7 +45,7 @@ class					RackTrack
 	void				DeleteAllRacks();
 
 	void				Dump();													// Debug - Shows member variables
-	void				RackTrack::DumpPlugins();								// Pas du tout objet, mais plus simple pour l'instant (ca permet de ne pas changer 
+	void				DumpPlugins();								// Pas du tout objet, mais plus simple pour l'instant (ca permet de ne pas changer 
 																				// l'API du plugin qui va de tte maniere l'etre pour les DSSI)
 
 	int					Units;
