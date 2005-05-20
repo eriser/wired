@@ -5,7 +5,7 @@
 #include <dlfcn.h>
 #include "PluginLoader.h"
 
-PluginLoader::PluginLoader(WiredDSSI *PlugMgr, int MenuItemId)
+PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, int MenuItemId)
 {
 	External = true;
 	PluginMgr = PlugMgr;
@@ -62,6 +62,7 @@ Plugin *PluginLoader::CreateRack(PlugStartInfo &info)
 {
 	if (External == false)
 	  return (create(&info));
+	ExternalPlug->SetInfo(&info);
 	return (Plugin*) ExternalPlug;
 }
 
