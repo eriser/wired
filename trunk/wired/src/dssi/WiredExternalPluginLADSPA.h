@@ -1,21 +1,17 @@
-#ifndef __WIREDDSSI_H__
-#define __WIREDDSSI_H__
+#ifndef _WIREDEXTERNALPLUGINLADSPA_H_
+#define _WIREDEXTERNALPLUGINLADSPA_H_
 
-#include "dssi.h"
 #include "ladspa.h"
 #include "../engine/AudioEngine.h"
 #include "../redist/Plugin.h"
 #include <stdlib.h>
-#include <sys/types.h>
-#include <dirent.h>
 #include <dlfcn.h>
 #include <math.h>
 
 #include <list>
-#include <map>
 #include <string>
-#include <sstream>
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 #define	TYPE_PLUGINS_DSSI 1
@@ -24,13 +20,6 @@ using namespace std;
 #define	TYPE_PLUGINS_INSTR 4
 #define	TYPE_PLUGINS_EFFECT 8
 
-#define ENV_NAME_PLUGINS_DSSI "DSSI_PATH"
-#define ENV_NAME_PLUGINS_LADSPA "LADSPA_PATH"
-#define DEFAULT_DSSI_PATH "/usr/lib/dssi:/usr/local/lib/dssi"
-#define DEFAULT_LADSPA_PATH "/usr/lib/ladspa:/usr/local/lib/ladspa"
-#define ENV_PATH_SEPARATOR ':'
-#define STR_DSSI_DESCRIPTOR_FUNCTION_NAME "dssi_descriptor"
-#define STR_LADSPA_DESCRIPTOR_FUNCTION_NAME "ladspa_descriptor"
 #define STR_DEFAULT_NAME "LADSPA Plugin"
 #define STR_DEFAULT_HELP "No help provided by this plugin"
 
@@ -65,6 +54,7 @@ public:
 	bool				Init(const LADSPA_Descriptor* Descriptor);
 	bool				Load();
 	void				SetInfo(PlugInitInfo *Info);
+	void				SetInfo(PlugStartInfo *Info);
 	bool				ChangeActivateState(bool Activate = true);
 
 	//<Wired Plugin Implementation>
@@ -81,17 +71,17 @@ public:
 	void				ProcessEvent(WiredEvent &event);
 	bool				HasView();
 	wxWindow			*CreateView(wxWindow *zone, wxPoint &pos, wxSize &size){return NULL;}
-	void				DestroyView();
+	void				DestroyView(){}
 	bool				IsAudio();
 	bool				IsMidi();
-	void				AskUpdate();
-	void				Update();
+	void				AskUpdate(){}
+	void				Update() {}
 	std::string			GetHelpString();
 	void				SetHelpMode(bool On);
 	std::string			DefaultName();
-	wxBitmap			*GetBitmap();	
+	wxBitmap			*GetBitmap(){return NULL;}	
 	//</Wired Plugin Implementation>
-	
+
 private:
 	void				UnLoad();
 	void				LoadPorts();
@@ -121,55 +111,5 @@ protected:
 	map<unsigned long, t_gui_control>	_GuiControls;								//Key == PortId; Value == PortData
 };
 
-class	WiredDSSIPlugin
-{
-public:
-	WiredDSSIPlugin();
-	~WiredDSSIPlugin();
-	WiredDSSIPlugin(const WiredDSSIPlugin& copy);
-	WiredDSSIPlugin		operator=(const WiredDSSIPlugin& right);
-	bool				Load(const string& FileName, int& FirstIndex);
-	void				UnLoad();
-	map<int, string>	GetPluginsList();
-	int					GetPluginType(int PluginId);
-	bool				Contains(int PluginId);
-	bool				CreatePlugin(int PluginId, WiredLADSPAInstance *Plugin);
-	bool				Contains(unsigned long PluginUniqueId);
 
-private:
-	string								_FileName;
-	void								*_Handle;
-	DSSI_Descriptor_Function			_DSSIDescriptorFunction;
-	map<int, const DSSI_Descriptor*>	_DSSIDescriptors;						//Key == PluginId; Value == PluginDescriptor
-	LADSPA_Descriptor_Function			_LADSPADescriptorFunction;
-	map<int, const LADSPA_Descriptor*>	_LADSPADescriptors;						//Key == PluginId; Value == PluginDescriptor
-	map<int, int>						_PluginsInfo;
-};
-
-class 	WiredDSSI
-{
-public:
-	WiredDSSI();
-	~WiredDSSI();
-	WiredDSSI(const WiredDSSI& copy);
-	WiredDSSI		operator=(const WiredDSSI& right);
-	
-	void				LoadPLugins(int Type);
-	map<int, string>	GetPluginsList();
-	void				SetMenuItemId(int ModuleId, int MenuItemId);
-	int					GetPluginType(int PluginId);
-	WiredLADSPAInstance	*CreatePlugin(int MenuItemId);
-	void				DestroyPlugin(WiredLADSPAInstance *Plug);
-	
-private:
-	void			LoadPlugins(const string& FileName);
-	list<string>	SplitPath(string& Path);
-	void			LoadPluginsFromPath(const char *Dirs, int Type);
-
-	list<WiredDSSIPlugin*>		_Plugins;
-	list<WiredLADSPAInstance*>	_LoadedPlugins;
-	map<int, int>			_IdTable;									//Key == MenuItemId; Value == PluginId (auto-increment)
-	int						_CurrentPluginIndex;
-};
-
-#endif	//__WIREDDSSI_H__
+#endif //_WIREDEXTERNALPLUGINLADSPA_H_

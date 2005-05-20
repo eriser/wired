@@ -5,7 +5,11 @@ LDFLAGS = $(shell wx-config --libs) -lm
 noinst_LIBRARIES = libwireddssi.a
 
 libwireddssi_a_SOURCES =		\
-		WiredDSSI.cpp		\
-		WiredDSSI.h		\
+		WiredExternalPluginMgr.cpp		\
+		WiredExternalPluginMgr.h		\
+		WiredExternalPlugin.cpp		\
+		WiredExternalPlugin.h		\
+		WiredExternalPluginLADSPA.cpp		\
+		WiredExternalPluginLADSPA.h		\
 		dssi.h			\
 		ladspa.h
