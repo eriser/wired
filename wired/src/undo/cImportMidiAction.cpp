@@ -8,35 +8,38 @@
 #include "../gui/Rack.h"
 
 
-/********************   class cImportWaveActionion   ********************/
+/********************   class cImportWaveAction   ********************/
 
 cImportWaveAction::cImportWaveAction (string path, bool kind)
 {
-  mTrackKindFlag = kind;
-  mWavePath = path;
+	mTrackKindFlag = kind;
+	mWavePath = path;
 }
 
 void cImportWaveAction::Do ()
 { 
-  WaveFile *w = WaveCenter.AddWaveFile(mWavePath);
+	WaveFile *w = WaveCenter.AddWaveFile(mWavePath);
 
-  if (w) 
+	if (w) 
     {
-      Track *t = SeqPanel->AddTrack(mTrackKindFlag);
-      t->AddPattern(w);
+    	Track *t = SeqPanel->AddTrack(mTrackKindFlag);
+		t->AddPattern(w);
     }
-
-  NotifyActionManager();
+	NotifyActionManager();
 }
-   
+
 void cImportWaveAction::Redo ()
 { 
-  Do();
+	Do();
 }
 
 void cImportWaveAction::Undo ()
 { 
-  SeqPanel->RemoveTrack(); 
+	//SeqPanel->DeleteSelectedTrack();			// Pas plantage :) mais ne fait pas ce qu'on veut ...
+	//SeqPanel->RemoveTrack();					// Plantage ...
+												// Il faut un removeTrack qui supprime la track ayant le contexte
+												// sauvegarde dans l'action
+	std::cout << "Should remove action's track" << std::endl;
 }
 
 
@@ -128,6 +131,67 @@ void cImportAkaiAction::Undo ()
 }
 
 
+/********************   class cChangeParamsEffectAction   ********************/
+
+cChangeParamsEffectAction::cChangeParamsEffectAction (Plugin* plugin, bool shouldSave)
+{
+  mPlugin = plugin;
+  mShouldSave = shouldSave;
+}
+
+void cChangeParamsEffectAction::Do ()
+{ 
+	if (mShouldSave)
+		SaveDatas();
+	else
+		LoadDatas();
+}
+   
+void cChangeParamsEffectAction::Redo ()
+{ 
+	Do();
+}
+
+void cChangeParamsEffectAction::Undo ()
+{
+	if (!mShouldSave)
+		SaveDatas();
+	else
+		LoadDatas();
+}
+
+// TODO : Be sure that only the concerned plugin is saved
+void cChangeParamsEffectAction::SaveDatas()
+{
+	if (mPlugin)
+		{
+			std::cout << "SavePluginsDatas" << endl;
+//			mPlugin->Save(&mDatas);
+		}
+    NotifyActionManager();
+}
+
+// TODO : Be sure that only the concerned plugin is loaded
+void cChangeParamsEffectAction::LoadDatas()
+{
+	if (mPlugin)
+		{
+			std::cout << "LoadPluginsDatas" << endl;
+//			mPlugin->Load(&mDatas);
+		}
+    NotifyActionManager();
+}
+
+
+void cChangeParamsEffectAction::Dump()
+{
+	std::cout << "    Dumping cChangeParamsEffectAction : "	<< this << std::endl;
+	std::cout << "      Plugin* mPlugin : "	<< mPlugin << std::endl;
+	std::cout << "      bool mShouldSave : " << mShouldSave << std::endl;
+	cAction::Dump();
+	std::cout << "      End Dumping cChangeParamsEffectAction" << std::endl;
+}
+
 /********************   class cCreateEffectAction   ********************/
 
 cCreateEffectAction::cCreateEffectAction (PlugStartInfo* startInfo, PluginLoader* plugLoader, 
@@ -164,7 +228,8 @@ void cCreateEffectAction::AddRackEffect ()
 { 
 	if (mPluginLoader)
     {
-		mRackIndex = RackPanel->RackTracks.size();
+    	if (mRackIndex < 0)
+			mRackIndex = RackPanel->RackTracks.size();
     	//RackPanel->AddToSelectedTrack(*mStartInfo, mPluginLoader);
     	RackPanel->AddRackAndChannel(*mStartInfo, mPluginLoader);
 	    NotifyActionManager();
@@ -176,7 +241,7 @@ void cCreateEffectAction::RemoveRackEffect ()
 	if (mRackIndex < 0)
 		RackPanel->RemoveSelectedRackAndChannel();
 	else
-		RackPanel->RemoveTrack(mRackIndex);
+		RackPanel->RemoveTrack(mRackIndex);				// TODO: Should be identified by StartInfo and PluginLoader
 	NotifyActionManager();
 }
 
@@ -190,6 +255,7 @@ void cCreateEffectAction::Dump()
 	std::cout << "      End Dumping cCreateEffectAction" << std::endl;
 }
 
+
 /********************   class cCreateRackAction   ********************/
 
 cCreateRackAction::cCreateRackAction (PlugStartInfo* startInfo, PluginLoader* plugLoader)
@@ -199,7 +265,7 @@ cCreateRackAction::cCreateRackAction (PlugStartInfo* startInfo, PluginLoader* pl
 }
 
 void cCreateRackAction::Do ()
-{ 
+{
   if (mPluginLoader)
   {
 	RackPanel->AddTrack(*mStartInfo, mPluginLoader);
