@@ -740,9 +740,12 @@ inline void			Rack::ResizeTracks()
 	    (*i)->Index = k;
 	    for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
 		{
-			CalcScrolledPosition(xx * (UNIT_W + UNIT_S), yy * (UNIT_H + UNIT_S), &xpos, &ypos);
-			(*j)->SetPosition(wxPoint(xpos, ypos));
-			yy += (*j)->InitInfo->UnitsY;
+			if ((*j)->HasView())
+			{
+				CalcScrolledPosition(xx * (UNIT_W + UNIT_S), yy * (UNIT_H + UNIT_S), &xpos, &ypos);
+				(*j)->SetPosition(wxPoint(xpos, ypos));
+				yy += (*j)->InitInfo->UnitsY;
+			}
 		}
     	xx += (*i)->Units;
     }
@@ -880,8 +883,8 @@ Plugin*				Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
   SeqMutex.Lock(); 
   RackTracks.push_back(t);
   SeqMutex.Unlock();
-  
-  SetScrolling();
+  if (tmp->HasView())
+	  SetScrolling();
   return tmp;
 }
 
