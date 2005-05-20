@@ -179,6 +179,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar = new wxMenuBar;
   FileMenu = new wxMenu;
   EditMenu = new wxMenu;
+  HistoryMenu = new wxMenu;
   SequencerMenu = new wxMenu;
   RacksMenu = new wxMenu;
   CreateInstrMenu = new wxMenu;
@@ -203,6 +204,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   EditMenu->Append(MainWin_Undo, "U&ndo\tCtrl+Z");
   EditMenu->Append(MainWin_Redo, "&Redo\tShift+Ctrl+Z");
+  EditMenu->Append(MainWin_History, "History", HistoryMenu);
 
   EditMenu->AppendSeparator();
   EditMenu->Append(MainWin_Cut, "C&ut\tCtrl+X");
@@ -309,6 +311,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxCommandEventFunction)&MainWindow::OnImportWave);
 
+  EditMenu->Enable(MainWin_History, false);
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
@@ -587,6 +590,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       dlg->Destroy();  
       cout << "[MAINWIN] User cancels open dialog" << endl;
     }
+    CreateHistoryMenu();
 }
 
 void					MainWindow::OnImportMIDI(wxCommandEvent &event)
@@ -935,24 +939,22 @@ void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
 
 void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
 {
-  int					id = event.GetId();
-  vector<PluginLoader *>::iterator	i;
-  PluginLoader				*p = 0x0;
+	int					id = event.GetId();
+	vector<PluginLoader *>::iterator	i;
+	PluginLoader				*p = 0x0;
 
-  for (i = LoadedPluginsList.begin(); i != LoadedPluginsList.end(); i++)
-    if ((*i)->Id == id)
-      {
-	p = *i;
-	break;
-      }
-  if (p)
+	for (i = LoadedPluginsList.begin(); i != LoadedPluginsList.end(); i++)
+		if ((*i)->Id == id)
+	    {
+			p = *i;
+			break;
+	    }
+	if (p)
     {
-      cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name << endl;     
-      // RackPanel->AddToSelectedTrack(StartInfo,  p);
-      cCreateEffectAction* action = new cCreateEffectAction(&StartInfo, p, true);
-      //cCreateEffectAction* action = new cCreateEffectAction(&StartInfo,  p);
-      action->Do();
-    }
+    	cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name << endl;     
+	    cActionManager::Global().AddEffectAction(&StartInfo, p, true);
+	    CreateHistoryMenu();
+	}
 }
 
 void					MainWindow::OnDeleteRack(wxCommandEvent &event)
@@ -964,8 +966,8 @@ void					MainWindow::OnDeleteRack(wxCommandEvent &event)
 		for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
 			if (COMPARE_IDS((*k)->InitInfo.UniqueId, RackPanel->selectedPlugin->InitInfo->UniqueId))
 		  	{
-				cCreateEffectAction* action = new cCreateEffectAction(&StartInfo, *k, false);
-				action->Do();
+				cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
+				CreateHistoryMenu();
 				return;
 		  	}
 	}
@@ -1262,7 +1264,6 @@ void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
 {
   wxMessageDialog			mdialog(this, msg, from, wxOK, wxDefaultPosition);
 
-  mdialog.ShowModal();  
 }
 
 void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
@@ -1282,12 +1283,45 @@ void					MainWindow::OnChangeAudioDir(wxCommandEvent &event)
 
 void					MainWindow::OnUndo(wxCommandEvent &event)
 {
-  cActionManager::Global().Undo();
+	cActionManager::Global().Undo();
+	CreateHistoryMenu();
 }
 
 void					MainWindow::OnRedo(wxCommandEvent &event)
 {
-  cActionManager::Global().Redo();
+	cActionManager::Global().Redo();
+	CreateHistoryMenu();
+}
+
+void					MainWindow::OnHistory(wxCommandEvent &event)
+{
+	cout << "On History" << endl;
+	CreateHistoryMenu();
+}
+
+void					MainWindow::CreateHistoryMenu()
+{
+	std::list<string>					historyList;
+	std::list<string>::const_iterator	iter;
+	int									separatorIndex;
+	bool								separatorIndexZero;
+	
+	if (HistoryMenu)
+	{
+		EditMenu->Destroy(MainWin_History);
+		//delete HistoryMenu;
+	}
+	HistoryMenu = new wxMenu;
+	historyList = cActionManager::Global().getListActions(&separatorIndex);
+	separatorIndexZero = false;
+	if (separatorIndex == 0) separatorIndexZero = true;
+	for (iter = historyList.begin(); iter != historyList.end(); iter++, separatorIndex--)
+	{
+		if (separatorIndex == 0 && !separatorIndexZero) HistoryMenu->AppendSeparator();
+		HistoryMenu->Append(MainWin_History, (*iter));
+	}
+	EditMenu->Insert(2, MainWin_History, "History", HistoryMenu);
+	EditMenu->Enable(MainWin_History, true);
 }
 
 void					MainWindow::OnCut(wxCommandEvent &event)
@@ -1455,6 +1489,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack) 
   EVT_MENU(MainWin_Undo, MainWindow::OnUndo) 
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
+  EVT_MENU(MainWin_History, MainWindow::OnHistory)
   EVT_MENU(MainWin_Copy, MainWindow::OnCopy)
   EVT_MENU(MainWin_Cut, MainWindow::OnCut)
   EVT_MENU(MainWin_Paste, MainWindow::OnPaste)
