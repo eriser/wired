@@ -218,6 +218,18 @@ void				Rack::InitContextMenu()
 		(wxCommandEventFunction)&Rack::OnDeleteClick);	
 }
 
+void				Rack::ConnectPluginChangeParamEventHandler(RackTrack *rackTrack)
+{
+	t_ListPluginIterator	iter;
+	
+	for (iter = rackTrack->Racks.begin(); iter != rackTrack->Racks.end(); iter++)
+	{
+		cout << "One connection done" << endl;
+		(*iter)->Connect(wxID_ANY, wxEVT_LEFT_UP, (wxObjectEventFunction) (wxEventFunction) 
+			(wxMouseEventFunction)&Rack::OnPluginParamChange);
+	}
+}
+
 t_RackTrackPlugin*	Rack::AddRackAndChannel(PlugStartInfo &startinfo, PluginLoader *p)
 {
 	t_RackTrackPlugin	*result;
@@ -227,6 +239,8 @@ t_RackTrackPlugin*	Rack::AddRackAndChannel(PlugStartInfo &startinfo, PluginLoade
 	result = new t_RackTrackPlugin();
 	t = new RackTrack(this, RackTracks.size());
 	tmp = t->AddRack(startinfo, p);
+	cout << "AddRackAndChannel(PlugStartInfo &startinfo, PluginLoader *p)" << endl;
+ 	ConnectPluginChangeParamEventHandler(t);
 	SeqMutex.Lock(); 
 	RackTracks.push_back(t);
 	SeqMutex.Unlock();
@@ -249,7 +263,7 @@ Plugin*				Rack::AddSelectedRackAndChannel(PlugStartInfo &startinfo, PluginLoade
 
 bool				Rack::RemoveTrack(int index)
 {
-	t_ListRackTrack::const_iterator	iter;
+	t_ListRackTrack::const_iterator		iter;
 	int									cptRacks;
 
 	if (index > (RackTracks.size() - 1) || index < 0) return false;					//TODO: Exception handling
@@ -261,15 +275,16 @@ bool				Rack::RemoveTrack(int index)
 bool				Rack::RemoveTrack(const RackTrack* rackTrack)
 {
 	t_ListRackTrack::const_iterator	iter;
+	unsigned int					cpt;
 
-	for (iter = RackTracks.begin(); (*iter) != rackTrack && iter != RackTracks.end(); iter++) ;
+	for (iter = RackTracks.begin(), cpt = 0; (*iter) != rackTrack && iter != RackTracks.end(); iter++, cpt++) ;
 	if (iter == RackTracks.end())
 		return false;										//TODO Exception handling
 	RemoveRackAndChannel(iter);
 	return true;
 }
 
-void				Rack::RemoveRackAndChannel(t_ListRackTrack::const_iterator	iter)
+void				Rack::RemoveRackAndChannel(t_ListRackTrack::const_iterator iter)
 {
 	//wxMutexLocker lock(SeqMutex);
 	SeqMutex.Lock();
@@ -290,7 +305,6 @@ void				Rack::UpdateConnectedSeqTracksFromDeletedRacks(t_ListRackTrack::const_it
 	{
 		if ((*iter)->TrackOpt->ConnectedRackTrack == (*iterRackTrack))
 		{
-			cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    I am in    !!!!!!!!!!!!!!!!!!!!!!" << endl;
 			(*iter)->TrackOpt->ConnectedRackTrack = 0;
 			(*iter)->TrackOpt->Connected = 0;
 		}
@@ -611,31 +625,15 @@ inline void			Rack::OnDeleteClick()
 {
 	vector<PluginLoader *>::iterator	k;
   
-//	cout << "Coucou" << endl;
-//	wxMutexLocker m(SeqMutex);
 	if (selectedPlugin)
     {
-//	   	for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
-//		if (COMPARE_IDS((*k)->InitInfo.UniqueId, selectedPlugin->InitInfo->UniqueId))
-//		{
-//	    	cout << "[MAINWIN] Destroying plugin: " << selectedPlugin->Name << endl;
-//		    RemoveChild(selectedPlugin);
-//		    (*k)->Destroy(selectedPlugin);
-//	    	break;
-//		}
-//		DeleteRack(selectedPlugin);
     	for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
 			if (COMPARE_IDS((*k)->InitInfo.UniqueId, selectedPlugin->InitInfo->UniqueId))
 			{
 		    	cout << "[MAINWIN] Destroying plugin: " << selectedPlugin->Name << endl;
-				cCreateEffectAction* action = new cCreateEffectAction(&StartInfo, *k, false);
-				action->Do();
+		    	cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
 				return;
-////				RemoveChild(selectedPlugin);
-////				(*k)->Destroy(selectedPlugin);
-////				break;
 			}
-//			//DeleteRack(selectedPlugin);
     }
 }
 
@@ -765,10 +763,17 @@ RackTrack*			Rack::GetRackTrack(Plugin *plug)
   return (0x0);
 }
 
+void				Rack::OnPluginParamChange(wxMouseEvent &event)
+{
+	cout << "OnPluginParamChange(wxMouseEvent &event)" << endl;
+	cActionManager::Global().AddChangeParamsEffectAction(0, true);
+}
+
 void				Rack::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
+    	cout << "In OnHelp" << endl;
       wxString s("This is the Rack view of Wired, where you can add plugins. Plugins are organized into tracks vertically, meaning the first plugin in a column will send its output signal to the plugin below it. You can connect sequencer tracks to plugins");
       HelpWin->SetText(s);
     }
@@ -776,8 +781,9 @@ void				Rack::OnHelp(wxMouseEvent &event)
 
 void				Rack::OnClick(wxMouseEvent &event)
 {
-  selectedTrack = 0x0;
-  selectedPlugin = 0x0;
+	cout << "In OnClick" << endl;
+	//selectedTrack = 0x0;
+	//selectedPlugin = 0x0;
 }
 
 void				Rack::Dump()
@@ -798,7 +804,7 @@ void				Rack::Dump()
 	cout << "End dumping Rack" << endl;
 }	
 
-// Kept methodes for compatibility
+// Don't know if this methodes should be used
 
 RackTrack* 			Rack::AddTrack()
 {
@@ -844,6 +850,7 @@ Plugin*				Rack::AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p)
 {
   //if (!selectedTrack && (RackTracks.size() > 0))
   //  selectedTrack = *(RackTracks.begin());
+  cout << "AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p)" << endl;
   Plugin *tmp;
   if (selectedTrack)
     {
@@ -865,6 +872,8 @@ void 				Rack::AddTrack(Plugin *p)
   SeqMutex.Lock(); 
 
   t->Racks.insert(t->Racks.begin(),p);
+	cout << "AddTrack(Plugin *p)" << endl;
+ 	ConnectPluginChangeParamEventHandler(t);
   RackTracks.push_back(t);
 
   SeqMutex.Unlock();      
@@ -874,47 +883,28 @@ void 				Rack::AddTrack(Plugin *p)
 
 Plugin*				Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
 {
-  RackTrack *t;
-  Plugin *tmp;
+	RackTrack *t;
+	Plugin *tmp;
 
-  t = new RackTrack(this, RackTracks.size());
-  tmp = t->AddRack(startinfo, p);
+	t = new RackTrack(this, RackTracks.size());
+	tmp = t->AddRack(startinfo, p);
 
-  SeqMutex.Lock(); 
-  RackTracks.push_back(t);
-  SeqMutex.Unlock();
-  if (tmp->HasView())
-	  SetScrolling();
-  return tmp;
+	cout << "Good AddTrack" << endl;
+	ConnectPluginChangeParamEventHandler(t);
+	SeqMutex.Lock(); 
+	RackTracks.push_back(t);
+	SeqMutex.Unlock();
+	if (tmp->HasView())
+		SetScrolling();
+	return tmp;
 }
 
-// Old event handling for deleting rack from contextMenu
-//inline void			Rack::OnDeleteClickOld()
-//{
-//  vector<PluginLoader *>::iterator	k;
-//  
-//  wxMutexLocker m(SeqMutex);
-//  if (selectedPlugin)
-//    {
-//      for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
-//	if (COMPARE_IDS((*k)->InitInfo.UniqueId, selectedPlugin->InitInfo->UniqueId))
-//	  {
-//	    cout << "[MAINWIN] Destroying plugin: " 
-//		 << selectedPlugin->Name << endl;
-//	    RemoveChild(selectedPlugin);
-//	    (*k)->Destroy(selectedPlugin);
-//	    break;
-//	  }
-//       DeleteRack(selectedPlugin);
-//    }
-//}
 
-
-// Events loop
+// Events loop (Static events)
 BEGIN_EVENT_TABLE(Rack, wxScrolledWindow)
   //  EVT_PAINT(Rack::OnPaint)
   EVT_ENTER_WINDOW(Rack::OnHelp)
-  EVT_LEFT_DOWN(Rack::OnClick)
-  EVT_RIGHT_DOWN(Rack::OnClick)
-  EVT_LEFT_UP(Rack::OnClick)
+//  EVT_LEFT_DOWN(Rack::OnClick)
+//  EVT_RIGHT_DOWN(Rack::OnClick)
+//  EVT_LEFT_UP(Rack::OnClick)
 END_EVENT_TABLE()

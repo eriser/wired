@@ -7,22 +7,23 @@
 #include <wx/wx.h>
 #include <list>
 
-using namespace						std;
+using namespace									std;
 
-#define 	UNIT_W					(200)
-#define 	UNIT_H					(100)
-#define 	UNIT_S					(2)
-#define 	SCROLL_PIX				(50)
+#define 	UNIT_W								(200)
+#define 	UNIT_H								(100)
+#define 	UNIT_S								(2)
+#define 	SCROLL_PIX							(50)
 
-class								PluginLoader;
-class								Plugin;
-class								Channel;
-class								ChannelGui;
-class								Rack;
-class								RackTrack;
+class											PluginLoader;
+class											Plugin;
+class											Channel;
+class											ChannelGui;
+class											Rack;
+class											RackTrack;
 
-typedef 	struct s_PlugStartInfo	PlugStartInfo;
-typedef		list<RackTrack *>		t_ListRackTrack;
+typedef 	struct s_PlugStartInfo				PlugStartInfo;
+typedef		list<RackTrack *>					t_ListRackTrack;
+typedef		list<Plugin *>::const_iterator		t_ListPluginIterator;
 
 typedef struct	s_RackTrackPlugin
 {
@@ -110,7 +111,6 @@ class				Rack: public wxScrolledWindow
 	Plugin*				selectedPlugin;
 
  protected:  
-	DECLARE_EVENT_TABLE()
  
 	int					OldX;
 	int					OldY;
@@ -133,6 +133,7 @@ class				Rack: public wxScrolledWindow
 	void				OnCutClick();											// Event : From contextMenu, Cuts a rack
 	void				OnCopyClick();											// Event : From contextMenu, Copy a rack
 	void				OnPasteClick();											// Event : From contextMenu, Pastes a rack
+	void				OnPluginParamChange(wxMouseEvent &event);				// Event : Calls AddChangeParamsEffectAction while a plugin's param is changed
 	bool 				DndGetDest(t_ListRackTrack::iterator &k, 
 									list<Plugin *>::iterator &l, int &new_x, 
 									int &new_y , Plugin *plug);
@@ -145,8 +146,9 @@ private:
 	void				RemoveRackAndChannel(t_ListRackTrack::const_iterator	// Removes a rack and a channel
 												iter);
 																				// Be carefull : Freezes if delete rack from contextMenu
-	void				InitContextMenu();										//Initializes contextMenu
-
+	void				InitContextMenu();										// Initializes contextMenu
+	void				ConnectPluginChangeParamEventHandler(RackTrack *rackTrack);
+	DECLARE_EVENT_TABLE()
 };
 
 // IDS
