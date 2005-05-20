@@ -24,17 +24,29 @@ cActionManager& cActionManager::Global()
 	return *spSingleton;
 }
 
-void	cActionManager::AddAction(tStackKind stack, cAction& action)
+void	cActionManager::AddEffectAction(PlugStartInfo* startInfo, PluginLoader* plugLoader, bool shouldAdd)
+{
+	cCreateEffectAction* action = new cCreateEffectAction(startInfo, plugLoader, shouldAdd);
+	action->Do();
+}
+
+void	cActionManager::AddChangeParamsEffectAction(Plugin* plugin, bool shouldSave)
+{
+	cChangeParamsEffectAction* action = new cChangeParamsEffectAction(plugin, shouldSave);
+	action->Do();
+}
+
+void	cActionManager::AddAction(tStackKind stack, cAction *action)
 {
 	if (stack == UNDO)
 	{
-		mUndoList.push_front (&action);
+		mUndoList.push_front (action);
       	mUndoCount++;
     }
   	else
     	if (stack == REDO)
       	{
-			mRedoList.push_front (&action);
+			mRedoList.push_front (action);
 			mRedoCount++;
       	}
 }
@@ -61,9 +73,7 @@ void	cActionManager::RemoveTopAction(tStackKind stack)
 void	cActionManager::RegisterActionManager(cAction* action) 
 { 
 	if (action->IsRegistered() == false)
-	{
-		AddAction( UNDO, *action );
-	}
+		AddAction(UNDO, action);
 	//Dump();
 }
 
@@ -72,10 +82,10 @@ bool	cActionManager::Redo()
 	if (CanRedo())
 	{
 		cAction* action = mRedoList.front();
-		mRedoList.push_back(action);
+		//mRedoList.push_back(action);					// Why ?
 		RemoveTopAction(REDO);
 		action->Accept( cRedoActionVisitor::Global() );
-		AddAction( UNDO, *action );
+		AddAction(UNDO, action);
 		return true;
 	}
 	return false;
@@ -86,13 +96,26 @@ bool	cActionManager::Undo()
 	if (CanUndo())
 	{
 		cAction* action = mUndoList.front();
-		mUndoList.push_back(action);
+		//mUndoList.push_back(action);					// Why ?
 		RemoveTopAction(UNDO);
-		action->Accept( cUndoActionVisitor::Global() );
-		AddAction( REDO, *action );
+		action->Accept(cUndoActionVisitor::Global());
+		AddAction(REDO, action);
 		return true;
 	}
 	return false;
+}
+
+std::list<string>		cActionManager::getListActions(int *separatorIndex)
+{
+	std::list<string>				result;
+	tActionList::const_iterator		iter;
+	
+	*separatorIndex = 0;
+	for (iter = mUndoList.begin(); iter != mUndoList.end(); iter++, (*separatorIndex)++)
+		result.push_back(UNDO_LABEL + (*iter)->getHistoryLabel());
+	for (iter = mRedoList.begin(); iter != mRedoList.end(); iter++)
+		result.push_back(REDO_LABEL + (*iter)->getHistoryLabel());
+	return result;
 }
 
 void	cActionManager::DumptActionList(const tActionList& actionList, const std::string& listName)

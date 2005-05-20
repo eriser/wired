@@ -6,6 +6,8 @@
 #include "cActionManager.h"
 #include "Visitor.h"
 
+#define	HISTORY_LABEL_ADD_TRACK_ACTION	"AddTrackAction"
+
 class SequencerGui;
 
 extern SequencerGui          *SeqPanel;
@@ -29,10 +31,15 @@ class cAddTrackAction : public cAction
     { SeqPanel->AddTrack(mTrackKindFlag); };
   
   virtual void Undo ()
-    { SeqPanel->RemoveTrack(); };
+    { 
+    	SeqPanel->RemoveTrack();
+    	//SeqPanel->DeleteSelectedTrack();
+    };
   
   virtual void Accept (cActionVisitor& visitor)
     { visitor.Visit (*this); };
+  virtual std::string		getHistoryLabel()				// Returns History label string
+  				{return HISTORY_LABEL_ADD_TRACK_ACTION;};
 };
 
 #endif
