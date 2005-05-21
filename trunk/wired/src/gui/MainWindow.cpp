@@ -1318,7 +1318,7 @@ void					MainWindow::CreateHistoryMenu()
 	for (iter = historyList.begin(); iter != historyList.end(); iter++, separatorIndex--)
 	{
 		if (separatorIndex == 0 && !separatorIndexZero) HistoryMenu->AppendSeparator();
-		HistoryMenu->Append(MainWin_History, (*iter));
+		HistoryMenu->Append(MainWin_History, (*iter).c_str());
 	}
 	EditMenu->Insert(2, MainWin_History, "History", HistoryMenu);
 	EditMenu->Enable(MainWin_History, true);
