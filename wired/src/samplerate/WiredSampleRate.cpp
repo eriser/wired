@@ -1,4 +1,4 @@
-#include "WiredSamplerate.h"
+#include "WiredSampleRate.h"
 
 WiredSampleRate::WiredSampleRate(const WiredSampleRate& copy)
 {
@@ -28,11 +28,49 @@ bool					WiredSampleRate::OpenFile(string& Path)
 	
 	if ((Result = sf_open(Path.c_str(), SFM_READ, Info)))
 	{
-		if (Info->samplerate != _ApplicationSettings.SampleRate || Info->format != _ApplicationSettings.Format)
+		if (Info->samplerate != _ApplicationSettings.SampleRate || 
+			IsSameFormat(Info->format, _ApplicationSettings.Format) == false)
 		{
 			
 		}
 		sf_close(Result);
 	}
 	return false;
+}
+
+bool					WiredSampleRate::IsSameFormat(int SndFileFormat, PaSampleFormat PaFormat)
+{
+	int		pos;
+	
+	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0; pos++)
+	{
+		if (_FormatTypes[pos].PaFormat == PaFormat)
+		{
+			if (_FormatTypes[pos].SndFileFormat & SndFileFormat)
+				return true;
+			else
+				return false;
+		}
+	}
+	return true;
+}
+
+const char*				WiredSampleRate::GetFormatName(int SndFileFormat)
+{
+	int		pos;
+	
+	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0; pos++)
+		if (_FormatTypes[pos].SndFileFormat & SndFileFormat)
+			return _FormatTypes[pos].FormatName;
+	return STR_UNKNOWN_FORMAT;	
+}
+
+const char*				WiredSampleRate::GetFormatName(PaSampleFormat PaFormat)
+{	
+	int		pos;
+	
+	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0; pos++)
+		if (_FormatTypes[pos].PaFormat == PaFormat)
+			return _FormatTypes[pos].FormatName;
+	return STR_UNKNOWN_FORMAT;
 }

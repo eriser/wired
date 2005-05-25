@@ -6,4 +6,5 @@ noinst_LIBRARIES = libwiredsamplerate.a
 
 libwiredsamplerate_a_SOURCES =		\
 		WiredSampleRate.cpp	\
-		WiredSampleRate.h
+		WiredSampleRate.h	\
+		WiredSampleRateTypes.cpp
