@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#include "WiredExternalPluginLADSPA.h"
+#include "WiredExternalPluginGui.h"
 #include "WiredExternalPlugin.h"
 
 #include <list>
@@ -44,8 +44,8 @@ public:
 	map<int, string>	GetPluginsList();
 	void				SetMenuItemId(int ModuleId, int MenuItemId);
 	int					GetPluginType(int PluginId);
-	WiredLADSPAInstance	*CreatePlugin(int MenuItemId);
-	void				DestroyPlugin(WiredLADSPAInstance *Plug);
+	WiredDSSIGui		*CreatePlugin(int MenuItemId);
+	void				DestroyPlugin(WiredDSSIGui *Plug);
 	
 private:
 	void			LoadPlugins(const string& FileName);
@@ -53,7 +53,7 @@ private:
 	void			LoadPluginsFromPath(const char *Dirs, int Type);
 
 	list<WiredDSSIPlugin*>		_Plugins;
-	list<WiredLADSPAInstance*>	_LoadedPlugins;
+	list<WiredDSSIGui*>	_LoadedPlugins;
 	map<int, int>			_IdTable;									//Key == MenuItemId; Value == PluginId (auto-increment)
 	int						_CurrentPluginIndex;
 };

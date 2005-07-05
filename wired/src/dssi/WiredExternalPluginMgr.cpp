@@ -12,7 +12,7 @@ WiredExternalPluginMgr::WiredExternalPluginMgr(const WiredExternalPluginMgr& cop
 
 WiredExternalPluginMgr::~WiredExternalPluginMgr()
 {
-	list<WiredLADSPAInstance*>::iterator	IterLoaded;
+	list<WiredDSSIGui*>::iterator	IterLoaded;
 	WiredLADSPAInstance*					CurrentLoadedPlugin;
 
 	for (IterLoaded = _LoadedPlugins.begin(); IterLoaded != _LoadedPlugins.end(); IterLoaded++)
@@ -149,7 +149,7 @@ int					WiredExternalPluginMgr::GetPluginType(int PluginId)
 	return Result;
 }
 
-WiredLADSPAInstance	*WiredExternalPluginMgr::CreatePlugin(int MenuItemId)
+WiredDSSIGui		*WiredExternalPluginMgr::CreatePlugin(int MenuItemId)
 {
 	list<WiredDSSIPlugin*>::iterator	Iter;
 	int									IdPlugin = 0;
@@ -161,7 +161,7 @@ WiredLADSPAInstance	*WiredExternalPluginMgr::CreatePlugin(int MenuItemId)
 	{
 		if ((*Iter)->Contains(IdPlugin))
 		{
-			WiredLADSPAInstance		*NewPlugin = new WiredLADSPAInstance();
+			WiredDSSIGui		*NewPlugin = new WiredDSSIGui();
 			
 			if ((*Iter)->CreatePlugin(IdPlugin, NewPlugin))
 			{
@@ -180,9 +180,9 @@ WiredLADSPAInstance	*WiredExternalPluginMgr::CreatePlugin(int MenuItemId)
 	return NULL;
 }
 
-void				WiredExternalPluginMgr::DestroyPlugin(WiredLADSPAInstance *Plug)
+void				WiredExternalPluginMgr::DestroyPlugin(WiredDSSIGui *Plug)
 {
-	list<WiredLADSPAInstance*>::iterator	Iter;
+	list<WiredDSSIGui*>::iterator	Iter;
 	
 	for (Iter = _LoadedPlugins.begin(); Iter != _LoadedPlugins.end(); Iter++)
 	{
