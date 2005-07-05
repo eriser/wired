@@ -165,6 +165,7 @@ WiredDSSIGui		*WiredExternalPluginMgr::CreatePlugin(int MenuItemId)
 			
 			if ((*Iter)->CreatePlugin(IdPlugin, NewPlugin))
 			{
+				NewPlugin->Load();
 				cout << "Plugin successfully loaded" << endl;
 				_LoadedPlugins.insert(_LoadedPlugins.end(), NewPlugin);
 				return NewPlugin;
