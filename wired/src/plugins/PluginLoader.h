@@ -35,7 +35,7 @@ class				PluginLoader
   create_t			create;
   destroy_t			destroy;
   bool				External;
-  WiredLADSPAInstance	*ExternalPlug;
+  WiredDSSIGui		*ExternalPlug;
   WiredExternalPluginMgr			*PluginMgr;
   int				IdMenuItem;
 };
