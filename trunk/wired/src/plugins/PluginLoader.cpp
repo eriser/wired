@@ -63,6 +63,7 @@ Plugin *PluginLoader::CreateRack(PlugStartInfo &info)
 	if (External == false)
 	  return (create(&info));
 	ExternalPlug->SetInfo(&info);
+	
 	return (Plugin*) ExternalPlug;
 }
 
