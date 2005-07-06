@@ -1,6 +1,6 @@
-CPPFLAGS = -Wall -Wunused -g3 -O3 
+CPPFLAGS = $(shell wx-config --cflags) @SAMPLERATE_CFLAGS@ -Wall -Wunused -g3 -O3 
 
-LDFLAGS = -lm
+LDFLAGS = $(shell wx-config --libs) -lm @SAMPLERATE_LIBS@
 
 noinst_LIBRARIES = libwiredsamplerate.a
 
