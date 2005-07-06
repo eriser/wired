@@ -1,4 +1,4 @@
-SUBDIRS = plugins ihm
+SUBDIRS = plugins ihm dssi
 
 datasdir = ${datadir}/wired/data
 datas_DATA = help.zip wired_click.wav
