@@ -39,6 +39,7 @@
 #include "../plugins/PluginLoader.h"
 #include "../xml/WiredSessionXml.h"
 #include "../dssi/WiredExternalPluginMgr.h"
+#include "../samplerate/WiredSampleRate.h"
 
 Rack					*RackPanel;
 SequencerGui				*SeqPanel;
@@ -527,6 +528,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 {
   //  TransportPanel->OnStop(event);
   FileLoader				*dlg;
+  int						res, HasConvertedFile;
 
   dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, NULL);
   /*  Connect(FileLoader_Start, wxEVT_COMMAND_BUTTON_CLICKED, 
@@ -541,38 +543,58 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       string selfile = dlg->GetSelectedFile();
       
       dlg->Destroy();
-      wxMessageDialog msg(this, 
-			  "Do you want to copy this file to your project directory ?", "Wired", 
-			  wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
-      int res = msg.ShowModal();
-      if (res == wxID_YES)
-	{
-	  if (CurrentXmlSession->GetAudioDir().empty())
-	    {
-	      wxDirDialog dir(this, "Choose the Audio file directory", 
-			      wxFileName::GetCwd());
-	      if (dir.ShowModal() == wxID_OK)
-		CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str(); 
-	      else
-		res = wxID_CANCEL;		
-	    }
-	  if (res != wxID_CANCEL)
-	    {
-	      wxFileName fn(selfile.c_str());
-	      
-	      fn.SetPath(CurrentXmlSession->GetAudioDir().c_str());		
-	      if (!wxCopyFile(selfile.c_str(), fn.GetFullPath().c_str()))
+      WiredSampleRate	CheckSampleRate;
+      t_samplerate_info	Info;
+      
+      if (CurrentXmlSession->GetAudioDir().empty() == false)
+	      res = wxID_OK;
+      else	     
+      {
+	    wxDirDialog dir(this, "Choose the Audio file directory", wxFileName::GetCwd());
+		if (dir.ShowModal() == wxID_OK)
 		{
-		  wxMessageDialog copymsg(this, 
-					  "Could not copy file", "Wired", 
-					  wxOK | wxICON_EXCLAMATION |wxCENTRE);
-		  copymsg.ShowModal();
-		  res = wxID_CANCEL;
+			CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str(); 
+			res = wxID_OK;
 		}
-	      else
-		selfile = fn.GetFullPath().c_str();
-	    }
-	}
+	    else
+			res = wxID_CANCEL;
+      }
+      if (res != wxID_CANCEL)
+      {
+        Info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
+      	Info.SampleRate = (int) Audio->SampleRate;
+	    Info.Format = Audio->UserData->SampleFormat;
+	    CheckSampleRate.Init(&Info);
+        HasConvertedFile = CheckSampleRate.OpenFile(selfile);
+      }
+      if (HasConvertedFile == wxID_NO && res != wxID_CANCEL)
+      {
+	      if (res != wxID_CANCEL)
+	      {
+		      wxMessageDialog msg(this, 
+					  "Do you want to copy this file to your project directory ?", "Wired", 
+					  wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
+		      res = msg.ShowModal();
+	      }
+		  if (res != wxID_CANCEL)
+		    {
+		      wxFileName fn(selfile.c_str());
+		      
+		      fn.SetPath(CurrentXmlSession->GetAudioDir().c_str());		
+		      if (!wxCopyFile(selfile.c_str(), fn.GetFullPath().c_str()))
+			{
+			  wxMessageDialog copymsg(this, 
+						  "Could not copy file", "Wired", 
+						  wxOK | wxICON_EXCLAMATION |wxCENTRE);
+			  copymsg.ShowModal();
+			  res = wxID_CANCEL;
+			}
+		      else
+			selfile = fn.GetFullPath().c_str();
+		    }
+		}
+		else if (HasConvertedFile == wxID_CANCEL)
+			res = wxID_CANCEL;
       if (res != wxID_CANCEL)
 	{
 	  wxProgressDialog *Progress = new wxProgressDialog("Loading wave file", "Please wait...", 100, 
@@ -902,15 +924,15 @@ void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
 {
 	if (LoadedExternalPlugins)
 	{
-		PluginLoader 	*NewPlugin = new PluginLoader(LoadedExternalPlugins, event.GetId());
+		PluginLoader 	*NewPlugin = new PluginLoader(LoadedExternalPlugins, event.GetId(), StartInfo);
 		
 		LoadedPluginsList.push_back(NewPlugin);
 		//LoadedDSSIPlugins->CreatePlugin(event.GetId());
 		cout << "[MAINWIN] Creating rack for plugin: " << NewPlugin->InitInfo.Name << endl;
       //      if ((plug = p->CreateRack(StartInfo)))
       // RackPanel->AddTrack(StartInfo, p);
-      cCreateRackAction* action = new cCreateRackAction(&StartInfo, NewPlugin);
-      action->Do();
+	  cActionManager::Global().AddEffectAction(&StartInfo, NewPlugin, true);
+	  CreateHistoryMenu();
       cout << "Rack creation ended" << endl;
 	}
 }
