@@ -966,7 +966,6 @@ void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
       //      if ((plug = p->CreateRack(StartInfo)))
       // RackPanel->AddTrack(StartInfo, p);
 	  cActionManager::Global().AddEffectAction(&StartInfo, NewPlugin, true);
-	  CreateHistoryMenu();
       cout << "Rack creation ended" << endl;
 	}
 }
