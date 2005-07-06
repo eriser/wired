@@ -7,6 +7,7 @@ using namespace				std;
 #include "cAction.h"
 #include "cActionManager.h"
 #include "Visitor.h"
+#include "PluginLoader.h"
 
 #define	INVALID_VALUE								-42
 #define	HISTORY_LABEL_CREATE_EFFECT_ACTION			"creating rack effect"
@@ -16,10 +17,10 @@ using namespace				std;
 #define	HISTORY_LABEL_CREATE_RACK_ACTION			"creating rack"
 #define	HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION	"changing rack effect parameters"
 
-class								Plugin;
-class								PluginLoader;
-//class								WiredPluginData;
-typedef struct s_PlugStartInfo		PlugStartInfo;
+//class								Plugin;
+//class								PluginLoader;
+////class								WiredPluginData;
+//typedef struct s_PlugStartInfo		PlugStartInfo;
 
 
 /********************   class cImportWaveAction   ********************/
@@ -85,6 +86,7 @@ public:
    							{return HISTORY_LABEL_IMPORT_AKAI_ACTION;};
 };
 
+
 /********************   class cChangeParamsEffectAction   ********************/
 
 class					cChangeParamsEffectAction : public cAction 
@@ -129,8 +131,7 @@ public:
 	virtual void			Undo ();				// Does undo action
 	virtual void			Accept					// Don't known
 							(cActionVisitor& visitor) { visitor.Visit (*this); };
-	virtual std::string		getHistoryLabel()		// Returns History label string
-							{return HISTORY_LABEL_CREATE_EFFECT_ACTION;};
+	virtual std::string		getHistoryLabel();		// Returns History label string
 	void					AddRackEffect ();		// Adds a rack effect
 	void					RemoveRackEffect ();	// Removes a rack effect
   	void					Dump();					// Debug - Draws member variables

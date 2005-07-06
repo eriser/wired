@@ -7,7 +7,6 @@
 #include "../midi/MidiFile.h"
 #include "../gui/Rack.h"
 
-
 /********************   class cImportWaveAction   ********************/
 
 cImportWaveAction::cImportWaveAction (string path, bool kind)
@@ -35,7 +34,8 @@ void cImportWaveAction::Redo ()
 
 void cImportWaveAction::Undo ()
 { 
-	//SeqPanel->DeleteSelectedTrack();			// Pas plantage :) mais ne fait pas ce qu'on veut ...
+	SeqPanel->ChangeSelectedTrackIndex(0);
+	SeqPanel->DeleteSelectedTrack();			// Pas plantage :) mais ne fait pas ce qu'on veut ...
 	//SeqPanel->RemoveTrack();					// Plantage ...
 												// Il faut un removeTrack qui supprime la track ayant le contexte
 												// sauvegarde dans l'action
@@ -182,7 +182,6 @@ void cChangeParamsEffectAction::LoadDatas()
     NotifyActionManager();
 }
 
-
 void cChangeParamsEffectAction::Dump()
 {
 	std::cout << "    Dumping cChangeParamsEffectAction : "	<< this << std::endl;
@@ -234,6 +233,16 @@ void cCreateEffectAction::AddRackEffect ()
     	RackPanel->AddRackAndChannel(*mStartInfo, mPluginLoader);
 	    NotifyActionManager();
     }
+}
+
+std::string		cCreateEffectAction::getHistoryLabel()		
+{
+	std::string			result;
+	
+	result = HISTORY_LABEL_CREATE_EFFECT_ACTION;
+	result += " ";
+	result += mPluginLoader->InitInfo.Name; 
+	return result;
 }
 
 void cCreateEffectAction::RemoveRackEffect ()

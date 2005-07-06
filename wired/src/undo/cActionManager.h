@@ -2,11 +2,14 @@
 #if !defined(ACTION_MANAGER_H)
 #define ACTION_MANAGER_H
 
-#define	UNDO_LABEL	"Undo "
-#define	REDO_LABEL	"Redo "
+#include 						<deque>
+#include 						"cImportMidiAction.h"
+#include 						<wx/menu.h>
 
-#include <deque>
-#include "cImportMidiAction.h"
+#define	UNDO_LABEL				"Undo "
+#define	REDO_LABEL				"Redo "
+#define BEGIN_HISTORY_ID		424242
+
 
 class	Plugin;
 
@@ -20,22 +23,30 @@ typedef std::deque<cAction *> 		tActionList;
 typedef	struct s_PlugStartInfo		PlugStartInfo;
 class									PluginLoader;
 
+// Structure MenuInfo
+typedef struct	s_menuInfo
+{
+	string		label;
+	int			id;
+}				t_menuInfo;
+
 // ----------------------------------------------------------------------------
 // Definition de classe cActionManager
 // ----------------------------------------------------------------------------
 
-class cActionManager 
+class cActionManager
 {
 private:
 	friend void cAction::NotifyActionManager();
 
 	enum tStackKind { UNDO, REDO };			// Type de listes geres par ce manager
 
-	static	cActionManager* spSingleton;	// Pointer sur l'unique objet de cette classe
-	tActionList	mUndoList;					// Liste des actions potentiellement annulables
-	int			mUndoCount;					// Nombre d'actions potentiellement annulables
-	tActionList	mRedoList;					// Liste des actions potentielles a refaire
-    int			mRedoCount;					// Nombre d'actions potentielles a refaire
+	static cActionManager*	spSingleton;	// Pointer sur l'unique objet de cette classe
+	int						nextID;			// Id du menuItem de la prochaine action
+	tActionList				mUndoList;		// Liste des actions potentiellement annulables
+	int						mUndoCount;		// Nombre d'actions potentiellement annulables
+	tActionList				mRedoList;		// Liste des actions potentielles a refaire
+    int						mRedoCount;		// Nombre d'actions potentielles a refaire
 
 	cActionManager();												// Constructeur prive
 	
@@ -56,12 +67,15 @@ public:
 	static		cActionManager& Global();							// Retourne l'instance unique de cette classe
 	bool		Redo();												// Refait la derniere action annulee
 	bool		Undo();												// Annule la derniere action effectuee
+	bool		Redo(int id);										// Refait la derniere action annulee
+	bool		Undo(int id);										// Annule la derniere action effectuee
 	void		Dump();												// Debug - Dump les donnees membres
 	void		AddEffectAction(PlugStartInfo* startInfo, 			// Adds a cEffectAction in cActionManager
 								PluginLoader* plugLoader, 
 								bool shouldAdd);
 	void		AddChangeParamsEffectAction(Plugin* plugin, bool shouldSave);	// Adds a cChangeParamsEffectAction in cActionManager
-	std::list<string>		getListActions(int* separatorIndex);	// Retourne la liste des actions Undo
+	std::list<t_menuInfo*>		getListActions(int* separatorIndex);	// Retourne la liste des actions Undo
+
 };
 
 

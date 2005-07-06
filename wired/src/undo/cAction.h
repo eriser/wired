@@ -29,6 +29,8 @@ protected:
 	bool			mRegistered;				// Indique si l'action est rattache au gestionnaire des actions ou pas
 
 public:
+	int				m_Id;						// Id du menuItem correspondant
+
 	cAction();									// Constructeur
 	virtual ~cAction() {};						// Destructeur
 	
