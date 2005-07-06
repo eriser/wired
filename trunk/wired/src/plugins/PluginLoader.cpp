@@ -5,12 +5,12 @@
 #include <dlfcn.h>
 #include "PluginLoader.h"
 
-PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, int MenuItemId)
+PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, int MenuItemId, PlugStartInfo &info)
 {
 	External = true;
 	PluginMgr = PlugMgr;
 	IdMenuItem = MenuItemId;
-	ExternalPlug = PluginMgr->CreatePlugin(IdMenuItem);
+	ExternalPlug = PluginMgr->CreatePlugin(IdMenuItem, info);
 	ExternalPlug->SetInfo(&InitInfo);
 }
 
