@@ -55,6 +55,8 @@ class					SettingWindow : public wxDialog
   wxChoice				*BitsChoice;
   wxStaticText				*Latency;
   wxSlider				*LatencySlider;
+  wxTextCtrl			*undoRedoMaxDepthTextCtrl;
+  wxStaticText			*undoRedoMaxDepthStaticText;
   int					*Latencies;
 
   wxPanel				*MidiPanel;

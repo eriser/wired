@@ -7,6 +7,7 @@
 #include "Colour.h"
 #include "../midi/MidiThread.h"
 #include "../midi/MidiDevice.h"
+#include <sstream>
 
 SettingWindow::SettingWindow()
   : wxDialog(0x0, -1, "Wired Settings", wxDefaultPosition, wxSize(400, 516))
@@ -26,7 +27,9 @@ SettingWindow::SettingWindow()
   GeneralPanel = new wxPanel(this, -1, wxPoint(8, 42), wxSize(384, 436), wxNO_BORDER);
   QuickWaveBox = new wxCheckBox(GeneralPanel, -1, "Quickly render waveforms", wxPoint(8, 8));
   dBWaveBox = new wxCheckBox(GeneralPanel, -1, "Render waveforms in dB mode", wxPoint(8, 28));
-
+  undoRedoMaxDepthTextCtrl = new wxTextCtrl(GeneralPanel, -1, "", wxPoint(218, 50), wxSize(45, 25));
+  undoRedoMaxDepthStaticText = new wxStaticText(GeneralPanel, -1, "Undo redo maximum depth", wxPoint(10, 50));
+  
   // AUDIO panel
   AudioPanel = new wxPanel(this, -1, wxPoint(8, 38), wxSize(384, 436), wxNO_BORDER);
 
@@ -335,8 +338,12 @@ void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
 
 void SettingWindow::Load()
 {
+	ostringstream	oss;
+	
   QuickWaveBox->SetValue(WiredSettings->QuickWaveRender);
-  dBWaveBox->SetValue(WiredSettings->dbWaveRender);  
+  dBWaveBox->SetValue(WiredSettings->dbWaveRender);
+  oss << WiredSettings->maxUndoRedoDepth;
+  undoRedoMaxDepthTextCtrl->SetValue(oss.str());
   if (WiredSettings->OutputDev > -1)
     OutputChoice->SetSelection(WiredSettings->OutputDev + 1);
   if (WiredSettings->InputDev > -1)
@@ -352,11 +359,13 @@ void SettingWindow::Load()
 void SettingWindow::Save()
 {
   long i;
+  istringstream	iss((string)undoRedoMaxDepthTextCtrl->GetValue());
 
   WiredSettings->QuickWaveRender = QuickWaveBox->IsChecked();
   WiredSettings->dbWaveRender = dBWaveBox->IsChecked();
   WiredSettings->OutputDev = OutputChoice->GetSelection() - 1;
   WiredSettings->InputDev = InputChoice->GetSelection() - 1;
+  iss >> WiredSettings->maxUndoRedoDepth;
 
   if (AudioLoaded)
     {
