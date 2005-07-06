@@ -53,7 +53,8 @@ libwireddssi_a_AR = $(AR) $(ARFLAGS)
 libwireddssi_a_LIBADD =
 am_libwireddssi_a_OBJECTS = WiredExternalPluginMgr.$(OBJEXT) \
 	WiredExternalPlugin.$(OBJEXT) \
-	WiredExternalPluginLADSPA.$(OBJEXT)
+	WiredExternalPluginLADSPA.$(OBJEXT) \
+	WiredExternalPluginGui.$(OBJEXT)
 libwireddssi_a_OBJECTS = $(am_libwireddssi_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/src/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -92,7 +93,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../audio -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../editmidi -I../undo -I../libs/WiredWidgets/src -g3 -O3 
+CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../audio -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../editmidi -I../undo -I../libs/WiredWidgets/src -I../../libs/WiredWidgets/src -Wall -Wunused -g3 -O3 
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -127,7 +128,10 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
+SAMPLERATE_CFLAGS = @SAMPLERATE_CFLAGS@
+SAMPLERATE_LIBS = @SAMPLERATE_LIBS@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -138,6 +142,7 @@ ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
+ac_pt_PKG_CONFIG = @ac_pt_PKG_CONFIG@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -184,6 +189,8 @@ libwireddssi_a_SOURCES = \
 		WiredExternalPluginLADSPA.cpp		\
 		WiredExternalPluginLADSPA.h		\
 		dssi.h			\
+		WiredExternalPluginGui.cpp	\
+		WiredExternalPluginGui.h		\
 		ladspa.h
 
 all: all-am
@@ -234,6 +241,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WiredExternalPlugin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WiredExternalPluginGui.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WiredExternalPluginLADSPA.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WiredExternalPluginMgr.Po@am__quote@
 
