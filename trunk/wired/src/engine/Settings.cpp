@@ -37,7 +37,7 @@ http://bloodshed.net/wired/forums"
 
 Settings::Settings() :
   QuickWaveRender(false), dbWaveRender(false), OutputDev(-1), InputDev(-1), OutputLatency(-1),
-  InputLatency(-1), SampleRate(44100), SamplesPerBuffer(2048), SampleFormat(-1)
+  InputLatency(-1), SampleRate(44100), SamplesPerBuffer(2048), SampleFormat(-1), maxUndoRedoDepth(20)
 {
   wxFileName f;
 
