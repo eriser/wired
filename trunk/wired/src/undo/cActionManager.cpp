@@ -1,14 +1,14 @@
-
 #include "cActionManager.h"
 #include "Visitor.h"
 #include <iostream>
-
+#include "Settings.h"
 
 
 cActionManager* cActionManager::spSingleton = 0;
 
 cActionManager::cActionManager() : mRedoCount (0), mUndoCount (0)
 {
+	nextID = BEGIN_HISTORY_ID;
 }
 
 cActionManager::~cActionManager()
@@ -40,14 +40,30 @@ void	cActionManager::AddAction(tStackKind stack, cAction *action)
 {
 	if (stack == UNDO)
 	{
-		mUndoList.push_front (action);
-      	mUndoCount++;
+		if (mUndoCount == WiredSettings->maxUndoRedoDepth)
+		{
+			mUndoList.push_front (action);
+    	  	mUndoList.pop_back();
+		}
+		else
+		{
+			mUndoList.push_front (action);
+    	  	mUndoCount++;
+		}
     }
   	else
     	if (stack == REDO)
       	{
-			mRedoList.push_front (action);
-			mRedoCount++;
+      		if (mUndoCount == WiredSettings->maxUndoRedoDepth)
+			{
+				mRedoList.push_front (action);
+    		  	mRedoList.pop_back();
+			}
+			else
+			{
+				mRedoList.push_front (action);
+				mRedoCount++;
+			}
       	}
 }
 
@@ -73,7 +89,10 @@ void	cActionManager::RemoveTopAction(tStackKind stack)
 void	cActionManager::RegisterActionManager(cAction* action) 
 { 
 	if (action->IsRegistered() == false)
+	{
+		action->m_Id = nextID++;
 		AddAction(UNDO, action);
+	}
 	//Dump();
 }
 
@@ -87,6 +106,26 @@ bool	cActionManager::Redo()
 		action->Accept( cRedoActionVisitor::Global() );
 		AddAction(UNDO, action);
 		return true;
+	}
+	return false;
+}
+
+bool	cActionManager::Redo(int id)
+{ 
+	while (42)
+	{
+		if (CanRedo())
+		{
+			cAction* action = mRedoList.front();
+			//mRedoList.push_back(action);					// Why ?
+			RemoveTopAction(REDO);
+			action->Accept( cRedoActionVisitor::Global() );
+			AddAction(UNDO, action);
+			if (action->m_Id == id)
+				return true;
+		}
+		else
+			return false;
 	}
 	return false;
 }
@@ -105,16 +144,46 @@ bool	cActionManager::Undo()
 	return false;
 }
 
-std::list<string>		cActionManager::getListActions(int *separatorIndex)
+bool	cActionManager::Undo(int id)
 {
-	std::list<string>				result;
-	tActionList::const_iterator		iter;
+	while (42)
+	{
+		if (CanUndo())
+		{
+			cAction* action = mUndoList.front();
+			//mUndoList.push_back(action);					// Why ?
+			RemoveTopAction(UNDO);
+			action->Accept(cUndoActionVisitor::Global());
+			AddAction(REDO, action);
+			if (action->m_Id == id)
+				return true;
+		}
+		else
+			return false;
+	}
+	return false;
+}
+
+std::list<t_menuInfo*>		cActionManager::getListActions(int *separatorIndex)
+{
+	std::list<t_menuInfo*>				result;
+	tActionList::const_iterator			iter;
 	
 	*separatorIndex = 0;
 	for (iter = mUndoList.begin(); iter != mUndoList.end(); iter++, (*separatorIndex)++)
-		result.push_back(UNDO_LABEL + (*iter)->getHistoryLabel());
+	{
+		t_menuInfo *menuInfo = new t_menuInfo;
+		menuInfo->label = UNDO_LABEL + (*iter)->getHistoryLabel();
+		menuInfo->id = (*iter)->m_Id;
+		result.push_back(menuInfo);
+	}
 	for (iter = mRedoList.begin(); iter != mRedoList.end(); iter++)
-		result.push_back(REDO_LABEL + (*iter)->getHistoryLabel());
+	{
+		t_menuInfo *menuInfo = new t_menuInfo;
+		menuInfo->label = REDO_LABEL + (*iter)->getHistoryLabel();
+		menuInfo->id = (*iter)->m_Id;
+		result.push_back(menuInfo);
+	}
 	return result;
 }
 
