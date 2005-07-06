@@ -69,6 +69,17 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h netinet/in.h stdlib.h string.h unistd.h])
 
+#Checks for libsamplerate
+PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.15,
+            ac_cv_samplerate=1, ac_cv_samplerate=0)
+
+AC_DEFINE_UNQUOTED([HAVE_SAMPLERATE],${ac_cv_samplerate},
+            [Set to 1 if you have libsamplerate.])
+
+AC_SUBST(SAMPLERATE_CFLAGS)
+AC_SUBST(SAMPLERATE_LIBS)
+
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
 AC_C_CONST
@@ -138,8 +149,8 @@ AC_CONFIG_FILES([Makefile
 		src/sequencer/Makefile
 		src/undo/Makefile
 		src/libs/Makefile
-	        src/libs/WiredWidgets/Makefile
-	        src/libs/WiredWidgets/src/Makefile
+        src/libs/WiredWidgets/Makefile
+        src/libs/WiredWidgets/src/Makefile
 		src/libs/WiredAkai/Makefile
 		src/libs/WiredAkai/src/Makefile
 		src/data/Makefile
@@ -164,6 +175,7 @@ AC_CONFIG_FILES([Makefile
 		src/data/plugins/chorus/Makefile
 		src/conf/Makefile
 		src/xml/Makefile
-		src/dssi/Makefile])
+		src/dssi/Makefile
+		src/samplerate/Makefile])
 
 AC_OUTPUT
