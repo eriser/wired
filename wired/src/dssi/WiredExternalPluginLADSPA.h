@@ -47,7 +47,7 @@ typedef struct s_gui_control
 class	WiredLADSPAInstance : public Plugin
 {
 public:
-	WiredLADSPAInstance();
+	WiredLADSPAInstance(PlugStartInfo &info);
 	~WiredLADSPAInstance();
 	WiredLADSPAInstance(const WiredLADSPAInstance& copy);
 	WiredLADSPAInstance	operator=(const WiredLADSPAInstance& right);
@@ -70,8 +70,6 @@ public:
 	void				SetSignature(int numerator, int denominator);
 	void				ProcessEvent(WiredEvent &event);
 	bool				HasView();
-	wxWindow			*CreateView(wxWindow *zone, wxPoint &pos, wxSize &size){return NULL;}
-	void				DestroyView(){}
 	bool				IsAudio();
 	bool				IsMidi();
 	void				AskUpdate(){}
@@ -79,7 +77,7 @@ public:
 	std::string			GetHelpString();
 	void				SetHelpMode(bool On);
 	std::string			DefaultName();
-	wxBitmap			*GetBitmap(){return NULL;}	
+	wxBitmap* 			GetBitmap(){return NULL;}
 	//</Wired Plugin Implementation>
 
 private:

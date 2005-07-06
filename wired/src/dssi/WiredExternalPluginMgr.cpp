@@ -149,7 +149,7 @@ int					WiredExternalPluginMgr::GetPluginType(int PluginId)
 	return Result;
 }
 
-WiredDSSIGui		*WiredExternalPluginMgr::CreatePlugin(int MenuItemId)
+WiredDSSIGui		*WiredExternalPluginMgr::CreatePlugin(int MenuItemId, PlugStartInfo &info)
 {
 	list<WiredDSSIPlugin*>::iterator	Iter;
 	int									IdPlugin = 0;
@@ -161,7 +161,7 @@ WiredDSSIGui		*WiredExternalPluginMgr::CreatePlugin(int MenuItemId)
 	{
 		if ((*Iter)->Contains(IdPlugin))
 		{
-			WiredDSSIGui		*NewPlugin = new WiredDSSIGui();
+			WiredDSSIGui		*NewPlugin = new WiredDSSIGui(info);
 			
 			if ((*Iter)->CreatePlugin(IdPlugin, NewPlugin))
 			{

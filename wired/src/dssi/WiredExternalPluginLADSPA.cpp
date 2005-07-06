@@ -1,11 +1,12 @@
 #include "WiredExternalPluginLADSPA.h"
 
-WiredLADSPAInstance::WiredLADSPAInstance() : Plugin()
+WiredLADSPAInstance::WiredLADSPAInstance(PlugStartInfo &info) : Plugin(info, NULL)
 {
 	_Handle = NULL;
 	_Descriptor = NULL;
 	_Type = 0;
 	_Properties = 0;
+	StartInfo = info;
 }
 
 WiredLADSPAInstance::~WiredLADSPAInstance()
@@ -404,7 +405,7 @@ void					WiredLADSPAInstance::ProcessEvent(WiredEvent &event)
 
 bool					WiredLADSPAInstance::HasView()
 {
-	return false;
+	return true;
 }
 
 bool					WiredLADSPAInstance::IsAudio()
