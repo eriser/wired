@@ -6,14 +6,26 @@
    #include <wx/wx.h>
 #endif
 #include "WiredExternalPluginGui.h"
-//#include "WiredDSSIGui.h"
 #include <string>
 #include <iostream>
 #include <sstream>
 
-WiredDSSIGui::WiredDSSIGui()
+BEGIN_EVENT_TABLE(WiredDSSIGui, wxWindow)
+  //EVT_BUTTON(Delay_Bypass, DelayPlugin::OnBypass)
+  //EVT_COMMAND_SCROLL(Delay_Time, DelayPlugin::OnDelayTime)
+  //EVT_COMMAND_SCROLL(Delay_Feedback, DelayPlugin::OnFeedback)
+  //EVT_COMMAND_SCROLL(Delay_DryWet, DelayPlugin::OnDryWet)
+  EVT_PAINT(WiredDSSIGui::OnPaint)
+END_EVENT_TABLE()
+
+WiredDSSIGui::WiredDSSIGui(PlugStartInfo &startinfo) : WiredLADSPAInstance(startinfo)
 {
+  // wxPoint	pt(0, 30);
+//   wxSize	sz(GetSize().GetWidth(), GetSize().GetHeight() - 30);
+
+  //  cout << "CreateView Called" << endl;
   
+  //cout << "******** CreateView processed" << endl;
 }
 
 WiredDSSIGui::~WiredDSSIGui()
@@ -23,13 +35,13 @@ WiredDSSIGui::~WiredDSSIGui()
 
 void		WiredDSSIGui::SetInfo(PlugInitInfo *info)
 {
-  wxPoint	pt(0, 30);
-  wxSize	sz(GetSize().GetWidth(), GetSize().GetHeight() - 30);
-
+  InitInfo = info;
   this->WiredLADSPAInstance::SetInfo(info);
-  cout << "CreateView Called" << endl;
-  CreateView(this, pt, sz);
-  cout << "******** CreateView processed" << endl;
+}
+
+void		WiredDSSIGui::SetInfo(PlugStartInfo *info)
+{
+  StartInfo = info;
 }
 
 wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
@@ -39,28 +51,34 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 
   // [creation du rack]
   
-  cout << "PWET" << endl;
-  //cout << "data dir" << string(GetDataDir()) << endl;
-  wxImage *tr_bg = new wxImage("/usr/local/share/wired/data/plugins/delay/delay_bg.png", wxBITMAP_TYPE_PNG);
+  wxImage *tr_bg = new wxImage(string(GetDataDir() + string("dssi/dssi_wide_bg.png")).c_str(), wxBITMAP_TYPE_PNG);
+  SetSize(-1, -1, 400, -1);
+  //size = wxSize(200, 100);
   TpBmp = new wxBitmap(tr_bg);
   
+#define IMG_DL_SINGLE_BG	"dssi/dssi_single_bg.png"
+#define IMG_DL_MIDDLE_BG	"dssi/dssi_middle_bg.png"
+#define IMG_DL_END_BG		"dssi/dssi_end_bg.png"
+#define IMG_DL_BEGIN_BG		"dssi/dssi_begin_bg.png"
+
   img_bg = NULL;
   img_fg = NULL;
-  img_bg = new wxImage("/usr/local/share/wired/data/plugins/delay/fader_fg.png", wxBITMAP_TYPE_PNG );
-  img_fg = new wxImage("/usr/local/share/wired/data/plugins/delay/fader_button.png", wxBITMAP_TYPE_PNG );
+  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
+
+  GetDataDir();
 
   i = 0;
-  cout << "boucle for" << endl;
+  Faders = (FaderCtrl**) new void*[_GuiControls.size()];
   for (iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++)
     {
-
-      iter->second;
-      //cout << "value : " << iter->second.Data << endl;
-      Faders[i] = new FaderCtrl(this, i, img_bg, img_fg, 0, 100, 50,
-			       wxPoint(i * 40, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
+      wxSize(img_bg->GetWidth(), img_bg->GetHeight());
+      Faders[i] = new FaderCtrl(this, i + 1, img_bg, img_fg, 0, 100, 50,
+				wxPoint(i * 37 + 73, 11) , wxSize(img_bg->GetWidth(), img_bg->GetHeight()) );
+      //cout << "size : " << img_bg->GetWidth() << img_bg->GetHeight() << endl;
       i++;
     }
-  cout << "number of controls : " << i << endl;
+  SetBackgroundColour(wxColour(237, 237, 237));
   return (NULL);
 }
 
@@ -69,4 +87,30 @@ void		WiredDSSIGui::DestroyView()
   
 }
 
+bool		WiredDSSIGui::Load()
+{
+  wxPoint	pt(0, 30);
+  wxSize	sz(GetSize().GetWidth(), GetSize().GetHeight() - 30);
+
+  CreateView(this, pt, sz);
+  return true;
+}
+
 // [implementation evenements]
+
+void WiredDSSIGui::OnPaint(wxPaintEvent &event)
+{
+  wxMemoryDC memDC;
+  wxPaintDC dc(this);
+  
+  memDC.SelectObject(*TpBmp);
+  wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
+  while (upd)
+    {    
+
+      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), 
+	      wxCOPY, FALSE);      
+      upd++;
+    }
+  Plugin::OnPaintEvent(event);
+}
