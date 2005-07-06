@@ -44,7 +44,7 @@ public:
 	map<int, string>	GetPluginsList();
 	void				SetMenuItemId(int ModuleId, int MenuItemId);
 	int					GetPluginType(int PluginId);
-	WiredDSSIGui		*CreatePlugin(int MenuItemId);
+	WiredDSSIGui		*CreatePlugin(int MenuItemId, PlugStartInfo &info);
 	void				DestroyPlugin(WiredDSSIGui *Plug);
 	
 private:
