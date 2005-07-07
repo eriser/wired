@@ -11,7 +11,7 @@
 #include <iostream>
 #include <sstream>
 
-
+static PlugInitInfo info;
 
 BEGIN_EVENT_TABLE(WiredDSSIGui, wxWindow)
   EVT_BUTTON(4242, WiredDSSIGui::OnBypass)
@@ -79,10 +79,15 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_SINGLE_BG)).c_str(), wxBITMAP_TYPE_PNG);
       SetSize(-1, -1, 200, -1);
     }
-  else
+  else if (_GuiControls.size() < 9)
     {
       tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
-      SetSize(-1, -1, (_GuiControls.size() / 6 + 2) * 200, -1);
+      SetSize(-1, -1, (_GuiControls.size() / 6 + 2) * 200, -1);      
+    }
+  else
+    {
+      tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
+      SetSize(-1, -1, (_GuiControls.size() / 6 + 2) * 200, -1);      
     }
   TpBmp = new wxBitmap(tr_bg);
 
@@ -91,9 +96,9 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
   img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
   
-  i = 0;
+  //i = 0;
   Faders = (FaderCtrl**) new void*[_GuiControls.size()];
-  for (iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++)
+  for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
     {
       wxSize(img_bg->GetWidth(), img_bg->GetHeight());
       Faders[i] = new FaderCtrl(this, i + 1, img_bg, img_fg, 0, 100, 50,
@@ -104,7 +109,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
 	   << iter->second.Data.UpperBound << endl;
       Faders[i]->SetValue(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100);
-      i++;
+      //i++;
     }
   
   // bypass
@@ -132,7 +137,10 @@ void		WiredDSSIGui::OnBypass(wxCommandEvent &e)
 
 void		WiredDSSIGui::OnBypassController(wxMouseEvent &e)
 {
+  int *midi_data;
 
+  midi_data = new int[3];
+  //_Bypass();
 }
 
 void		WiredDSSIGui::OnFaderMove(wxScrollEvent &e)
