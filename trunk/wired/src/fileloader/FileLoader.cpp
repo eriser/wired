@@ -81,12 +81,12 @@ BEGIN_EVENT_TABLE(FileLoader, wxDialog)
 END_EVENT_TABLE()
 
 FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai, bool psave, vector<string> *exts) :
-   
 wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT))
 {
   Center();
   
   wxFileName f;
+
 
   f.AssignHomeDir();
   f.AppendDir(".wired");
@@ -94,7 +94,6 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   favdir += FAVORITE_FILE;
   mrudir = f.GetFullPath().c_str();
   mrudir += MRU_FILE;
-
   akai = pakai;
   save = psave;
   folder = new wxTreeCtrl(this, FOLDER_ID, wxPoint(4, 34), 
@@ -105,7 +104,6 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 			  wxSize(2 * F_WIDTH / 3 - 8, F_HEIGHT - 110), 
 			  wxSUNKEN_BORDER | wxLC_REPORT | 
 			  wxLC_SINGLE_SEL);
-
   files->InsertColumn(0, "Name");
   files->SetColumnWidth(0, 180);
   files->InsertColumn(1, "Size", wxLIST_FORMAT_RIGHT);
@@ -120,7 +118,6 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
     files->InsertColumn(2, "Type");
     files->SetColumnWidth(2, 180);
   }
-
   wxImageList *images = new wxImageList(16, 16, TRUE);
   AddIcon(images, wxIcon(icon3_xpm));
   AddIcon(images, wxIcon(icon5_xpm));
@@ -130,7 +127,6 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   AddIcon(imgs, wxIcon(audio_xpm));
   AddIcon(imgs, wxIcon(file_xpm));
   files->AssignImageList(imgs, wxIMAGE_LIST_SMALL);
-		  
   if (!akai)
   {
   	fntext = new wxStaticText(this, -1, _T("Filename"), 
@@ -202,9 +198,9 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   if (!akai)
     {
       if (exts == NULL)
-	LoadSoundExt();
+		LoadSoundExt();	
   	else
-  	{
+  	{	
 	  for (unsigned int i = 0; i < exts->size(); i++)
 	  {
 		  unsigned int j;
@@ -218,8 +214,8 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 	  }
   	}
   	LoadFolders();
-  	ListDirectories(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
-
+  	if (folder != NULL)
+	  	ListDirectories(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
 	if (OldPath.empty())
 	  {
 	    char cwd[PATH_MAX];
@@ -307,19 +303,31 @@ void FileLoader::AddIcon(wxImageList *images, wxIcon icon)
 void FileLoader::LoadFolders()
 {
 	string line;
-	ifstream f(favdir.c_str());
-	while (getline(f, line, '\n'))
-		if (favorites->FindString(line.c_str()) == -1)
-			favorites->Append(line.c_str());
-	f.close();
-	ifstream f2(mrudir.c_str());
-	while (getline(f2, line, '\n'))
-		if (mru->FindString(line.c_str()) == -1)
-			mru->Append(line.c_str());
-	f2.close();
-	files->SetFocus();
-	while (mru->GetCount() > 10)
-		mru->Delete(0);
+
+	if (favorites != NULL)
+	{
+		ifstream f(favdir.c_str());	
+		if (f.is_open())
+			while (getline(f, line, '\n'))
+			{
+				if (favorites->FindString(line.c_str()) == -1)
+					favorites->Append(line.c_str());
+			}
+		f.close();
+	}
+	if (mru != NULL)
+	{
+		ifstream f2(mrudir.c_str());
+		while (getline(f2, line, '\n'))
+			if (mru->FindString(line.c_str()) == -1)
+				mru->Append(line.c_str());
+		f2.close();
+	}
+	if (files != NULL)
+		files->SetFocus();
+	if (mru != NULL)
+		while (mru->GetCount() > 10)
+			mru->Delete(0);
 }
 
 void FileLoader::SaveFolders()
