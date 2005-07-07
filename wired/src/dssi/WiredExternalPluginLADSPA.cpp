@@ -177,16 +177,20 @@ void					WiredLADSPAInstance::AddGuiControl(t_ladspa_port *PortData)
 {
 	t_gui_control			NewGuiPort;
 
-
-	NewGuiPort.Data.LowerBound = PortData->RangeHint.LowerBound;
-	NewGuiPort.Data.UpperBound = PortData->RangeHint.UpperBound;
+	if (LADSPA_IS_HINT_BOUNDED_BELOW(PortData->RangeHint.HintDescriptor))
+		NewGuiPort.Data.LowerBound = PortData->RangeHint.LowerBound;
+	else
+		NewGuiPort.Data.LowerBound = 0;
+	if (LADSPA_IS_HINT_BOUNDED_ABOVE(PortData->RangeHint.HintDescriptor))
+		NewGuiPort.Data.UpperBound = PortData->RangeHint.UpperBound;
+	else
+		NewGuiPort.Data.UpperBound = 100;
 	NewGuiPort.Data.Data = new LADSPA_Data;
 	*(NewGuiPort.Data.Data) = GetDefaultValue(&NewGuiPort.Data, PortData->RangeHint.HintDescriptor);
 	NewGuiPort.Descriptor.Descriptor = PortData->Descriptor;
 	NewGuiPort.Descriptor.RangeHint = PortData->RangeHint;
 	NewGuiPort.Descriptor.Name = PortData->Name;
 	NewGuiPort.Descriptor.Id = PortData->Id;
-
 	_GuiControls[PortData->Id] = NewGuiPort;
 }
 
@@ -241,7 +245,10 @@ void					WiredLADSPAInstance::DumpPorts()
 		cout << "Input Named {" << Iter->Name.c_str() << "}" << endl;
 	cout << "Input(s) data" << endl;
 	for (Iter = _InputDataPluginsPorts.begin(); Iter != _InputDataPluginsPorts.end(); Iter++)
+	{
 		cout << "Input Named {" << Iter->Name.c_str() << "}" << endl;
+//		cout << "Lower Bound == " << Iter->RangeHint.LowerBound << ", Upper Bound == " << Iter->RangeHint.UpperBound << endl;
+	}
 	cout << "Output(s) audio" << endl;
 	for (Iter = _OutputAudioPluginsPorts.begin(); Iter != _OutputAudioPluginsPorts.end(); Iter++)
 		cout << "Output Named {" << Iter->Name.c_str() << "}" << endl;
