@@ -9,7 +9,10 @@ WiredSampleRate			WiredSampleRate::operator=(const WiredSampleRate& right)
 {
 	if (this != &right)
 	{
-		_ApplicationSettings = right._ApplicationSettings;
+		_ApplicationSettings.WorkingDirectory = right._ApplicationSettings.WorkingDirectory;
+		_ApplicationSettings.SampleRate = right._ApplicationSettings.SampleRate;
+		_ApplicationSettings.Format = right._ApplicationSettings.Format;
+		_ApplicationSettings.SamplesPerBuffer = right._ApplicationSettings.SamplesPerBuffer;
 	}
 	return *this;
 }
@@ -19,21 +22,188 @@ void					WiredSampleRate::Init(t_samplerate_info *Info)
 	_ApplicationSettings.WorkingDirectory = Info->WorkingDirectory;
 	_ApplicationSettings.SampleRate = Info->SampleRate;
 	_ApplicationSettings.Format = Info->Format;
+	_ApplicationSettings.SamplesPerBuffer = Info->SamplesPerBuffer;
 }
 
-bool					WiredSampleRate::OpenFile(string& Path)
+int						WiredSampleRate::OpenFile(string& Path)
 {
 	SNDFILE				*Result;
-	SF_INFO				*Info;
+	SF_INFO				Info;
+	int					Res = wxID_NO;
+	bool				SameSampleRate, SameFormat;
 	
-	if ((Result = sf_open(Path.c_str(), SFM_READ, Info)))
+	if ((Result = sf_open(Path.c_str(), SFM_READ, &Info)))
 	{
-		if (Info->samplerate != _ApplicationSettings.SampleRate || 
-			IsSameFormat(Info->format, _ApplicationSettings.Format) == false)
+		SameFormat = IsSameFormat(Info.format, _ApplicationSettings.Format);
+		SameSampleRate = (int)Info.samplerate == (int)_ApplicationSettings.SampleRate ? true : false;
+		if (!SameFormat || !SameSampleRate)
 		{
+			string			strFormats;
+			ostringstream	oss;
 			
+			strFormats = "Would you like to convert your file from ";
+			if (!SameFormat)
+			{
+				strFormats += GetFormatName(Info.format);
+				strFormats += " to ";
+				strFormats += GetFormatName(_ApplicationSettings.Format);
+			}
+			if (!SameSampleRate)
+			{
+				if (!SameFormat)
+					strFormats += " and  ";
+				strFormats += "samplerate from ";
+				oss << Info.samplerate << string(" Hz to ");
+				oss << _ApplicationSettings.SampleRate ;
+				oss << string(" Hz");
+			}
+			strFormats += oss.str();
+			strFormats += " ?";
+			wxMessageDialog msg(NULL, strFormats, "File format mismatch", 
+								wxYES_NO | wxCANCEL  | wxICON_QUESTION | wxCENTRE);
+			int res = msg.ShowModal();
+			
+        	if (res == wxID_YES)
+        	{
+        		if (Convert(&Info, Path, Result))
+	        		Res = wxID_YES;
+	        	else
+	        		Res = wxID_CANCEL;
+        	}
+        	else if (res  == wxID_CANCEL)
+        		Res = wxID_CANCEL;
+			msg.Destroy();
 		}
 		sf_close(Result);
+	}
+	return Res;
+}
+
+int						WiredSampleRate::GetConverterQuality()
+{
+	wxSingleChoiceDialog	*Dlg;
+	wxArrayString			Choices;
+	int						Values[NB_SAMPLERATE_QUALITY];
+	int						Result;
+	wxString				Msg("Please Choose conversion quality (default is better)");
+	wxString				Title("Conversion quality");
+	
+	for (int pos = 0; pos < NB_SAMPLERATE_QUALITY; pos ++)
+	{
+		Values[pos] = pos;
+		Choices.Add(src_get_name(pos));
+	}
+	
+	Dlg = new wxSingleChoiceDialog(NULL, Msg, Title, Choices, (char **)&Values);
+	if (Dlg->ShowModal() == wxID_OK)
+		Result = (int) Dlg->GetSelectionClientData();
+	else 
+		Result = 0;
+	delete Dlg;
+	return Result;
+}
+
+float					*WiredSampleRate::ConvertSampleRate(SRC_STATE* Converter, float *Input, unsigned long FrameNb, double Ratio, unsigned long &ToWrite, bool End, int NbChannels, unsigned long &ReallyReaden)
+{
+	int					res = 0;
+	SRC_DATA			Data;
+	
+	Data.data_in = Input;
+	Data.input_frames = (long) FrameNb;
+	Data.output_frames = (long) FrameNb;
+	Data.data_out = new float[FrameNb * NbChannels];
+	Data.src_ratio = Ratio;
+	if (End == false)
+		Data.end_of_input = 0;
+	else
+		Data.end_of_input = 1;
+	res = src_process(Converter, &Data);
+	if (res)
+	{
+		cout << "An error occured while trying to convert file : " << src_strerror(res) << endl;
+		return NULL;
+	}
+	else
+	{
+		ToWrite = Data.output_frames_gen;
+		ReallyReaden = Data.input_frames_used;
+		return Data.data_out;
+	}
+}
+
+bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *SrcData)
+{
+	SNDFILE				*Result;
+	SF_INFO				Info;	
+	string				DestFileName;
+	int					ConversionQuality;
+	
+	if (SrcFile.find("/") != SrcFile.npos)
+	{
+		DestFileName = _ApplicationSettings.WorkingDirectory + SrcFile.substr(SrcFile.find_last_of("/"));
+		Info.samplerate = _ApplicationSettings.SampleRate;
+		Info.channels = SrcInfo->channels;
+		Info.format = SrcInfo->format;
+		Info.format |= GetFileFormat(_ApplicationSettings.Format);
+		if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)))
+		{
+			ConversionQuality = GetConverterQuality();
+			wxProgressDialog *ProgressBar = new wxProgressDialog("Converting wave file", "Please wait...", 
+											SrcInfo->frames , NULL, 
+											wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_APP_MODAL);
+			if (sf_seek(SrcData, 0, SEEK_SET) != -1)
+			{
+				float		*Buffer, *Output;
+				sf_count_t	Readen = 0;
+				int			NbLoop = 0;
+				double 		Ratio = (double)  _ApplicationSettings.SampleRate / SrcInfo->samplerate;
+				bool		HasFailed = false;
+				unsigned long ToWrite, ReallyReaden;
+				int			ConverterError;
+				SRC_STATE*	Converter = src_new(ConversionQuality, SrcInfo->channels, &ConverterError);
+				
+				ProgressBar->Update(NbLoop);
+				Buffer = new float[_ApplicationSettings.SamplesPerBuffer * Info.channels];
+				while ((Readen = sf_readf_float(SrcData, Buffer, _ApplicationSettings.SamplesPerBuffer)) > 0)
+				{
+					if (Ratio != 1)
+					{
+						Output = ConvertSampleRate(Converter, Buffer, (unsigned long) Readen, Ratio, ToWrite, (Readen < _ApplicationSettings.SamplesPerBuffer ? true : false) , SrcInfo->channels, ReallyReaden);
+						if (!Output)
+							HasFailed = true;
+					}
+					else
+						Output = Buffer;
+					if (!HasFailed)
+					{
+						if (sf_writef_float(Result, Output, ToWrite) != ToWrite)
+						{
+							cout << "An error occured while writing to file " << DestFileName.c_str() << endl;
+							HasFailed = true;
+						}
+						delete Output;
+						if (Readen > ReallyReaden)
+							sf_seek(SrcData, ReallyReaden - Readen, SEEK_CUR);
+					}
+					NbLoop += Readen;
+					ProgressBar->Update(NbLoop, "", &HasFailed);
+					if (HasFailed)					
+					{
+						delete ProgressBar;
+						sf_close(Result);
+						delete Buffer;
+						return false;
+					}
+				}
+				src_delete(Converter);
+				delete Buffer;
+			
+			}
+			delete ProgressBar;
+			sf_close(Result);
+		}
+		SrcFile = DestFileName;
+		return true;
 	}
 	return false;
 }
@@ -70,7 +240,17 @@ const char*				WiredSampleRate::GetFormatName(PaSampleFormat PaFormat)
 	int		pos;
 	
 	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0; pos++)
-		if (_FormatTypes[pos].PaFormat == PaFormat)
+		if (_FormatTypes[pos].PaFormat & PaFormat)
 			return _FormatTypes[pos].FormatName;
 	return STR_UNKNOWN_FORMAT;
+}
+
+int						WiredSampleRate::GetFileFormat(PaSampleFormat PaFormat)
+{
+	int		pos;
+	
+	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0; pos++)
+		if (_FormatTypes[pos].PaFormat & PaFormat)
+			return _FormatTypes[pos].SndFileFormat;
+	return SF_FORMAT_PCM_32; // default value is float 32 bits
 }
