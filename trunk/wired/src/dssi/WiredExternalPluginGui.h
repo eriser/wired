@@ -6,8 +6,10 @@
 #ifndef WX_PRECOMP
    #include <wx/wx.h>
 #endif
+#include "Plugin.h"
 #include "WiredExternalPluginLADSPA.h"
 #include "FaderCtrl.h"
+#include "DownButton.h"
 
 #define IMG_DL_SINGLE_BG	"dssi/dssi_single_bg.png"
 #define IMG_DL_MIDDLE_BG	"dssi/dssi_middle_bg.png"
@@ -33,13 +35,22 @@ class				WiredDSSIGui : public WiredLADSPAInstance
   bool		Load();
   void		OnPaint(wxPaintEvent &event);
   void		OnFaderMove(wxScrollEvent &WXUNUSED(e));
+  void		OnBypass(wxCommandEvent &e);
+  void		OnBypassController(wxMouseEvent &event);
 
  protected:
+  bool		Bypass;
   FaderCtrl	**Faders;
   wxImage	*Background;
   wxBitmap	*TpBmp;
   wxImage	*img_bg;
   wxImage	*img_fg;
+  wxImage	*liquid_off;
+  wxImage	*liquid_on;
+  wxImage	*bypass_on;
+  wxImage	*bypass_off;
+  StaticBitmap	*Liquid;
+  DownButton	*BypassBtn;
   PlugStartInfo *StartInfo;
   PlugInitInfo	*InitInfo;
 
