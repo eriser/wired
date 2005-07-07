@@ -14,7 +14,7 @@
 
 
 BEGIN_EVENT_TABLE(WiredDSSIGui, wxWindow)
-  //EVT_BUTTON(Delay_Bypass, DelayPlugin::OnBypass)
+  EVT_BUTTON(4242, WiredDSSIGui::OnBypass)
   //EVT_COMMAND_SCROLL(Delay_Time, DelayPlugin::OnDelayTime)
   EVT_COMMAND_SCROLL(1, WiredDSSIGui::OnFaderMove)
   EVT_COMMAND_SCROLL(2, WiredDSSIGui::OnFaderMove)
@@ -41,7 +41,7 @@ BEGIN_EVENT_TABLE(WiredDSSIGui, wxWindow)
   EVT_PAINT(WiredDSSIGui::OnPaint)
 END_EVENT_TABLE()
 
-WiredDSSIGui::WiredDSSIGui(PlugStartInfo &startinfo) : WiredLADSPAInstance(startinfo)
+  WiredDSSIGui::WiredDSSIGui(PlugStartInfo &startinfo) : WiredLADSPAInstance(startinfo), Bypass(false)
 {
   // wxPoint	pt(0, 30);
 //   wxSize	sz(GetSize().GetWidth(), GetSize().GetHeight() - 30);
@@ -107,8 +107,33 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 	   << iter->second.Data.UpperBound << endl;
       i++;
     }
+
+  // bypass
+
+  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  BypassBtn = new DownButton(this, 4242, wxPoint(21, 58), wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()),
+			     bypass_off, bypass_on);
+  Connect(4242, wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&WiredDSSIGui::OnBypassController);
+  
   SetBackgroundColour(wxColour(237, 237, 237));
   return (NULL);
+}
+
+void		WiredDSSIGui::OnBypass(wxCommandEvent &e)
+{
+  cout << "Bypass !" << endl;
+  Bypass = BypassBtn->GetOn();
+  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+}
+
+void		WiredDSSIGui::OnBypassController(wxMouseEvent &e)
+{
+
 }
 
 void		WiredDSSIGui::OnFaderMove(wxScrollEvent &e)
