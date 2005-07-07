@@ -71,28 +71,26 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 {
   int		i;
   map<unsigned long, t_gui_control>::iterator iter;
+  wxImage *tr_bg = NULL;
 
-  // [creation du rack]
-  
-  
-  wxImage *tr_bg = new wxImage(string(GetDataDir() + string("dssi/dssi_wide_bg.png")).c_str(), wxBITMAP_TYPE_PNG);
-  cout << "numbers of control : " << _GuiControls.size() << endl;
+  // gruik  
   if (_GuiControls.size() < 3)
-    SetSize(-1, -1, 200, -1);
+    {
+      tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_SINGLE_BG)).c_str(), wxBITMAP_TYPE_PNG);
+      SetSize(-1, -1, 200, -1);
+    }
   else
-    SetSize(-1, -1, (_GuiControls.size() / 6 + 2) * 200, -1);
+    {
+      tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
+      SetSize(-1, -1, (_GuiControls.size() / 6 + 2) * 200, -1);
+    }
   TpBmp = new wxBitmap(tr_bg);
-  
-#define IMG_DL_SINGLE_BG	"dssi/dssi_single_bg.png"
-#define IMG_DL_MIDDLE_BG	"dssi/dssi_middle_bg.png"
-#define IMG_DL_END_BG		"dssi/dssi_end_bg.png"
-#define IMG_DL_BEGIN_BG		"dssi/dssi_begin_bg.png"
 
   img_bg = NULL;
   img_fg = NULL;
   img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
   img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
-
+  
   i = 0;
   Faders = (FaderCtrl**) new void*[_GuiControls.size()];
   for (iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++)
@@ -105,11 +103,12 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       FaderIndex[i + 1] = iter->first;
       cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
 	   << iter->second.Data.UpperBound << endl;
+      Faders[i]->SetValue(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100);
       i++;
     }
-
+  
   // bypass
-
+  
   liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
   liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
