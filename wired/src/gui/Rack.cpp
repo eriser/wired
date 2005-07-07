@@ -224,7 +224,6 @@ void				Rack::ConnectPluginChangeParamEventHandler(RackTrack *rackTrack)
 	
 	for (iter = rackTrack->Racks.begin(); iter != rackTrack->Racks.end(); iter++)
 	{
-		cout << "One connection done" << endl;
 		(*iter)->Connect(wxID_ANY, wxEVT_LEFT_UP, (wxObjectEventFunction) (wxEventFunction) 
 			(wxMouseEventFunction)&Rack::OnPluginParamChange);
 	}
@@ -239,7 +238,6 @@ t_RackTrackPlugin*	Rack::AddRackAndChannel(PlugStartInfo &startinfo, PluginLoade
 	result = new t_RackTrackPlugin();
 	t = new RackTrack(this, RackTracks.size());
 	tmp = t->AddRack(startinfo, p);
-	cout << "AddRackAndChannel(PlugStartInfo &startinfo, PluginLoader *p)" << endl;
  	ConnectPluginChangeParamEventHandler(t);
 	SeqMutex.Lock(); 
 	RackTracks.push_back(t);
@@ -740,9 +738,9 @@ inline void			Rack::ResizeTracks()
 		{
 			if ((*j)->HasView())
 			{
-				CalcScrolledPosition(xx * (UNIT_W + UNIT_S), yy * (UNIT_H + UNIT_S), &xpos, &ypos);
-				(*j)->SetPosition(wxPoint(xpos, ypos));
-				yy += (*j)->InitInfo->UnitsY;
+				//CalcScrolledPosition(xx * (UNIT_W + UNIT_S), yy * (UNIT_H + UNIT_S), &xpos, &ypos);
+				//(*j)->SetPosition(wxPoint(xpos, ypos));
+				//yy += (*j)->InitInfo->UnitsY;
 			}
 		}
     	xx += (*i)->Units;
@@ -765,7 +763,6 @@ RackTrack*			Rack::GetRackTrack(Plugin *plug)
 
 void				Rack::OnPluginParamChange(wxMouseEvent &event)
 {
-	cout << "OnPluginParamChange(wxMouseEvent &event)" << endl;
 	cActionManager::Global().AddChangeParamsEffectAction(0, true);
 }
 
@@ -850,7 +847,6 @@ Plugin*				Rack::AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p)
 {
   //if (!selectedTrack && (RackTracks.size() > 0))
   //  selectedTrack = *(RackTracks.begin());
-  cout << "AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p)" << endl;
   Plugin *tmp;
   if (selectedTrack)
     {
@@ -872,7 +868,6 @@ void 				Rack::AddTrack(Plugin *p)
   SeqMutex.Lock(); 
 
   t->Racks.insert(t->Racks.begin(),p);
-	cout << "AddTrack(Plugin *p)" << endl;
  	ConnectPluginChangeParamEventHandler(t);
   RackTracks.push_back(t);
 
@@ -889,7 +884,6 @@ Plugin*				Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
 	t = new RackTrack(this, RackTracks.size());
 	tmp = t->AddRack(startinfo, p);
 
-	cout << "Good AddTrack" << endl;
 	ConnectPluginChangeParamEventHandler(t);
 	SeqMutex.Lock(); 
 	RackTracks.push_back(t);
