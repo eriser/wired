@@ -32,6 +32,7 @@ class				WiredDSSIGui : public WiredLADSPAInstance
   void		SetInfo(PlugStartInfo *info);
   bool		Load();
   void		OnPaint(wxPaintEvent &event);
+  void		OnFaderMove(wxScrollEvent &WXUNUSED(e));
 
  protected:
   FaderCtrl	**Faders;
@@ -41,6 +42,8 @@ class				WiredDSSIGui : public WiredLADSPAInstance
   wxImage	*img_fg;
   PlugStartInfo *StartInfo;
   PlugInitInfo	*InitInfo;
+
+  map <int, unsigned long> FaderIndex;
 
   DECLARE_EVENT_TABLE();
 };
