@@ -87,7 +87,8 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   else
     {
       tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
-      SetSize(-1, -1, (_GuiControls.size() / 6 + 2) * 200, -1);      
+      // gruik
+      SetSize(-1, -1, 600, -1);      
     }
   TpBmp = new wxBitmap(tr_bg);
 
@@ -96,7 +97,6 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
   img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
   
-  //i = 0;
   Faders = (FaderCtrl**) new void*[_GuiControls.size()];
   for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
     {
@@ -109,7 +109,9 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
 	   << iter->second.Data.UpperBound << endl;
       Faders[i]->SetValue(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100);
-      //i++;
+      // gruik bis
+      if (i == 13)
+	break;
     }
   
   // bypass
@@ -137,9 +139,9 @@ void		WiredDSSIGui::OnBypass(wxCommandEvent &e)
 
 void		WiredDSSIGui::OnBypassController(wxMouseEvent &e)
 {
-  int *midi_data;
+  //int *midi_data;
 
-  midi_data = new int[3];
+  //midi_data = new int[3];
   //_Bypass();
 }
 
