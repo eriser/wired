@@ -32,12 +32,16 @@ int						WiredSampleRate::OpenFile(string& Path)
 	int					Res = wxID_NO;
 	bool				SameSampleRate, SameFormat;
 	
-	if ((Result = sf_open(Path.c_str(), SFM_READ, &Info)))
+	Info.format = 0;
+	if ((Result = sf_open(Path.c_str(), SFM_READ, &Info)) != NULL)
 	{
+//		cout << "succesfully opened file" << Path.c_str() << endl;
 		SameFormat = IsSameFormat(Info.format, _ApplicationSettings.Format);
 		SameSampleRate = (int)Info.samplerate == (int)_ApplicationSettings.SampleRate ? true : false;
 		if (!SameFormat || !SameSampleRate)
 		{
+//			cout << "Successfully opend file, info : format == " << Info.format << ", samplerate == " << Info.samplerate 
+//					<< ", NbFrames == " << Info.frames << "sections == " << Info.sections << ", Seekable == " << Info.seekable << endl;
 			string			strFormats;
 			ostringstream	oss;
 			
@@ -149,7 +153,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 		{
 			ConversionQuality = GetConverterQuality();
 			wxProgressDialog *ProgressBar = new wxProgressDialog("Converting wave file", "Please wait...", 
-											SrcInfo->frames , NULL, 
+											SrcInfo->frames , NULL, wxPD_SMOOTH | wxPD_ELAPSED_TIME |
 											wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_APP_MODAL);
 			if (sf_seek(SrcData, 0, SEEK_SET) != -1)
 			{
@@ -162,7 +166,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 				int			ConverterError;
 				SRC_STATE*	Converter = src_new(ConversionQuality, SrcInfo->channels, &ConverterError);
 				
-				ProgressBar->Update(NbLoop);
+				ProgressBar->Update(NbLoop, "", &HasFailed);
 				Buffer = new float[_ApplicationSettings.SamplesPerBuffer * Info.channels];
 				while ((Readen = sf_readf_float(SrcData, Buffer, _ApplicationSettings.SamplesPerBuffer)) > 0)
 				{
@@ -185,9 +189,8 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 						if (Readen > ReallyReaden)
 							sf_seek(SrcData, ReallyReaden - Readen, SEEK_CUR);
 					}
-					NbLoop += Readen;
-					ProgressBar->Update(NbLoop, "", &HasFailed);
-					if (HasFailed)					
+					NbLoop += ReallyReaden;
+					if (HasFailed || ProgressBar->Update(NbLoop) == false)
 					{
 						delete ProgressBar;
 						sf_close(Result);
@@ -195,12 +198,18 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 						return false;
 					}
 				}
+				cout << "sndfile error {" << sf_strerror(SrcData) << "}" << endl;
 				src_delete(Converter);
 				delete Buffer;
 			
 			}
 			delete ProgressBar;
 			sf_close(Result);
+		}
+		else
+		{
+			cout << "Error while loading file !" << endl;
+			return false;
 		}
 		SrcFile = DestFileName;
 		return true;
