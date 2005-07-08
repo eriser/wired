@@ -127,6 +127,10 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   AddIcon(imgs, wxIcon(audio_xpm));
   AddIcon(imgs, wxIcon(file_xpm));
   files->AssignImageList(imgs, wxIMAGE_LIST_SMALL);
+  
+  //Codecs gestion
+  _CodecsMgr.Init();
+    
   if (!akai)
   {
   	fntext = new wxStaticText(this, -1, _T("Filename"), 
@@ -197,6 +201,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   }
   if (!akai)
     {
+    	
       if (exts == NULL)
 		LoadSoundExt();	
   	else
@@ -266,6 +271,26 @@ void FileLoader::LoadSoundExt()
     }
   }
   f.close();
+
+	  list<string>	CodecsList = _CodecsMgr.GetExtension();
+	  list<string>::iterator	iter;
+	  for (iter = CodecsList.begin(); iter != CodecsList.end(); iter++)
+	  {
+	  	line = *iter;
+		  if ((j = line.find("\t", 0)) != string::npos)
+	      {
+	        type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
+	                     strdup(line.substr(i, j).c_str()));
+	        if (allext != NULL)
+	        {
+			  *allext += ";";
+			  *allext += line.substr(i, j);
+	        }
+	        else
+		  allext = new string(line.substr(i, j));
+	      }
+	  }
+
   if (allext != NULL)
   {
 	  string desc = "All supported soundfiles (*.";
