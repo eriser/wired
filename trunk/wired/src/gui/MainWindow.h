@@ -11,6 +11,9 @@ using namespace std;
 #include <vector>
 #include <stdlib.h>
 
+//a enlever
+#include <sndfile.h>
+
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
    #include <wx/wx.h>
@@ -22,11 +25,10 @@ using namespace std;
 #include <wx/splitter.h>
 
 #define WIRED_VERSION			(0.1f)
-#define PLUG_MENU_INDEX_START	(50000)
-#define INDEX_MENUITEM_UNDO		0
-#define INDEX_MENUITEM_REDO		1
+#define PLUG_MENU_INDEX_START		(50000)
 
 #include "Plugin.h"
+#include "../codec/WiredCodec.h"
 
 typedef	struct s_PlugStartInfo		PlugStartInfo;
 class					PluginLoader;
@@ -38,7 +40,6 @@ class					MainWindow: public wxFrame
  public:
   
   MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size);
-  ~MainWindow();
   void					OnClose(wxCloseEvent &event);
   void					OnQuit(wxCommandEvent &event);
   void					OnOpen(wxCommandEvent &event);
@@ -78,13 +79,12 @@ class					MainWindow: public wxFrame
 
   void					OnUndo(wxCommandEvent &event);
   void					OnRedo(wxCommandEvent &event);
-  void					OnEditMenuOpen(wxMenuEvent &event);
+  void					OnHistory(wxCommandEvent &event);
   void					OnCut(wxCommandEvent &event);
   void					OnCopy(wxCommandEvent &event);
   void					OnPaste(wxCommandEvent &event);
   void					OnDelete(wxCommandEvent &event);
   void					OnSelectAll(wxCommandEvent &event);
-  void					OnIdle(wxIdleEvent &event);
 
   void					OnSpaceKey();
   void					SwitchRackOptView();
@@ -92,7 +92,7 @@ class					MainWindow: public wxFrame
   void					AddUpdatePlugin(Plugin *p);
 
  private:
-  int					PluginMenuIndexCount;
+  int					PluginMenuIndexCount;			
   bool					RackModeView;
   bool					SeqModeView;
 
@@ -101,10 +101,8 @@ class					MainWindow: public wxFrame
   int					AddPluginMenuItem(int Type, bool IsEffect, const string& MenuName);
   void					OnCreateExternalPlugin(wxCommandEvent &event);
 
-  /* Undo Redo Menu items */
-  void					InitUndoRedoMenuItems();
-  void					CreateUndoRedoMenus(wxMenu *callingMenu);
-  void					removeAllMenuItems(wxMenu *menu);
+  /* Undo Redo Menus */
+  void					CreateHistoryMenu();
 
   /* Config files */
   wxTextFile				PluginsConfFile;
@@ -114,8 +112,7 @@ class					MainWindow: public wxFrame
   wxMenuBar				*MenuBar;
   wxMenu				*FileMenu;
   wxMenu				*EditMenu;
-  wxMenu				*UndoMenu;
-  wxMenu				*RedoMenu;
+  wxMenu				*HistoryMenu;
   wxMenu				*ViewMenu;
   wxMenu				*SequencerMenu;
   wxMenu				*RacksMenu;
@@ -179,6 +176,7 @@ enum
   MainWin_FloatView,
   MainWin_Undo,
   MainWin_Redo,
+  MainWin_History, 
   MainWin_Delete,
   MainWin_SelectAll,
   MainWin_FullScreen,
@@ -186,8 +184,7 @@ enum
   MainWin_FileLoader,
   MainWin_IntHelp,
   MainWin_SwitchRack,
-  MainWin_SwitchSeq, 
-  MainWin_JustAtry 
+  MainWin_SwitchSeq 
 };
 
 extern MainWindow		*MainWin;
