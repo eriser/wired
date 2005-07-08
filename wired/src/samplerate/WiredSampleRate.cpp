@@ -72,7 +72,8 @@ int						WiredSampleRate::OpenFile(string& Path)
         		if (Convert(&Info, Path, Result))
 	        		Res = wxID_YES;
 	        	else
-	        		Res = wxID_CANCEL;
+	        		Res = wxID_NO;
+	        		//Res = wxID_CANCEL;
         	}
         	else if (res  == wxID_CANCEL)
         		Res = wxID_CANCEL;
@@ -198,9 +199,16 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 						return false;
 					}
 				}
-				cout << "sndfile error {" << sf_strerror(SrcData) << "}" << endl;
-				src_delete(Converter);
-				delete Buffer;
+				if (sf_error(SrcData) != SF_ERR_NO_ERROR)
+				{
+					delete ProgressBar;
+					sf_close(Result);
+					delete Buffer;
+					return false;
+				}
+//				cout << "sndfile error {" << sf_strerror(SrcData) << "}" << endl;
+//				src_delete(Converter);
+//				delete Buffer;
 			
 			}
 			delete ProgressBar;
@@ -211,6 +219,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 			cout << "Error while loading file !" << endl;
 			return false;
 		}
+		chmod(DestFileName.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		SrcFile = DestFileName;
 		return true;
 	}

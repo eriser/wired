@@ -11,6 +11,10 @@
 #include <wx/choicdlg.h>
 #include <sstream>
 
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include <iostream>
 
 using namespace std;
