@@ -161,7 +161,7 @@ bool FileDecoder::test_respond()
   
   cout << "[FLAC] init()... " << endl;
   if(init() != ::FLAC__FILE_DECODER_OK)
-    return die();
+ 	  return die();
   
   current_metadata_number_ = 0;
   
@@ -184,9 +184,8 @@ void WiredLibFlac::init(list<s_LibInfo> &Info)
   int			temp;
 
   LibInfo.CodecMask = EXIST;
-  LibInfo.Extension = ".flac";
+  LibInfo.Extension = "flac\tFree Lossless Audio Codec (*.flac)";
   LibInfo.Note = 5;
-
   handle = dlopen(SO_NAME, RTLD_LAZY);
   if (!handle)
     {
