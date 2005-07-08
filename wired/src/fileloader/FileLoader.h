@@ -26,9 +26,11 @@
 #include <fcntl.h>
 #include <string>
 #include <vector>
+#include <list>
 #include "TreeItemData.h"
 #include "akai.h"
 #include "Settings.h"
+#include "../codec/WiredCodec.h"
 
 using std::string;
 using std::vector;
@@ -122,6 +124,8 @@ class FileLoader: public wxDialog
 
   string	favdir;
   string	mrudir;
+
+	WiredCodec		_CodecsMgr;
 
   DECLARE_EVENT_TABLE()
 };
