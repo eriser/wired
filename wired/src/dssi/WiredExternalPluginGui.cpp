@@ -130,11 +130,11 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   return (NULL);
 }
 
-void		WiredDSSIGui::OnBypass(wxCommandEvent &e)
+void		WiredDSSIGui::OnBypass(wxCommandEvent &e) 
 {
-  cout << "Bypass !" << endl;
   Bypass = BypassBtn->GetOn();
   Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+  this->WiredLADSPAInstance::Bypass();
 }
 
 void		WiredDSSIGui::OnBypassController(wxMouseEvent &e)
