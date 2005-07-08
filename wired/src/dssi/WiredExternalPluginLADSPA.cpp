@@ -7,6 +7,7 @@ WiredLADSPAInstance::WiredLADSPAInstance(PlugStartInfo &info) : Plugin(info, NUL
 	_Type = 0;
 	_Properties = 0;
 	StartInfo = info;
+	_Bypass = false;
 }
 
 WiredLADSPAInstance::~WiredLADSPAInstance()
@@ -71,7 +72,7 @@ bool					WiredLADSPAInstance::Load()
 	{
 		UnLoad();
 		if (_Descriptor->instantiate!= NULL)
-			if ((_Handle = _Descriptor->instantiate(_Descriptor, Audio->OutputSampleFormat)))
+			if ((_Handle = _Descriptor->instantiate(_Descriptor, (unsigned long) Audio->SampleRate)))
 			{
 				_Properties = _Descriptor->Properties;
 				Name = _Descriptor->Name;
@@ -192,6 +193,7 @@ void					WiredLADSPAInstance::AddGuiControl(t_ladspa_port *PortData)
 	NewGuiPort.Descriptor.Name = PortData->Name;
 	NewGuiPort.Descriptor.Id = PortData->Id;
 	_GuiControls[PortData->Id] = NewGuiPort;
+	ConnectMonoInput((float *) NewGuiPort.Data.Data, PortData->Id);
 }
 
 LADSPA_Data				WiredLADSPAInstance::GetDefaultValue(t_gui_port *GuiPort, LADSPA_PortRangeHintDescriptor Descriptor)
@@ -237,24 +239,25 @@ LADSPA_Data				WiredLADSPAInstance::GetDefaultValue(t_gui_port *GuiPort, LADSPA_
 
 void					WiredLADSPAInstance::DumpPorts()
 {
+	return;
 	list<t_ladspa_port>::iterator	Iter;
 	
 	cout << "############## Begin of Ports Dump ##############" << endl;
 	cout << "Input(s) audio" << endl;
 	for (Iter = _InputAudioPluginsPorts.begin(); Iter != _InputAudioPluginsPorts.end(); Iter++)
-		cout << "Input Named {" << Iter->Name.c_str() << "}" << endl;
+		cout << "Input Named {" << Iter->Name.c_str() << "}" << " Id == " << Iter->Id << endl;
 	cout << "Input(s) data" << endl;
 	for (Iter = _InputDataPluginsPorts.begin(); Iter != _InputDataPluginsPorts.end(); Iter++)
 	{
-		cout << "Input Named {" << Iter->Name.c_str() << "}" << endl;
+		cout << "Input Named {" << Iter->Name.c_str() << "}" << " Id == " << Iter->Id << endl;
 //		cout << "Lower Bound == " << Iter->RangeHint.LowerBound << ", Upper Bound == " << Iter->RangeHint.UpperBound << endl;
 	}
 	cout << "Output(s) audio" << endl;
 	for (Iter = _OutputAudioPluginsPorts.begin(); Iter != _OutputAudioPluginsPorts.end(); Iter++)
-		cout << "Output Named {" << Iter->Name.c_str() << "}" << endl;
+		cout << "Output Named {" << Iter->Name.c_str() << "}" << " Id == " << Iter->Id << endl;
 	cout << "Output(s) data" << endl;
 	for (Iter = _OutputDataPluginsPorts.begin(); Iter != _OutputDataPluginsPorts.end(); Iter++)
-		cout << "Output Named {" << Iter->Name.c_str() << "}" << endl;
+		cout << "Output Named {" << Iter->Name.c_str() << "}" << " Id == " << Iter->Id << endl;
 	cout << "############## End of Ports Dump ##############" << endl;
 }
 
@@ -265,20 +268,29 @@ bool					WiredLADSPAInstance::IsLoaded()
 	return false;
 }
 
+void					WiredLADSPAInstance::Bypass()
+{
+	_Bypass = _Bypass == true ? false : true;
+}
+
 void	 				WiredLADSPAInstance::Process(float **input, float **output, long sample_length)
 {
-	if (IsLoaded() == false && _InputAudioPluginsPorts.empty() || _OutputAudioPluginsPorts.empty() && 
-		LADSPA_IS_INPLACE_BROKEN(_Properties) && *input == *output && _IsPlaying)
-	{	
-		if (_InputAudioPluginsPorts.size() >= 2 && _OutputAudioPluginsPorts.size() >= 2)
-			ProcessStereo(input, output, sample_length);
-		else
-			ProcessMono(input, output, sample_length);
-	}
-	else
+	if (IsLoaded() == false || _InputAudioPluginsPorts.empty() || _OutputAudioPluginsPorts.empty() || 
+		(LADSPA_IS_INPLACE_BROKEN(_Properties) && *input == *output) || _IsPlaying == false || _Bypass == true)
 	{
 		memcpy(output[0], input[0], sample_length * sizeof(float));
 		memcpy(output[1], input[1], sample_length * sizeof(float));
+	}
+	else
+	{
+		if (_InputAudioPluginsPorts.size() >= 2 && _OutputAudioPluginsPorts.size() >= 2)
+		{
+			memcpy(output[0], input[0], sample_length * sizeof(float));
+			memcpy(output[1], input[1], sample_length * sizeof(float));
+//			ProcessStereo(input, output, sample_length);
+		}
+		else
+			ProcessMono(input, output, sample_length);
 	}
 }
 
@@ -298,12 +310,17 @@ void					WiredLADSPAInstance::ProcessStereo(float **input, float **output, long 
 {
 	if (IsLoaded() && _InputAudioPluginsPorts.size() >= 2 && _OutputAudioPluginsPorts.size() >= 2)
 	{
+		cout << "process Stereo 0, port == " << GetPortId(_InputAudioPluginsPorts, 0)<< " vers == " << GetPortId(_OutputAudioPluginsPorts, 0) << endl;
 		ConnectMonoInput(input[0], GetPortId(_InputAudioPluginsPorts, 0));
 		ConnectMonoOutput(output[0], GetPortId(_OutputAudioPluginsPorts, 0));
+		cout << "process Stereo 1" << endl;
 		_Descriptor->run(_Handle, (unsigned long) sample_length);
+		cout << "process Stereo 2" << endl;
 		ConnectMonoInput(input[1], GetPortId(_InputAudioPluginsPorts, 1));
 		ConnectMonoOutput(output[1], GetPortId(_OutputAudioPluginsPorts, 1));
+		cout << "process Stereo 3" << endl;
 		_Descriptor->run(_Handle, (unsigned long) sample_length);
+		cout << "process Stereo 4" << endl;
 	}
 }
 

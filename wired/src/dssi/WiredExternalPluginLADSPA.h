@@ -56,6 +56,7 @@ public:
 	void				SetInfo(PlugInitInfo *Info);
 	void				SetInfo(PlugStartInfo *Info);
 	bool				ChangeActivateState(bool Activate = true);
+	void				Bypass();
 
 	//<Wired Plugin Implementation>
 	void	 			Process(float **input, float **output, long sample_length);
@@ -105,6 +106,7 @@ private:
 	list<t_ladspa_port>				_InputDataPluginsPorts;
 	list<t_ladspa_port>				_OutputDataPluginsPorts;
 	bool							_IsPlaying;
+	bool							_Bypass;
 protected:
 	map<unsigned long, t_gui_control>	_GuiControls;								//Key == PortId; Value == PortData
 };
