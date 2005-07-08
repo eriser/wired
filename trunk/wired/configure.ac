@@ -177,6 +177,9 @@ AC_CONFIG_FILES([Makefile
 		src/xml/Makefile
 		src/dssi/Makefile
 		src/samplerate/Makefile
-		src/data/dssi/Makefile])
+		src/data/dssi/Makefile
+		src/codec/Makefile
+		src/codec/wiredcodec/Makefile
+		src/codec/wiredcodec/flac/Makefile])
 
 AC_OUTPUT
