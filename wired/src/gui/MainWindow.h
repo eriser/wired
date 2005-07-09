@@ -24,8 +24,10 @@ using namespace std;
 #include <wx/splash.h>
 #include <wx/splitter.h>
 
-#define WIRED_VERSION			(0.1f)
+#define WIRED_VERSION			(0.2f)
 #define PLUG_MENU_INDEX_START		(50000)
+#define INDEX_MENUITEM_UNDO		0
+#define INDEX_MENUITEM_REDO		1
 
 #include "Plugin.h"
 #include "../codec/WiredCodec.h"
@@ -102,7 +104,9 @@ class					MainWindow: public wxFrame
   void					OnCreateExternalPlugin(wxCommandEvent &event);
 
   /* Undo Redo Menus */
-  void					CreateHistoryMenu();
+  void					InitUndoRedoMenuItems();
+  void					CreateUndoRedoMenus(wxMenu *callingMenu);
+  void					removeAllMenuItems(wxMenu *menu);
 
   /* Config files */
   wxTextFile				PluginsConfFile;
@@ -112,6 +116,8 @@ class					MainWindow: public wxFrame
   wxMenuBar				*MenuBar;
   wxMenu				*FileMenu;
   wxMenu				*EditMenu;
+  wxMenu				*UndoMenu;
+  wxMenu				*RedoMenu;
   wxMenu				*HistoryMenu;
   wxMenu				*ViewMenu;
   wxMenu				*SequencerMenu;
