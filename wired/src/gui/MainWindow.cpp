@@ -180,7 +180,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar = new wxMenuBar;
   FileMenu = new wxMenu;
   EditMenu = new wxMenu;
-  HistoryMenu = new wxMenu;
+  UndoMenu = new wxMenu;
+  RedoMenu = new wxMenu;
   SequencerMenu = new wxMenu;
   RacksMenu = new wxMenu;
   CreateInstrMenu = new wxMenu;
@@ -203,9 +204,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_Quit, "&Quit");
 
-  EditMenu->Append(MainWin_Undo, "U&ndo\tCtrl+Z");
-  EditMenu->Append(MainWin_Redo, "&Redo\tShift+Ctrl+Z");
-  EditMenu->Append(MainWin_History, "History", HistoryMenu);
+  //  EditMenu->Append(MainWin_Undo, "U&ndo\tCtrl+Z");
+  //EditMenu->Append(MainWin_Redo, "&Redo\tShift+Ctrl+Z");
+  //EditMenu->Append(MainWin_History, "History", HistoryMenu);
 
   EditMenu->AppendSeparator();
   EditMenu->Append(MainWin_Cut, "C&ut\tCtrl+X");
@@ -312,11 +313,41 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxCommandEventFunction)&MainWindow::OnImportWave);
 
-  EditMenu->Enable(MainWin_History, false);
+  //  EditMenu->Enable(MainWin_History, false);
+
+  InitUndoRedoMenuItems();
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
 }
+
+void					MainWindow::InitUndoRedoMenuItems()
+{
+	EditMenu->Insert(INDEX_MENUITEM_UNDO, MainWin_Undo, "U&ndo", UndoMenu);
+	EditMenu->Insert(INDEX_MENUITEM_REDO, MainWin_Redo, "&Redo", RedoMenu);
+	EditMenu->Enable(MainWin_Undo, false);
+	EditMenu->Enable(MainWin_Redo, false);
+	//	EditMenu->Connect(wxEVT_MENU_OPEN, (wxObjectEventFunction) (wxEventFunction)
+	//					(wxMenuEventFunction) &MainWindow::OnEditMenuOpen);
+//	Connect(MainWin_ImportWave, wxEVT_COMMAND_MENU_SELECTED, 
+//	  (wxObjectEventFunction)(wxEventFunction) 
+//	  (wxCommandEventFunction)&MainWindow::OnImportWave);
+//	EditMenu->Append(424242, "Just a try");
+//	Connect(424242, wxEVT_COMMAND_MENU_SELECTED, 
+//		      (wxObjectEventFunction)(wxEventFunction) 
+//		      (wxCommandEventFunction)&MainWindow::OnUndo);
+//	UndoMenu->Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
+//		      (wxCommandEventFunction)&MainWindow::OnUndo);
+//	RedoMenu->Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
+//		      (wxCommandEventFunction)&MainWindow::OnRedo);
+	//UndoMenu->Connect();
+//	EditMenu->Connect(wxEVT_CONTEXT_MENU, (wxObjectEventFunction) (wxEventFunction)
+//						(wxContextMenuEventFunction) &MainWindow::OnMenuOpen);
+//	EditMenu->Connect(wxEVT_MENU_HIGHLIGHT, (wxObjectEventFunction) (wxEventFunction)
+//						 (wxMenuEventFunction) &MainWindow::OnMenuOpen);
+
+}
+
 
 void					MainWindow::OnClose(wxCloseEvent &event)
 {
@@ -571,7 +602,9 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       	Decoder.Init();
       	Decode = Decoder.Decode(selfile);
 //      	DestFileName = CurrentXmlSession->GetAudioDir() + string("/tmp_") + selfile.substr(selfile.find_last_of("/") + 1) + string(".wav");
-      	DestFileName = selfile + string(".wav");
+      	
+
+	DestFileName = selfile + string(".wav");
       	Info.samplerate = Decode.SampleRate;
 		Info.channels = Decode.Channels;
 		Info.format = 0;
@@ -591,7 +624,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 		}
       }
       //end truc immonde
-      else if (res != wxID_CANCEL)
+      if (res != wxID_CANCEL)
       {
         Info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
       	Info.SampleRate = (int) Audio->SampleRate;
@@ -637,6 +670,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 	  cImportWaveAction* action = new cImportWaveAction(selfile, true);
   	  Progress->Update(20);
 	  action->Do();
+	  CreateUndoRedoMenus(EditMenu);
 	  Progress->Update(99);
 	  delete Progress;
 	}
@@ -1001,6 +1035,7 @@ void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
     {
     	cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name << endl;     
 	    cActionManager::Global().AddEffectAction(&StartInfo, p, true);
+	  CreateUndoRedoMenus(EditMenu);
 	}
 }
 
@@ -1014,6 +1049,7 @@ void					MainWindow::OnDeleteRack(wxCommandEvent &event)
 			if (COMPARE_IDS((*k)->InitInfo.UniqueId, RackPanel->selectedPlugin->InitInfo->UniqueId))
 		  	{
 				cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
+				CreateUndoRedoMenus(EditMenu);
 				return;
 		  	}
 	}
@@ -1033,18 +1069,20 @@ void					MainWindow::StopStream(wxCommandEvent &event)
 
 void					MainWindow::OnAddTrackAudio(wxCommandEvent &event)
 {
-  cAddTrackAction			*action = new cAddTrackAction(true);
+  //cAddTrackAction			*action = new cAddTrackAction(true);
 
-  action->Do();
-  //SeqPanel->AddTrack(true);
+  //action->Do();
+  //CreateUndoRedoMenus(EditMenu);
+  SeqPanel->AddTrack(true);
 }
 
 void					MainWindow::OnAddTrackMidi(wxCommandEvent &event)
 {
-  cAddTrackAction			*action = new cAddTrackAction(false);
+  //cAddTrackAction			*action = new cAddTrackAction(false);
 
-  action->Do();
-  // SeqPanel->AddTrack(false);
+  //action->Do();
+  //CreateUndoRedoMenus(EditMenu);
+  SeqPanel->AddTrack(false);
 }
 
 void					MainWindow::OnFloatTransport(wxCommandEvent &event)
@@ -1330,18 +1368,87 @@ void					MainWindow::OnChangeAudioDir(wxCommandEvent &event)
 
 void					MainWindow::OnUndo(wxCommandEvent &event)
 {
-	cActionManager::Global().Undo();
+	wxMenuItemList					listItems;
+	wxMenuItemList::const_iterator	iter;
+	
+	listItems = UndoMenu->GetMenuItems();
+	for (iter = listItems.begin(); iter != listItems.end(); iter++)
+	{
+		cActionManager::Global().Undo();
+		cout << "Undo" << endl;
+		if ((*iter)->GetId() == event.GetId())
+			break;
+	}
+	CreateUndoRedoMenus(EditMenu);
 }
 
 void					MainWindow::OnRedo(wxCommandEvent &event)
 {
-	cActionManager::Global().Redo();
+	wxMenuItemList					listItems;
+	wxMenuItemList::const_iterator	iter;
+	
+	listItems = RedoMenu->GetMenuItems();
+	for (iter = listItems.begin(); iter != listItems.end(); iter++)
+	{
+		cActionManager::Global().Redo();
+		if ((*iter)->GetId() == event.GetId())
+			break;
+	}
+	CreateUndoRedoMenus(EditMenu);
 }
 
-void					MainWindow::OnHistory(wxCommandEvent &event)
+void					MainWindow::removeAllMenuItems(wxMenu *menu)
 {
-	cout << "On History" << endl;
+	wxMenuItemList						menuItemList;
+	wxMenuItemList::const_iterator		itermenuItems;
+	
+	menuItemList = menu->GetMenuItems();
+	for (itermenuItems = menuItemList.begin(); itermenuItems != menuItemList.end(); itermenuItems++)
+		menu->Delete(*itermenuItems);
 }
+
+void					MainWindow::CreateUndoRedoMenus(wxMenu *callingMenu)
+{
+	std::list<t_menuInfo*>					historyList;
+	std::list<t_menuInfo*>::const_iterator	iter;
+	wxMenu									*undoMenu;
+	wxMenu									*redoMenu;
+	int										separatorIndex;
+	int										count;
+
+	undoMenu = callingMenu->FindItemByPosition(INDEX_MENUITEM_UNDO)->GetSubMenu();
+	redoMenu = callingMenu->FindItemByPosition(INDEX_MENUITEM_REDO)->GetSubMenu();
+	removeAllMenuItems(undoMenu);
+	removeAllMenuItems(redoMenu);
+	historyList = cActionManager::Global().getListActions(&separatorIndex);
+	for (count = 0, iter = historyList.begin(); iter != historyList.end(); iter++, separatorIndex--, count++)
+	{
+		wxMenuItem	*insertedMenuItem;
+		string		tmpString;
+		
+		if (separatorIndex > 0)
+		{
+			tmpString = (*iter)->label.c_str();
+			if (count == 0)
+				tmpString += "\tCtrl+Z";
+			insertedMenuItem = undoMenu->Append((*iter)->id, tmpString);
+			Connect((*iter)->id, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
+		      (wxCommandEventFunction)&MainWindow::OnUndo);
+		}
+		else
+		{
+			tmpString = (*iter)->label.c_str();
+			if (separatorIndex == 0)
+				tmpString += "\tCtrl+Shift+Z";
+			insertedMenuItem = redoMenu->Append((*iter)->id, tmpString);
+			Connect((*iter)->id, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
+		      (wxCommandEventFunction)&MainWindow::OnRedo);
+		}
+	}
+	callingMenu->Enable(MainWin_Undo, undoMenu->GetMenuItemCount() > 0);
+	callingMenu->Enable(MainWin_Redo, redoMenu->GetMenuItemCount() > 0);
+}
+
 
 void					MainWindow::OnCut(wxCommandEvent &event)
 {
@@ -1508,7 +1615,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack) 
   EVT_MENU(MainWin_Undo, MainWindow::OnUndo) 
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
-  EVT_MENU(MainWin_History, MainWindow::OnHistory)
+  //EVT_MENU(MainWin_History, MainWindow::OnHistory)
   EVT_MENU(MainWin_Copy, MainWindow::OnCopy)
   EVT_MENU(MainWin_Cut, MainWindow::OnCut)
   EVT_MENU(MainWin_Paste, MainWindow::OnPaste)
