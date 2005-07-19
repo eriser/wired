@@ -9,6 +9,11 @@
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
 #include <wx/choicdlg.h>
+#include <wx/file.h>
+#include <wx/dialog.h>
+#include <wx/combobox.h>
+#include <wx/stattext.h>
+#include <wx/button.h>
 #include <sstream>
 
 
@@ -31,10 +36,18 @@ typedef struct s_format_types
 
 extern struct s_format_types _FormatTypes[];
 
+typedef struct s_samplerate_types
+{
+	unsigned long 	SampleRate;
+	const char		*SampleRateName;
+};
+
+extern struct s_samplerate_types _SampleRateTypes[];
+
 typedef struct s_samplerate_info
 {
 	string			WorkingDirectory;
-	int				SampleRate;
+	unsigned long	SampleRate;
 	PaSampleFormat	Format;
 	unsigned long	SamplesPerBuffer;
 } t_samplerate_info;
@@ -51,6 +64,7 @@ public:
 	int			OpenFile(string& Path);					//return wxID_NO if not modified (or invalid), 	
 														//else return wxID_YES r wxID_CANCEL if canceled
 														// and set Path to the new FilePath
+	int			SaveFile(string& Path);					//same return value as OpenFile()
 	bool		IsSameFormat(int SndFileFormat, PaSampleFormat PaFormat);
 	const char	*GetFormatName(int SndFileFormat);
 	const char	*GetFormatName(PaSampleFormat PaFormat);
@@ -59,6 +73,7 @@ private:
 	int			GetConverterQuality();
 	float		*ConvertSampleRate(SRC_STATE* Converter, float *Input, unsigned long FrameNb, double Ratio, unsigned long &ToWrite, bool End, int NbChannels, unsigned long &ReallyReaden);
 	int			GetFileFormat(PaSampleFormat PaFormat);
+	void		ChooseFileFormat(SF_INFO *DestInfo);
 	t_samplerate_info	_ApplicationSettings;
 };
 
