@@ -1,6 +1,6 @@
 SUBDIRS = wiredcodec
 
-CPPFLAGS = -g3 -03
+CPPFLAGS = -g3 -O3
 
 LDFLAGS = -ldl
 
