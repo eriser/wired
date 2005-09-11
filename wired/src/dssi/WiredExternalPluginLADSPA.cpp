@@ -164,7 +164,10 @@ void					WiredLADSPAInstance::LoadPorts()
 		else if (LADSPA_IS_PORT_OUTPUT(CurrentPort.Descriptor))
 		{
 			if (LADSPA_IS_PORT_CONTROL(CurrentPort.Descriptor))
+			{
+				ConnectMonoInput((float *) new LADSPA_Data, pos);
 				_OutputDataPluginsPorts.insert(_OutputDataPluginsPorts.end(), CurrentPort);
+			}
 			else if (LADSPA_IS_PORT_AUDIO(CurrentPort.Descriptor))
 				_OutputAudioPluginsPorts.insert(_OutputAudioPluginsPorts.end(), CurrentPort);
 		}
@@ -239,7 +242,6 @@ LADSPA_Data				WiredLADSPAInstance::GetDefaultValue(t_gui_port *GuiPort, LADSPA_
 
 void					WiredLADSPAInstance::DumpPorts()
 {
-	return;
 	list<t_ladspa_port>::iterator	Iter;
 	
 	cout << "############## Begin of Ports Dump ##############" << endl;
@@ -285,9 +287,9 @@ void	 				WiredLADSPAInstance::Process(float **input, float **output, long sampl
 	{
 		if (_InputAudioPluginsPorts.size() >= 2 && _OutputAudioPluginsPorts.size() >= 2)
 		{
-			memcpy(output[0], input[0], sample_length * sizeof(float));
-			memcpy(output[1], input[1], sample_length * sizeof(float));
-//			ProcessStereo(input, output, sample_length);
+			//memcpy(output[0], input[0], sample_length * sizeof(float));
+			//memcpy(output[1], input[1], sample_length * sizeof(float));
+			ProcessStereo(input, output, sample_length);
 		}
 		else
 			ProcessMono(input, output, sample_length);
@@ -296,13 +298,13 @@ void	 				WiredLADSPAInstance::Process(float **input, float **output, long sampl
 
 void					WiredLADSPAInstance::ConnectMonoInput(float *input, unsigned long PortId)
 {
-	if (IsLoaded())
+	//if (IsLoaded())
 		_Descriptor->connect_port(_Handle, PortId, input);
 }
 
 void					WiredLADSPAInstance::ConnectMonoOutput(float *output, unsigned long PortId)
 {
-	if (IsLoaded())
+	//if (IsLoaded())
 		_Descriptor->connect_port(_Handle, PortId, output);
 }
 
