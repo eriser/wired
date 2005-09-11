@@ -32,6 +32,8 @@ int						WiredSampleRate::OpenFile(string& Path)
 	int					Res = wxID_NO;
 	bool				SameSampleRate, SameFormat;
 	
+	SaveFile(Path);
+	return wxID_CANCEL;
 	Info.format = 0;
 	if ((Result = sf_open(Path.c_str(), SFM_READ, &Info)) != NULL)
 	{
@@ -271,4 +273,73 @@ int						WiredSampleRate::GetFileFormat(PaSampleFormat PaFormat)
 		if (_FormatTypes[pos].PaFormat & PaFormat)
 			return _FormatTypes[pos].SndFileFormat;
 	return SF_FORMAT_PCM_32; // default value is float 32 bits
+}
+
+void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
+{
+	wxSize				DialogSize(350, 150);
+	wxSize				ComboSize(140, 20);
+	wxPoint				ComboPos(40, 70);
+	wxDialog 			Dialog(NULL, -1, "File format selection", wxDefaultPosition, DialogSize, 
+								wxCENTRE | wxCAPTION | wxTHICK_FRAME | wxSTAY_ON_TOP);
+	wxStaticText		*DialogText;
+	wxButton			*DialogButton;
+	int					pos;
+	
+	DialogButton = new wxButton(&Dialog, wxID_OK, "", wxPoint(135, 110));
+	DialogText = new wxStaticText(&Dialog, -1, wxString("Please select the options that\nyou want for the downmix.\n(Defaults are current project's configuration)"),
+									wxPoint(13, 10), wxSize(-1, -1), wxALIGN_CENTER);
+	wxComboBox			*CBFormat = new wxComboBox(&Dialog, -1, "", ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
+	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0;pos++)
+		CBFormat->Append(wxString(_FormatTypes[pos].FormatName));
+	ComboPos.x = 200;
+	ComboSize.x = 100;
+	wxComboBox			*CBSampleRate = new wxComboBox(&Dialog, -1, "", ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
+	for (pos = 0; _SampleRateTypes[pos].SampleRate != 0;pos++)
+		CBSampleRate->Append(wxString(_SampleRateTypes[pos].SampleRateName));
+	Dialog.SetReturnCode(wxID_OK);
+	if (Dialog.ShowModal() == wxID_OK)
+	{
+		for (pos = 0; _FormatTypes[pos].SndFileFormat != 0;pos++)
+			if (CBFormat->GetValue().compare(_FormatTypes[pos].FormatName) == 0)
+			{
+				DestInfo->format = _FormatTypes[pos].SndFileFormat;
+				break;
+			}
+		for (pos = 0; _SampleRateTypes[pos].SampleRate != 0;pos++)
+			if (CBSampleRate->GetValue().compare(_SampleRateTypes[pos].SampleRateName) == 0)
+			{
+				DestInfo->samplerate = _SampleRateTypes[pos].SampleRate;
+				break;
+			}
+	}
+	delete CBFormat;
+	delete CBSampleRate;
+	delete DialogText;
+	delete DialogButton;
+}
+
+int						WiredSampleRate::SaveFile(string& Path)
+{
+	wxFile				File;
+	int					Res = wxID_CANCEL;
+	
+	if (File.Exists(Path.c_str()))
+	{
+		wxMessageDialog msg(NULL, string("The file ") + Path + " already exists on the filesystem.\n Do you want to overwrite it ?" , 
+							"File already exists", wxYES | wxICON_QUESTION | wxCENTRE);
+		if (msg.ShowModal() ==  wxID_YES)
+		{
+			SF_INFO		FileInfo;
+			SNDFILE		*FileData;
+			
+			ChooseFileFormat(&FileInfo);
+			FileInfo.channels = ;
+			if ((FileData = sf_open(Path.c_str(), SFM_WRITE, &FileInfo)) != NULL)
+			{
+				
+			}
+		}
+	}
+	return Res;
 }
