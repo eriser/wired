@@ -22,6 +22,8 @@
 */
 
 #include "akai.h"
+#include <stdlib.h>
+#include <string.h>
 
 const t_akaiType	kAkaiTypes[] = {
 	{  1, "S1000 VOLUME"},
