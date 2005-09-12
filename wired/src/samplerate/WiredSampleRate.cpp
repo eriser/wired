@@ -334,7 +334,7 @@ int						WiredSampleRate::SaveFile(string& Path)
 			SNDFILE		*FileData;
 			
 			ChooseFileFormat(&FileInfo);
-			FileInfo.channels = ;
+			FileInfo.channels = 2;
 			if ((FileData = sf_open(Path.c_str(), SFM_WRITE, &FileInfo)) != NULL)
 			{
 				
