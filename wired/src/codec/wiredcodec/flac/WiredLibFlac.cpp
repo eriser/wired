@@ -241,6 +241,7 @@ bool test_decoders(t_Pcm *OriginalPcm)
 
 int WiredLibFlac::decode(const string filename, t_Pcm *pcm)
 {
+  flacfilename_ = filename.c_str();
   if (!test_decoders(pcm))
     return 0;
   else       
