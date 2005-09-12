@@ -54,7 +54,8 @@ bool				WiredDSSIPlugin::Load(const string& FileName, int& FirstIndex)
 	}
 	if (Found == true)
 	{
-		int		pos, PortPos, PluginInfo;
+		int		pos, PluginInfo;
+		unsigned long PortPos;
 		LADSPA_PortDescriptor Pod;
 		
 		_FileName = FileName;

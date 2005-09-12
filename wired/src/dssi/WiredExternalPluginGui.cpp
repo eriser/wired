@@ -108,7 +108,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       FaderIndex[i + 1] = iter->first;
       cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
 	   << iter->second.Data.UpperBound << endl;
-      Faders[i]->SetValue(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100);
+      Faders[i]->SetValue((int)*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100);
       // gruik bis
       if (i == 13)
 	break;

@@ -14,6 +14,8 @@ using namespace std;
 #include <wx/toolbar.h>
 #include <wx/colordlg.h>
 
+#include "MidiPattern.h"
+
 #define ID_SEQ_SETPOS			(101010)
 #define ID_SEQ_RESIZE			(101011)
 #define ID_SEQ_DRAWMIDI			(101012)
