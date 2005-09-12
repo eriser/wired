@@ -22,7 +22,7 @@ Please read them below :
 	* We recommend to compile with ALSA support (--with-alsa) and without 
 	JACK since jack support hasn't been really tested.
 
-- SoundTouch: http://sky.prohosting.com/oparviai/soundtouch/
+  - SoundTouch: http://sky.prohosting.com/oparviai/soundtouch/
 	* /!\ VERY IMPORTANT /!\
 	You need to modify a SoundTouch header before compiling and installing,
 	in order to use float samples instead of integers:
@@ -31,7 +31,12 @@ Please read them below :
 	  - find line "#define FLOAT_SAMPLES" and UNCOMMENT it
 	  - now you can compile and install SoundTouch
 
-- libsndfile : http://www.mega-nerd.com/libsndfile/
+  - libsndfile : http://www.mega-nerd.com/libsndfile/
+
+  - libsamplerate (at least 0.1) : http://www.mega-nerd.com/SRC/download.html
+
+  - dssi-0.9 : http://dssi.sourceforge.net/download.html
+
 
 --- To compile Wired:
 
