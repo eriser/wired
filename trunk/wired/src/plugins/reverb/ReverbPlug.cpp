@@ -10,9 +10,15 @@ static PlugInitInfo info;
 
 BEGIN_EVENT_TABLE(ReverbPlugin, wxWindow)
   EVT_BUTTON(Reverb_Bypass, ReverbPlugin::OnBypass)
-  EVT_COMMAND_SCROLL(Reverb_Selrev, ReverbPlugin::OnSelrev)
+  //EVT_COMMAND_SCROLL(Reverb_Selrev, ReverbPlugin::OnSelrev)
   EVT_COMMAND_SCROLL(Reverb_Decay, ReverbPlugin::OnDecay)
   EVT_COMMAND_SCROLL(Reverb_Mix, ReverbPlugin::OnMix)
+
+  EVT_BUTTON(Reverb_Select, ReverbPlugin::OnSelect)
+  EVT_BUTTON(Reverb_A, ReverbPlugin::OnASelect)
+  EVT_BUTTON(Reverb_A, ReverbPlugin::OnBSelect)
+  EVT_BUTTON(Reverb_A, ReverbPlugin::OnCSelect)
+
   EVT_PAINT(ReverbPlugin::OnPaint)
 END_EVENT_TABLE()
 
@@ -40,6 +46,36 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 				    bypass_on->GetHeight()),
 			     bypass_off, bypass_on);
   
+  //reverb type selector button
+
+  wxImage** imgs;
+
+  imgs = new wxImage*[4];
+  imgs[0] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_LP)).c_str()));
+  imgs[1] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_BP)).c_str()));
+  imgs[2] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_HP)).c_str()));
+  // imgs[3] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_NOTCH)).c_str()));
+
+  printf("a\n");
+  a_rev_on = new wxImage(string(GetDataDir() + string(IMG_FL_HP)).c_str(), wxBITMAP_TYPE_PNG);
+  a_rev_off = new wxImage(string(GetDataDir() + string(IMG_FL_HP_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  AReverbBtn = new DownButton(this, Reverb_A, wxPoint(70, 43),
+			      wxSize(a_rev_off->GetWidth(), a_rev_off->GetHeight()), a_rev_off, a_rev_on);
+
+  printf("b\n");
+  b_rev_on = new wxImage(string(GetDataDir() + string(IMG_FL_LP)).c_str(), wxBITMAP_TYPE_PNG);
+  b_rev_off = new wxImage(string(GetDataDir() + string(IMG_FL_LP_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  BReverbBtn = new DownButton(this, Reverb_B, wxPoint(81, 47),
+			      wxSize(b_rev_off->GetWidth(), b_rev_off->GetHeight()), b_rev_off, b_rev_on);
+
+  printf("c\n");
+  c_rev_on = new wxImage(string(GetDataDir() + string(IMG_FL_BP)).c_str(), wxBITMAP_TYPE_PNG);
+  c_rev_off = new wxImage(string(GetDataDir() + string(IMG_FL_BP_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  CReverbBtn = new DownButton(this, Reverb_C, wxPoint(92, 47),
+			      wxSize(c_rev_off->GetWidth(), c_rev_off->GetHeight()), c_rev_off, c_rev_on);
+
+  AReverbBtn->SetOn();
+  
   // bypass button's stuff
 
   liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
@@ -49,24 +85,24 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   // Knobs' background
 
-  SelrevKnob = 
-    new FaderCtrl(this, Reverb_Selrev, img_bg, img_fg, 0, 2, 0,
-		  wxPoint(73, 11), wxSize(img_bg->GetWidth() - 3, 
-					  img_bg->GetHeight()));  
+  //SelrevKnob = 
+  //  new FaderCtrl(this, Reverb_Selrev, img_bg, img_fg, 0, 2, 0,
+  //		  wxPoint(73, 11), wxSize(img_bg->GetWidth() - 3, 
+  //					  img_bg->GetHeight()));  
   DecayKnob = 
     new FaderCtrl(this, Reverb_Decay, img_bg, img_fg, 0, 30, 3,
-		  wxPoint(110, 11), wxSize(img_bg->GetWidth() - 3, 
+		  wxPoint(118, 12), wxSize(img_bg->GetWidth() - 3, 
 					   img_bg->GetHeight()));
   MixKnob = new FaderCtrl(this, Reverb_Mix, img_bg, img_fg, 0, 100, 50,
-			  wxPoint(149, 11), wxSize(img_bg->GetWidth() - 3, 
+			  wxPoint(153, 12), wxSize(img_bg->GetWidth() - 3, 
 						   img_bg->GetHeight()));
   
   Connect(Reverb_Bypass, wxEVT_RIGHT_DOWN,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&ReverbPlugin::OnBypassController);    
-  Connect(Reverb_Selrev, wxEVT_RIGHT_DOWN,
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxMouseEventFunction)&ReverbPlugin::OnSelrev); 
+  // Connect(Reverb_Selrev, wxEVT_RIGHT_DOWN,
+// 	  (wxObjectEventFunction)(wxEventFunction) 
+// 	  (wxMouseEventFunction)&ReverbPlugin::OnSelrev); 
   Connect(Reverb_Decay, wxEVT_RIGHT_DOWN,
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&ReverbPlugin::OnDecay);    
@@ -267,10 +303,22 @@ wxBitmap *ReverbPlugin::GetBitmap()
 }
 
 
-void ReverbPlugin::OnSelrev(wxScrollEvent &e)
+void ReverbPlugin::OnSelect(wxCommandEvent &e)
 {
-  rev_sel = SelrevKnob->GetValue();
-  cout << "rev no: " << SelrevKnob->GetValue() << endl;
+  //rev_sel = SelrevKnob->GetValue();
+  //cout << "rev no: " << SelrevKnob->GetValue() << endl;
+}
+
+void ReverbPlugin::OnASelect(wxCommandEvent &e)
+{
+}
+
+void ReverbPlugin::OnBSelect(wxCommandEvent &e)
+{
+}
+
+void ReverbPlugin::OnCSelect(wxCommandEvent &e)
+{
 }
 
 void ReverbPlugin::OnDecay(wxScrollEvent &e)

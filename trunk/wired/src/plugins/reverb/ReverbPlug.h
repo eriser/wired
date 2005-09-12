@@ -14,6 +14,7 @@
 #include "KnobCtrl.h"
 #include "FaderCtrl.h"
 #include "DownButton.h"
+#include "StaticPosKnob.h"
 
 #include "NRev.h"
 #include "JCRev.h"
@@ -32,6 +33,21 @@
 #define IMG_BYPASS_ON	"plugins/reverb/bypass_button_down.png"
 #define IMG_BYPASS_OFF	"plugins/reverb/bypass_button_up.png"
 #define EFFECT_MIX	100.f
+
+#define IMG_FL_HP		"plugins/filter/filter_hp_dwn.png"
+#define IMG_FL_BP		"plugins/filter/filter_bp_dwn.png"
+#define IMG_FL_LP		"plugins/filter/filter_lp_dwn.png"
+//#define IMG_FL_NOTCH		"plugins/filter/filter_notch_dwn.png"
+//#define IMG_FL_NOTCHBAR		"plugins/filter/filter_notchbar_dwn.png"
+#define IMG_FL_HP_UP		"plugins/filter/filter_hp_up.png"
+#define IMG_FL_BP_UP		"plugins/filter/filter_bp_up.png"
+#define IMG_FL_LP_UP		"plugins/filter/filter_lp_up.png"
+//#define IMG_FL_NOTCH_UP		"plugins/filter/filter_notch_up.png"
+#define IMG_FL_NOTCHBAR_UP	"plugins/filter/filter_notchbar_up.png"
+#define IMG_FL_KNOB_HP		"plugins/filter/filter_knob_hp.png"
+#define IMG_FL_KNOB_BP		"plugins/filter/filter_knob_bp.png"
+#define IMG_FL_KNOB_LP		"plugins/filter/filter_knob_lp.png"
+//#define IMG_FL_KNOB_NOTCH	"plugins/filter/filter_knob_notch.png"
 
 #define STR_REVERB_SELECTED "ReverbSelected"
 #define STR_MIX_LEVEL "MixLevel"
@@ -65,7 +81,10 @@ class ReverbPlugin: public Plugin
 
   std::string DefaultName() { return "Reverb"; }
 
-  void OnSelrev(wxScrollEvent &e);
+  void OnSelect(wxCommandEvent &e);
+  void OnASelect(wxCommandEvent &e);
+  void OnBSelect(wxCommandEvent &e);
+  void OnCSelect(wxCommandEvent &e);
   void OnDecay(wxScrollEvent &e);
   void OnMix(wxScrollEvent &e);
   void OnBypass(wxCommandEvent &e);
@@ -90,7 +109,19 @@ class ReverbPlugin: public Plugin
 
   wxBitmap	*bmp;   
 
-  FaderCtrl	*SelrevKnob;
+  // reverb type selection stuff
+  StaticPosKnob	*SelrevKnob;
+  wxImage	*a_rev_on;
+  wxImage	*a_rev_off;
+  wxImage	*b_rev_on;
+  wxImage	*b_rev_off;
+  wxImage	*c_rev_on;
+  wxImage	*c_rev_off;
+  DownButton	*AReverbBtn;
+  DownButton	*BReverbBtn;
+  DownButton	*CReverbBtn;
+
+
   FaderCtrl	*DecayKnob;
   FaderCtrl	*MixKnob;
  
@@ -116,7 +147,10 @@ class ReverbPlugin: public Plugin
 enum
   {
     Reverb_Bypass = 1,
-    Reverb_Selrev,
+    Reverb_Select,
+    Reverb_A,
+    Reverb_B,
+    Reverb_C,
     Reverb_Decay,
     Reverb_Mix
   };
