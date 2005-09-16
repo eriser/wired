@@ -642,11 +642,12 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 					  wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
 		      res = msg.ShowModal();
 	      }
-		  if (res != wxID_CANCEL)
+		  if (res != wxID_CANCEL && res != wxID_NO)
 		    {
 		      wxFileName fn(selfile.c_str());
 		      
-		      fn.SetPath(CurrentXmlSession->GetAudioDir().c_str());		
+		      fn.SetPath(CurrentXmlSession->GetAudioDir().c_str());
+		      cout << "Will copy File {" << selfile.c_str() << "} TO {" << fn.GetFullPath().c_str() << "}" << endl;
 		      if (!wxCopyFile(selfile.c_str(), fn.GetFullPath().c_str()))
 			{
 			  wxMessageDialog copymsg(this, 
