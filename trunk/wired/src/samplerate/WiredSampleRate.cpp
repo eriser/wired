@@ -32,8 +32,8 @@ int						WiredSampleRate::OpenFile(string& Path)
 	int					Res = wxID_NO;
 	bool				SameSampleRate, SameFormat;
 	
-	SaveFile(Path);
-	return wxID_CANCEL;
+	//SaveFile(Path);
+	//return wxID_CANCEL;
 	Info.format = 0;
 	if ((Result = sf_open(Path.c_str(), SFM_READ, &Info)) != NULL)
 	{
@@ -83,6 +83,7 @@ int						WiredSampleRate::OpenFile(string& Path)
 		}
 		sf_close(Result);
 	}
+	cout << "End OpenFile" << endl;
 	return Res;
 }
 
@@ -322,7 +323,7 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 int						WiredSampleRate::SaveFile(string& Path)
 {
 	wxFile				File;
-	int					Res = wxID_CANCEL;
+	int					Res = wxID_NO;
 	
 	if (File.Exists(Path.c_str()))
 	{
@@ -340,6 +341,8 @@ int						WiredSampleRate::SaveFile(string& Path)
 				
 			}
 		}
+		else
+			Res = wxID_NO;
 	}
 	return Res;
 }
