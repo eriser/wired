@@ -82,7 +82,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   else if (_GuiControls.size() < 9)
     {
       tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
-      SetSize(-1, -1, (_GuiControls.size() / 6 + 2) * 200, -1);      
+      SetSize(-1, -1, 400, -1);      
     }
   else
     {

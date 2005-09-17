@@ -10,6 +10,7 @@
 
 #include "Plugin.h"
 #include "FaderCtrl.h"
+#include "HintedFader.h"
 #include "DownButton.h"
 #include "WvIn.h"
 #include "WaveLoop.h"
@@ -30,41 +31,28 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   BufStart[1] = 0x0;
   Init();
 
-  wxImage *tr_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_DL_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_BG)).c_str(), wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(), 
-		     wxBITMAP_TYPE_BMP); 
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(),
-		       wxBITMAP_TYPE_PNG );
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(),
-		       wxBITMAP_TYPE_PNG );
-
-  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), 
-			  wxBITMAP_TYPE_PNG);
-  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
-			   wxBITMAP_TYPE_PNG);
-  BypassBtn = new DownButton(this, Chorus_Bypass, wxPoint(21, 58),
-			     wxSize(bypass_on->GetWidth(), 
-				    bypass_on->GetHeight()),
-			     bypass_off, bypass_on);
+  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(), wxBITMAP_TYPE_BMP); 
+  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG );
+  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG );
+  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  BypassBtn = new DownButton(this, Chorus_Bypass, wxPoint(21, 58), wxSize(bypass_on->GetWidth(), 
+				    bypass_on->GetHeight()), bypass_off, bypass_on);
 
   //bypass button's stuff
 
-  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
-			  wxBITMAP_TYPE_PNG);
+  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
   liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
-  
-  // FrequencyFader = new FaderCtrl(this, Chorus_Time, img_bg, img_fg, 0, 10, 3, 
-// 				 wxPoint(18, 8), wxSize(22,78));
-  BaseLengthFader = new FaderCtrl(this, Chorus_Feedback, img_bg, img_fg, 0, 10000, 5000,
-				  wxPoint(73, 11), wxSize(22,78));
-  ModDepthFader = new FaderCtrl(this, Chorus_Stage, img_bg, img_fg, 0, 10, 3,
-				wxPoint(110, 11), wxSize(22,78));
-  EffectMixFader = new FaderCtrl(this, Chorus_DryWet, img_bg, img_fg, 0, 100, 50,
-				 wxPoint(149, 11), wxSize(22,78));  
+  BaseLengthFader = new HintedFader(this, Chorus_Feedback, this->GetParent(), img_bg, img_fg, 0, 10000, 5000,
+				  wxPoint(73, 11), wxSize(22,78), GetPosition() + wxPoint(58, 25));
+  ModDepthFader = new HintedFader(this, Chorus_Stage, this->GetParent(), img_bg, img_fg, 0, 10, 3,
+				  wxPoint(110, 11), wxSize(22,78), GetPosition() + wxPoint(95, 25));
+  EffectMixFader = new HintedFader(this, Chorus_DryWet, this->GetParent(), img_bg, img_fg, 0, 100, 50,
+				 wxPoint(149, 11), wxSize(22, 78), GetPosition() + wxPoint(135, 25));  
   SetBackgroundColour(wxColour(237, 237, 237));
 }
 
@@ -278,7 +266,7 @@ void ChorusPlugin::OnChorusTime(wxScrollEvent &WXUNUSED(e))
   ChorusMutex.Unlock();
   chorus1->setModFrequency(Frequency);
   chorus2->setModFrequency(Frequency);
-  cout << "Frequency: " << Frequency << endl;
+  //cout << "Frequency: " << Frequency << endl;
 }
   
 void ChorusPlugin::OnFeedback(wxScrollEvent &WXUNUSED(e))
@@ -287,7 +275,7 @@ void ChorusPlugin::OnFeedback(wxScrollEvent &WXUNUSED(e))
 
   chorus1->setBaseLength(BaseLength);
   chorus2->setBaseLength(BaseLength);
-  cout << "Delay: " << BaseLength << endl;
+  //cout << "Delay: " << BaseLength << endl;
 }
 
 void ChorusPlugin::OnChorusStage(wxScrollEvent &WXUNUSED(e))
@@ -296,7 +284,7 @@ void ChorusPlugin::OnChorusStage(wxScrollEvent &WXUNUSED(e))
 
   ModDepth = ModDepthFader->GetValue()/100.f;
 
-  cout << "ModDepth:" << ModDepth << endl;
+  //cout << "ModDepth:" << ModDepth << endl;
   chorus1->setModDepth(ModDepth);
   chorus2->setModDepth(ModDepth);
   ChorusMutex.Unlock();
@@ -308,9 +296,9 @@ void ChorusPlugin::OnDryWet(wxScrollEvent &WXUNUSED(e))
   EffectMix = (100 - EffectMixFader->GetValue()) / 100.f;
   chorus1->setEffectMix(EffectMix);
   chorus2->setEffectMix(EffectMix);
-  cout << "EffectMix: " << EffectMix << endl;
-  cout << "Delay: " << BaseLength << endl;
-  cout << "Frequency: " << Frequency << endl;
+  //cout << "EffectMix: " << EffectMix << endl;
+  //cout << "Delay: " << BaseLength << endl;
+  //cout << "Frequency: " << Frequency << endl;
 }
 
 void ChorusPlugin::OnPaint(wxPaintEvent &event)
@@ -354,7 +342,6 @@ extern "C"
   {
     delete p;
   }
-
 }
 
 
