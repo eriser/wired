@@ -45,7 +45,9 @@ public:
 	void				SetMenuItemId(int ModuleId, int MenuItemId);
 	int					GetPluginType(int PluginId);
 	WiredDSSIGui		*CreatePlugin(int MenuItemId, PlugStartInfo &info);
+	WiredDSSIGui		*CreatePlugin(unsigned long UniqueId);
 	void				DestroyPlugin(WiredDSSIGui *Plug);
+	void				SetStartInfo(PlugStartInfo &Info);
 	
 private:
 	void			LoadPlugins(const string& FileName);
@@ -57,6 +59,7 @@ private:
 	map<int, int>			_IdTable;									//Key == MenuItemId; Value == PluginId (auto-increment)
 	int						_CurrentPluginIndex;
 	map<unsigned long, int>			_UniqueIdTable;								//Key == Plugin unique ID; Value == PluginId
+	PlugStartInfo			_StartInfo;
 };
 
 

@@ -1,6 +1,7 @@
 #include "WiredSessionXml.h"
 
 extern std::vector<PluginLoader *>	LoadedPluginsList;
+extern WiredExternalPluginMgr		*LoadedExternalPlugins;
 extern PlugStartInfo				StartInfo;
 
 
@@ -193,7 +194,7 @@ bool			WiredSessionXml::IsPluginConnected(Plugin *Plug)
 	return false;
 }
 
-bool				WiredSessionXml::SaveFreePlugins()
+bool			WiredSessionXml::SaveFreePlugins()
 {
 	PluginIter								IterPlugins;
 	bool									Result = false;
@@ -304,7 +305,7 @@ bool			WiredSessionXml::SavePatternAudioData(AudioPattern* PatternInfo)
 	return Res == 0;
 }
 
-bool				WiredSessionXml::SavePatternMIDIData(MidiPattern* PatternInfo)
+bool			WiredSessionXml::SavePatternMIDIData(MidiPattern* PatternInfo)
 {
 	int				Res = 0;
 	char			Buffer[20];
@@ -610,14 +611,22 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 	Plugin 									*NewPlugin;
 	std::vector<PluginLoader *>::iterator 	it;
 	PluginLoader 							*p = 0x0;
+	unsigned long							Id = atol(PluginInfo->Id.c_str());
 	
 	NewRack = RackPanel->AddTrack();
-	for (it = LoadedPluginsList.begin(); it != LoadedPluginsList.end(); it++)
-		if (COMPARE_IDS((*it)->InitInfo.UniqueId, PluginInfo->Id.c_str()))
-		{
-			p = *it;
-			break;
-		}
+	if (Id == 0)
+	{
+		for (it = LoadedPluginsList.begin(); it != LoadedPluginsList.end(); it++)
+			if (COMPARE_IDS((*it)->InitInfo.UniqueId, PluginInfo->Id.c_str()))
+			{
+				p = *it;
+				break;
+			}
+	}
+	else
+	{
+		p = new PluginLoader(LoadedExternalPlugins, Id);
+	}
 	if (p)
 	{
 	 	cout << "[WIREDSESSION] Creating rack for plugin: " << p->InitInfo.Name << endl;
