@@ -12,6 +12,16 @@ PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, int MenuItemId, Plug
 	IdMenuItem = MenuItemId;
 	ExternalPlug = PluginMgr->CreatePlugin(IdMenuItem, info);
 	ExternalPlug->SetInfo(&InitInfo);
+	ExternalPlug->SetVirtualSize(400, 100);
+}
+
+PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, unsigned long UniqueId)
+{
+	External = true;
+	PluginMgr = PlugMgr;
+	//IdMenuItem = MenuItemId;
+	ExternalPlug = PluginMgr->CreatePlugin(UniqueId);
+	ExternalPlug->SetInfo(&InitInfo);
 }
 
 PluginLoader::PluginLoader(string filename) : 
