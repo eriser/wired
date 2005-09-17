@@ -58,6 +58,7 @@ void					WiredLADSPAInstance::SetInfo(PlugInitInfo *Info)
 		Info->Type = PLUG_IS_INSTR;
 	Info->UnitsX = 1;
 	Info->UnitsY = 1;
+	Info->UniqueExternalId = _Descriptor->UniqueID;
 	InitInfo = Info;
 }
 
@@ -458,4 +459,11 @@ std::string				WiredLADSPAInstance::DefaultName()
 	if (IsLoaded())
 		return _Descriptor->Name;
 	return STR_DEFAULT_NAME;
+}
+
+unsigned long			WiredLADSPAInstance::GetUniqueId()
+{
+	if (IsLoaded())
+		return _Descriptor->UniqueID;
+	return 0;
 }

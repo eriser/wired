@@ -25,6 +25,7 @@ public:
 	bool				Contains(int PluginId);
 	bool				CreatePlugin(int PluginId, WiredLADSPAInstance *Plugin);
 	bool				Contains(unsigned long PluginUniqueId);
+	map<int, unsigned long>	GetPluginsListUniqueId();
 
 private:
 	string								_FileName;
