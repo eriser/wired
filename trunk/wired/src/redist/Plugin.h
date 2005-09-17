@@ -24,8 +24,10 @@ typedef long (*HostInterface)(Plugin *plug, long param, void *value);
    of your plugin */
 typedef struct  
 {
-  // ID of your plugin. Must be *unique*
+  // ID of your plugin. Must be *unique* AND ALPHA (not numeric)
   char	 UniqueId[4];	
+    // ID of an external plugin. Must not be filled if you want to comply with Wired Old API
+  unsigned long	 UniqueExternalId;
   // Your plugin name
   std::string Name;	
   // Type of plugin (PLUG_IS_INSTR for an instrument or PLUG_IS_EFFECT for an effect)
