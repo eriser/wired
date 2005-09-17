@@ -100,7 +100,7 @@ void			WiredExternalPluginMgr::LoadPlugins(const string& FileName)
 		_Plugins.insert(_Plugins.end(), NewPlugin);
 		map<int, unsigned long>::iterator		Iter;
 		map<int, unsigned long>					ListUniqueID = NewPlugin->GetPluginsListUniqueId();
-		
+
 		for (Iter = ListUniqueID.begin(); Iter != ListUniqueID.end(); Iter++)
 			_UniqueIdTable[Iter->second] = Iter->first;
 	}
@@ -188,6 +188,38 @@ WiredDSSIGui		*WiredExternalPluginMgr::CreatePlugin(int MenuItemId, PlugStartInf
 	return NULL;
 }
 
+WiredDSSIGui		*WiredExternalPluginMgr::CreatePlugin(unsigned long UniqueId)
+{
+	list<WiredDSSIPlugin*>::iterator	Iter;
+	int									IdPlugin = 0;
+	
+	if (_UniqueIdTable.find(UniqueId) == _UniqueIdTable.end())
+		return NULL;
+	IdPlugin = _UniqueIdTable.find(UniqueId)->second;
+	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
+	{
+		if ((*Iter)->Contains(IdPlugin))
+		{
+			WiredDSSIGui		*NewPlugin = new WiredDSSIGui(_StartInfo);
+			
+			if ((*Iter)->CreatePlugin(IdPlugin, NewPlugin))
+			{
+				NewPlugin->Load();
+				cout << "Plugin successfully loaded" << endl;
+				_LoadedPlugins.insert(_LoadedPlugins.end(), NewPlugin);
+				return NewPlugin;
+			}
+			else
+			{
+				cout << "Cannot load the Plugin" << endl;
+				delete NewPlugin;
+			}
+			break;
+		}
+	}	
+	return NULL;
+}
+
 void				WiredExternalPluginMgr::DestroyPlugin(WiredDSSIGui *Plug)
 {
 	list<WiredDSSIGui*>::iterator	Iter;
@@ -202,4 +234,9 @@ void				WiredExternalPluginMgr::DestroyPlugin(WiredDSSIGui *Plug)
 		}
 	}
 	cout << "Can't find plugin to unload" << endl;
+}
+
+void				WiredExternalPluginMgr::SetStartInfo(PlugStartInfo &Info)
+{
+	_StartInfo = Info;
 }

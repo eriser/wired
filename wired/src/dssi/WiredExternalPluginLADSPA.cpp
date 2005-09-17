@@ -56,7 +56,7 @@ void					WiredLADSPAInstance::SetInfo(PlugInitInfo *Info)
 		Info->Type = PLUG_IS_EFFECT;
 	else
 		Info->Type = PLUG_IS_INSTR;
-	Info->UnitsX = 1;
+	Info->UnitsX = _InputDataPluginsPorts.size() / 5 + 1;
 	Info->UnitsY = 1;
 	Info->UniqueExternalId = _Descriptor->UniqueID;
 	InitInfo = Info;
