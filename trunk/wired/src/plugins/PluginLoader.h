@@ -19,6 +19,7 @@ class				PluginLoader
  public:
   PluginLoader(string filename);
   PluginLoader(WiredExternalPluginMgr *PlugMgr, int MenuItemId, PlugStartInfo &info);
+  PluginLoader(WiredExternalPluginMgr *PlugMgr, unsigned long UniqueId);
   ~PluginLoader();
 
   void				Unload();
