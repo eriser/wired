@@ -919,6 +919,7 @@ void					MainWindow::LoadExternalPlugins()
   CreateDSSIEffectMenu = NULL;
   CreateLADSPAEffectMenu = NULL;
   LoadedExternalPlugins->LoadPLugins(TYPE_PLUGINS_DSSI | TYPE_PLUGINS_LADSPA);
+  LoadedExternalPlugins->SetStartInfo(StartInfo);
   PluginsList = LoadedExternalPlugins->GetPluginsList();
   for (IterPluginsList = PluginsList.begin(); IterPluginsList != PluginsList.end(); IterPluginsList++)
   {
@@ -927,7 +928,6 @@ void					MainWindow::LoadExternalPlugins()
   	LoadedExternalPlugins->SetMenuItemId(IterPluginsList->first, 
   		AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, IterPluginsList->second));
   }
-	
 }
 
 int						MainWindow::AddPluginMenuItem(int Type, bool IsEffect, const string& MenuName)
