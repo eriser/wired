@@ -10,6 +10,8 @@ Plugin::Plugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 { 
   InitInfo = initinfo;
   StartInfo = startinfo;
+  if (InitInfo) 
+  	InitInfo->UniqueExternalId = 0;
   Connect(wxID_ANY, wxEVT_KEY_DOWN, (wxObjectEventFunction)(wxEventFunction)
           &Plugin::OnKeyEvent);
   Connect(wxID_ANY, wxEVT_MOUSEWHEEL, (wxObjectEventFunction)(wxEventFunction)
