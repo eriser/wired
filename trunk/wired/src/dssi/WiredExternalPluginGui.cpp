@@ -72,37 +72,34 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   int		i;
   map<unsigned long, t_gui_control>::iterator iter;
   wxImage *tr_bg = NULL;
+  int		width;
+  int		interspace;
+
+  width = (_GuiControls.size() / 5 + (_GuiControls.size() % 5) / 4 + 1) * 200;
 
   // gruik  
-  if (_GuiControls.size() < 3)
-    {
-      tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_SINGLE_BG)).c_str(), wxBITMAP_TYPE_PNG);
-      SetSize(-1, -1, 200, -1);
-    }
+  if (_GuiControls.size() <= 3)
+    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_SINGLE_BG)).c_str(), wxBITMAP_TYPE_PNG);
   else if (_GuiControls.size() < 9)
-    {
-      tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
-      SetSize(-1, -1, 400, -1);      
-    }
+    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
   else
-    {
-      tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
-      // gruik
-      SetSize(-1, -1, 600, -1);      
-    }
+    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(), wxBITMAP_TYPE_PNG); 
+  SetSize(-1, -1, width, -1);
+  cout << "nb potards : " << _GuiControls.size() << " => " << width << "px" << endl;
   TpBmp = new wxBitmap(tr_bg);
 
-  img_bg = NULL;
-  img_fg = NULL;
   img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
   img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
   
-  Faders = (FaderCtrl**) new void*[_GuiControls.size()];
+  Faders = (HintedFader**) new void*[_GuiControls.size()];
+
+  interspace = (width - 73 - 21) / _GuiControls.size();
+
   for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
     {
       wxSize(img_bg->GetWidth(), img_bg->GetHeight());
-      Faders[i] = new FaderCtrl(this, i + 1, img_bg, img_fg, 0, 100, 50,
-				wxPoint(i * 37 + 73, 11) , wxSize(img_bg->GetWidth(), img_bg->GetHeight()) );
+      Faders[i] = new HintedFader(this, i + 1, this->GetParent(), img_bg, img_fg, 0, 100, 50, wxPoint(73 + i * interspace + interspace / 2 - 5, 11) ,
+				  wxSize(img_bg->GetWidth(), img_bg->GetHeight()), GetPosition() + wxPoint(73 + i * interspace + interspace / 2 - 25, 25));
       Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
 	      wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
       FaderIndex[i + 1] = iter->first;
