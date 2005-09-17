@@ -131,6 +131,27 @@ map<int, string>	WiredDSSIPlugin::GetPluginsList()
 	return Result;
 }
 
+map<int, unsigned long>		WiredDSSIPlugin::GetPluginsListUniqueId()
+{
+	map<int, unsigned long>	Result;
+	
+	if (_LADSPADescriptorFunction)
+	{
+		map<int, const LADSPA_Descriptor*>::iterator	Iter;
+
+		for (Iter = _LADSPADescriptors.begin(); Iter != _LADSPADescriptors.end(); Iter++)
+			Result[Iter->first] = Iter->second->UniqueID;
+	}
+	else if (_DSSIDescriptorFunction)
+	{
+		map<int, const DSSI_Descriptor*>::iterator	Iter;
+		
+		for (Iter = _DSSIDescriptors.begin(); Iter != _DSSIDescriptors.end(); Iter++)
+			Result[Iter->first] = Iter->second->LADSPA_Plugin->UniqueID;
+	}
+	return Result;
+}
+
 void				WiredDSSIPlugin::UnLoad()
 {
 	if (_Handle != NULL)

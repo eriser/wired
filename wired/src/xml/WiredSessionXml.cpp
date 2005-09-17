@@ -223,7 +223,10 @@ bool			WiredSessionXml::SavePlugin(Plugin* PluginInfo)
 	PluginInfo->Save(Params);
 	Res += this->StartElement(std::string(STR_PLUGIN));
 	Res += this->StartElement(std::string(STR_PLUGIN_ID));
-	Res += this->WriteString(std::string(PluginInfo->InitInfo->UniqueId).substr(0, 4));
+	sprintf(Buffer, "%ld", PluginInfo->InitInfo->UniqueExternalId);
+	Res += this->WriteString(PluginInfo->InitInfo->UniqueExternalId == 0 ? 
+							std::string(PluginInfo->InitInfo->UniqueId).substr(0, 4) :
+							std::string(Buffer));
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_NAME));
 	Res += this->WriteString(PluginInfo->Name);

@@ -96,7 +96,14 @@ void			WiredExternalPluginMgr::LoadPlugins(const string& FileName)
 	WiredDSSIPlugin		*NewPlugin = new WiredDSSIPlugin();
 	
 	if (NewPlugin->Load(FileName, _CurrentPluginIndex))
+	{
 		_Plugins.insert(_Plugins.end(), NewPlugin);
+		map<int, unsigned long>::iterator		Iter;
+		map<int, unsigned long>					ListUniqueID = NewPlugin->GetPluginsListUniqueId();
+		
+		for (Iter = ListUniqueID.begin(); Iter != ListUniqueID.end(); Iter++)
+			_UniqueIdTable[Iter->second] = Iter->first;
+	}
 	else
 		delete NewPlugin;
 }

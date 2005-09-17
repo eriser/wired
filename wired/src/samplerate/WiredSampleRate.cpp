@@ -205,6 +205,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 				if (sf_error(SrcData) != SF_ERR_NO_ERROR)
 				{
 					delete ProgressBar;
+					cout << "sndfile error {" << sf_strerror(SrcData) << "}" << endl;
 					sf_close(Result);
 					delete Buffer;
 					return false;
@@ -336,6 +337,7 @@ int						WiredSampleRate::SaveFile(string& Path)
 			
 			ChooseFileFormat(&FileInfo);
 			FileInfo.channels = 2;
+			
 			if ((FileData = sf_open(Path.c_str(), SFM_WRITE, &FileInfo)) != NULL)
 			{
 				

@@ -6,6 +6,8 @@
 
 #include <soundtouch/SoundTouch.h>
 
+using namespace soundtouch;
+
 class Slice
 {
  public:

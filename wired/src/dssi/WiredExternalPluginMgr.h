@@ -56,6 +56,7 @@ private:
 	list<WiredDSSIGui*>	_LoadedPlugins;
 	map<int, int>			_IdTable;									//Key == MenuItemId; Value == PluginId (auto-increment)
 	int						_CurrentPluginIndex;
+	map<unsigned long, int>			_UniqueIdTable;								//Key == Plugin unique ID; Value == PluginId
 };
 
 

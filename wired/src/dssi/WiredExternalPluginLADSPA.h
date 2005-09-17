@@ -57,6 +57,7 @@ public:
 	void				SetInfo(PlugStartInfo *Info);
 	bool				ChangeActivateState(bool Activate = true);
 	void				Bypass();
+	unsigned long		GetUniqueId();
 
 	//<Wired Plugin Implementation>
 	void	 			Process(float **input, float **output, long sample_length);
