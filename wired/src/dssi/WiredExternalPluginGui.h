@@ -9,6 +9,7 @@
 #include "Plugin.h"
 #include "WiredExternalPluginLADSPA.h"
 #include "FaderCtrl.h"
+#include "HintedFader.h"
 #include "DownButton.h"
 
 #define IMG_DL_SINGLE_BG	"dssi/dssi_single_bg.png"
@@ -42,7 +43,7 @@ class				WiredDSSIGui : public WiredLADSPAInstance
 
  protected:
   bool		Bypass;
-  FaderCtrl	**Faders;
+  HintedFader	**Faders;
   wxImage	*Background;
   wxBitmap	*TpBmp;
   wxImage	*img_bg;
