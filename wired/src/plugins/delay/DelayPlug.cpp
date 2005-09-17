@@ -23,37 +23,28 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
     new wxImage(string(GetDataDir() + string(IMG_DL_BG)).c_str(), wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
 
-  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), 
-			  wxBITMAP_TYPE_PNG);
-  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), 
-			   wxBITMAP_TYPE_PNG);
+  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
-  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), 
-			  wxBITMAP_TYPE_PNG);
-  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
-			   wxBITMAP_TYPE_PNG);
-  BypassBtn = new DownButton(this, Delay_Bypass, wxPoint(21, 58),
-			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()),
-			     bypass_off, bypass_on);
+  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  BypassBtn = new DownButton(this, Delay_Bypass, wxPoint(21, 58), 
+			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), bypass_off, bypass_on);
 
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(), 
-		     wxBITMAP_TYPE_BMP); 
-
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(),
-		       wxBITMAP_TYPE_PNG );
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(),
-		       wxBITMAP_TYPE_PNG );
+  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(), wxBITMAP_TYPE_BMP); 
+  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG );
   
-  TimeFader = new 
-    FaderCtrl(this, Delay_Time, img_bg, img_fg, 0, MAX_TIME, 1000,
-	      wxPoint(73, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
-  FeedbackFader = new 
-    FaderCtrl(this, Delay_Feedback, img_bg, img_fg, 0, 100, 50,
-	      wxPoint(110, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
-  DryWetFader = new 
-    FaderCtrl(this, Delay_DryWet, img_bg, img_fg, 0, 100, 50,
-	      wxPoint(149, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()));
+  TimeFader = new HintedFader(this, Delay_Time, this->GetParent(), img_bg, img_fg, 0, MAX_TIME, 1000,
+			      wxPoint(73, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
+			      GetPosition() + wxPoint(58, 25));
+  FeedbackFader = new HintedFader(this, Delay_Feedback, this->GetParent(), img_bg, img_fg, 0, 100, 50,
+				  wxPoint(110, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
+				  GetPosition() + wxPoint(95, 25));
+  DryWetFader = new HintedFader(this, Delay_DryWet, this->GetParent(), img_bg, img_fg, 0, 100, 50,
+				wxPoint(149, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
+				GetPosition() + wxPoint(135, 25));
   
   SetBackgroundColour(wxColour(237, 237, 237));
 
@@ -387,20 +378,20 @@ void DelayPlugin::OnDelayTime(wxScrollEvent &WXUNUSED(e))
 
   DelayMutex.Unlock();
 
-  cout << "Time: " << DelayTime << endl;
+  //  cout << "Time: " << DelayTime << endl;
 }
   
 void DelayPlugin::OnFeedback(wxScrollEvent &WXUNUSED(e))
 {
   Feedback = FeedbackFader->GetValue() / 100.f;
-  cout << "Feedback: " << Feedback << endl;
+  //cout << "Feedback: " << Feedback << endl;
 }
 
 void DelayPlugin::OnDryWet(wxScrollEvent &WXUNUSED(e))
 {
   DryLevel = (100 - DryWetFader->GetValue()) / 100.f;
   WetLevel = DryWetFader->GetValue() / 100.f;
-  cout << "DryLevel: " << DryLevel << "; WetLevel: " << WetLevel << endl;
+  //cout << "DryLevel: " << DryLevel << "; WetLevel: " << WetLevel << endl;
 }
 
 void DelayPlugin::OnPaint(wxPaintEvent &event)

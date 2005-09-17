@@ -465,7 +465,7 @@ ac_includes_default="\
 #endif"
 
 ac_default_prefix=/usr/local
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT EGREP LN_S ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB STRIP ac_ct_STRIP CPP CXX CXXFLAGS ac_ct_CXX CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT EGREP LN_S ECHO AR ac_ct_AR RANLIB ac_ct_RANLIB STRIP ac_ct_STRIP CPP CXX CXXFLAGS ac_ct_CXX CXXCPP F77 FFLAGS ac_ct_F77 LIBTOOL INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO install_sh INSTALL_STRIP_PROGRAM mkdir_p AWK SET_MAKE am__leading_dot AMTAR am__tar am__untar DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE PKG_CONFIG ac_pt_PKG_CONFIG SAMPLERATE_CFLAGS SAMPLERATE_LIBS LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -946,6 +946,18 @@ ac_env_FFLAGS_set=${FFLAGS+set}
 ac_env_FFLAGS_value=$FFLAGS
 ac_cv_env_FFLAGS_set=${FFLAGS+set}
 ac_cv_env_FFLAGS_value=$FFLAGS
+ac_env_PKG_CONFIG_set=${PKG_CONFIG+set}
+ac_env_PKG_CONFIG_value=$PKG_CONFIG
+ac_cv_env_PKG_CONFIG_set=${PKG_CONFIG+set}
+ac_cv_env_PKG_CONFIG_value=$PKG_CONFIG
+ac_env_SAMPLERATE_CFLAGS_set=${SAMPLERATE_CFLAGS+set}
+ac_env_SAMPLERATE_CFLAGS_value=$SAMPLERATE_CFLAGS
+ac_cv_env_SAMPLERATE_CFLAGS_set=${SAMPLERATE_CFLAGS+set}
+ac_cv_env_SAMPLERATE_CFLAGS_value=$SAMPLERATE_CFLAGS
+ac_env_SAMPLERATE_LIBS_set=${SAMPLERATE_LIBS+set}
+ac_env_SAMPLERATE_LIBS_value=$SAMPLERATE_LIBS
+ac_cv_env_SAMPLERATE_LIBS_set=${SAMPLERATE_LIBS+set}
+ac_cv_env_SAMPLERATE_LIBS_value=$SAMPLERATE_LIBS
 
 #
 # Report the --help message.
@@ -1060,6 +1072,11 @@ Some influential environment variables:
   CXXCPP      C++ preprocessor
   F77         Fortran 77 compiler command
   FFLAGS      Fortran 77 compiler flags
+  PKG_CONFIG  path to pkg-config utility
+  SAMPLERATE_CFLAGS
+              C compiler flags for SAMPLERATE, overriding pkg-config
+  SAMPLERATE_LIBS
+              linker flags for SAMPLERATE, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -3064,7 +3081,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 3067 "configure"' > conftest.$ac_ext
+  echo '#line 3084 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -4519,7 +4536,7 @@ fi
 
 
 # Provide some information about the compiler.
-echo "$as_me:4522:" \
+echo "$as_me:4539:" \
      "checking for Fortran 77 compiler version" >&5
 ac_compiler=`set X $ac_compile; echo $2`
 { (eval echo "$as_me:$LINENO: \"$ac_compiler --version </dev/null >&5\"") >&5
@@ -5551,11 +5568,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:5554: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:5571: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:5558: \$? = $ac_status" >&5
+   echo "$as_me:5575: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -5784,11 +5801,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:5787: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:5804: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:5791: \$? = $ac_status" >&5
+   echo "$as_me:5808: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -5844,11 +5861,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:5847: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:5864: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:5851: \$? = $ac_status" >&5
+   echo "$as_me:5868: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8032,7 +8049,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 8035 "configure"
+#line 8052 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -8130,7 +8147,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 8133 "configure"
+#line 8150 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10307,11 +10324,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10310: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10327: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10314: \$? = $ac_status" >&5
+   echo "$as_me:10331: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -10367,11 +10384,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10370: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10387: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10374: \$? = $ac_status" >&5
+   echo "$as_me:10391: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11736,7 +11753,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11739 "configure"
+#line 11756 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11834,7 +11851,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 11837 "configure"
+#line 11854 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12661,11 +12678,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12664: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12681: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:12668: \$? = $ac_status" >&5
+   echo "$as_me:12685: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -12721,11 +12738,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:12724: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:12741: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:12728: \$? = $ac_status" >&5
+   echo "$as_me:12745: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14766,11 +14783,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14769: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14786: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14773: \$? = $ac_status" >&5
+   echo "$as_me:14790: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -14999,11 +15016,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15002: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15019: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:15006: \$? = $ac_status" >&5
+   echo "$as_me:15023: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings
@@ -15059,11 +15076,11 @@ else
    -e 's:.*FLAGS}? :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:15062: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15079: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:15066: \$? = $ac_status" >&5
+   echo "$as_me:15083: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -17247,7 +17264,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 17250 "configure"
+#line 17267 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17345,7 +17362,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<EOF
-#line 17348 "configure"
+#line 17365 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -21380,6 +21397,172 @@ fi
 done
 
 
+#Checks for libsamplerate
+
+
+if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
+	if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_PKG_CONFIG+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $PKG_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_PKG_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  ;;
+esac
+fi
+PKG_CONFIG=$ac_cv_path_PKG_CONFIG
+
+if test -n "$PKG_CONFIG"; then
+  echo "$as_me:$LINENO: result: $PKG_CONFIG" >&5
+echo "${ECHO_T}$PKG_CONFIG" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+fi
+if test -z "$ac_cv_path_PKG_CONFIG"; then
+  ac_pt_PKG_CONFIG=$PKG_CONFIG
+  # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_ac_pt_PKG_CONFIG+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $ac_pt_PKG_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_PKG_CONFIG="$ac_pt_PKG_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_PKG_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  ;;
+esac
+fi
+ac_pt_PKG_CONFIG=$ac_cv_path_ac_pt_PKG_CONFIG
+
+if test -n "$ac_pt_PKG_CONFIG"; then
+  echo "$as_me:$LINENO: result: $ac_pt_PKG_CONFIG" >&5
+echo "${ECHO_T}$ac_pt_PKG_CONFIG" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+  PKG_CONFIG=$ac_pt_PKG_CONFIG
+else
+  PKG_CONFIG="$ac_cv_path_PKG_CONFIG"
+fi
+
+fi
+if test -n "$PKG_CONFIG"; then
+	_pkg_min_version=0.9.0
+	echo "$as_me:$LINENO: checking pkg-config is at least version $_pkg_min_version" >&5
+echo $ECHO_N "checking pkg-config is at least version $_pkg_min_version... $ECHO_C" >&6
+	if $PKG_CONFIG --atleast-pkgconfig-version $_pkg_min_version; then
+		echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+	else
+		echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+		PKG_CONFIG=""
+	fi
+
+fi
+
+pkg_failed=no
+echo "$as_me:$LINENO: checking for SAMPLERATE" >&5
+echo $ECHO_N "checking for SAMPLERATE... $ECHO_C" >&6
+
+if test -n "$PKG_CONFIG"; then
+        if test -n "$PKG_CONFIG" && \
+    { (echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"samplerate >= 0.0.15\"") >&5
+  ($PKG_CONFIG --exists --print-errors "samplerate >= 0.0.15") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+  pkg_cv_SAMPLERATE_CFLAGS=`$PKG_CONFIG --cflags "samplerate >= 0.0.15" 2>/dev/null`
+else
+  pkg_failed=yes
+fi
+else
+	pkg_failed=untried
+fi
+if test -n "$PKG_CONFIG"; then
+        if test -n "$PKG_CONFIG" && \
+    { (echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"samplerate >= 0.0.15\"") >&5
+  ($PKG_CONFIG --exists --print-errors "samplerate >= 0.0.15") 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; then
+  pkg_cv_SAMPLERATE_LIBS=`$PKG_CONFIG --libs "samplerate >= 0.0.15" 2>/dev/null`
+else
+  pkg_failed=yes
+fi
+else
+	pkg_failed=untried
+fi
+
+if test $pkg_failed = yes; then
+	SAMPLERATE_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "samplerate >= 0.0.15"`
+	# Put the nasty error message in config.log where it belongs
+	echo "$SAMPLERATE_PKG_ERRORS" 1>&5
+
+	ac_cv_samplerate=0
+elif test $pkg_failed = untried; then
+	ac_cv_samplerate=0
+else
+	SAMPLERATE_CFLAGS=$pkg_cv_SAMPLERATE_CFLAGS
+	SAMPLERATE_LIBS=$pkg_cv_SAMPLERATE_LIBS
+        echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+	ac_cv_samplerate=1
+fi
+
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_SAMPLERATE ${ac_cv_samplerate}
+_ACEOF
+
+
+
+
+
+
 # Checks for typedefs, structures, and compiler characteristics.
 echo "$as_me:$LINENO: checking for stdbool.h that conforms to C99" >&5
 echo $ECHO_N "checking for stdbool.h that conforms to C99... $ECHO_C" >&6
@@ -22872,7 +23055,7 @@ else
  OPTION_DSSI="DSSI_DISABLED"
 fi
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ac_config_files="$ac_config_files Makefile src/Makefile src/audio/Makefile src/editmidi/Makefile src/engine/Makefile src/fileloader/Makefile src/gui/Makefile src/midi/Makefile src/midi/portmidi/Makefile src/midi/portmidi/porttime/Makefile src/mixer/Makefile src/plugins/Makefile src/plugins/beatbox/Makefile src/plugins/compressor/Makefile src/plugins/crusher/Makefile src/plugins/delay/Makefile src/plugins/filter/Makefile src/plugins/loop_sampler/Makefile src/plugins/akai_sampler/Makefile src/plugins/reverb/Makefile src/plugins/synth/Makefile src/plugins/chorus/Makefile src/plugins/wahwah/Makefile src/plugins/test/Makefile src/redist/Makefile src/sequencer/Makefile src/undo/Makefile src/libs/Makefile src/libs/WiredWidgets/Makefile src/libs/WiredWidgets/src/Makefile src/libs/WiredAkai/Makefile src/libs/WiredAkai/src/Makefile src/data/Makefile src/data/ihm/Makefile src/data/ihm/mixer/Makefile src/data/ihm/opt/Makefile src/data/ihm/player/Makefile src/data/ihm/seqtrack/Makefile src/data/ihm/splash/Makefile src/data/ihm/toolbar/Makefile src/data/ihm/widgets/Makefile src/data/plugins/Makefile src/data/plugins/akaisampler/Makefile src/data/plugins/beatbox/Makefile src/data/plugins/compressor/Makefile src/data/plugins/crusher/Makefile src/data/plugins/delay/Makefile src/data/plugins/filter/Makefile src/data/plugins/loopsampler/Makefile src/data/plugins/reverb/Makefile src/data/plugins/wahwah/Makefile src/data/plugins/chorus/Makefile src/conf/Makefile src/xml/Makefile src/dssi/Makefile"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ac_config_files="$ac_config_files Makefile src/Makefile src/audio/Makefile src/editmidi/Makefile src/engine/Makefile src/fileloader/Makefile src/gui/Makefile src/midi/Makefile src/midi/portmidi/Makefile src/midi/portmidi/porttime/Makefile src/mixer/Makefile src/plugins/Makefile src/plugins/beatbox/Makefile src/plugins/compressor/Makefile src/plugins/crusher/Makefile src/plugins/delay/Makefile src/plugins/filter/Makefile src/plugins/loop_sampler/Makefile src/plugins/akai_sampler/Makefile src/plugins/reverb/Makefile src/plugins/synth/Makefile src/plugins/chorus/Makefile src/plugins/wahwah/Makefile src/plugins/test/Makefile src/redist/Makefile src/sequencer/Makefile src/undo/Makefile src/libs/Makefile src/libs/WiredWidgets/Makefile src/libs/WiredWidgets/src/Makefile src/libs/WiredAkai/Makefile src/libs/WiredAkai/src/Makefile src/data/Makefile src/data/ihm/Makefile src/data/ihm/mixer/Makefile src/data/ihm/opt/Makefile src/data/ihm/player/Makefile src/data/ihm/seqtrack/Makefile src/data/ihm/splash/Makefile src/data/ihm/toolbar/Makefile src/data/ihm/widgets/Makefile src/data/plugins/Makefile src/data/plugins/akaisampler/Makefile src/data/plugins/beatbox/Makefile src/data/plugins/compressor/Makefile src/data/plugins/crusher/Makefile src/data/plugins/delay/Makefile src/data/plugins/filter/Makefile src/data/plugins/loopsampler/Makefile src/data/plugins/reverb/Makefile src/data/plugins/wahwah/Makefile src/data/plugins/chorus/Makefile src/conf/Makefile src/xml/Makefile src/dssi/Makefile src/samplerate/Makefile src/data/dssi/Makefile src/codec/Makefile src/codec/wiredcodec/Makefile src/codec/wiredcodec/flac/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -23486,6 +23669,11 @@ do
   "src/conf/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/conf/Makefile" ;;
   "src/xml/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/xml/Makefile" ;;
   "src/dssi/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/dssi/Makefile" ;;
+  "src/samplerate/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/samplerate/Makefile" ;;
+  "src/data/dssi/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/data/dssi/Makefile" ;;
+  "src/codec/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/Makefile" ;;
+  "src/codec/wiredcodec/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/Makefile" ;;
+  "src/codec/wiredcodec/flac/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/flac/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "src/include/config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS src/include/config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
@@ -23638,6 +23826,10 @@ s,@am__fastdepCC_FALSE@,$am__fastdepCC_FALSE,;t t
 s,@CXXDEPMODE@,$CXXDEPMODE,;t t
 s,@am__fastdepCXX_TRUE@,$am__fastdepCXX_TRUE,;t t
 s,@am__fastdepCXX_FALSE@,$am__fastdepCXX_FALSE,;t t
+s,@PKG_CONFIG@,$PKG_CONFIG,;t t
+s,@ac_pt_PKG_CONFIG@,$ac_pt_PKG_CONFIG,;t t
+s,@SAMPLERATE_CFLAGS@,$SAMPLERATE_CFLAGS,;t t
+s,@SAMPLERATE_LIBS@,$SAMPLERATE_LIBS,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
