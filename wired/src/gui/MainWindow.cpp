@@ -569,7 +569,7 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 {
 	if (CodecMgr != NULL)
 	{
-		if (CodecMgr->CanDecode(FileToDecode) == false)
+		if (CodecMgr->CanDecode(FileToDecode) == true)
 		{
 			t_Pcm			Res = CodecMgr->Decode(FileToDecode);			
 	      	wxFileName		RelativeFileName;
@@ -621,19 +621,42 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 	}
 }
 
+bool					MainWindow::ConvertSamplerate(string& FileName, bool &HasChangedPath)
+{
+	int					HasConvertedFile;
+    WiredSampleRate		CheckSampleRate;
+    t_samplerate_info	Info;
+
+	Info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
+	Info.SampleRate = (int) Audio->SampleRate;
+	Info.Format = Audio->UserData->SampleFormat;
+	Info.SamplesPerBuffer = Audio->SamplesPerBuffer;
+	CheckSampleRate.Init(&Info);
+    HasConvertedFile = CheckSampleRate.OpenFile(FileName);
+	if (HasConvertedFile == wxID_CANCEL)
+		return false;
+	else if (HasConvertedFile == wxID_NO)
+		return true;
+	else if (HasConvertedFile == wxID_YES)
+	{
+		HasChangedPath = true;
+		return true;
+	}
+	return true;
+}
+
 void					MainWindow::OnImportWave(wxCommandEvent &event)
 {
   FileLoader				*dlg;
-  int						res, HasConvertedFile;
+  int						res;
 
   dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, &CodecExtensions, true);
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();
+      bool					HasChangedPath = false;
       
       dlg->Destroy();
-      WiredSampleRate	CheckSampleRate;
-      t_samplerate_info	Info;
       
       if (CurrentXmlSession->GetAudioDir().empty() == false)
 	      res = wxID_OK;
@@ -651,23 +674,17 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       if (res != wxID_CANCEL)
       {
 		ApplyCodec(selfile);
-        Info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
-      	Info.SampleRate = (int) Audio->SampleRate;
-	    Info.Format = Audio->UserData->SampleFormat;
-	    Info.SamplesPerBuffer = Audio->SamplesPerBuffer;
-	    CheckSampleRate.Init(&Info);
-        HasConvertedFile = CheckSampleRate.OpenFile(selfile);
+		if (ConvertSamplerate(selfile, HasChangedPath) == false)
+			res = wxID_CANCEL;
       }
-      if (HasConvertedFile == wxID_NO && res != wxID_CANCEL)
-      {
-	      if (res != wxID_CANCEL)
+	      if (res != wxID_CANCEL && HasChangedPath == false)
 	      {
 		      wxMessageDialog msg(this, 
 					  "Do you want to copy this file to your project directory ?", "Wired", 
 					  wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
 		      res = msg.ShowModal();
 	      }
-		  if (res != wxID_CANCEL && res != wxID_NO)
+		  if (res != wxID_CANCEL && res != wxID_NO && HasChangedPath == false)
 		    {
 		      wxFileName fn(selfile.c_str());
 		      
@@ -684,9 +701,6 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 		      else
 			selfile = fn.GetFullPath().c_str();
 		    }
-		}
-		else if (HasConvertedFile == wxID_CANCEL)
-			res = wxID_CANCEL;
       if (res != wxID_CANCEL)
 	{
 	  wxProgressDialog *Progress = new wxProgressDialog("Loading wave file", "Please wait...", 100, 
@@ -696,6 +710,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 	  cImportWaveAction* action = new cImportWaveAction(selfile, true);
   	  Progress->Update(20);
 	  action->Do();
+	  Progress->Update(80);
 	  CreateUndoRedoMenus(EditMenu);
 	  Progress->Update(99);
 	  delete Progress;

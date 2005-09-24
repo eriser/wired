@@ -113,6 +113,8 @@ class					MainWindow: public wxFrame
   WiredCodec			*CodecMgr;
   vector<string>		CodecExtensions;
 
+  bool					ConvertSamplerate(string& FileName, bool &HasChangedPath);
+
   /* Config files */
   wxTextFile				PluginsConfFile;
   
