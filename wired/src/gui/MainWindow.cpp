@@ -602,7 +602,7 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 			}			
 			if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)))
 			{
-				int		sf_write-result = 0;
+				int		sf_write_result = 0;
 				
 				if (Res.PType == Float32)
 					sf_write_result = sf_writef_float(Result, (float *)Res.pcm, Res.TotalSample);
