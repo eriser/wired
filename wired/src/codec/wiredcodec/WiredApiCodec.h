@@ -24,6 +24,13 @@ typedef struct		s_LibInfo
   string	       	Extension;
   /*Note to determine if that codec is the best for this extension*/
   short			Note;
+  /*where it has to read the start of the extension format*/
+  int			fccStartPos;
+  /*string format's lenght*/
+  int			fccLenght;
+  /*format's name*/
+  string		fccLabel;
+
 }			t_LibInfo;
 
 enum PcmType
@@ -61,7 +68,13 @@ class   WiredApiCodec
 
   /*encode and decode functions*/
   virtual int		encode(float** pcm) = 0;
-  virtual int		decode(const string filename, t_Pcm *pcm) = 0;
+  virtual int		decode(const string &filename, t_Pcm *pcm) = 0;
+
+  void			SetuniqueId(unsigned long Id){_UniqueId = Id;}
+  unsigned long		GetUniqueId(){return _UniqueId;}
+ private:
+  unsigned long		_UniqueId;
+  /*Return 1 if the codec can decode this file*/
 };
 
 
