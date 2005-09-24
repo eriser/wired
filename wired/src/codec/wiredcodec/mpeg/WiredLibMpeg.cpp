@@ -57,7 +57,7 @@ void	mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen)
 	}
 }
 
-int WiredLibMpeg::decode(const string filename, t_Pcm *pcm)
+int WiredLibMpeg::decode(const string &filename, t_Pcm *pcm)
 {
 	mpeg3_t		*file;
 	int			stream = 0;
