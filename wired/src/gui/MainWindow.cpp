@@ -314,7 +314,16 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 	  (wxCommandEventFunction)&MainWindow::OnImportWave);
 
   //  EditMenu->Enable(MainWin_History, false);
-
+  // Codec Mgr
+  cout << "[MAINWIN] Loading codec extensions...";
+  CodecMgr = new WiredCodec();
+  CodecMgr->Init();
+  list<string>				CodecsListExtensions = CodecMgr->GetExtension();
+  list<string>::iterator	Iter;
+  
+  for (Iter = CodecsListExtensions.begin(); Iter != CodecsListExtensions.end(); Iter++)
+  	CodecExtensions.insert(CodecExtensions.end(), *Iter);
+  cout << "done" << endl;
   InitUndoRedoMenuItems();
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
@@ -396,6 +405,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 
   WiredSettings->Save();
   delete WiredSettings;
+  delete CodecMgr;
   cout << "[MAINWIN] Closing..."<< endl; 
   exit(1);
 }
@@ -555,20 +565,68 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   dlg->Destroy();
 }
 
+void					MainWindow::ApplyCodec(string& FileToDecode)
+{
+	if (CodecMgr != NULL)
+	{
+		if (CodecMgr->CanDecode(FileToDecode) == false)
+		{
+			t_Pcm			Res = CodecMgr->Decode(FileToDecode);			
+	      	wxFileName		RelativeFileName;
+	      	string			DestFileName;
+    	  	SNDFILE			*Result;
+			SF_INFO			Info;	
+
+			RelativeFileName = FileToDecode.substr(FileToDecode.find_last_of("/"));
+			RelativeFileName.SetExt(wxString("wav"));
+			DestFileName = CurrentXmlSession->GetAudioDir() + string("/") + RelativeFileName.GetFullName();
+			cout << "file {" << DestFileName.c_str() << "}" << endl;
+	      	Info.samplerate = Res.SampleRate;
+			Info.channels = Res.Channels;
+			Info.format = 0;
+			Info.format |= SF_FORMAT_WAV;	
+			switch (Res.PType)
+			{
+				case UInt8:
+					Info.format |= SF_FORMAT_PCM_U8;
+				case Int8:
+					Info.format |= SF_FORMAT_PCM_S8;
+				case Int16:
+					Info.format |= SF_FORMAT_PCM_16;
+				case Int24:
+					Info.format |= SF_FORMAT_PCM_24;
+				case Float32:
+					Info.format |= SF_FORMAT_PCM_32;
+				default: 
+					Info.format |= SF_FORMAT_PCM_16;
+			}			
+			if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)))
+			{
+				int		sf_write-result = 0;
+				
+				if (Res.PType == Float32)
+					sf_write_result = sf_writef_float(Result, (float *)Res.pcm, Res.TotalSample);
+				else
+					sf_write_result = sf_writef_int(Result, (int *)Res.pcm, Res.TotalSample);
+				if (sf_write_result == 0)
+				{
+					cout << "[MAINWIN] Could not decode file" << FileToDecode.c_str() << endl;
+					return;
+				}
+				FileToDecode = DestFileName;
+				sf_close(Result);
+			}
+			delete Res.pcm;
+		}
+	}
+}
+
 void					MainWindow::OnImportWave(wxCommandEvent &event)
 {
-  //  TransportPanel->OnStop(event);
   FileLoader				*dlg;
   int						res, HasConvertedFile;
 
-  dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, NULL);
-  /*  Connect(FileLoader_Start, wxEVT_COMMAND_BUTTON_CLICKED, 
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxCommandEventFunction)&MainWindow::OnFileLoaderStart);
-  
-  Connect(FileLoader_Stop, wxEVT_COMMAND_BUTTON_CLICKED, 
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxCommandEventFunction)&MainWindow::OnFileLoaderStop);*/
+  dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, &CodecExtensions, true);
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();
@@ -590,42 +648,9 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 	    else
 			res = wxID_CANCEL;
       }
-      //truc immonde      
-      if (selfile.find(".flac") != selfile.npos && res != wxID_CANCEL)
-      {
-      	WiredCodec		Decoder;
-      	t_Pcm			Decode;
-      	string			DestFileName;
-      	SNDFILE			*Result;
-		SF_INFO			Info;	
-      	
-      	Decoder.Init();
-      	Decode = Decoder.Decode(selfile);
-//      	DestFileName = CurrentXmlSession->GetAudioDir() + string("/tmp_") + selfile.substr(selfile.find_last_of("/") + 1) + string(".wav");
-      	
-
-	DestFileName = selfile + string(".wav");
-      	Info.samplerate = Decode.SampleRate;
-		Info.channels = Decode.Channels;
-		Info.format = 0;
-		Info.format |= SF_FORMAT_WAV;
-		Info.format |= SF_FORMAT_PCM_16;
-		if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)))
-		{
-			if (sf_writef_int(Result, (int *)Decode.pcm, Decode.TotalSample) == 0)
-			{
-				cout << "[MAINWIN] Could not decode file" << selfile.c_str() << endl;
-				res = wxID_CANCEL;
-			}
-			//selfile = CurrentXmlSession->GetAudioDir() + selfile.substr(selfile.find_last_of("/"));
-			selfile = DestFileName;
-			sf_close(Result);
-			
-		}
-      }
-      //end truc immonde
       if (res != wxID_CANCEL)
       {
+		ApplyCodec(selfile);
         Info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
       	Info.SampleRate = (int) Audio->SampleRate;
 	    Info.Format = Audio->UserData->SampleFormat;
