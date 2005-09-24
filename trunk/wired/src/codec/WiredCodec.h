@@ -35,6 +35,9 @@ class			WiredCodec
   /*Return a list of extension readable by all codecs*/
   list<string>		GetExtension();
 
+  /*look if it can decode the file*/
+  bool			CanDecode(const string &filename){return false;}
+
  private:
 
   /*look for .so*/
@@ -48,9 +51,6 @@ class			WiredCodec
 
   /*check extension to don t have same occurence two time*/
   int			CheckExtension(const string& str);
-
-  /*look if it can decode the file*/
-  bool			CanDecode(const string &filename){return false;}
 
   /*list of extension*/
   list<string>	_ExtList;
