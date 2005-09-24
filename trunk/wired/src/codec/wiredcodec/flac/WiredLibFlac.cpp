@@ -186,6 +186,9 @@ void WiredLibFlac::init(list<s_LibInfo> &Info)
   LibInfo.CodecMask = EXIST;
   LibInfo.Extension = "flac\tFree Lossless Audio Codec (*.flac)";
   LibInfo.Note = 5;
+  LibInfo.fccStartPos = 0;
+  LibInfo.fccLenght = 4;
+  LibInfo.fccLabel = "fLaC";
   handle = dlopen(SO_NAME, RTLD_LAZY);
   if (!handle)
     {
@@ -239,7 +242,7 @@ bool test_decoders(t_Pcm *OriginalPcm)
   return true;
 }
 
-int WiredLibFlac::decode(const string filename, t_Pcm *pcm)
+int WiredLibFlac::decode(const string &filename, t_Pcm *pcm)
 {
   flacfilename_ = filename.c_str();
   if (!test_decoders(pcm))
