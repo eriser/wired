@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <list>
+#include <map>
 #include <string>
 #include <iostream>
 #include "./wiredcodec/WiredApiCodec.h"
@@ -36,7 +37,7 @@ class			WiredCodec
   list<string>		GetExtension();
 
   /*look if it can decode the file*/
-  bool			CanDecode(const string &filename){return false;}
+  bool			CanDecode(const string &filename);
 
  private:
 
@@ -65,6 +66,8 @@ class			WiredCodec
   vector<string>	_WiredSo;
 
   t_WLib WiredCodec::FindBestCodec(string extension);
+
+  std::map<string, int>		codecToUse;
 };
 
 typedef WiredApiCodec* (*WiredCodecConstruct)();

@@ -19,6 +19,42 @@ WiredCodec::~WiredCodec()
   
 }
 
+bool WiredCodec::CanDecode(const string &filename)
+{
+  int				fd;
+  list<t_WLib>::iterator	i;
+  list<t_LibInfo>::iterator	j;
+  char				*buf;
+  bool				valRet;
+  int			        ret;
+
+  cout << "blob 1" << endl;
+  if ((fd = open(filename.c_str(),  O_RDONLY)) == -1)
+    return false;
+
+  valRet = false;
+  for (i = _WLib.begin(); i != _WLib.end(); i++)
+    for (j = (*i).Info.begin(); j != (*i).Info.end(); j++)
+      {
+	cout << "extension == " << (*j).Extension.c_str() << endl;
+	if ((*j).fccLenght == 0)
+	  continue;
+	buf = new char((*j).fccLenght);
+	if (ret = (read(fd, buf, (*j).fccLenght)))
+	  if (strcmp(buf, (*j).fccLabel.c_str()) == 0)
+	    {
+	      codecToUse[filename] = (*i).Codec->GetUniqueId();
+	      valRet = true;
+	      delete buf;
+	      break;
+	    }
+	delete buf;
+      }
+  close(fd);
+  cout << "blob2" << endl;
+  return valRet;
+}
+
 void WiredCodec::Init()
 {
   InitWLib();
@@ -85,19 +121,28 @@ int WiredCodec::Encode(float **pcm, string OutExtension)
   return 1;
 }
 
-t_Pcm WiredCodec::Decode(const string filename)
+t_Pcm WiredCodec::Decode(const string &filename)
 {
-  int				fd;
   list<t_WLib>::iterator	i;
-  char				buf[BUF_SIZE];
-  float				**pcm;
-  int				size;
-  int				pcm_size;
+  list<t_LibInfo>::iterator	j;
   t_Pcm				mypcm;
+  unsigned long			id;
 
+  cout << "salut" << endl;
+  if (codecToUse.find(filename) != codecToUse.end())
+    id = codecToUse[filename];
+  else
+    {
+      mypcm.pcm = NULL;
+      return mypcm;
+    }
+  
   for (i = _WLib.begin(); i != _WLib.end(); i++)
-    if ((*i).Codec->decode(filename, &mypcm))
-      break;
+    if ((*i).Codec->GetUniqueId() == id)
+      {
+	(*i).Codec->decode(filename, &mypcm);
+	break;
+      }
   return mypcm;
 }
 
@@ -135,10 +180,10 @@ void WiredCodec::WLibLoader(const string& filename)
   list<t_LibInfo>::iterator	i;
   void				*handle;
   WiredCodecConstruct		construct;
-  bool				find;
 
   t_WLib			WLibTemp;
   list<t_LibInfo>		Infos;
+  static int			j = 0;
 
   handle = dlopen(filename.c_str(), RTLD_LAZY);
   if (!handle)
@@ -151,19 +196,17 @@ void WiredCodec::WLibLoader(const string& filename)
       return;
     }
 
+
   WiredApiCodec *NewLib = construct();
   NewLib->init(Infos);
-
-  find = false;
+  NewLib->SetuniqueId(j++);
   for (i = Infos.begin(); i != Infos.end(); i++)
     if ((*i).CodecMask > EXIST)
       {
 	WLibTemp.Info = Infos;
 	WLibTemp.Codec = NewLib;
 	_WLib.push_back(WLibTemp);
-	find = true;
 	break;
       }
-  if (!find)
-    dlclose(handle);
+  dlclose(handle);
 }
