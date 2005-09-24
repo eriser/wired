@@ -1,1 +1,1 @@
-SUBDIRS = flac
+SUBDIRS = flac mpeg
