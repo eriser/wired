@@ -180,6 +180,7 @@ AC_CONFIG_FILES([Makefile
 		src/data/dssi/Makefile
 		src/codec/Makefile
 		src/codec/wiredcodec/Makefile
-		src/codec/wiredcodec/flac/Makefile])
+		src/codec/wiredcodec/flac/Makefile
+		src/codec/wiredcodec/mpeg/Makefile])
 
 AC_OUTPUT
