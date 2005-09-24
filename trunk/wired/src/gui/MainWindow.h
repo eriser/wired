@@ -107,6 +107,11 @@ class					MainWindow: public wxFrame
   void					InitUndoRedoMenuItems();
   void					CreateUndoRedoMenus(wxMenu *callingMenu);
   void					removeAllMenuItems(wxMenu *menu);
+  
+  /* Codecs stuff */
+  void					ApplyCodec(string& FileToDecode);
+  WiredCodec			*CodecMgr;
+  vector<string>		CodecExtensions;
 
   /* Config files */
   wxTextFile				PluginsConfFile;
