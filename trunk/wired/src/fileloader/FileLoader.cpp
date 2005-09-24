@@ -80,7 +80,7 @@ BEGIN_EVENT_TABLE(FileLoader, wxDialog)
   EVT_BUTTON(DELMRU_ID, FileLoader::OnDeleteRecent)
 END_EVENT_TABLE()
 
-FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai, bool psave, vector<string> *exts) :
+FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai, bool psave, vector<string> *exts, bool LoadExt) :
 wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT))
 {
   Center();
@@ -127,10 +127,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   AddIcon(imgs, wxIcon(audio_xpm));
   AddIcon(imgs, wxIcon(file_xpm));
   files->AssignImageList(imgs, wxIMAGE_LIST_SMALL);
-  
-  //Codecs gestion
-  _CodecsMgr.Init();
-    
+      
   if (!akai)
   {
   	fntext = new wxStaticText(this, -1, _T("Filename"), 
@@ -206,17 +203,20 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 		LoadSoundExt();	
   	else
   	{	
-	  for (unsigned int i = 0; i < exts->size(); i++)
-	  {
-		  unsigned int j;
-		string ext = (*exts)[i];
-      		if ((j = ext.find("\t", 0)) != string::npos)
-        		type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
-                     strdup(ext.substr(0, j).c_str()));
-		else
-			type->Append(_T(ext.c_str()), strdup(ext.c_str()));
-		  
-	  }
+  	  if (LoadExt == true)
+  	  	LoadSoundExt(exts);
+  	  else
+		  for (unsigned int i = 0; i < exts->size(); i++)
+		  {
+			  unsigned int j;
+			string ext = (*exts)[i];
+	      		if ((j = ext.find("\t", 0)) != string::npos)
+	        		type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
+	                     strdup(ext.substr(0, j).c_str()));
+			else
+				type->Append(_T(ext.c_str()), strdup(ext.c_str()));
+			  
+		  }
   	}
   	LoadFolders();
   	if (folder != NULL)
@@ -238,7 +238,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   }
 }
 
-void FileLoader::LoadSoundExt()
+void FileLoader::LoadSoundExt(vector<string> *Exts)
 {
   type->Append(_T("will be replaced by allfiles at the end of the function"));
   string *allext = NULL;
@@ -272,24 +272,44 @@ void FileLoader::LoadSoundExt()
   }
   f.close();
 
-	  list<string>	CodecsList = _CodecsMgr.GetExtension();
-	  list<string>::iterator	iter;
-	  for (iter = CodecsList.begin(); iter != CodecsList.end(); iter++)
-	  {
-	  	line = *iter;
-		  if ((j = line.find("\t", 0)) != string::npos)
-	      {
-	        type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
-	                     strdup(line.substr(i, j).c_str()));
-	        if (allext != NULL)
-	        {
-			  *allext += ";";
-			  *allext += line.substr(i, j);
-	        }
-	        else
-		  allext = new string(line.substr(i, j));
-	      }
-	  }
+  for (unsigned int i = 0; i < Exts->size(); i++)
+  {
+	  unsigned int j;
+	string ext = (*Exts)[i];
+
+	if ((j = ext.find("\t", 0)) != string::npos)
+		type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
+	                strdup(ext.substr(0, j).c_str()));
+	else
+		type->Append(_T(ext.c_str()), strdup(ext.c_str()));
+	if (allext != NULL)
+    {
+	  *allext += ";";
+	  *allext += ext.substr(i, j);
+    }
+    else
+	  allext = new string(ext.substr(i, j));
+			  
+  }
+
+//	  list<string>	CodecsList = _CodecsMgr.GetExtension();
+//	  list<string>::iterator	iter;
+//	  for (iter = CodecsList.begin(); iter != CodecsList.end(); iter++)
+//	  {
+//	  	line = *iter;
+//		  if ((j = line.find("\t", 0)) != string::npos)
+//	      {
+//	        type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
+//	                     strdup(line.substr(i, j).c_str()));
+//	        if (allext != NULL)
+//	        {
+//			  *allext += ";";
+//			  *allext += line.substr(i, j);
+//	        }
+//	        else
+//		  allext = new string(line.substr(i, j));
+//	      }
+//	  }
 
   if (allext != NULL)
   {

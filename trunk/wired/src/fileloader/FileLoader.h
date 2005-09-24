@@ -30,7 +30,6 @@
 #include "TreeItemData.h"
 #include "akai.h"
 #include "Settings.h"
-#include "../codec/WiredCodec.h"
 
 using std::string;
 using std::vector;
@@ -51,7 +50,7 @@ DEFINE_EVENT_TYPE(wxEVT_FILELOADER_STOP)
 class FileLoader: public wxDialog
 {
  public:
-  FileLoader(wxWindow *parent, wxWindowID id, string, bool, bool, vector<string> *);
+  FileLoader(wxWindow *parent, wxWindowID id, string, bool, bool, vector<string> *, bool = false);
   ~FileLoader();
   string GetSelectedFile();
   bool	 IsAkai() { return akai; }
@@ -91,7 +90,7 @@ class FileLoader: public wxDialog
   
   void AddIcon(wxImageList *, wxIcon);
   
-  void LoadSoundExt();
+  void LoadSoundExt(vector<string> * = NULL);
   void LoadFolders();
   void SaveFolders();
 
@@ -125,7 +124,6 @@ class FileLoader: public wxDialog
   string	favdir;
   string	mrudir;
 
-	WiredCodec		_CodecsMgr;
 
   DECLARE_EVENT_TABLE()
 };
