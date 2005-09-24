@@ -285,10 +285,10 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 	if (allext != NULL)
     {
 	  *allext += ";";
-	  *allext += ext.substr(i, j);
+	  *allext += ext.substr(0, j);
     }
     else
-	  allext = new string(ext.substr(i, j));
+	  allext = new string(ext.substr(0, j));
 			  
   }
 
