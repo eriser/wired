@@ -30,7 +30,7 @@ class   WiredLibMpeg: public WiredApiCodec
 
   /*encode and decode functions*/
   int		encode(float** pcm);
-  int		decode(const string filename, t_Pcm *pcm);
+  int		decode(const string &filename, t_Pcm *pcm);
  private:
   void			*handle;
 };
