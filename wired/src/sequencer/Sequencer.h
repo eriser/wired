@@ -22,6 +22,8 @@ class					MidiEvent;
 class					WaveFile;
 class					WriteWaveFile;
 
+class					WiredSampleRate;
+
 class ChanBuf
 {
  public:
@@ -52,7 +54,7 @@ class Sequencer : public wxThread
   void					Stop();
   void					Record();
   void					StopRecord();
-  void					ExportToWave(string filename);
+  bool					ExportToWave(string &filename);
   void					StopExport();
   void					PlayFile(string filename, bool isakai);
   void					StopFile();
@@ -115,6 +117,8 @@ class Sequencer : public wxThread
   WaveFile				*PlayWave;  
   long					PlayWavePos;
   Channel				*PlayWaveChannel;
+  
+  WiredSampleRate		*SampleRateConverter;
 };
 
 extern wxMutex				SeqMutex;

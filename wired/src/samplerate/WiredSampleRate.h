@@ -64,10 +64,11 @@ public:
 	int			OpenFile(string& Path);					//return wxID_NO if not modified (or invalid), 	
 														//else return wxID_YES r wxID_CANCEL if canceled
 														// and set Path to the new FilePath
-	int			SaveFile(string& Path);					//same return value as OpenFile()
+	bool		SaveFile(string& Path);					//return false if saving canceled
 	bool		IsSameFormat(int SndFileFormat, PaSampleFormat PaFormat);
 	const char	*GetFormatName(int SndFileFormat);
 	const char	*GetFormatName(PaSampleFormat PaFormat);
+	void		WriteToFile(unsigned long NbSamples, float);
 private:
 	bool		Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *SrcData);
 	int			GetConverterQuality();
@@ -75,6 +76,7 @@ private:
 	int			GetFileFormat(PaSampleFormat PaFormat);
 	void		ChooseFileFormat(SF_INFO *DestInfo);
 	t_samplerate_info	_ApplicationSettings;
+	SNDFILE		*OpenedFile;
 };
 
 #endif //_WIREDSAMPLERATE_H_
