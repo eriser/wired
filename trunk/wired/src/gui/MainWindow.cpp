@@ -596,10 +596,10 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 				case Int24:
 					Info.format |= SF_FORMAT_PCM_24;
 				case Float32:
-					Info.format |= SF_FORMAT_PCM_32;
+					Info.format |= SF_FORMAT_FLOAT;
 				default: 
 					Info.format |= SF_FORMAT_PCM_16;
-			}			
+			}
 			if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)))
 			{
 				int		sf_write_result = 0;
@@ -857,7 +857,11 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 	  selfile = f.GetFullPath();
 	}      
       cout << "[MAINWIN] User exports " << selfile << endl;
-      Seq->ExportToWave(selfile);
+      if (Seq->ExportToWave(selfile) == false)
+      {
+      	cout << "[MAINWIN] Export canceled by user " << endl;
+      	return;
+      }
 
       wxProgressDialog *Progress = new wxProgressDialog("Exporting song", "Please wait...", 
 						       100, this, 
