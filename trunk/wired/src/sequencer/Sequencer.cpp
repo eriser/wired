@@ -18,6 +18,7 @@
 #include "../audio/WaveFile.h"
 #include "../redist/Plugin.h"
 #include "../audio/WriteWaveFile.h"
+#include "../samplerate/WiredSampleRate.h"
 
 wxMutex					SeqMutex;
 
@@ -140,7 +141,7 @@ void					*Sequencer::Entry()
 	    SetCurrentPos(BeginLoopPos);
 	  if (Loop && ((EndLoopPos - CurrentPos) < (Audio->SamplesPerBuffer * MeasurePerSample)))
 	    delta = (long)((EndLoopPos - CurrentPos) * SamplesPerMeasure);
-	  /* Métronome */
+	  /* M?tronome */
 	  if (Click)
 	    {
 	      click_coeff = (long)(fmod(CurrentPos, 1.0 / SigNumerator) * SamplesPerMeasure);
@@ -182,7 +183,7 @@ void					*Sequencer::Entry()
 		  click_pos += size;
 		}
 	    }
-	  /* Récupérations des patterns à jouer */
+	  /* R?cup?rations des patterns ? jouer */
 	  for (T = Tracks.begin(); T != Tracks.end(); T++)
 	    {	      
 	      if ((*T)->IsAudioTrack())
@@ -201,7 +202,7 @@ void					*Sequencer::Entry()
 		    }
 		  if (!(*T)->TrackOpt->Mute)
 		    {
-		      /* Récupération des buffers Audio */
+		      /* R?cup?ration des buffers Audio */
 		      AudioP = GetCurrentAudioPattern(*T);  
 		      if (AudioP)
 			{
@@ -304,13 +305,13 @@ void					*Sequencer::Entry()
 	    }
 	}
       //LastCurBlock = CurBlock;
-      /* Envoi des buffers supplémentaire */
+      /* Envoi des buffers suppl?mentaire */
       for (B = ExtraBufs.begin(); B != ExtraBufs.end(); B++)
 	{
 	  // Channel Mono
 	  if (!(*B)->Buffer[1])
 	    (*B)->Chan->PushBuffer((*B)->Buffer[0]);
-	  else // Channel Stéréo
+	  else // Channel St?r?o
 	    (*B)->Chan->PushBuffer((*B)->Buffer);
 	}
       /* Appel de la fonction Mix->MixOutput(); */
@@ -747,7 +748,7 @@ void					Sequencer::ProcessCurrentMidiEvents(Track *T, MidiPattern *p)
 					    * SamplesPerMeasure);
 	      memcpy(curevent->MidiData, (*i)->Msg, sizeof(int) * 3);
 
-	      // Envoi au plugin connecté
+	      // Envoi au plugin connect?
 	      T->TrackOpt->Connected->ProcessEvent(*curevent);
 	      delete curevent;
 	    }
@@ -825,9 +826,31 @@ void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l,
   t->AddPattern(p);
 }
 
-void					Sequencer::ExportToWave(string filename)
+bool					Sequencer::ExportToWave(string &filename)
 {
   Seq->Stop();
+	if (!SampleRateConverter)
+		delete SampleRateConverter;
+	SampleRateConverter = new WiredSampleRate;
+	t_samplerate_info	Info;
+  
+	Info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
+	Info.SampleRate = (int) Audio->SampleRate;
+	Info.Format = Audio->UserData->SampleFormat;
+	Info.SamplesPerBuffer = Audio->SamplesPerBuffer;
+	SampleRateConverter->Init(&Info);
+	if (SampleRateConverter->SaveFile(filename))
+	{
+      SetCurrentPos(BeginLoopPos);      
+      SeqMutex.Lock();
+      Exporting = true;
+      SeqMutex.Unlock();
+      Play();
+      return true;
+	}
+	else
+		return false:
+
   try
     {
       ExportWave = new WriteWaveFile(filename, (int)Audio->SampleRate, 2, 
@@ -844,6 +867,7 @@ void					Sequencer::ExportToWave(string filename)
     {
       cout << "[SEQUENCER] Could not create export file" << endl; // FIXME error dialog box
     } 
+    return false;
 }
 
 void					Sequencer::StopExport()
@@ -851,6 +875,11 @@ void					Sequencer::StopExport()
   Stop();
   SeqMutex.Lock();
   Exporting = false;
+  if (SampleRateConverter)
+  	delete SampleRateConverter;
+  SeqMutex.Unlock();
+  return;
+  
   if (ExportWave)
     {
       delete ExportWave;
@@ -861,6 +890,15 @@ void					Sequencer::StopExport()
 
 void					Sequencer::WriteExport()
 {
+	
+	if (SampleRateConverter)
+	{
+		memcpy(AllocBuf1[0], Mix->OutputLeft, Audio->SamplesPerBuffer);
+		memcpy(AllocBuf1[1], Mix->OutputRight, Audio->SamplesPerBuffer);
+		
+	}
+	return;
+	
   long					i, j, chan;
   
   for (i = 0, j = 0; i < Audio->SamplesPerBuffer; j++)

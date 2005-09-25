@@ -83,7 +83,7 @@ int						WiredSampleRate::OpenFile(string& Path)
 		}
 		sf_close(Result);
 	}
-	cout << "End OpenFile" << endl;
+	//cout << "End OpenFile" << endl;
 	return Res;
 }
 
@@ -321,30 +321,28 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 	delete DialogButton;
 }
 
-int						WiredSampleRate::SaveFile(string& Path)
+bool					WiredSampleRate::SaveFile(string& Path)
 {
 	wxFile				File;
-	int					Res = wxID_NO;
+	bool				Res = true;
 	
 	if (File.Exists(Path.c_str()))
 	{
 		wxMessageDialog msg(NULL, string("The file ") + Path + " already exists on the filesystem.\n Do you want to overwrite it ?" , 
 							"File already exists", wxYES | wxICON_QUESTION | wxCENTRE);
-		if (msg.ShowModal() ==  wxID_YES)
-		{
-			SF_INFO		FileInfo;
-			SNDFILE		*FileData;
+		if (msg.ShowModal() ==  wxID_NO)
+			Res = false;
+	}
+	if (Res == true)
+	{
+		SF_INFO		FileInfo;
 			
-			ChooseFileFormat(&FileInfo);
-			FileInfo.channels = 2;
+		ChooseFileFormat(&FileInfo);
+		FileInfo.channels = 2;
 			
-			if ((FileData = sf_open(Path.c_str(), SFM_WRITE, &FileInfo)) != NULL)
-			{
-				
-			}
-		}
-		else
-			Res = wxID_NO;
+		if ((OpenedFile = sf_open(Path.c_str(), SFM_WRITE, &FileInfo)) == NULL)
+			Res = false;
 	}
 	return Res;
 }
+
