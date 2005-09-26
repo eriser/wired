@@ -76,6 +76,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   int		interspace;
 
   width = (_GuiControls.size() / 5 + (_GuiControls.size() % 5) / 4 + 1) * 200;
+  interspace = (width - 73 - 21) / _GuiControls.size();
 
   // gruik  
   if (_GuiControls.size() <= 3)
@@ -84,7 +85,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
     tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
   else
     tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(), wxBITMAP_TYPE_PNG); 
-  SetSize(-1, -1, width, -1);
+  //SetSize(-1, -1, width, -1);
   cout << "nb potards : " << _GuiControls.size() << " => " << width << "px" << endl;
   TpBmp = new wxBitmap(tr_bg);
 
@@ -93,19 +94,20 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   
   Faders = (HintedFader**) new void*[_GuiControls.size()];
 
-  interspace = (width - 73 - 21) / _GuiControls.size();
-
   for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
     {
       wxSize(img_bg->GetWidth(), img_bg->GetHeight());
-      Faders[i] = new HintedFader(this, i + 1, this->GetParent(), img_bg, img_fg, 0, 100, 50, wxPoint(73 + i * interspace + interspace / 2 - 5, 11) ,
-				  wxSize(img_bg->GetWidth(), img_bg->GetHeight()), GetPosition() + wxPoint(73 + i * interspace + interspace / 2 - 25, 25));
+      Faders[i] = new HintedFader(this, i + 1, this, img_bg, img_fg, 0, 100, 50, 
+				  wxPoint(73 + i * interspace + interspace / 2 - 5, 11) ,
+				  wxSize(img_bg->GetWidth(), img_bg->GetHeight()), GetPosition() + 
+				  wxPoint(73 + i * interspace + interspace / 2 - 25, 25));
       Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
 	      wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
       FaderIndex[i + 1] = iter->first;
       cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
 	   << iter->second.Data.UpperBound << endl;
       Faders[i]->SetValue((int)*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100);
+	
       // gruik bis
       if (i == 13)
 	break;
@@ -177,19 +179,28 @@ bool		WiredDSSIGui::Load()
 
 // [implementation evenements]
 
-void WiredDSSIGui::OnPaint(wxPaintEvent &event)
+void		WiredDSSIGui::OnPaint(wxPaintEvent &event)
 {
-  wxMemoryDC memDC;
-  wxPaintDC dc(this);
+  int		i;
+  int		width;
+  int		interspace;
+  map<unsigned long, t_gui_control>::iterator iter;
+  wxMemoryDC	memDC;
+  wxPaintDC	dc(this);
   
+  wxFont lblfont(5, wxDECORATIVE, wxFONTFLAG_BOLD, wxBOLD, false, "");
+  dc.SetFont(lblfont);  
   memDC.SelectObject(*TpBmp);
   wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
   while (upd)
     {    
-
-      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), 
-	      wxCOPY, FALSE);      
+      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), wxCOPY, FALSE);      
       upd++;
     }
+  width = (_GuiControls.size() / 5 + (_GuiControls.size() % 5) / 4 + 1) * 200;
+  
+  interspace = (width - 73 - 21) / _GuiControls.size();
+  for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
+    dc.DrawRotatedText(iter->second.Descriptor.Name, 73 + i * interspace + interspace / 2 - 13 , 80, 90);
   Plugin::OnPaintEvent(event);
 }
