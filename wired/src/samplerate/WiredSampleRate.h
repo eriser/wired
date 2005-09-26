@@ -6,6 +6,7 @@
 #include <samplerate.h>
 #include <portaudio.h>
 #include <string>
+#include <string.h>
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
 #include <wx/choicdlg.h>
@@ -68,15 +69,18 @@ public:
 	bool		IsSameFormat(int SndFileFormat, PaSampleFormat PaFormat);
 	const char	*GetFormatName(int SndFileFormat);
 	const char	*GetFormatName(PaSampleFormat PaFormat);
-	void		WriteToFile(unsigned long NbSamples, float);
+	void		WriteToFile(unsigned long NbSamples, float **Buffer, unsigned int NbChannel);
 private:
 	bool		Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *SrcData);
 	int			GetConverterQuality();
 	float		*ConvertSampleRate(SRC_STATE* Converter, float *Input, unsigned long FrameNb, double Ratio, unsigned long &ToWrite, bool End, int NbChannels, unsigned long &ReallyReaden);
 	int			GetFileFormat(PaSampleFormat PaFormat);
 	void		ChooseFileFormat(SF_INFO *DestInfo);
+	float		*ConvertnChannels(float **Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long ToWrite);
 	t_samplerate_info	_ApplicationSettings;
 	SNDFILE		*OpenedFile;
+	SF_INFO		OpenedFileInfo;
+	SRC_STATE	*StaticConverter;
 };
 
 #endif //_WIREDSAMPLERATE_H_
