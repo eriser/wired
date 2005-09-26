@@ -271,7 +271,8 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
     }
   }
   f.close();
-
+  if (Exts)
+  {
   for (unsigned int i = 0; i < Exts->size(); i++)
   {
 	  unsigned int j;
@@ -290,6 +291,7 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
     else
 	  allext = new string(ext.substr(0, j));
 			  
+  }
   }
 
 //	  list<string>	CodecsList = _CodecsMgr.GetExtension();
