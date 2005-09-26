@@ -894,7 +894,7 @@ void					Sequencer::WriteExport()
 	{
 		memcpy(AllocBuf1[0], Mix->OutputLeft, Audio->SamplesPerBuffer);
 		memcpy(AllocBuf1[1], Mix->OutputRight, Audio->SamplesPerBuffer);
-		
+		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, AllocBuf1, 2);
 	}
 	return;
 	
