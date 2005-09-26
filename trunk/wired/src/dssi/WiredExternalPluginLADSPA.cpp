@@ -49,14 +49,13 @@ bool					WiredLADSPAInstance::Init(const LADSPA_Descriptor *Descriptor)
 }
 
 void					WiredLADSPAInstance::SetInfo(PlugInitInfo *Info)
-{
-	
+{	
 	Info->Name = Name;
 	if (_InputAudioPluginsPorts.size() > 0)
 		Info->Type = PLUG_IS_EFFECT;
 	else
 		Info->Type = PLUG_IS_INSTR;
-	Info->UnitsX = _InputDataPluginsPorts.size() / 5 + 1;
+	Info->UnitsX = _InputDataPluginsPorts.size() / 5 + ((_InputDataPluginsPorts.size() % 5) / 4) + 1;
 	Info->UnitsY = 1;
 	Info->UniqueExternalId = _Descriptor->UniqueID;
 	InitInfo = Info;
