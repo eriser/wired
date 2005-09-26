@@ -834,7 +834,6 @@ bool					Sequencer::ExportToWave(string &filename)
 	SampleRateConverter = new WiredSampleRate;
 	t_samplerate_info	Info;
   
-	Info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
 	Info.SampleRate = (int) Audio->SampleRate;
 	Info.Format = Audio->UserData->SampleFormat;
 	Info.SamplesPerBuffer = Audio->SamplesPerBuffer;
@@ -849,7 +848,7 @@ bool					Sequencer::ExportToWave(string &filename)
       return true;
 	}
 	else
-		return false:
+		return false;
 
   try
     {
