@@ -1,6 +1,7 @@
 #ifndef _WIREDSAMPLERATE_H_
 #define _WIREDSAMPLERATE_H_
 
+#include <wx/thread.h>
 #include <stdio.h>
 #include <sndfile.h>
 #include <samplerate.h>
@@ -65,7 +66,7 @@ public:
 	int			OpenFile(string& Path);					//return wxID_NO if not modified (or invalid), 	
 														//else return wxID_YES r wxID_CANCEL if canceled
 														// and set Path to the new FilePath
-	bool		SaveFile(string& Path);					//return false if saving canceled
+	bool		SaveFile(string& Path, unsigned int NbChannel);					//return false if saving canceled
 	bool		IsSameFormat(int SndFileFormat, PaSampleFormat PaFormat);
 	const char	*GetFormatName(int SndFileFormat);
 	const char	*GetFormatName(PaSampleFormat PaFormat);
@@ -76,11 +77,15 @@ private:
 	float		*ConvertSampleRate(SRC_STATE* Converter, float *Input, unsigned long FrameNb, double Ratio, unsigned long &ToWrite, bool End, int NbChannels, unsigned long &ReallyReaden);
 	int			GetFileFormat(PaSampleFormat PaFormat);
 	void		ChooseFileFormat(SF_INFO *DestInfo);
-	float		*ConvertnChannels(float **Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long ToWrite);
+	float		*ConvertnChannels(float **Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite);
 	t_samplerate_info	_ApplicationSettings;
 	SNDFILE		*OpenedFile;
 	SF_INFO		OpenedFileInfo;
 	SRC_STATE	*StaticConverter;
+	int			_Quality;
+	int			_ConverterError;
 };
+
+extern wxMutex				SampleRateMutex;
 
 #endif //_WIREDSAMPLERATE_H_
