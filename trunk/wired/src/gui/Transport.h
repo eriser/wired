@@ -25,6 +25,8 @@
 #define TRANSPORT_DOWNDO_IMG	"ihm/player/trwindow_button_dwn_down.png"
 #define TRANSPORT_CLICKUP_IMG	"ihm/player/tr_window_minibutton_up.png"
 #define TRANSPORT_CLICKDO_IMG	"ihm/player/tr_window_minibutton_dwn.png"
+#define TRANSPORT_METRO_UP_IMG	"ihm/player/tr_window_metronom_up.png"
+#define TRANSPORT_METRO_DO_IMG	"ihm/player/tr_window_metronom_down.png"
 
 class				MainWindow;
 class				DownButton;

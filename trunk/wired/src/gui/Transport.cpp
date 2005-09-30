@@ -57,9 +57,9 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   wxImage *down_down = 
     new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_DOWNDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *click_up = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_CLICKUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_METRO_UP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *click_down = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_CLICKDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_METRO_DO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   
   PlayBtn = 
     new DownButton(this, Transport_Play, wxPoint(138, 95), wxSize(41, 42), play_up, play_down);
@@ -70,7 +70,7 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   BackwardBtn = new HoldButton(this, Transport_Backward, wxPoint(17, 98), wxSize(35, 39), backward_up, backward_down);
   ForwardBtn = new HoldButton(this, Transport_Forward, wxPoint(53, 98), wxSize(35, 39), forward_up, forward_down);
   LoopBtn = new DownButton(this, Transport_Loop, wxPoint(277, 119), wxSize(11, 11), loop_up, loop_down);
-  ClickBtn = new DownButton(this, Transport_Click, wxPoint(254, 119), wxSize(11, 11), 
+  ClickBtn = new DownButton(this, Transport_Click, wxPoint(250, 102), wxSize(19, 30), 
 			    click_up, click_down);
 
   LoopBtn->Connect(Transport_Loop, wxEVT_ENTER_WINDOW, 
