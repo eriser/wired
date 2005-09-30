@@ -838,14 +838,12 @@ bool					Sequencer::ExportToWave(string &filename)
 	Info.Format = Audio->UserData->SampleFormat;
 	Info.SamplesPerBuffer = Audio->SamplesPerBuffer;
 	SampleRateConverter->Init(&Info);
-	cout << "samplerate created" << endl;
-	if (SampleRateConverter->SaveFile(filename, 2))
+	if (SampleRateConverter->SaveFile(filename, 2, Audio->SamplesPerBuffer))
 	{
-      SetCurrentPos(BeginLoopPos);      
-      SeqMutex.Lock();
+	  SeqMutex.Lock();
+      SetCurrentPos(BeginLoopPos);
       Exporting = true;
       SeqMutex.Unlock();
-      cout << "samplerate created, will play" << endl;
       Play();
       return true;
 	}
@@ -877,7 +875,11 @@ void					Sequencer::StopExport()
   SeqMutex.Lock();
   Exporting = false;
   if (SampleRateConverter)
+  {
+  	SampleRateConverter->EndSaveFile(2);
   	delete SampleRateConverter;
+  	SampleRateConverter = NULL;
+  }
   SeqMutex.Unlock();
   return;
   
@@ -891,12 +893,13 @@ void					Sequencer::StopExport()
 
 void					Sequencer::WriteExport()
 {
-	
 	if (SampleRateConverter)
 	{
+		//SeqMutex.Lock();
 		memcpy(AllocBuf1[0], Mix->OutputLeft, Audio->SamplesPerBuffer);
 		memcpy(AllocBuf1[1], Mix->OutputRight, Audio->SamplesPerBuffer);
 		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, AllocBuf1, 2);
+		//SeqMutex.Unlock();
 	}
 	return;
 	

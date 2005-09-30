@@ -2,6 +2,20 @@
 
 wxMutex				SampleRateMutex;
 
+WiredSampleRate::WiredSampleRate()
+{
+	OpenedFile = NULL;
+	StaticConverter = NULL;
+}
+
+WiredSampleRate::~WiredSampleRate()
+{
+	//SampleRateMutex.Lock();
+	if (OpenedFile)
+		EndSaveFile(2);
+	SampleRateMutex.Unlock();
+}
+
 WiredSampleRate::WiredSampleRate(const WiredSampleRate& copy)
 {
 	*this = copy;
@@ -21,16 +35,19 @@ WiredSampleRate			WiredSampleRate::operator=(const WiredSampleRate& right)
 
 void					WiredSampleRate::Init(t_samplerate_info *Info)
 {
+	//SampleRateMutex.Lock();
 	_ApplicationSettings.WorkingDirectory = Info->WorkingDirectory;
 	_ApplicationSettings.SampleRate = Info->SampleRate;
 	_ApplicationSettings.Format = Info->Format;
 	_ApplicationSettings.SamplesPerBuffer = Info->SamplesPerBuffer;
 	StaticConverter = NULL;
+	//SampleRateMutex.Unlock();
 		
 }
 
 int						WiredSampleRate::OpenFile(string& Path)
 {
+	//SampleRateMutex.Lock();
 	SNDFILE				*Result;
 	SF_INFO				Info;
 	int					Res = wxID_NO;
@@ -87,7 +104,7 @@ int						WiredSampleRate::OpenFile(string& Path)
 		}
 		sf_close(Result);
 	}
-	//cout << "End OpenFile" << endl;
+	//SampleRateMutex.Unlock();
 	return Res;
 }
 
@@ -145,7 +162,8 @@ float					*WiredSampleRate::ConvertSampleRate(SRC_STATE* Converter, float *Input
 
 bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *SrcData)
 {
-	SNDFILE				*Result;
+	
+	SNDFILE				*Result;	
 	SF_INFO				Info;	
 	string				DestFileName;
 	int					ConversionQuality;
@@ -325,8 +343,9 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 	delete DialogButton;
 }
 
-bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel)
+bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples)
 {
+	SampleRateMutex.Lock();
 	wxFile				File;
 	
 	ChooseFileFormat(&OpenedFileInfo);
@@ -337,32 +356,32 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel)
 	if ((OpenedFile = sf_open(Path.c_str(), SFM_WRITE, &OpenedFileInfo)) == NULL)
 	{
 		cout << "An error occured while trying to open file (details :" << sf_strerror(OpenedFile) << ")" << endl;
+		SampleRateMutex.Unlock();
 		return false;
 	}
 	_Quality = GetConverterQuality();
 	StaticConverter = src_new(_Quality, NbChannel, &_ConverterError);
+	_Buffer = new float[NbChannel * NbSamples];
+	_ChannelBuffer = new float *[NbChannel];
+	for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannel; CurrentChannel++)
+		_ChannelBuffer[CurrentChannel] = new float[NbSamples];
+	SampleRateMutex.Unlock();
 	return true;
 }
 
 float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite)
 {
-	float				**Output;
 	SRC_DATA			Data;
-	int					res = 0, CurrentChannel;
+	unsigned int		CurrentChannel;
+	int					res = 0;
 
-	SampleRateMutex.Lock();
-	Output = (float **) new float[2];
-	Output[0] = new float[NbSamples];
-	Output[1] = new float[NbSamples];
 	for (CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
 	{
-		cout << "Allocating Chan No" << CurrentChannel << endl;
-		bzero(Output[CurrentChannel], NbSamples);	
-		cout << "Done" << endl;
+		bzero(_ChannelBuffer[CurrentChannel], NbSamples);	
 		Data.data_in = Input[CurrentChannel];
 		Data.input_frames = NbSamples;
 		Data.output_frames = NbSamples;
-		Data.data_out = Output[CurrentChannel];
+		Data.data_out = _ChannelBuffer[CurrentChannel];
 		Data.src_ratio = Ratio;
 		Data.end_of_input = End;
 		if ((res = src_process(Converter, &Data)))
@@ -372,19 +391,22 @@ float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChann
 		}
 		ToWrite = Data.output_frames_gen;
 	}
-	float				*Res = new float[NbChannels * NbSamples];
+
 	unsigned long		CurrentSample, CurrentResSample;
 	
-	for (CurrentSample = 0, CurrentResSample = 0; CurrentSample < NbSamples; CurrentSample++)
-		for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
-			Res[CurrentResSample++] = Output[CurrentChannel][CurrentSample];
-	delete[] Output;
-	return Res;
-	SampleRateMutex.Unlock();
+	bzero(_Buffer, NbChannels * ToWrite);
+	
+	for (CurrentSample = 0, CurrentResSample = 0; CurrentSample < ToWrite && CurrentResSample < NbChannels * ToWrite; CurrentSample++)
+	{
+		_Buffer[CurrentResSample++] = _ChannelBuffer[0][CurrentSample];
+		_Buffer[CurrentResSample++] = _ChannelBuffer[1][CurrentSample];
+	}
+	return _Buffer;
 }
 
 void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, unsigned int NbChannel)
 {
+	SampleRateMutex.Lock();
 	float		*Output;
 	double 		Ratio = (double)  _ApplicationSettings.SampleRate / OpenedFileInfo.samplerate;
 	unsigned long ToWrite;
@@ -395,9 +417,27 @@ void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, u
 		if (sf_writef_float(OpenedFile, Output, ToWrite) != ToWrite)
 		{
 			cout << "An error occured while writing to file " << endl;
-		}
-		delete Output;
+		}		
 	}
 	if (sf_error(OpenedFile) != SF_ERR_NO_ERROR)
 		cout << "sndfile error {" << sf_strerror(OpenedFile) << "}" << endl;
+	SampleRateMutex.Unlock();
+}
+
+void					WiredSampleRate::EndSaveFile(unsigned int NbChannel)
+{
+	if(OpenedFile)
+	{
+		SampleRateMutex.Lock();
+		if (!OpenedFile)
+			return;
+		sf_close(OpenedFile);
+		OpenedFile = NULL;
+//		for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannel; CurrentChannel++)
+//			delete [] _ChannelBuffer[CurrentChannel];
+//		
+		delete [] _ChannelBuffer;
+		//delete [] _Buffer;
+		SampleRateMutex.Unlock();
+	}
 }
