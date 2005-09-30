@@ -57,8 +57,8 @@ typedef struct s_samplerate_info
 class WiredSampleRate
 {
 public:
-	WiredSampleRate(){}
-	~WiredSampleRate(){}
+	WiredSampleRate();
+	~WiredSampleRate();
 	WiredSampleRate(const WiredSampleRate& copy);
 	WiredSampleRate		operator=(const WiredSampleRate& right);
 
@@ -66,7 +66,8 @@ public:
 	int			OpenFile(string& Path);					//return wxID_NO if not modified (or invalid), 	
 														//else return wxID_YES r wxID_CANCEL if canceled
 														// and set Path to the new FilePath
-	bool		SaveFile(string& Path, unsigned int NbChannel);					//return false if saving canceled
+	bool		SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples);					//return false if saving canceled
+	void		EndSaveFile(unsigned int NbChannel);
 	bool		IsSameFormat(int SndFileFormat, PaSampleFormat PaFormat);
 	const char	*GetFormatName(int SndFileFormat);
 	const char	*GetFormatName(PaSampleFormat PaFormat);
@@ -84,6 +85,8 @@ private:
 	SRC_STATE	*StaticConverter;
 	int			_Quality;
 	int			_ConverterError;
+	float		*_Buffer;
+	float		**_ChannelBuffer;
 };
 
 extern wxMutex				SampleRateMutex;
