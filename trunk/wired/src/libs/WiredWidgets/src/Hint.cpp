@@ -13,10 +13,9 @@ Hint::Hint( wxWindow *parent, wxWindowID id, const wxString& label,
 {
   SetBackgroundColour(bgcolour);
   SetForegroundColour(fgcolour);
-  Label = new wxStaticText(this, -1, label, wxPoint(0,0), size, wxALIGN_RIGHT,
+  Label = new wxStaticText(this, -1, label, wxPoint(0, 0), size, wxALIGN_RIGHT,
 			   "");
   Label->SetFont(wxFont(10, wxMODERN, wxNORMAL, wxNORMAL));
-  
   SetLabel(label);
 }
 

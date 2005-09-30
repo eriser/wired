@@ -27,6 +27,7 @@ class HintedFader : public FaderCtrl
 
  protected:
   Hint* Label;
+  wxWindow  *HintParent;
 DECLARE_EVENT_TABLE()
 };
 

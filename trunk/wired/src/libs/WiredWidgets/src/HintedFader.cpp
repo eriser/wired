@@ -1,3 +1,4 @@
+#include <wx/layout.h>
 #include "HintedFader.h"
 
 
@@ -23,11 +24,13 @@ HintedFader::HintedFader(wxWindow *parent, wxWindowID id, wxWindow* hintparent,
   : FaderCtrl(parent, id, img_bg, img_fg, begin_value, end_value, val, 
 	      pos, size)
 {
+
   wxString s;
   s.Printf("%d", val);
-  
+  HintParent = hintparent;
   Label = new Hint(hintparent, -1, s, 
-		   wxPoint( hintpos.x + GetSize().x, hintpos.y + GetSize().y ),
+		   //wxPoint( hintpos.x + GetSize().x, hintpos.y + GetSize().y ),
+		   wxPoint(parent->GetPosition().x + this->GetPosition().x, parent->GetPosition().y + this->GetPosition().y + 75),
 		   wxDefaultSize, *wxWHITE, *wxBLACK);
   Label->Show(false);
   
@@ -36,8 +39,10 @@ HintedFader::HintedFader(wxWindow *parent, wxWindowID id, wxWindow* hintparent,
 HintedFader::~HintedFader()
 {}
 
-void HintedFader::OnLeftDown(wxMouseEvent& WXUNUSED(event))
+ void HintedFader::OnLeftDown(wxMouseEvent& WXUNUSED(event))
 {
+  //Label->SetPosition(GetPosition());
+  
   Label->Show(true);
 }
 

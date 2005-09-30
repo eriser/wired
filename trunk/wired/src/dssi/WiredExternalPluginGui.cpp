@@ -86,7 +86,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   else
     tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(), wxBITMAP_TYPE_PNG); 
   //SetSize(-1, -1, width, -1);
-  cout << "nb potards : " << _GuiControls.size() << " => " << width << "px" << endl;
+  //cout << "nb potards : " << _GuiControls.size() << " => " << width << "px" << endl;
   TpBmp = new wxBitmap(tr_bg);
 
   img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
@@ -100,12 +100,12 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       Faders[i] = new HintedFader(this, i + 1, this, img_bg, img_fg, 0, 100, 50, 
 				  wxPoint(73 + i * interspace + interspace / 2 - 5, 11) ,
 				  wxSize(img_bg->GetWidth(), img_bg->GetHeight()), GetPosition() + 
-				  wxPoint(73 + i * interspace + interspace / 2 - 25, 25));
+				  wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
       Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
 	      wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
       FaderIndex[i + 1] = iter->first;
-      cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
-	   << iter->second.Data.UpperBound << endl;
+      //cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
+// 	   << iter->second.Data.UpperBound << endl;
       Faders[i]->SetValue((int)*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100);
 	
       // gruik bis
@@ -155,11 +155,11 @@ void		WiredDSSIGui::OnFaderMove(wxScrollEvent &e)
 	float max = _GuiControls[FaderIndex[id]].Data.UpperBound;
 	float range = max - min;
 
-	cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
+	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
 	*_GuiControls[FaderIndex[id]].Data.Data = Faders[id - 1]->GetValue() / 100.f * range + min;	  
-	cout << (float)_GuiControls[FaderIndex[id]].Data.LowerBound << " < " <<  
-	  Faders[id - 1]->GetValue() << " < " << (float)_GuiControls[FaderIndex[id]].Data.UpperBound << endl;
-	cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
+	//cout << (float)_GuiControls[FaderIndex[id]].Data.LowerBound << " < " <<  
+	//   Faders[id - 1]->GetValue() << " < " << (float)_GuiControls[FaderIndex[id]].Data.UpperBound << endl;
+	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
       }
 }
 
