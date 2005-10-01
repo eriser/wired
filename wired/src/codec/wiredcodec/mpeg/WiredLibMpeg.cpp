@@ -7,6 +7,15 @@
 
 void	mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen);
 
+WiredLibMpeg			WiredLibMpeg::operator=(const WiredLibMpeg& right)
+{
+	if (this != &right)
+	{
+		handle = right.handle;
+	}
+	return *this;
+}
+
 void WiredLibMpeg::init(list<s_LibInfo> &Info)
 {
 	t_LibInfo		LibInfoMp3;
@@ -14,20 +23,29 @@ void WiredLibMpeg::init(list<s_LibInfo> &Info)
 	t_LibInfo		LibInfoAc3;
 	int				temp;
 
-	cout << "WiredLibMpeg - Init" << endl;
+	cout << "[WIRED_MPEG_CODEC] Initializing" << endl;
 	LibInfoMp3.Extension = MPEG3_EXTENTION;
 	LibInfoMp3.Note = 5;
 	LibInfoMp3.CodecMask = DECODE;
+	LibInfoMp3.fccLenght = 4;
+	LibInfoMp3.fccLabel = "";
+	LibInfoMp3.fccStartPos = 0;
 	LibInfoMp2.Extension = MPEG2_EXTENTION;
 	LibInfoMp2.Note = 5;
 	LibInfoMp2.CodecMask = DECODE;
+	LibInfoMp2.fccLenght = 4;
+	LibInfoMp2.fccLabel = "";
+	LibInfoMp2.fccStartPos = 0;
 	LibInfoAc3.Extension = AC3_EXTENTION;
 	LibInfoAc3.Note = 5;
 	LibInfoAc3.CodecMask = DECODE;
+	LibInfoAc3.fccLenght = 0;
+	LibInfoAc3.fccLabel = "";
+	LibInfoAc3.fccStartPos = 0;
 	handle = dlopen(SO_NAME, RTLD_LAZY);
 	if (!handle)
 	{
-    	cout << "[WIREDLIBMPEG] Can't open " << SO_NAME << endl;
+    	cout << "[WIRED_MPEG_CODEC] Can't open " << SO_NAME << endl;
 		Info.push_back(LibInfoMp3);
 		Info.push_back(LibInfoMp2);
 		Info.push_back(LibInfoAc3);
@@ -57,7 +75,7 @@ void	mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen)
 	}
 }
 
-int WiredLibMpeg::decode(const string &filename, t_Pcm *pcm)
+int WiredLibMpeg::decode(char *filename, t_Pcm *pcm)
 {
 	mpeg3_t		*file;
 	int			stream = 0;
@@ -65,8 +83,9 @@ int WiredLibMpeg::decode(const string &filename, t_Pcm *pcm)
 	char		*path;
 	
 	cout << "[WIREDLIBMPEG] decoding" << endl;
-	path = (char*)malloc(filename.size() * sizeof(char));
-	strcpy(path, filename.c_str());
+//	path = new char(filename.size() * sizeof(char));
+	path = filename;
+//	strcpy(path, filename.c_str());
 	if (mpeg3_check_sig(path) != 1)
 	{
 		cout << "[WIREDLIBMPEG] Bad file format" << endl;
