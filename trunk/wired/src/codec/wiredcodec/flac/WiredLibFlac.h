@@ -33,15 +33,18 @@ class   WiredLibFlac: public WiredApiCodec
   /*struct use for each codec to decode*/
   WiredLibFlac(){std::cout << "[WIRED_FLAC_CODEC] Child Flac created" << std::endl;}
   ~WiredLibFlac(){}
+  WiredLibFlac(const WiredLibFlac& copy){*this = copy;};
+  WiredLibFlac		operator=(const WiredLibFlac& right);
  
-  void*			codecstruct;
+ // void*			codecstruct;
 
   /*init codec and looking for it formal*/
   void		init(list<s_LibInfo> &Info);
 
   /*encode and decode functions*/
   int		encode(float** pcm);
-  int		decode(const string& filename, t_Pcm *pcm);
+//  int		decode(const string& filename, t_Pcm *pcm);
+  int		decode(char *filename, t_Pcm *pcm);
  private:
   void			*handle;
 };

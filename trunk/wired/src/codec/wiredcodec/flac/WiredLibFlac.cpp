@@ -1,5 +1,13 @@
 #include	"WiredLibFlac.h"
 
+WiredLibFlac			WiredLibFlac::operator=(const WiredLibFlac& right)
+{
+	if (this != &right)
+	{
+		handle = right.handle;
+	}
+	return *this;
+}
 
 static bool die_(const char *msg)
 {
@@ -242,9 +250,9 @@ bool test_decoders(t_Pcm *OriginalPcm)
   return true;
 }
 
-int WiredLibFlac::decode(const string &filename, t_Pcm *pcm)
+int WiredLibFlac::decode(char *filename, t_Pcm *pcm)
 {
-  flacfilename_ = filename.c_str();
+  flacfilename_ = filename;
   if (!test_decoders(pcm))
     return 0;
   else       
