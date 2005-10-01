@@ -14,6 +14,10 @@ WiredCodec::WiredCodec()
 
 WiredCodec::~WiredCodec()
 {
+	list<t_WLib>::const_iterator	iter;
+	
+	for (iter = _WLib.begin(); iter != _WLib.end(); iter++)
+		dlclose((*iter).handle);
 }
 
 void WiredCodec::DumpCodec()
@@ -21,62 +25,36 @@ void WiredCodec::DumpCodec()
 	list<t_WLib>::iterator	i;
 	list<t_LibInfo>::iterator	j;
 
-  for (i = _WLib.begin(); i != _WLib.end(); i++)
+	for (i = _WLib.begin(); i != _WLib.end(); i++)
     {
-      cout << "ID bebe:" << (*i).Codec->GetUniqueId() << endl;
-      cout << "\tAdresse codec:" << (*i).Codec << endl;
-      for (j = (*i).Info.begin(); j != (*i).Info.end(); j++)
-	{
-	  cout << "\t-----" << endl;
-	  cout << "\tCodecMask:" << (*j).CodecMask << endl;
-	  cout << "\tExtension:" << (*j).Extension << endl;
-	  cout << "\tNote:" << (*j).Note << endl;
-	  cout << "\tFccStartPos:" << (*j).fccStartPos << endl;
-	  cout << "\tfccLenght:" << (*j).fccLenght << endl;
-	  cout << "\tFccLabel:" <<  (*j).fccLabel << endl;
-	}
+    	cout << "ID bebe:" << (*i).Codec->GetUniqueId() << endl;
+      	cout << "\tAdresse codec:" << (*i).Codec << endl;
+      	for (j = (*i).Info.begin(); j != (*i).Info.end(); j++)
+		{
+	  		cout << "\t-----" << endl;
+	  		cout << "\tCodecMask:" << (*j).CodecMask << endl;
+	  		cout << "\tExtension:" << (*j).Extension << endl;
+	  		cout << "\tNote:" << (*j).Note << endl;
+		}
     }
 }
 
 bool WiredCodec::CanDecode(const string &filename)
 {
-	int									fd;
 	list<t_WLib>::const_iterator		iterTWLib;
-	list<t_LibInfo>::const_iterator		iterTLibInfo;
-	char								*buf;
-	bool								valRet = false;
-	int			        				ret;
+	bool								result = false;
 
 	WiredCodecMutex.Lock();
-//	if ((fd = open(filename.c_str(),  O_RDONLY)) == -1)
-//	{
-//		cout << "[WIREDCODEC] Can't open file" << endl;
-//    	return false;
-//	}
-//	for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
-//    	for (iterTLibInfo = (*iterTWLib).Info.begin(); iterTLibInfo != (*iterTWLib).Info.end(); iterTLibInfo++)
-//	    {
-//			cout << "extension == " << (*iterTLibInfo).Extension.c_str() << endl;
-//			if ((*iterTLibInfo).fccLenght <= 0)
-//				continue;
-//			buf = new char((*iterTLibInfo).fccLenght * sizeof(char) + 1);
-//			buf[(*iterTLibInfo).fccLenght * sizeof(char)] = 0;
-//			if (ret = (read(fd, buf, (*iterTLibInfo).fccLenght)))
-//				if (strcmp(buf, (*iterTLibInfo).fccLabel.c_str()) == 0)
-//			    {
-//	      			codecToUse[filename] = (*iterTWLib).Codec->GetUniqueId();
-//					valRet = true;
-//					delete buf;
-//					break;
-//			    }
-//			delete buf;
-//      	}
-//	close(fd);
-//	cout << "blob2: " << valRet << endl;
-	codecToUse[filename] = 0;
+	for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
+	{
+		if ((*iterTWLib).Codec->canDecode((char*)filename.c_str()) == true)
+		{
+			codecToUse[filename] = (*iterTWLib).Codec->GetUniqueId();
+			result = true;
+		}
+	}
 	WiredCodecMutex.Unlock();
-//	return valRet;
-	return true;
+	return result;
 }
 
 void WiredCodec::Init()
@@ -157,29 +135,22 @@ int WiredCodec::Encode(float **pcm, string OutExtension)
 t_Pcm WiredCodec::Decode(const string &filename)
 {
 	list<t_WLib>::const_iterator		iterTWLib;
-//  list<t_LibInfo>::const_iterator	iterTLibInfo;
 	t_Pcm								mypcm;
 	unsigned long						id;
 
 	WiredCodecMutex.Lock();
-	cout << "filename: " << filename.c_str() << endl;
 	if (codecToUse.find(filename) != codecToUse.end())
     	id = codecToUse[filename];
 	else
     {
-    	cout << "ici" << endl;
     	mypcm.pcm = NULL;
     	WiredCodecMutex.Unlock();
 	    return mypcm;
     }
-    cout << "ici1" << endl;
 	for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
 	{
-	    cout << "GetUniqueID: " << (*iterTWLib).Codec->GetUniqueId() << endl;
     	if ((*iterTWLib).Codec->GetUniqueId() == id)
 		{
-			cout << "ici3" << endl;
-      		DumpCodec();
       		char *path = new char(filename.size() * sizeof(char));
 			strcpy(path, filename.c_str());
 			(*iterTWLib).Codec->decode(path, &mypcm);
@@ -237,16 +208,19 @@ void WiredCodec::WLibLoader(const string& filename)
 	WiredApiCodec *NewLib = construct();
 	NewLib->init(Infos);
 	NewLib->SetuniqueId(_CurrentUniqueID++);
-	// Tester la note egalement
 	for (iter = Infos.begin(); iter != Infos.end(); iter++)
     	if ((*iter).CodecMask > EXIST)
 	    {
+	    	WLibTemp.handle = handle;
 			WLibTemp.Info = Infos;
 			WLibTemp.Codec = NewLib;
 			_WLib.push_back(WLibTemp);
 			shouldDeleteNewLib = false;
 			break;
 	    }
-	if (shouldDeleteNewLib == true) delete NewLib;
-	dlclose(handle);
+	if (shouldDeleteNewLib == true)
+	{
+		delete NewLib;
+		dlclose(handle);
+	}
 }
