@@ -1,12 +1,11 @@
 #ifndef __WiredCodec_H__
 #define __WiredCodec_H__
 
+#include <wx/thread.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <dirent.h>
-
 #include <dlfcn.h>
-
 #include <vector>
 #include <list>
 #include <map>
@@ -16,60 +15,39 @@
 
 using namespace std;
 
-#define CODEC_PATH	"/usr/local/lib"
-
+#define CODEC_PATH		"/usr/local/lib"
 #define	WLIBCONSTRUCT	"WiredCodecConstruct"
-
-#define BUF_SIZE	4049
 
 class			WiredCodec
 {
  public:
   WiredCodec();
-  WiredCodec(const string& DataPath);
   ~WiredCodec();
 
-  void			Init();
-  t_Pcm      		Decode(const string &filename);
-  int			Encode(float **pcm, string OutExtension);
+  void						Init();														/* Inits and loads codecs */
+  t_Pcm      				Decode(const string &filename);								/* Decodes file */
+  int						Encode(float **pcm, string OutExtension);					/* Encodes stream */
 
-  /*Return a list of extension readable by all codecs*/
-  list<string>		GetExtension();
-
-  /*look if it can decode the file*/
-  bool			CanDecode(const string &filename);
+  list<string>				GetExtension();												/* Returns a list of extensions readable by all codecs */
+  bool						CanDecode(const string &filename);							/* Proper codec installed ? */
 
  private:
-
-  /*look for .so*/
-  void			InitWLib();
-
-  /*load all .so*/
-  void			WLoadLib();
-
-  /*load .so*/
-  void			WLibLoader(const string& filename);
-
-  /*check extension to don t have same occurence two time*/
-  int			CheckExtension(const string& str);
-
-  /*list of extension*/
-  list<string>	_ExtList;
-
-  /*Instance of codec found*/
-  list<t_WLib>		_WLib;
-
-  /*path of codecs*/
-  string		_WiredPath;
-
-  /*list of codec.so*/
-  vector<string>	_WiredSo;
-
-  t_WLib WiredCodec::FindBestCodec(string extension);
-
-  std::map<string, int>		codecToUse;
+  list<t_WLib>				_WLib;														/* Instance of codec found */
+  string					_WiredPath;													/* path of codecs */
+  list<string>				_WiredSo;													/* list of codec.so */
+  std::map<string, int>		codecToUse;													/* Codec to use :) */
+  unsigned long				_CurrentUniqueID;											/* */
+ 
+  void						InitWLib();													/* look for .so */
+  void						WLoadLib();													/* load all .so */
+  void						WLibLoader(const string& filename);							/* load .so */
+  int						CheckExtension(const string& str, const list<string>& ExtList);	/* check same occurence extensions */
+  t_WLib					WiredCodec::FindBestCodec(string extension);				/* Not implemented yet */
+  void						DumpCodec();
 };
 
 typedef WiredApiCodec* (*WiredCodecConstruct)();
+
+extern wxMutex				WiredCodecMutex;
 
 #endif
