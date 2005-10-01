@@ -61,19 +61,20 @@ class   WiredApiCodec
   ~WiredApiCodec(){};
 
   /*struct use for each codec to decode*/
-  void*			codecstruct;
+ // void*			codecstruct;
 
   /*init codec and looking for it formal*/
   virtual void		init(list<s_LibInfo> &Info) = 0;
 
   /*encode and decode functions*/
   virtual int		encode(float** pcm) = 0;
-  virtual int		decode(const string &filename, t_Pcm *pcm) = 0;
+//  virtual int		decode(const string &filename, t_Pcm *pcm) = 0;
+  virtual int		decode(char *filename, t_Pcm *pcm) = 0;
 
   void			SetuniqueId(unsigned long Id){_UniqueId = Id;}
   unsigned long		GetUniqueId(){return _UniqueId;}
  private:
-  unsigned long		_UniqueId;
+   unsigned long		_UniqueId;
   /*Return 1 if the codec can decode this file*/
 };
 
@@ -82,7 +83,7 @@ typedef struct		s_WLib
 {
   list<t_LibInfo>      	Info;
   WiredApiCodec*       	Codec;
-  t_Pcm			*pcm;
+//  t_Pcm			*pcm;
 }			t_WLib;
 
 #endif
