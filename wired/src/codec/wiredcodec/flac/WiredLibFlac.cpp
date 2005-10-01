@@ -15,7 +15,7 @@ WiredLibFlac			WiredLibFlac::operator=(const WiredLibFlac& right)
 
 static bool die_(const char *msg)
 {
-  cout << "[FLAC] ERROR: " <<  msg << endl;
+  cout << "[WIRED_FLAC_CODEC] ERROR: " <<  msg << endl;
   return false;
 }
 
@@ -62,8 +62,8 @@ static void free_metadata_blocks_()
 	if(
 		(frame->header.number_type == ::FLAC__FRAME_NUMBER_TYPE_FRAME_NUMBER && frame->header.number.frame_number == 0) ||
 		(frame->header.number_type == ::FLAC__FRAME_NUMBER_TYPE_SAMPLE_NUMBER && frame->header.number.sample_number == 0)
-	) {
-		printf("content... ");
+ 	) {
+		printf("[WIRED_FLAC_CODEC] content... ");
 		fflush(stdout);
 	}
 	
@@ -80,12 +80,12 @@ void DecoderCommon::common_metadata_callback_(const ::FLAC__StreamMetadata *meta
 
 	
 	if(current_metadata_number_ >= num_expected_) {
-		(void)die_("got more metadata blocks than expected");
+		(void)die_("[WIRED_FLAC_CODEC] got more metadata blocks than expected");
 		error_occurred_ = true;
 	}
 	else {
 		if(!::FLAC__metadata_object_is_equal(expected_metadata_sequence_[current_metadata_number_], metadata)) {
-			(void)die_("metadata block mismatch");
+			(void)die_("[WIRED_FLAC_CODEC] metadata block mismatch");
 			error_occurred_ = true;
 		}
 	}
@@ -96,7 +96,7 @@ void DecoderCommon::common_metadata_callback_(const ::FLAC__StreamMetadata *meta
 void DecoderCommon::common_error_callback_(::FLAC__StreamDecoderErrorStatus status)
 {
 	if(!ignore_errors_) {
-		printf("ERROR: got error callback: err = %u (%s)\n", (unsigned)status, ::FLAC__StreamDecoderErrorStatusString[status]);
+		printf("[WIRED_FLAC_CODEC] ERROR: got error callback: err = %u (%s)\n", (unsigned)status, ::FLAC__StreamDecoderErrorStatusString[status]);
 		error_occurred_ = true;
 	}
 }
@@ -108,21 +108,15 @@ void DecoderCommon::common_error_callback_(::FLAC__StreamDecoderErrorStatus stat
   if (pass == 0)
     {
       index_pcm = 0;
-      //      cout << index_pcm << " et " << total_samples << " * " << get_channels() << " = " << (total_samples * get_channels())<< endl;
-      pcm = new FLAC__int32[total_samples * get_channels() +1];
+      pcm = new FLAC__int32[total_samples * get_channels()];
       pass = 1;
     }
 
   k = 0;
   for( j = 0; j < frame->header.blocksize; j++ )
     for( i = 0; i < get_channels(); i++ )
-      {
-	FLAC__int32 sample;
+      pcm[index_pcm++] = buffer[i][j];
 
-	sample = buffer[i][j];
-	pcm[index_pcm++] = sample;
-      }
-  
   return (FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE);
 }
 
@@ -141,9 +135,9 @@ bool FileDecoder::die(const char *msg) const
   State state = get_state();
   
   if(msg)
-    cout << "[FLAC] FAILED, " <<  msg << endl;
+    cout << "[WIRED_FLAC_CODEC] FAILED, " <<  msg << endl;
   else
-    cout <<"[FLAC] FAILED";
+    cout <<"[WIRED_FLAC_CODEC] FAILED";
   
   printf(", state = %u (%s)\n", (unsigned)((::FLAC__FileDecoderState)state), state.as_cstring());
   if(state == ::FLAC__FILE_DECODER_SEEKABLE_STREAM_DECODER_ERROR) {
@@ -162,26 +156,26 @@ return false;
 bool FileDecoder::test_respond()
 {
   if(!set_filename(flacfilename_)) {
-    cout << "[FLAC] FAILED at set_filename()" << endl;
+    cout << "[WIRED_FLAC_CODEC] FAILED at set_filename()" << endl;
     return false;
   }
   
   if(!set_md5_checking(true)) {
-    cout << "{FLAC} FAILED at set_md5_checking()" << endl;
+    cout << "[WIRED_FLAC_CODEC] FAILED at set_md5_checking()" << endl;
     return false;
   }
   
-  cout << "[FLAC] init()... " << endl;
+  cout << "[WIRED_FLAC_CODEC] init()... " << endl;
   if(init() != ::FLAC__FILE_DECODER_OK)
  	  return die();
   
   current_metadata_number_ = 0;
   
-  cout << "[FLAC] process_until_end_of_file()... " ;
+  cout << "[WIRED_FLAC_CODEC] process_until_end_of_file()... " ;
   
   if(!process_until_end_of_file()) {
     State state = get_state();
-    cout << "[FLAC] FAILED, returned false, state = " << (unsigned)((::FLAC__FileDecoderState)state)  <<  "(" <<  state.as_cstring() << ")" << endl;
+    cout << "[WIRED_FLAC_CODEC] FAILED, returned false, state = " << (unsigned)((::FLAC__FileDecoderState)state)  <<  "(" <<  state.as_cstring() << ")" << endl;
     return false;
   }
   cout << "" << endl;
@@ -245,27 +239,27 @@ bool test_decoders(t_Pcm *OriginalPcm)
   num_expected_ = 0;
   expected_metadata_sequence_[num_expected_++] = &streaminfo_;
   
-  cout << "[FLAC] allocating decoder instance... " << endl;
+  cout << "[WIRED_FLAC_CODEC] allocating decoder instance... " << endl;
   decoder = new FileDecoder();
   if(0 == decoder) {
-    cout << "[FLAC] FAILED, new returned NULL" << endl;
+    cout << "[WIRED_FLAC_CODEC] FAILED, new returned NULL" << endl;
     return false;
   }
   if(!decoder->is_valid()) {
-    cout << "[FLAC] FAILED, returned false" << endl;
+    cout << "[WIRED_FLAC_CODEC] FAILED, returned false" << endl;
     return false;
   }
   
   decoder->test_respond();
 
-  OriginalPcm->pcm = decoder->pcm;
-  OriginalPcm->PType = Int16;
+  OriginalPcm->pcm = (float*)decoder->pcm;
+  OriginalPcm->PType = Float32;
   OriginalPcm->Channels = decoder->get_channels();
   OriginalPcm->TotalSample = decoder->total_samples;
   OriginalPcm->SampleRate = decoder->get_sample_rate();
 
   delete decoder;
-  cout << "[FLAC] File decoded" << endl;
+  cout << "[WIRED_FLAC_CODEC] File decoded" << endl;
   
   free_metadata_blocks_();
   return true;
