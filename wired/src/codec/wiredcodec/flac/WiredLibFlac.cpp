@@ -1,3 +1,7 @@
+#include	<unistd.h>
+#include	<sys/types.h>
+#include	<sys/stat.h>
+#include	<fcntl.h>
 #include	"WiredLibFlac.h"
 
 WiredLibFlac			WiredLibFlac::operator=(const WiredLibFlac& right)
@@ -185,7 +189,6 @@ bool FileDecoder::test_respond()
   return true;
 }
 
-
 void WiredLibFlac::init(list<s_LibInfo> &Info)
 {
   t_LibInfo		LibInfo;
@@ -194,9 +197,6 @@ void WiredLibFlac::init(list<s_LibInfo> &Info)
   LibInfo.CodecMask = EXIST;
   LibInfo.Extension = "flac\tFree Lossless Audio Codec (*.flac)";
   LibInfo.Note = 5;
-  LibInfo.fccStartPos = 0;
-  LibInfo.fccLenght = 4;
-  LibInfo.fccLabel = "fLaC";
   handle = dlopen(SO_NAME, RTLD_LAZY);
   if (!handle)
     {
@@ -208,6 +208,27 @@ void WiredLibFlac::init(list<s_LibInfo> &Info)
   Info.push_back(LibInfo);
 
   dlclose(handle);
+}
+
+bool WiredLibFlac::canDecode(const char* path)
+{
+	int		fd;
+	char	*buf;
+
+	if ((fd = open(path, O_RDONLY)) == -1)
+    	return false;
+    buf = new char((FLAC_FCC_LENGHT + 1) * sizeof(char));
+    buf[FLAC_FCC_LENGHT] = 0;
+    if (read(fd, buf, FLAC_FCC_LENGHT) == FLAC_FCC_LENGHT)
+    {
+    	if (strcmp(buf, FLAC_FCC_LABEL) == 0)
+    	{
+    		delete buf;
+    		return true;	
+    	}
+    }
+	delete buf;
+	return false;
 }
 
 int WiredLibFlac::encode(float** pcm)
@@ -250,9 +271,9 @@ bool test_decoders(t_Pcm *OriginalPcm)
   return true;
 }
 
-int WiredLibFlac::decode(char *filename, t_Pcm *pcm)
+int WiredLibFlac::decode(const char *path, t_Pcm *pcm)
 {
-  flacfilename_ = filename;
+  flacfilename_ = path;
   if (!test_decoders(pcm))
     return 0;
   else       
