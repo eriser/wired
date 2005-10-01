@@ -18,20 +18,10 @@ using namespace std;
 
 typedef struct		s_LibInfo
 {
-  /*what can do the lib*/
-  int			CodecMask;
-  /*extension readable by the lib*/
-  string	       	Extension;
-  /*Note to determine if that codec is the best for this extension*/
-  short			Note;
-  /*where it has to read the start of the extension format*/
-  int			fccStartPos;
-  /*string format's lenght*/
-  int			fccLenght;
-  /*format's name*/
-  string		fccLabel;
-
-}			t_LibInfo;
+	int			CodecMask;					/* Codec capabilities */
+	string	    Extension;					/* Hanfled extension */
+    short		Note;						/* Note to determine if that codec is the best suited for this extension */
+}					t_LibInfo;
 
 enum PcmType
   {
@@ -42,17 +32,14 @@ enum PcmType
 	Float32
   };
 
-
-typedef struct   s_Pcm
+typedef struct  s_Pcm
 {
-  void			*pcm;
-  PcmType		PType;
-  int			TotalSample;
-  int			SampleRate;
-  int			Channels;
-}		 t_Pcm;
-
-
+  void			*pcm;						/* audio streams */
+  PcmType		PType;						/* Encoded format */
+  int			TotalSample;				/* Total number of samples */
+  int			SampleRate;					/* Samplerate */
+  int			Channels;					/* Number of channels */
+}		 		t_Pcm;
 
 class   WiredApiCodec
 {
@@ -60,31 +47,24 @@ class   WiredApiCodec
   WiredApiCodec(){};
   ~WiredApiCodec(){};
 
-  /*struct use for each codec to decode*/
- // void*			codecstruct;
-
-  /*init codec and looking for it formal*/
-  virtual void		init(list<s_LibInfo> &Info) = 0;
-
-  /*encode and decode functions*/
-  virtual int		encode(float** pcm) = 0;
-//  virtual int		decode(const string &filename, t_Pcm *pcm) = 0;
-  virtual int		decode(char *filename, t_Pcm *pcm) = 0;
-
-  void			SetuniqueId(unsigned long Id){_UniqueId = Id;}
-  unsigned long		GetUniqueId(){return _UniqueId;}
+  virtual void		init(list<s_LibInfo> &Info) = 0;			/* Inits codec and fills infos */
+  virtual int		encode(float** pcm) = 0;					/* Encode function */
+  virtual int		decode(const char *path, t_Pcm *pcm) = 0;	/* Decode function */
+  virtual bool		canDecode(const char* path) = 0;			/* True if codec can decode file */
+  void				SetuniqueId(unsigned long Id)				/* Sets unique Id */
+  					{_UniqueId = Id;}
+  unsigned long		GetUniqueId()								/* Returns unique Id */
+  					{return _UniqueId;}
+  					
  private:
-   unsigned long		_UniqueId;
-  /*Return 1 if the codec can decode this file*/
+   unsigned long		_UniqueId;								/* Used to identify codec */
 };
 
-
-typedef struct		s_WLib
+typedef struct			s_WLib
 {
-  list<t_LibInfo>      	Info;
-  WiredApiCodec*       	Codec;
-//  t_Pcm			*pcm;
-}			t_WLib;
+	list<t_LibInfo>     Info;
+	WiredApiCodec       *Codec;
+	void				*handle;
+}						t_WLib;
 
 #endif
-
