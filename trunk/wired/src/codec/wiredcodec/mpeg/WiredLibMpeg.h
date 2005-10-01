@@ -11,7 +11,6 @@
 #define		AC3_EXTENTION	"ac3\tAudio coding 3 (*.ac3)"
 #define		SO_NAME			"libmpeg3.so"
 
-//static const char *mpegFileName = "";
 
 bool test_decoders(t_Pcm *pcmOriginalPcm);
 
@@ -19,21 +18,23 @@ class   WiredLibMpeg: public WiredApiCodec
 {
  public:
 
-  /*struct use for each codec to decode*/
   WiredLibMpeg(){std::cout << "[WIRED_MPEG_CODEC] Mpeg child created" << std::endl;}
   ~WiredLibMpeg(){}
   WiredLibMpeg(const WiredLibMpeg& copy){*this = copy;};
+
+  /* Inits codec */
+  void				init(list<s_LibInfo> &Info);
+
+  /* Encode and decode methodes */
+  int				encode(float** pcm);
+  int				decode(const char *path, t_Pcm *pcm);
+  
+  /* Checks format */
+  bool				canDecode(const char* path);
+
+  /* Operators */
   WiredLibMpeg		operator=(const WiredLibMpeg& right);
- 
- // void*			codecstruct;
-
-  /*init codec and looking for it formal*/
-  void		init(list<s_LibInfo> &Info);
-
-  /*encode and decode functions*/
-  int		encode(float** pcm);
-//  int		decode(const string &filename, t_Pcm *pcm);
-  int		decode(char *filename, t_Pcm *pcm);
+  
  private:
   void			*handle;
 };

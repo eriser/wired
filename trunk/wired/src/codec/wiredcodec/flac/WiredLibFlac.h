@@ -9,7 +9,9 @@
 #include	<FLAC++/all.h>
 #include	<FLAC/assert.h>
 
-#define	SO_NAME	"libFLAC++.so"
+#define		SO_NAME				"libFLAC++.so"
+#define		FLAC_FCC_LENGHT		4
+#define		FLAC_FCC_LABEL		"fLaC"
 
 
 #ifdef _MSC_VER
@@ -30,21 +32,23 @@ class   WiredLibFlac: public WiredApiCodec
 {
  public:
 
-  /*struct use for each codec to decode*/
   WiredLibFlac(){std::cout << "[WIRED_FLAC_CODEC] Child Flac created" << std::endl;}
   ~WiredLibFlac(){}
   WiredLibFlac(const WiredLibFlac& copy){*this = copy;};
+
+  /* Inits codec */
+  void				init(list<s_LibInfo> &Info);
+
+  /* Encode and decode methodes */
+  int				encode(float** pcm);
+  int				decode(const char *path, t_Pcm *pcm);
+  
+  /* Checks format */
+  bool				canDecode(const char* path);
+
+  /* Operators */
   WiredLibFlac		operator=(const WiredLibFlac& right);
- 
- // void*			codecstruct;
-
-  /*init codec and looking for it formal*/
-  void		init(list<s_LibInfo> &Info);
-
-  /*encode and decode functions*/
-  int		encode(float** pcm);
-//  int		decode(const string& filename, t_Pcm *pcm);
-  int		decode(char *filename, t_Pcm *pcm);
+  
  private:
   void			*handle;
 };

@@ -23,25 +23,15 @@ void WiredLibMpeg::init(list<s_LibInfo> &Info)
 	t_LibInfo		LibInfoAc3;
 	int				temp;
 
-	cout << "[WIRED_MPEG_CODEC] Initializing" << endl;
 	LibInfoMp3.Extension = MPEG3_EXTENTION;
 	LibInfoMp3.Note = 5;
 	LibInfoMp3.CodecMask = DECODE;
-	LibInfoMp3.fccLenght = 4;
-	LibInfoMp3.fccLabel = "";
-	LibInfoMp3.fccStartPos = 0;
 	LibInfoMp2.Extension = MPEG2_EXTENTION;
 	LibInfoMp2.Note = 5;
 	LibInfoMp2.CodecMask = DECODE;
-	LibInfoMp2.fccLenght = 4;
-	LibInfoMp2.fccLabel = "";
-	LibInfoMp2.fccStartPos = 0;
 	LibInfoAc3.Extension = AC3_EXTENTION;
 	LibInfoAc3.Note = 5;
 	LibInfoAc3.CodecMask = DECODE;
-	LibInfoAc3.fccLenght = 0;
-	LibInfoAc3.fccLabel = "";
-	LibInfoAc3.fccStartPos = 0;
 	handle = dlopen(SO_NAME, RTLD_LAZY);
 	if (!handle)
 	{
@@ -62,6 +52,13 @@ int WiredLibMpeg::encode(float** pcm)
 	return 1;
 }
 
+bool	WiredLibMpeg::canDecode(const char* path)
+{
+	if (mpeg3_check_sig((char*)path) != 1)
+		return false;
+	return true;
+}
+
 void	mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen)
 {
 	int cpt;
@@ -75,23 +72,19 @@ void	mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen)
 	}
 }
 
-int WiredLibMpeg::decode(char *filename, t_Pcm *pcm)
+int WiredLibMpeg::decode(const char *path, t_Pcm *pcm)
 {
 	mpeg3_t		*file;
 	int			stream = 0;
 	float		*output_f;
-	char		*path;
 	
 	cout << "[WIREDLIBMPEG] decoding" << endl;
-//	path = new char(filename.size() * sizeof(char));
-	path = filename;
-//	strcpy(path, filename.c_str());
-	if (mpeg3_check_sig(path) != 1)
+	if (mpeg3_check_sig((char*)path) != 1)
 	{
 		cout << "[WIREDLIBMPEG] Bad file format" << endl;
 		return 0;
 	}
-	file = mpeg3_open(path);
+	file = mpeg3_open((char*)path);
 	if (file == NULL)
 	{
 		cout << "[WIREDLIBMPEG] Can't open file" << endl;
