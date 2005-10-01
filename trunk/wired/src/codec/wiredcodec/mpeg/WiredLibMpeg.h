@@ -22,15 +22,18 @@ class   WiredLibMpeg: public WiredApiCodec
   /*struct use for each codec to decode*/
   WiredLibMpeg(){std::cout << "[WIRED_MPEG_CODEC] Mpeg child created" << std::endl;}
   ~WiredLibMpeg(){}
+  WiredLibMpeg(const WiredLibMpeg& copy){*this = copy;};
+  WiredLibMpeg		operator=(const WiredLibMpeg& right);
  
-  void*			codecstruct;
+ // void*			codecstruct;
 
   /*init codec and looking for it formal*/
   void		init(list<s_LibInfo> &Info);
 
   /*encode and decode functions*/
   int		encode(float** pcm);
-  int		decode(const string &filename, t_Pcm *pcm);
+//  int		decode(const string &filename, t_Pcm *pcm);
+  int		decode(char *filename, t_Pcm *pcm);
  private:
   void			*handle;
 };
