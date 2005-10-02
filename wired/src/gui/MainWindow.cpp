@@ -482,6 +482,7 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
       if (!NewSession())
 	{
 	  dlg->Destroy();
+	  delete dlg;
 	  return;
 	}
 	//	cout << "[MAINWIN]  Closing old session 0.1" << endl;
@@ -511,6 +512,7 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
   dlg->Destroy();
+  delete dlg;
 }
 
 void					MainWindow::OnSave(wxCommandEvent &event)
@@ -563,6 +565,7 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
   dlg->Destroy();
+  delete dlg;
 }
 
 void					MainWindow::ApplyCodec(string& FileToDecode)
@@ -616,7 +619,7 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 				FileToDecode = DestFileName;
 				sf_close(Result);
 			}
-			delete Res.pcm;
+			delete (float*)Res.pcm;
 		}
 	}
 }
@@ -632,7 +635,7 @@ bool					MainWindow::ConvertSamplerate(string& FileName, bool &HasChangedPath)
 	Info.Format = Audio->UserData->SampleFormat;
 	Info.SamplesPerBuffer = Audio->SamplesPerBuffer;
 	CheckSampleRate.Init(&Info);
-    HasConvertedFile = CheckSampleRate.OpenFile(FileName);
+    HasConvertedFile = CheckSampleRate.OpenFile(FileName, this);
 	if (HasConvertedFile == wxID_CANCEL)
 		return false;
 	else if (HasConvertedFile == wxID_NO)
@@ -707,11 +710,11 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 							    this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
 							    | wxPD_REMAINING_TIME);
 	  Progress->Update(1);
-	  cImportWaveAction* action = new cImportWaveAction(selfile, true);
+	  //cImportWaveAction* action = new cImportWaveAction(selfile, true);
   	  Progress->Update(20);
-	  action->Do();
+	  //action->Do();
 	  Progress->Update(80);
-	  CreateUndoRedoMenus(EditMenu);
+	  //CreateUndoRedoMenus(EditMenu);
 	  Progress->Update(99);
 	  delete Progress;
 	}
@@ -721,6 +724,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       dlg->Destroy();  
       cout << "[MAINWIN] User cancels open dialog" << endl;
     }
+        //SeqMutex.Unlock();
 }
 
 void					MainWindow::OnImportMIDI(wxCommandEvent &event)
