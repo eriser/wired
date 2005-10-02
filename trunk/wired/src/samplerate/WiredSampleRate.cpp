@@ -45,9 +45,9 @@ void					WiredSampleRate::Init(t_samplerate_info *Info)
 		
 }
 
-int						WiredSampleRate::OpenFile(string& Path)
+int						WiredSampleRate::OpenFile(string& Path, wxWindow* parent)
 {
-	//SampleRateMutex.Lock();
+	SampleRateMutex.Lock();
 	SNDFILE				*Result;
 	SF_INFO				Info;
 	int					Res = wxID_NO;
@@ -58,15 +58,17 @@ int						WiredSampleRate::OpenFile(string& Path)
 	Info.format = 0;
 	if ((Result = sf_open(Path.c_str(), SFM_READ, &Info)) != NULL)
 	{
-//		cout << "succesfully opened file" << Path.c_str() << endl;
+		//cout << "succesfully opened file" << Path.c_str() << endl;
 		SameFormat = IsSameFormat(Info.format, _ApplicationSettings.Format);
 		SameSampleRate = (int)Info.samplerate == (int)_ApplicationSettings.SampleRate ? true : false;
 		if (!SameFormat || !SameSampleRate)
 		{
-//			cout << "Successfully opend file, info : format == " << Info.format << ", samplerate == " << Info.samplerate 
-//					<< ", NbFrames == " << Info.frames << "sections == " << Info.sections << ", Seekable == " << Info.seekable << endl;
-			string			strFormats;
-			ostringstream	oss;
+			//cout << "Successfully opend file, info : format == " << Info.format << ", samplerate == " << Info.samplerate 
+			//		<< ", NbFrames == " << Info.frames << ", sections == " << Info.sections << ", Seekable == " << Info.seekable << endl;
+			wxString			strFormats;
+			char				buf[1024];
+			int					res;
+//			ostringstream	oss;
 			
 			strFormats = "Would you like to convert your file from ";
 			if (!SameFormat)
@@ -79,32 +81,41 @@ int						WiredSampleRate::OpenFile(string& Path)
 			{
 				if (!SameFormat)
 					strFormats += " and  ";
-				strFormats += "samplerate from ";
-				oss << Info.samplerate << string(" Hz to ");
-				oss << _ApplicationSettings.SampleRate ;
-				oss << string(" Hz");
+				strFormats += "samplerate ";
+				sprintf(buf, "%ld Hz to %ld Hz ?", Info.samplerate, _ApplicationSettings.SampleRate);
+//				oss << Info.samplerate << string(" Hz to ");
+//				oss << _ApplicationSettings.SampleRate ;
+//				oss << string(" Hz");
 			}
-			strFormats += oss.str();
-			strFormats += " ?";
-			wxMessageDialog msg(NULL, strFormats, "File format mismatch", 
+			strFormats += buf;
+//			strFormats += oss.str();
+//			strFormats += " ?";
+//			oss.clear();
+			wxMessageDialog msg(parent, strFormats, "File format mismatch", 
 								wxYES_NO | wxCANCEL  | wxICON_QUESTION | wxCENTRE);
-			int res = msg.ShowModal();
+			cout << "5  strformat == " << strFormats.c_str() << endl;
+			res = msg.ShowModal();
+			cout << "6  strformat == " << strFormats.c_str() << endl;
 			
+			msg.Destroy();
         	if (res == wxID_YES)
         	{
+        		//SampleRateMutex.Lock();
         		if (Convert(&Info, Path, Result))
 	        		Res = wxID_YES;
 	        	else
 	        		Res = wxID_NO;
 	        		//Res = wxID_CANCEL;
+	        		//SampleRateMutex.Unlock();
         	}
         	else if (res  == wxID_CANCEL)
         		Res = wxID_CANCEL;
-			msg.Destroy();
 		}
 		sf_close(Result);
 	}
+   	cout << "converting samplerate end" << endl;
 	//SampleRateMutex.Unlock();
+	SampleRateMutex.Unlock();
 	return Res;
 }
 
@@ -371,10 +382,15 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigne
 
 float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite)
 {
+	float				*Output[2];
 	SRC_DATA			Data;
 	unsigned int		CurrentChannel;
 	int					res = 0;
 
+
+	SampleRateMutex.Lock();
+	Output[0] = new float[NbSamples];
+	Output[1] = new float[NbSamples];
 	for (CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
 	{
 		bzero(_ChannelBuffer[CurrentChannel], NbSamples);	
