@@ -135,7 +135,6 @@ int WiredCodec::Encode(float **pcm, string OutExtension)
 unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned long length)
 {
 	list<t_WLib>::const_iterator		iterTWLib;
-	t_Pcm								mypcm;
 	unsigned long						id;
 	unsigned long						retLenght = 0;
 
@@ -144,7 +143,7 @@ unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned lo
     	id = codecToUse[filename];
 	else
     {
-    	mypcm.pcm = NULL;
+    	pcm->pcm = NULL;
     	WiredCodecMutex.Unlock();
 	    return retLenght;
     }
@@ -154,7 +153,7 @@ unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned lo
 		{
       		char *path = new char(filename.size() * sizeof(char));
 			strcpy(path, filename.c_str());
-			retLenght = (*iterTWLib).Codec->decode(path, &mypcm, length);
+			retLenght = (*iterTWLib).Codec->decode(path, pcm, length);
 			break;
 		}
 	}

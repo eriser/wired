@@ -18,6 +18,7 @@
 #define		MPEG3_AUDIO_SAMPLES		"mpeg3_audio_samples"
 #define		MPEG3_SAMPLE_RATE		"mpeg3_sample_rate"
 #define		MPEG3_READ_AUDIO		"mpeg3_read_audio"
+#define		MPEG3_REREAD_AUDIO		"mpeg3_reread_audio"
 #define		MPEG3_SEEK_BYTE			"mpeg3_seek_byte"
 #define		MPEG3_CLOSE				"mpeg3_close"
 #define		MPEG3_TELL_BYTE			"mpeg3_tell_byte"
@@ -29,6 +30,8 @@ typedef int			(*t_mpeg3_audio_channels)	(mpeg3_t *file, int stream);
 typedef long		(*t_mpeg3_audio_samples)	(mpeg3_t *file, int stream);
 typedef int			(*t_mpeg3_sample_rate)		(mpeg3_t *file, int stream);
 typedef int			(*t_mpeg3_read_audio)		(mpeg3_t *file, float *output_f, short *output_i, 
+  												int channel, long samples, int stream);
+typedef int			(*t_mpeg3_reread_audio)		(mpeg3_t *file, float *output_f, short *output_i, 
   												int channel, long samples, int stream);
 typedef int			(*t_mpeg3_seek_byte)		(mpeg3_t *file, int64_t byte);
 typedef int			(*t_mpeg3_close)			(mpeg3_t *file);
@@ -61,6 +64,7 @@ class   WiredLibMpeg: public WiredApiCodec
   t_mpeg3_audio_samples		mpeg3_audio_samples_func;
   t_mpeg3_sample_rate		mpeg3_sample_rate_func;
   t_mpeg3_read_audio		mpeg3_read_audio_func;
+  t_mpeg3_reread_audio		mpeg3_reread_audio_func;
   t_mpeg3_seek_byte			mpeg3_seek_byte_func;
   t_mpeg3_close				mpeg3_close_func;
   t_mpeg3_tell_byte			mpeg3_tell_byte_func;

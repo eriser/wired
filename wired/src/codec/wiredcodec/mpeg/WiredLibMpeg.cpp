@@ -42,6 +42,7 @@ void	WiredLibMpeg::InitAccesLib()
   mpeg3_audio_samples_func = (t_mpeg3_audio_samples) dlsym(handle, MPEG3_AUDIO_SAMPLES);
   mpeg3_sample_rate_func = (t_mpeg3_sample_rate) dlsym(handle, MPEG3_SAMPLE_RATE);
   mpeg3_read_audio_func = (t_mpeg3_read_audio) dlsym(handle, MPEG3_READ_AUDIO);
+  mpeg3_reread_audio_func = (t_mpeg3_reread_audio) dlsym(handle, MPEG3_REREAD_AUDIO);
   mpeg3_seek_byte_func = (t_mpeg3_seek_byte) dlsym(handle, MPEG3_SEEK_BYTE);
   mpeg3_close_func = (t_mpeg3_close) dlsym(handle, MPEG3_CLOSE);
   mpeg3_tell_byte_func = (t_mpeg3_tell_byte) dlsym(handle, MPEG3_TELL_BYTE);
@@ -83,7 +84,6 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 {
 	int				stream = 0;
 	float			*output_f;
-	unsigned long	retLength = 0;
 	static unsigned long	lengthRead = 0;
 	
 	cout << "[WIREDLIBMPEG] decoding: " << length << endl;
@@ -92,7 +92,7 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 	if (file == NULL)
 	{
 		cout << "[WIREDLIBMPEG] Can't open file" << endl;
-		return retLength;
+		return 0;
 	}
 	stream = mpeg3_total_astreams_func(file);
 	pcm->PType = Float32;
@@ -102,37 +102,41 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 	if (length >= (pcm->TotalSample * pcm->Channels))
 	{
 		cout << "[WIREDLIBMPEG] Not enought samples" << endl;
-		return retLength;	
+		return 0;	
 	}
 	if (pcm->Channels > 0)
 	{
-		float* leftChan = new float[length / 2];
-		float* rightChan = new float[length / 2];
+		float* leftChan = new float[length];
+		float* rightChan = new float[length];
 		int64_t filePosition = mpeg3_tell_byte_func(file);
+		cout << "filePosition: " << filePosition << endl;
 		
 		if (filePosition < 0)
 		{
 			cout << "[WIREDLIBMPEG] Can't tel position" << endl;
-			return retLength;
+			delete leftChan;
+			delete rightChan;
+			return 0;
 		}
 		for (int cpt = 0; cpt < pcm->Channels && cpt != 2; cpt++)
 		{
 			if (cpt == 0)
 			{
-				retLength = (unsigned long) mpeg3_read_audio_func(file, leftChan, NULL, cpt, (length / 2), 0);
+				mpeg3_read_audio_func(file, leftChan, NULL, cpt, length, 0);
 			}
 			else
 			{
 				mpeg3_seek_byte_func(file, filePosition);
-				retLength = (unsigned long) mpeg3_read_audio_func(file, rightChan, NULL, cpt, (length / 2), 0);
+				mpeg3_read_audio_func(file, rightChan, NULL, cpt, length, 0);
 			}
 		}
 		if (pcm->Channels == 2)
 		{
-			pcm->pcm = new float[pcm->TotalSample * 2];
-			mergeChannels(leftChan, rightChan, (float*)pcm->pcm, length);
-			delete leftChan;
+			//pcm->pcm = new float[pcm->TotalSample * 2];
+			mergeChannels(leftChan, rightChan, (float*)pcm->pcm, length * 2);
+			//delete leftChan;
 		}
+		delete leftChan;
 //		if (pcm->Channels == 1)
 //			pcm->pcm = (void*)leftChan;
 		delete rightChan;
@@ -142,14 +146,14 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 		cout << "[WIREDLIBMPEG] No channel found" << endl;
 		return 0;
 	}
-	lengthRead += length;
+	lengthRead += length * 2;
 	if (lengthRead > pcm->TotalSample * pcm->Channels)
 	{
-		cout << "[WIREDLIBMPEG] done: " << 0 << endl;
-		return 0;
+		cout << "[WIREDLIBMPEG] done - lengthRead: " << lengthRead << " / " << pcm->TotalSample * pcm->Channels << endl;
+		return (pcm->TotalSample * pcm->Channels) % lengthRead;
 	}
-	cout << "[WIREDLIBMPEG] done: " << 1 << endl;
-	return length;
+	cout << "[WIREDLIBMPEG] during - lengthRead: " << lengthRead << " / " << pcm->TotalSample * pcm->Channels << endl;
+	return length * 2;
 }
 
 WiredLibMpeg			WiredLibMpeg::operator=(const WiredLibMpeg& right)
