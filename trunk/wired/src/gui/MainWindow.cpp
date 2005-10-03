@@ -570,6 +570,25 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   delete dlg;
 }
 
+int						MainWindow::GetSndFFormat(PcmType Type)
+{
+	switch (Type)
+	{
+		case UInt8:
+			return SF_FORMAT_PCM_U8;
+		case Int8:
+			return SF_FORMAT_PCM_S8;
+		case Int16:
+			return SF_FORMAT_PCM_16;
+		case Int24:
+			return SF_FORMAT_PCM_24;
+		case Float32:
+			return SF_FORMAT_FLOAT;
+		default: 
+			return SF_FORMAT_PCM_16;
+	}
+}
+
 void					MainWindow::ApplyCodec(string& FileToDecode)
 {
 	if (CodecMgr != NULL)
@@ -580,54 +599,44 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 		cout << "01 file {" << FileToDecode.c_str() << "}" << endl;
 		if (CodecMgr->CanDecode(FileToDecode) == true)
 		{
-			cout << "02 file {" << FileToDecode.c_str() << "}" << endl;
-			t_Pcm			Res = CodecMgr->Decode(FileToDecode);			
-			cout << "03 file {" << FileToDecode.c_str() << "}" << endl;
+			t_Pcm			Data;
 	      	wxFileName		RelativeFileName;
 	      	string			DestFileName;
-    	  	SNDFILE			*Result;
+    	  	SNDFILE			*Result = NULL;
 			SF_INFO			Info;
+			unsigned long	Readen = 0;
+			unsigned long 	TotalReaden = 0;
+			int				sf_write_result = 0;
+			unsigned long	BufferSize = Audio->SamplesPerBuffer;
 
 			RelativeFileName = FileToDecode.substr(FileToDecode.find_last_of("/"));
 			RelativeFileName.SetExt(wxString("wav"));
 			DestFileName = CurrentXmlSession->GetAudioDir() + string("/") + RelativeFileName.GetFullName();
 			cout << "file {" << DestFileName.c_str() << "}" << endl;
-	      	Info.samplerate = Res.SampleRate;
-			Info.channels = Res.Channels;
-			Info.format = 0;
-			Info.format |= SF_FORMAT_WAV;	
-			switch (Res.PType)
-			{
-				case UInt8:
-					Info.format |= SF_FORMAT_PCM_U8;
-				case Int8:
-					Info.format |= SF_FORMAT_PCM_S8;
-				case Int16:
-					Info.format |= SF_FORMAT_PCM_16;
-				case Int24:
-					Info.format |= SF_FORMAT_PCM_24;
-				case Float32:
-					Info.format |= SF_FORMAT_FLOAT;
-				default: 
-					Info.format |= SF_FORMAT_PCM_16;
-			}
+			
 			if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)))
-			{
-				int		sf_write_result = 0;
-				
-				if (Res.PType == Float32)
+			{			
+				Data.pcm = new float[2 * BufferSize];
+				bzero(Data.pcm, BufferSize * 2);
+				while ((Readen = CodecMgr->Decode(FileToDecode, &Data, BufferSize)) > 0)
 				{
-					sf_write_result = sf_writef_float(Result, (float *)Res.pcm, Res.TotalSample);
-					delete (float*)Res.pcm;
+					TotalReaden += Readen;
+			      	Info.samplerate = Data.SampleRate;
+					Info.channels = Data.Channels;
+					Info.format = 0;
+					Info.format |= SF_FORMAT_WAV;	
+					Info.format |= GetSndFFormat(Data.PType);
+					if (Data.PType == Float32)
+						sf_write_result = sf_writef_float(Result, (float *)Data.pcm,Readen);
+					else
+						sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen);
+					bzero(Data.pcm, BufferSize * 2);
 				}
-				else
+				CodecMgr->EndDecode();
+				delete (float *)Data.pcm;
+				if (!TotalReaden || !sf_write_result)
 				{
-					sf_write_result = sf_writef_int(Result, (int *)Res.pcm, Res.TotalSample);
-					delete (int*)Res.pcm;
-				}
-				if (sf_write_result == 0)
-				{
-					cout << "[MAINWIN] Could not write decoded file {" << FileToDecode.c_str();
+					cout << "[MAINWIN] Codec 1 - Could not write decoded file {" << FileToDecode.c_str();
 					cout << "} because of error : " << sf_strerror(Result) << endl;
 				}
 				else
@@ -635,9 +644,8 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 			}
 			else
 			{
-				cout << "[MAINWIN] Could not open file " << FileToDecode.c_str() << endl;
+				cout << "[MAINWIN] Codec 2 - Could not open file " << FileToDecode.c_str();
 				cout << "} because of error : " << sf_strerror(Result) << endl;
-				return;
 			}
 			sf_close(Result);
 		}
@@ -645,7 +653,6 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 		SeqMutex.Unlock();
 		AudioMutex.Unlock();
 	}
-
 }
 
 bool					MainWindow::ConvertSamplerate(string& FileName, bool &HasChangedPath)
