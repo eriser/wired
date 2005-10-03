@@ -7,6 +7,8 @@
 
 #include "Plugin.h"
 #include "FaderCtrl.h"
+#include "DownButton.h"
+#include "midi.h"
 
 #define PLUGIN_NAME	"Crusher"
 
@@ -14,6 +16,11 @@
 #define IMG_CR_BMP	"plugins/crusher/CrusherPlug.bmp"
 #define IMG_CR_FADER_BG	"plugins/crusher/fader_bg.png"
 #define IMG_CR_FADER_FG	"plugins/crusher/fader_button.png"
+
+#define IMG_LIQUID_ON	"plugins/reverb/liquid-cristal_play.png"
+#define IMG_LIQUID_OFF	"plugins/reverb/liquid-cristal_stop.png"
+#define IMG_BYPASS_ON	"plugins/reverb/bypass_button_down.png"
+#define IMG_BYPASS_OFF	"plugins/reverb/bypass_button_up.png"
 
 static PlugInitInfo info;
 
@@ -35,28 +42,42 @@ class CrusherPlugin: public Plugin
   bool	 IsAudio();
   bool	 IsMidi();
 
-  void OnButtonClick(wxCommandEvent &e); 
-  void OnBits(wxScrollEvent &e);  
-  void OnFreq(wxScrollEvent &e);  
-  void OnPaint(wxPaintEvent &event);
+  void		OnButtonClick(wxCommandEvent &e); 
+  void		OnBits(wxScrollEvent &e);  
+  void		OnFreq(wxScrollEvent &e);  
+  void		OnPaint(wxPaintEvent &event);
+  void		OnBypass(wxCommandEvent &e);
+  void		OnBypassController(wxMouseEvent &event);
 
   wxBitmap	*GetBitmap();
   int		Bits;
   int		Freq;
   
  protected:
-  wxBitmap *bmp;   
+  wxBitmap	*bmp;   
 
-  FaderCtrl *BitsFader;
-  FaderCtrl *FreqFader;
-  wxImage *img_fg;
-  wxImage *img_bg;
-  wxBitmap *TpBmp;
+  int		MidiBypass[2];
+
+  FaderCtrl	*BitsFader;
+  FaderCtrl	*FreqFader;
+  wxImage	*img_fg;
+  wxImage	*img_bg;
+  wxImage	*bypass_on;
+  wxImage	*bypass_off;
+  wxBitmap	*TpBmp;
+
+  StaticBitmap	*Liquid;
+  wxImage	*liquid_on;
+  wxImage	*liquid_off;
+  DownButton	*BypassBtn;
+  bool		Bypass;
 
   float		NormFreq;
   float		Step;
   float		Phasor[2];
   float		Last;
+
+  wxMutex	CrusherMutex;
 
   DECLARE_EVENT_TABLE()  
 
@@ -64,13 +85,15 @@ class CrusherPlugin: public Plugin
 
 enum
   {
-    Crusher_Bits = 1,
+    Crusher_Bypass = 1,
+    Crusher_Bits,
     Crusher_Freq
   };
 
 /******** CrusherPlugin Implementation *********/
 
 BEGIN_EVENT_TABLE(CrusherPlugin, wxWindow)
+  EVT_BUTTON(Crusher_Bypass, CrusherPlugin::OnBypass)
   EVT_COMMAND_SCROLL(Crusher_Bits, CrusherPlugin::OnBits)
   EVT_COMMAND_SCROLL(Crusher_Freq, CrusherPlugin::OnFreq)
   EVT_PAINT(CrusherPlugin::OnPaint)
@@ -90,14 +113,24 @@ CrusherPlugin::CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   img_bg = new wxImage(string(GetDataDir() + string(IMG_CR_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
   img_fg = new wxImage(string(GetDataDir() + string(IMG_CR_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
+
+  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  BypassBtn = new DownButton(this, Crusher_Bypass, wxPoint(21, 58), 
+			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), bypass_off, bypass_on);  
   
+  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+
   BitsFader = new 
     FaderCtrl(this, Crusher_Bits, img_bg, img_fg, 0, 76, 16,
 	      wxPoint(83, 12)/*wxPoint(GetSize().x / 2, 10)*/, wxSize(22,78));
   FreqFader = new 
     FaderCtrl(this, Crusher_Freq, img_bg, img_fg, 0, 44100, 4000,
 	      wxPoint(140, 12)/*wxPoint(GetSize().x / 2 + 40, 10)*/, wxSize(22,78));
-  
+  Connect(Crusher_Bypass, wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction) 
+	  (wxMouseEventFunction)&CrusherPlugin::OnBypassController);
   SetBackgroundColour(wxColour(237, 237, 237));
 }
 
@@ -120,21 +153,28 @@ void CrusherPlugin::Process(float **input, float **output, long sample_length)
   long i;
   int chan;
 
-  for (chan = 0; chan < 2; chan++)
+  if (!Bypass)
     {
-      for (i = 0; i < sample_length; i++)
+      for (chan = 0; chan < 2; chan++)
 	{
-	  Phasor[chan] = Phasor[chan] + NormFreq;
-	  if (Phasor[chan] >= 1.0f)
+	  for (i = 0; i < sample_length; i++)
 	    {
-	      Phasor[chan] = Phasor[chan] - 1.0f;
-	      Last = Step * floorf(input[chan][i] / Step + 0.5f);
+	      Phasor[chan] = Phasor[chan] + NormFreq;
+	      if (Phasor[chan] >= 1.0f)
+		{
+		  Phasor[chan] = Phasor[chan] - 1.0f;
+		  Last = Step * floorf(input[chan][i] / Step + 0.5f);
+		}
+	      output[chan][i] = Last; 
 	    }
-	  output[chan][i] = Last; 
 	}
     }
+  else
+    {
+      memcpy(output[0], input[0], sample_length * sizeof(float));
+      memcpy(output[1], input[1], sample_length * sizeof(float));
+    }
 }
-
 CrusherPlugin::~CrusherPlugin()
 {
 
@@ -221,6 +261,30 @@ void CrusherPlugin::OnPaint(wxPaintEvent &event)
       upd++;
     }
   Plugin::OnPaintEvent(event);
+}
+
+void	CrusherPlugin::OnBypass(wxCommandEvent &e)
+{
+  CrusherMutex.Lock();
+  Bypass = BypassBtn->GetOn();
+  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+  CrusherMutex.Unlock();
+}
+
+void	CrusherPlugin::OnBypassController(wxMouseEvent &event)
+{
+  int	*midi_data;
+
+  midi_data = new int[3];
+  if (ShowMidiController(&midi_data))
+    {
+      CrusherMutex.Lock();
+      //CheckExistingControllerData(midi_data);
+      MidiBypass[0] = midi_data[0];
+      MidiBypass[1] = midi_data[1];
+      CrusherMutex.Unlock();
+    }
+  delete midi_data;
 }
 
 /******** Main and mandatory library functions *********/
