@@ -42,13 +42,16 @@ class   WiredLibMpeg: public WiredApiCodec
 
   void				init(list<t_LibInfo> &Info);				/* Inits codec */
   int				encode(float** pcm);						/* Encode methodes */
-  int				decode(const char *path, t_Pcm *pcm);		/* Decode methodes */
+  int				decode(const char *path, t_Pcm *pcm, 
+  							unsigned long length);				/* Decode methodes */
   bool				canDecode(const char* path);				/* Checks format */
+  int				EndDecode();
 
   WiredLibMpeg		operator=(const WiredLibMpeg& right);
   
  private:
   void						*handle;
+  mpeg3_t					*file;
   t_mpeg3_check_sig			mpeg3_check_sig_func;
   t_mpeg3_open				mpeg3_open_func;
   t_mpeg3_total_astreams	mpeg3_total_astreams_func;

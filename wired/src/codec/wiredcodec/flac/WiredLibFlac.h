@@ -41,7 +41,8 @@ class   WiredLibFlac: public WiredApiCodec
 
   /* Encode and decode methodes */
   int				encode(float** pcm);
-  int				decode(const char *path, t_Pcm *pcm);
+  int				decode(const char *path, t_Pcm *pcm, unsigned long length);
+  int				EndDecode(){};
   
   /* Checks format */
   bool				canDecode(const char* path);
