@@ -49,7 +49,9 @@ class   WiredApiCodec
 
   virtual void		init(list<s_LibInfo> &Info) = 0;			/* Inits codec and fills infos */
   virtual int		encode(float** pcm) = 0;					/* Encode function */
-  virtual int		decode(const char *path, t_Pcm *pcm) = 0;	/* Decode function */
+  virtual int		decode(const char *path, t_Pcm *pcm, 
+  							unsigned long lenght) = 0;			/* Decode function */
+  virtual int		EndDecode() = 0;							/* Closes file */
   virtual bool		canDecode(const char* path) = 0;			/* True if codec can decode file */
   void				SetuniqueId(unsigned long Id)				/* Sets unique Id */
   					{_UniqueId = Id;}
