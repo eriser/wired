@@ -72,7 +72,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
       // FIXME we just overwrote detected settings
       // with saved ones, even if they're wrong/fucked/don't exist
       
-      Audio->OpenStream(); 
+      Audio->OpenStream();
     }
   catch (Error::NoDevice)
     {
@@ -157,15 +157,12 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
       // FIXME handle some kind of error recovery
     }
   
-  // Le Mixer doit etre declarer apres AudioEngine
+  // Le Mixer doit etre declarer apres AudioEngine 
   Mix = new Mixer();
-  
   OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 150), wxSIMPLE_BORDER);
   Seq = new Sequencer();
-  
   MidiEngine = new MidiThread();
   MidiEngine->OpenDefaultDevices();
-  
   if (MidiEngine->Create() != wxTHREAD_NO_ERROR)
     cout << "[MAINWIN] Create MidiEngine thread failed !" << endl;
   if (MidiEngine->Run() != wxTHREAD_NO_ERROR)
@@ -313,6 +310,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxCommandEventFunction)&MainWindow::OnImportWave);
 
+
   InitCodecMgr();
   InitUndoRedoMenuItems();
 
@@ -402,10 +400,11 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   cout << "[MAINWIN] Unloading external plugins..." << endl;
   Seq->Delete();
   delete Seq;
-  //delete LoadedExternalPlugins;
+  delete LoadedExternalPlugins;
   
   delete Audio;
-
+  MidiEngine->Delete();
+  delete MidiEngine;
   WiredSettings->Save();
   delete WiredSettings;
   delete CodecMgr;
@@ -573,13 +572,17 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 
 void					MainWindow::ApplyCodec(string& FileToDecode)
 {
-//	LockAllMutex(true);
-//	WiredCodecMutex.Lock();
 	if (CodecMgr != NULL)
-	{
+	{		
+		MidiMutex.Lock();
+		SeqMutex.Lock();
+		AudioMutex.Lock();
+		cout << "01 file {" << FileToDecode.c_str() << "}" << endl;
 		if (CodecMgr->CanDecode(FileToDecode) == true)
 		{
+			cout << "02 file {" << FileToDecode.c_str() << "}" << endl;
 			t_Pcm			Res = CodecMgr->Decode(FileToDecode);			
+			cout << "03 file {" << FileToDecode.c_str() << "}" << endl;
 	      	wxFileName		RelativeFileName;
 	      	string			DestFileName;
     	  	SNDFILE			*Result;
@@ -613,24 +616,36 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 				int		sf_write_result = 0;
 				
 				if (Res.PType == Float32)
+				{
 					sf_write_result = sf_writef_float(Result, (float *)Res.pcm, Res.TotalSample);
+					delete (float*)Res.pcm;
+				}
 				else
+				{
 					sf_write_result = sf_writef_int(Result, (int *)Res.pcm, Res.TotalSample);
+					delete (int*)Res.pcm;
+				}
 				if (sf_write_result == 0)
 				{
-//					WiredCodecMutex.Unlock();
-//					LockAllMutex(false);
-					cout << "[MAINWIN] Could not decode file" << FileToDecode.c_str() << endl;
-					return;
+					cout << "[MAINWIN] Could not write decoded file {" << FileToDecode.c_str();
+					cout << "} because of error : " << sf_strerror(Result) << endl;
 				}
-				FileToDecode = DestFileName;
-				sf_close(Result);
+				else
+					FileToDecode = DestFileName;
 			}
-			delete (float*)Res.pcm;
+			else
+			{
+				cout << "[MAINWIN] Could not open file " << FileToDecode.c_str() << endl;
+				cout << "} because of error : " << sf_strerror(Result) << endl;
+				return;
+			}
+			sf_close(Result);
 		}
+		MidiMutex.Unlock();
+		SeqMutex.Unlock();
+		AudioMutex.Unlock();
 	}
-//	WiredCodecMutex.Unlock();
-//	LockAllMutex(false);
+
 }
 
 bool					MainWindow::ConvertSamplerate(string& FileName, bool &HasChangedPath)
@@ -874,19 +889,14 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
       	return;
       }
 
-      wxProgressDialog *Progress = new wxProgressDialog("Exporting song", "Please wait...", 
-						       100, this, 
-						       wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
-      int up = 0;
-
+      //wxProgressDialog *Progress = new wxProgressDialog("Exporting mix", "Please wait...", 
+//						       (int)Seq->EndLoopPos * 1000, this, 
+//						       wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
       bool done = false;
 
       while (!done)
 	{
-	  up += 10;
-	  if (up > 99)
-	    up = 99;
-	  //Progress->Update(up); ** Generates segfault in pango
+//	  Progress->Update((int) Seq->CurrentPos * 1000);
 	  //cout << "pos: " << Seq->CurrentPos << "; end: " << Seq->EndLoopPos << endl;
 	  wxMilliSleep(50);
 	  SeqMutex.Lock();
@@ -894,7 +904,7 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 	    done = true;
 	  SeqMutex.Unlock();
 	}
-      delete Progress;
+//      delete Progress;
     }
   else
     {
