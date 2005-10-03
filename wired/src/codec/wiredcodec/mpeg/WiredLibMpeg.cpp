@@ -14,18 +14,15 @@ void WiredLibMpeg::init(list<t_LibInfo> &Info)
 	fillLibInfo(LibInfoMp3, MPEG3_EXTENTION);
 	fillLibInfo(LibInfoMp2, MPEG2_EXTENTION);
 	fillLibInfo(LibInfoAc3, AC3_EXTENTION);
+	Info.push_back(LibInfoMp3);
+	Info.push_back(LibInfoMp2);
+	Info.push_back(LibInfoAc3);
 	handle = dlopen(SO_NAME, RTLD_LAZY);
 	if (!handle)
 	{
     	cout << "[WIRED_MPEG_CODEC] Can't open " << SO_NAME << endl;
-		Info.push_back(LibInfoMp3);
-		Info.push_back(LibInfoMp2);
-		Info.push_back(LibInfoAc3);
 	    return ;
     }
-    Info.push_back(LibInfoMp3);
-	Info.push_back(LibInfoMp2);
-	Info.push_back(LibInfoAc3);
 	InitAccesLib();
 }
 
