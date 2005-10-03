@@ -8,6 +8,31 @@
 #include "MainApp.h"
 #include "MainWindow.h"
 
+//void*	operator new(size_t size)
+//{
+//	write(1, "new\n", 4);
+//	return (malloc(size));
+//}
+//
+//void	operator delete(void *ptr)
+//{
+//	write(1, "delete\n", 7);
+//	free(ptr);
+//}
+//
+//void*	operator new[](size_t size, int index)
+//{
+//	write(1, "new[]\n", 6);
+//	return (malloc(size * index));
+//}
+//
+//void	operator delete[](void *ptr)
+//{
+//	write(1, "delete[]\n", 9);
+//	free(ptr);
+//}
+
+
 IMPLEMENT_APP(MainApp)
 
 MainWindow			*MainWin;
