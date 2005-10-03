@@ -618,14 +618,17 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 			bzero(Data.pcm, BufferSize * 2);
 			while ((Readen = CodecMgr->Decode(FileToDecode, &Data, BufferSize)) > 0)
 			{
+				cout << "Readen == " << Readen << endl;
 				TotalReaden += Readen;
-				if (!Result)
+				if (Result == NULL)
 				{
 			      	Info.samplerate = Data.SampleRate;
 					Info.channels = Data.Channels;
 					Info.format = 0;
 					Info.format |= SF_FORMAT_WAV;	
 					Info.format |= GetSndFFormat(Data.PType);
+					cout << "samplerate == " << Info.samplerate << ", Channels == " << Info.channels
+						<< ", Enum == " << GetSndFFormat(Data.PType) << endl;
 					if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)) == NULL)
 					{
 						cout << "[MAINWIN] Codec 2 - Could not open file " << DestFileName.c_str();
@@ -650,7 +653,7 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 			}
 			else
 				FileToDecode = DestFileName;
-			sf_close(Result);
+			sf_close(Result);  
 		}
 		MidiMutex.Unlock();
 		SeqMutex.Unlock();
