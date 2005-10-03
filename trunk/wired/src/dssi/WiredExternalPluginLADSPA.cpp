@@ -34,6 +34,7 @@ WiredLADSPAInstance		WiredLADSPAInstance::operator=(const WiredLADSPAInstance& r
 		_Properties = right._Properties;
 		_GuiControls = right._GuiControls;
 		_IsPlaying = right._IsPlaying;
+		_Bypass = right._Bypass;
 	}
 	return *this;
 }

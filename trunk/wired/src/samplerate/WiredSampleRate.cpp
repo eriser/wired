@@ -1,6 +1,6 @@
 #include "WiredSampleRate.h"
 
-wxMutex				SampleRateMutex;
+static wxMutex				SampleRateMutex;
 
 WiredSampleRate::WiredSampleRate()
 {
@@ -29,6 +29,13 @@ WiredSampleRate			WiredSampleRate::operator=(const WiredSampleRate& right)
 		_ApplicationSettings.SampleRate = right._ApplicationSettings.SampleRate;
 		_ApplicationSettings.Format = right._ApplicationSettings.Format;
 		_ApplicationSettings.SamplesPerBuffer = right._ApplicationSettings.SamplesPerBuffer;
+		OpenedFile = right.OpenedFile;
+		OpenedFileInfo = right.OpenedFileInfo;
+		StaticConverter = right.StaticConverter;
+		_Quality = right._Quality;
+		_ConverterError = right._ConverterError;
+		_Buffer = right._Buffer;
+		_ChannelBuffer = right._ChannelBuffer;
 	}
 	return *this;
 }
@@ -98,6 +105,7 @@ int						WiredSampleRate::OpenFile(string& Path, wxWindow* parent)
 			cout << "6  strformat == " << strFormats.c_str() << endl;
 			
 			msg.Destroy();
+			cout << "7  strformat == " << strFormats.c_str() << endl;
         	if (res == wxID_YES)
         	{
         		//SampleRateMutex.Lock();
@@ -414,8 +422,11 @@ float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChann
 	
 	for (CurrentSample = 0, CurrentResSample = 0; CurrentSample < ToWrite && CurrentResSample < NbChannels * ToWrite; CurrentSample++)
 	{
-		_Buffer[CurrentResSample++] = _ChannelBuffer[0][CurrentSample];
-		_Buffer[CurrentResSample++] = _ChannelBuffer[1][CurrentSample];
+		//_Buffer[CurrentResSample++] = _ChannelBuffer[0][CurrentSample];
+		//_Buffer[CurrentResSample++] = _ChannelBuffer[1][CurrentSample];
+		_Buffer[CurrentResSample++] = Input[0][CurrentSample];
+		_Buffer[CurrentResSample++] = Input[1][CurrentSample];
+		
 	}
 	return _Buffer;
 }
