@@ -25,23 +25,23 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Init();
 
   wxImage *tr_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_RV_BG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(string(GetDataDir() + string(IMG_WW_BG)).c_str(), wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
-  
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_RV_BMP)).c_str(), wxBITMAP_TYPE_BMP);
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_RV_KNOB_BG)).c_str(),wxBITMAP_TYPE_PNG);
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_RV_KNOB_FG)).c_str(),wxBITMAP_TYPE_PNG);
+  SetSize(-1, -1, 400, 100);
+  bmp = new wxBitmap(string(GetDataDir() + string(IMG_WW_BMP)).c_str(), wxBITMAP_TYPE_BMP);
+  img_bg = new wxImage(string(GetDataDir() + string(IMG_WW_FADER_BG)).c_str(),wxBITMAP_TYPE_PNG);
+  img_fg = new wxImage(string(GetDataDir() + string(IMG_WW_FADER_FG)).c_str(),wxBITMAP_TYPE_PNG);
   
   FreqFader = new FaderCtrl(this, Wahwah_Frequency, img_bg, img_fg, 0, TO_GUI_FREQ(4.0), TO_GUI_FREQ(DEFAULT_FREQ),
-			    wxPoint(8, 8), wxSize(22, 78));
+			    wxPoint(83, 12), wxSize(22, 78));
   StartPhaseFader = new FaderCtrl(this, Wahwah_StartPhase, img_bg, img_fg, 0, 1, DEFAULT_STARTPHASE,
-				  wxPoint(35, 8), wxSize(22, 78));
+				  wxPoint(142, 12), wxSize(22, 78));
   DepthFader = new FaderCtrl(this, Wahwah_Depth, img_bg, img_fg, 0, 100, TO_GUI_DEPTH(DEFAULT_DEPTH),
-			     wxPoint(72, 8), wxSize(22, 78));
+			     wxPoint(200, 12), wxSize(22, 78));
   FreqOfsFader = new FaderCtrl(this, Wahwah_FreqOfs, img_bg, img_fg, 0, 99, TO_GUI_FREQOFS(DEFAULT_FREQOFS),
-			     wxPoint(100, 8), wxSize(22, 78));
+			     wxPoint(258, 12), wxSize(22, 78));
   ResFader = new FaderCtrl(this, Wahwah_Res, img_bg, img_fg, TO_GUI_RES(0.1), TO_GUI_RES(10.0), TO_GUI_RES(DEFAULT_RES),
-			   wxPoint(142, 8), wxSize(22, 78));
+			   wxPoint(320, 12), wxSize(22, 78));
   SetBackgroundColour(wxColour(237, 237, 237));
 }
 
@@ -281,7 +281,7 @@ extern "C"
     WIRED_MAKE_STR(info.UniqueId, "Wah");
     info.Name = PLUGIN_NAME;
     info.Type = PLUG_IS_EFFECT;  
-    info.UnitsX = 1;
+    info.UnitsX = 2;
     info.UnitsY = 1;
     return (info);
   }
