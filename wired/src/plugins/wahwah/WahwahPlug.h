@@ -19,10 +19,10 @@
 #define		PLUGIN_NAME	"Wahwah"
 
 /* Desssin */
-#define		IMG_RV_BG	"plugins/wahwah/wahwah.png"
-#define		IMG_RV_BMP	"plugins/wahwah/ReverbPlug.bmp"
-#define		IMG_RV_KNOB_BG	"plugins/wahwah/fader_bg.png"
-#define		IMG_RV_KNOB_FG	"plugins/wahwah/fader_fg.png"
+#define		IMG_WW_BG	"plugins/wahwah/wah-wah_bg.png"
+#define		IMG_WW_BMP	"plugins/wahwah/ReverbPlug.bmp"
+#define		IMG_WW_FADER_BG	"plugins/wahwah/fader_bg.png"
+#define		IMG_WW_FADER_FG	"plugins/wahwah/fader_button.png"
 
 /* Initialisation */
 #define		DEFAULT_FREQ		1.5

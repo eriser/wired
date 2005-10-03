@@ -43,27 +43,27 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   wxImage** imgs;
 
   imgs = new wxImage*[3];
-  imgs[0] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_LP)).c_str()));
-  imgs[1] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_BP)).c_str()));
-  imgs[2] = new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_HP)).c_str()));
+  imgs[0] = new wxImage(_T(string(GetDataDir() + string(IMG_RV_KNOB_PRC)).c_str()));
+  imgs[1] = new wxImage(_T(string(GetDataDir() + string(IMG_RV_KNOB_JC)).c_str()));
+  imgs[2] = new wxImage(_T(string(GetDataDir() + string(IMG_RV_KNOB_N)).c_str()));
 
-  a_rev_on = new wxImage(string(GetDataDir() + string(IMG_FL_HP)).c_str(), wxBITMAP_TYPE_PNG);
-  a_rev_off = new wxImage(string(GetDataDir() + string(IMG_FL_HP_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  AReverbBtn = new DownButton(this, Reverb_A, wxPoint(70, 43),
+  a_rev_on = new wxImage(string(GetDataDir() + string(IMG_RV_PRC)).c_str(), wxBITMAP_TYPE_PNG);
+  a_rev_off = new wxImage(string(GetDataDir() + string(IMG_RV_PRC_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  AReverbBtn = new DownButton(this, Reverb_A, wxPoint(68, 45),
 			      wxSize(a_rev_off->GetWidth(), a_rev_off->GetHeight()), a_rev_off, a_rev_on);
 
-  b_rev_on = new wxImage(string(GetDataDir() + string(IMG_FL_LP)).c_str(), wxBITMAP_TYPE_PNG);
-  b_rev_off = new wxImage(string(GetDataDir() + string(IMG_FL_LP_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  BReverbBtn = new DownButton(this, Reverb_B, wxPoint(81, 47),
+  b_rev_on = new wxImage(string(GetDataDir() + string(IMG_RV_JC)).c_str(), wxBITMAP_TYPE_PNG);
+  b_rev_off = new wxImage(string(GetDataDir() + string(IMG_RV_JC_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  BReverbBtn = new DownButton(this, Reverb_B, wxPoint(85, 47),
 			      wxSize(b_rev_off->GetWidth(), b_rev_off->GetHeight()), b_rev_off, b_rev_on);
 
-  c_rev_on = new wxImage(string(GetDataDir() + string(IMG_FL_BP)).c_str(), wxBITMAP_TYPE_PNG);
-  c_rev_off = new wxImage(string(GetDataDir() + string(IMG_FL_BP_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  CReverbBtn = new DownButton(this, Reverb_C, wxPoint(92, 47),
+  c_rev_on = new wxImage(string(GetDataDir() + string(IMG_RV_N)).c_str(), wxBITMAP_TYPE_PNG);
+  c_rev_off = new wxImage(string(GetDataDir() + string(IMG_RV_N_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  CReverbBtn = new DownButton(this, Reverb_C, wxPoint(102, 45),
 			      wxSize(c_rev_off->GetWidth(), c_rev_off->GetHeight()), c_rev_off, c_rev_on);
 
   AReverbBtn->SetOn();
-  SelrevKnob = new StaticPosKnob(this, Reverb_Select, 3, imgs, 15, 0, 2, 0, wxPoint(68, 7), wxDefaultSize);
+  SelrevKnob = new StaticPosKnob(this, Reverb_Select, 3, imgs, 15, 0, 2, 0, wxPoint(70, 7), wxDefaultSize);
   
   // bypass button's stuff
 

@@ -34,24 +34,22 @@
 #define IMG_BYPASS_OFF	"plugins/reverb/bypass_button_up.png"
 #define EFFECT_MIX	100.f
 
-#define IMG_FL_HP		"plugins/filter/filter_hp_dwn.png"
-#define IMG_FL_BP		"plugins/filter/filter_bp_dwn.png"
-#define IMG_FL_LP		"plugins/filter/filter_lp_dwn.png"
-//#define IMG_FL_NOTCH		"plugins/filter/filter_notch_dwn.png"
-//#define IMG_FL_NOTCHBAR		"plugins/filter/filter_notchbar_dwn.png"
-#define IMG_FL_HP_UP		"plugins/filter/filter_hp_up.png"
-#define IMG_FL_BP_UP		"plugins/filter/filter_bp_up.png"
-#define IMG_FL_LP_UP		"plugins/filter/filter_lp_up.png"
-//#define IMG_FL_NOTCH_UP		"plugins/filter/filter_notch_up.png"
-#define IMG_FL_NOTCHBAR_UP	"plugins/filter/filter_notchbar_up.png"
-#define IMG_FL_KNOB_HP		"plugins/filter/filter_knob_hp.png"
-#define IMG_FL_KNOB_BP		"plugins/filter/filter_knob_bp.png"
-#define IMG_FL_KNOB_LP		"plugins/filter/filter_knob_lp.png"
-//#define IMG_FL_KNOB_NOTCH	"plugins/filter/filter_knob_notch.png"
+#define IMG_RV_PRC		"plugins/reverb/reverb_prc_dwn.png"
+#define IMG_RV_N		"plugins/reverb/reverb_n_dwn.png"
+#define IMG_RV_JC		"plugins/reverb/reverb_jc_dwn.png"
 
-#define STR_REVERB_SELECTED "ReverbSelected"
-#define STR_MIX_LEVEL "MixLevel"
-#define STR_DECAY "Decay"
+#define IMG_RV_PRC_UP		"plugins/reverb/reverb_prc_up.png"
+#define IMG_RV_N_UP		"plugins/reverb/reverb_n_up.png"
+#define IMG_RV_JC_UP		"plugins/reverb/reverb_jc_up.png"
+
+#define IMG_RV_KNOB_PRC		"plugins/reverb/reverb_knob_prc.png"
+#define IMG_RV_KNOB_N		"plugins/reverb/reverb_knob_n.png"
+#define IMG_RV_KNOB_JC		"plugins/reverb/reverb_knob_jc.png"
+
+
+#define STR_REVERB_SELECTED	"ReverbSelected"
+#define STR_MIX_LEVEL		"MixLevel"
+#define STR_DECAY		"Decay"
 
 typedef struct s_param
 {

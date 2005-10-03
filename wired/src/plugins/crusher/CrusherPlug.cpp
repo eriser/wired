@@ -10,7 +10,7 @@
 
 #define PLUGIN_NAME	"Crusher"
 
-#define IMG_CR_BG	"plugins/crusher/crusher.png"
+#define IMG_CR_BG	"plugins/crusher/crusher_bg.png"
 #define IMG_CR_BMP	"plugins/crusher/CrusherPlug.bmp"
 #define IMG_CR_FADER_BG	"plugins/crusher/fader_bg.png"
 #define IMG_CR_FADER_FG	"plugins/crusher/fader_fg.png"
@@ -93,10 +93,10 @@ CrusherPlugin::CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   BitsFader = new 
     FaderCtrl(this, Crusher_Bits, img_bg, img_fg, 0, 76, 16,
-	      wxPoint(18, 8)/*wxPoint(GetSize().x / 2, 10)*/, wxSize(22,78));
+	      wxPoint(83, 12)/*wxPoint(GetSize().x / 2, 10)*/, wxSize(22,78));
   FreqFader = new 
     FaderCtrl(this, Crusher_Freq, img_bg, img_fg, 0, 44100, 4000,
-	      wxPoint(142, 8)/*wxPoint(GetSize().x / 2 + 40, 10)*/, wxSize(22,78));
+	      wxPoint(140, 12)/*wxPoint(GetSize().x / 2 + 40, 10)*/, wxSize(22,78));
   
   SetBackgroundColour(wxColour(237, 237, 237));
 }
