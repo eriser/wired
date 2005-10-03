@@ -25,10 +25,11 @@ class			WiredCodec
   WiredCodec (const WiredCodec& copy){*this = copy;};
   ~WiredCodec();
 
-  void						Init();														/* Inits and loads codecs */
-  int	      				Decode(const string &filename, t_Pcm *pcm, 
-  									unsigned long length);								/* Decodes file */
-  int						Encode(float **pcm, string OutExtension);					/* Encodes stream */
+  void						Init();														/* Init and loads codecs */
+  unsigned long				Decode(const string &filename, t_Pcm *pcm, 
+  									unsigned long length);								/* Decode file */
+  int						Encode(float **pcm, string OutExtension);					/* Encode stream */
+  int						EndDecode(){};												/* Close file */
 
   list<string>				GetExtension();												/* Returns a list of extensions readable by all codecs */
   bool						CanDecode(const string &filename);							/* Proper codec installed ? */
@@ -44,7 +45,7 @@ class			WiredCodec
   void						WLoadLib();													/* load all .so */
   void						WLibLoader(const string& filename);							/* load .so */
   int						CheckExtension(const string& str, const list<string>& ExtList);	/* check same occurence extensions */
-  t_WLib					WiredCodec::FindBestCodec(string extension);				/* Not implemented yet */
+  t_WLib					FindBestCodec(string extension);							/* Not implemented yet */
   void						DumpCodec();
 };
 
