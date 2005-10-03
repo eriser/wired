@@ -113,6 +113,7 @@ class					MainWindow: public wxFrame
   vector<string>		CodecExtensions;
   void					ApplyCodec(string& FileToDecode);  
   void					InitCodecMgr();
+  int					GetSndFFormat(PcmType Type);
 
   /* SampleRate methods */
   bool					ConvertSamplerate(string& FileName, bool &HasChangedPath);
