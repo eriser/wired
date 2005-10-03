@@ -30,6 +30,12 @@ void	cActionManager::AddEffectAction(PlugStartInfo* startInfo, PluginLoader* plu
 	action->Do();
 }
 
+void	cActionManager::AddImportWaveAction(const string& path, bool kind, bool selectFromIndex)
+{
+	cImportWaveAction* action = new cImportWaveAction(path, kind, selectFromIndex);
+	action->Do();
+}
+
 void	cActionManager::AddChangeParamsEffectAction(Plugin* plugin, bool shouldSave)
 {
 	cChangeParamsEffectAction* action = new cChangeParamsEffectAction(plugin, shouldSave);
