@@ -313,21 +313,24 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxCommandEventFunction)&MainWindow::OnImportWave);
 
-  //  EditMenu->Enable(MainWin_History, false);
-  // Codec Mgr
-  cout << "[MAINWIN] Loading codec extensions...";
-  CodecMgr = new WiredCodec();
-  CodecMgr->Init();
-  list<string>				CodecsListExtensions = CodecMgr->GetExtension();
-  list<string>::iterator	Iter;
-  
-  for (Iter = CodecsListExtensions.begin(); Iter != CodecsListExtensions.end(); Iter++)
-  	CodecExtensions.insert(CodecExtensions.end(), *Iter);
-  cout << "done" << endl;
+  InitCodecMgr();
   InitUndoRedoMenuItems();
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
+}
+
+void					MainWindow::InitCodecMgr()
+{
+	cout << "[MAINWIN] Loading codec extensions" << endl;
+	CodecMgr = new WiredCodec();
+	CodecMgr->Init();
+	list<string>				CodecsListExtensions = CodecMgr->GetExtension();
+	list<string>::iterator	Iter;
+
+	for (Iter = CodecsListExtensions.begin(); Iter != CodecsListExtensions.end(); Iter++)
+  		CodecExtensions.insert(CodecExtensions.end(), *Iter);
+	cout << "[MAINWIN] Codec extensions loaded" << endl;
 }
 
 void					MainWindow::InitUndoRedoMenuItems()
@@ -570,6 +573,8 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 
 void					MainWindow::ApplyCodec(string& FileToDecode)
 {
+//	LockAllMutex(true);
+//	WiredCodecMutex.Lock();
 	if (CodecMgr != NULL)
 	{
 		if (CodecMgr->CanDecode(FileToDecode) == true)
@@ -578,7 +583,7 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 	      	wxFileName		RelativeFileName;
 	      	string			DestFileName;
     	  	SNDFILE			*Result;
-			SF_INFO			Info;	
+			SF_INFO			Info;
 
 			RelativeFileName = FileToDecode.substr(FileToDecode.find_last_of("/"));
 			RelativeFileName.SetExt(wxString("wav"));
@@ -613,6 +618,8 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 					sf_write_result = sf_writef_int(Result, (int *)Res.pcm, Res.TotalSample);
 				if (sf_write_result == 0)
 				{
+//					WiredCodecMutex.Unlock();
+//					LockAllMutex(false);
 					cout << "[MAINWIN] Could not decode file" << FileToDecode.c_str() << endl;
 					return;
 				}
@@ -622,6 +629,8 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 			delete (float*)Res.pcm;
 		}
 	}
+//	WiredCodecMutex.Unlock();
+//	LockAllMutex(false);
 }
 
 bool					MainWindow::ConvertSamplerate(string& FileName, bool &HasChangedPath)
@@ -1385,7 +1394,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 	  MidiDeviceMutex.Lock();
 	  // Reopen midi devices
 	  MidiEngine->OpenDefaultDevices(); 
-	  MidiDeviceMutex.Unlock();	  
+	  MidiDeviceMutex.Unlock();
 	}
     }
   else

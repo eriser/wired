@@ -109,17 +109,19 @@ class					MainWindow: public wxFrame
   void					removeAllMenuItems(wxMenu *menu);
   
   /* Codecs stuff */
-  void					ApplyCodec(string& FileToDecode);
   WiredCodec			*CodecMgr;
   vector<string>		CodecExtensions;
+  void					ApplyCodec(string& FileToDecode);  
+  void					InitCodecMgr();
 
+  /* SampleRate methods */
   bool					ConvertSamplerate(string& FileName, bool &HasChangedPath);
 
   /* Config files */
   wxTextFile				PluginsConfFile;
   
   /* Visible controls */
-  wxSplitterWindow			*split;
+  wxSplitterWindow		*split;
   wxMenuBar				*MenuBar;
   wxMenu				*FileMenu;
   wxMenu				*EditMenu;
