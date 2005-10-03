@@ -1,5 +1,5 @@
-#ifndef __WiredLibFlac_H__
-#define __WiredLibFlac_H__
+#ifndef __WiredLibMpeg_H__
+#define __WiredLibMpeg_H__
 
 #include	"../WiredApiCodec.h"
 
