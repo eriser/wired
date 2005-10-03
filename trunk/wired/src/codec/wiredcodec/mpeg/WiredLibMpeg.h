@@ -1,14 +1,14 @@
-#ifndef __WiredLibMpeg_H__
-#define __WiredLibMpeg_H__
+#ifndef __WIREDLIBMPEG_H__
+#define __WIREDLIBMPEG_H__
 
 #include	"../WiredApiCodec.h"
 
 #include	<iostream>
 #include	<dlfcn.h>
 
-#define		MPEG3_EXTENTION	"mp3\tMoving Picture Experts Group (*.mp3)"
-#define		MPEG2_EXTENTION	"mp2\tMoving Picture Experts Group (*.mp2)"
-#define		AC3_EXTENTION	"ac3\tAudio coding 3 (*.ac3)"
+#define		MPEG3_EXTENTION	"mp3\tMPEG-1 layer III (*.mp3)"
+#define		MPEG2_EXTENTION	"mp2\tMPEG-1 layer II (*.mp2)"
+#define		AC3_EXTENTION	"ac3\tAC3 (*.ac3)"
 #define		SO_NAME			"libmpeg3.so"
 
 
