@@ -434,7 +434,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Connect(ID_SEQ_RESIZE, TYPE_SEQ_RESIZE, (wxObjectEventFunction)&SequencerGui::OnResizePattern);
   // evenement draw evenement midi
   Connect(ID_SEQ_DRAWMIDI, TYPE_SEQ_DRAWMIDI, (wxObjectEventFunction)&SequencerGui::OnDrawMidi);
-  // Création du popup menu
+  // Cr?ation du popup menu
   PopMenu = new wxMenu();  
   PopMenu->Append(ID_POPUP_MOVE_TO_CURSOR, "Move to cursor");
   PopMenu->Append(ID_POPUP_DELETE, "Delete");
@@ -714,6 +714,16 @@ void					SequencerGui::UnselectTracks()
       (*i)->TrackOpt->SetSelected(false);
 }
 
+void					SequencerGui::SelectTrack(long trackindex)
+{
+	vector<Track *>::iterator		iter;
+
+	UnselectTracks();
+	for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
+    	if ((*iter)->Index == trackindex)
+			(*iter)->TrackOpt->SetSelected(true);
+}
+
 void					SequencerGui::SwapTracksPos(Track *t1, Track *t2)
 {
   long					z;
@@ -725,43 +735,44 @@ void					SequencerGui::SwapTracksPos(Track *t1, Track *t2)
 
 void					SequencerGui::ChangeSelectedTrackIndex(long trackindexdelta)
 {
-  vector<Track *>::iterator		i;
-  vector<Track *>::iterator		j;
-  vector<Track *>			u;
-  long					x;
-  long					z;
-  Track					*t;
+	vector<Track *>::iterator		i;
+	vector<Track *>::iterator		j;
+	vector<Track *>					u;
+	long							x;
+	long							z;
+	Track							*t;
 
 #ifdef __DEBUG__
   printf("SequencerGui::ChangeSelectedTrackIndex(%d)\n", trackindexdelta);
 #endif
-  for (i = Seq->Tracks.begin(); (i != Seq->Tracks.end()) && !((*i)->TrackOpt->GetSelected()); i++);
-  if (i == Seq->Tracks.end())
-    return;
-  if ((z = trackindexdelta) > 0)
-    for (j = i++, x = 0; (x < z) && (i != Seq->Tracks.end()); x++)
-      {
-	SwapTracksPos(*i, *j);
-	(*i)->UpdateIndex((*i)->Index - 1);
-	u.push_back(*i);
-	t = *i;
-	*(i++) = *j;
-	*(j++) = t;
-      }
-  else
-    for (j = i--, x = 0; (x > z) && (j != Seq->Tracks.begin()); x--)
-      {
-	SwapTracksPos(*i, *j);
-	(*i)->UpdateIndex((*i)->Index + 1);
-	u.push_back(*i);
-	t = *i;
-	*(i--) = *j;
-	*(j--) = t;
-      }
-  (*j)->UpdateIndex((*j)->Index + x);
-  u.push_back(*j);
-  UpdateTrackList(&u);
-  u.clear();
+
+	for (i = Seq->Tracks.begin(); (i != Seq->Tracks.end()) && !((*i)->TrackOpt->GetSelected()); i++);
+	if (i == Seq->Tracks.end())
+    	return;
+	if ((z = trackindexdelta) > 0)
+	    for (j = i++, x = 0; (x < z) && (i != Seq->Tracks.end()); x++)
+    	{
+			SwapTracksPos(*i, *j);
+			(*i)->UpdateIndex((*i)->Index - 1);
+			u.push_back(*i);
+			t = *i;
+			*(i++) = *j;
+			*(j++) = t;
+	    }
+	else
+    	for (j = i--, x = 0; (x > z) && (j != Seq->Tracks.begin()); x--)
+		{
+			SwapTracksPos(*i, *j);
+			(*i)->UpdateIndex((*i)->Index + 1);
+			u.push_back(*i);
+			t = *i;
+			*(i--) = *j;
+			*(j--) = t;
+		}
+	(*j)->UpdateIndex((*j)->Index + x);
+	u.push_back(*j);
+	UpdateTrackList(&u);
+	u.clear();
 }
 
 void					SequencerGui::ScrollTrackList(long track_delta)
@@ -806,34 +817,35 @@ void					SequencerGui::DeleteAllTracks()
 
 void					SequencerGui::DeleteSelectedTrack()
 {
-  vector<Track *>::iterator		i;
-  vector<Pattern *>::iterator		p;
-  long					j;
+	vector<Track *>::iterator		iterTrack;
+	vector<Pattern *>::iterator		iterPattern;
+	long							j;
   
 #ifdef __DEBUG__
   printf("SequencerGui::DeleteSelectedTrack()\n");
 #endif
-  for (i = Seq->Tracks.begin(); (i != Seq->Tracks.end()) && !((*i)->TrackOpt->GetSelected()); i++);
-  if (i == Seq->Tracks.end())
-    return;
-  if ((*i)->TrackOpt->Record && Seq->Recording)
-    return;
-  if ((*i)->TrackOpt->ChanGui)
-    MixerPanel->RemoveChannel((*i)->TrackOpt->ChanGui);
-  for (p = SelectedItems.begin(); p != SelectedItems.end(); )
-    if (((*i)->Index == (*p)->GetTrackIndex()) && (*p)->IsSelected())
-      SelectedItems.erase(p);
-    else
-      p++;
-  SeqMutex.Lock();
-  delete (*i);
-  Seq->Tracks.erase(i);
-  for (i = Seq->Tracks.begin(), j = 0; i != Seq->Tracks.end(); i++)
-    (*i)->UpdateIndex(j++);
-  UpdateTracks();
-  SeqMutex.Unlock();
-  SetScrolling();
-  AdjustVScrolling();
+
+	for (iterTrack = Seq->Tracks.begin(); (iterTrack != Seq->Tracks.end()) && !((*iterTrack)->TrackOpt->GetSelected()); iterTrack++);
+	if (iterTrack == Seq->Tracks.end())
+    	return;
+	if ((*iterTrack)->TrackOpt->Record && Seq->Recording)
+    	return;
+	if ((*iterTrack)->TrackOpt->ChanGui)
+    	MixerPanel->RemoveChannel((*iterTrack)->TrackOpt->ChanGui);
+	for (iterPattern = SelectedItems.begin(); iterPattern != SelectedItems.end(); )
+    	if (((*iterTrack)->Index == (*iterPattern)->GetTrackIndex()) && (*iterPattern)->IsSelected())
+			SelectedItems.erase(iterPattern);
+		else
+			iterPattern++;
+	SeqMutex.Lock();
+	delete (*iterTrack);
+	Seq->Tracks.erase(iterTrack);
+	for (iterTrack = Seq->Tracks.begin(), j = 0; iterTrack != Seq->Tracks.end(); iterTrack++)
+    	(*iterTrack)->UpdateIndex(j++);
+	UpdateTracks();
+	SeqMutex.Unlock();
+	SetScrolling();
+	AdjustVScrolling();
 }
 
 void					SequencerGui::SelectItem(Pattern *p, bool shift)

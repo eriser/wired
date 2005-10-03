@@ -239,6 +239,7 @@ class				SequencerGui: public wxPanel
   Track				*AddTrack(bool is_audio = true);
   void				RemoveTrack();
   void				UnselectTracks();
+  void				SelectTrack(long trackindex);
   void				ChangeSelectedTrackIndex(long trackindex);
   void				ScrollTrackList(long track_delta);
   void				AdjustHScrolling();
