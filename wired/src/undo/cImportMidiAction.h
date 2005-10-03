@@ -17,6 +17,8 @@ using namespace				std;
 #define	HISTORY_LABEL_CREATE_RACK_ACTION			"creating rack"
 #define	HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION	"changing rack effect parameters"
 
+#define	INVALID_VALUE								-42
+
 //class								Plugin;
 //class								PluginLoader;
 ////class								WiredPluginData;
@@ -28,19 +30,25 @@ using namespace				std;
 class					cImportWaveAction : public cAction 
 {
 private:
-   bool					mTrackKindFlag;
-   string				mWavePath;
+   bool					_TrackKindFlag;
+   string				_WavePath;
+   long					_trackIndex;
+   bool					_ShouldAdd;
  
 public:
-  cImportWaveAction (std::string path, bool kind);
+  cImportWaveAction (const std::string& path, bool kind, bool shouldAdd);
+  cImportWaveAction (const cImportWaveAction& copy){*this = copy;};
   ~cImportWaveAction () {};
-  virtual void Do ();
-  virtual void Redo ();
-  virtual void Undo ();
-  virtual void Accept (cActionVisitor& visitor)
-  { visitor.Visit (*this); };
+  
+  virtual void				Do ();
+  virtual void				Redo ();
+  virtual void				Undo ();
+  virtual void				Accept (cActionVisitor& visitor)
+  							{ visitor.Visit (*this); };
   virtual std::string		getHistoryLabel()		// Returns History label string
   							{return HISTORY_LABEL_IMPORT_WAVE_ACTION;};
+  void						AddWaveTrack();
+  void						RemoveWaveTrack(bool selectFromIndex);
 };
 
 
@@ -54,6 +62,7 @@ private:
 
 public:
   cImportMidiAction (std::string path, bool kind);
+  cImportMidiAction (const cImportMidiAction& copy){*this = copy;};
   ~cImportMidiAction () {};
   virtual void				Do();
   virtual void				Redo();
@@ -77,6 +86,7 @@ private:
    
 public:
    cImportAkaiAction (std::string path, bool kind);
+   cImportAkaiAction (const cImportAkaiAction& copy){*this = copy;};
    ~cImportAkaiAction () {};
    virtual void			Do();
    virtual void			Redo();
@@ -98,6 +108,7 @@ private:
   
 public:
 	cChangeParamsEffectAction (Plugin* plugin, bool shouldSave);
+	cChangeParamsEffectAction (const cChangeParamsEffectAction& copy){*this = copy;};
 	~cChangeParamsEffectAction () {};
 	virtual void			Do ();					// Does action
 	virtual void			Redo ();				// Does redo action
@@ -125,6 +136,7 @@ private:
   
 public:
 	cCreateEffectAction (PlugStartInfo* startInfo, PluginLoader * plugin, bool shouldAdd);
+	cCreateEffectAction (const cCreateEffectAction& copy){*this = copy;};
 	~cCreateEffectAction () {};
 	virtual void			Do ();					// Does action
 	virtual void			Redo ();				// Does redo action
@@ -148,6 +160,7 @@ private:
   
 public:
   cCreateRackAction (PlugStartInfo* startInfo, PluginLoader* plugLoader);
+  cCreateRackAction (const cCreateRackAction& copy){*this = copy;};
   ~cCreateRackAction () {};
   virtual void				Do ();
   virtual void				Redo ();

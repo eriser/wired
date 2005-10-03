@@ -9,22 +9,40 @@
 
 /********************   class cImportWaveAction   ********************/
 
-cImportWaveAction::cImportWaveAction (string path, bool kind)
+cImportWaveAction::cImportWaveAction (const string& path, bool kind, bool shouldAdd)
 {
-	mTrackKindFlag = kind;
-	mWavePath = path;
+	_TrackKindFlag = kind;
+	_WavePath = path;
+	_trackIndex = INVALID_VALUE;
+	_ShouldAdd = shouldAdd;
 }
 
 void cImportWaveAction::Do ()
-{ 
-	WaveFile *w = WaveCenter.AddWaveFile(mWavePath);
+{
+	if (_ShouldAdd == true)
+		AddWaveTrack();	
+	else
+		RemoveWaveTrack(false);
+}
 
+void cImportWaveAction::AddWaveTrack()
+{
+	WaveFile *w = WaveCenter.AddWaveFile(_WavePath);
+	
 	if (w) 
     {
-    	Track *t = SeqPanel->AddTrack(mTrackKindFlag);
+    	Track *t = SeqPanel->AddTrack(_TrackKindFlag);
 		t->AddPattern(w);
+		_trackIndex = t->Index;
     }
-	NotifyActionManager();
+	NotifyActionManager();	
+}
+
+void cImportWaveAction::RemoveWaveTrack(bool selectFromIndex)
+{
+	if (selectFromIndex == true)
+		SeqPanel->SelectTrack(_trackIndex);
+	SeqPanel->DeleteSelectedTrack();
 }
 
 void cImportWaveAction::Redo ()
@@ -33,13 +51,11 @@ void cImportWaveAction::Redo ()
 }
 
 void cImportWaveAction::Undo ()
-{ 
-	SeqPanel->ChangeSelectedTrackIndex(0);
-	SeqPanel->DeleteSelectedTrack();			// Pas plantage :) mais ne fait pas ce qu'on veut ...
-	//SeqPanel->RemoveTrack();					// Plantage ...
-												// Il faut un removeTrack qui supprime la track ayant le contexte
-												// sauvegarde dans l'action
-	std::cout << "Should remove action's track" << std::endl;
+{
+	if (_ShouldAdd == true)
+		RemoveWaveTrack(true);	
+	else
+		AddWaveTrack();
 }
 
 
