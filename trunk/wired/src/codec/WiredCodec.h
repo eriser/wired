@@ -22,10 +22,12 @@ class			WiredCodec
 {
  public:
   WiredCodec();
+  WiredCodec (const WiredCodec& copy){*this = copy;};
   ~WiredCodec();
 
   void						Init();														/* Inits and loads codecs */
-  t_Pcm      				Decode(const string &filename);								/* Decodes file */
+  int	      				Decode(const string &filename, t_Pcm *pcm, 
+  									unsigned long length);								/* Decodes file */
   int						Encode(float **pcm, string OutExtension);					/* Encodes stream */
 
   list<string>				GetExtension();												/* Returns a list of extensions readable by all codecs */
