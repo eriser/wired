@@ -84,8 +84,9 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 	int				stream = 0;
 	float			*output_f;
 	unsigned long	retLength = 0;
+	static unsigned long	lengthRead = 0;
 	
-	cout << "[WIREDLIBMPEG] decoding" << endl;
+	cout << "[WIREDLIBMPEG] decoding: " << length << endl;
 	if (file == NULL)
 		file = mpeg3_open_func((char*)path);
 	if (file == NULL)
@@ -141,8 +142,14 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 		cout << "[WIREDLIBMPEG] No channel found" << endl;
 		return 0;
 	}
-	cout << "[WIREDLIBMPEG] done" << endl;
-	return retLength;
+	lengthRead += length;
+	if (lengthRead > pcm->TotalSample * pcm->Channels)
+	{
+		cout << "[WIREDLIBMPEG] done: " << 0 << endl;
+		return 0;
+	}
+	cout << "[WIREDLIBMPEG] done: " << 1 << endl;
+	return length;
 }
 
 WiredLibMpeg			WiredLibMpeg::operator=(const WiredLibMpeg& right)
