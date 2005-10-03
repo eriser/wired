@@ -719,11 +719,9 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 							    this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
 							    | wxPD_REMAINING_TIME);
 	  Progress->Update(1);
-	  //cImportWaveAction* action = new cImportWaveAction(selfile, true);
-  	  Progress->Update(20);
-	  //action->Do();
+	  cActionManager::Global().AddImportWaveAction(selfile, true, true);
 	  Progress->Update(80);
-	  //CreateUndoRedoMenus(EditMenu);
+	  CreateUndoRedoMenus(EditMenu);
 	  Progress->Update(99);
 	  delete Progress;
 	}
@@ -1053,7 +1051,7 @@ void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
 		
 		LoadedPluginsList.push_back(NewPlugin);
 		cout << "[MAINWIN] Creating rack for plugin: " << NewPlugin->InitInfo.Name << endl;
-	  cActionManager::Global().AddEffectAction(&StartInfo, NewPlugin, true);
+		cActionManager::Global().AddEffectAction(&StartInfo, NewPlugin, true);
 	}
 }
 
@@ -1410,7 +1408,9 @@ void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
 
 void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
 {
-  SeqPanel->DeleteSelectedTrack();
+	SeqPanel->DeleteSelectedTrack();
+	/* Needs path in AudioPattern */
+	//cActionManager::Global().AddImportWaveAction(selfile, true, false);
 }
 
 void					MainWindow::OnChangeAudioDir(wxCommandEvent &event)
