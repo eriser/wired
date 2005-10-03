@@ -265,7 +265,7 @@ bool test_decoders(t_Pcm *OriginalPcm)
   return true;
 }
 
-int WiredLibFlac::decode(const char *path, t_Pcm *pcm)
+int WiredLibFlac::decode(const char *path, t_Pcm *pcm, unsigned long length)
 {
   flacfilename_ = path;
   if (!test_decoders(pcm))
