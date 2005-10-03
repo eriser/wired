@@ -89,6 +89,6 @@ private:
 	float		**_ChannelBuffer;
 };
 
-extern wxMutex				SampleRateMutex;
+//extern wxMutex				SampleRateMutex;
 
 #endif //_WIREDSAMPLERATE_H_

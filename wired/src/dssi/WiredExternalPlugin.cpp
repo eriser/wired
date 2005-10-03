@@ -188,7 +188,7 @@ bool				WiredDSSIPlugin::CreatePlugin(int PluginId, WiredLADSPAInstance* Plugin)
 	if (Contains(PluginId) == false || Plugin == NULL)
 		return false;
 
-	const LADSPA_Descriptor	*Descriptor;
+	const LADSPA_Descriptor	*Descriptor = NULL;
 
 	if (_LADSPADescriptorFunction)
 		Descriptor = _LADSPADescriptors.find(PluginId)->second;
