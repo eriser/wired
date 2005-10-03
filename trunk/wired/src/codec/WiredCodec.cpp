@@ -132,7 +132,7 @@ int WiredCodec::Encode(float **pcm, string OutExtension)
 	
 }
 
-int WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned long length)
+unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned long length)
 {
 	list<t_WLib>::const_iterator		iterTWLib;
 	t_Pcm								mypcm;
