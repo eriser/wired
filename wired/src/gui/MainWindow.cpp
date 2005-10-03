@@ -614,39 +614,42 @@ void					MainWindow::ApplyCodec(string& FileToDecode)
 			DestFileName = CurrentXmlSession->GetAudioDir() + string("/") + RelativeFileName.GetFullName();
 			cout << "file {" << DestFileName.c_str() << "}" << endl;
 			
-			if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)))
-			{			
-				Data.pcm = new float[2 * BufferSize];
-				bzero(Data.pcm, BufferSize * 2);
-				while ((Readen = CodecMgr->Decode(FileToDecode, &Data, BufferSize)) > 0)
+			Data.pcm = new float[2 * BufferSize];
+			bzero(Data.pcm, BufferSize * 2);
+			while ((Readen = CodecMgr->Decode(FileToDecode, &Data, BufferSize)) > 0)
+			{
+				TotalReaden += Readen;
+				if (!Result)
 				{
-					TotalReaden += Readen;
 			      	Info.samplerate = Data.SampleRate;
 					Info.channels = Data.Channels;
 					Info.format = 0;
 					Info.format |= SF_FORMAT_WAV;	
 					Info.format |= GetSndFFormat(Data.PType);
-					if (Data.PType == Float32)
-						sf_write_result = sf_writef_float(Result, (float *)Data.pcm,Readen);
-					else
-						sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen);
-					bzero(Data.pcm, BufferSize * 2);
+					if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)) == NULL)
+					{
+						cout << "[MAINWIN] Codec 2 - Could not open file " << DestFileName.c_str();
+						cout << "} because of error : " << sf_strerror(Result) << endl;
+						TotalReaden = 0;
+						sf_write_result = 0;
+						break;
+					}
 				}
-				CodecMgr->EndDecode();
-				delete (float *)Data.pcm;
-				if (!TotalReaden || !sf_write_result)
-				{
-					cout << "[MAINWIN] Codec 1 - Could not write decoded file {" << FileToDecode.c_str();
-					cout << "} because of error : " << sf_strerror(Result) << endl;
-				}
+				if (Data.PType == Float32)
+					sf_write_result = sf_writef_float(Result, (float *)Data.pcm,Readen);
 				else
-					FileToDecode = DestFileName;
+					sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen);
+				bzero(Data.pcm, BufferSize * 2);				
 			}
-			else
+			CodecMgr->EndDecode();
+			delete (float *)Data.pcm;
+			if (!TotalReaden || !sf_write_result)
 			{
-				cout << "[MAINWIN] Codec 2 - Could not open file " << FileToDecode.c_str();
+				cout << "[MAINWIN] Codec 1 - Could not write decoded file {" << FileToDecode.c_str();
 				cout << "} because of error : " << sf_strerror(Result) << endl;
 			}
+			else
+				FileToDecode = DestFileName;
 			sf_close(Result);
 		}
 		MidiMutex.Unlock();
