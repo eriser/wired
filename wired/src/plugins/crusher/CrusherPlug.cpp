@@ -13,7 +13,7 @@
 #define IMG_CR_BG	"plugins/crusher/crusher_bg.png"
 #define IMG_CR_BMP	"plugins/crusher/CrusherPlug.bmp"
 #define IMG_CR_FADER_BG	"plugins/crusher/fader_bg.png"
-#define IMG_CR_FADER_FG	"plugins/crusher/fader_fg.png"
+#define IMG_CR_FADER_FG	"plugins/crusher/fader_button.png"
 
 static PlugInitInfo info;
 

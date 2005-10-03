@@ -557,14 +557,23 @@ s,@CPPFLAGS@,,;t t
 s,@ac_ct_CC@,gcc,;t t
 s,@EXEEXT@,,;t t
 s,@OBJEXT@,o,;t t
+s,@EGREP@,grep -E,;t t
 s,@LN_S@,ln -s,;t t
 s,@ECHO@,echo,;t t
+s,@AR@,ar,;t t
+s,@ac_ct_AR@,ar,;t t
 s,@RANLIB@,ranlib,;t t
 s,@ac_ct_RANLIB@,ranlib,;t t
 s,@STRIP@,strip,;t t
 s,@ac_ct_STRIP@,strip,;t t
 s,@CPP@,gcc -E,;t t
-s,@EGREP@,grep -E,;t t
+s,@CXX@,g++,;t t
+s,@CXXFLAGS@,-ggdb,;t t
+s,@ac_ct_CXX@,g++,;t t
+s,@CXXCPP@,g++ -E,;t t
+s,@F77@,,;t t
+s,@FFLAGS@,,;t t
+s,@ac_ct_F77@,,;t t
 s,@LIBTOOL@,$(SHELL) $(top_builddir)/libtool,;t t
 s,@INSTALL_PROGRAM@,${INSTALL},;t t
 s,@INSTALL_SCRIPT@,${INSTALL},;t t
@@ -595,13 +604,9 @@ s,@AMDEPBACKSLASH@,\,;t t
 s,@CCDEPMODE@,depmode=gcc3,;t t
 s,@am__fastdepCC_TRUE@,,;t t
 s,@am__fastdepCC_FALSE@,#,;t t
-s,@CXX@,g++,;t t
-s,@CXXFLAGS@,-g -O2,;t t
-s,@ac_ct_CXX@,g++,;t t
 s,@CXXDEPMODE@,depmode=gcc3,;t t
 s,@am__fastdepCXX_TRUE@,,;t t
 s,@am__fastdepCXX_FALSE@,#,;t t
-s,@CXXCPP@,g++ -E,;t t
 s,@PKG_CONFIG@,/usr/bin/pkg-config,;t t
 s,@ac_pt_PKG_CONFIG@,/usr/bin/pkg-config,;t t
 s,@SAMPLERATE_CFLAGS@,-I/usr/local/include  ,;t t
