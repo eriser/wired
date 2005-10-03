@@ -20,6 +20,7 @@
 #define		MPEG3_READ_AUDIO		"mpeg3_read_audio"
 #define		MPEG3_SEEK_BYTE			"mpeg3_seek_byte"
 #define		MPEG3_CLOSE				"mpeg3_close"
+#define		MPEG3_TELL_BYTE			"mpeg3_tell_byte"
 
 typedef int			(*t_mpeg3_check_sig)		(char *path);
 typedef mpeg3_t* 	(*t_mpeg3_open)				(char *path);
@@ -31,12 +32,13 @@ typedef int			(*t_mpeg3_read_audio)		(mpeg3_t *file, float *output_f, short *out
   												int channel, long samples, int stream);
 typedef int			(*t_mpeg3_seek_byte)		(mpeg3_t *file, int64_t byte);
 typedef int			(*t_mpeg3_close)			(mpeg3_t *file);
+typedef int64_t		(*t_mpeg3_tell_byte)		(mpeg3_t *file);
 
 class   WiredLibMpeg: public WiredApiCodec
 {
  public:
 
-  WiredLibMpeg(){std::cout << "[WIRED_MPEG_CODEC] Mpeg child created" << std::endl;}
+  WiredLibMpeg(){std::cout << "[WIRED_MPEG_CODEC] Mpeg child created" << std::endl;file = NULL;}
   WiredLibMpeg(const WiredLibMpeg& copy){*this = copy;};
   ~WiredLibMpeg(){dlclose(handle);};
 
@@ -61,6 +63,7 @@ class   WiredLibMpeg: public WiredApiCodec
   t_mpeg3_read_audio		mpeg3_read_audio_func;
   t_mpeg3_seek_byte			mpeg3_seek_byte_func;
   t_mpeg3_close				mpeg3_close_func;
+  t_mpeg3_tell_byte			mpeg3_tell_byte_func;
   
   void				InitAccesLib();
   void				fillLibInfo(t_LibInfo& info, char *extension);
