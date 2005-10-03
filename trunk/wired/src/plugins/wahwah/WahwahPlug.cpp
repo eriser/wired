@@ -10,6 +10,7 @@
 static PlugInitInfo info;
 
 BEGIN_EVENT_TABLE(EffectWahwah, wxWindow)
+  EVT_BUTTON(Wahwah_Bypass, EffectWahwah::OnBypass)
   EVT_COMMAND_SCROLL(Wahwah_Frequency, EffectWahwah::OnFrequency)
   EVT_COMMAND_SCROLL(Wahwah_StartPhase, EffectWahwah::OnStartPhase)
   EVT_COMMAND_SCROLL(Wahwah_Depth, EffectWahwah::OnDepth)
@@ -31,6 +32,10 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   bmp = new wxBitmap(string(GetDataDir() + string(IMG_WW_BMP)).c_str(), wxBITMAP_TYPE_BMP);
   img_bg = new wxImage(string(GetDataDir() + string(IMG_WW_FADER_BG)).c_str(),wxBITMAP_TYPE_PNG);
   img_fg = new wxImage(string(GetDataDir() + string(IMG_WW_FADER_FG)).c_str(),wxBITMAP_TYPE_PNG);
+    bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  BypassBtn = new DownButton(this, Wahwah_Bypass, wxPoint(21, 58), 
+			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), bypass_off, bypass_on);
   
   FreqFader = new FaderCtrl(this, Wahwah_Frequency, img_bg, img_fg, 0, TO_GUI_FREQ(4.0), TO_GUI_FREQ(DEFAULT_FREQ),
 			    wxPoint(83, 12), wxSize(22, 78));
@@ -42,6 +47,11 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 			     wxPoint(258, 12), wxSize(22, 78));
   ResFader = new FaderCtrl(this, Wahwah_Res, img_bg, img_fg, TO_GUI_RES(0.1), TO_GUI_RES(10.0), TO_GUI_RES(DEFAULT_RES),
 			   wxPoint(320, 12), wxSize(22, 78));
+
+  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+
   SetBackgroundColour(wxColour(237, 237, 237));
 }
 
@@ -202,8 +212,24 @@ long		EffectWahwah::Save(int fd)
 
 void		EffectWahwah::Process(float **input, float **output, long sample_length) 
 {
-  LeftChannel.ProcessSimpleMono(input[0], output[0], sample_length);
-  RightChannel.ProcessSimpleMono(input[1], output[1], sample_length);
+  if (!Bypass)
+    {
+      LeftChannel.ProcessSimpleMono(input[0], output[0], sample_length);
+      RightChannel.ProcessSimpleMono(input[1], output[1], sample_length);
+    }
+  else
+    {
+      memcpy(output[0], input[0], sample_length * sizeof(float));
+      memcpy(output[1], input[1], sample_length * sizeof(float));
+    }
+}
+
+void		EffectWahwah::OnBypass(wxCommandEvent &e)
+{
+  WahwahMutex.Lock();
+  Bypass = BypassBtn->GetOn();
+  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+  WahwahMutex.Unlock();
 }
 
 void		EffectWahwah::Load(WiredPluginData& Datas)
