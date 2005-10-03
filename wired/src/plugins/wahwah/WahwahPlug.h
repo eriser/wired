@@ -14,6 +14,7 @@
 
 #include	"Plugin.h"
 #include	"FaderCtrl.h"
+#include	"DownButton.h"
 
 
 #define		PLUGIN_NAME	"Wahwah"
@@ -66,6 +67,12 @@ typedef struct s_plugParams
 #define STR_DEPTH "Depth"
 #define STR_FREQUENCY_OFS "FrequencyOFS"
 #define STR_RESOLUTION "Resolution"
+
+#define IMG_LIQUID_ON	"plugins/reverb/liquid-cristal_play.png"
+#define IMG_LIQUID_OFF	"plugins/reverb/liquid-cristal_stop.png"
+#define IMG_BYPASS_ON	"plugins/reverb/bypass_button_down.png"
+#define IMG_BYPASS_OFF	"plugins/reverb/bypass_button_up.png"
+
  
 class Wahwah
 {
@@ -118,6 +125,7 @@ class EffectWahwah : public Plugin
   void	OnFreqOfs(wxScrollEvent &e);
   void	OnRes(wxScrollEvent &e);
   void	OnPaint(wxPaintEvent &event);
+  void	OnBypass(wxCommandEvent &e);
   void	Load(int fd, long size);
   long	Save(int fd);
   void	Load(WiredPluginData& Datas);
@@ -133,17 +141,26 @@ class EffectWahwah : public Plugin
 
  protected:
 
-  wxBitmap *bmp;   
+  wxBitmap	*bmp;   
 
-  FaderCtrl *FreqFader;
-  FaderCtrl *StartPhaseFader;
-  FaderCtrl *DepthFader;
-  FaderCtrl *FreqOfsFader;
-  FaderCtrl *ResFader;
+  bool		Bypass;
 
-  wxImage *img_fg;
-  wxImage *img_bg;
-  wxBitmap *TpBmp;
+  FaderCtrl	*FreqFader;
+  FaderCtrl	*StartPhaseFader;
+  FaderCtrl	*DepthFader;
+  FaderCtrl	*FreqOfsFader;
+  FaderCtrl	*ResFader;
+  DownButton	*BypassBtn;
+
+  wxImage	*img_fg;
+  wxImage	*img_bg;
+  wxImage	*bypass_on;
+  wxImage	*bypass_off;
+  wxImage	*liquid_on;
+  wxImage	*liquid_off;
+  
+  StaticBitmap	*Liquid;
+  wxBitmap	*TpBmp;
 
   wxMutex	WahwahMutex;
 
@@ -153,7 +170,8 @@ class EffectWahwah : public Plugin
 
 enum
   {
-    Wahwah_Frequency = 1,
+    Wahwah_Bypass,
+    Wahwah_Frequency,
     Wahwah_StartPhase,
     Wahwah_Depth,
     Wahwah_FreqOfs,
