@@ -1,1 +1,2 @@
-SUBDIRS = flac mpeg
+SUBDIRS = flac mpeg vorbis
+
