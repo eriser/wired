@@ -15,7 +15,7 @@ WiredLADSPAInstance::~WiredLADSPAInstance()
 	UnLoad();
 }
 
-WiredLADSPAInstance::WiredLADSPAInstance(const WiredLADSPAInstance& copy) : Plugin()
+WiredLADSPAInstance::WiredLADSPAInstance(const WiredLADSPAInstance& copy)
 {
 	*this = copy;
 }
@@ -24,6 +24,10 @@ WiredLADSPAInstance		WiredLADSPAInstance::operator=(const WiredLADSPAInstance& r
 {
 	if (this != &right)
 	{
+		//this->::Plugin = right;
+		Name= right.Name;
+		StartInfo = right.StartInfo;
+		InitInfo = right.InitInfo;
 		_InputAudioPluginsPorts = right._InputAudioPluginsPorts;
 		_OutputAudioPluginsPorts = right._OutputAudioPluginsPorts;
 		_InputDataPluginsPorts = right._InputDataPluginsPorts;
