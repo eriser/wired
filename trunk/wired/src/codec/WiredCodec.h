@@ -29,7 +29,7 @@ class			WiredCodec
   unsigned long				Decode(const string &filename, t_Pcm *pcm, 
   									unsigned long length);								/* Decode file */
   int						Encode(float **pcm, string OutExtension);					/* Encode stream */
-  int						EndDecode(){};												/* Close file */
+  int						EndDecode();												/* Close file */
 
   list<string>				GetExtension();												/* Returns a list of extensions readable by all codecs */
   bool						CanDecode(const string &filename);							/* Proper codec installed ? */
@@ -40,8 +40,9 @@ class			WiredCodec
   list<string>				_WiredSo;													/* list of codec.so */
   std::map<string, int>		codecToUse;													/* Codec to use :) */
   unsigned long				_CurrentUniqueID;											/* */
+  char *path;
  
-  void						InitWLib();													/* look for .so */
+ void						InitWLib();													/* look for .so */
   void						WLoadLib();													/* load all .so */
   void						WLibLoader(const string& filename);							/* load .so */
   int						CheckExtension(const string& str, const list<string>& ExtList);	/* check same occurence extensions */

@@ -20,6 +20,24 @@ WiredCodec::~WiredCodec()
 		dlclose((*iter).handle);
 }
 
+int	WiredCodec::EndDecode()
+{
+  list<t_WLib>::const_iterator		iterTWLib;
+  unsigned long						id;
+    
+  if (codecToUse.find(path) != codecToUse.end())
+    id = codecToUse[path];
+  for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
+    {
+      if ((*iterTWLib).Codec->GetUniqueId() == id)
+	{
+	  (*iterTWLib).Codec->EndDecode();
+	  break;
+	}
+    }
+  return 0;
+}
+
 void WiredCodec::DumpCodec()
 {
 	list<t_WLib>::iterator	i;
@@ -134,31 +152,35 @@ int WiredCodec::Encode(float **pcm, string OutExtension)
 
 unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned long length)
 {
-	list<t_WLib>::const_iterator		iterTWLib;
-	unsigned long						id;
-	unsigned long						retLenght = 0;
-
-	WiredCodecMutex.Lock();
-	if (codecToUse.find(filename) != codecToUse.end())
-    	id = codecToUse[filename];
-	else
+  list<t_WLib>::const_iterator		iterTWLib;
+  unsigned long						id;
+  unsigned long						retLenght = 0;
+  
+  cout << "lu" << endl;
+  WiredCodecMutex.Lock();
+  if (codecToUse.find(filename) != codecToUse.end())
+    id = codecToUse[filename];
+  else
     {
-    	pcm->pcm = NULL;
-    	WiredCodecMutex.Unlock();
-	    return retLenght;
+      pcm->pcm = NULL;
+      WiredCodecMutex.Unlock();
+      return retLenght;
     }
-	for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
+  if (!path)
+    {
+      path = new char(filename.size() * sizeof(char));
+      strcpy(path, filename.c_str());
+    }
+  for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
+    {
+      if ((*iterTWLib).Codec->GetUniqueId() == id)
 	{
-    	if ((*iterTWLib).Codec->GetUniqueId() == id)
-		{
-      		char *path = new char(filename.size() * sizeof(char));
-			strcpy(path, filename.c_str());
-			retLenght = (*iterTWLib).Codec->decode(path, pcm, length);
-			break;
-		}
+	  retLenght = (*iterTWLib).Codec->decode(path, pcm, length);
+	  break;
 	}
-	WiredCodecMutex.Unlock();
-	return retLenght;
+    }
+  WiredCodecMutex.Unlock();
+  return retLenght;
 }
 
 void WiredCodec::InitWLib()
