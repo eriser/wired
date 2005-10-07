@@ -34,6 +34,13 @@
 //	free(ptr);
 //}
 
+
+void	AllocationErrorHandler(void)
+{
+	cout << "[MAINAPP] Allocation error or not enough memory, exiting" << endl;
+	exit(-1);
+}
+
 //void*		operator new(size_t size)
 //{
 //	void	*res = NULL;
@@ -61,11 +68,6 @@
 //	free(ptr);
 //}
 
-void		ErrorHandler(void)
-{
-	cout << "[MAINAPP] An unhandled exception was thrown porgram will now exit" << endl;
-	exit(-1);
-}
 
 IMPLEMENT_APP(MainApp)
 
@@ -73,7 +75,7 @@ MainWindow			*MainWin;
 
 bool				MainApp::OnInit()
 {
-	std:set_new_handler(&ErrorHandler);
+	std::set_new_handler(&AllocationErrorHandler);
   wxBitmap			bitmap;
 #if wxUSE_LIBPNG
   wxImage::AddHandler(new wxPNGHandler);
