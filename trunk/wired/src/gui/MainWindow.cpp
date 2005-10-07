@@ -331,9 +331,8 @@ void					MainWindow::InitFileConverter()
 	info.SamplesPerBuffer = Audio->SamplesPerBuffer;
 	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) Audio->SamplesPerBuffer))
 		cout << "[MAINWIN] Create file converter thread failed !" << endl; 
-	else
-		if (FileConverter->GetThread()->Run() != wxTHREAD_NO_ERROR)
-			cout << "[MAINWIN] Run file converter thread failed !" << endl; 
+	if (FileConverter->GetThread()->Run() != wxTHREAD_NO_ERROR)
+		cout << "[MAINWIN] Run file converter thread failed !" << endl; 
 }
 
 void					MainWindow::InitUndoRedoMenuItems()
@@ -407,7 +406,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   delete Seq;
   delete LoadedExternalPlugins;
   
-  FileConverter->GetThread()->Delete();
+  FileConverter->Stop();
   delete FileConverter;
   delete Audio;
   MidiEngine->Delete();
