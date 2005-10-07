@@ -8,14 +8,14 @@
 
 wxMutex FileConversionMutex;
 
-FileConversion::Fileconversion() : wxThreadHelper()
+FileConversion::FileConversion() : wxThreadHelper()
 {
 	_ShouldRun = false;
 }
 
-FileConversion::~FileConversion() : ~wxThreadHelper()
+FileConversion::~FileConversion()
 {
-	
+	GetThread()->Delete();
 }
 
 FileConversion		FileConversion::operator=(const FileConversion& right)
@@ -41,7 +41,7 @@ bool				FileConversion::Init(t_samplerate_info *RateInit, string WorkingDir, uns
 	for (Iter = CodecsListExtensions.begin(); Iter != CodecsListExtensions.end(); Iter++)
   		_CodecsExtensions.insert(_CodecsExtensions.end(), *Iter);
   	cout << "...done" << endl << "[FILECONVERT] Loading samplerate management...";
-	_SampleRate.Init(RateInit);
+	_SampleRateConverter.Init(RateInit);
 	cout << "...done" << endl;
 	_ShouldRun = true;
 	if (Create() != wxTHREAD_NO_ERROR)
@@ -64,7 +64,7 @@ void				*FileConversion::Entry()
 		{
 			FileConversionAction	*Action = _ActionsList.front();
 			_ActionsList.pop_front();
-			switch case (Action->TypeAction)
+			switch (Action->TypeAction)
 			{
 				case ImportWaveFile :
 					Decode(Action->SrcFileName);					
@@ -76,15 +76,15 @@ void				*FileConversion::Entry()
 				case ConvertSampleRate :
 					ConvertSamplerate(Action->SrcFileName);
 					break;
-				case ImportWaveFile :
+				case ImportFile :
 					
 					break;
-				case default :
+				default :
 					break;
 			}
 			delete Action;
 		}
-		if (TestDestroy() == true)
+		if (GetThread()->TestDestroy() == true)
 			break;
 		FileConversionMutex.Lock();
 	}
@@ -131,7 +131,7 @@ void				FileConversion::Decode(string &FileName)
 		cout << "file {" << DestFileName.c_str() << "}" << endl;
 		
 		Data.pcm = new float[2 * _BufferSize];
-		bzero(Data.pcm, BufferSize * 2);
+		bzero(Data.pcm, _BufferSize * 2);
 		while ((Readen = _CodecConverter.Decode(FileName, &Data, _BufferSize)) > 0)
 		{
 			TotalReaden += Readen;
@@ -157,9 +157,9 @@ void				FileConversion::Decode(string &FileName)
 				sf_write_result = sf_writef_float(Result, (float *)Data.pcm,Readen * Info.channels);
 			else
 				sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen * Info.channels);
-			bzero(Data.pcm, BufferSize * 2);				
+			bzero(Data.pcm, _BufferSize * 2);				
 		}
-		_CodecConverter->EndDecode();
+		_CodecConverter.EndDecode();
 		cout << "Total Readen == " << TotalReaden << endl;
 		delete (float *)Data.pcm;
 		if (!TotalReaden || !sf_write_result)
@@ -176,19 +176,19 @@ void				FileConversion::Decode(string &FileName)
 
 void				FileConversion::ConvertFromCodec(const string &FileName)
 {
-	EnqueueAction(ImportWaveFile, FileName, "")
+	EnqueueAction(ImportWaveFile, FileName, "");
 	FileConversionMutex.Unlock();
 }
 
 void				FileConversion::ConvertToCodec(const string &FileName)
 {
-	EnqueueAction(ExportWaveFile, FileName, "")
+	EnqueueAction(ExportWaveFile, FileName, "");
 	FileConversionMutex.Unlock();
 }
 
 void				FileConversion::ConvertSamplerate(const string &FileName)
 {
-	EnqueueAction(ConvertSampleRate, FileName, "")
+	EnqueueAction(ConvertSampleRate, FileName, "");
 	FileConversionMutex.Unlock();
 }
 
@@ -197,7 +197,7 @@ bool				FileConversion::ConvertSamplerate(string& FileName, bool &HasChangedPath
 	int					HasConvertedFile;
     t_samplerate_info	Info;
 
-    HasConvertedFile = _SampleRateConverter.OpenFile(FileName, this);
+    HasConvertedFile = _SampleRateConverter.OpenFile(FileName, NULL);
 	if (HasConvertedFile == wxID_CANCEL)
 		return false;
 	else if (HasConvertedFile == wxID_NO)

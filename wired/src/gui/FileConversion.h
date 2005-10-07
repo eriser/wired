@@ -4,7 +4,7 @@
 #include <wx/thread.h>
 #include <iostream>
 #include <string>
-#include <liste>
+#include <list>
 #include <vector>
 #include <deque>
 
@@ -13,11 +13,11 @@
 
 using namespace std;
 
-enum {
+typedef enum {
 	ImportWaveFile = 0,
 	ConvertSampleRate,
 	ExportWaveFile,
-	ImportWaveFile
+	ImportFile
 } FileConversionTypeAction;
 
 typedef struct s_FileConversionAction
@@ -30,7 +30,7 @@ typedef struct s_FileConversionAction
 class	FileConversion : public wxThreadHelper
 {
 public:
-	Fileconversion();
+	FileConversion();
 	~FileConversion();
 	FileConversion(const FileConversion& copy){*this = copy;}
 	FileConversion operator=(const FileConversion& right);
@@ -43,11 +43,11 @@ public:
 	void				ConvertSamplerate(const string &FileName);
 private:
 	bool				ConvertSamplerate(string& FileName, bool &HasChangedPath);
-	int					GetSndFFormat(PcmType Type)
+	int					GetSndFFormat(PcmType Type);
 	void				Decode(string &FileName);
 	void				EnqueueAction(FileConversionTypeAction ActionType, const string &SrcFile, const string &DstFile);
 	bool 				_ShouldRun;
-	WireSamplerate		_SampleRateConverter;
+	WiredSampleRate		_SampleRateConverter;
 	WiredCodec			_CodecConverter;
 	vector<string>		_CodecsExtensions;
 	string				_WorkingDir;

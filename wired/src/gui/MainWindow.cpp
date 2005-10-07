@@ -329,10 +329,10 @@ void					MainWindow::InitFileConverter()
 	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
 	info.SampleRate = Audio->SampleRate;
 	info.SamplesPerBuffer = Audio->SamplesPerBuffer;
-	if (FileConverter->Init(info, CurrentXmlSession->GetAudioDir(), Audio->SamplesPerBuffer))
+	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) Audio->SamplesPerBuffer))
 		cout << "[MAINWIN] Create file converter thread failed !" << endl; 
 	else
-		if (FileConverter->Run() != wxTHREAD_NO_ERROR)
+		if (FileConverter->GetThread()->Run() != wxTHREAD_NO_ERROR)
 			cout << "[MAINWIN] Run file converter thread failed !" << endl; 
 }
 
@@ -407,14 +407,13 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   delete Seq;
   delete LoadedExternalPlugins;
   
-  FileConverter->Delete();
+  FileConverter->GetThread()->Delete();
   delete FileConverter;
   delete Audio;
   MidiEngine->Delete();
   delete MidiEngine;
   WiredSettings->Save();
   delete WiredSettings;
-  delete CodecMgr;
   cout << "[MAINWIN] Closing..."<< endl; 
   exit(0);
 }
@@ -582,7 +581,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
   FileLoader				*dlg;
   int						res;
 
-  dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, &CodecExtensions, true);
+  dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, FileConverter->GetCodecsExtensions(), true);
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();
@@ -605,8 +604,8 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       }
       if (res != wxID_CANCEL)
       {		
-		if (ConvertSamplerate(selfile, HasChangedPath) == false)
-			res = wxID_CANCEL;
+//		if (ConvertSamplerate(selfile, HasChangedPath) == false)
+//			res = wxID_CANCEL;
       }
 	      if (res != wxID_CANCEL && HasChangedPath == false)
 	      {
