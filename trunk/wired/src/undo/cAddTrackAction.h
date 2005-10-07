@@ -5,6 +5,7 @@
 #include "cAction.h"
 #include "cActionManager.h"
 #include "Visitor.h"
+#include "SequencerGui.h"
 
 #define	HISTORY_LABEL_ADD_TRACK_ACTION	"AddTrackAction"
 
