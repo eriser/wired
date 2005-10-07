@@ -30,7 +30,7 @@ class   WiredLibVorbis: public WiredApiCodec
 {
  public:
   
-  WiredLibVorbis(){std::cout << "[WIRED_OGG_CODEC] Vorbis ogg child created" << std::endl;}
+  WiredLibVorbis(){std::cout << "[WIRED_OGG_CODEC] Vorbis ogg child created" << std::endl;Pass = 0;}
   ~WiredLibVorbis(){dlclose(handle);}
   WiredLibVorbis(const WiredLibVorbis& copy){*this = copy;};
   
