@@ -843,6 +843,7 @@ bool					Sequencer::ExportToWave(string &filename)
 	  SeqMutex.Lock();
       SetCurrentPos(BeginLoopPos);
       Exporting = true;
+      Loop = false;
       SeqMutex.Unlock();
       Play();
       return true;
