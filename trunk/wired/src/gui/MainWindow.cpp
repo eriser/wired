@@ -39,7 +39,8 @@
 #include "../plugins/PluginLoader.h"
 #include "../xml/WiredSessionXml.h"
 #include "../dssi/WiredExternalPluginMgr.h"
-#include "../samplerate/WiredSampleRate.h"
+#include "FileConversion.h"
+
 
 Rack					*RackPanel;
 SequencerGui				*SeqPanel;
@@ -53,6 +54,7 @@ vector<PluginLoader *>			LoadedPluginsList;
 WiredSession				*CurrentSession;
 WiredSessionXml				*CurrentXmlSession;
 WiredExternalPluginMgr		*LoadedExternalPlugins;
+FileConversion				*FileConverter;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
@@ -297,6 +299,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   RackModeView = true;
   SeqModeView = true;
 
+  InitFileConverter();
+
   // Taille minimum de la fenetre
   SetSizeHints(400, 300);
 
@@ -311,24 +315,25 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 	  (wxCommandEventFunction)&MainWindow::OnImportWave);
 
 
-  InitCodecMgr();
   InitUndoRedoMenuItems();
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
 }
 
-void					MainWindow::InitCodecMgr()
+void					MainWindow::InitFileConverter()
 {
-	cout << "[MAINWIN] Loading codec extensions" << endl;
-	CodecMgr = new WiredCodec();
-	CodecMgr->Init();
-	list<string>				CodecsListExtensions = CodecMgr->GetExtension();
-	list<string>::iterator	Iter;
-
-	for (Iter = CodecsListExtensions.begin(); Iter != CodecsListExtensions.end(); Iter++)
-  		CodecExtensions.insert(CodecExtensions.end(), *Iter);
-	cout << "[MAINWIN] Codec extensions loaded" << endl;
+	FileConverter = new FileConversion();
+	t_samplerate_info info;
+	
+	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
+	info.SampleRate = Audio->SampleRate;
+	info.SamplesPerBuffer = Audio->SamplesPerBuffer;
+	if (FileConverter->Init(info, CurrentXmlSession->GetAudioDir(), Audio->SamplesPerBuffer))
+		cout << "[MAINWIN] Create file converter thread failed !" << endl; 
+	else
+		if (FileConverter->Run() != wxTHREAD_NO_ERROR)
+			cout << "[MAINWIN] Run file converter thread failed !" << endl; 
 }
 
 void					MainWindow::InitUndoRedoMenuItems()
@@ -402,6 +407,8 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   delete Seq;
   delete LoadedExternalPlugins;
   
+  FileConverter->Delete();
+  delete FileConverter;
   delete Audio;
   MidiEngine->Delete();
   delete MidiEngine;
@@ -409,7 +416,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   delete WiredSettings;
   delete CodecMgr;
   cout << "[MAINWIN] Closing..."<< endl; 
-  exit(1);
+  exit(0);
 }
 
 void					MainWindow::OnQuit(wxCommandEvent &WXUNUSED(event))
@@ -570,121 +577,6 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   delete dlg;
 }
 
-int						MainWindow::GetSndFFormat(PcmType Type)
-{
-	switch (Type)
-	{
-		case UInt8:
-			return SF_FORMAT_PCM_U8;
-		case Int8:
-			return SF_FORMAT_PCM_S8;
-		case Int16:
-			return SF_FORMAT_PCM_16;
-		case Int24:
-			return SF_FORMAT_PCM_24;
-		case Float32:
-			return SF_FORMAT_FLOAT;
-		default: 
-			return SF_FORMAT_PCM_16;
-	}
-}
-
-void					MainWindow::ApplyCodec(string& FileToDecode)
-{
-	if (CodecMgr != NULL)
-	{		
-		MidiMutex.Lock();
-		SeqMutex.Lock();
-		AudioMutex.Lock();
-		cout << "01 file {" << FileToDecode.c_str() << "}" << endl;
-		if (CodecMgr->CanDecode(FileToDecode) == true)
-		{
-			t_Pcm			Data;
-	      	wxFileName		RelativeFileName;
-	      	string			DestFileName;
-    	  	SNDFILE			*Result = NULL;
-			SF_INFO			Info;
-			unsigned long	Readen = 0;
-			unsigned long 	TotalReaden = 0;
-			int				sf_write_result = 0;
-			unsigned long	BufferSize = Audio->SamplesPerBuffer;
-
-			RelativeFileName = FileToDecode.substr(FileToDecode.find_last_of("/"));
-			RelativeFileName.SetExt(wxString("wav"));
-			DestFileName = CurrentXmlSession->GetAudioDir() + string("/") + RelativeFileName.GetFullName();
-			cout << "file {" << DestFileName.c_str() << "}" << endl;
-			
-			Data.pcm = new float[2 * BufferSize];
-			bzero(Data.pcm, BufferSize * 2);
-			while ((Readen = CodecMgr->Decode(FileToDecode, &Data, BufferSize)) > 0)
-			{
-				cout << "Readen == " << Readen << endl;
-				TotalReaden += Readen;
-				if (Result == NULL)
-				{
-			      	Info.samplerate = Data.SampleRate;
-					Info.channels = Data.Channels;
-					Info.format = 0;
-					Info.format |= SF_FORMAT_WAV;	
-					Info.format |= GetSndFFormat(Data.PType);
-					cout << "samplerate == " << Info.samplerate << ", Channels == " << Info.channels
-						<< ", Enum == " << GetSndFFormat(Data.PType) << endl;
-					if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)) == NULL)
-					{
-						cout << "[MAINWIN] Codec 2 - Could not open file " << DestFileName.c_str();
-						cout << "} because of error : " << sf_strerror(Result) << endl;
-						TotalReaden = 0;
-						sf_write_result = 0;
-						break;
-					}
-				}
-				if (Data.PType == Float32)
-					sf_write_result = sf_writef_float(Result, (float *)Data.pcm,Readen);
-				else
-					sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen);
-				bzero(Data.pcm, BufferSize * 2);				
-			}
-			CodecMgr->EndDecode();
-			delete (float *)Data.pcm;
-			if (!TotalReaden || !sf_write_result)
-			{
-				cout << "[MAINWIN] Codec 1 - Could not write decoded file {" << FileToDecode.c_str();
-				cout << "} because of error : " << sf_strerror(Result) << endl;
-			}
-			else
-				FileToDecode = DestFileName;
-			sf_close(Result);  
-		}
-		MidiMutex.Unlock();
-		SeqMutex.Unlock();
-		AudioMutex.Unlock();
-	}
-}
-
-bool					MainWindow::ConvertSamplerate(string& FileName, bool &HasChangedPath)
-{
-	int					HasConvertedFile;
-    WiredSampleRate		CheckSampleRate;
-    t_samplerate_info	Info;
-
-	Info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
-	Info.SampleRate = (int) Audio->SampleRate;
-	Info.Format = Audio->UserData->SampleFormat;
-	Info.SamplesPerBuffer = Audio->SamplesPerBuffer;
-	CheckSampleRate.Init(&Info);
-    HasConvertedFile = CheckSampleRate.OpenFile(FileName, this);
-	if (HasConvertedFile == wxID_CANCEL)
-		return false;
-	else if (HasConvertedFile == wxID_NO)
-		return true;
-	else if (HasConvertedFile == wxID_YES)
-	{
-		HasChangedPath = true;
-		return true;
-	}
-	return true;
-}
-
 void					MainWindow::OnImportWave(wxCommandEvent &event)
 {
   FileLoader				*dlg;
@@ -712,8 +604,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 			res = wxID_CANCEL;
       }
       if (res != wxID_CANCEL)
-      {
-		ApplyCodec(selfile);
+      {		
 		if (ConvertSamplerate(selfile, HasChangedPath) == false)
 			res = wxID_CANCEL;
       }

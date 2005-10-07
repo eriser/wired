@@ -30,7 +30,6 @@ using namespace std;
 #define INDEX_MENUITEM_REDO		1
 
 #include "Plugin.h"
-#include "../codec/WiredCodec.h"
 
 typedef	struct s_PlugStartInfo		PlugStartInfo;
 class					PluginLoader;
@@ -108,16 +107,8 @@ class					MainWindow: public wxFrame
   void					CreateUndoRedoMenus(wxMenu *callingMenu);
   void					removeAllMenuItems(wxMenu *menu);
   
-  /* Codecs stuff */
-  WiredCodec			*CodecMgr;
-  vector<string>		CodecExtensions;
-  void					ApplyCodec(string& FileToDecode);  
-  void					InitCodecMgr();
-  int					GetSndFFormat(PcmType Type);
-
-  /* SampleRate methods */
-  bool					ConvertSamplerate(string& FileName, bool &HasChangedPath);
-
+  void					InitFileConverter();
+  
   /* Config files */
   wxTextFile				PluginsConfFile;
   
