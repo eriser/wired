@@ -41,6 +41,7 @@ public:
 	void				ConvertFromCodec(const string &FileName);
 	void				ConvertToCodec(const string &FileName);
 	void				ConvertSamplerate(const string &FileName);
+	void				Stop();
 private:
 	bool				ConvertSamplerate(string& FileName, bool &HasChangedPath);
 	int					GetSndFFormat(PcmType Type);
@@ -55,6 +56,6 @@ private:
 	deque<FileConversionAction *>	_ActionsList;
 };
 
-extern wxMutex FileConversionMutex;
+static wxMutex FileConversionMutex;
 
 #endif /*FILECONVERSION_H_*/

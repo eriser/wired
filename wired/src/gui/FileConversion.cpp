@@ -6,7 +6,6 @@
 #include "../undo/cAddTrackAction.h"
 #include "../undo/cImportMidiAction.h"
 
-wxMutex FileConversionMutex;
 
 FileConversion::FileConversion() : wxThreadHelper()
 {
@@ -25,6 +24,10 @@ FileConversion		FileConversion::operator=(const FileConversion& right)
 		_ShouldRun = right._ShouldRun;
 		_CodecConverter = right._CodecConverter;
 		_SampleRateConverter = right._SampleRateConverter;
+		_CodecsExtensions = right._CodecsExtensions;
+		_WorkingDir = right._WorkingDir;
+		_BufferSize = right._BufferSize;
+		_ActionsList = right._ActionsList;
 	}
 	return *this;
 }
@@ -46,7 +49,7 @@ bool				FileConversion::Init(t_samplerate_info *RateInit, string WorkingDir, uns
 	_ShouldRun = true;
 	if (Create() != wxTHREAD_NO_ERROR)
 		return false;	
-	FileConversionMutex.Lock();
+	//FileConversionMutex.Lock();
 	return true;
 }
 
@@ -55,11 +58,19 @@ vector<string>		*FileConversion::GetCodecsExtensions()
 	return &_CodecsExtensions;
 }
 
+void				FileConversion::Stop()
+{
+	FileConversionMutex.Unlock();
+	GetThread()->Delete();
+}
+
 void				*FileConversion::Entry()
-{	
+{
+	cout << "[FILECONVERT] Thread started !" << endl;
 	while(_ShouldRun)
 	{
 		FileConversionMutex.Lock();
+		cout << "[FILECONVERT] Thread running !" << endl;
 		if (_ActionsList.empty() == false)
 		{
 			FileConversionAction	*Action = _ActionsList.front();
@@ -88,6 +99,7 @@ void				*FileConversion::Entry()
 			break;
 		FileConversionMutex.Lock();
 	}
+	cout << "[FILECONVERT] Thread killed !" << endl;
 	return (GetThread()->Wait());
 }
 
