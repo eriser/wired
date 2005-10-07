@@ -1,6 +1,8 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License#include "HostCallback.h"
 
+#include <new>
+
 #include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/timer.h>
@@ -32,6 +34,38 @@
 //	free(ptr);
 //}
 
+//void*		operator new(size_t size)
+//{
+//	void	*res = NULL;
+//	
+//	try
+//	{
+//		res = malloc(size) ;
+//		
+//		if (res == NULL)
+//		{
+//			cout << "[MAINAPP] Out of memory" << endl;
+//			return res;
+//		}
+//		return res;
+//	}
+//	catch (std::bad_alloc)
+//	{
+//		res = NULL;
+//		return res;
+//	}
+//}
+//
+//void		operatordelete(void *ptr)
+//{
+//	free(ptr);
+//}
+
+void		ErrorHandler(void)
+{
+	cout << "[MAINAPP] An unhandled exception was thrown porgram will now exit" << endl;
+	exit(-1);
+}
 
 IMPLEMENT_APP(MainApp)
 
@@ -39,6 +73,7 @@ MainWindow			*MainWin;
 
 bool				MainApp::OnInit()
 {
+	std:set_new_handler(&ErrorHandler);
   wxBitmap			bitmap;
 #if wxUSE_LIBPNG
   wxImage::AddHandler(new wxPNGHandler);
