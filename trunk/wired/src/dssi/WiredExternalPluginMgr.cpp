@@ -15,23 +15,23 @@ WiredExternalPluginMgr::~WiredExternalPluginMgr()
 	list<WiredDSSIGui*>::iterator	IterLoaded;
 	WiredLADSPAInstance*					CurrentLoadedPlugin;
 
+	cout << "[DSSI] Deleting Loaded plugins ...";
 	for (IterLoaded = _LoadedPlugins.begin(); IterLoaded != _LoadedPlugins.end(); IterLoaded++)
 	{
-		cout << "before  delete  LADSPA" << endl;
 		CurrentLoadedPlugin = *IterLoaded;
 		delete CurrentLoadedPlugin;
-		cout << "after  delete  LADSPA" << endl;
 	}
-	
+	cout << "...done" << endl;
 	list<WiredDSSIPlugin*>::iterator	Iter;
 	WiredDSSIPlugin*					CurrentPlugin;
-	cout << "before  delete  DSSI" << endl;
+	cout << "[DSSI] Deleting found plugins ...";
 	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
 	{
 		(*Iter)->UnLoad();
 		CurrentPlugin = *Iter;
 		delete CurrentPlugin;
 	}
+	cout << "...done" << endl;
 }
 
 WiredExternalPluginMgr		WiredExternalPluginMgr::operator=(const WiredExternalPluginMgr& right)
@@ -42,6 +42,8 @@ WiredExternalPluginMgr		WiredExternalPluginMgr::operator=(const WiredExternalPlu
 		_CurrentPluginIndex = right._CurrentPluginIndex;
 		_IdTable = right._IdTable;
 		_LoadedPlugins = right._LoadedPlugins;
+		_UniqueIdTable = right._UniqueIdTable;
+		_StartInfo = right._StartInfo;
 	}
 	return *this;
 }
@@ -173,13 +175,13 @@ WiredDSSIGui		*WiredExternalPluginMgr::CreatePlugin(int MenuItemId, PlugStartInf
 			if ((*Iter)->CreatePlugin(IdPlugin, NewPlugin))
 			{
 				NewPlugin->Load();
-				cout << "Plugin successfully loaded" << endl;
+				cout << "[DSSI] Plugin successfully loaded" << endl;
 				_LoadedPlugins.insert(_LoadedPlugins.end(), NewPlugin);
 				return NewPlugin;
 			}
 			else
 			{
-				cout << "Cannot load the Plugin" << endl;
+				cout << "[DSSI] Cannot load the Plugin" << endl;
 				delete NewPlugin;
 			}
 			break;
@@ -205,13 +207,13 @@ WiredDSSIGui		*WiredExternalPluginMgr::CreatePlugin(unsigned long UniqueId)
 			if ((*Iter)->CreatePlugin(IdPlugin, NewPlugin))
 			{
 				NewPlugin->Load();
-				cout << "Plugin successfully loaded" << endl;
+				cout << "[DSSI] Plugin successfully loaded" << endl;
 				_LoadedPlugins.insert(_LoadedPlugins.end(), NewPlugin);
 				return NewPlugin;
 			}
 			else
 			{
-				cout << "Cannot load the Plugin" << endl;
+				cout << "[DSSI] Cannot load the Plugin" << endl;
 				delete NewPlugin;
 			}
 			break;
@@ -233,7 +235,7 @@ void				WiredExternalPluginMgr::DestroyPlugin(WiredDSSIGui *Plug)
 			break;	
 		}
 	}
-	cout << "Can't find plugin to unload" << endl;
+	cout << "[DSSI] Can't find plugin to unload" << endl;
 }
 
 void				WiredExternalPluginMgr::SetStartInfo(PlugStartInfo &Info)
