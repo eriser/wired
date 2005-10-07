@@ -142,6 +142,13 @@ class Plugin: public wxWindow
   Plugin(){}
   Plugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo);
   ~Plugin();
+  Plugin&	operator=(const Plugin &right)
+  {
+  	Name = right.Name;
+	StartInfo = right.StartInfo;
+	InitInfo = right.InitInfo;
+	return *this;
+  }
 
   /* Called when the plugin is created by the host */
   virtual void	 Init() {}
