@@ -93,6 +93,7 @@ bool	WiredLibVorbis::canDecode(const char* path)
   int		fd;
   char		*buf;
   
+  cout << "can decode" << endl;
   if ((fd = open(path, O_RDONLY)) == -1)
     return false;
   buf = new char((VORBIS_FCC_LENGHT + 1) * sizeof(char));
@@ -102,17 +103,18 @@ bool	WiredLibVorbis::canDecode(const char* path)
       if (strcmp(buf, VORBIS_FCC_LABEL) == 0)
     	{
 	  delete buf;
+	  cout << "can decode true" << endl;
 	  return true;	
     	}
     }
   delete buf;
+  cout << "can decode false" << endl;
   return false;
 }
 
 int	WiredLibVorbis::EndDecode()
 {
   OvClear(&vf);
-  dlclose(handle);
   Pass = 0;
   TotalRead = 0;
 }
@@ -146,18 +148,18 @@ int WiredLibVorbis::decode(const char *path, t_Pcm *pcm, unsigned long length)
       Pass = 1;
       TotalRead = 0;
     }
-  //ca je suis oblige de faire une allocation .. enfin y a pas d info la dessus ...
-  pcmout = new float*[length * sizeof(float*)];
   if (TotalRead >= pcm->TotalSample)
-    return 0;
-  ret = OvReadFloat(&vf, &pcmout,length , &current_section);
-  for (j = 0; j < length & j < pcm->TotalSample; j++)
-    for (i = 0; i < vi->channels; i++)
-      ((float*)pcm->pcm)[k++] = pcmout[i][j];
+    {
+      cout << "decode end read:" << TotalRead << "total"  << pcm->TotalSample << endl;
+      return 0;
+    }
+  ret = OvReadFloat(&vf, &pcmout, length , &current_section);
+  for (j = 0; j < length; j++)
+    {
+      for (i = 0; i < vi->channels; i++)
+	((float*)pcm->pcm)[k++] = pcmout[i][j];
+    }
   TotalRead += ret;
-  cout << "read:" << TotalRead << " / " << pcm->TotalSample << endl;
-  // ici ca plante que sur certains fichiers le delete
-  delete[] pcmout;
   cout << "read:" << TotalRead << " / " << pcm->TotalSample << endl;
   cout << "Fin-OGG" << endl;
   return ret;
