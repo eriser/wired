@@ -32,7 +32,7 @@ class			WiredCodec
   int			       		EndDecode();												/* Close file */
 
   list<string>				GetExtension(int Decode);												/* Returns a list of extensions readable by all codecs */
-  bool					CanConvert(const string &filename, int Decode);							/* Proper codec installed ? */
+  bool						CanConvert(const string &filename, int Decode);							/* Proper codec installed ? */
 
  private:
   list<t_WLib>				_WLib;														/* Instance of codec found */
@@ -55,6 +55,7 @@ class			WiredCodec
 
 typedef WiredApiCodec* (*WiredCodecConstruct)();
 
-extern wxMutex				WiredCodecMutex;
+static wxMutex		WiredCodecMutex;
+//extern wxMutex				WiredCodecMutex;
 
 #endif

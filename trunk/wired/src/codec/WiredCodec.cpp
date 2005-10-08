@@ -4,8 +4,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-wxMutex		WiredCodecMutex;
-
 WiredCodec::WiredCodec()
 {
   _WiredPath = CODEC_PATH;
