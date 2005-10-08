@@ -49,7 +49,7 @@ class   WiredLibMpeg: public WiredApiCodec
   int				encode(float** pcm);						/* Encode methodes */
   int				decode(const char *path, t_Pcm *pcm, 
   							unsigned long length);				/* Decode methodes */
-  bool				canDecode(const char* path);				/* Checks format */
+  bool				CanConvert(const char* path, int Decode);				/* Checks format */
   int				EndDecode();
 
   WiredLibMpeg		operator=(const WiredLibMpeg& right);

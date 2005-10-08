@@ -42,7 +42,7 @@ class   WiredLibVorbis: public WiredApiCodec
   // int				decode(const char *path, t_Pcm *pcm);
   int				decode(const char *path, t_Pcm *pcm, unsigned long length);				/* Decode methodes */
   /* Checks format */
-  bool				canDecode(const char* path);
+  bool				CanConvert(const char* path, int Decode);
 
   int				EndDecode();
 

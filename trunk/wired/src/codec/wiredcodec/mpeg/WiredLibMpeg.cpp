@@ -30,7 +30,7 @@ void	WiredLibMpeg::fillLibInfo(t_LibInfo& info, char *extension)
 {
 	info.Extension = extension;
 	info.Note = 5;
-	info.CodecMask = DECODE;
+	info.CodecMask = EXIST | DECODE;
 }
 
 void	WiredLibMpeg::InitAccesLib()
@@ -53,8 +53,10 @@ int		WiredLibMpeg::encode(float** pcm)
 	return 1;
 }
 
-bool	WiredLibMpeg::canDecode(const char* path)
+bool	WiredLibMpeg::CanConvert(const char* path, int Decode)
 {
+	if (Decode & ENCODE)
+		return false;
 	if (mpeg3_check_sig_func((char*)path) != 1)
 		return false;
 	return true;
