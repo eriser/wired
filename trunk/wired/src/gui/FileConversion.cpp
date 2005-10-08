@@ -67,37 +67,50 @@ void				FileConversion::Stop()
 void				*FileConversion::Entry()
 {
 	cout << "[FILECONVERT] Thread started !" << endl;
+	bool HasChangedPath;
+	
 	while(_ShouldRun)
 	{
 		FileConversionMutex.Lock();
-		cout << "[FILECONVERT] Thread running !" << endl;
+		cout << "[FILECONVERT] Thread working !" << endl;
 		if (_ActionsList.empty() == false)
 		{
 			FileConversionAction	*Action = _ActionsList.front();
 			_ActionsList.pop_front();
 			switch (Action->TypeAction)
 			{
-				case ImportWaveFile :
-					Decode(Action->SrcFileName);					
-					EnqueueAction(ConvertSampleRate, Action->SrcFileName, "");
+				case AImportWaveFile :
+					Decode(Action->SrcFileName);
 					break;
-				case ExportWaveFile :
+				case AExportWaveFile :
 					cout << "[FILECONVERT] Encoding is not supported" << endl;
 					break;
-				case ConvertSampleRate :
-					ConvertSamplerate(Action->SrcFileName);
+				case AConvertSampleRate :
+				HasChangedPath = false;
+					ConvertSamplerate(Action->SrcFileName, HasChangedPath);
 					break;
-				case ImportFile :
-					
+				case AImportFile :
+					ImportWavePattern(Action->SrcFileName);					
 					break;
 				default :
+//					FileConversionMutex.Lock();
 					break;
 			}
+			if (Action->SrcFileName)
+				delete Action->SrcFileName;
+			if (Action->DstFileName)
+				delete Action->DstFileName;
 			delete Action;
+			FileConversionMutex.Unlock();
+			cout << "[FILECONVERT] Thread has finished his work !" << endl;
+		}
+		else
+		{
+			cout << "[FILECONVERT] Thread has no work !" << endl;
+			//FileConversionMutex.Lock();
 		}
 		if (GetThread()->TestDestroy() == true)
 			break;
-		FileConversionMutex.Lock();
 	}
 	cout << "[FILECONVERT] Thread killed !" << endl;
 	return (GetThread()->Wait());
@@ -122,12 +135,13 @@ int						FileConversion::GetSndFFormat(PcmType Type)
 	}
 }
 
-void				FileConversion::Decode(string &FileName)
+void				FileConversion::Decode(string *FileName)
 {
 	if (_ShouldRun == false)
 		return;
-	if (_CodecConverter.CanDecode(FileName) == true)
+	if (_CodecConverter.CanDecode(string(FileName->c_str())) == true)
 	{
+		string			FileNameLocal(FileName->c_str());
 		t_Pcm			Data;
       	wxFileName		RelativeFileName;
       	string			DestFileName;
@@ -137,15 +151,16 @@ void				FileConversion::Decode(string &FileName)
 		unsigned long 	TotalReaden = 0;
 		int				sf_write_result = 0;
 
-		RelativeFileName = FileName.substr(FileName.find_last_of("/"));
+		RelativeFileName = FileNameLocal.substr(FileNameLocal.find_last_of("/"));
 		RelativeFileName.SetExt(wxString("wav"));
 		DestFileName = _WorkingDir + string("/") + RelativeFileName.GetFullName();
 		cout << "file {" << DestFileName.c_str() << "}" << endl;
 		
 		Data.pcm = new float[2 * _BufferSize];
 		bzero(Data.pcm, _BufferSize * 2);
-		while ((Readen = _CodecConverter.Decode(FileName, &Data, _BufferSize)) > 0)
+		while ((Readen = _CodecConverter.Decode(FileNameLocal, &Data, _BufferSize)) > 0)
 		{
+			cout << "000 file {" << DestFileName.c_str() << "}" << endl;
 			TotalReaden += Readen;
 			if (Result == NULL)
 			{
@@ -171,40 +186,42 @@ void				FileConversion::Decode(string &FileName)
 				sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen * Info.channels);
 			bzero(Data.pcm, _BufferSize * 2);				
 		}
+		
+		cout << "01 file {" << DestFileName.c_str() << "}" << endl;
 		_CodecConverter.EndDecode();
 		cout << "Total Readen == " << TotalReaden << endl;
 		delete (float *)Data.pcm;
 		if (!TotalReaden || !sf_write_result)
 		{
-			cout << "[FILECONVERT] Codec 1 - Could not write decoded file {" << FileName.c_str();
+			cout << "[FILECONVERT] Codec 1 - Could not write decoded file {" << FileName->c_str();
 			cout << "} because of error : " << sf_strerror(Result) << endl;
 		}
 		else
-			FileName = DestFileName;
+			*FileName = DestFileName;
 		sf_close(Result);  
 	}
 
 }
 
-void				FileConversion::ConvertFromCodec(const string &FileName)
+void				FileConversion::ConvertFromCodec(string *FileName)
 {
-	EnqueueAction(ImportWaveFile, FileName, "");
+	EnqueueAction(AImportWaveFile, FileName, NULL);
 	FileConversionMutex.Unlock();
 }
 
-void				FileConversion::ConvertToCodec(const string &FileName)
+void				FileConversion::ConvertToCodec(string *FileName)
 {
-	EnqueueAction(ExportWaveFile, FileName, "");
+	EnqueueAction(AExportWaveFile, FileName, NULL);
 	FileConversionMutex.Unlock();
 }
 
-void				FileConversion::ConvertSamplerate(const string &FileName)
+void				FileConversion::ConvertSamplerate(string *FileName)
 {
-	EnqueueAction(ConvertSampleRate, FileName, "");
+	EnqueueAction(AConvertSampleRate, FileName, NULL);
 	FileConversionMutex.Unlock();
 }
 
-bool				FileConversion::ConvertSamplerate(string& FileName, bool &HasChangedPath)
+bool				FileConversion::ConvertSamplerate(string *FileName, bool &HasChangedPath)
 {
 	int					HasConvertedFile;
     t_samplerate_info	Info;
@@ -222,12 +239,54 @@ bool				FileConversion::ConvertSamplerate(string& FileName, bool &HasChangedPath
 	return true;
 }
 
-void				FileConversion::EnqueueAction(FileConversionTypeAction ActionType, const string &SrcFile, const string &DstFile)
+void				FileConversion::ImportWaveFile(string *FileName)
+{
+	EnqueueAction(AImportFile, FileName, NULL);
+	FileConversionMutex.Unlock();
+}
+
+void				FileConversion::EnqueueAction(FileConversionTypeAction ActionType, string *SrcFile, string *DstFile)
 {
 	FileConversionAction	*NewAction = new FileConversionAction;
 	
 	NewAction->TypeAction = ActionType;
-	NewAction->SrcFileName = SrcFile;
-	NewAction->DstFileName = DstFile;
+	NewAction->SrcFileName = SrcFile == NULL ? NULL : new string(SrcFile->c_str());
+	NewAction->DstFileName = DstFile == NULL ? NULL : new string(DstFile->c_str());
 	_ActionsList.push_back(NewAction);
+	FileConversionMutex.Unlock();
+}
+
+void				FileConversion::ImportWavePattern(string *FileName)
+{
+	wxProgressDialog *Progress = new wxProgressDialog("Loading wave file", "Please wait...", 100, 
+														NULL, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
+														| wxPD_REMAINING_TIME);
+	Progress->Update(1);
+	cActionManager::Global().AddImportWaveAction(*FileName, true, true);
+	Progress->Update(80);
+	//CreateUndoRedoMenus(EditMenu); // ??
+	Progress->Update(99);
+	delete Progress;
+}
+
+void				FileConversion::CopyToWorkingDir(string *FileName)
+{
+
+	wxMessageDialog msg(NULL, "Do you want to copy this file to your project directory ?", "Wired", 
+						wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
+	int res = msg.ShowModal();
+	if (res == wxID_OK)
+	{
+		wxFileName fn(FileName->c_str());
+	  
+		fn.SetPath(_WorkingDir);
+		cout << "Will copy File {" << FileName->c_str() << "} TO {" << fn.GetFullPath().c_str() << "}" << endl;
+		if (!wxCopyFile(FileName->c_str(), fn.GetFullPath().c_str()))
+		{
+			wxMessageDialog copymsg(NULL, "Could not copy file", "Wired", wxOK | wxICON_EXCLAMATION | wxCENTRE);
+			copymsg.ShowModal();
+		}
+		else
+			*FileName = fn.GetFullPath().c_str();
+	}
 }

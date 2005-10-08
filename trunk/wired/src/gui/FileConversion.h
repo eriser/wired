@@ -14,17 +14,17 @@
 using namespace std;
 
 typedef enum {
-	ImportWaveFile = 0,
-	ConvertSampleRate,
-	ExportWaveFile,
-	ImportFile
+	AImportWaveFile = 0,
+	AConvertSampleRate,
+	AExportWaveFile,
+	AImportFile
 } FileConversionTypeAction;
 
 typedef struct s_FileConversionAction
 {
 	FileConversionTypeAction	TypeAction;
-	string						SrcFileName;
-	string						DstFileName;
+	string						*SrcFileName;
+	string						*DstFileName;
 } FileConversionAction;
 
 class	FileConversion : public wxThreadHelper
@@ -38,15 +38,18 @@ public:
 	virtual void		*Entry();
 	bool				Init(t_samplerate_info *RateInit, string WorkingDir, unsigned long BufferSize);
 	vector<string>		*GetCodecsExtensions();
-	void				ConvertFromCodec(const string &FileName);
-	void				ConvertToCodec(const string &FileName);
-	void				ConvertSamplerate(const string &FileName);
+	void				ConvertFromCodec(string *FileName);
+	void				ConvertToCodec(string *FileName);
+	void				ConvertSamplerate(string *FileName);
+	void				ImportWaveFile(string *FileName);
 	void				Stop();
 private:
-	bool				ConvertSamplerate(string& FileName, bool &HasChangedPath);
+	void				CopyToWorkingDir(string *FileName);
+	void				ImportWavePattern(string *FileName);
+	bool				ConvertSamplerate(string *FileName, bool &HasChangedPath);
 	int					GetSndFFormat(PcmType Type);
-	void				Decode(string &FileName);
-	void				EnqueueAction(FileConversionTypeAction ActionType, const string &SrcFile, const string &DstFile);
+	void				Decode(string *FileName);
+	void				EnqueueAction(FileConversionTypeAction ActionType, string *SrcFile, string *DstFile);
 	bool 				_ShouldRun;
 	WiredSampleRate		_SampleRateConverter;
 	WiredCodec			_CodecConverter;
