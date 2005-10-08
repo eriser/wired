@@ -13,77 +13,103 @@
 #define		FLAC_FCC_LENGHT		4
 #define		FLAC_FCC_LABEL		"fLaC"
 
+#define		FLAC_FILE_DECODER_NEW				"FLAC__file_decoder_new"
+#define		FLAC_FILE_DECODER_DELETE			"FLAC__file_decoder_delete"
+#define		FLAC_FILE_DECODER_SET_MD5_CHECKING		"FLAC__file_decoder_set_md5_checking"
+#define		FLAC_FILE_DECODER_SET_FILENAME			"FLAC__file_decoder_set_filename"
+#define		FLAC_FILE_DECODER_SET_WRITE_CALLBACK		"FLAC__file_decoder_set_write_callback"
+#define		FLAC_FILE_DECODER_SET_METADATA_CALLBACK		"FLAC__file_decoder_set_metadata_callback"
+#define		FLAC_FILE_DECODER_SET_ERROR_CALLBACK		"FLAC__file_decoder_set_error_callback"
+#define		FLAC_FILE_DECODER_SET_CLIENT_DATA		"FLAC__file_decoder_set_client_data"
+#define		FLAC_FILE_DECODER_SET_METADATA_RESPOND_ALL	"FLAC__file_decoder_set_metadata_respond_all"
+#define		FLAC_FILE_DECODER_GET_STATE			"FLAC__file_decoder_get_state"
+#define		FLAC_FILE_DECODER_GET_RESOLVED_STATE_STRING	"FLAC__file_decoder_get_resolved_state_string"
+#define		FLAC_FILE_DECODER_GET_CHANNELS			"FLAC__file_decoder_get_channels"
+#define		FLAC_FILE_DECODER_GET_SAMPLE_RATE		"FLAC__file_decoder_get_sample_rate"
+#define		FLAC_FILE_DECODER_INIT				"FLAC__file_decoder_init"
+#define		FLAC_FILE_DECODER_FINISH			"FLAC__file_decoder_finish"
+#define		FLAC_FILE_DECODER_PROCESS_SINGLE		"FLAC__file_decoder_process_single"
+#define		FLAC_FILE_DECODER_GET_DECODE_POSITION		"FLAC__file_decoder_get_decode_position"
+#define		FLAC_FILE_DECODER_SEEK_ABSOLUTE			"FLAC__file_decoder_seek_absolute"
+#define		FLAC_FILE_DECODER_METADATA_CALLBACK		"FLAC__FileDecoderMetadataCallback"
+#define		FLAC_FILE_DECODER_WRITE_CALLBACK		"FLAC__FileDecoderWriteCallback"
 
-#ifdef _MSC_VER
-// warning C4800: 'int' : forcing to bool 'true' or 'false' (performance warning)
-#pragma warning ( disable : 4800 )
-#endif
+typedef FLAC__FileDecoder* (*WiredFileDecoderNew)();
+typedef void (*WiredFileDecoderDelete)(FLAC__FileDecoder *);
+typedef FLAC__bool (*WiredFileDecoderSetMd5Checking)(FLAC__FileDecoder *, FLAC__bool);
+typedef FLAC__bool (*WiredFileDecoderSetFilename)(FLAC__FileDecoder *, const char *);
+typedef FLAC__bool (*WiredFileDecoderSetWriteCallback)(FLAC__FileDecoder *, FLAC__FileDecoderWriteCallback);
+typedef FLAC__bool (*WiredFileDecoderSetMetadataCallback)(FLAC__FileDecoder *, FLAC__FileDecoderMetadataCallback);
+typedef FLAC__bool (*WiredFileDecoderSetErrorCallback)(FLAC__FileDecoder *, FLAC__FileDecoderErrorCallback);
+typedef FLAC__bool (*WiredFileDecoderSetClientData)(FLAC__FileDecoder *, void *);
+typedef FLAC__bool (*WiredFileDecoderSetMetadataRespondAll)(FLAC__FileDecoder *);
+typedef	FLAC__FileDecoderState (*WiredFileDecoderGetState)(const FLAC__FileDecoder *);
+typedef const char* (*WiredFileDecoderGetResolvedStateString)(const FLAC__FileDecoder *);
+typedef unsigned (*WiredFileDecoderGetChannels)(const FLAC__FileDecoder *);
+typedef unsigned (*WiredFileDecoderGetSampleRate)(const FLAC__FileDecoder *);
+typedef FLAC__FileDecoderState (*WiredFileDecoderInit)(FLAC__FileDecoder *);
+typedef FLAC__bool (*WiredFileDecoderFinish)(FLAC__FileDecoder *);
+typedef FLAC__bool (*WiredFileDecoderProcessSingle)(FLAC__FileDecoder *);
+typedef FLAC__bool (*WiredFileDecoderGetDecodePosition)(const FLAC__FileDecoder *, FLAC__uint64 *);
+typedef FLAC__bool (*WiredFileDecoderSeekAbsolute)(FLAC__FileDecoder *, FLAC__uint64);
+typedef void (*WiredFileDecoderMetadataCallback)(const FLAC__FileDecoder *, const FLAC__StreamMetadata *, void *);
+typedef FLAC__StreamDecoderWriteStatus (*WiredFileDecoderWriteCallback)(const FLAC__FileDecoder *, const FLAC__Frame *, const FLAC__int32 * const, void *);
 
-static ::FLAC__StreamMetadata streaminfo_, padding_, seektable_, application1_, application2_, vorbiscomment_, cuesheet_, unknown_;
-static ::FLAC__StreamMetadata *expected_metadata_sequence_[8];
-static unsigned num_expected_;
-static const char *flacfilename_ = "";
-static unsigned flacfilesize_;
-static int pass = 0;
+const char *flacfilename_ = "";
 
 bool test_decoders(t_Pcm *pcmOriginalPcm);
 
 class   WiredLibFlac: public WiredApiCodec
 {
  public:
-
+  
   WiredLibFlac(){std::cout << "[WIRED_FLAC_CODEC] Child Flac created" << std::endl;}
   ~WiredLibFlac(){}
   WiredLibFlac(const WiredLibFlac& copy){*this = copy;};
-
+  
   /* Inits codec */
   void				init(list<s_LibInfo> &Info);
-
+  
   /* Encode and decode methodes */
   int				encode(float** pcm);
   int				decode(const char *path, t_Pcm *pcm, unsigned long length);
-  int				EndDecode(){};
+  int				EndDecode();
   
   /* Checks format */
-  bool				canDecode(const char* path);
+  bool				CanConvert(const char* path, int Decode);
 
   /* Operators */
   WiredLibFlac		operator=(const WiredLibFlac& right);
   
  private:
-  void			*handle;
-};
+  void						*handle;
+  bool						LoadSymbol();
+  FLAC__FileDecoder				*decoder;
+  void						*client_data;
+/*   const FLAC__Frame				*frame;; */
+/*   const FLAC__int32				*const buffer[]; */
+   int						Pass;
 
-class DecoderCommon {
-public:
-	FILE *file_;
-	unsigned current_metadata_number_;
-	bool ignore_errors_;
-	bool error_occurred_;
-
-	DecoderCommon(): file_(0), current_metadata_number_(0), ignore_errors_(false), error_occurred_(false) { }
-	::FLAC__StreamDecoderReadStatus common_read_callback_(FLAC__byte buffer[], unsigned *bytes);
-	::FLAC__StreamDecoderWriteStatus common_write_callback_(const ::FLAC__Frame *frame);
-	void common_metadata_callback_(const ::FLAC__StreamMetadata *metadata);
-	void common_error_callback_(::FLAC__StreamDecoderErrorStatus status);
-	int total_samples;
-};
-
-
-class FileDecoder : public FLAC::Decoder::File, public DecoderCommon {
-public:
-	FileDecoder(): FLAC::Decoder::File(), DecoderCommon() { }
-	~FileDecoder() {pcm = 0; pass = 0;}
-
-	// from FLAC::Decoder::File
-	::FLAC__StreamDecoderWriteStatus write_callback(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[]);
-	void metadata_callback(const ::FLAC__StreamMetadata *metadata);
-	void error_callback(::FLAC__StreamDecoderErrorStatus status);
-
-	bool die(const char *msg = 0) const;
-	int	index_pcm;
-	FLAC__int32	*pcm;
-	bool test_respond();
+  WiredFileDecoderNew				FileDecoderNew;
+  WiredFileDecoderDelete			FileDecoderDelete;
+  WiredFileDecoderSetMd5Checking		FileDecoderSetMd5Checking;
+  WiredFileDecoderSetFilename			FileDecoderSetFilename;
+  WiredFileDecoderSetWriteCallback		FileDecoderSetWriteCallback;
+  WiredFileDecoderSetMetadataCallback		FileDecoderSetMetadataCallback;
+  WiredFileDecoderSetErrorCallback		FileDecoderSetErrorCallback;
+  WiredFileDecoderSetClientData			FileDecoderSetClientData;
+  WiredFileDecoderSetMetadataRespondAll		FileDecoderSetMetadataRespondAll;
+  WiredFileDecoderGetState			FileDecoderGetState;
+  WiredFileDecoderGetResolvedStateString	FileDecoderGetResolvedStateString;
+  WiredFileDecoderGetChannels			FileDecoderGetChannels;
+  WiredFileDecoderGetSampleRate			FileDecoderGetSampleRate;
+  WiredFileDecoderInit				FileDecoderInit;
+  WiredFileDecoderFinish			FileDecoderFinish;
+  WiredFileDecoderProcessSingle			FileDecoderProcessSingle;
+  WiredFileDecoderGetDecodePosition		FileDecoderGetDecodePosition;
+  WiredFileDecoderSeekAbsolute			FileDecoderSeekAbsolute;
+  WiredFileDecoderMetadataCallback		FileDecoderMetadataCallback;
+  WiredFileDecoderWriteCallback			FileDecoderWriteCallback;
 };
 
 

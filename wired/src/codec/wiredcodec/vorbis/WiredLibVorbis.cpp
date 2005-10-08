@@ -78,7 +78,7 @@ void WiredLibVorbis::init(list<s_LibInfo> &Info)
       Info.push_back(LibInfoVorbis);
       dlclose(handle);
     }
-  LibInfoVorbis.CodecMask = DECODE;
+  LibInfoVorbis.CodecMask |= DECODE;
   Info.push_back(LibInfoVorbis);
   return ;
 }
@@ -88,12 +88,13 @@ int WiredLibVorbis::encode(float** pcm)
   return 1;
 }
 
-bool	WiredLibVorbis::canDecode(const char* path)
+bool	WiredLibVorbis::CanConvert(const char* path, int Decode)
 {
   int		fd;
   char		*buf;
   
-  cout << "can decode" << endl;
+  if (Decode & ENCODE)
+    return false;
   if ((fd = open(path, O_RDONLY)) == -1)
     return false;
   buf = new char((VORBIS_FCC_LENGHT + 1) * sizeof(char));
@@ -108,7 +109,6 @@ bool	WiredLibVorbis::canDecode(const char* path)
     	}
     }
   delete buf;
-  cout << "can decode false" << endl;
   return false;
 }
 

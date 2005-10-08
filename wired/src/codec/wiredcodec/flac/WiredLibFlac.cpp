@@ -3,184 +3,18 @@
 #include	<sys/stat.h>
 #include	<fcntl.h>
 #include	"WiredLibFlac.h"
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 WiredLibFlac			WiredLibFlac::operator=(const WiredLibFlac& right)
 {
-	if (this != &right)
-	{
-		handle = right.handle;
-	}
-	return *this;
-}
-
-static bool die_(const char *msg)
-{
-  cout << "[WIRED_FLAC_CODEC] ERROR: " <<  msg << endl;
-  return false;
-}
-
-static void init_metadata_blocks_()
-{
-  FLAC__metadata_get_streaminfo(flacfilename_, &streaminfo_);
-}
-
-static void free_metadata_blocks_()
-{
-  (void)streaminfo_;
-}
-
-
-::FLAC__StreamDecoderReadStatus DecoderCommon::common_read_callback_(FLAC__byte buffer[], unsigned *bytes)
-{
-	if(error_occurred_)
-		return ::FLAC__STREAM_DECODER_READ_STATUS_ABORT;
-
-	if(feof(file_))
-		return ::FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
-	else if(*bytes > 0) {
-		unsigned bytes_read = ::fread(buffer, 1, *bytes, file_);
-		if(bytes_read == 0) {
-			if(feof(file_))
-				return ::FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
-			else
-				return ::FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
-		}
-		else {
-			*bytes = bytes_read;
-			return ::FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
-		}
-	}
-	else
-		return ::FLAC__STREAM_DECODER_READ_STATUS_ABORT; /* abort to avoid a deadlock */
-}
-
-::FLAC__StreamDecoderWriteStatus DecoderCommon::common_write_callback_(const ::FLAC__Frame *frame)
-{
-	if(error_occurred_)
-		return ::FLAC__STREAM_DECODER_WRITE_STATUS_ABORT;
-
-	if(
-		(frame->header.number_type == ::FLAC__FRAME_NUMBER_TYPE_FRAME_NUMBER && frame->header.number.frame_number == 0) ||
-		(frame->header.number_type == ::FLAC__FRAME_NUMBER_TYPE_SAMPLE_NUMBER && frame->header.number.sample_number == 0)
- 	) {
-		printf("[WIRED_FLAC_CODEC] content... ");
-		fflush(stdout);
-	}
-	
-	return ::FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
-}
-
-void DecoderCommon::common_metadata_callback_(const ::FLAC__StreamMetadata *metadata)
-{
-	if(error_occurred_)
-		return;
-
-	printf("%d... ", current_metadata_number_);
-	fflush(stdout);
-
-	
-	if(current_metadata_number_ >= num_expected_) {
-		(void)die_("[WIRED_FLAC_CODEC] got more metadata blocks than expected");
-		error_occurred_ = true;
-	}
-	else {
-		if(!::FLAC__metadata_object_is_equal(expected_metadata_sequence_[current_metadata_number_], metadata)) {
-			(void)die_("[WIRED_FLAC_CODEC] metadata block mismatch");
-			error_occurred_ = true;
-		}
-	}
-	total_samples = metadata->data.stream_info.total_samples;
-	current_metadata_number_++;
-}
-
-void DecoderCommon::common_error_callback_(::FLAC__StreamDecoderErrorStatus status)
-{
-	if(!ignore_errors_) {
-		printf("[WIRED_FLAC_CODEC] ERROR: got error callback: err = %u (%s)\n", (unsigned)status, ::FLAC__StreamDecoderErrorStatusString[status]);
-		error_occurred_ = true;
-	}
-}
-
-::FLAC__StreamDecoderWriteStatus FileDecoder::write_callback(const ::FLAC__Frame *frame, const FLAC__int32 * const buffer[])
-{
-  int k, i, j;
-
-  if (pass == 0)
+  if (this != &right)
     {
-      index_pcm = 0;
-      pcm = new FLAC__int32[total_samples * get_channels()];
-      pass = 1;
+      handle = right.handle;
     }
-
-  k = 0;
-  for( j = 0; j < frame->header.blocksize; j++ )
-    for( i = 0; i < get_channels(); i++ )
-      pcm[index_pcm++] = buffer[i][j];
-
-  return (FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE);
-}
-
-void FileDecoder::metadata_callback(const ::FLAC__StreamMetadata *metadata)
-{
-	common_metadata_callback_(metadata);
-}
-
-void FileDecoder::error_callback(::FLAC__StreamDecoderErrorStatus status)
-{
-	common_error_callback_(status);
-}
-
-bool FileDecoder::die(const char *msg) const
-{
-  State state = get_state();
-  
-  if(msg)
-    cout << "[WIRED_FLAC_CODEC] FAILED, " <<  msg << endl;
-  else
-    cout <<"[WIRED_FLAC_CODEC] FAILED";
-  
-  printf(", state = %u (%s)\n", (unsigned)((::FLAC__FileDecoderState)state), state.as_cstring());
-  if(state == ::FLAC__FILE_DECODER_SEEKABLE_STREAM_DECODER_ERROR) {
-    FLAC::Decoder::SeekableStream::State state_ = get_seekable_stream_decoder_state();
-    printf("      seekable stream decoder state = %u (%s)\n", (unsigned)((::FLAC__SeekableStreamDecoderState)state_), state_.as_cstring());
-    if(state_ == ::FLAC__SEEKABLE_STREAM_DECODER_STREAM_DECODER_ERROR) {
-      FLAC::Decoder::Stream::State state__ = get_stream_decoder_state();
-      printf("      stream decoder state = %u (%s)\n", (unsigned)((::FLAC__StreamDecoderState)state__), state__.as_cstring());
-    }
-  }
-
-return false;
-}
-
-
-bool FileDecoder::test_respond()
-{
-  if(!set_filename(flacfilename_)) {
-    cout << "[WIRED_FLAC_CODEC] FAILED at set_filename()" << endl;
-    return false;
-  }
-  
-  if(!set_md5_checking(true)) {
-    cout << "[WIRED_FLAC_CODEC] FAILED at set_md5_checking()" << endl;
-    return false;
-  }
-  
-  cout << "[WIRED_FLAC_CODEC] init()... " << endl;
-  if(init() != ::FLAC__FILE_DECODER_OK)
- 	  return die();
-  
-  current_metadata_number_ = 0;
-  
-  cout << "[WIRED_FLAC_CODEC] process_until_end_of_file()... " ;
-  
-  if(!process_until_end_of_file()) {
-    State state = get_state();
-    cout << "[WIRED_FLAC_CODEC] FAILED, returned false, state = " << (unsigned)((::FLAC__FileDecoderState)state)  <<  "(" <<  state.as_cstring() << ")" << endl;
-    return false;
-  }
-  cout << "" << endl;
-  finish();
-  return true;
+  return *this;
 }
 
 void WiredLibFlac::init(list<s_LibInfo> &Info)
@@ -197,32 +31,36 @@ void WiredLibFlac::init(list<s_LibInfo> &Info)
       Info.push_back(LibInfo);
       return ;
     }
-  
+  if (LoadSymbol() == false)
+    {
+      Info.push_back(LibInfo);
+      return;
+    }  
   LibInfo.CodecMask = DECODE;
   Info.push_back(LibInfo);
-
-  dlclose(handle);
 }
 
-bool WiredLibFlac::canDecode(const char* path)
+bool WiredLibFlac::CanConvert(const char* path, int Decode)
 {
-	int		fd;
-	char	*buf;
-
-	if ((fd = open(path, O_RDONLY)) == -1)
-    	return false;
-    buf = new char((FLAC_FCC_LENGHT + 1) * sizeof(char));
-    buf[FLAC_FCC_LENGHT] = 0;
-    if (read(fd, buf, FLAC_FCC_LENGHT) == FLAC_FCC_LENGHT)
+  int		fd;
+  char		*buf;
+  
+  if (Decode & ENCODE)
+    return false;
+  if ((fd = open(path, O_RDONLY)) == -1)
+    return false;
+  buf = new char((FLAC_FCC_LENGHT + 1) * sizeof(char));
+  buf[FLAC_FCC_LENGHT] = 0;
+  if (read(fd, buf, FLAC_FCC_LENGHT) == FLAC_FCC_LENGHT)
     {
-    	if (strcmp(buf, FLAC_FCC_LABEL) == 0)
+      if (strcmp(buf, FLAC_FCC_LABEL) == 0)
     	{
-    		delete buf;
-    		return true;	
+	  delete buf;
+	  return true;	
     	}
     }
-	delete buf;
-	return false;
+  delete buf;
+  return false;
 }
 
 int WiredLibFlac::encode(float** pcm)
@@ -230,48 +68,218 @@ int WiredLibFlac::encode(float** pcm)
   return 1;
 }
 
+// void	write_out(FLAC__int32* pcm, const char* file, int size)
+// {
+//   int	fd;
+//   int	i;
+
+//   cout << "--WRITE--" << endl;
+//   fd = open(file, O_CREAT | O_TRUNC | O_WRONLY, S_IRWXU);
+//   if (fd > 0)
+//     {
+//       cout << "fd:" << fd <<  " size:" << size << endl;
+
+//       if (write(fd, (void*)pcm,  size) <= 0)
+// 	cout << "rien" << endl;
+      
+//     }
+//   close(fd);
+//   cout << "--AND WRITE--" << endl;
+// }
+
 
 bool test_decoders(t_Pcm *OriginalPcm)
 { 
-  FileDecoder *decoder;
-  
-  init_metadata_blocks_();
-  num_expected_ = 0;
-  expected_metadata_sequence_[num_expected_++] = &streaminfo_;
-  
-  cout << "[WIRED_FLAC_CODEC] allocating decoder instance... " << endl;
-  decoder = new FileDecoder();
-  if(0 == decoder) {
-    cout << "[WIRED_FLAC_CODEC] FAILED, new returned NULL" << endl;
-    return false;
-  }
-  if(!decoder->is_valid()) {
-    cout << "[WIRED_FLAC_CODEC] FAILED, returned false" << endl;
-    return false;
-  }
-  
-  decoder->test_respond();
+}
 
-  OriginalPcm->pcm = (float*)decoder->pcm;
-  OriginalPcm->PType = Float32;
-  OriginalPcm->Channels = decoder->get_channels();
-  OriginalPcm->TotalSample = decoder->total_samples;
-  OriginalPcm->SampleRate = decoder->get_sample_rate();
-
-  delete decoder;
-  cout << "[WIRED_FLAC_CODEC] File decoded" << endl;
-  
-  free_metadata_blocks_();
+bool WiredLibFlac::LoadSymbol()
+{
+  FileDecoderNew = (WiredFileDecoderNew) dlsym(handle, FLAC_FILE_DECODER_NEW);
+  if (!FileDecoderNew)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_NEW << endl;
+      return false;
+    }
+  FileDecoderDelete = (WiredFileDecoderDelete) dlsym(handle, FLAC_FILE_DECODER_DELETE);
+  if (!FileDecoderDelete)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_DELETE << endl;
+      return false;
+    }
+  FileDecoderSetMd5Checking = (WiredFileDecoderSetMd5Checking) dlsym(handle, FLAC_FILE_DECODER_SET_MD5_CHECKING);
+  if (!FileDecoderSetMd5Checking)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_SET_MD5_CHECKING << endl;
+      return false;
+    }
+  FileDecoderSetFilename = (WiredFileDecoderSetFilename) dlsym(handle, FLAC_FILE_DECODER_SET_FILENAME);
+  if (!FileDecoderSetFilename)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_SET_FILENAME << endl;
+      return false;
+    }
+  FileDecoderSetWriteCallback = (WiredFileDecoderSetWriteCallback) dlsym(handle, FLAC_FILE_DECODER_SET_WRITE_CALLBACK);
+  if (!FileDecoderSetWriteCallback)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_SET_WRITE_CALLBACK << endl;
+      return false;
+    }
+  FileDecoderSetMetadataCallback = (WiredFileDecoderSetMetadataCallback) dlsym(handle, FLAC_FILE_DECODER_SET_METADATA_CALLBACK);
+  if (!FileDecoderSetMetadataCallback)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_SET_METADATA_CALLBACK << endl;
+      return false;
+    }
+  FileDecoderSetErrorCallback = (WiredFileDecoderSetErrorCallback) dlsym(handle, FLAC_FILE_DECODER_SET_ERROR_CALLBACK);
+  if (!FileDecoderSetErrorCallback)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_SET_ERROR_CALLBACK << endl;
+      return false;
+    }
+  FileDecoderSetClientData = (WiredFileDecoderSetClientData) dlsym(handle, FLAC_FILE_DECODER_SET_CLIENT_DATA);
+  if (!FileDecoderSetClientData)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_SET_CLIENT_DATA << endl;
+      return false;
+    }
+  FileDecoderSetMetadataRespondAll = (WiredFileDecoderSetMetadataRespondAll) dlsym(handle, FLAC_FILE_DECODER_SET_METADATA_RESPOND_ALL);
+  if (!FileDecoderSetMetadataRespondAll)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_SET_METADATA_RESPOND_ALL << endl;
+      return false;
+    }
+  FileDecoderGetState = (WiredFileDecoderGetState) dlsym(handle, FLAC_FILE_DECODER_GET_STATE);
+  if (!FileDecoderGetState)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_GET_STATE << endl;
+      return false;
+    }
+  FileDecoderGetResolvedStateString = (WiredFileDecoderGetResolvedStateString) dlsym(handle, FLAC_FILE_DECODER_GET_RESOLVED_STATE_STRING);
+  if (!FileDecoderGetResolvedStateString)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_GET_RESOLVED_STATE_STRING << endl;
+      return false;
+    }
+  FileDecoderGetChannels = (WiredFileDecoderGetChannels) dlsym(handle, FLAC_FILE_DECODER_GET_CHANNELS);
+  if (!FileDecoderGetChannels)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_GET_CHANNELS << endl;
+      return false;
+    }
+  FileDecoderGetSampleRate = (WiredFileDecoderGetSampleRate) dlsym(handle, FLAC_FILE_DECODER_GET_SAMPLE_RATE);
+  if (!FileDecoderGetSampleRate)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_GET_SAMPLE_RATE << endl;
+      return false;
+    }
+  FileDecoderInit = (WiredFileDecoderInit) dlsym(handle, FLAC_FILE_DECODER_INIT);
+  if (!FileDecoderInit)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_INIT << endl;
+      return false;
+    }
+  FileDecoderFinish = (WiredFileDecoderFinish) dlsym(handle, FLAC_FILE_DECODER_FINISH);
+  if (!FileDecoderFinish)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_FINISH << endl;
+      return false;
+    }
+  FileDecoderProcessSingle = (WiredFileDecoderProcessSingle) dlsym(handle, FLAC_FILE_DECODER_PROCESS_SINGLE);
+  if (!FileDecoderProcessSingle)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_PROCESS_SINGLE << endl;
+      return false;
+    }
+  FileDecoderGetDecodePosition = (WiredFileDecoderGetDecodePosition) dlsym(handle, FLAC_FILE_DECODER_GET_DECODE_POSITION);
+  if (!FileDecoderGetDecodePosition)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_GET_DECODE_POSITION << endl;
+      return false;
+    }
+  FileDecoderSeekAbsolute = (WiredFileDecoderSeekAbsolute) dlsym(handle, FLAC_FILE_DECODER_SEEK_ABSOLUTE);
+  if (!FileDecoderSeekAbsolute)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_SEEK_ABSOLUTE << endl;
+      return false;
+    }
+  FileDecoderMetadataCallback = (WiredFileDecoderMetadataCallback) dlsym(handle, FLAC_FILE_DECODER_METADATA_CALLBACK);
+  if (!FileDecoderMetadataCallback)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_METADATA_CALLBACK << endl;
+      return false;
+    }
+  FileDecoderWriteCallback = (WiredFileDecoderWriteCallback) dlsym(handle, FLAC_FILE_DECODER_WRITE_CALLBACK);
+  if (!FileDecoderWriteCallback)
+    {
+      cout << "Can t load symbol:" << FLAC_FILE_DECODER_WRITE_CALLBACK << endl;
+      return false;
+    }
   return true;
+}
+
+int	WiredLibFlac::EndDecode()
+{
+  dlclose(handle);
 }
 
 int WiredLibFlac::decode(const char *path, t_Pcm *pcm, unsigned long length)
 {
-  flacfilename_ = path;
-  if (!test_decoders(pcm))
-    return 0;
-  else       
-    return 1;
+
+  if (Pass != 1)
+    {
+      flacfilename_ = path;
+      
+      decoder = FileDecoderNew();
+      
+      if (FileDecoderSetMd5Checking(decoder, false) == false)
+	{
+	  cout << "[WIRED_FLAC_CODEC] md5 doesn t match" <<endl;
+	  return 0;
+	}
+      if (FileDecoderSetFilename(decoder, path) == false)
+	{
+	  cout << "[WIRED_FLAC_CODEC] Can t set decoder filename" <<endl;
+	  return 0;
+	}
+      if (FileDecoderSetClientData(decoder, client_data) == false)
+	{
+	  cout << "[WIRED_FLAC_CODEC] Can t set decoder client data" <<endl;
+	  return 0;
+	}  
+//       if (FileDecoderSetWriteCallback(decoder, frame, buffer, client_data))
+// 	{
+// 	  cout << "[WIRED_FLAC_CODEC] Can t set decoder write callback" <<endl;
+// 	  return 0;
+// 	}
+      Pass = 1;
+    }
+
+
+//   if (FLAC__file_decoder_set_write_callback(decoder, NULL) == false)
+//     {
+//       cout << "[WIRED_FLAC_CODEC] Can t set decoder write callback" <<endl;
+//       return 0;
+//     }
+//   if (FLAC__file_decoder_set_metadata_callback(decoder, NULL) == false)
+//     {
+//       cout << "[WIRED_FLAC_CODEC] Can t set decoder metadata callback" <<endl;
+//       return 0;
+//     }
+
+  if (FileDecoderInit(decoder)  != FLAC__FILE_DECODER_OK)
+    {
+      cout << "[WIRED_FLAC_CODEC] Can t init decoder" <<endl;
+      return 0;
+    }
+
+
+  if (FileDecoderFinish(decoder) != FLAC__FILE_DECODER_UNINITIALIZED)
+    {
+      cout << "[WIRED_FLAC_CODEC] can t uninit decoder" <<endl;
+      return 0;
+    }
+  FileDecoderDelete(decoder);
+  return 0;
 }
 
 

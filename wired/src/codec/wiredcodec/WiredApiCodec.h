@@ -5,9 +5,9 @@
 #include <list>
 #include <string>
 
-#define	EXIST	0x0
-#define	DECODE	0x1
-#define	ENCODE	0x2
+#define	EXIST	0x1
+#define	DECODE	0x2
+#define	ENCODE	0x4
 
 #define	CODEC_MASK	0x0
 
@@ -18,10 +18,10 @@ using namespace std;
 
 typedef struct		s_LibInfo
 {
-	int			CodecMask;					/* Codec capabilities */
-	string	    Extension;					/* Hanfled extension */
-    short		Note;						/* Note to determine if that codec is the best suited for this extension */
-}					t_LibInfo;
+  int  		CodecMask;					/* Codec capabilities */
+  string	Extension;					/* Hanfled extension */
+  short		Note;						/* Note to determine if that codec is the best suited for this extension */
+}			t_LibInfo;
 
 enum PcmType
   {
@@ -52,8 +52,8 @@ class   WiredApiCodec
   virtual int		decode(const char *path, t_Pcm *pcm, 
   							unsigned long lenght) = 0;			/* Decode function */
   virtual int		EndDecode() = 0;							/* Closes file */
-  virtual bool		canDecode(const char* path) = 0;			/* True if codec can decode file */
-  void				SetuniqueId(unsigned long Id)				/* Sets unique Id */
+  virtual bool		CanConvert(const char* path, int Decode) = 0;			/* True if codec can decode file */
+  void			SetuniqueId(unsigned long Id)				/* Sets unique Id */
   					{_UniqueId = Id;}
   unsigned long		GetUniqueId()								/* Returns unique Id */
   					{return _UniqueId;}
