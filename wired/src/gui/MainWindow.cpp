@@ -326,9 +326,15 @@ void					MainWindow::InitFileConverter()
 	FileConverter = new FileConversion();
 	t_samplerate_info info;
 	
+	
+	wxDirDialog dir(this, "Choose the audio working directory", wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
+	if (dir.ShowModal() == wxID_OK)
+		CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str();
+	else
+		CurrentXmlSession->GetAudioDir() = wxFileName::GetCwd();
 	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
-	info.SampleRate = Audio->SampleRate;
-	info.SamplesPerBuffer = Audio->SamplesPerBuffer;
+	info.SampleRate = (unsigned long) Audio->SampleRate;
+	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
 	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) Audio->SamplesPerBuffer))
 		cout << "[MAINWIN] Create file converter thread failed !" << endl; 
 	if (FileConverter->GetThread()->Run() != wxTHREAD_NO_ERROR)
@@ -443,11 +449,8 @@ bool					MainWindow::NewSession()
   }
   else if (res == wxID_CANCEL)
     return (false);
-  //  cout << "[MAINWIN]  Closing old session 1" << endl;
   delete CurrentXmlSession;
-//  cout << "[MAINWIN]  Closing old session 2" << endl;
   CurrentXmlSession = new WiredSessionXml("");
-  //cout << "[MAINWIN]  Closing old session 3" << endl;
 
   Seq->Stop();
   
@@ -459,13 +462,9 @@ bool					MainWindow::NewSession()
   Seq->PatternsToRefresh.clear();
   Seq->PatternsToResize.clear();
   Seq->TracksToRefresh.clear();
-//cout << "[MAINWIN]  Closing old session 0.1" << endl;
   SeqPanel->DeleteAllTracks();
-//  cout << "[MAINWIN]  Closing old session 0.2" << endl;
   RackPanel->DeleteAllRacks();
-  cout << "[MAINWIN]  Closing old session 0.2" << endl;
   OptPanel->DeleteTools();
-//cout << "[MAINWIN]  Closing old session 0.3" << endl;
   SeqMutex.Unlock();
   return (true);
 }
@@ -475,12 +474,9 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
   vector<string>			exts;
   FileLoader				*dlg;
   
-//  cout << "[MAINWIN] OnOpen 1" << endl;
   exts.insert(exts.begin(), "wrd\tWired session file (*.wrd)");
   exts.insert(exts.begin(), "xml\tWired session file (*.xml)");
-  //cout << "[MAINWIN] OnOpen 2" << endl;
   dlg = new FileLoader(this, MainWin_FileLoader, "Open session", false, false, &exts);
-//  cout << "[MAINWIN] OnOpen 3" << endl;
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();    
@@ -489,21 +485,18 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
       if (!NewSession())
 	{
 	  dlg->Destroy();
-	  delete dlg;
 	  return;
 	}
-	//	cout << "[MAINWIN]  Closing old session 0.1" << endl;
 		if (selfile.size() > 4)
 		{
 			transform(selfile.begin(), selfile.end(), selfile.begin(), (int(*)(int))tolower);
 			if (!selfile.substr(selfile.find_last_of('.')).compare(XML_EXTENSION))
 			{
-		//		cout << "[MAINWIN]  Closing old session" << endl;
 				if (CurrentXmlSession)				
 					delete CurrentXmlSession;
 	    	  CurrentXmlSession = new WiredSessionXml(selfile);
 	    	  CurrentXmlSession->Load(selfile);
-	    	  cout << "[MAINWIN]  new session loaded" << endl;
+	    	  cout << "[MAINWIN] New session loaded" << endl;
 			}
 			else
 			{
@@ -518,8 +511,7 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
-  dlg->Destroy();
-  delete dlg;
+  dlg->Destroy();  
 }
 
 void					MainWindow::OnSave(wxCommandEvent &event)
@@ -572,7 +564,6 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
   dlg->Destroy();
-  delete dlg;
 }
 
 void					MainWindow::OnImportWave(wxCommandEvent &event)
@@ -583,8 +574,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
   dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, FileConverter->GetCodecsExtensions(), true);
   if (dlg->ShowModal() == wxID_OK)
     {
-      string selfile = dlg->GetSelectedFile();
-      bool					HasChangedPath = false;
+      string 	selfile = dlg->GetSelectedFile();
       
       dlg->Destroy();
       
@@ -602,53 +592,18 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 			res = wxID_CANCEL;
       }
       if (res != wxID_CANCEL)
-      {		
-//		if (ConvertSamplerate(selfile, HasChangedPath) == false)
-//			res = wxID_CANCEL;
-      }
-	      if (res != wxID_CANCEL && HasChangedPath == false)
-	      {
-		      wxMessageDialog msg(this, 
-					  "Do you want to copy this file to your project directory ?", "Wired", 
-					  wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
-		      res = msg.ShowModal();
-	      }
-		  if (res != wxID_CANCEL && res != wxID_NO && HasChangedPath == false)
-		    {
-		      wxFileName fn(selfile.c_str());
-		      
-		      fn.SetPath(CurrentXmlSession->GetAudioDir().c_str());
-		      cout << "Will copy File {" << selfile.c_str() << "} TO {" << fn.GetFullPath().c_str() << "}" << endl;
-		      if (!wxCopyFile(selfile.c_str(), fn.GetFullPath().c_str()))
-			{
-			  wxMessageDialog copymsg(this, 
-						  "Could not copy file", "Wired", 
-						  wxOK | wxICON_EXCLAMATION |wxCENTRE);
-			  copymsg.ShowModal();
-			  res = wxID_CANCEL;
-			}
-		      else
-			selfile = fn.GetFullPath().c_str();
-		    }
-      if (res != wxID_CANCEL)
-	{
-	  wxProgressDialog *Progress = new wxProgressDialog("Loading wave file", "Please wait...", 100, 
-							    this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
-							    | wxPD_REMAINING_TIME);
-	  Progress->Update(1);
-	  cActionManager::Global().AddImportWaveAction(selfile, true, true);
-	  Progress->Update(80);
-	  CreateUndoRedoMenus(EditMenu);
-	  Progress->Update(99);
-	  delete Progress;
-	}
+      {
+      	cout << "[MAINWIN] Importing file" << endl;
+      	FileConverter->ConvertFromCodec(&selfile);
+      	FileConverter->ConvertSamplerate(&selfile);
+      	FileConverter->ImportWaveFile(&selfile);      	
+      }	  
     }
   else
     {
       dlg->Destroy();  
       cout << "[MAINWIN] User cancels open dialog" << endl;
     }
-        //SeqMutex.Unlock();
 }
 
 void					MainWindow::OnImportMIDI(wxCommandEvent &event)

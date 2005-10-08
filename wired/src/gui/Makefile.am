@@ -63,4 +63,4 @@ libgui_a_SOURCES = 			\
 		PluginEffect.cpp	\
 		PluginEffect.h		\
 		FileConversion.h	\
-		FileConversion.cp
+		FileConversion.cpp
