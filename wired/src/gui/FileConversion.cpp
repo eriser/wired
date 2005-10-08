@@ -38,7 +38,7 @@ bool				FileConversion::Init(t_samplerate_info *RateInit, string WorkingDir, uns
 	_BufferSize = BufferSize;
 	cout << "[FILECONVERT] Loading Codec management...";
 	_CodecConverter.Init();
-	list<string>			CodecsListExtensions = _CodecConverter.GetExtension();
+	list<string>			CodecsListExtensions = _CodecConverter.GetExtension(DECODE);
 	list<string>::iterator	Iter;
 
 	for (Iter = CodecsListExtensions.begin(); Iter != CodecsListExtensions.end(); Iter++)
@@ -139,7 +139,7 @@ void				FileConversion::Decode(string *FileName)
 {
 	if (_ShouldRun == false)
 		return;
-	if (_CodecConverter.CanDecode(string(FileName->c_str())) == true)
+	if (_CodecConverter.CanConvert(string(FileName->c_str()), DECODE) == true)
 	{
 		string			FileNameLocal(FileName->c_str());
 		t_Pcm			Data;
