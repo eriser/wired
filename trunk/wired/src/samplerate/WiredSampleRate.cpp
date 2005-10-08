@@ -52,7 +52,7 @@ void					WiredSampleRate::Init(t_samplerate_info *Info)
 		
 }
 
-int						WiredSampleRate::OpenFile(string& Path, wxWindow* parent)
+int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 {
 	SampleRateMutex.Lock();
 	SNDFILE				*Result;
@@ -60,10 +60,8 @@ int						WiredSampleRate::OpenFile(string& Path, wxWindow* parent)
 	int					Res = wxID_NO;
 	bool				SameSampleRate, SameFormat;
 	
-	//SaveFile(Path);
-	//return wxID_CANCEL;
 	Info.format = 0;
-	if ((Result = sf_open(Path.c_str(), SFM_READ, &Info)) != NULL)
+	if ((Result = sf_open(Path->c_str(), SFM_READ, &Info)) != NULL)
 	{
 		//cout << "succesfully opened file" << Path.c_str() << endl;
 		SameFormat = IsSameFormat(Info.format, _ApplicationSettings.Format);
@@ -89,7 +87,7 @@ int						WiredSampleRate::OpenFile(string& Path, wxWindow* parent)
 				if (!SameFormat)
 					strFormats += " and  ";
 				strFormats += "samplerate ";
-				sprintf(buf, "%ld Hz to %ld Hz ?", Info.samplerate, _ApplicationSettings.SampleRate);
+				sprintf(buf, "%d Hz to %ld Hz ?", Info.samplerate, _ApplicationSettings.SampleRate);
 //				oss << Info.samplerate << string(" Hz to ");
 //				oss << _ApplicationSettings.SampleRate ;
 //				oss << string(" Hz");
@@ -109,7 +107,7 @@ int						WiredSampleRate::OpenFile(string& Path, wxWindow* parent)
         	if (res == wxID_YES)
         	{
         		//SampleRateMutex.Lock();
-        		if (Convert(&Info, Path, Result))
+        		if (Convert(&Info, *Path, Result))
 	        		Res = wxID_YES;
 	        	else
 	        		Res = wxID_NO;
