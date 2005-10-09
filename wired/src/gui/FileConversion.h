@@ -27,7 +27,7 @@ typedef struct s_FileConversionAction
 	string						*DstFileName;
 } FileConversionAction;
 
-class	FileConversion : public wxThreadHelper
+class	FileConversion : public wxThread
 {
 public:
 	FileConversion();
@@ -36,7 +36,7 @@ public:
 	FileConversion operator=(const FileConversion& right);
 	
 	virtual void		*Entry();
-	bool				Init(t_samplerate_info *RateInit, string WorkingDir, unsigned long BufferSize);
+	bool				Init(t_samplerate_info *RateInit, string WorkingDir, unsigned long BufferSize, wxWindow *Parent);
 	vector<string>		*GetCodecsExtensions();
 	void				ConvertFromCodec(string *FileName);
 	void				ConvertToCodec(string *FileName);
@@ -56,9 +56,27 @@ private:
 	vector<string>		_CodecsExtensions;
 	string				_WorkingDir;
 	unsigned long		_BufferSize;
+	wxWindow			*_Parent;
 	deque<FileConversionAction *>	_ActionsList;
 };
 
 static wxMutex FileConversionMutex;
+
+class	AskQuestion
+{
+public:
+	AskQuestion(wxWindow *Parent){_Parent = Parent;}
+	~AskQuestion(){};
+	
+	int					Ask(const string &Question, const string &Title)
+	{
+		wxMessageDialog	msg(_Parent, Question, Title, wxYES_NO | wxCANCEL  | wxICON_QUESTION | wxCENTRE);
+		int res = msg.ShowModal();
+		msg.Destroy();
+		return res;
+	}
+private:
+	wxWindow			*_Parent;
+};
 
 #endif /*FILECONVERSION_H_*/

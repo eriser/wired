@@ -7,14 +7,14 @@
 #include "../undo/cImportMidiAction.h"
 
 
-FileConversion::FileConversion() : wxThreadHelper()
+FileConversion::FileConversion() : wxThread()
 {
 	_ShouldRun = false;
 }
 
 FileConversion::~FileConversion()
 {
-	GetThread()->Delete();
+	Delete();
 }
 
 FileConversion		FileConversion::operator=(const FileConversion& right)
@@ -28,14 +28,16 @@ FileConversion		FileConversion::operator=(const FileConversion& right)
 		_WorkingDir = right._WorkingDir;
 		_BufferSize = right._BufferSize;
 		_ActionsList = right._ActionsList;
+		_Parent = right._Parent;
 	}
 	return *this;
 }
 
-bool				FileConversion::Init(t_samplerate_info *RateInit, string WorkingDir, unsigned long BufferSize)
+bool				FileConversion::Init(t_samplerate_info *RateInit, string WorkingDir, unsigned long BufferSize, wxWindow *Parent)
 {
 	_WorkingDir = WorkingDir;
 	_BufferSize = BufferSize;
+	_Parent = Parent;
 	cout << "[FILECONVERT] Loading Codec management...";
 	_CodecConverter.Init();
 	list<string>			CodecsListExtensions = _CodecConverter.GetExtension(DECODE);
@@ -61,7 +63,7 @@ vector<string>		*FileConversion::GetCodecsExtensions()
 void				FileConversion::Stop()
 {
 	FileConversionMutex.Unlock();
-	GetThread()->Delete();
+	Delete();
 }
 
 void				*FileConversion::Entry()
@@ -86,7 +88,7 @@ void				*FileConversion::Entry()
 					cout << "[FILECONVERT] Encoding is not supported" << endl;
 					break;
 				case AConvertSampleRate :
-				HasChangedPath = false;
+					HasChangedPath = false;
 					ConvertSamplerate(Action->SrcFileName, HasChangedPath);
 					break;
 				case AImportFile :
@@ -109,11 +111,11 @@ void				*FileConversion::Entry()
 			cout << "[FILECONVERT] Thread has no work !" << endl;
 			//FileConversionMutex.Lock();
 		}
-		if (GetThread()->TestDestroy() == true)
+		if (TestDestroy() == true)
 			break;
 	}
 	cout << "[FILECONVERT] Thread killed !" << endl;
-	return (GetThread()->Wait());
+	return (Wait());
 }
 
 int						FileConversion::GetSndFFormat(PcmType Type)
@@ -226,7 +228,7 @@ bool				FileConversion::ConvertSamplerate(string *FileName, bool &HasChangedPath
 	int					HasConvertedFile;
     t_samplerate_info	Info;
 
-    HasConvertedFile = _SampleRateConverter.OpenFile(FileName, NULL);
+    HasConvertedFile = _SampleRateConverter.OpenFile(FileName, _Parent);
 	if (HasConvertedFile == wxID_CANCEL)
 		return false;
 	else if (HasConvertedFile == wxID_NO)
@@ -272,7 +274,7 @@ void				FileConversion::ImportWavePattern(string *FileName)
 void				FileConversion::CopyToWorkingDir(string *FileName)
 {
 
-	wxMessageDialog msg(NULL, "Do you want to copy this file to your project directory ?", "Wired", 
+	wxMessageDialog msg(_Parent, "Do you want to copy this file to your project directory ?", "Wired", 
 						wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
 	int res = msg.ShowModal();
 	if (res == wxID_OK)
@@ -283,7 +285,7 @@ void				FileConversion::CopyToWorkingDir(string *FileName)
 		cout << "Will copy File {" << FileName->c_str() << "} TO {" << fn.GetFullPath().c_str() << "}" << endl;
 		if (!wxCopyFile(FileName->c_str(), fn.GetFullPath().c_str()))
 		{
-			wxMessageDialog copymsg(NULL, "Could not copy file", "Wired", wxOK | wxICON_EXCLAMATION | wxCENTRE);
+			wxMessageDialog copymsg(_Parent, "Could not copy file", "Wired", wxOK | wxICON_EXCLAMATION | wxCENTRE);
 			copymsg.ShowModal();
 		}
 		else
