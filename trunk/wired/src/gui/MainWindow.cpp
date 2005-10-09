@@ -298,7 +298,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   RackModeView = true;
   SeqModeView = true;
-
   InitFileConverter();
 
   // Taille minimum de la fenetre
@@ -335,9 +334,9 @@ void					MainWindow::InitFileConverter()
 	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
 	info.SampleRate = (unsigned long) Audio->SampleRate;
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
-	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) Audio->SamplesPerBuffer))
+	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) Audio->SamplesPerBuffer, this))
 		cout << "[MAINWIN] Create file converter thread failed !" << endl; 
-	if (FileConverter->GetThread()->Run() != wxTHREAD_NO_ERROR)
+	if (FileConverter->Run() != wxTHREAD_NO_ERROR)
 		cout << "[MAINWIN] Run file converter thread failed !" << endl; 
 }
 
@@ -590,14 +589,18 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 		}
 	    else
 			res = wxID_CANCEL;
+		dir.Destroy();
       }
       if (res != wxID_CANCEL)
       {
       	cout << "[MAINWIN] Importing file" << endl;
       	FileConverter->ConvertFromCodec(&selfile);
-      	FileConverter->ConvertSamplerate(&selfile);
-      	FileConverter->ImportWaveFile(&selfile);      	
-      }	  
+      	cout << "[MAINWIN] Importing file 01" << endl;
+		//FileConverter->ConvertSamplerate(&selfile);
+      	cout << "[MAINWIN] Importing file 02" << endl;
+      	FileConverter->ImportWaveFile(&selfile);
+      	cout << "[MAINWIN] Importing file done" << endl;
+      }
     }
   else
     {
