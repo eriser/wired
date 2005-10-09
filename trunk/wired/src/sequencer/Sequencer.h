@@ -121,7 +121,8 @@ class Sequencer : public wxThread
   WiredSampleRate		*SampleRateConverter;
 };
 
-extern wxMutex				SeqMutex;
+static wxMutex					SeqMutex;
+//extern wxMutex				SeqMutex;
 extern Sequencer			*Seq;
 
 #endif
