@@ -20,7 +20,6 @@
 #include "../audio/WriteWaveFile.h"
 #include "../samplerate/WiredSampleRate.h"
 
-wxMutex					SeqMutex;
 
 Sequencer::Sequencer() 
   : wxThread(), BPM(96), SigNumerator(4), SigDenominator(4), Loop(false), 
