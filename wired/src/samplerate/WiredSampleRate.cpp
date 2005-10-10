@@ -54,7 +54,6 @@ void					WiredSampleRate::Init(t_samplerate_info *Info)
 
 int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 {
-	SampleRateMutex.Lock();
 	SNDFILE				*Result;
 	SF_INFO				Info;
 	int					Res = wxID_NO;
@@ -96,13 +95,13 @@ int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 //			strFormats += oss.str();
 //			strFormats += " ?";
 //			oss.clear();
-			wxMessageDialog msg(parent, strFormats, "File format mismatch", 
+			wxMessageDialog *msg = new wxMessageDialog(parent, strFormats, "File format mismatch", 
 								wxYES_NO | wxCANCEL  | wxICON_QUESTION | wxCENTRE);
 			cout << "5  strformat == " << strFormats.c_str() << endl;
-			res = msg.ShowModal();
+			res = msg->ShowModal();
 			cout << "6  strformat == " << strFormats.c_str() << endl;
 			
-			msg.Destroy();
+			msg->Destroy();
 			cout << "7  strformat == " << strFormats.c_str() << endl;
         	if (res == wxID_YES)
         	{
@@ -121,7 +120,6 @@ int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 	}
    	cout << "converting samplerate end" << endl;
 	//SampleRateMutex.Unlock();
-	SampleRateMutex.Unlock();
 	return Res;
 }
 
@@ -362,7 +360,6 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 
 bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples)
 {
-	SampleRateMutex.Lock();
 	wxFile				File;
 	
 	ChooseFileFormat(&OpenedFileInfo);
@@ -382,7 +379,6 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigne
 	_ChannelBuffer = new float *[NbChannel];
 	for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannel; CurrentChannel++)
 		_ChannelBuffer[CurrentChannel] = new float[NbSamples];
-	SampleRateMutex.Unlock();
 	return true;
 }
 
@@ -393,8 +389,6 @@ float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChann
 	unsigned int		CurrentChannel;
 	int					res = 0;
 
-
-	SampleRateMutex.Lock();
 	Output[0] = new float[NbSamples];
 	Output[1] = new float[NbSamples];
 	for (CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
@@ -431,7 +425,6 @@ float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChann
 
 void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, unsigned int NbChannel)
 {
-	SampleRateMutex.Lock();
 	float		*Output;
 	double 		Ratio = (double)  _ApplicationSettings.SampleRate / OpenedFileInfo.samplerate;
 	unsigned long ToWrite;
@@ -446,14 +439,12 @@ void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, u
 	}
 	if (sf_error(OpenedFile) != SF_ERR_NO_ERROR)
 		cout << "sndfile error {" << sf_strerror(OpenedFile) << "}" << endl;
-	SampleRateMutex.Unlock();
 }
 
 void					WiredSampleRate::EndSaveFile(unsigned int NbChannel)
 {
 	if(OpenedFile)
 	{
-		SampleRateMutex.Lock();
 		if (!OpenedFile)
 			return;
 		sf_close(OpenedFile);
@@ -463,6 +454,5 @@ void					WiredSampleRate::EndSaveFile(unsigned int NbChannel)
 //		
 		delete [] _ChannelBuffer;
 		//delete [] _Buffer;
-		SampleRateMutex.Unlock();
 	}
 }
