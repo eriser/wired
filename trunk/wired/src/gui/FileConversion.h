@@ -27,7 +27,7 @@ typedef struct s_FileConversionAction
 	string						*DstFileName;
 } FileConversionAction;
 
-class	FileConversion : public wxThread
+class	FileConversion //: public wxThread
 {
 public:
 	FileConversion();

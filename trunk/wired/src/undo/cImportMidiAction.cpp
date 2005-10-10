@@ -34,8 +34,8 @@ void cImportWaveAction::AddWaveTrack()
     	Track *t = SeqPanel->AddTrack(_TrackKindFlag);
 		t->AddPattern(w);
 		_trackIndex = t->Index;
+		NotifyActionManager();
     }
-	NotifyActionManager();	
 }
 
 void cImportWaveAction::RemoveWaveTrack(bool selectFromIndex)

@@ -334,10 +334,10 @@ void					MainWindow::InitFileConverter()
 	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
 	info.SampleRate = (unsigned long) Audio->SampleRate;
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
-	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) Audio->SamplesPerBuffer, this))
+	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) Audio->SamplesPerBuffer, this) == false)
 		cout << "[MAINWIN] Create file converter thread failed !" << endl; 
-	if (FileConverter->Run() != wxTHREAD_NO_ERROR)
-		cout << "[MAINWIN] Run file converter thread failed !" << endl; 
+//	if (FileConverter->Run() != wxTHREAD_NO_ERROR)
+//		cout << "[MAINWIN] Run file converter thread failed !" << endl; 
 }
 
 void					MainWindow::InitUndoRedoMenuItems()
@@ -593,13 +593,25 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       }
       if (res != wxID_CANCEL)
       {
+      	//SeqMutex.Lock();
+      	MidiMutex.Lock();
+      	Audio->StopStream();
+      	//int result = Seq->Pause();
+      	//MidiEngine->Pause();
+//      	cout << "Result == " << result << "wxTHREAD_NO_ERROR == " << wxTHREAD_NO_ERROR << ", wxTHREAD_RUNNING" << wxTHREAD_RUNNING << endl;
+      	
       	cout << "[MAINWIN] Importing file" << endl;
       	FileConverter->ConvertFromCodec(&selfile);
       	cout << "[MAINWIN] Importing file 01" << endl;
-		//FileConverter->ConvertSamplerate(&selfile);
+		FileConverter->ConvertSamplerate(&selfile);
       	cout << "[MAINWIN] Importing file 02" << endl;
       	FileConverter->ImportWaveFile(&selfile);
       	cout << "[MAINWIN] Importing file done" << endl;
+      	//Seq->Resume();
+      	//MidiEngine->Resume();
+      	//SeqMutex.Unlock();
+      	MidiMutex.Unlock();  
+      	Audio->StartStream();    	
       }
     }
   else
