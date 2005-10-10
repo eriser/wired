@@ -8,6 +8,7 @@ using namespace std;
 //#include <iostream>
 #include <list>
 
+
 #define PREBUF_NUM 6
 
 class Sequencer;

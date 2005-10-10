@@ -29,7 +29,7 @@ WaveFile::WaveFile()
   if (sffile == NULL )
   {
     Error = true;
-    cout << "Unable to create temporary file in read/write mode " << endl;
+    cout << "[WAVEFILE] Unable to create temporary file in read/write mode " << endl;
     throw Error::File("", sf_strerror(0));
   }    
 }
@@ -71,8 +71,8 @@ WaveFile::WaveFile()
       sffile = sf_open (Filename.c_str(), SFM_WRITE, &sfinfo);
       break;
     case rwrite :
-      cout << "Temporary file created" << endl;
       sffile = sf_open (Filename.c_str(), SFM_RDWR, &sfinfo);
+      cout << "[WAVEFILE] Temporary file created" << endl;
       break;
     case tmp :
       //cout << "Trying to creat a new temporary file " << endl;
@@ -81,7 +81,7 @@ WaveFile::WaveFile()
       //cout << "Temporary file created" << endl;
       break;
     default: 
-      throw cException ("WaveFile : Unknow opening mode!!");
+      throw cException ("[WAVEFILE] : Unknow opening mode!!");
   }
 
   if (sffile == NULL )
@@ -175,11 +175,11 @@ WaveFile::~WaveFile()
   if (LoadedInMem)
   {
     for (int i = 0; i < sfinfo.channels; i++)
-      delete Data[i];
-    delete Data;
+      delete[] Data[i];
+    delete[] Data;
   }
   else
-   delete TempBuf;
+   delete[] TempBuf;
 }
 
 unsigned long WaveFile::Read(float **buf, long pos, long size, 

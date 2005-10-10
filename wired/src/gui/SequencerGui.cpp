@@ -476,7 +476,7 @@ Track					*SequencerGui::AddTrack(bool is_audio)
   yy = SeqView->GetTotalHeight() - (long) floor(CurrentYScrollPos);
   wxPoint p(0, yy);
   wxSize  s(TRACK_WIDTH, (long) floor(TRACK_HEIGHT * VertZoomFactor));
-  //  printf("adding SEQTRACK %d with Y=%d\n", Seq->Tracks.size() + 1, yy);
+//    printf("adding SEQTRACK %d with Y=%d\n", Seq->Tracks.size() + 1, yy);
   n1 = new SeqTrack(Seq->Tracks.size() + 1, TrackView, p, s, is_audio);
   //  printf("adding SEQTRACK PATTERN\n");
   n2 = new SeqTrackPattern(SeqView, n1, SeqView->GetTotalWidth());

@@ -1,5 +1,6 @@
 #include <math.h>
 #include <wx/thread.h>
+#include <wx/utils.h>
 #include "Mixer.h"
 #include "MixerGui.h"
 #include "MixerError.h"
@@ -315,8 +316,7 @@ void				Mixer::MixOutput(bool soundcard)
 	  tmp = ((i % 2) ?  OutputRight : OutputLeft);
 	  /* Blocking write */
 	  //cout << "[MIXER] blocking write BEGIN" << endl;
-	  for (long spb = Audio->SamplesPerBuffer; spb > 0; 
-	       nanosleep(&t, 0x0))
+	  for (long spb = Audio->SamplesPerBuffer; spb > 0; wxMicroSleep(100)) //nanosleep(&t, 0x0))
 	    {
 	      bytes_written = (*chan)->Write(tmp, spb); 
 	      spb -= bytes_written;
