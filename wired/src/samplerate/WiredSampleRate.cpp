@@ -429,6 +429,7 @@ void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, u
 	double 		Ratio = (double)  _ApplicationSettings.SampleRate / OpenedFileInfo.samplerate;
 	unsigned long ToWrite;
 
+	SampleRateMutex.Lock();
 	Output = ConvertnChannels(Buffer, NbChannel, StaticConverter, NbSamples, Ratio, (NbSamples < _ApplicationSettings.SamplesPerBuffer ? 1 : 0), ToWrite);	
 	if (Output)
 	{
@@ -439,6 +440,7 @@ void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, u
 	}
 	if (sf_error(OpenedFile) != SF_ERR_NO_ERROR)
 		cout << "sndfile error {" << sf_strerror(OpenedFile) << "}" << endl;
+	SampleRateMutex.Unlock();
 }
 
 void					WiredSampleRate::EndSaveFile(unsigned int NbChannel)
