@@ -94,6 +94,8 @@ class AudioEngine
 
 extern AudioEngine	*Audio;
 
+extern wxMutex		AudioMutex;
+
 // AudioCallback
 static int	AudioCallback(const void *input,
 			      void *output,
@@ -102,6 +104,7 @@ static int	AudioCallback(const void *input,
 			      PaStreamCallbackFlags statusFlags, 
 			      void *userData)
 {
+	AudioMutex.Lock();
   callback_t *data = (callback_t*)userData;
   unsigned long bytes = frameCount, processed = 0;
   float **outputs = (float**)output;
@@ -112,7 +115,7 @@ static int	AudioCallback(const void *input,
   vector<long>::iterator chan;
   
   if (data->SampleFormat & paFloat32)
-    {  
+    {
       for (processed = 0, chan = data->Sets->OutputChannels.begin(); 
 	   chan != data->Sets->OutputChannels.end();
 	   chan++, nchan++)
@@ -145,8 +148,8 @@ static int	AudioCallback(const void *input,
     ;
   else if ( data->SampleFormat & paInt8 )
     ;
+  AudioMutex.Unlock();
   return (0);
-  
 }
 
 extern wxMutex	AudioMutex;
