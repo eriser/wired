@@ -595,7 +595,10 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       {
       	//SeqMutex.Lock();
       	MidiMutex.Lock();
-      	Audio->StopStream();
+      	MidiDeviceMutex.Lock();
+      	//Audio->StopStream();
+      	AudioMutex.Lock();
+      	SeqMutex.Unlock();
       	//int result = Seq->Pause();
       	//MidiEngine->Pause();
 //      	cout << "Result == " << result << "wxTHREAD_NO_ERROR == " << wxTHREAD_NO_ERROR << ", wxTHREAD_RUNNING" << wxTHREAD_RUNNING << endl;
@@ -611,7 +614,9 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       	//MidiEngine->Resume();
       	//SeqMutex.Unlock();
       	MidiMutex.Unlock();  
-      	Audio->StartStream();    	
+      	MidiDeviceMutex.Unlock();
+      	AudioMutex.Unlock();
+      	//Audio->StartStream();    	
       }
     }
   else
