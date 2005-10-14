@@ -133,11 +133,11 @@ void AudioEngine::SetOutputDevice(void)
   
   
   cout << "[AUDIO] OUTPUT MIN LATENCY " 
-       << SelectedOutputDevice->OutputLatencyRange[MIN] << endl; 
+       << SelectedOutputDevice->OutputLatencyRange[MIN] * 1000 << " msec" << endl; 
   cout << "[AUDIO] OUTPUT MAX LATENCY " 
-       << SelectedOutputDevice->OutputLatencyRange[MAX] << endl; 
+       << SelectedOutputDevice->OutputLatencyRange[MAX] * 1000 << " msec" << endl; 
   cout << "[AUDIO] SUGGESTED LATENCY: " 
-       << (double)((double)SamplesPerBuffer / (double)SampleRate)
+       << (double)((double)SamplesPerBuffer / (double)SampleRate) * 1000 << " msec"
        << endl;
   if ( (WiredSettings->OutputLatency > 
 	SelectedOutputDevice->OutputLatencyRange[MAX]) ||
@@ -222,14 +222,14 @@ void AudioEngine::GetDeviceSettings()
 	throw Error::InvalidDeviceSettings();
   
   cout << "[AUDIO] OUTPUT MIN LATENCY " 
-       << SelectedOutputDevice->OutputLatencyRange[MIN] << endl; 
+       << SelectedOutputDevice->OutputLatencyRange[MIN] * 1000 << " msec" << endl; 
   cout << "[AUDIO] OUTPUT MAX LATENCY " 
-       << SelectedOutputDevice->OutputLatencyRange[MAX] << endl; 
+       << SelectedOutputDevice->OutputLatencyRange[MAX] * 1000 << " msec" << endl;
   
   cout << "[AUDIO] INPUT MIN LATENCY " 
-       << SelectedInputDevice->InputLatencyRange[MIN] << endl; 
+       << SelectedInputDevice->InputLatencyRange[MIN] * 1000 << " msec" << endl; 
   cout << "[AUDIO] INPUT MAX LATENCY "
-       << SelectedInputDevice->InputLatencyRange[MAX] << endl; 
+       << SelectedInputDevice->InputLatencyRange[MAX] * 1000 << " msec" << endl; 
   
   if ( (WiredSettings->OutputLatency > 
 	SelectedOutputDevice->OutputLatencyRange[MAX]) ||
