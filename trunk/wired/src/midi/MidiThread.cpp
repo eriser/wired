@@ -119,6 +119,7 @@ void					*MidiThread::Entry()
   while (1)
     {
       MidiDeviceMutex.Lock();
+      cout << "[MIDITHREAD] Thread running !" << endl;
       for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
 	{
 	  if ((*i)->Poll())
@@ -128,6 +129,8 @@ void					*MidiThread::Entry()
 	    }
 	}
       MidiDeviceMutex.Unlock();
+      if (TestDestroy() == true)
+      	break;
       wxMilliSleep(1);
     }
   return (0x0);
