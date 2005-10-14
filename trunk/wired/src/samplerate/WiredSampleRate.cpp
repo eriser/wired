@@ -62,18 +62,18 @@ int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 	Info.format = 0;
 	if ((Result = sf_open(Path->c_str(), SFM_READ, &Info)) != NULL)
 	{
-		//cout << "succesfully opened file" << Path.c_str() << endl;
+//		cout << "succesfully opened file" << Path->c_str() << endl;
 		SameFormat = IsSameFormat(Info.format, _ApplicationSettings.Format);
 		SameSampleRate = (int)Info.samplerate == (int)_ApplicationSettings.SampleRate ? true : false;
 		if (!SameFormat || !SameSampleRate)
 		{
-			//cout << "Successfully opend file, info : format == " << Info.format << ", samplerate == " << Info.samplerate 
-			//		<< ", NbFrames == " << Info.frames << ", sections == " << Info.sections << ", Seekable == " << Info.seekable << endl;
+//			cout << "Successfully opend file, info : format == " << Info.format << ", samplerate == " << Info.samplerate 
+//					<< ", NbFrames == " << Info.frames << ", sections == " << Info.sections << ", Seekable == " << Info.seekable << endl;
 			wxString			strFormats;
 			char				buf[1024];
 			int					res;
 //			ostringstream	oss;
-			
+
 			strFormats = "Would you like to convert your file from ";
 			if (!SameFormat)
 			{
@@ -95,12 +95,14 @@ int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 //			strFormats += oss.str();
 //			strFormats += " ?";
 //			oss.clear();
+
 			wxMessageDialog *msg = new wxMessageDialog(parent, strFormats, "File format mismatch", 
 								wxYES_NO | wxCANCEL  | wxICON_QUESTION | wxCENTRE);
+			
 			cout << "5  strformat == " << strFormats.c_str() << endl;
 			res = msg->ShowModal();
 			cout << "6  strformat == " << strFormats.c_str() << endl;
-			
+
 			msg->Destroy();
 			cout << "7  strformat == " << strFormats.c_str() << endl;
         	if (res == wxID_YES)
@@ -118,14 +120,12 @@ int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 		}
 		sf_close(Result);
 	}
-   	cout << "converting samplerate end" << endl;
 	//SampleRateMutex.Unlock();
 	return Res;
 }
 
 int						WiredSampleRate::GetConverterQuality()
 {
-	wxSingleChoiceDialog	*Dlg;
 	wxArrayString			Choices;
 	int						Values[NB_SAMPLERATE_QUALITY];
 	int						Result;
@@ -137,13 +137,12 @@ int						WiredSampleRate::GetConverterQuality()
 		Values[pos] = pos;
 		Choices.Add(src_get_name(pos));
 	}
-	
-	Dlg = new wxSingleChoiceDialog(NULL, Msg, Title, Choices, (char **)&Values);
-	if (Dlg->ShowModal() == wxID_OK)
-		Result = (int) Dlg->GetSelectionClientData();
+
+	wxSingleChoiceDialog	Dlg(NULL, Msg, Title, Choices, (char **)&Values);
+	if (Dlg.ShowModal() == wxID_OK)
+		Result = (int) Dlg.GetSelectionClientData();
 	else 
 		Result = 0;
-	delete Dlg;
 	return Result;
 }
 
@@ -164,7 +163,7 @@ float					*WiredSampleRate::ConvertSampleRate(SRC_STATE* Converter, float *Input
 	res = src_process(Converter, &Data);
 	if (res)
 	{
-		cout << "An error occured while trying to convert file : " << src_strerror(res) << endl;
+		cout << "[FILECONVERT] An error occured while trying to convert file : " << src_strerror(res) << endl;
 		return NULL;
 	}
 	else
@@ -223,7 +222,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 					{
 						if (sf_writef_float(Result, Output, ToWrite) != ToWrite)
 						{
-							cout << "An error occured while writing to file " << DestFileName.c_str() << endl;
+							cout << "[FILECONVERT] An error occured while writing to file " << DestFileName.c_str() << endl;
 							HasFailed = true;
 						}
 						delete[] Output;
@@ -242,7 +241,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 				if (sf_error(SrcData) != SF_ERR_NO_ERROR)
 				{
 					delete ProgressBar;
-					cout << "sndfile error {" << sf_strerror(SrcData) << "}" << endl;
+					cout << "[FILECONVERT] Sndfile error {" << sf_strerror(SrcData) << "}" << endl;
 					sf_close(Result);
 					delete[] Buffer;
 					return false;
@@ -257,7 +256,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 		}
 		else
 		{
-			cout << "Error while loading file !" << endl;
+			cout << "[FILECONVERT] Error while loading file !" << endl;
 			return false;
 		}
 		chmod(DestFileName.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
@@ -320,42 +319,36 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 	wxSize				ComboSize(140, 20);
 	wxPoint				ComboPos(40, 70);
 	wxDialog 			Dialog(NULL, -1, "File format selection", wxDefaultPosition, DialogSize, 
-								wxCENTRE | wxCAPTION | wxTHICK_FRAME | wxSTAY_ON_TOP);
-	wxStaticText		*DialogText;
-	wxButton			*DialogButton;
+								wxCENTRE | wxCAPTION | wxTHICK_FRAME | wxSTAY_ON_TOP);	
+	wxStaticText		DialogText(&Dialog, -1, wxString("Please select the options that\nyou want for the downmix.\n(Defaults are current project's configuration)"),
+									wxPoint(13, 10), wxSize(-1, -1), wxALIGN_CENTER);
+	wxButton			DialogButton(&Dialog, wxID_OK, "", wxPoint(135, 110));
+	wxComboBox			CBFormat(&Dialog, -1, "", ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
 	int					pos;
 	
-	DialogButton = new wxButton(&Dialog, wxID_OK, "", wxPoint(135, 110));
-	DialogText = new wxStaticText(&Dialog, -1, wxString("Please select the options that\nyou want for the downmix.\n(Defaults are current project's configuration)"),
-									wxPoint(13, 10), wxSize(-1, -1), wxALIGN_CENTER);
-	wxComboBox			*CBFormat = new wxComboBox(&Dialog, -1, "", ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
 	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0;pos++)
-		CBFormat->Append(wxString(_FormatTypes[pos].FormatName));
+		CBFormat.Append(wxString(_FormatTypes[pos].FormatName));
 	ComboPos.x = 200;
 	ComboSize.x = 100;
-	wxComboBox			*CBSampleRate = new wxComboBox(&Dialog, -1, "", ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
+	wxComboBox			CBSampleRate(&Dialog, -1, "", ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
 	for (pos = 0; _SampleRateTypes[pos].SampleRate != 0;pos++)
-		CBSampleRate->Append(wxString(_SampleRateTypes[pos].SampleRateName));
+		CBSampleRate.Append(wxString(_SampleRateTypes[pos].SampleRateName));
 	Dialog.SetReturnCode(wxID_OK);
 	if (Dialog.ShowModal() == wxID_OK)
 	{
 		for (pos = 0; _FormatTypes[pos].SndFileFormat != 0;pos++)
-			if (CBFormat->GetValue().compare(_FormatTypes[pos].FormatName) == 0)
+			if (CBFormat.GetValue().compare(_FormatTypes[pos].FormatName) == 0)
 			{
 				DestInfo->format = _FormatTypes[pos].SndFileFormat;
 				break;
 			}
 		for (pos = 0; _SampleRateTypes[pos].SampleRate != 0;pos++)
-			if (CBSampleRate->GetValue().compare(_SampleRateTypes[pos].SampleRateName) == 0)
+			if (CBSampleRate.GetValue().compare(_SampleRateTypes[pos].SampleRateName) == 0)
 			{
 				DestInfo->samplerate = _SampleRateTypes[pos].SampleRate;
 				break;
 			}
 	}
-	delete CBFormat;
-	delete CBSampleRate;
-	delete DialogText;
-	delete DialogButton;
 }
 
 bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples)
@@ -366,10 +359,10 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigne
 	OpenedFileInfo.channels = 2;
 	OpenedFileInfo.format |= SF_FORMAT_WAV;
 	if (sf_format_check(&OpenedFileInfo) == false)
-		cout << "An error occured while trying to open a file, bad parameters)" << endl;
+		cout << "[FILECONVERT] An error occured while trying to open a file, bad parameters)" << endl;
 	if ((OpenedFile = sf_open(Path.c_str(), SFM_WRITE, &OpenedFileInfo)) == NULL)
 	{
-		cout << "An error occured while trying to open file (details :" << sf_strerror(OpenedFile) << ")" << endl;
+		cout << "[FILECONVERT] An error occured while trying to open file (details :" << sf_strerror(OpenedFile) << ")" << endl;
 		SampleRateMutex.Unlock();
 		return false;
 	}
@@ -377,6 +370,7 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigne
 	StaticConverter = src_new(_Quality, NbChannel, &_ConverterError);
 	_Buffer = new float[NbChannel * NbSamples];
 	_ChannelBuffer = new float *[NbChannel];
+	//TO FIX bad allocation ....
 	for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannel; CurrentChannel++)
 		_ChannelBuffer[CurrentChannel] = new float[NbSamples];
 	return true;
@@ -384,13 +378,13 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigne
 
 float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite)
 {
-	float				*Output[2];
+	//float				*Output[2];
 	SRC_DATA			Data;
 	unsigned int		CurrentChannel;
 	int					res = 0;
 
-	Output[0] = new float[NbSamples];
-	Output[1] = new float[NbSamples];
+	//Output[0] = new float[NbSamples];
+	//Output[1] = new float[NbSamples];
 	for (CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
 	{
 		bzero(_ChannelBuffer[CurrentChannel], NbSamples);	
@@ -402,7 +396,7 @@ float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChann
 		Data.end_of_input = End;
 		if ((res = src_process(Converter, &Data)))
 		{
-			cout << "An error occured while trying to convert file (details :" << src_strerror(res) << ")" << endl;
+			cout << "[FILECONVERT] An error occured while trying to convert file (details :" << src_strerror(res) << ")" << endl;
 			return NULL;
 		}
 		ToWrite = Data.output_frames_gen;
@@ -435,11 +429,11 @@ void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, u
 	{
 		if (sf_writef_float(OpenedFile, Output, ToWrite) != ToWrite)
 		{
-			cout << "An error occured while writing to file " << endl;
+			cout << "[FILECONVERT] An error occured while writing to file " << endl;
 		}		
 	}
 	if (sf_error(OpenedFile) != SF_ERR_NO_ERROR)
-		cout << "sndfile error {" << sf_strerror(OpenedFile) << "}" << endl;
+		cout << "[FILECONVERT] sndfile error {" << sf_strerror(OpenedFile) << "}" << endl;
 	SampleRateMutex.Unlock();
 }
 
@@ -451,10 +445,10 @@ void					WiredSampleRate::EndSaveFile(unsigned int NbChannel)
 			return;
 		sf_close(OpenedFile);
 		OpenedFile = NULL;
-//		for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannel; CurrentChannel++)
-//			delete [] _ChannelBuffer[CurrentChannel];
-//		
-		delete [] _ChannelBuffer;
-		//delete [] _Buffer;
+		for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannel; CurrentChannel++)
+			delete _ChannelBuffer[CurrentChannel];
+
+		//delete [] _ChannelBuffer;
+		delete _Buffer;
 	}
 }
