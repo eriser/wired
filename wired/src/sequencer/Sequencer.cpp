@@ -336,7 +336,9 @@ void					*Sequencer::Entry()
 	  (*B)->DeleteBuffer();
 	  delete *B;
 	}
-      ExtraBufs.clear();      
+      ExtraBufs.clear();
+      if (TestDestroy() == true)
+      	break;
     }
   cout << "[SEQ] Thread finished !" << endl;
   return (Wait());
