@@ -29,3 +29,4 @@
 # by USERNAME. It is recommended that someone be watching this module
 # as it shouldn't need to be modified very often.
 CVSROOT /cvsroot/sitedocs/CVSROOT/cvstools/syncmail %{sVv} pj-leger@users.sourceforge.net
+DEFAULT /cvsroot/sitedocs/CVSROOT/cvstools/syncmail %{sVv} wired-commits@lists.sourceforge.net
