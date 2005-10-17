@@ -567,15 +567,14 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 
 void					MainWindow::OnImportWave(wxCommandEvent &event)
 {
-  FileLoader				*dlg;
+  FileLoader				*dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, FileConverter->GetCodecsExtensions(), true);
   int						res;
 
-  dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, FileConverter->GetCodecsExtensions(), true);
   if (dlg->ShowModal() == wxID_OK)
     {
       string 	selfile = dlg->GetSelectedFile();
       
-      dlg->Destroy();
+      //dlg->Destroy();
       
       if (CurrentXmlSession->GetAudioDir().empty() == false)
 	      res = wxID_OK;
@@ -589,7 +588,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 		}
 	    else
 			res = wxID_CANCEL;
-		dir.Destroy();
+		//dir.Destroy();
       }
       if (res != wxID_CANCEL)
       {
@@ -603,13 +602,9 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       	//MidiEngine->Pause();
 //      	cout << "Result == " << result << "wxTHREAD_NO_ERROR == " << wxTHREAD_NO_ERROR << ", wxTHREAD_RUNNING" << wxTHREAD_RUNNING << endl;
       	
-      	cout << "[MAINWIN] Importing file" << endl;
       	FileConverter->ConvertFromCodec(&selfile);
-      	cout << "[MAINWIN] Importing file 01" << endl;
 		FileConverter->ConvertSamplerate(&selfile);
-      	cout << "[MAINWIN] Importing file 02" << endl;
       	FileConverter->ImportWaveFile(&selfile);
-      	cout << "[MAINWIN] Importing file done" << endl;
       	//Seq->Resume();
       	//MidiEngine->Resume();
       	//SeqMutex.Unlock();
@@ -621,7 +616,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
     }
   else
     {
-      dlg->Destroy();  
+      //dlg->Destroy();  
       cout << "[MAINWIN] User cancels open dialog" << endl;
     }
 }
@@ -752,7 +747,7 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
     {
       string selfile = dlg->GetSelectedFile();    
       
-      dlg->Destroy();
+      //dlg->Destroy();
       wxFileName f(selfile.c_str());
       if (f.GetExt().IsEmpty())
 	{
@@ -766,26 +761,26 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
       	return;
       }
 
-      //wxProgressDialog *Progress = new wxProgressDialog("Exporting mix", "Please wait...", 
-//						       (int)Seq->EndLoopPos * 1000, this, 
-//						       wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
+      wxProgressDialog *Progress = new wxProgressDialog("Exporting mix", "Please wait...", 
+						       (int)Seq->EndLoopPos * 1000, this, 
+						       wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
       bool done = false;
 
       while (!done)
 	{
-//	  Progress->Update((int) Seq->CurrentPos * 1000);
+	  Progress->Update((int) Seq->CurrentPos * 1000);
 	  //cout << "pos: " << Seq->CurrentPos << "; end: " << Seq->EndLoopPos << endl;
 	  wxMilliSleep(50);
-	  SeqMutex.Lock();
+	  //SeqMutex.Lock();
 	  if (Seq->CurrentPos >= Seq->EndLoopPos)
 	    done = true;
-	  SeqMutex.Unlock();
+	  //SeqMutex.Unlock();
 	}
 //      delete Progress;
     }
   else
     {
-      dlg->Destroy();  
+      //dlg->Destroy();  
       cout << "[MAINWIN] User cancels open dialog" << endl;
     }
 }

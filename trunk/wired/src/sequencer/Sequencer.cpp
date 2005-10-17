@@ -897,10 +897,25 @@ void					Sequencer::WriteExport()
 {
 	if (SampleRateConverter)
 	{
+		
+		cout << "Write Export" << endl;
+//		  for (i = 0, j = 0; i < Audio->SamplesPerBuffer; j++)
+//		    {
+//		      AllocBuf1[0][i++] = Mix->OutputLeft[j];
+//		      AllocBuf1[0][i++] = Mix->OutputRight[j];
+//		    }
+//		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, AllocBuf1, 2);
+//		  for (i = 0; i < Audio->SamplesPerBuffer; j++)
+//		    {
+//		      AllocBuf1[0][i++] = Mix->OutputLeft[j];
+//		      AllocBuf1[0][i++] = Mix->OutputRight[j];  
+//		    }		    
+//		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, AllocBuf1, 2);
 		//SeqMutex.Lock();
 		memcpy(AllocBuf1[0], Mix->OutputLeft, Audio->SamplesPerBuffer);
 		memcpy(AllocBuf1[1], Mix->OutputRight, Audio->SamplesPerBuffer);
 		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, AllocBuf1, 2);
+		cout << "Write Export ended" << endl;
 		//SeqMutex.Unlock();
 	}
 	return;
