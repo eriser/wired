@@ -784,9 +784,17 @@ void				Rack::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-    	cout << "In OnHelp" << endl;
-      wxString s("This is the Rack view of Wired, where you can add plugins. Plugins are organized into tracks vertically, meaning the first plugin in a column will send its output signal to the plugin below it. You can connect sequencer tracks to plugins");
-      HelpWin->SetText(s);
+    	//cout << "In OnHelp" << endl;
+    	if (selectedPlugin)
+    	{
+    		wxString s(selectedPlugin->GetHelpString());
+     		HelpWin->SetText(s);	
+    	}
+    	else
+    	{
+      		wxString s("This is the Rack view of Wired, where you can add plugins. Plugins are organized into tracks vertically, meaning the first plugin in a column will send its output signal to the plugin below it. You can connect sequencer tracks to plugins");
+     		HelpWin->SetText(s);
+    	}
     }
 }
 
