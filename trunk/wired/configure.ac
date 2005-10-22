@@ -46,32 +46,23 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 # Checks for libraries.
-# FIXME: Replace `main' with a function in `-lasound':
-#AC_CHECK_LIB([asound], [main])
+AC_CHECK_LIB([asound], [snd_asoundlib_version], [ASOUND='yes'], AC_MSG_ERROR([Couldn't find libasound]))
 # FIXME: Replace `main' with a function in `-lm':
 #AC_CHECK_LIB([m], [main])
-# FIXME: Replace `main' with a function in `-lportaudio':
-#AC_CHECK_LIB([portaudio], [main])
-# FIXME: Replace `main' with a function in `-lportmidi':
-
-# FIXME: Replace `main' with a function in `-lpthread':
-#AC_CHECK_LIB([pthread], [main])
-# FIXME: Replace `main' with a function in `-lsndfile':
+AC_CHECK_LIB([portaudio], [Pa_Sleep], [PORTAUDIO='yes'], AC_MSG_ERROR([Couldn't find portaudio]))
+AC_CHECK_LIB([pthread], [pthread_create], [PTHREAD='yes'], AC_MSG_ERROR([Couldn't find libpthread]))
 AC_CHECK_LIB([sndfile], [sf_open], [LIBSNDFILE='yes'], AC_MSG_ERROR([Couldn't find libsndfile ]))
-# FIXME: Replace `main' with a function in `-lsndfile':
 AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch ]))
-#AC_CHECK_LIB([ltdl], [lt_dlopen])
-
+#AC_CHECK_LIB([ltdl], [lt_dlmutex_lock], [LTDL='yes'], AC_MSG_ERROR([Couldn't find lib libtool or ltdl ]))
 AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find lib FLAC++ ]))
-
 AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find lib VorbisFile ]))
-
 AC_CHECK_LIB([xml2], [xmlParseMemory], [ XML2F='yes' ], AC_MSG_ERROR([Couldn't find libxml2 ]))
+AC_CHECK_LIB([samplerate], [src_new], [SRC='yes' ], AC_MSG_ERROR([Couldn't find libsamplerate]))
 
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h netinet/in.h stdlib.h string.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h netinet/in.h stdlib.h string.h unistd.h math.h sys/types.h sys/stat.h dlfcn.h stdint.h stdio.h dirent.h alsa/seq_event.h cmath wx/wx.h sndfile.h portaudio.h byteswap.h list.h alsa/asoundlib.h errno.h soundtouch/SoundTouch.h assert.h samplerate.h io.h direct.h])
 
 #Checks for libsamplerate
 PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.15,
@@ -104,7 +95,7 @@ AC_FUNC_LSTAT
 AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
 AC_FUNC_MALLOC
 AC_FUNC_SELECT_ARGTYPES
-AC_CHECK_FUNCS([floor ftime getcwd memmove memset pow select sqrt strdup])
+AC_CHECK_FUNCS([floor ftime getcwd memmove memset pow select sqrt strdup bzero open])
 
 AC_PREFIX_DEFAULT(/usr/local)
 if [[ $prefix = "NONE" ]] ; then
