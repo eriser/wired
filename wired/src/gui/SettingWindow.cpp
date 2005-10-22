@@ -358,6 +358,9 @@ void SettingWindow::Load()
 
 void SettingWindow::Save()
 {
+	
+	AudioMutex.Lock();
+	MidiMutex.Lock();
   long i;
   istringstream	iss((string)undoRedoMaxDepthTextCtrl->GetValue());
 
@@ -393,7 +396,9 @@ void SettingWindow::Save()
 	  WiredSettings->MidiIn.push_back(i);
       
       WiredSettings->Save();
-    }
+    }    
+	AudioMutex.Unlock();
+	MidiMutex.Unlock();
 }
 
 void SettingWindow::LoadSampleFormat()

@@ -120,6 +120,7 @@ static int	AudioCallback(const void *input,
 	   chan != data->Sets->OutputChannels.end();
 	   chan++, nchan++)
 	{
+		cout << "Out Nchan == " << nchan << "Bytes == " << bytes << endl;
 	  processed = data->OutFIFOVector[nchan]->Read(outputs[*chan], bytes);
 	  if (processed < bytes)
 	    for (; processed < bytes; processed++)
@@ -130,6 +131,7 @@ static int	AudioCallback(const void *input,
 	   chan != data->Sets->InputChannels.end();
 	   chan++, nchan++)
 	{
+		cout << "In Nchan == " << nchan << "Bytes == " << bytes << endl;
 	  processed = data->InFIFOVector[nchan]->Write(inputs[*chan], bytes);
 	  /*if (processed != bytes)
 	    cout << "[AUDIO] Frame drop while recording" << endl;
