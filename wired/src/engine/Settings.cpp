@@ -11,11 +11,12 @@
 Settings *WiredSettings;
 
 #define FIRST_START_MSG \
-"Welcome to version 0.11 of Wired.\n\
+"Welcome to version 0.2 of Wired.\n\
 Wired is currently a beta software, some of its features may not work completly yet.\n\
 We recommend to do not use the following features at this time :\n\
 - Undo/Redo\n\
 - Drag and drop of plugins\n\
+- Codec management is known to be quite unstable at this time\n\
 \n\
 The next step is to configure your soundcard settings in Wired Settings dialog.\
 Select 32 bits float for sample format, 44100hz for sample rate (or whatever \
