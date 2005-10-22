@@ -239,8 +239,8 @@ void				Rack::ConnectPluginChangeParamEventHandler(RackTrack *rackTrack)
 	
 	for (iter = rackTrack->Racks.begin(); iter != rackTrack->Racks.end(); iter++)
 	{
-		(*iter)->Connect(wxID_ANY, wxEVT_LEFT_UP, (wxObjectEventFunction) (wxEventFunction) 
-			(wxMouseEventFunction)&Rack::OnPluginParamChange);
+//		(*iter)->Connect(wxID_ANY, wxEVT_LEFT_UP, (wxObjectEventFunction) (wxEventFunction) 
+//			(wxMouseEventFunction)&Rack::OnPluginParamChange);
 	}
 }
 
@@ -512,13 +512,12 @@ void				Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
 	    new_x = (event->GetPosition().x + plug->GetPosition().x);
     	new_y = (event->GetPosition().y + plug->GetPosition().y);
     }
-    
 	if(event->RightDown())
     {
     	SetSelected(plug);
 	    wxPoint p(event->GetPosition().x + plug->GetPosition().x, event->GetPosition().y + plug->GetPosition().y);
 	    PopupMenu(menu, p.x, p.y);
-    }   
+    }
 	else if(event->LeftUp() && WasDragging)
     {
 		new_x = (event->GetPosition().x + plug->GetPosition().x);
@@ -751,12 +750,12 @@ inline void			Rack::ResizeTracks()
 	    (*i)->Index = k;
 	    for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
 		{
-			if ((*j)->HasView())
-			{
-				//CalcScrolledPosition(xx * (UNIT_W + UNIT_S), yy * (UNIT_H + UNIT_S), &xpos, &ypos);
-				//(*j)->SetPosition(wxPoint(xpos, ypos));
-				//yy += (*j)->InitInfo->UnitsY;
-			}
+//			if ((*j)->HasView())
+//			{
+				CalcScrolledPosition(xx * (UNIT_W + UNIT_S), yy * (UNIT_H + UNIT_S), &xpos, &ypos);
+				(*j)->SetPosition(wxPoint(xpos, ypos));
+				yy += (*j)->InitInfo->UnitsY;
+//			}
 		}
     	xx += (*i)->Units;
     }
@@ -778,7 +777,7 @@ RackTrack*			Rack::GetRackTrack(Plugin *plug)
 
 void				Rack::OnPluginParamChange(wxMouseEvent &event)
 {
-	cActionManager::Global().AddChangeParamsEffectAction(0, true);
+	//cActionManager::Global().AddChangeParamsEffectAction(0, true);
 }
 
 void				Rack::OnHelp(wxMouseEvent &event)
