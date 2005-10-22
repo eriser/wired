@@ -21077,17 +21077,221 @@ fi
 
 
 # Checks for libraries.
-# FIXME: Replace `main' with a function in `-lasound':
-#AC_CHECK_LIB([asound], [main])
+echo "$as_me:$LINENO: checking for snd_asoundlib_version in -lasound" >&5
+echo $ECHO_N "checking for snd_asoundlib_version in -lasound... $ECHO_C" >&6
+if test "${ac_cv_lib_asound_snd_asoundlib_version+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lasound  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char snd_asoundlib_version ();
+int
+main ()
+{
+snd_asoundlib_version ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_cxx_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_asound_snd_asoundlib_version=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_asound_snd_asoundlib_version=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_asound_snd_asoundlib_version" >&5
+echo "${ECHO_T}$ac_cv_lib_asound_snd_asoundlib_version" >&6
+if test $ac_cv_lib_asound_snd_asoundlib_version = yes; then
+  ASOUND='yes'
+else
+  { { echo "$as_me:$LINENO: error: Couldn't find libasound" >&5
+echo "$as_me: error: Couldn't find libasound" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
 # FIXME: Replace `main' with a function in `-lm':
 #AC_CHECK_LIB([m], [main])
-# FIXME: Replace `main' with a function in `-lportaudio':
-#AC_CHECK_LIB([portaudio], [main])
-# FIXME: Replace `main' with a function in `-lportmidi':
+echo "$as_me:$LINENO: checking for Pa_Sleep in -lportaudio" >&5
+echo $ECHO_N "checking for Pa_Sleep in -lportaudio... $ECHO_C" >&6
+if test "${ac_cv_lib_portaudio_Pa_Sleep+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lportaudio  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
 
-# FIXME: Replace `main' with a function in `-lpthread':
-#AC_CHECK_LIB([pthread], [main])
-# FIXME: Replace `main' with a function in `-lsndfile':
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char Pa_Sleep ();
+int
+main ()
+{
+Pa_Sleep ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_cxx_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_portaudio_Pa_Sleep=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_portaudio_Pa_Sleep=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_portaudio_Pa_Sleep" >&5
+echo "${ECHO_T}$ac_cv_lib_portaudio_Pa_Sleep" >&6
+if test $ac_cv_lib_portaudio_Pa_Sleep = yes; then
+  PORTAUDIO='yes'
+else
+  { { echo "$as_me:$LINENO: error: Couldn't find portaudio" >&5
+echo "$as_me: error: Couldn't find portaudio" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+echo "$as_me:$LINENO: checking for pthread_create in -lpthread" >&5
+echo $ECHO_N "checking for pthread_create in -lpthread... $ECHO_C" >&6
+if test "${ac_cv_lib_pthread_pthread_create+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lpthread  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char pthread_create ();
+int
+main ()
+{
+pthread_create ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_cxx_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_pthread_pthread_create=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_pthread_pthread_create=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_pthread_pthread_create" >&5
+echo "${ECHO_T}$ac_cv_lib_pthread_pthread_create" >&6
+if test $ac_cv_lib_pthread_pthread_create = yes; then
+  PTHREAD='yes'
+else
+  { { echo "$as_me:$LINENO: error: Couldn't find libpthread" >&5
+echo "$as_me: error: Couldn't find libpthread" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
 echo "$as_me:$LINENO: checking for sf_open in -lsndfile" >&5
 echo $ECHO_N "checking for sf_open in -lsndfile... $ECHO_C" >&6
 if test "${ac_cv_lib_sndfile_sf_open+set}" = set; then
@@ -21159,7 +21363,6 @@ echo "$as_me: error: Couldn't find libsndfile " >&2;}
    { (exit 1); exit 1; }; }
 fi
 
-# FIXME: Replace `main' with a function in `-lsndfile':
 echo "$as_me:$LINENO: checking for soundtouch_ac_test in -lSoundTouch" >&5
 echo $ECHO_N "checking for soundtouch_ac_test in -lSoundTouch... $ECHO_C" >&6
 if test "${ac_cv_lib_SoundTouch_soundtouch_ac_test+set}" = set; then
@@ -21231,8 +21434,7 @@ echo "$as_me: error: Couldn't find lib SoundTouch " >&2;}
    { (exit 1); exit 1; }; }
 fi
 
-#AC_CHECK_LIB([ltdl], [lt_dlopen])
-
+#AC_CHECK_LIB([ltdl], [lt_dlmutex_lock], [LTDL='yes'], AC_MSG_ERROR([Couldn't find lib libtool or ltdl ]))
 echo "$as_me:$LINENO: checking for FLAC__file_decoder_init in -lFLAC++" >&5
 echo $ECHO_N "checking for FLAC__file_decoder_init in -lFLAC++... $ECHO_C" >&6
 if test "${ac_cv_lib_FLACpp_FLAC__file_decoder_init+set}" = set; then
@@ -21303,7 +21505,6 @@ else
 echo "$as_me: error: Couldn't find lib FLAC++ " >&2;}
    { (exit 1); exit 1; }; }
 fi
-
 
 echo "$as_me:$LINENO: checking for vorbis_info_init in -lvorbis" >&5
 echo $ECHO_N "checking for vorbis_info_init in -lvorbis... $ECHO_C" >&6
@@ -21376,7 +21577,6 @@ echo "$as_me: error: Couldn't find lib VorbisFile " >&2;}
    { (exit 1); exit 1; }; }
 fi
 
-
 echo "$as_me:$LINENO: checking for xmlParseMemory in -lxml2" >&5
 echo $ECHO_N "checking for xmlParseMemory in -lxml2... $ECHO_C" >&6
 if test "${ac_cv_lib_xml2_xmlParseMemory+set}" = set; then
@@ -21445,6 +21645,77 @@ if test $ac_cv_lib_xml2_xmlParseMemory = yes; then
 else
   { { echo "$as_me:$LINENO: error: Couldn't find libxml2 " >&5
 echo "$as_me: error: Couldn't find libxml2 " >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+echo "$as_me:$LINENO: checking for src_new in -lsamplerate" >&5
+echo $ECHO_N "checking for src_new in -lsamplerate... $ECHO_C" >&6
+if test "${ac_cv_lib_samplerate_src_new+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lsamplerate  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char src_new ();
+int
+main ()
+{
+src_new ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_cxx_werror_flag"			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_samplerate_src_new=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_samplerate_src_new=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_samplerate_src_new" >&5
+echo "${ECHO_T}$ac_cv_lib_samplerate_src_new" >&6
+if test $ac_cv_lib_samplerate_src_new = yes; then
+  SRC='yes'
+else
+  { { echo "$as_me:$LINENO: error: Couldn't find libsamplerate" >&5
+echo "$as_me: error: Couldn't find libsamplerate" >&2;}
    { (exit 1); exit 1; }; }
 fi
 
@@ -21946,7 +22217,28 @@ fi
 
 
 
-for ac_header in fcntl.h netinet/in.h stdlib.h string.h unistd.h
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+for ac_header in fcntl.h netinet/in.h stdlib.h string.h unistd.h math.h sys/types.h sys/stat.h dlfcn.h stdint.h stdio.h dirent.h alsa/seq_event.h cmath wx/wx.h sndfile.h portaudio.h byteswap.h list.h alsa/asoundlib.h errno.h soundtouch/SoundTouch.h assert.h samplerate.h io.h direct.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then
@@ -22207,6 +22499,9 @@ echo "$as_me:$LINENO: checking for SAMPLERATE" >&5
 echo $ECHO_N "checking for SAMPLERATE... $ECHO_C" >&6
 
 if test -n "$PKG_CONFIG"; then
+    if test -n "$SAMPLERATE_CFLAGS"; then
+        pkg_cv_SAMPLERATE_CFLAGS="$SAMPLERATE_CFLAGS"
+    else
         if test -n "$PKG_CONFIG" && \
     { (echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"samplerate >= 0.0.15\"") >&5
   ($PKG_CONFIG --exists --print-errors "samplerate >= 0.0.15") 2>&5
@@ -22217,10 +22512,14 @@ if test -n "$PKG_CONFIG"; then
 else
   pkg_failed=yes
 fi
+    fi
 else
 	pkg_failed=untried
 fi
 if test -n "$PKG_CONFIG"; then
+    if test -n "$SAMPLERATE_LIBS"; then
+        pkg_cv_SAMPLERATE_LIBS="$SAMPLERATE_LIBS"
+    else
         if test -n "$PKG_CONFIG" && \
     { (echo "$as_me:$LINENO: \$PKG_CONFIG --exists --print-errors \"samplerate >= 0.0.15\"") >&5
   ($PKG_CONFIG --exists --print-errors "samplerate >= 0.0.15") 2>&5
@@ -22231,14 +22530,27 @@ if test -n "$PKG_CONFIG"; then
 else
   pkg_failed=yes
 fi
+    fi
 else
 	pkg_failed=untried
 fi
 
+
+
 if test $pkg_failed = yes; then
-	SAMPLERATE_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "samplerate >= 0.0.15"`
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        SAMPLERATE_PKG_ERRORS=`$PKG_CONFIG --short-errors --errors-to-stdout --print-errors "samplerate >= 0.0.15"`
+        else
+	        SAMPLERATE_PKG_ERRORS=`$PKG_CONFIG --errors-to-stdout --print-errors "samplerate >= 0.0.15"`
+        fi
 	# Put the nasty error message in config.log where it belongs
-	echo "$SAMPLERATE_PKG_ERRORS" 1>&5
+	echo "$SAMPLERATE_PKG_ERRORS" >&5
 
 	ac_cv_samplerate=0
 elif test $pkg_failed = untried; then
@@ -23627,7 +23939,9 @@ rm -f conftest*
 
 
 
-for ac_func in floor ftime getcwd memmove memset pow select sqrt strdup
+
+
+for ac_func in floor ftime getcwd memmove memset pow select sqrt strdup bzero open
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for $ac_func" >&5
@@ -23753,7 +24067,7 @@ else
  OPTION_DSSI="DSSI_DISABLED"
 fi
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ac_config_files="$ac_config_files Makefile src/Makefile src/audio/Makefile src/editmidi/Makefile src/engine/Makefile src/fileloader/Makefile src/gui/Makefile src/midi/Makefile src/midi/portmidi/Makefile src/midi/portmidi/porttime/Makefile src/mixer/Makefile src/plugins/Makefile src/plugins/beatbox/Makefile src/plugins/compressor/Makefile src/plugins/crusher/Makefile src/plugins/delay/Makefile src/plugins/filter/Makefile src/plugins/loop_sampler/Makefile src/plugins/akai_sampler/Makefile src/plugins/reverb/Makefile src/plugins/synth/Makefile src/plugins/chorus/Makefile src/plugins/wahwah/Makefile src/plugins/test/Makefile src/redist/Makefile src/sequencer/Makefile src/undo/Makefile src/libs/Makefile src/libs/WiredWidgets/Makefile src/libs/WiredWidgets/src/Makefile src/libs/WiredAkai/Makefile src/libs/WiredAkai/src/Makefile src/data/Makefile src/data/ihm/Makefile src/data/ihm/mixer/Makefile src/data/ihm/opt/Makefile src/data/ihm/player/Makefile src/data/ihm/seqtrack/Makefile src/data/ihm/splash/Makefile src/data/ihm/toolbar/Makefile src/data/ihm/widgets/Makefile src/data/plugins/Makefile src/data/plugins/akaisampler/Makefile src/data/plugins/beatbox/Makefile src/data/plugins/compressor/Makefile src/data/plugins/crusher/Makefile src/data/plugins/delay/Makefile src/data/plugins/filter/Makefile src/data/plugins/loopsampler/Makefile src/data/plugins/reverb/Makefile src/data/plugins/wahwah/Makefile src/data/plugins/chorus/Makefile src/conf/Makefile src/xml/Makefile src/dssi/Makefile src/samplerate/Makefile src/data/dssi/Makefile src/codec/Makefile src/codec/wiredcodec/Makefile src/codec/wiredcodec/flac/Makefile src/codec/wiredcodec/mpeg/Makefile"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile src/Makefile src/audio/Makefile src/editmidi/Makefile src/engine/Makefile src/fileloader/Makefile src/gui/Makefile src/midi/Makefile src/midi/portmidi/Makefile src/midi/portmidi/porttime/Makefile src/mixer/Makefile src/plugins/Makefile src/plugins/beatbox/Makefile src/plugins/compressor/Makefile src/plugins/crusher/Makefile src/plugins/delay/Makefile src/plugins/filter/Makefile src/plugins/loop_sampler/Makefile src/plugins/akai_sampler/Makefile src/plugins/reverb/Makefile src/plugins/synth/Makefile src/plugins/chorus/Makefile src/plugins/wahwah/Makefile src/plugins/test/Makefile src/redist/Makefile src/sequencer/Makefile src/undo/Makefile src/libs/Makefile src/libs/WiredWidgets/Makefile src/libs/WiredWidgets/src/Makefile src/libs/WiredAkai/Makefile src/libs/WiredAkai/src/Makefile src/data/Makefile src/data/ihm/Makefile src/data/ihm/mixer/Makefile src/data/ihm/opt/Makefile src/data/ihm/player/Makefile src/data/ihm/seqtrack/Makefile src/data/ihm/splash/Makefile src/data/ihm/toolbar/Makefile src/data/ihm/widgets/Makefile src/data/plugins/Makefile src/data/plugins/akaisampler/Makefile src/data/plugins/beatbox/Makefile src/data/plugins/compressor/Makefile src/data/plugins/crusher/Makefile src/data/plugins/delay/Makefile src/data/plugins/filter/Makefile src/data/plugins/loopsampler/Makefile src/data/plugins/reverb/Makefile src/data/plugins/wahwah/Makefile src/data/plugins/chorus/Makefile src/conf/Makefile src/xml/Makefile src/dssi/Makefile src/samplerate/Makefile src/data/dssi/Makefile src/codec/Makefile src/codec/wiredcodec/Makefile src/codec/wiredcodec/flac/Makefile src/codec/wiredcodec/mpeg/Makefile src/codec/wiredcodec/vorbis/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -24373,6 +24687,7 @@ do
   "src/codec/wiredcodec/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/Makefile" ;;
   "src/codec/wiredcodec/flac/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/flac/Makefile" ;;
   "src/codec/wiredcodec/mpeg/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/mpeg/Makefile" ;;
+  "src/codec/wiredcodec/vorbis/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/vorbis/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "src/include/config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS src/include/config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
