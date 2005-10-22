@@ -126,6 +126,21 @@ int					RackTrack::GetYPos()
   return (u * (UNIT_H + UNIT_S));
 }
 
+RackTrack			RackTrack::operator=(const RackTrack& right)
+{
+	if (this != &right)
+	{
+		Units = right.Units;
+		Parent = right.Parent;
+		Index = right.Index;
+		Racks = right.Racks;
+		Output = right.Output;
+		ChanGui = right.ChanGui;
+		CurrentBuffer = right.CurrentBuffer;
+	}
+	return *this;
+}
+
 void				RackTrack::Dump()
 {
 	cout << "  Dumping RackTrack at adress " << this << endl;
@@ -893,6 +908,16 @@ Plugin*				Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
 	return tmp;
 }
 
+Rack				Rack::operator=(const Rack& right)
+{
+	if (this != &right)
+	{
+		RackTracks = right.RackTracks;
+		selectedTrack = right.selectedTrack;
+		selectedPlugin = right.selectedPlugin;
+	}
+	return *this;
+}
 
 // Events loop (Static events)
 BEGIN_EVENT_TABLE(Rack, wxScrolledWindow)
