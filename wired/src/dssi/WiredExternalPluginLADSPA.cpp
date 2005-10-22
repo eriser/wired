@@ -179,7 +179,7 @@ void					WiredLADSPAInstance::LoadPorts()
 	}
 	if (!(_Type & TYPE_PLUGINS_EFFECT))
 		_Type |= TYPE_PLUGINS_INSTR;
-	DumpPorts();
+	//DumpPorts();
 }
 
 void					WiredLADSPAInstance::AddGuiControl(t_ladspa_port *PortData)
@@ -450,6 +450,67 @@ bool					WiredLADSPAInstance::IsMidi()
 
 std::string				WiredLADSPAInstance::GetHelpString()
 {
+	if (IsLoaded())
+	{
+		std::string						HelpMsg;
+		list<t_ladspa_port>::iterator	Iter;
+		
+		HelpMsg = "This is a LADSPA or DSSI Plugin, named '";
+		HelpMsg += _Descriptor->Name;
+		HelpMsg += "'";
+		if (_Descriptor->Maker)
+		{
+			HelpMsg += "<BR>Maker is : ";
+			HelpMsg += _Descriptor->Maker;
+		}
+		if (_Descriptor->Copyright)
+		{
+			HelpMsg += "<BR>Copyright : ";
+			HelpMsg += _Descriptor->Copyright;
+		}
+		HelpMsg += "<BR>This plugin is currently ";
+		if (_Bypass == true)
+			HelpMsg += "disabled.<BR>";
+		else
+			HelpMsg += "enabled.<BR>";
+		if (_InputAudioPluginsPorts.size() > 0)
+		{
+			HelpMsg += "Audio Inputs are : ";
+			for (Iter = _InputAudioPluginsPorts.begin(); Iter != _InputAudioPluginsPorts.end(); Iter++)
+			{
+				HelpMsg += Iter->Name.c_str();
+				HelpMsg += "<BR>";
+			}
+		}
+		if (_InputDataPluginsPorts.size() > 0)
+		{
+			HelpMsg += "Data Inputs are : ";
+			for (Iter = _InputDataPluginsPorts.begin(); Iter != _InputDataPluginsPorts.end(); Iter++)
+			{
+				HelpMsg += Iter->Name.c_str();
+				HelpMsg += "<BR>";
+			}
+		}
+		if (_OutputAudioPluginsPorts.size() > 0)
+		{
+			HelpMsg += "Audio Outputs are : ";
+			for (Iter = _OutputAudioPluginsPorts.begin(); Iter != _OutputAudioPluginsPorts.end(); Iter++)
+			{
+				HelpMsg += Iter->Name.c_str();
+				HelpMsg += "<BR>";
+			}
+		}
+		if (_OutputDataPluginsPorts.size() > 0)
+		{			
+			HelpMsg += "Data Outputs are : ";
+			for (Iter = _OutputDataPluginsPorts.begin(); Iter != _OutputDataPluginsPorts.end(); Iter++)
+			{
+				HelpMsg += Iter->Name.c_str();
+				HelpMsg += "<BR>";
+			}
+		}
+		return (HelpMsg);
+	}
 	return STR_DEFAULT_HELP;
 }
 
