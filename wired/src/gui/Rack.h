@@ -35,6 +35,7 @@ class					RackTrack
 {
  public:
 	RackTrack(Rack *parent, int index);
+	RackTrack(const RackTrack& copy){*this = copy;};
 	~RackTrack();
 
 	Plugin*				AddRack(PlugStartInfo &startinfo, PluginLoader *p, 
@@ -44,6 +45,8 @@ class					RackTrack
 	void				RemoveRack();
 	void				RemoveChannel();
 	void				DeleteAllRacks();
+
+	RackTrack			operator=(const RackTrack& right);
 
 	void				Dump();													// Debug - Shows member variables
 	void				DumpPlugins();								// Pas du tout objet, mais plus simple pour l'instant (ca permet de ne pas changer 
@@ -64,6 +67,7 @@ class				Rack: public wxScrolledWindow
 	Rack(wxWindow* parent, wxWindowID id = -1, 
     	 const wxPoint& pos = wxDefaultPosition, 
 	     const wxSize& size = wxDefaultSize);
+	Rack(const Rack& copy){*this = copy;};
 	~Rack();
 
 	Plugin*				AddTrack(PlugStartInfo &startinfo, PluginLoader *p);	// Kept for compatibility but shouldn't be used anymore
@@ -104,7 +108,9 @@ class				Rack: public wxScrolledWindow
 	void				HandleKeyEvent(Plugin *plug, wxKeyEvent *event);		// Handles key events
 	void				HandlePaintEvent(Plugin *plug, wxPaintEvent *event);	// Handles all paint events like onPaint ???
 																				// Draws the selection rectangle
-  
+
+	Rack				operator=(const Rack& right);
+	  
 	t_ListRackTrack	RackTracks;
 
 	RackTrack*			selectedTrack;
