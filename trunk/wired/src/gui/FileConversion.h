@@ -43,6 +43,9 @@ public:
 	void				ConvertSamplerate(string *FileName);
 	void				ImportWaveFile(string *FileName);
 	void				Stop();
+	void				SetBufferSize(unsigned long Size){_BufferSize = Size; _SampleRateConverter.SetBufferSize(Size);}
+	void				SetSampleRate(unsigned long SampleRate){_SampleRateConverter.SetSampleRate(SampleRate);}
+	void				SetFormat(PaSampleFormat Format){_SampleRateConverter.SetFormat(Format);}
 private:
 	void				CopyToWorkingDir(string *FileName);
 	void				ImportWavePattern(string *FileName);

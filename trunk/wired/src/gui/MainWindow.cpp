@@ -601,10 +601,13 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       	//int result = Seq->Pause();
       	//MidiEngine->Pause();
 //      	cout << "Result == " << result << "wxTHREAD_NO_ERROR == " << wxTHREAD_NO_ERROR << ", wxTHREAD_RUNNING" << wxTHREAD_RUNNING << endl;
-      	
+     	//cout << "[MAINWIN] Importing file" << endl;
       	FileConverter->ConvertFromCodec(&selfile);
+      	//cout << "[MAINWIN] Importing file 01" << endl;
 		FileConverter->ConvertSamplerate(&selfile);
+      	//cout << "[MAINWIN] Importing file 02" << endl;
       	FileConverter->ImportWaveFile(&selfile);
+      	//cout << "[MAINWIN] Importing file done" << endl;
       	//Seq->Resume();
       	//MidiEngine->Resume();
       	//SeqMutex.Unlock();
@@ -1260,6 +1263,9 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 	}
       if ( Audio->IsOk )
 	{
+      FileConverter->SetFormat((PaSampleFormat)Audio->SampleFormat);
+      FileConverter->SetBufferSize(Audio->SamplesPerBuffer);		
+      FileConverter->SetSampleRate(Audio->SampleRate);		
 	  Audio->OpenStream();
 	  if (Audio->StartStream())
 	    AudioMutex.Unlock();/* This will unlock the sequencer	\

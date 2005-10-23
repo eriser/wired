@@ -66,19 +66,24 @@ public:
 	int			OpenFile(string *Path, wxWindow* parent);					//return wxID_NO if not modified (or invalid), 	
 														//else return wxID_YES r wxID_CANCEL if canceled
 														// and set Path to the new FilePath
-	bool		SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples);					//return false if saving canceled
+	bool		SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples, bool interleaved);					//return false if saving canceled
 	void		EndSaveFile(unsigned int NbChannel);
 	bool		IsSameFormat(int SndFileFormat, PaSampleFormat PaFormat);
 	const char	*GetFormatName(int SndFileFormat);
 	const char	*GetFormatName(PaSampleFormat PaFormat);
-	void		WriteToFile(unsigned long NbSamples, float **Buffer, unsigned int NbChannel);
+	void		WriteToFile(unsigned long NbSamples, float **Buffer, unsigned int NbChannel); // non interleaved
+	void		WriteToFile(unsigned long NbSamples, float *Buffer, unsigned int NbChannel);  //interleaved
+	void		SetSampleRate(unsigned long SampleRate);
+	void		SetFormat(PaSampleFormat Format);
+	void		SetBufferSize(unsigned long Size);
 private:
 	bool		Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *SrcData);
 	int			GetConverterQuality();
 	float		*ConvertSampleRate(SRC_STATE* Converter, float *Input, unsigned long FrameNb, double Ratio, unsigned long &ToWrite, bool End, int NbChannels, unsigned long &ReallyReaden);
 	int			GetFileFormat(PaSampleFormat PaFormat);
 	void		ChooseFileFormat(SF_INFO *DestInfo);
-	float		*ConvertnChannels(float **Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite);
+	float		*ConvertnChannels(float **Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite); // non interleaved
+	float		*ConvertnChannels(float *Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite);  // interleaved
 	t_samplerate_info	_ApplicationSettings;
 	SNDFILE		*OpenedFile;
 	SF_INFO		OpenedFileInfo;
