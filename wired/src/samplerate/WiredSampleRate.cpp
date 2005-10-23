@@ -345,12 +345,12 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 	}
 }
 
-bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples)
+bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples, bool interleaved)
 {
 	wxFile				File;
 	
 	ChooseFileFormat(&OpenedFileInfo);
-	OpenedFileInfo.channels = 2;
+	OpenedFileInfo.channels = NbChannel;
 	OpenedFileInfo.format |= SF_FORMAT_WAV;
 	if (sf_format_check(&OpenedFileInfo) == false)
 		cout << "[FILECONVERT] An error occured while trying to open a file, bad parameters)" << endl;
@@ -361,7 +361,7 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigne
 		return false;
 	}
 	_Quality = GetConverterQuality();
-	StaticConverter = src_new(_Quality, 1, &_ConverterError);
+	StaticConverter = src_new(_Quality, (interleaved == true ? NbChannel : 1 ), &_ConverterError);
 	_Buffer = new float[NbChannel * NbSamples];
 	_ChannelBuffer = new float *[NbChannel];
 	//TO FIX bad allocation ....
@@ -406,10 +406,35 @@ float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChann
 		_Buffer[CurrentResSample++] = _ChannelBuffer[0][CurrentSample];
 		_Buffer[CurrentResSample++] = _ChannelBuffer[1][CurrentSample];
 //		_Buffer[CurrentResSample++] = Input[0][CurrentSample];
-//		_Buffer[CurrentResSample++] = Input[1][CurrentSample];
-		
+//		_Buffer[CurrentResSample++] = Input[1][CurrentSample];		
 	}
 	ToWrite *= NbChannels;
+	return _Buffer;
+}
+
+float					*WiredSampleRate::ConvertnChannels(float *Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite)
+{
+	SRC_DATA			Data;
+	unsigned int		CurrentChannel;
+	int					res = 0;
+
+	bzero(_Buffer, NbChannels * NbSamples);
+	for (CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
+	{
+		bzero(_ChannelBuffer[CurrentChannel], NbSamples);
+		Data.data_in = Input;
+		Data.input_frames = NbSamples * NbChannels;
+		Data.output_frames = NbSamples * NbChannels;
+		Data.data_out = _Buffer;
+		Data.src_ratio = Ratio;
+		Data.end_of_input = End;
+		if ((res = src_process(Converter, &Data)))
+		{
+			cout << "[FILECONVERT] An error occured while trying to convert file (details :" << src_strerror(res) << ")" << endl;
+			return NULL;
+		}
+		ToWrite = Data.output_frames_gen;
+	}
 	return _Buffer;
 }
 
@@ -421,6 +446,24 @@ void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, u
 
 	//SampleRateMutex.Lock();
 	Output = ConvertnChannels(Buffer, NbChannel, StaticConverter, NbSamples, Ratio, (NbSamples < _ApplicationSettings.SamplesPerBuffer ? 1 : 0), ToWrite);	
+	if (Output)
+	{
+		if (sf_writef_float(OpenedFile, Output, ToWrite) != ToWrite)
+			cout << "[FILECONVERT] An error occured while writing to file " << endl;
+	}
+	if (sf_error(OpenedFile) != SF_ERR_NO_ERROR)
+		cout << "[FILECONVERT] sndfile error {" << sf_strerror(OpenedFile) << "}" << endl;
+	//SampleRateMutex.Unlock();
+}
+
+void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float *Buffer, unsigned int NbChannel)
+{
+	float		*Output = NULL;
+	double 		Ratio = (double)  _ApplicationSettings.SampleRate / OpenedFileInfo.samplerate;
+	unsigned long ToWrite;
+
+	//SampleRateMutex.Lock();
+	Output = ConvertnChannels(Buffer, NbChannel, StaticConverter, NbSamples, Ratio, (NbSamples < _ApplicationSettings.SamplesPerBuffer ? 1 : 0), ToWrite);
 	if (Output)
 	{
 		if (sf_writef_float(OpenedFile, Output, ToWrite) != ToWrite)
@@ -447,4 +490,19 @@ void					WiredSampleRate::EndSaveFile(unsigned int NbChannel)
 		//delete [] _ChannelBuffer;
 		delete _Buffer;
 	}
+}
+
+void					WiredSampleRate::SetBufferSize(unsigned long Size)
+{
+	_ApplicationSettings.SamplesPerBuffer = Size;
+}
+
+void					WiredSampleRate::SetSampleRate(unsigned long SampleRate)
+{
+	_ApplicationSettings.SampleRate = SampleRate;
+}
+
+void					WiredSampleRate::SetFormat(PaSampleFormat Format)
+{
+	_ApplicationSettings.Format = Format;
 }
