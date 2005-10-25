@@ -203,9 +203,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_Quit, "&Quit");
 
-  //  EditMenu->Append(MainWin_Undo, "U&ndo\tCtrl+Z");
-  //EditMenu->Append(MainWin_Redo, "&Redo\tShift+Ctrl+Z");
-  //EditMenu->Append(MainWin_History, "History", HistoryMenu);
 
   EditMenu->AppendSeparator();
   EditMenu->Append(MainWin_Cut, "C&ut\tCtrl+X");
@@ -254,10 +251,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   /* Creation Panel */
   RackPanel = new Rack(split, -1, wxPoint(0, 0), wxSize(800, 250));
 
-  cout << "1111" << endl;  
+  cout << "Known warning ...." << endl;  
     
   SeqPanel = new SequencerGui(split, wxPoint(0, 254), wxSize(800, 200));
-  cout << "2222" << endl;  
+  cout << "done :-)" << endl;  
 
   //  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 150), wxSIMPLE_BORDER);
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
@@ -336,8 +333,6 @@ void					MainWindow::InitFileConverter()
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
 	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) Audio->SamplesPerBuffer, this) == false)
 		cout << "[MAINWIN] Create file converter thread failed !" << endl; 
-//	if (FileConverter->Run() != wxTHREAD_NO_ERROR)
-//		cout << "[MAINWIN] Run file converter thread failed !" << endl; 
 }
 
 void					MainWindow::InitUndoRedoMenuItems()
@@ -346,25 +341,6 @@ void					MainWindow::InitUndoRedoMenuItems()
 	EditMenu->Insert(INDEX_MENUITEM_REDO, MainWin_Redo, "&Redo", RedoMenu);
 	EditMenu->Enable(MainWin_Undo, false);
 	EditMenu->Enable(MainWin_Redo, false);
-	//	EditMenu->Connect(wxEVT_MENU_OPEN, (wxObjectEventFunction) (wxEventFunction)
-	//					(wxMenuEventFunction) &MainWindow::OnEditMenuOpen);
-//	Connect(MainWin_ImportWave, wxEVT_COMMAND_MENU_SELECTED, 
-//	  (wxObjectEventFunction)(wxEventFunction) 
-//	  (wxCommandEventFunction)&MainWindow::OnImportWave);
-//	EditMenu->Append(424242, "Just a try");
-//	Connect(424242, wxEVT_COMMAND_MENU_SELECTED, 
-//		      (wxObjectEventFunction)(wxEventFunction) 
-//		      (wxCommandEventFunction)&MainWindow::OnUndo);
-//	UndoMenu->Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
-//		      (wxCommandEventFunction)&MainWindow::OnUndo);
-//	RedoMenu->Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
-//		      (wxCommandEventFunction)&MainWindow::OnRedo);
-	//UndoMenu->Connect();
-//	EditMenu->Connect(wxEVT_CONTEXT_MENU, (wxObjectEventFunction) (wxEventFunction)
-//						(wxContextMenuEventFunction) &MainWindow::OnMenuOpen);
-//	EditMenu->Connect(wxEVT_MENU_HIGHLIGHT, (wxObjectEventFunction) (wxEventFunction)
-//						 (wxMenuEventFunction) &MainWindow::OnMenuOpen);
-
 }
 
 
@@ -402,22 +378,34 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 	    break;
 	    }*/
 
+  WiredSettings->Save();
   cout << "[MAINWIN] Unloading shared libraries..."<< endl;
   for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
     (*k)->Unload();
     
   cout << "[MAINWIN] Unloading external plugins..." << endl;
-  Seq->Delete();
-  delete Seq;
-  delete LoadedExternalPlugins;
+  if (Seq)
+  {
+	  Seq->Delete();
+	  delete Seq;
+  }
+  if (LoadedExternalPlugins)
+	  delete LoadedExternalPlugins;
   
-  FileConverter->Stop();
-  delete FileConverter;
-  delete Audio;
-  MidiEngine->Delete();
-  delete MidiEngine;
-  WiredSettings->Save();
-  delete WiredSettings;
+  if(FileConverter)
+  {
+	  //FileConverter->Stop();
+    delete FileConverter;
+  }
+  if (Audio)
+	  delete Audio;
+  if (MidiEngine)
+	{
+  	MidiEngine->Delete();
+	  delete MidiEngine;
+	}
+  if (WiredSettings)
+	  delete WiredSettings;
   cout << "[MAINWIN] Closing..."<< endl; 
   exit(0);
 }
@@ -764,14 +752,14 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
       	return;
       }
 
-      wxProgressDialog *Progress = new wxProgressDialog("Exporting mix", "Please wait...", 
-						       (int)Seq->EndLoopPos * 1000, this, 
-						       wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
+      //wxProgressDialog Progress("Exporting mix", "Please wait...", 
+	//					       (int)Seq->EndLoopPos * 1000, this, 
+		//				       wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
       bool done = false;
 
       while (!done)
 	{
-	  Progress->Update((int) Seq->CurrentPos * 1000);
+	  //Progress.Update((int) Seq->CurrentPos * 1000);
 	  //cout << "pos: " << Seq->CurrentPos << "; end: " << Seq->EndLoopPos << endl;
 	  wxMilliSleep(50);
 	  //SeqMutex.Lock();
@@ -779,7 +767,6 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 	    done = true;
 	  //SeqMutex.Unlock();
 	}
-//      delete Progress;
     }
   else
     {
