@@ -32,9 +32,11 @@ class ChanBuf
 
   void					DeleteBuffer() 
     { 
+   	if (Buffer[0])
       delete Buffer[0];
       if (Buffer[1])
 	delete Buffer[1];
+	if (Buffer)
       delete Buffer;
     }
 
@@ -107,12 +109,15 @@ class Sequencer : public wxThread
   float					**GetCurrentAudioBuffer(AudioPattern *p);
   void					ProcessCurrentMidiEvents(Track *T, MidiPattern *p);
   void					WriteExport();
+  void					AllocExportBuffer(unsigned int NbChannels);
+  void					FreeExportBuffer(unsigned int NbChannels);
   double				StartAudioPos;
   list<MidiEvent *>			MidiEvents;
   WaveFile				*ClickWave;
   Channel				*ClickChannel;
   float					**AllocBuf1;
   float					**AllocBuf2;
+  float					**ExportBuf;
   WriteWaveFile				*ExportWave;  
   WaveFile				*PlayWave;  
   long					PlayWavePos;
