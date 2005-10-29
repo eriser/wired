@@ -40,6 +40,8 @@ Sequencer::Sequencer()
   CalcSpeed();
   ExportBuf = NULL;
   SampleRateConverter = NULL;
+  AllocBuf1 = NULL;
+  AllocBuf2 = NULL;
 }
 
 Sequencer::~Sequencer()
@@ -85,11 +87,12 @@ void					*Sequencer::Entry()
   */
   if ( !Audio->StartStream() )
     cout << "[SEQUENCER] StartStream returned false" << endl;
-  SetBufferSize();
-  cout << "[SEQ] Thread started !" << endl;
+  AllocBuffer(AllocBuf1);
+  AllocBuffer(AllocBuf2);
+  cout << "[SEQUENCER] Thread started !" << endl;
   while (ok)
     {
-    	
+
 	  if (TestDestroy() == true)
 	   	break;
       /* - Traitement des messages MIDI recus */
@@ -289,10 +292,7 @@ void					*Sequencer::Entry()
       /* Jouer fichier du FileLoader si besoin */
       if (PlayWave)
 	{
-	  buf = new float *[2];
-	  buf[0] = new float[Audio->SamplesPerBuffer];
-	  buf[1] = new float[Audio->SamplesPerBuffer];
-
+      AllocBuffer(buf, 2);
 	  size = PlayWave->GetNumberOfFrames() - PlayWavePos;
 	  if (size > Audio->SamplesPerBuffer)
 	    size = Audio->SamplesPerBuffer;
@@ -786,16 +786,38 @@ void					Sequencer::DeletePattern(Pattern *p)
     }
 }
 
-void					Sequencer::SetBufferSize()
+void					Sequencer::DeleteBuffer(float **Buffer, unsigned int NbChannels)
 {
-  SeqMutex.Lock();
-  AllocBuf1 = new float *[2];
-  AllocBuf1[0] = new float [Audio->SamplesPerBuffer];
-  AllocBuf1[1] = new float [Audio->SamplesPerBuffer];  
-  AllocBuf2 = new float *[2];
-  AllocBuf2[0] = new float [Audio->SamplesPerBuffer];
-  AllocBuf2[1] = new float [Audio->SamplesPerBuffer];  
-  SeqMutex.Unlock();
+  if (NbChannels == 0)
+  	return;
+  try
+  {
+	  for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
+	  {
+		  if (Buffer)
+			  if (Buffer[CurrentChannel])
+			  	delete Buffer[CurrentChannel];
+	  }
+	  if (Buffer)
+	  	delete [] Buffer;
+	  Buffer = NULL;
+  }
+  catch (...)
+  {
+	//TO FIX : It's always a bad idea not to manage exceptions....
+  }
+}
+
+void					Sequencer::AllocBuffer(float **Buffer, unsigned int NbChannels)
+{
+  if (NbChannels == 0)
+  	return;
+  DeleteBuffer(Buffer, NbChannels);
+  Buffer = new float *[NbChannels];
+  for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
+  {  	
+	  Buffer[CurrentChannel] = new float [Audio->SamplesPerBuffer];
+  }
 }
 
 void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l, 
@@ -834,36 +856,6 @@ void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l,
   t->AddPattern(p);
 }
 
-void					Sequencer::AllocExportBuffer(unsigned int NbChannels)
-{
-	unsigned int Current;
-	
-	if (NbChannels > 0)
-	{
-		ExportBuf = new float *[NbChannels];
-		for (Current = 0; Current < NbChannels; Current++)
-			ExportBuf[Current] = new float [Audio->SamplesPerBuffer];
-	}
-}
-
-void					Sequencer::FreeExportBuffer(unsigned int NbChannels)
-{
-	if (ExportBuf)
-	{
-		unsigned int Current;
-		
-		if (NbChannels > 0)
-		{
-			
-			for (Current = 0; Current < NbChannels; Current++)
-				if (ExportBuf[Current])
-					delete ExportBuf[Current];
-			delete [] ExportBuf;
-		}
-		ExportBuf = NULL;
-	}
-}
-
 bool					Sequencer::ExportToWave(string &filename)
 {
 	Seq->Stop();
@@ -879,8 +871,7 @@ bool					Sequencer::ExportToWave(string &filename)
 	if (SampleRateConverter->SaveFile(filename, 2, Audio->SamplesPerBuffer, true))
 	{
 	  SeqMutex.Lock();
-	  FreeExportBuffer(2);
-	  AllocExportBuffer(2);
+	  AllocBuffer(ExportBuf);
       SetCurrentPos(BeginLoopPos);
       Exporting = true;
       Loop = false;
@@ -920,7 +911,7 @@ void					Sequencer::StopExport()
   	SampleRateConverter->EndSaveFile(2);
   	delete SampleRateConverter;
   	SampleRateConverter = NULL;
-    FreeExportBuffer(2);
+    DeleteBuffer(ExportBuf);
   }
   SeqMutex.Unlock();
   return;
