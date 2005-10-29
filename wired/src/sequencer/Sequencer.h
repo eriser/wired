@@ -72,7 +72,8 @@ class Sequencer : public wxThread
   void					SetCurrentPos(double pos);
   void					DeletePattern(Pattern *p);
   void					PrepareTrackForRecording(Track *T);
-  void					SetBufferSize();
+  void					AllocBuffer(float **Buffer, unsigned int NbChannels = 2);
+  void					DeleteBuffer(float **Buffer, unsigned int NbChannels = 2);
 
   bool					Playing;
   bool					Recording;
@@ -82,18 +83,18 @@ class Sequencer : public wxThread
   bool					Loop;
   bool					Click;
   bool					Exporting;
-  unsigned long				CurAudioPos;
+  unsigned long			CurAudioPos;
   double				CurrentPos;
   double				BeginLoopPos;
   double				EndLoopPos;
   double				EndPos;
-  vector<Track *>			Tracks;
+  vector<Track *>		Tracks;
   Track					*MidiRecord;
   double				MeasurePerSample;
   double				SamplesPerMeasure;
-  list<Pattern *>			PatternsToResize;
-  list<MidiPattern *>			PatternsToRefresh;
-  list<Track *>				TracksToRefresh;
+  list<Pattern *>		PatternsToResize;
+  list<MidiPattern *>	PatternsToRefresh;
+  list<Track *>			TracksToRefresh;
 
  protected:
 
@@ -103,22 +104,20 @@ class Sequencer : public wxThread
   void					PrepareRecording();
   void					FinishRecording();
 
-  AudioPattern				*GetCurrentAudioPattern(Track *t);
-  list<MidiPattern *>			GetCurrentMidiPatterns(Track *t);
+  AudioPattern			*GetCurrentAudioPattern(Track *t);
+  list<MidiPattern *>	GetCurrentMidiPatterns(Track *t);
 
   float					**GetCurrentAudioBuffer(AudioPattern *p);
   void					ProcessCurrentMidiEvents(Track *T, MidiPattern *p);
   void					WriteExport();
-  void					AllocExportBuffer(unsigned int NbChannels);
-  void					FreeExportBuffer(unsigned int NbChannels);
   double				StartAudioPos;
-  list<MidiEvent *>			MidiEvents;
+  list<MidiEvent *>		MidiEvents;
   WaveFile				*ClickWave;
   Channel				*ClickChannel;
   float					**AllocBuf1;
   float					**AllocBuf2;
   float					**ExportBuf;
-  WriteWaveFile				*ExportWave;  
+  WriteWaveFile			*ExportWave;  
   WaveFile				*PlayWave;  
   long					PlayWavePos;
   Channel				*PlayWaveChannel;
