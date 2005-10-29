@@ -244,7 +244,7 @@ void					SeqTrack::OnPaint(wxPaintEvent &WXUNUSED(event))
 
 void					SeqTrack::OnClick(wxCommandEvent &WXUNUSED(event))
 {
-  printf("what 4 funciton ?\n");
+  //printf("what 4 funciton ?\n");
   SeqPanel->UnselectTracks();
   SetSelected(true);
 }
