@@ -26,23 +26,31 @@ Mixer::~Mixer()
   for (list<Channel*>::iterator c = InChannels.begin(); 
        c != InChannels.end(); c++)
     {
-      delete *c;
+    	if (*c)
+	      delete *c;
       OutChannels.erase(c);
     }
   for (list<Channel*>::iterator c = OutChannels.begin(); 
        c != OutChannels.end(); c++)
     {
-      delete *c;
+    	if (*c)
+		  delete *c;
       InChannels.erase(c);
     }
   OutChannels.clear();
   InChannels.clear();
   
-  delete OutputLeft;
-  delete OutputRight;
+  if (OutputLeft)
+	  delete OutputLeft;
+  if (OutputRight)
+	  delete OutputRight;
   for (int i = 0; i < PREBUF_NUM; i++)
-    delete Input[i];
-  delete Input;
+  {
+  	if (Input[i])
+	    delete Input[i];
+  }
+  if (Input)
+	  delete Input;
 }
 
 Channel				*Mixer::AddMonoOutputChannel()
@@ -56,7 +64,7 @@ Channel				*Mixer::AddMonoOutputChannel()
     }
   catch (std::bad_alloc)
     {
-      chan = 0;
+      chan = NULL;
     }
   return chan;
 }
@@ -72,7 +80,7 @@ Channel				*Mixer::AddMonoInputChannel()
     }
   catch (std::bad_alloc)
     {
-      chan = 0;
+      chan = NULL;
     }
   return chan;
 }
@@ -86,7 +94,7 @@ Channel				*Mixer::AddStereoOutputChannel()
     }
   catch (std::bad_alloc)
     {
-      chan = 0;
+      chan = NULL;
     }
   return chan;
 }
@@ -102,7 +110,7 @@ Channel				*Mixer::AddStereoInputChannel()
     }
   catch (std::bad_alloc)
     {
-      chan = 0;
+      chan = NULL;
     }
   return chan;
 }
@@ -119,7 +127,7 @@ Channel				*Mixer::AddMonoOutputChannel(bool visible)
     }
   catch (std::bad_alloc)
     {
-      chan = 0;
+      chan = NULL;
     }
   return chan;
 }
@@ -137,7 +145,7 @@ Channel				*Mixer::AddStereoOutputChannel(bool visible)
     }
   catch (std::bad_alloc)
     {
-      chan = 0;
+      chan = NULL;
     }
   return chan;
 }
@@ -148,7 +156,8 @@ bool				Mixer::RemoveChannel(Channel *chan)
        c != InChannels.end(); c++)
     if ((*c) == chan)
       {
-	delete (*c);
+	if(*c)
+		delete (*c);
 	InChannels.erase(c);
 	return true;
       }
@@ -158,7 +167,8 @@ bool				Mixer::RemoveChannel(Channel *chan)
       {
 	//if ((*c)->Visible)
 	//MixerPanel->RemoveChannel(*c);
-	delete (*c);
+	if(*c)
+		delete (*c);
 	OutChannels.erase(c);
 	return true;
       }
@@ -187,7 +197,8 @@ bool				Mixer::InitOutputBuffers(void)
     }
   catch (std::bad_alloc)
     {
-      delete OutputLeft;
+    	if (OutputLeft)
+	      delete OutputLeft;
       cout << "[MIXER] insufficient memory"<< endl;
       return false;
     }
