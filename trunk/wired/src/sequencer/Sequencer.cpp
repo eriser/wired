@@ -786,7 +786,7 @@ void					Sequencer::DeletePattern(Pattern *p)
     }
 }
 
-void					Sequencer::DeleteBuffer(float **Buffer, unsigned int NbChannels)
+void					Sequencer::DeleteBuffer(float** &Buffer, unsigned int NbChannels)
 {
   if (NbChannels == 0)
   	return;
@@ -808,14 +808,14 @@ void					Sequencer::DeleteBuffer(float **Buffer, unsigned int NbChannels)
   }
 }
 
-void					Sequencer::AllocBuffer(float **Buffer, unsigned int NbChannels)
+void					Sequencer::AllocBuffer(float** &Buffer, unsigned int NbChannels)
 {
   if (NbChannels == 0)
   	return;
   DeleteBuffer(Buffer, NbChannels);
   Buffer = new float *[NbChannels];
   for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
-  {  	
+  {
 	  Buffer[CurrentChannel] = new float [Audio->SamplesPerBuffer];
   }
 }
