@@ -1,7 +1,7 @@
 #ifndef __SEQUENCER_H__
 #define __SEQUENCER_H__
 
-using namespace				std;
+using namespace	std;
 
 #include <vector>
 #include <list>
@@ -72,8 +72,8 @@ class Sequencer : public wxThread
   void					SetCurrentPos(double pos);
   void					DeletePattern(Pattern *p);
   void					PrepareTrackForRecording(Track *T);
-  void					AllocBuffer(float **Buffer, unsigned int NbChannels = 2);
-  void					DeleteBuffer(float **Buffer, unsigned int NbChannels = 2);
+  void					AllocBuffer(float** &Buffer, unsigned int NbChannels = 2);
+  void					DeleteBuffer(float** &Buffer, unsigned int NbChannels = 2);
 
   bool					Playing;
   bool					Recording;
