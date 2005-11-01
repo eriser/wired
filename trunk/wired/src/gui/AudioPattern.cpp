@@ -196,10 +196,10 @@ bool					AudioPattern::PrepareRecord(int type)
   int					i = 1;
 
   cout << "Preparing record for pattern " << this 
-       << " with audio dir : " << CurrentSession->AudioDir << endl;
+       << " with audio dir : " << CurrentXmlSession->GetAudioDir().c_str() << endl;
   while (!done)
     {
-      s.Printf("%s/wired_audio%d.wav", CurrentSession->AudioDir.c_str(), i);
+      s.Printf("%s/wired_audio%d.wav", CurrentXmlSession->GetAudioDir().c_str(), i);
       wxFileName f(s);
       if (!f.FileExists())
 	done = true;
