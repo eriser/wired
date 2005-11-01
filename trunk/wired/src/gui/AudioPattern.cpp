@@ -9,7 +9,7 @@
 #include "OptionPanel.h"
 #include "Mixer.h"
 #include "AudioCenter.h"
-#include "WiredSession.h"
+#include "../xml/WiredSessionXml.h"
 #include "ColoredBox.h"
 #include "AudioPattern.h"
 #include "HelpPanel.h"
@@ -20,7 +20,7 @@
 #include "../mixer/Channel.h"
 
 static long				audio_pattern_count = 1;
-extern WiredSession			*CurrentSession;
+extern WiredSessionXml	*CurrentXmlSession;
 
 AudioPattern::AudioPattern(double pos, double endpos, long trackindex)
   : Pattern(pos, endpos, trackindex),
