@@ -36,6 +36,14 @@ RackTrack::RackTrack(Rack *parent, int index)
 RackTrack::~RackTrack()
 {
   RemoveChannel();
+  if (Parent) delete Parent;
+  list<Plugin *>::iterator	iter;
+  for (iter = Racks.begin(); iter != Racks.end(); iter++)
+  	delete *iter;
+  if (Output) delete Output;
+  if (ChanGui) delete ChanGui;
+	cout << "[RackTrack] End destructor" << endl;
+  //TODO delete CurrentBuffer
 }
 
 void				RackTrack::RemoveChannel()
@@ -191,13 +199,23 @@ Rack::~Rack()
   for (i = RackTracks.begin(); i != RackTracks.end(); i++)
     delete *i;
 
+t_ListRackTrack		RackTracks;
+
+	RackTrack*			selectedTrack;
+	Plugin*				selectedPlugin;
+ 
   if(fd_copy != -1)
-    {
-      close(fd_copy);
-      if(wxRemoveFile("/tmp/.tmpccp") == false)
-	cout << "error supression\n" <<endl;
-      
-    }
+  {
+  	close(fd_copy);
+    if(wxRemoveFile("/tmp/.tmpccp") == false)
+			cout << "error supression\n" <<endl;
+  }
+	if (copy_plug) delete copy_plug;
+	if (menu) delete menu;
+	if (submenu) delete submenu;
+	if (instr_menu) delete instr_menu;
+	if (effects_menu) delete effects_menu;
+	cout << "[Rack] End destructor" << endl;
 }
 
 void				Rack::InitContextMenu()

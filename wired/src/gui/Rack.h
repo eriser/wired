@@ -16,10 +16,13 @@ using namespace									std;
 
 class											PluginLoader;
 class											Plugin;
-class											Channel;
-class											ChannelGui;
 class											Rack;
 class											RackTrack;
+class											ChannelGui;
+#ifndef __TRACK_H__
+	class											Channel;
+#endif
+
 
 typedef 	struct s_PlugStartInfo				PlugStartInfo;
 typedef		list<RackTrack *>					t_ListRackTrack;
@@ -111,7 +114,7 @@ class				Rack: public wxScrolledWindow
 
 	Rack				operator=(const Rack& right);
 	  
-	t_ListRackTrack	RackTracks;
+	t_ListRackTrack		RackTracks;
 
 	RackTrack*			selectedTrack;
 	Plugin*				selectedPlugin;
