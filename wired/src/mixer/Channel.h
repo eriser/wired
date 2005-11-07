@@ -13,6 +13,8 @@ class Channel
  public:
   Channel(bool stereo);
   Channel(bool stereo, bool visible);
+  Channel(const Channel& copy){*this = topy;}
+  Channel	operator=(const Channel& right);
   ~Channel();
   
   bool		Stereo;

@@ -34,12 +34,39 @@ Channel::~Channel()
     for (vector<float**>::iterator b = StereoBuffers.begin(); 
 	 b != StereoBuffers.end(); b++)
       {
-	delete (*b)[0];
-	delete (*b)[1];
-	delete (*b);
+      	if ((*b)[0])
+			delete (*b)[0];
+		if ((*b)[1])
+			delete (*b)[1];
+		if (*b)
+			delete (*b);
       }
   MonoBuffers.clear();
   StereoBuffers.clear();
+}
+
+Channel		Channel::operator=(const Channel& right)
+{
+	if (this != &right)
+	{
+		Label = right.Label;
+		Visible = right.Visible;
+		Lrms = right.Lrms;
+		Rrms = right.Rrms;	  
+		MonoBuffers = right.MonoBuffers;
+		StereoBuffers = right.StereoBuffers;	  
+		CurBuf = right.CurBuf;	  
+		Filled = right.Filed;
+		Stereo = right.Stereo;
+		Mute = right.Mute;
+		MuteLeft = right.MuteLeft;
+		MuteRight = right.MuteRight;
+		Volume = right.Volume;
+		VolumeLeft = right.VolumeLeft;
+		VolumeRight = right.VolumeRight;	 
+		InputNum = right.InputNum;
+	}
+	return *this;
 }
 
 void Channel::AddBuffers(unsigned int num)
@@ -220,27 +247,20 @@ void Channel::ClearAllBuffers(void)
   if (!Stereo)
     for (vector<float*>::iterator b = MonoBuffers.begin(); 
 	 b != MonoBuffers.end(); b++)
-      delete *b;
+	 if (*b)
+	    delete *b;
   else
     for (vector<float**>::iterator b = StereoBuffers.begin(); 
 	 b != StereoBuffers.end(); b++)
       {
-	delete (*b)[0];
-	delete (*b)[1];
-	delete (*b);
+      	if ((*b)[0])
+			delete (*b)[0];
+		if ((*b)[1])
+			delete (*b)[1];
+		if (*b)
+			delete (*b);
       }
   MonoBuffers.clear();
   StereoBuffers.clear();
   AddBuffers(NUM_BUFFERS);
 }
-
-
-
-
-
-
-
-
-
-
-
