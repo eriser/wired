@@ -15,7 +15,8 @@ cClipBoard::cClipBoard(string filename, bool loadmem, t_opening_mode open_mode)
 
 cClipBoard::~cClipBoard()
 {
-  delete spSingleton;
+	if(spSingleton)
+	  delete spSingleton;
   wxRemoveFile("/tmp/tmp.wav");
 }
 
