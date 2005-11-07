@@ -29,8 +29,11 @@
 class				WiredDSSIGui : public WiredLADSPAInstance
 {
  public:
-		WiredDSSIGui(PlugStartInfo &startinfo);
-  		~WiredDSSIGui();
+	WiredDSSIGui(PlugStartInfo &startinfo);
+	WiredDSSIGui(const WiredDSSIGui& copy) {*this = copy;}
+	WiredDSSIGui operator=(const WiredDSSIGui& right);
+	~WiredDSSIGui();
+  
   void		DestroyView();
   wxWindow	*CreateView(wxWindow *rack, wxPoint &pos, wxSize &size);
   void		SetInfo(PlugInitInfo *info);

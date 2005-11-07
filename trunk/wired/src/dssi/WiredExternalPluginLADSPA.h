@@ -47,9 +47,10 @@ typedef struct s_gui_control
 class	WiredLADSPAInstance : public Plugin
 {
 public:
+	WiredLADSPAInstance(){;}
 	WiredLADSPAInstance(PlugStartInfo &info);
 	~WiredLADSPAInstance();
-	WiredLADSPAInstance(const WiredLADSPAInstance& copy);
+	WiredLADSPAInstance(const WiredLADSPAInstance& copy){*this = copy;}
 	WiredLADSPAInstance	operator=(const WiredLADSPAInstance& right);
 	bool				Init(const LADSPA_Descriptor* Descriptor);
 	bool				Load();
