@@ -29,3 +29,14 @@ void	cAction::Dump(bool alone)
 	if (alone == true)
 		std::cout << "    End Dumping cAction" << std::endl;
 }
+
+cAction			cAction::operator=(const cAction& right)
+{
+	if (this != &right)
+	{
+		m_Id = right.m_Id;
+		mRegistered = right.mRegistered;
+		mValid = right.mValid;
+	}
+	return *this;
+}

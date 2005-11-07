@@ -49,7 +49,8 @@ private:
     int						mRedoCount;		// Nombre d'actions potentielles a refaire
 
 	cActionManager();												// Constructeur prive
-	
+	cActionManager(const cActionManager& copy){*this = copy;};		// Constructeur par recopie prive
+		
 	bool		CanUndo() const										// Verifie que des actions peuvent etre annulees
 				{ return (mUndoCount != 0);};
 	bool		CanRedo() const										// Verifie que des actions peuvent etre refaites
@@ -60,6 +61,7 @@ private:
 	void		RegisterActionManager (cAction* action);			// Ajoute une action dans la liste d'action a annuler ou a refaire
 	void		DumptActionList(const tActionList& actionList, 
 								const std::string& listName);		// Debug - Dump un tActionList
+	cActionManager		operator=(const cActionManager& right);		// Operateur =
 
 public:
 

@@ -31,11 +31,15 @@ private:
 
 	// Constructeur, prive pour gerer une seule instance de cette classe 
 	cRedoActionVisitor() {};
+	cRedoActionVisitor(const cRedoActionVisitor& copy) {*this = copy;};
 
 public:
 	virtual ~cRedoActionVisitor() {};
 	static cRedoActionVisitor& Global();
 	virtual void Visit (cAction& action);
+
+	// Operateur =
+	cRedoActionVisitor		operator=(const cRedoActionVisitor& right);
 
 };
 
@@ -47,8 +51,8 @@ private:
 	static cUndoActionVisitor* spSingleton;
 
 	// Constructeur, prive pour gerer une seule instance de cette classe
-	cUndoActionVisitor() 
-	{};
+	cUndoActionVisitor() {};
+	cUndoActionVisitor(const cUndoActionVisitor& copy) {*this = copy;};
 
 public:
 	// Destructeur
@@ -60,6 +64,10 @@ public:
 
 	// Fonction Visiteur
 	virtual void Visit (cAction& action);
+	
+	// Operateur =
+	cUndoActionVisitor		operator=(const cUndoActionVisitor& right);
+
 };
 
 

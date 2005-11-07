@@ -21,7 +21,8 @@ class cAddTrackAction : public cAction
  public:
   cAddTrackAction (bool kind)
     { mTrackKindFlag = kind; };
-  
+  cAddTrackAction(const cAddTrackAction& copy)
+	{ *this = copy; };
   ~cAddTrackAction ()
     {};
   
@@ -41,6 +42,9 @@ class cAddTrackAction : public cAction
     { visitor.Visit (*this); };
   virtual std::string		getHistoryLabel()				// Returns History label string
   				{return HISTORY_LABEL_ADD_TRACK_ACTION;};
+  				
+  cAddTrackAction			cAddTrackAction::operator=(const cAddTrackAction& right)
+							{if (this != &right) mTrackKindFlag = right.mTrackKindFlag;return *this;}
 };
 
 #endif
