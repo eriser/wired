@@ -18,6 +18,8 @@ class Mixer
 {
  public:
   Mixer();
+  Mixer(const Mixer& copy){*this = copy;}
+  Mixer operator=(const Mixer& right);
   ~Mixer();
   
   Channel*		AddMonoOutputChannel(void);
@@ -62,11 +64,3 @@ extern Mixer		*Mix;
 extern wxMutex		MixMutex;
 
 #endif
-
-
-
-
-
-
-
-

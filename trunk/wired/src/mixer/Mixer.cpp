@@ -53,6 +53,24 @@ Mixer::~Mixer()
 	  delete Input;
 }
 
+Mixer 	Mixer::operator=(const Mixer& right)
+{
+	if (this != &right)
+	{
+		OutputLeft = right.OutputLeft;
+		OutputRight = right.OutputRight;
+		Input = right.Input;
+		Volume = right.Volume;
+		VolumeLeft = right.VolumeLeft;
+		VolumeRight = right.VolumeLeft;
+		MuteL = right.MuteL;
+		MuteR = right.MuteR;  
+		OutChannels = right.OutChannels;
+		InChannels = right.InChannels;  
+	}
+	return *this;
+}
+
 Channel				*Mixer::AddMonoOutputChannel()
 {
   Channel *chan;
