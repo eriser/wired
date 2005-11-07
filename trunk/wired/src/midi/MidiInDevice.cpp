@@ -56,7 +56,7 @@ bool				MidiInDevice::Read(MidiType *buf)
 {
   int				err;
   
-  if ((err = Pm_Read(stream, &buffer, 1)) > 0) 
+  if ((err = Pm_Read(stream, &buffer, 1)) > 0 && buf)
     {
       printf("Got midi in : time %d, %2x %2x %2x\n",
 	     buffer.timestamp,
