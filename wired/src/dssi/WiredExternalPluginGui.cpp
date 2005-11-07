@@ -7,6 +7,7 @@
    #include <wx/wx.h>
 #endif
 #include "WiredExternalPluginGui.h"
+#include "ladspa.h"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -53,7 +54,7 @@ END_EVENT_TABLE()
 
 WiredDSSIGui::~WiredDSSIGui()
 {
-  
+  delete[] Faders;
 }
 
 WiredDSSIGui WiredDSSIGui::operator=(const WiredDSSIGui& right)
@@ -65,8 +66,10 @@ WiredDSSIGui WiredDSSIGui::operator=(const WiredDSSIGui& right)
 		Faders = right.Faders;
 		Background= right.Background;
 		TpBmp = right.TpBmp;
-		img_bg = right.img_bg;
-		img_fg = right.img_fg;
+		img_fader_bg = right.img_fader_bg;
+		img_fader_fg = right.img_fader_fg;
+		img_knob_bg = right.img_knob_bg;
+		img_knob_fg = right.img_knob_fg;
 		tr_bg = right.tr_bg;
 		liquid_off = right.liquid_off;
 		liquid_on = right.liquid_on;
@@ -109,32 +112,46 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
     tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
   else
     tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(), wxBITMAP_TYPE_PNG); 
-  //SetSize(-1, -1, width, -1);
-  //cout << "nb potards : " << _GuiControls.size() << " => " << width << "px" << endl;
   TpBmp = new wxBitmap(tr_bg);
 
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
+  img_fader_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  img_fader_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
+  img_knob_bg = new wxImage(string(GetDataDir() + string(IMG_DL_KNOB_FG)).c_str(), wxBITMAP_TYPE_PNG);
+  img_knob_fg = new wxImage(string(GetDataDir() + string(IMG_DL_KNOB_BG)).c_str(), wxBITMAP_TYPE_PNG);
   
-  Faders = (HintedFader**) new void*[_GuiControls.size()];
+  Faders = (wxWindow**) new void*[_GuiControls.size()];
+
+  cout << "adresse rack : " << this << endl;
 
   for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
     {
-      wxSize(img_bg->GetWidth(), img_bg->GetHeight());
-      Faders[i] = new HintedFader(this, i + 1, this, img_bg, img_fg, 0, 100, 50, 
-				  wxPoint(73 + i * interspace + interspace / 2 - 5, 11) ,
-				  wxSize(img_bg->GetWidth(), img_bg->GetHeight()), GetPosition() + 
-				  wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
-      Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
-	      wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
-      FaderIndex[i + 1] = iter->first;
-      //cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
-// 	   << iter->second.Data.UpperBound << endl;
-      Faders[i]->SetValue((int)(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100));
-	
-      // gruik bis
-      if (i == 13)
-	break;
+      //wxSize(img_fader_bg->GetWidth(), img_fader_bg->GetHeight());
+      if (LADSPA_IS_HINT_LOGARITHMIC(iter->second.Descriptor.RangeHint.HintDescriptor))
+	{
+	  //cout << "LOG" << endl;
+	  Faders[i] = new HintedKnob(this, i + 1, this, img_knob_bg, img_knob_fg, 0, 100, 50, 10,
+				     wxPoint(73 + i * interspace + interspace / 2 - 5, 11),
+				     wxSize(img_knob_bg->GetWidth(), img_knob_bg->GetHeight()), GetPosition() + 
+				     wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
+	  //cout << "knob instancie" << endl;
+	}
+      else
+	{
+	  Faders[i] = new HintedFader(this, i + 1, this, img_fader_bg, img_fader_fg, 0, 100, 50, 
+				      wxPoint(73 + i * interspace + interspace / 2 - 5, 11) ,
+				      wxSize(img_fader_bg->GetWidth(), img_fader_bg->GetHeight()), GetPosition() + 
+				      wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
+	  Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
+		  wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
+	  FaderIndex[i + 1] = iter->first;
+	  //cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
+	  // 	   << iter->second.Data.UpperBound << endl;
+	  ((HintedFader*)Faders[i])->SetValue((int)(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100));
+	  
+	  // gruik bis
+	  if (i == 13)
+	    break;
+	}
     }
   
   // bypass
@@ -180,7 +197,7 @@ void		WiredDSSIGui::OnFaderMove(wxScrollEvent &e)
 	float range = max - min;
 
 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
-	*_GuiControls[FaderIndex[id]].Data.Data = Faders[id - 1]->GetValue() / 100.f * range + min;	  
+	*_GuiControls[FaderIndex[id]].Data.Data = ((HintedFader*)Faders[id - 1])->GetValue() / 100.f * range + min;	  
 	//cout << (float)_GuiControls[FaderIndex[id]].Data.LowerBound << " < " <<  
 	//   Faders[id - 1]->GetValue() << " < " << (float)_GuiControls[FaderIndex[id]].Data.UpperBound << endl;
 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
