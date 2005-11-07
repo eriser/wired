@@ -53,14 +53,32 @@ Track::Track(SeqTrack *n1, SeqTrackPattern *n2, char typ)
 
 Track::~Track() 
 { 
-  delete TrackOpt; 
-  delete TrackPattern;
+	if (TrackOpt)
+	  delete TrackOpt;
+    if (TrackPattern)
+	  delete TrackPattern;
   if (Wave)
     delete Wave;
   if (Midi)
     delete Midi;
   if (Output)
     Mix->RemoveChannel(Output);
+}
+
+Track			Track::operator=(const Track& right)
+{
+	if (this != &right)
+	{
+		TrackOpt = right.TrackOpt;
+		TrackPattern = right.TrackPattern;
+		Wave = right.Wave;
+		Midi = right.Midi;
+		Index = right.Index;
+		Output = right.Output;
+		Type = right.Type;
+		ColourIndex = right.ColourIndex;
+	}
+	return *this;
 }
 
 AudioPattern					*Track::AddPattern(WaveFile *w, double pos)
