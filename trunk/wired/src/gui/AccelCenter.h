@@ -40,6 +40,7 @@ class					AccelCenter
     
  public:
   AccelCenter(const long accel_type, const long steps = 1, const double max_accel = 1, const double init_value = 0);
+	AccelCenter(const AccelCenter& copy){*this = copy;};
   ~AccelCenter();
   
   void					SetSteps(long steps) { Steps = steps; }
@@ -54,6 +55,8 @@ class					AccelCenter
   double				GetNewValue(double move);
   double				ForwardAccel();
   double				ReverseAccel();
+  
+  AccelCenter		operator=(const AccelCenter& right);
 };
 
 extern const struct s_accel_specs	AccelSpecs[];
