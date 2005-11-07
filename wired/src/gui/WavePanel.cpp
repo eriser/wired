@@ -100,7 +100,17 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
 
 WavePanel::~WavePanel()
 {
-
+	if (sbh)
+		delete sbh;
+	if (Toolbar)
+		delete Toolbar;
+	if (w)
+		delete w;
+	wxSizer *Sizer = GetSizer();
+	if  (Sizer)
+		delete Sizer;
+	if (combobox)
+		delete combobox;
 }
 
 
