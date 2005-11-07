@@ -107,7 +107,6 @@ bool	cActionManager::Redo()
 	if (CanRedo())
 	{
 		cAction* action = mRedoList.front();
-		//mRedoList.push_back(action);					// Why ?
 		RemoveTopAction(REDO);
 		action->Accept( cRedoActionVisitor::Global() );
 		AddAction(UNDO, action);
@@ -123,7 +122,6 @@ bool	cActionManager::Redo(int id)
 		if (CanRedo())
 		{
 			cAction* action = mRedoList.front();
-			//mRedoList.push_back(action);					// Why ?
 			RemoveTopAction(REDO);
 			action->Accept( cRedoActionVisitor::Global() );
 			AddAction(UNDO, action);
@@ -141,7 +139,6 @@ bool	cActionManager::Undo()
 	if (CanUndo())
 	{
 		cAction* action = mUndoList.front();
-		//mUndoList.push_back(action);					// Why ?
 		RemoveTopAction(UNDO);
 		action->Accept(cUndoActionVisitor::Global());
 		AddAction(REDO, action);
@@ -157,7 +154,6 @@ bool	cActionManager::Undo(int id)
 		if (CanUndo())
 		{
 			cAction* action = mUndoList.front();
-			//mUndoList.push_back(action);					// Why ?
 			RemoveTopAction(UNDO);
 			action->Accept(cUndoActionVisitor::Global());
 			AddAction(REDO, action);
@@ -191,6 +187,20 @@ std::list<t_menuInfo*>		cActionManager::getListActions(int *separatorIndex)
 		result.push_back(menuInfo);
 	}
 	return result;
+}
+
+cActionManager			cActionManager::operator=(const cActionManager& right)
+{
+	if (this != &right)
+	{
+		spSingleton = right.spSingleton;
+		nextID = right.nextID;
+		mUndoList = right.mUndoList;
+		mUndoCount = right.mUndoCount;
+		mRedoList = right.mRedoList;
+		mRedoCount = right.mRedoCount;
+	}
+	return *this;
 }
 
 void	cActionManager::DumptActionList(const tActionList& actionList, const std::string& listName)

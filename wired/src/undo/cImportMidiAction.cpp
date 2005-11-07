@@ -31,10 +31,15 @@ void cImportWaveAction::AddWaveTrack()
 	
 	if (w) 
     {
+    	cout << "[AddWaveTrack] 0" << endl;
     	Track *t = SeqPanel->AddTrack(_TrackKindFlag);
+    	cout << "[AddWaveTrack] 1" << endl;
 		t->AddPattern(w);
+		cout << "[AddWaveTrack] 2" << endl;
 		_trackIndex = t->Index;
+		cout << "[AddWaveTrack] 3" << endl;
 		NotifyActionManager();
+		cout << "[AddWaveTrack] 4" << endl;
     }
 }
 
@@ -56,6 +61,18 @@ void cImportWaveAction::Undo ()
 		RemoveWaveTrack(true);	
 	else
 		AddWaveTrack();
+}
+
+cImportWaveAction			cImportWaveAction::operator=(const cImportWaveAction& right)
+{
+	if (this != &right)
+	{
+		_TrackKindFlag = right._TrackKindFlag;
+		_WavePath = right._WavePath;
+		_trackIndex = right._trackIndex;
+		_ShouldAdd = right._ShouldAdd;
+	}
+	return *this;
 }
 
 
@@ -95,6 +112,15 @@ void cImportMidiAction::Undo ()
   SeqPanel->RemoveTrack(); 
 }
 
+cImportMidiAction			cImportMidiAction::operator=(const cImportMidiAction& right)
+{
+	if (this != &right)
+	{
+		mTrackKindFlag = right.mTrackKindFlag;
+		mMidiPath = right.mMidiPath;
+	}
+	return *this;
+}
 
 /********************   class cImportAkaiAction   ********************/
 
@@ -146,6 +172,18 @@ void cImportAkaiAction::Undo ()
   SeqPanel->RemoveTrack(); 
 }
 
+cImportAkaiAction			cImportAkaiAction::operator=(const cImportAkaiAction& right)
+{
+	if (this != &right)
+	{
+		mTrackKindFlag = right.mTrackKindFlag;
+		mDevice = right.mDevice;
+		mPart = right.mPart;
+		mPath = right.mPath;
+		mName = right.mName;
+	}
+	return *this;
+}
 
 /********************   class cChangeParamsEffectAction   ********************/
 
@@ -205,6 +243,16 @@ void cChangeParamsEffectAction::Dump()
 	std::cout << "      bool mShouldSave : " << mShouldSave << std::endl;
 	cAction::Dump();
 	std::cout << "      End Dumping cChangeParamsEffectAction" << std::endl;
+}
+
+cChangeParamsEffectAction			cChangeParamsEffectAction::operator=(const cChangeParamsEffectAction& right)
+{
+	if (this != &right)
+	{
+		mPlugin = right.mPlugin;
+		mShouldSave = right.mShouldSave;
+	}
+	return *this;
 }
 
 /********************   class cCreateEffectAction   ********************/
@@ -280,6 +328,17 @@ void cCreateEffectAction::Dump()
 	std::cout << "      End Dumping cCreateEffectAction" << std::endl;
 }
 
+cCreateEffectAction			cCreateEffectAction::operator=(const cCreateEffectAction& right)
+{
+	if (this != &right)
+	{
+		mPluginLoader = right.mPluginLoader;
+		mStartInfo = right.mStartInfo;
+		mShouldAdd = right.mShouldAdd;
+		mRackIndex = right.mRackIndex;
+	}
+	return *this;
+}
 
 /********************   class cCreateRackAction   ********************/
 
@@ -306,4 +365,14 @@ void cCreateRackAction::Redo ()
 void cCreateRackAction::Undo ()
 { 
   RackPanel->RemoveTrack();
+}
+
+cCreateRackAction			cCreateRackAction::operator=(const cCreateRackAction& right)
+{
+	if (this != &right)
+	{
+		mPluginLoader = right.mPluginLoader;
+		mStartInfo = right.mStartInfo;
+	}
+	return *this;
 }

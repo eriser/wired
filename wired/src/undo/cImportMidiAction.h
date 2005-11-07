@@ -19,12 +19,6 @@ using namespace				std;
 
 #define	INVALID_VALUE								-42
 
-//class								Plugin;
-//class								PluginLoader;
-////class								WiredPluginData;
-//typedef struct s_PlugStartInfo		PlugStartInfo;
-
-
 /********************   class cImportWaveAction   ********************/
 
 class					cImportWaveAction : public cAction 
@@ -49,6 +43,8 @@ public:
   							{return HISTORY_LABEL_IMPORT_WAVE_ACTION;};
   void						AddWaveTrack();
   void						RemoveWaveTrack(bool selectFromIndex);
+  
+  cImportWaveAction		operator=(const cImportWaveAction& right);
 };
 
 
@@ -70,6 +66,8 @@ public:
   virtual void				Accept(cActionVisitor& visitor) { visitor.Visit (*this); };
   virtual std::string		getHistoryLabel()		// Returns History label string
   							{return HISTORY_LABEL_IMPORT_MIDI_ACTION;};
+  							
+  cImportMidiAction		operator=(const cImportMidiAction& right);
 };
 
 
@@ -78,22 +76,24 @@ public:
 class					cImportAkaiAction : public cAction 
 {
 private:
-   bool					mTrackKindFlag;
-   string				mDevice;
-   int					mPart;
-   string				mPath;
-   string				mName;
+  bool					mTrackKindFlag;
+  string				mDevice;
+  int					mPart;
+  string				mPath;
+  string				mName;
    
 public:
-   cImportAkaiAction (std::string path, bool kind);
-   cImportAkaiAction (const cImportAkaiAction& copy){*this = copy;};
-   ~cImportAkaiAction () {};
-   virtual void			Do();
-   virtual void			Redo();
-   virtual void			Undo();
-   virtual void			Accept(cActionVisitor& visitor) { visitor.Visit (*this); };
-   virtual std::string		getHistoryLabel()		// Returns History label string
+  cImportAkaiAction (std::string path, bool kind);
+  cImportAkaiAction (const cImportAkaiAction& copy){*this = copy;};
+  ~cImportAkaiAction () {};
+  virtual void			Do();
+  virtual void			Redo();
+  virtual void			Undo();
+  virtual void			Accept(cActionVisitor& visitor) { visitor.Visit (*this); };
+  virtual std::string		getHistoryLabel()		// Returns History label string
    							{return HISTORY_LABEL_IMPORT_AKAI_ACTION;};
+   
+  cImportAkaiAction		operator=(const cImportAkaiAction& right);
 };
 
 
@@ -119,7 +119,9 @@ public:
 							{return HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION;};
 	void					SaveDatas();			// Saves mDatas
 	void					LoadDatas();			// Loads mDatas
-  	void					Dump();					// Debug - Draws member variables
+	void					Dump();					// Debug - Draws member variables
+  	
+	cChangeParamsEffectAction		operator=(const cChangeParamsEffectAction& right);
 };
 
 
@@ -147,6 +149,8 @@ public:
 	void					AddRackEffect ();		// Adds a rack effect
 	void					RemoveRackEffect ();	// Removes a rack effect
   	void					Dump();					// Debug - Draws member variables
+  	
+	cCreateEffectAction		operator=(const cCreateEffectAction& right);
 };
 
 
@@ -169,6 +173,8 @@ public:
   { visitor.Visit (*this); };
   virtual std::string		getHistoryLabel()		// Returns History label string
   							{return HISTORY_LABEL_CREATE_RACK_ACTION;};
+  					
+  cCreateRackAction		operator=(const cCreateRackAction& right);
 };
 
 #endif

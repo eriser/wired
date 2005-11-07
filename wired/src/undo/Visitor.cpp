@@ -2,6 +2,8 @@
 #include "Visitor.h"
 #include "cAction.h"
 
+/********************   class cRedoActionVisitor   ********************/
+
 cRedoActionVisitor* cRedoActionVisitor::spSingleton = 0;
 
 cRedoActionVisitor& cRedoActionVisitor::Global()
@@ -16,6 +18,17 @@ void cRedoActionVisitor::Visit (cAction& action)
 	action.Redo(); 
 }
 
+cRedoActionVisitor			cRedoActionVisitor::operator=(const cRedoActionVisitor& right)
+{
+	if (this != &right)
+	{
+		spSingleton = right.spSingleton;
+	}
+	return *this;
+}
+
+/********************   class cUndoActionVisitor   ********************/
+
 cUndoActionVisitor* cUndoActionVisitor::spSingleton = 0;
 
 cUndoActionVisitor& cUndoActionVisitor::Global()
@@ -28,4 +41,13 @@ cUndoActionVisitor& cUndoActionVisitor::Global()
 void cUndoActionVisitor::Visit (cAction& action)
 { 
 	action.Undo(); 
+}
+
+cUndoActionVisitor			cUndoActionVisitor::operator=(const cUndoActionVisitor& right)
+{
+	if (this != &right)
+	{
+		spSingleton = right.spSingleton;
+	}
+	return *this;
 }

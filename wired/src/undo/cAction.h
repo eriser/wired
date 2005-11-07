@@ -32,6 +32,8 @@ public:
 	int				m_Id;						// Id du menuItem correspondant
 
 	cAction();									// Constructeur
+	cAction(const cAction& copy)				// Constructeur par recopie
+				{*this = copy;};
 	virtual ~cAction() {};						// Destructeur
 	
 	virtual bool	IsValid () const			// Indique si l'objet est valide ou pas
@@ -53,6 +55,8 @@ public:
 	virtual std::string	getHistoryLabel()		// Retourne la chaine affichee dans la menu Historique Undo / Redo
 			{return HISTORY_LABEL_PARENT_INSTANCE_ACTION;};
 	void			Dump(bool alone = true);	// Debug - Dump les donnees membres
+	
+	cAction		operator=(const cAction& right);
 };
 
 #endif
