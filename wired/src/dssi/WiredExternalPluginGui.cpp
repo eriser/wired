@@ -56,6 +56,30 @@ WiredDSSIGui::~WiredDSSIGui()
   
 }
 
+WiredDSSIGui WiredDSSIGui::operator=(const WiredDSSIGui& right)
+{
+	if (this != &right)
+	{
+		(WiredLADSPAInstance)*this = (WiredLADSPAInstance) right;
+		Bypass = right.Bypass;
+		Faders = right.Faders;
+		Background= right.Background;
+		TpBmp = right.TpBmp;
+		img_bg = right.img_bg;
+		img_fg = right.img_fg;
+		tr_bg = right.tr_bg;
+		liquid_off = right.liquid_off;
+		liquid_on = right.liquid_on;
+		bypass_on = right.bypass_on;
+		bypass_off = right.bypass_off;
+		Liquid = right.Liquid;
+		BypassBtn = right.BypassBtn;
+		StartInfo = right.StartInfo;
+		InitInfo = right.InitInfo;
+	}
+	return *this;
+}
+
 void		WiredDSSIGui::SetInfo(PlugInitInfo *info)
 {
   InitInfo = info;
@@ -106,7 +130,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       FaderIndex[i + 1] = iter->first;
       //cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
 // 	   << iter->second.Data.UpperBound << endl;
-      Faders[i]->SetValue((int)*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100);
+      Faders[i]->SetValue((int)(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100));
 	
       // gruik bis
       if (i == 13)

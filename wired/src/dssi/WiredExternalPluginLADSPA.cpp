@@ -15,11 +15,6 @@ WiredLADSPAInstance::~WiredLADSPAInstance()
 	UnLoad();
 }
 
-WiredLADSPAInstance::WiredLADSPAInstance(const WiredLADSPAInstance& copy)
-{
-	*this = copy;
-}
-
 WiredLADSPAInstance		WiredLADSPAInstance::operator=(const WiredLADSPAInstance& right)
 {
 	if (this != &right)
