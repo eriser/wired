@@ -19,6 +19,22 @@ WiredCodec::~WiredCodec()
 		dlclose((*iter).handle);
 }
 
+WiredCodec		WiredCodec::operator=(const WiredCodec& right)
+{
+	if (this !=& right)
+	{
+		_WLib = right._WLib;
+		_WiredPath = right._WiredPath;
+		_WiredSo = right._WiredSo;
+		codecToUse = right.codecToUse;
+		_CurrentUniqueID = right._CurrentUniqueID;
+		path = right.path;
+		_DecodeExtList = right._DecodeExtList;
+		_EncodeExtList = right._EncodeExtList;
+	}
+	return *this;
+}
+
 int	WiredCodec::EndDecode()
 {
   list<t_WLib>::const_iterator		iterTWLib;

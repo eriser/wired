@@ -23,6 +23,7 @@ class			WiredCodec
  public:
   WiredCodec();
   WiredCodec (const WiredCodec& copy){*this = copy;};
+  WiredCodec	operator=(const WiredCodec& right);
   ~WiredCodec();
   
   void			      		Init();														/* Init and loads codecs */
