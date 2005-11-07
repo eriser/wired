@@ -36,6 +36,23 @@ AudioEngine::~AudioEngine()
     {
       cout << "[AUDIO] Portaudio unloaded" << endl;
     }
+    ResetChannels();
+    vector<Device*>::iterator	Iter;
+	if (UserData)
+	{
+	    for (Iter = DeviceList.begin(); Iter != DeviceList.end(); Iter++)
+		    if (*Iter)
+		    	delete *Iter;
+		vector<RingBuffer<float>*>::iterator	IterBuffers;
+		for (IterBuffers = UserData->OutFIFOVector.begin(); IterBuffers != UserData->OutFIFOVector.end(); IterBuffers++)
+			if (*Iter)
+				delete *Iter;
+		for (IterBuffers = UserData->InFIFOVector.begin(); IterBuffers != UserData->InFIFOVector.end(); IterBuffers++)
+			if (*Iter)
+				delete *Iter;
+		delete UserData;
+		UserData = NULL;
+	}
 }
 
 

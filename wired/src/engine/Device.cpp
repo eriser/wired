@@ -3,6 +3,14 @@
 
 #include "Device.h"
 
+Device::~Device()
+{
+	vector<DeviceFormat *>::iterator	Iter;
+	for (Iter = SupportedFormats.begin(); Iter != SupportedFormats.end(); Iter++)
+		if (*Iter)
+			delete *Iter;
+}
+
 bool Device::GetSupportedSettings(void)
 {
   const PaDeviceInfo	*info = 0x0;

@@ -104,6 +104,8 @@ static int	AudioCallback(const void *input,
 			      PaStreamCallbackFlags statusFlags, 
 			      void *userData)
 {
+	if (!userData)
+		return (0);
 	AudioMutex.Lock();
   callback_t *data = (callback_t*)userData;
   unsigned long bytes = frameCount, processed = 0;
