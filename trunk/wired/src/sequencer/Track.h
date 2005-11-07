@@ -19,6 +19,8 @@ class					Track
  public:
   Track(SeqTrack *n1, SeqTrackPattern *n2, char typ = IS_MIDI_TRACK); 
   ~Track(); 
+  Track(const Track& copy) {*this = copy;}
+  Track	operator=(const Track& right);
 
   AudioPattern				*AddPattern(WaveFile *w, double pos = 0);
   MidiPattern				*AddPattern(MidiTrack *t);
