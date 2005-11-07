@@ -119,3 +119,17 @@ double				AccelCenter::ReverseAccel()
     Step = 0;
   return (Value);
 }
+
+AccelCenter			AccelCenter::operator=(const AccelCenter& right)
+{
+	if (this != &right)
+	{
+		StateMask = right.StateMask;
+		Step = right.Step;
+		Steps = right.Steps;
+		Max = right.Max;
+		Value = right.Value;
+		InitValue = right.InitValue;
+	}
+	return *this;
+}
