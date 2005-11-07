@@ -82,8 +82,6 @@ FaderCtrl::~FaderCtrl()
 	  delete tmp_fg;
 	if (bg)
 	  delete bg;
-	if (fg)
-	  delete fg;
 	if (Label)
 	delete Label;
 }
