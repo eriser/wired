@@ -75,8 +75,17 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
 
 FaderCtrl::~FaderCtrl()
 {
-  delete tmp_fg;
-  delete bg;
+	wxMask*Mask = tmp_fg->GetMask();
+	if  (Mask)
+		delete Mask;
+	if (tmp_fg)
+	  delete tmp_fg;
+	if (bg)
+	  delete bg;
+	if (fg)
+	  delete fg;
+	if (Label)
+	delete Label;
 }
 
 void FaderCtrl::OnPaint(wxPaintEvent &event)

@@ -42,7 +42,8 @@ StaticPosKnob::~StaticPosKnob()
 {
   for (int i = 0; i < Steps; i++)
     {
-      delete Bmps[i];
+    	if (Bmps[i])
+			delete Bmps[i];
     }
   delete [] Bmps;
 }

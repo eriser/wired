@@ -40,9 +40,12 @@ HoldButton::HoldButton(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 
 HoldButton::~HoldButton()
 {
-  delete Up;
-  delete Down;
-  delete Timer;
+	if (Up)
+	  delete Up;
+	if (Down)
+	  delete Down;
+	if (Timer)
+	  delete Timer;
 }
 
 void HoldButton::OnPaint(wxPaintEvent &event)
