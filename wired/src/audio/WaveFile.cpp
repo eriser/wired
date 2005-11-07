@@ -143,6 +143,7 @@ WaveFile::WaveFile()
     TempBuf = new float[sfinfo.channels * WAVE_TEMP_SIZE];
   }
  // cout << "[WAVEFILE] read: " << NumberOfFrames << "; sf: " << sfinfo.frames << endl;    
+ cout << "[WAVEFILE] End" << endl;
 }
 
 WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
@@ -174,11 +175,15 @@ WaveFile::~WaveFile()
 
   if (LoadedInMem)
   {
-    for (int i = 0; i < sfinfo.channels; i++)
-      delete[] Data[i];
-    delete[] Data;
+  	if (Data)
+  	{
+	    for (int i = 0; i < sfinfo.channels; i++)
+	    	if(Data[i])
+		      delete[] Data[i];
+	    delete[] Data;
+  	}
   }
-  else
+  else if (TempBuf)
    delete[] TempBuf;
 }
 
@@ -192,7 +197,8 @@ unsigned long WaveFile::Read(float **buf, long pos, long size,
   {
     if (WAVE_TEMP_SIZE < size)
     {
-      delete TempBuf;
+    	if(TempBuf)
+	      delete TempBuf;
       TempBuf = new float[sfinfo.channels * size];
     }
     if (Invert)	
