@@ -26,9 +26,13 @@ AudioPattern::AudioPattern(double pos, double endpos, long trackindex)
   : Pattern(pos, endpos, trackindex),
     WaveDrawer(Pattern::GetSize())
 {
+	cout << "[AUDIOPATTERN] [New] 0" << endl;
   Init();
+  	cout << "[AUDIOPATTERN] [New] 1" << endl;
   Wave = 0;
+  	cout << "[AUDIOPATTERN] [New] 2" << endl;
   SetWave(0);
+  	cout << "[AUDIOPATTERN] [New] 3" << endl;
 }
 
 AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
@@ -53,7 +57,8 @@ AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
 
 AudioPattern::~AudioPattern()
 {
-  
+  if (InputChan) delete InputChan;
+  if (RecordWave) delete RecordWave;
 }
 
 void					AudioPattern::Init()
@@ -402,4 +407,30 @@ void					AudioPattern::SetSize(wxSize s)
       Refresh();
     }
   //  printf(" [  END  ] AudioPattern::SetSize(wxSize s) >> [ %d ] [ %d ]\n", s.x, s.y);
+}
+
+AudioPattern			AudioPattern::operator=(const AudioPattern& right)
+{
+	if (this != &right)
+	{
+		//TODO xdrag = right.xdrag (When used)
+		//TODO ydrag = right.ydrag (When used)
+		Position = right.Position;
+		EndPosition = right.EndPosition;
+		Length = right.Length;
+		TrackIndex = right.TrackIndex;
+		StateMask = right.StateMask;
+		m_pos = right.m_pos;
+		m_size = right.m_size;
+		m_click = right.m_click;
+		Name = right.Name;
+		//TODO PenColor = right.PenColor;
+		//TODO BrushColor = right.BrushColor;
+
+		InputChan = right.InputChan;
+		LastBlock = right.LastBlock;
+		FileName = right.FileName;
+		RecordWave = right.RecordWave;
+	}
+	return *this;
 }
