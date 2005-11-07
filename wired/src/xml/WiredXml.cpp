@@ -32,7 +32,7 @@ WiredXml				WiredXml::operator=(const WiredXml& right)
 		_DtdFileName = right._DtdFileName;
 		_DtdFile = right._DtdFile;
 		_DocumentWriter = right._DocumentWriter;
-		_DocumentWriter = right._DocumentWriter;	
+		_DocumentWriterName = right._DocumentWriterName;
 		
 	}
 	return *this;
