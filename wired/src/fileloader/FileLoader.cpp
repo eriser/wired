@@ -400,7 +400,38 @@ FileLoader::~FileLoader()
 	if (!akai)
 		SaveFolders();
 	if (akaifd != -1)
-	  close(akaifd);
+	  close(akaifd);	  
+	if (folder)	
+	  	delete folder;
+	if	(files)
+		delete files;
+	if (filename)
+		delete filename;	
+	if (fntext)
+		delete fntext;
+	if (typtext)
+		delete typtext;
+	if (favtext)
+		delete favtext;
+	if (mrutext)
+		delete mrutext;
+	if (type)
+		delete type;
+	if (preview)
+		delete preview;
+	if (btopen)
+		delete btopen;		
+	if (cancel)
+		delete cancel;
+	if (mru)
+		delete mru;
+	if (favorites)
+		delete favorites;
+	if (mrudel)
+		delete mrudel;
+	if  (favdel)
+		delete favdel;
+	Destroy();
 }
 
 void	FileLoader::ListDirectories(wxTreeItemId root)
