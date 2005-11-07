@@ -129,10 +129,10 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 
 Transport::~Transport()
 {
-	if (vum) delete vum;
+	//if (vum) delete vum;
 	if (PlayBtn) delete PlayBtn;
 	if (StopBtn) delete StopBtn;
-	if (RecordBtn) delete RecordBtn
+	if (RecordBtn) delete RecordBtn;
 	if (BackwardBtn) delete BackwardBtn;
 	if (ForwardBtn) delete ForwardBtn;
 	if (LoopBtn) delete LoopBtn;
@@ -144,12 +144,6 @@ Transport::~Transport()
 	if (SigDenUpBtn) delete SigDenUpBtn;
 	if (SigDenDownBtn) delete SigDenDownBtn;  
 	if (TrBmp) delete TrBmp;
-	if (MesLabel) delete MesLabel;
-	if (SigLabel) delete SigLabel;
-	if (MilliSigLabel) delete MilliSigLabel;
-	if (BpmLabel) delete BpmLabel;
-	if (SigNumLabel) delete SigNumLabel;
-	if (SigDenLabel) delete SigDenLabel;
 	if (BpmText) delete BpmText;
 }
 
