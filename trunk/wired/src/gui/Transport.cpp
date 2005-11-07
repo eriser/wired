@@ -129,7 +129,28 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 
 Transport::~Transport()
 {
-
+	if (vum) delete vum;
+	if (PlayBtn) delete PlayBtn;
+	if (StopBtn) delete StopBtn;
+	if (RecordBtn) delete RecordBtn
+	if (BackwardBtn) delete BackwardBtn;
+	if (ForwardBtn) delete ForwardBtn;
+	if (LoopBtn) delete LoopBtn;
+	if (ClickBtn) delete ClickBtn;
+	if (BpmUpBtn) delete BpmUpBtn;
+	if (BpmDownBtn) delete BpmDownBtn;
+	if (SigNumUpBtn) delete SigNumUpBtn;
+	if (SigNumDownBtn) delete SigNumDownBtn;
+	if (SigDenUpBtn) delete SigDenUpBtn;
+	if (SigDenDownBtn) delete SigDenDownBtn;  
+	if (TrBmp) delete TrBmp;
+	if (MesLabel) delete MesLabel;
+	if (SigLabel) delete SigLabel;
+	if (MilliSigLabel) delete MilliSigLabel;
+	if (BpmLabel) delete BpmLabel;
+	if (SigNumLabel) delete SigNumLabel;
+	if (SigDenLabel) delete SigDenLabel;
+	if (BpmText) delete BpmText;
 }
 
 void				Transport::OnLoopHelp(wxMouseEvent &event)
@@ -353,6 +374,7 @@ void				Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
 
 void				Transport::OnBpmClick(wxCommandEvent &WXUNUSED(event))
 {
+  if (BpmText) delete BpmText;	
   BpmText = new wxTextCtrl(this, Transport_BpmEnter, BpmLabel->GetLabel(), 
 			   BpmLabel->GetPosition(), wxSize(50, BpmLabel->GetSize().y), 
 			   wxTE_PROCESS_ENTER);
