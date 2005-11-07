@@ -51,7 +51,8 @@ SysExEvent::SysExEvent(unsigned long pos, unsigned char ID, unsigned long len,
 
 SysExEvent::~SysExEvent()
 {
-  free(data);
+	if (data)
+	  free(data);
 }
  
 
@@ -72,7 +73,8 @@ NonMidiEvent::NonMidiEvent(unsigned long pos, unsigned char ID, unsigned long le
 
 NonMidiEvent::~NonMidiEvent()
 {
-  free(data);
+	if (data)
+	  free(data);
 }
 
 
@@ -172,7 +174,8 @@ unsigned long MidiTrack::GetVLQ(unsigned char *buf, unsigned long &ofs)
 MidiTrack::~MidiTrack()
 {
   for (unsigned int i = 0; i < Events.size(); i++)
-    delete(Events[i]);
+	  if (Events[i])
+	    delete(Events[i]);
 }
 
 
@@ -255,5 +258,6 @@ MidiFile::MidiFile(string filename)
 MidiFile::~MidiFile()
 {
   for (unsigned int i = 0; i < Tracks.size(); i++)
-    delete(Tracks[i]);
+  	if (Tracks[i])
+	    delete(Tracks[i]);
 }
