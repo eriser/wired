@@ -43,9 +43,11 @@ CycleKnob::~CycleKnob()
 {
   for (int i = 0; i < Steps; i++)
     {
-      delete Bmps[i];
+    	if (Bmps[i])
+	      delete Bmps[i];
     }
-  delete [] Bmps;
+    if (Bmps)
+	  delete [] Bmps;
 }
 
 void CycleKnob::OnPaint(wxPaintEvent& WXUNUSED(event))
