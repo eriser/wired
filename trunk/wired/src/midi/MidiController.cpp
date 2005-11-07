@@ -31,15 +31,24 @@ MidiController::MidiController(wxWindow *parent) :
 
 MidiController::~MidiController()
 {
-  delete sb;
-  delete OkBtn;
-  delete CancelBtn;
-  delete ChannelCtrl;
-  delete ControllerCtrl;
-  delete ValueCtrl;
-  delete ChannelText;
-  delete ControllerText;
-  delete ValueText;
+	if(sb)
+	  delete sb;
+	if (OkBtn)
+	  delete OkBtn;
+	if (CancelBtn)
+     delete CancelBtn;
+	if (ChannelCtrl)
+	 delete ChannelCtrl;
+	if(ControllerCtrl)
+	 delete ControllerCtrl;
+	if (ValueCtrl)
+	 delete ValueCtrl;
+	if (ChannelText)
+	 delete ChannelText;
+	if (ControllerText)
+	 delete ControllerText;
+	if (ValueText)
+	 delete ValueText;
 }
 
 void MidiController::ProcessMidi(int midi_msg[3])

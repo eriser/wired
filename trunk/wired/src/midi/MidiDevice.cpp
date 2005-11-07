@@ -18,7 +18,8 @@ void MidiDevice::CloseDevice()
 void MidiDevice::DeleteDevices()
 {
   for (MidiDeviceList::iterator i = devices.begin(); i != devices.end(); i++)
-    delete (*i);     
+	if (*i)
+	    delete (*i);
   devices.clear();
 }
 
