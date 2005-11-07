@@ -52,9 +52,7 @@ class KnobCtrl : public wxWindow
   unsigned int		Pas;
   float      		coeff;
   int			oldy;
-  DECLARE_EVENT_TABLE()
-
-    
-    };
+  DECLARE_EVENT_TABLE()   
+};
     
 #endif

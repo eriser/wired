@@ -37,7 +37,10 @@ HintedFader::HintedFader(wxWindow *parent, wxWindowID id, wxWindow* hintparent,
 }
 
 HintedFader::~HintedFader()
-{}
+{
+	if (Label)
+		delete Label;
+}
 
  void HintedFader::OnLeftDown(wxMouseEvent& WXUNUSED(event))
 {

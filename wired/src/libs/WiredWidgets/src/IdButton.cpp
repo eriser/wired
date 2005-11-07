@@ -23,7 +23,14 @@ IdButton::IdButton(wxWindow* parent, wxWindowID id, const wxPoint& pos,
 
 IdButton::~IdButton()
 {
-  delete [] Bitmaps;
+	if (Bitmaps)
+	{
+		if (Bitmaps[UNCLICKED])
+			delete Bitmaps[UNCLICKED];
+		if (Bitmaps[CLICKED])
+			delete Bitmaps[CLICKED];
+	  delete [] Bitmaps;
+	}
 }
 
 

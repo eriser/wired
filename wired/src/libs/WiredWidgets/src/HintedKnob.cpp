@@ -29,7 +29,10 @@ HintedKnob::HintedKnob(wxWindow *parent, wxWindowID id, wxWindow* hintparent,
 
 
 HintedKnob::~HintedKnob()
-{}
+{
+	if (Label)
+		delete Label;
+}
 
 void HintedKnob::OnMouseEvent(wxMouseEvent &event)
 {

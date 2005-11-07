@@ -20,7 +20,10 @@ Hint::Hint( wxWindow *parent, wxWindowID id, const wxString& label,
 }
 
 Hint::~Hint()
-{}
+{
+	if (Label)
+		delete Label;
+}
 
 void Hint::SetLabel(const wxString& label)
 {
