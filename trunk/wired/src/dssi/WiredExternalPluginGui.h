@@ -10,6 +10,7 @@
 #include "WiredExternalPluginLADSPA.h"
 #include "FaderCtrl.h"
 #include "HintedFader.h"
+#include "HintedKnob.h"
 #include "DownButton.h"
 
 #define IMG_DL_SINGLE_BG	"dssi/dssi_single_bg.png"
@@ -21,6 +22,8 @@
 #define IMG_DL_BMP		"dssi/DelayPlug.bmp"
 #define IMG_DL_FADER_BG		"dssi/fader_bg.png"
 #define IMG_DL_FADER_FG		"dssi/fader_button.png"
+#define IMG_DL_KNOB_FG		"dssi/knob_fg.png"
+#define IMG_DL_KNOB_BG		"dssi/knob_bg.png"
 #define IMG_LIQUID_ON		"dssi/liquid-cristal_play.png"
 #define IMG_LIQUID_OFF		"dssi/liquid-cristal_stop.png"
 #define IMG_BYPASS_ON		"dssi/bypass_button_down.png"
@@ -46,11 +49,13 @@ class				WiredDSSIGui : public WiredLADSPAInstance
 
  protected:
   bool		Bypass;
-  HintedFader	**Faders;
+  wxWindow	**Faders;
   wxImage	*Background;
   wxBitmap	*TpBmp;
-  wxImage	*img_bg;
-  wxImage	*img_fg;
+  wxImage	*img_fader_bg;
+  wxImage	*img_fader_fg;
+  wxImage	*img_knob_bg;
+  wxImage	*img_knob_fg;
   wxImage	*tr_bg;
   wxImage	*liquid_off;
   wxImage	*liquid_on;
