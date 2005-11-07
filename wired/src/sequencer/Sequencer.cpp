@@ -127,9 +127,10 @@ void					*Sequencer::Entry()
 		  if (Playing && Recording && (*T)->TrackOpt->Record)
 		    {
 		      AddNote(*T, **MidiMsg);
-		    }		  
-		}	  	  
-	  delete *MidiMsg;	  
+		    }
+		}
+		if (*MidiMsg)
+		  delete *MidiMsg;
 	}
       SeqMutex.Unlock();
       MidiEvents.clear();
@@ -341,8 +342,11 @@ void					*Sequencer::Entry()
       /* Cleanage des channels et buffers extra */
       for (B = ExtraBufs.begin(); B != ExtraBufs.end(); B++)
 	{
-	  (*B)->DeleteBuffer();
-	  delete *B;
+		if(*B)
+		{
+		  (*B)->DeleteBuffer();
+		  delete *B;
+		}
 	}
       ExtraBufs.clear();
     }
@@ -535,6 +539,7 @@ void					Sequencer::AddMidiEvent(int id, MidiType midi_msg[3])
 
 void					Sequencer::AddNote(Track *t, MidiEvent &event)
 {
+	if (!t)	return;
   if (t->Midi)
     {
       cout << "[SEQ] Adding note to track" << endl;
@@ -908,7 +913,7 @@ void					Sequencer::StopExport()
   Exporting = false;
   if (SampleRateConverter)
   {
-  	SampleRateConverter->EndSaveFile(2);
+  	SampleRateConverter->EndSaveFile(2);  	
   	delete SampleRateConverter;
   	SampleRateConverter = NULL;
     DeleteBuffer(ExportBuf);
@@ -1046,7 +1051,7 @@ void					Sequencer::StopFile()
       SeqMutex.Lock();
       PlayWave = 0x0;
       SeqMutex.Unlock();
-
-      delete w;
+		if (w)
+	      delete w;
     }
 }
