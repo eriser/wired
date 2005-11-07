@@ -15,6 +15,7 @@ class					AudioPattern: public Pattern, public WaveDrawer
  public:
   AudioPattern(double pos, double endpos, long trackindex);
   AudioPattern(double pos, WaveFile *w, long trackindex);
+	AudioPattern(const AudioPattern& copy){*this = copy;};
   ~AudioPattern();
   
   float					**GetBlock(long block);
@@ -29,8 +30,10 @@ class					AudioPattern: public Pattern, public WaveDrawer
   void					SetWave(WaveFile *w);
   void					SetDrawColour(wxColour c);
   void					Split(double pos);
-
   Pattern				*CreateCopy(double pos);
+  
+	AudioPattern		operator=(const AudioPattern& right);
+
   Channel				*InputChan;
   long					LastBlock;
   string				FileName;

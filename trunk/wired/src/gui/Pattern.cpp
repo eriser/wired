@@ -258,4 +258,3 @@ void					Pattern::DrawName(wxPaintDC &dc, const wxSize &s)
       dc.DrawText(Name, PATTERN_NAME_MARGINS + 2 * PATTERN_NAME_OFFSET, y + PATTERN_NAME_OFFSET);
     }
 }
-

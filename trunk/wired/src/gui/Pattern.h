@@ -27,56 +27,61 @@ class					MidiEvent;
 
 class					Pattern : public wxWindow
 {
-  double				xdrag;			/* sill unused, will serve to avoid wrong way scroll */
-  double				ydrag;			/* during a pattern dragging */
+  double							xdrag;			/* sill unused, will serve to avoid wrong way scroll */
+  double							ydrag;			/* during a pattern dragging */
 
  protected:
+	Pattern(){};
+
   virtual void				OnClick(wxMouseEvent &e);
   virtual void				OnLeftUp(wxMouseEvent &e);
   virtual void				OnDoubleClick(wxMouseEvent &e);
   virtual void				OnRightClick(wxMouseEvent &e);
   virtual void				OnMotion(wxMouseEvent &e);
-  void					XMove(double Motion);
-  void					DrawName(wxPaintDC &dc, const wxSize &s);
+  void								XMove(double Motion);
+  void								DrawName(wxPaintDC &dc, const wxSize &s);
 
-  double				Position;
-  double				EndPosition;
-  double				Length;
+  double							Position;
+  double							EndPosition;
+  double							Length;
   unsigned long				TrackIndex;
   unsigned char				StateMask;
-  wxPoint				m_pos;
-  wxSize				m_size;
-  wxPoint				m_click;
-  wxString				Name;
-  wxColour				PenColor;
-  wxColour				BrushColor;
+  wxPoint							m_pos;
+  wxSize							m_size;
+  wxPoint							m_click;
+  wxString						Name;
+  wxColour						PenColor;
+  wxColour						BrushColor;
 
  public:
   Pattern(double pos, double endpos, long trackindex);
+//  Pattern(const Pattern& copy){*this = copy;};
   virtual ~Pattern();
 
-  void					Modify(double newpos = -1, double newendpos = -1, 
-					       long newtrackindex = -1, double newlength = -1);
-  void					UpdateMeasure();
+  void								Modify(double newpos = -1, double newendpos = -1, 
+					       							long newtrackindex = -1, double newlength = -1);
+  void								UpdateMeasure();
   virtual void				Update();
   virtual void				SetSelected(bool sel);
-  virtual void				OnBpmChange() {}
-  virtual void				SetDrawColour(wxColour c) { PenColor = c; }
+  virtual void				OnBpmChange() {};
+  virtual void				SetDrawColour(wxColour c) { PenColor = c; };
   virtual Pattern			*CreateCopy(double pos) = 0x0;
-  wxPoint				GetMPosition() { return (m_pos); }
-  void					SetMPosition(wxPoint p) { m_pos = p; }
-  wxPoint				SetPos(double newpos, long track);
-  wxSize				GetSize() { return (m_size); }
-  void					SetSize(wxSize s) { m_size = s; }
-  int					GetXPos(double pos);
-  bool					IsSelected() { return (StateMask & PATTERN_MASK_SELECTED); }
-  double				SetPosition(double p) { Position = p; }
-  double				GetPosition() { return (Position); }
-  double				GetEndPosition() { return (EndPosition); }
-  wxString				GetName() { return (Name); }
-  void					SetName(wxString n) { Name = n; }
-  long					GetTrackIndex() { return (TrackIndex); }
-  void					SetTrackIndex(long t) { TrackIndex = t; }
+  wxPoint							GetMPosition() { return (m_pos); };
+  void								SetMPosition(wxPoint p) { m_pos = p; };
+  wxPoint							SetPos(double newpos, long track);
+  wxSize							GetSize() { return (m_size); };
+  void								SetSize(wxSize s) { m_size = s; };
+  int									GetXPos(double pos);
+  bool								IsSelected() { return (StateMask & PATTERN_MASK_SELECTED); };
+  double							SetPosition(double p) { Position = p; };
+  double							GetPosition() { return (Position); };
+  double							GetEndPosition() { return (EndPosition); };
+  wxString						GetName() { return (Name); };
+  void								SetName(wxString n) { Name = n; };
+  long								GetTrackIndex() { return (TrackIndex); };
+  void								SetTrackIndex(long t) { TrackIndex = t; };
+  
+//  virtual Pattern			operator=(const Pattern& right) = 0;
 };
 
 #endif
