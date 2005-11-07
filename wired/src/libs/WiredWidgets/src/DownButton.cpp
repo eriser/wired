@@ -40,8 +40,10 @@ DownButton::DownButton(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 
 DownButton::~DownButton()
 {
-  delete Up;
-  delete Down;
+	if (Up)
+	  delete Up;
+	if (Down)
+	  delete Down;
 }
 
 void DownButton::OnPaint(wxPaintEvent& WXUNUSED(event))

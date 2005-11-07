@@ -18,7 +18,8 @@ MidiThread::~MidiThread()
   vector<MidiInDevice *>:: iterator	i;
 
   for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
-    delete *i;
+  	if (*i)
+	    delete *i;
 }
 
 void MidiThread::OnExit()
@@ -87,7 +88,8 @@ void					MidiThread::RemoveDevice(int id)
   for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
     if ((*i)->id == id)
       {
-	delete *i;
+      	if (*i)
+			delete *i;
 	MidiInDev.erase(i);
 	break;
       }
