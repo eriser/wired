@@ -15,6 +15,9 @@ cActionManager::~cActionManager()
 {
 	//TODO : Supprimer les actions puis faire un clear() des listes
 	//TODO : Voir comment gerer le cycle de vie des actions
+	mUndoList.clear();
+	mRedoList.clear();
+	if (spSingleton) delete spSingleton;
 }
 
 cActionManager& cActionManager::Global()
