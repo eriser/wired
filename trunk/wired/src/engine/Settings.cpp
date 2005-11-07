@@ -111,7 +111,8 @@ Settings::Settings() :
 
 Settings::~Settings()
 {
-  delete conf;
+	if (conf)
+		delete conf;  
 }
 
 void Settings::Load()

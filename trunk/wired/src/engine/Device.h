@@ -56,7 +56,7 @@ class Device
 				  MaxInputChannels = maxin;		\
 				  MaxOutputChannels = maxout;		\
 				}
-  ~Device()			{ }
+  ~Device();
   
   int		Id;
   string	Name;

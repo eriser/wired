@@ -40,6 +40,7 @@ void AudioCenter::Clear()
   list<WaveFile *>::iterator i;
 
   for (i = WaveFiles.begin(); i != WaveFiles.end(); i++)
-    delete *i;
+  	if (*i)
+	    delete *i;
   WaveFiles.clear();
 }
