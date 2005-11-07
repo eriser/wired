@@ -34,7 +34,7 @@ private:
 	cRedoActionVisitor(const cRedoActionVisitor& copy) {*this = copy;};
 
 public:
-	virtual ~cRedoActionVisitor() {};
+	virtual ~cRedoActionVisitor() {if (spSingleton) delete spSingleton;};
 	static cRedoActionVisitor& Global();
 	virtual void Visit (cAction& action);
 
@@ -56,8 +56,7 @@ private:
 
 public:
 	// Destructeur
-	virtual ~cUndoActionVisitor() 
-	{};
+	virtual ~cUndoActionVisitor() {if (spSingleton) delete spSingleton;};
 
     // Retourne l'unique instance de cette classe
 	static cUndoActionVisitor& Global();
