@@ -144,9 +144,12 @@ class Plugin: public wxWindow
   ~Plugin();
   Plugin&	operator=(const Plugin &right)
   {
-  	Name = right.Name;
-	StartInfo = right.StartInfo;
-	InitInfo = right.InitInfo;
+  	if (this !=& right)
+  	{
+	  	Name = right.Name;
+		StartInfo = right.StartInfo;
+		InitInfo = right.InitInfo;
+  	}
 	return *this;
   }
 
