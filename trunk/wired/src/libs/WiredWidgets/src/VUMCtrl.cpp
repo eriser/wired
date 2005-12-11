@@ -121,7 +121,7 @@ void VUMCtrl::SetValue(int val)
 int VUMCtrl::GetValue()
 {
   int tmp;
-  tmp = (int)value / coeff;
+  tmp = (int)(value / coeff);
   return(tmp);
 }
 

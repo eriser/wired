@@ -75,9 +75,9 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
 
 FaderCtrl::~FaderCtrl()
 {
-	wxMask*Mask = tmp_fg->GetMask();
-	if  (Mask)
-		delete Mask;
+//	wxMask*Mask = tmp_fg->GetMask();
+//	if  (Mask)
+//		delete Mask;
 	if (tmp_fg)
 	  delete tmp_fg;
 	if (bg)

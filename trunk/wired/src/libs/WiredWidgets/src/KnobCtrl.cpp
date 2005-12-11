@@ -78,12 +78,12 @@ KnobCtrl::~KnobCtrl()
 		delete knob_fg;
 	if (knob_bg)
 		delete knob_bg;
-	if (fg_tmp)
-		delete fg_tmp;
+//	if (fg_tmp)
+//		delete fg_tmp;
 	if (fg)
 		delete fg;
-	if (fg_mask)
-		delete fg_mask;
+//	if (fg_mask)
+//		delete fg_mask;
 }
 
 void KnobCtrl::OnPaint(wxPaintEvent &event)
