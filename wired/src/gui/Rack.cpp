@@ -36,12 +36,12 @@ RackTrack::RackTrack(Rack *parent, int index)
 RackTrack::~RackTrack()
 {
   RemoveChannel();
-  if (Parent) delete Parent;
-  list<Plugin *>::iterator	iter;
-  for (iter = Racks.begin(); iter != Racks.end(); iter++)
-  	delete *iter;
-  if (Output) delete Output;
-  if (ChanGui) delete ChanGui;
+//  if (Parent) delete Parent;
+//  list<Plugin *>::iterator	iter;
+//  for (iter = Racks.begin(); iter != Racks.end(); iter++)
+//  	delete *iter;
+//  if (Output) delete Output;
+//  if (ChanGui) delete ChanGui;
 	cout << "[RackTrack] End destructor" << endl;
   //TODO delete CurrentBuffer
 }
