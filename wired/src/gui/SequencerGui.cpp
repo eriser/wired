@@ -329,7 +329,7 @@ void					SequencerView::DrawTrackLines()
       }
 }
 
-SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size)
+SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size, wxWindow *mainwindow)
   : wxPanel(parent, -1, pos, size, wxSIMPLE_BORDER | wxWS_EX_PROCESS_IDLE)
 {
   wxSize				s;
@@ -379,7 +379,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   HoriZoomSlider = new wxSlider(this, ID_SEQ_HSLIDER, 100, 25, 400, wxPoint(-1, -1),
 				wxSize(-1, HorizScrollBar->GetSize().y));
   RulerPanel = new Ruler(this, ID_SEQ_RULER, wxPoint(-1, -1), wxSize(-1, RULER_HEIGHT));
-  ColorDialogBox = new wxColourDialog(this, 0);
+  ColorDialogBox = new wxColourDialog(mainwindow, 0);
   BrushColor = CL_DEFAULT_SEQ_BRUSH;
   ColorBox = new ColoredBox(this, ID_SEQ_COLORBOX, wxPoint(Toolbar->GetSize().x + COLORBOX_MARGINS, COLORBOX_MARGINS),
 			    wxSize(TOOLS_HEIGHT - 2 * COLORBOX_MARGINS, TOOLS_HEIGHT - 2 * COLORBOX_MARGINS),

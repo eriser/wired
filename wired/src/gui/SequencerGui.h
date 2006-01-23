@@ -233,7 +233,7 @@ class				SequencerGui: public wxPanel
   ColoredBox			*ColorBox;
 	
  public:
-  SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size);
+  SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size, wxWindow *mainwindow = NULL);
   ~SequencerGui();
 
   Track				*AddTrack(bool is_audio = true);
