@@ -322,12 +322,19 @@ void					MainWindow::InitFileConverter()
 	FileConverter = new FileConversion();
 	t_samplerate_info info;
 	
-	
-	wxDirDialog dir(this, "Choose the audio working directory", wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
-	if (dir.ShowModal() == wxID_OK)
-		CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str();
+	if (Audio->UserData->Sets->WorkingDir.empty())
+	{
+		wxDirDialog dir(this, "Choose the audio working directory", wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
+		if (dir.ShowModal() == wxID_OK)
+			CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str();
+		else
+			CurrentXmlSession->GetAudioDir() = wxFileName::GetCwd();
+		Audio->UserData->Sets->WorkingDir = CurrentXmlSession->GetAudioDir().c_str();
+	}
 	else
-		CurrentXmlSession->GetAudioDir() = wxFileName::GetCwd();
+	{
+		CurrentXmlSession->GetAudioDir() = Audio->UserData->Sets->WorkingDir.c_str();
+	}
 	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
 	info.SampleRate = (unsigned long) Audio->SampleRate;
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;

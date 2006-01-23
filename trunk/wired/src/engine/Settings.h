@@ -43,6 +43,7 @@ class Settings
   string PlugConfFile;
   string ConfDir;
   string DataDir;
+  wxString WorkingDir;
 
   void Load();
   void Save();
