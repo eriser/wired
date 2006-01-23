@@ -112,6 +112,8 @@ bool	WiredLibMpeg::CanConvert(const char* path, int Decode)
 {
 	if (Decode & ENCODE)
 		return false;
+	if (!mpeg3_check_sig_func)
+		return false;
 	if (mpeg3_check_sig_func((char*)path) != 1)
 		return false;
 	return true;
@@ -132,7 +134,7 @@ void	WiredLibMpeg::mergeChannels(float* leftChan, float* rightChan, float* dst, 
 
 int	WiredLibMpeg::EndDecode()
 {
-	if (file == NULL)
+	if (file == NULL || mpeg3_close_func == NULL)
 		return 0;
 	return mpeg3_close_func(file);
 }
