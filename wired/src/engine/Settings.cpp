@@ -38,7 +38,7 @@ http://bloodshed.net/wired/forums"
 
 Settings::Settings() :
   QuickWaveRender(false), dbWaveRender(false), OutputDev(-1), InputDev(-1), OutputLatency(-1),
-  InputLatency(-1), SampleRate(44100), SamplesPerBuffer(2048), SampleFormat(-1), maxUndoRedoDepth(20)
+  InputLatency(-1), SampleRate(44100), SamplesPerBuffer(2048), SampleFormat(-1), maxUndoRedoDepth(20), WorkingDir("")
 {
   wxFileName f;
 
@@ -128,6 +128,9 @@ void Settings::Load()
   conf->Read("SampleRate", &SampleRate, 0);
   conf->Read("SampleFormat", &SampleFormat, 0);
   conf->Read("SamplesPerBuffer", &SamplesPerBuffer, 4096);
+  wxString		temp1("");
+  wxString		temp2("WorkingDirectory");
+  conf->Read(temp2, &WorkingDir, temp1);
 
   conf->SetPath("/OutputChannels");
   for (l = 0; ; l++)
@@ -172,6 +175,7 @@ void Settings::Save()
   conf->Write("SampleRate", SampleRate);
   conf->Write("SampleFormat", SampleFormat);
   conf->Write("SamplesPerBuffer", SamplesPerBuffer);
+  conf->Write("WorkingDirectory", WorkingDir);
 
   conf->DeleteGroup("/OutputChannels");
   conf->DeleteGroup("/InputChannels");
