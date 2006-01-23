@@ -128,10 +128,10 @@ int VUMCtrl::GetValue()
 
 VUMCtrl::~VUMCtrl()
 {
-	if (img_o)
-		delete img_o;
-	if (img_r)
-		delete img_r;
-	if (img_g)
-		delete img_g;
+//	if (img_o)
+//		delete img_o;
+//	if (img_r)
+//		delete img_r;
+//	if (img_g)
+//		delete img_g;
 }
