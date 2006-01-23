@@ -251,10 +251,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   /* Creation Panel */
   RackPanel = new Rack(split, -1, wxPoint(0, 0), wxSize(800, 250));
 
-  cout << "Known warning ...." << endl;  
-    
-  SeqPanel = new SequencerGui(split, wxPoint(0, 254), wxSize(800, 200));
-  cout << "done :-)" << endl;  
+  //cout << "Known warning ...." << endl;      
+  SeqPanel = new SequencerGui(split, wxPoint(0, 254), wxSize(800, 200), this);
+  //cout << "done :-)" << endl;  
 
   //  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 150), wxSIMPLE_BORDER);
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
