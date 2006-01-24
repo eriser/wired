@@ -63,4 +63,6 @@ libgui_a_SOURCES = 			\
 		PluginEffect.cpp	\
 		PluginEffect.h		\
 		FileConversion.h	\
-		FileConversion.cpp
+		FileConversion.cpp	\
+		FloatingFrame.h		\
+		FloatingFrame.cpp

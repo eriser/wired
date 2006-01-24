@@ -1037,7 +1037,7 @@ void					MainWindow::OnFloatTransport(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatTransport))
     {
-      TransportFrame = new FloatingFrame(0x0, -1, "Transport", TransportPanel->GetPosition(), TransportPanel->GetSize(), TransportPanel, this);
+      TransportFrame = new FloatingFrame(0x0, -1, "Transport", TransportPanel->GetPosition(), TransportPanel->GetSize(), TransportPanel, this, NULL);
       TransportPanel->Reparent(TransportFrame);
       TransportFrame->Show();
     }
@@ -1053,7 +1053,7 @@ void					MainWindow::OnFloatSequencer(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatSequencer))
     {
-      SequencerFrame = new FloatingFrame(0x0, -1, "Sequencer", SeqPanel->GetPosition(), SeqPanel->GetSize(), SeqPanel, this);
+      SequencerFrame = new FloatingFrame(0x0, -1, "Sequencer", SeqPanel->GetPosition(), SeqPanel->GetSize(), SeqPanel, this, NULL);
       SeqPanel->Reparent(SequencerFrame);
       SequencerFrame->Show();
     }
@@ -1069,7 +1069,7 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatRacks))
     {
-      RackFrame = new FloatingFrame(0x0, -1, "Racks", RackPanel->GetPosition(), RackPanel->GetSize(), RackPanel, this);
+      RackFrame = new FloatingFrame(0x0, -1, "Racks", RackPanel->GetPosition(), RackPanel->GetSize(), RackPanel, this, NULL);
       RackPanel->Reparent(RackFrame);
       RackFrame->Show();
     }
