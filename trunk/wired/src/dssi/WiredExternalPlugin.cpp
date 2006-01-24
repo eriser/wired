@@ -105,7 +105,7 @@ bool				WiredDSSIPlugin::Load(const string& FileName, int& FirstIndex)
 					PluginInfo |= TYPE_PLUGINS_INSTR;
 				_PluginsInfo[FirstIndex++] = PluginInfo;
 			}
-		}	
+		}
 	}
 	return Found;
 }

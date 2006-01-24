@@ -37,6 +37,11 @@ WiredLADSPAInstance		WiredLADSPAInstance::operator=(const WiredLADSPAInstance& r
 	}
 	return *this;
 }
+//
+//bool					WiredLADSPAInstance::operator<(const WiredLADSPAInstance& right)
+//{
+//	return (this->Name.compare(right.Name)) <= 0;
+//}
 
 bool					WiredLADSPAInstance::Init(const LADSPA_Descriptor *Descriptor)
 {

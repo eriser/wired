@@ -52,6 +52,7 @@ public:
 	~WiredLADSPAInstance();
 	WiredLADSPAInstance(const WiredLADSPAInstance& copy){*this = copy;}
 	WiredLADSPAInstance	operator=(const WiredLADSPAInstance& right);
+	bool				operator<(const WiredLADSPAInstance& right);
 	bool				Init(const LADSPA_Descriptor* Descriptor);
 	bool				Load();
 	void				SetInfo(PlugInitInfo *Info);
@@ -112,6 +113,23 @@ private:
 protected:
 	map<unsigned long, t_gui_control>	_GuiControls;								//Key == PortId; Value == PortData
 };
+
+//template <typename T>
+//	struct SortByName : std::binary_function<T const *, T const *, bool>
+//	{
+//		bool operator()(T const * x, T const * y) const
+//        {
+//        	return std::less<T>()(*x, *y); 
+//		}
+//	};
+
+//struct SortPluginsByName
+//{ 
+//	bool operator ()(const WiredLADSPAInstance *p1, const WiredLADSPAInstance *p2) const 
+//	{ 
+//		return (p1->Name.compare(p2->Name)) <= 0;
+//	} 
+//}; 
 
 
 #endif //_WIREDEXTERNALPLUGINLADSPA_H_

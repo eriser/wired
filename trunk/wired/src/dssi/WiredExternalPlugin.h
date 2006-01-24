@@ -37,4 +37,5 @@ private:
 	map<int, int>						_PluginsInfo;
 };
 
+
 #endif //_WIREDEXTERNALPLUGIN_H_
