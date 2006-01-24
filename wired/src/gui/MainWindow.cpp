@@ -28,6 +28,7 @@
 #include "FaderCtrl.h"
 #include "StaticLabel.h"
 #include "VUMCtrl.h"
+#include "FloatingFrame.h"
 #include "../engine/AudioEngine.h"
 #include "../engine/Settings.h"
 #include "../engine/EngineError.h"
@@ -1036,7 +1037,7 @@ void					MainWindow::OnFloatTransport(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatTransport))
     {
-      TransportFrame = new wxFrame(0x0, -1, "Transport", TransportPanel->GetPosition(), TransportPanel->GetSize());
+      TransportFrame = new FloatingFrame(0x0, -1, "Transport", TransportPanel->GetPosition(), TransportPanel->GetSize(), TransportPanel, this);
       TransportPanel->Reparent(TransportFrame);
       TransportFrame->Show();
     }
@@ -1052,7 +1053,7 @@ void					MainWindow::OnFloatSequencer(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatSequencer))
     {
-      SequencerFrame = new wxFrame(0x0, -1, "Sequencer", SeqPanel->GetPosition(), SeqPanel->GetSize());
+      SequencerFrame = new FloatingFrame(0x0, -1, "Sequencer", SeqPanel->GetPosition(), SeqPanel->GetSize(), SeqPanel, this);
       SeqPanel->Reparent(SequencerFrame);
       SequencerFrame->Show();
     }
@@ -1068,7 +1069,7 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatRacks))
     {
-      RackFrame = new wxFrame(0x0, -1, "Racks", RackPanel->GetPosition(), RackPanel->GetSize());
+      RackFrame = new FloatingFrame(0x0, -1, "Racks", RackPanel->GetPosition(), RackPanel->GetSize(), RackPanel, this);
       RackPanel->Reparent(RackFrame);
       RackFrame->Show();
     }

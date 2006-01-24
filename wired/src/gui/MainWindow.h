@@ -30,6 +30,7 @@ using namespace std;
 #define INDEX_MENUITEM_REDO		1
 
 #include "Plugin.h"
+#include "FloatingFrame.h"
 
 typedef	struct s_PlugStartInfo		PlugStartInfo;
 class					PluginLoader;
@@ -137,7 +138,7 @@ class					MainWindow: public wxFrame
   wxBoxSizer				*TopSizer;
 
   /* Frame pour detacher les objets */
-  wxFrame				*TransportFrame;
+  FloatingFrame				*TransportFrame;
   wxFrame				*OptFrame;
   wxFrame				*SequencerFrame;
   wxFrame				*RackFrame;
