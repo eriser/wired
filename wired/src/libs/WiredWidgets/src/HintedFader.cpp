@@ -30,7 +30,8 @@ HintedFader::HintedFader(wxWindow *parent, wxWindowID id, wxWindow* hintparent,
   HintParent = hintparent;
   Label = new Hint(hintparent, -1, s, 
 		   //wxPoint( hintpos.x + GetSize().x, hintpos.y + GetSize().y ),
-		   wxPoint(parent->GetPosition().x + this->GetPosition().x, parent->GetPosition().y + this->GetPosition().y + 75),
+		   //wxPoint(parent->GetPosition().x + this->GetPosition().x, parent->GetPosition().y + this->GetPosition().y + 75),
+		   wxPoint(this->GetPosition().x, this->GetPosition().y + this->GetSize().y),
 		   wxDefaultSize, *wxWHITE, *wxBLACK);
   Label->Show(false);
   
