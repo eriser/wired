@@ -79,9 +79,9 @@ FilterPlugin::FilterPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   img_bg = new wxImage(string(GetDataDir() + string(IMG_FL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG );
   img_fg = new wxImage(string(GetDataDir() + string(IMG_FL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG );
   
-  CutoffFader = new HintedFader(this, Filter_Cutoff, this->GetParent(), img_bg, img_fg, 1, SIZE_CUTOFF, SIZE_CUTOFF,
+  CutoffFader = new HintedFader(this, Filter_Cutoff, this, img_bg, img_fg, 1, SIZE_CUTOFF, SIZE_CUTOFF,
 			      wxPoint(118, 12), wxSize(img_bg->GetWidth(), img_bg->GetHeight()), GetPosition() + wxPoint(103, 25));
-  ResFader = new HintedFader(this, Filter_Res, this->GetParent(), img_bg, img_fg, 0, SIZE_RES, 0,
+  ResFader = new HintedFader(this, Filter_Res, this, img_bg, img_fg, 0, SIZE_RES, 0,
 			   wxPoint(153, 12), wxSize(img_bg->GetWidth(), img_bg->GetHeight()), GetPosition() + wxPoint(138, 25));
 
   wxImage** imgs;

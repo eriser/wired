@@ -73,9 +73,9 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   // Knobs' background
 
-  DecayKnob = new HintedFader(this, Reverb_Decay, this->GetParent(), img_bg, img_fg, 0, 30, 3, wxPoint(118, 12), 
+  DecayKnob = new HintedFader(this, Reverb_Decay, this, img_bg, img_fg, 0, 30, 3, wxPoint(118, 12), 
 			      wxSize(img_bg->GetWidth() - 3, img_bg->GetHeight()), GetPosition() + wxPoint(100,25));
-  MixKnob = new HintedFader(this, Reverb_Mix, this->GetParent(), img_bg, img_fg, 0, 100, 50, wxPoint(153, 12),
+  MixKnob = new HintedFader(this, Reverb_Mix, this, img_bg, img_fg, 0, 100, 50, wxPoint(153, 12),
 			    wxSize(img_bg->GetWidth() - 3, img_bg->GetHeight()), GetPosition() + wxPoint(135,25));
 
   Connect(Reverb_Bypass, wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction) 

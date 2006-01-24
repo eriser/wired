@@ -5,6 +5,8 @@
 #include <sstream>
 #include <stdlib.h>
 
+
+
 #define lfoskipsamples 30
 
 static PlugInitInfo info;
@@ -37,17 +39,18 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   BypassBtn = new DownButton(this, Wahwah_Bypass, wxPoint(21, 58), 
 			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), bypass_off, bypass_on);
   
-  FreqFader = new FaderCtrl(this, Wahwah_Frequency, img_bg, img_fg, 0, TO_GUI_FREQ(4.0), TO_GUI_FREQ(DEFAULT_FREQ),
-			    wxPoint(83, 12), wxSize(22, 78));
-  StartPhaseFader = new FaderCtrl(this, Wahwah_StartPhase, img_bg, img_fg, 0, 1, DEFAULT_STARTPHASE,
-				  wxPoint(142, 12), wxSize(22, 78));
-  DepthFader = new FaderCtrl(this, Wahwah_Depth, img_bg, img_fg, 0, 100, TO_GUI_DEPTH(DEFAULT_DEPTH),
-			     wxPoint(200, 12), wxSize(22, 78));
-  FreqOfsFader = new FaderCtrl(this, Wahwah_FreqOfs, img_bg, img_fg, 0, 99, TO_GUI_FREQOFS(DEFAULT_FREQOFS),
-			     wxPoint(258, 12), wxSize(22, 78));
-  ResFader = new FaderCtrl(this, Wahwah_Res, img_bg, img_fg, TO_GUI_RES(0.1), TO_GUI_RES(10.0), TO_GUI_RES(DEFAULT_RES),
-			   wxPoint(320, 12), wxSize(22, 78));
-
+  FreqFader = new HintedFader(this, Wahwah_Frequency, this, img_bg, img_fg, 0, TO_GUI_FREQ(4.0), TO_GUI_FREQ(DEFAULT_FREQ),
+			      wxPoint(83, 12), wxSize(22, 78), GetPosition() + wxPoint(83, 35));
+  StartPhaseFader = new HintedFader(this, Wahwah_StartPhase, this, img_bg, img_fg, 0, 1, DEFAULT_STARTPHASE,
+				  wxPoint(142, 12), wxSize(22, 78), GetPosition() + wxPoint(142, 35));
+  DepthFader = new HintedFader(this, Wahwah_Depth, this, img_bg, img_fg, 0, 100, TO_GUI_DEPTH(DEFAULT_DEPTH),
+			       wxPoint(200, 12), wxSize(22, 78), GetPosition() + wxPoint(200, 35));
+  FreqOfsFader = new HintedFader(this, Wahwah_FreqOfs, this, img_bg, img_fg, 0, 99, TO_GUI_FREQOFS(DEFAULT_FREQOFS),
+				 wxPoint(258, 12), wxSize(22, 78), wxPoint(258, 35));
+  ResFader = new HintedFader(this, Wahwah_Res, this, img_bg, img_fg, TO_GUI_RES(0.1), 
+			     TO_GUI_RES(10.0), TO_GUI_RES(DEFAULT_RES), wxPoint(320, 12), 
+			     wxSize(22, 78), GetPosition() + wxPoint(320, 35));
+  
   liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
   liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
