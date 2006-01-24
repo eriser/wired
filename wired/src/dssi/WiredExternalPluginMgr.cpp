@@ -91,6 +91,8 @@ void			WiredExternalPluginMgr::LoadPluginsFromPath(const char *Dirs, int Type)
 			closedir(CurrentDir);
 		}
 	}
+	//_Plugins.sort(SortByName<WiredLADSPAInstance>());
+	//std::sort(_Plugins.begin(), _Plugins.end(), SortPluginsByName());
 }
 
 void			WiredExternalPluginMgr::LoadPlugins(const string& FileName)
@@ -136,7 +138,30 @@ map<int, string>	WiredExternalPluginMgr::GetPluginsList()
 		CurrentPluginList = (*Iter)->GetPluginsList();
 		for (IterDescriptor = CurrentPluginList.begin(); IterDescriptor != CurrentPluginList.end(); IterDescriptor++)
 			Result[IterDescriptor->first] = IterDescriptor->second;
+	}	
+	return Result;
+}
+
+list<string>		WiredExternalPluginMgr::GetSortedPluginsList(const string& Separator)
+{
+	list<string>						Result;
+	list<WiredDSSIPlugin*>::iterator	Iter;
+	map<int, string>::iterator			IterDescriptor;
+	map<int, string>					CurrentPluginList;
+	char								buf[1024];
+	string								StrResult;
+
+	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
+	{
+		CurrentPluginList = (*Iter)->GetPluginsList();
+		for (IterDescriptor = CurrentPluginList.begin(); IterDescriptor != CurrentPluginList.end(); IterDescriptor++)
+		{
+			StrResult = string(IterDescriptor->second + Separator);
+			sprintf(buf, "%d", IterDescriptor->first);
+			Result.insert(Result.end(), StrResult + string(buf));			
+		}
 	}
+	Result.sort();
 	return Result;
 }
 

@@ -42,6 +42,7 @@ public:
 	
 	void				LoadPLugins(int Type);
 	map<int, string>	GetPluginsList();
+	list<string>		GetSortedPluginsList(const string& Separator = "#");
 	void				SetMenuItemId(int ModuleId, int MenuItemId);
 	int					GetPluginType(int PluginId);
 	WiredDSSIGui		*CreatePlugin(int MenuItemId, PlugStartInfo &info);

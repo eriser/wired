@@ -843,9 +843,13 @@ void					MainWindow::LoadPlugins()
 
 void					MainWindow::LoadExternalPlugins()
 { 
-  map<int, string>				PluginsList;
-  map<int, string>::iterator	IterPluginsList;
+//  map<int, string>				PluginsList;
+  list<string>					PluginsList;
+//  map<int, string>::iterator	IterPluginsList;
+  list<string>::iterator		IterPluginsList;
   int							PluginInfo;
+  int							PluginId;
+  string						PluginName, Sep("#");  
   
   CreateDSSIInstrMenu = NULL;
   CreateLADSPAInstrMenu = NULL;
@@ -853,13 +857,22 @@ void					MainWindow::LoadExternalPlugins()
   CreateLADSPAEffectMenu = NULL;
   LoadedExternalPlugins->LoadPLugins(TYPE_PLUGINS_DSSI | TYPE_PLUGINS_LADSPA);
   LoadedExternalPlugins->SetStartInfo(StartInfo);
-  PluginsList = LoadedExternalPlugins->GetPluginsList();
+  PluginsList = LoadedExternalPlugins->GetSortedPluginsList(Sep);
+  
   for (IterPluginsList = PluginsList.begin(); IterPluginsList != PluginsList.end(); IterPluginsList++)
   {
-  	PluginInfo = LoadedExternalPlugins->GetPluginType(IterPluginsList->first);
+  	if ((*IterPluginsList).find_last_of(Sep.c_str()) > 0)
+  	{
+  		PluginName = (*IterPluginsList).substr(0, (*IterPluginsList).find_last_of(Sep.c_str()));
+  		PluginId = atoi((*IterPluginsList).substr((*IterPluginsList).find_last_of(Sep.c_str()) + 1).c_str());
+  	}
+//  	PluginInfo = LoadedExternalPlugins->GetPluginType(IterPluginsList->first);
+  	PluginInfo = LoadedExternalPlugins->GetPluginType(PluginId);
 
-  	LoadedExternalPlugins->SetMenuItemId(IterPluginsList->first, 
-  		AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, IterPluginsList->second));
+//  	LoadedExternalPlugins->SetMenuItemId(IterPluginsList->first, 
+//  		AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, IterPluginsList->second));
+  	LoadedExternalPlugins->SetMenuItemId(PluginId, 
+  		AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, PluginName));
   }
 }
 
