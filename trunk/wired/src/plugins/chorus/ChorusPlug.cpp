@@ -47,11 +47,11 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
-  BaseLengthFader = new HintedFader(this, Chorus_Feedback, this->GetParent(), img_bg, img_fg, 0, 10000, 5000,
+  BaseLengthFader = new HintedFader(this, Chorus_Feedback, this, img_bg, img_fg, 0, 10000, 5000,
 				  wxPoint(73, 11), wxSize(22,78), GetPosition() + wxPoint(58, 25));
-  ModDepthFader = new HintedFader(this, Chorus_Stage, this->GetParent(), img_bg, img_fg, 0, 10, 3,
+  ModDepthFader = new HintedFader(this, Chorus_Stage, this, img_bg, img_fg, 0, 10, 3,
 				  wxPoint(110, 11), wxSize(22,78), GetPosition() + wxPoint(95, 25));
-  EffectMixFader = new HintedFader(this, Chorus_DryWet, this->GetParent(), img_bg, img_fg, 0, 100, 50,
+  EffectMixFader = new HintedFader(this, Chorus_DryWet, this, img_bg, img_fg, 0, 100, 50,
 				 wxPoint(149, 11), wxSize(22, 78), GetPosition() + wxPoint(135, 25));  
   SetBackgroundColour(wxColour(237, 237, 237));
 }

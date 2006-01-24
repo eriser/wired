@@ -36,15 +36,15 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
   img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG );
   
-  TimeFader = new HintedFader(this, Delay_Time, this->GetParent(), img_bg, img_fg, 0, MAX_TIME, 1000,
+  TimeFader = new HintedFader(this, Delay_Time, this, img_bg, img_fg, 0, MAX_TIME, 1000,
 			      wxPoint(73, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
 			      GetPosition() + wxPoint(58, 25));
-  FeedbackFader = new HintedFader(this, Delay_Feedback, this->GetParent(), img_bg, img_fg, 0, 100, 50,
+  FeedbackFader = new HintedFader(this, Delay_Feedback, this, img_bg, img_fg, 0, 100, 50,
 				  wxPoint(110, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
-				  GetPosition() + wxPoint(95, 25));
-  DryWetFader = new HintedFader(this, Delay_DryWet, this->GetParent(), img_bg, img_fg, 0, 100, 50,
+				  GetPosition() + wxPoint(95, 35));
+  DryWetFader = new HintedFader(this, Delay_DryWet, this, img_bg, img_fg, 0, 100, 50,
 				wxPoint(149, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
-				GetPosition() + wxPoint(135, 25));
+				GetPosition() + wxPoint(135, 35));
   
   SetBackgroundColour(wxColour(237, 237, 237));
 
