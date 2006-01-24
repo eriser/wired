@@ -366,10 +366,13 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigne
 	_ChannelBuffer = new float *[NbChannel];
 	//TO FIX bad allocation ....
 	for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannel; CurrentChannel++)
+	{
 		_ChannelBuffer[CurrentChannel] = new float[NbSamples];
+		bzero(_ChannelBuffer[CurrentChannel], NbSamples * sizeof(float));
+	}
 	return true;
 }
-
+//non interleaved
 float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite)
 {
 	SRC_DATA			Data;
@@ -405,7 +408,7 @@ float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChann
 	ToWrite *= NbChannels;
 	return _Buffer;
 }
-
+// interleaved
 float					*WiredSampleRate::ConvertnChannels(float *Input, unsigned int NbChannels, SRC_STATE *Converter, unsigned long NbSamples, double Ratio, int End, unsigned long &ToWrite)
 {
 	SRC_DATA			Data;
@@ -432,22 +435,21 @@ float					*WiredSampleRate::ConvertnChannels(float *Input, unsigned int NbChanne
 	return _Buffer;
 }
 
+//non interleaved, used in Seqencer to export Wave
 void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, unsigned int NbChannel)
 {
-	SampleRateMutex.Lock();
+//	SampleRateMutex.Lock();
 	float		*Output = NULL;
 	double 		Ratio = (double)  _ApplicationSettings.SampleRate / OpenedFileInfo.samplerate;
 	unsigned long ToWrite;
+	unsigned int Chans = 0;
 
 	cout <<  "Exporting non interleaved for " << NbSamples * NbChannel << " samples" << endl;
-	unsigned long		CurrentSample, CurrentResSample;
+	unsigned long		CurrentSample;
 	bzero(_Buffer, NbChannel * NbSamples);
-	for (CurrentSample = 0, CurrentResSample = 0; CurrentSample < NbSamples; CurrentSample++)
-	{
-		_Buffer[CurrentResSample++] = Buffer[0][CurrentSample];
-		_Buffer[CurrentResSample++] = Buffer[1][CurrentSample];		
-	}
-	ToWrite = NbSamples * NbChannel;
+	for (CurrentSample = 0, ToWrite = 0; CurrentSample < NbSamples; CurrentSample++)
+		for (Chans = 0; Chans < NbChannel; Chans++)
+			_Buffer[ToWrite++] = Buffer[Chans][CurrentSample];
 	Output = _Buffer;
 	//Output = ConvertnChannels(Buffer, NbChannel, StaticConverter, NbSamples, Ratio, (NbSamples < _ApplicationSettings.SamplesPerBuffer ? 1 : 0), ToWrite);	
 	if (Output)
@@ -457,9 +459,10 @@ void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float **Buffer, u
 	}
 	if (sf_error(OpenedFile) != SF_ERR_NO_ERROR)
 		cout << "[FILECONVERT] sndfile error {" << sf_strerror(OpenedFile) << "}" << endl;
-	SampleRateMutex.Unlock();
+	//SampleRateMutex.Unlock();
 }
 
+//interleaved
 void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float *Buffer, unsigned int NbChannel)
 {
 	float		*Output = NULL;
@@ -479,24 +482,25 @@ void					WiredSampleRate::WriteToFile(unsigned long NbSamples, float *Buffer, un
 }
 
 void					WiredSampleRate::EndSaveFile(unsigned int NbChannel)
-{
+{	
+	cout << "Closed File exported 0" << endl;
 	if(OpenedFile)
 	{
 		if (!OpenedFile)
 			return;
 		
-		cout << "Closed Fiel exported 1" << endl;
+		cout << "Closed File exported 1" << endl;
 		sf_close(OpenedFile);
-		cout << "Closed Fiel exported 2" << endl;
+		cout << "Closed File exported 2" << endl;
 		src_delete(StaticConverter);
-		cout << "Closed Fiel exported 3" << endl;
+		cout << "Closed File exported 3" << endl;
 		OpenedFile = NULL;
 //		for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannel; CurrentChannel++)
 //			delete _ChannelBuffer[CurrentChannel];
 
 		//delete [] _ChannelBuffer;
 		//delete _Buffer;
-		cout << "Closed Fiel exported" << endl;
+		cout << "Closed File exported" << endl;
 	}
 }
 
