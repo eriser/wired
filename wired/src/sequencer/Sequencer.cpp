@@ -913,7 +913,7 @@ void					Sequencer::StopExport()
   Exporting = false;
   if (SampleRateConverter)
   {
-  	SampleRateConverter->EndSaveFile(2);  	
+  	SampleRateConverter->EndSaveFile(2);
   	delete SampleRateConverter;
   	SampleRateConverter = NULL;
     DeleteBuffer(ExportBuf);
@@ -933,7 +933,7 @@ void					Sequencer::WriteExport()
 {
 	if (SampleRateConverter)
 	{
-		cout << "Write Export" << endl;
+		cout << "Write Export began" << endl;
 //		  for (i = 0, j = 0; i < Audio->SamplesPerBuffer; j++)
 //		    {
 //		      AllocBuf1[0][i++] = Mix->OutputLeft[j];
@@ -947,11 +947,11 @@ void					Sequencer::WriteExport()
 //		    }		    
 //		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, AllocBuf1, 2);
 		//SeqMutex.Lock();
-		memcpy(ExportBuf[0], Mix->OutputLeft, Audio->SamplesPerBuffer);
-		memcpy(ExportBuf[1], Mix->OutputRight, Audio->SamplesPerBuffer);
+//		memcpy(ExportBuf[0], Mix->OutputLeft, Audio->SamplesPerBuffer);
+//		memcpy(ExportBuf[1], Mix->OutputRight, Audio->SamplesPerBuffer);
 		long				j;
 
-	  for (j = 0; j < Audio->SamplesPerBuffer; j++)
+		for (j = 0; j < Audio->SamplesPerBuffer; j++)
 	    {
 	      ExportBuf[0][j] = Mix->OutputLeft[j];
 	      ExportBuf[1][j] = Mix->OutputRight[j];
