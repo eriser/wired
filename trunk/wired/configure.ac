@@ -49,7 +49,7 @@ AC_PROG_MAKE_SET
 AC_CHECK_LIB([asound], [snd_asoundlib_version], [ASOUND='yes'], AC_MSG_ERROR([Couldn't find libasound]))
 # FIXME: Replace `main' with a function in `-lm':
 #AC_CHECK_LIB([m], [main])
-AC_CHECK_LIB([portaudio], [Pa_Sleep], [PORTAUDIO='yes'], AC_MSG_ERROR([Couldn't find portaudio]))
+#AC_CHECK_LIB([portaudio], [Pa_Sleep], [PORTAUDIO='yes'], AC_MSG_ERROR([Couldn't find portaudio]))
 AC_CHECK_LIB([pthread], [pthread_create], [PTHREAD='yes'], AC_MSG_ERROR([Couldn't find libpthread]))
 AC_CHECK_LIB([sndfile], [sf_open], [LIBSNDFILE='yes'], AC_MSG_ERROR([Couldn't find libsndfile ]))
 AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch ]))
@@ -177,6 +177,7 @@ AC_CONFIG_FILES([Makefile
 		src/codec/wiredcodec/Makefile
 		src/codec/wiredcodec/flac/Makefile
 		src/codec/wiredcodec/mpeg/Makefile
-		src/codec/wiredcodec/vorbis/Makefile])
+		src/codec/wiredcodec/vorbis/Makefile
+		src/wiredvideo/Makefile])
 
 AC_OUTPUT
