@@ -58,7 +58,8 @@ wired_DEPENDENCIES = gui/libgui.a sequencer/libsequencer.a \
 	midi/portmidi/porttime/libporttime.a mixer/libmixer.a \
 	plugins/libplugins.a redist/libredist.a undo/libundo.a \
 	xml/libwiredxml.a dssi/libwireddssi.a \
-	samplerate/libwiredsamplerate.a codec/libwiredCodec.a
+	samplerate/libwiredsamplerate.a codec/libwiredCodec.a \
+	wiredvideo/libwiredvideo.a
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/src/include
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -198,7 +199,8 @@ SUBDIRS = \
 	xml				\
 	dssi				\
 	samplerate			\
-	codec
+	codec		\
+	wiredvideo
 
 DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so libs/WiredAkai/src/.libs/libWiredAkai.so -Lfileloader -lfileloader
 wired_LDFLAGS = $(shell wx-config --libs) -lsndfile -lasound -Lmidi/portmidi $(DEPS_LIBS) -lportaudio  -L/usr/pkg/lib/ `xml2-config --libs` @SAMPLERATE_LIBS@ -g3 -O3
@@ -221,7 +223,8 @@ wired_LDADD = \
 	xml/libwiredxml.a		\
 	dssi/libwireddssi.a		\
 	samplerate/libwiredsamplerate.a	\
-	codec/libwiredCodec.a
+	codec/libwiredCodec.a	\
+	wiredvideo/libwiredvideo.a
 
 all: all-recursive
 
