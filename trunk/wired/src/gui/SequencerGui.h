@@ -231,6 +231,7 @@ class				SequencerGui: public wxPanel
   wxColour			BrushColor;
   wxColour			PenColor;
   ColoredBox			*ColorBox;
+
 	
  public:
   SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size, wxWindow *mainwindow = NULL);
@@ -291,6 +292,7 @@ class				SequencerGui: public wxPanel
   void				OnMagnetismChange(wxCommandEvent &event);
   void				OnColorButtonClick(wxCommandEvent &event);
   void				OnColoredBoxClick(wxCommandEvent &event);
+  //bool				Floating;
 
   double			CurrentPos;
 

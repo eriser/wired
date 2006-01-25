@@ -4,7 +4,7 @@
 #include "FloatingFrame.h"
 
 FloatingFrame::FloatingFrame(wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos,
-			const wxSize &size, wxWindow *frame_child, wxWindow *frame_old_parent, wxMenuItem *menu)
+			     const wxSize &size, wxWindow *frame_child, wxWindow *frame_old_parent, wxMenuItem *menu)
   : wxFrame(parent, id, title, pos, size)
 {
   Child = frame_child;
@@ -25,6 +25,7 @@ FloatingFrame::~FloatingFrame()
 void		FloatingFrame::OnClose(wxCloseEvent &event)
 {
   Child->Reparent(OldParent);
+  MenuItem->Check(false);
   delete this;
 }
 

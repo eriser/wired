@@ -343,6 +343,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   long					c;
   long					r;
 
+  //Floating = false;
   Tool = ID_TOOL_MOVE_SEQUENCER;
   HoriZoomFactor = 1.0f;
   VertZoomFactor = 1.0f;
