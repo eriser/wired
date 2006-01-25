@@ -229,10 +229,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   WindowMenu->Append(MainWin_SwitchRack, "Switch &Rack/Optional view\tTAB");
   WindowMenu->Append(MainWin_SwitchSeq, "Switch &Sequencer/Optional view\tCtrl+TAB");
   WindowMenu->AppendSeparator();
-  WindowMenu->AppendCheckItem(MainWin_FloatTransport, "Floating Transport");
-  WindowMenu->AppendCheckItem(MainWin_FloatSequencer, "Floating Sequencer");
-  WindowMenu->AppendCheckItem(MainWin_FloatRacks, "Floating Racks");
-  WindowMenu->AppendCheckItem(MainWin_FloatView, "Floating Optional View");
+  ItemFloatingTrans = WindowMenu->AppendCheckItem(MainWin_FloatTransport, "Floating Transport");
+  ItemFloatingSeq = WindowMenu->AppendCheckItem(MainWin_FloatSequencer, "Floating Sequencer");
+  ItemFloatingRacks = WindowMenu->AppendCheckItem(MainWin_FloatRacks, "Floating Racks");
+  ItemFloatingOptView = WindowMenu->AppendCheckItem(MainWin_FloatView, "Floating Optional View");
   WindowMenu->AppendSeparator();
   WindowMenu->AppendCheckItem(MainWin_FullScreen, "&Fullscreen");
   
@@ -1037,7 +1037,8 @@ void					MainWindow::OnFloatTransport(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatTransport))
     {
-      TransportFrame = new FloatingFrame(0x0, -1, "Transport", TransportPanel->GetPosition(), TransportPanel->GetSize(), TransportPanel, this, NULL);
+      TransportFrame = new FloatingFrame(0x0, -1, "Transport", TransportPanel->GetPosition(), 
+					 TransportPanel->GetSize(), TransportPanel, this, ItemFloatingTrans);
       TransportPanel->Reparent(TransportFrame);
       TransportFrame->Show();
     }
@@ -1053,13 +1054,16 @@ void					MainWindow::OnFloatSequencer(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatSequencer))
     {
-      SequencerFrame = new FloatingFrame(0x0, -1, "Sequencer", SeqPanel->GetPosition(), SeqPanel->GetSize(), SeqPanel, this, NULL);
+      SequencerFrame = new FloatingFrame(0x0, -1, "Sequencer", SeqPanel->GetPosition(), 
+					 SeqPanel->GetSize(), SeqPanel, this, ItemFloatingSeq);
       SeqPanel->Reparent(SequencerFrame);
+      //SeqPanel->Floating = true;
       SequencerFrame->Show();
     }
   else
     {
       SeqPanel->Reparent(this);
+      //SeqPanel->Floating = false;
       delete SequencerFrame;
       SequencerFrame = 0x0;
     }
@@ -1069,7 +1073,8 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatRacks))
     {
-      RackFrame = new FloatingFrame(0x0, -1, "Racks", RackPanel->GetPosition(), RackPanel->GetSize(), RackPanel, this, NULL);
+      RackFrame = new FloatingFrame(0x0, -1, "Racks", RackPanel->GetPosition(), 
+				    RackPanel->GetSize(), RackPanel, this, ItemFloatingRacks);
       RackPanel->Reparent(RackFrame);
       RackFrame->Show();
     }

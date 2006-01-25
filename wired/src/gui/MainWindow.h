@@ -114,7 +114,7 @@ class					MainWindow: public wxFrame
   wxTextFile				PluginsConfFile;
   
   /* Visible controls */
-  wxSplitterWindow		*split;
+  wxSplitterWindow			*split;
   wxMenuBar				*MenuBar;
   wxMenu				*FileMenu;
   wxMenu				*EditMenu;
@@ -132,6 +132,11 @@ class					MainWindow: public wxFrame
   wxMenu				*CreateLADSPAEffectMenu;     
   wxMenu				*HelpMenu;
   wxMenu				*WindowMenu;
+  
+  wxMenuItem				*ItemFloatingTrans;
+  wxMenuItem				*ItemFloatingSeq;
+  wxMenuItem				*ItemFloatingRacks;
+  wxMenuItem				*ItemFloatingOptView;
 
   /* Sizers */
   wxBoxSizer				*BottomSizer;
