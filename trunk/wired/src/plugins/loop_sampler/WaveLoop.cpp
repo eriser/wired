@@ -95,8 +95,8 @@ void WaveLoop::SetLoopCursors()
 {
   double inc = (double)GetClientSize().x / (double)EndWavePos;
 
-  LoopStartCursor->SetPosition(wxPoint(inc * LoopInfo->Start, 0));
-  LoopEndCursor->SetPosition(wxPoint(inc * LoopInfo->End, 0));
+  LoopStartCursor->SetPosition(wxPoint((int)(inc * LoopInfo->Start), 0));
+  LoopEndCursor->SetPosition(wxPoint((int)(inc * LoopInfo->End), 0));
 }
 
 void WaveLoop::OnSliceBtnSelected(wxCommandEvent &event)
