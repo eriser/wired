@@ -193,7 +193,7 @@ void FaderCtrl::SetValue(int val)
   if (val == BeginValue)
     fg->Move(wxPoint(0, bg->GetHeight() - fg->GetSize().y));
   else
-    fg->Move(wxPoint(0, (int)((EndValue - BeginValue) - val) / coeff));
+    fg->Move(wxPoint(0, (int)(((EndValue - BeginValue) - val) / coeff)));
   Value = val;
   // cout << "coeff = " << int(coeff) << endl;
 }
