@@ -7,7 +7,9 @@ WiredMplayer::WiredMplayer()
 
 WiredMplayer::~WiredMplayer()
 {
-	
+	SendMPlayerMessage(ACTION_QUIT, LEN_ACTION_QUIT);
+	close(pfd[0]);
+	close(pfd[1]);
 }
 
 int		WiredMplayer::PlayFile()
