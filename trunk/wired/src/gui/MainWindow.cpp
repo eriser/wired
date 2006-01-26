@@ -46,6 +46,7 @@
 Rack					*RackPanel;
 SequencerGui				*SeqPanel;
 Sequencer				*Seq;
+WiredVideo			*WiredVideoObject;
 AudioEngine				*Audio;
 Mixer					*Mix;
 AudioCenter				WaveCenter;
@@ -180,6 +181,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar = new wxMenuBar;
   FileMenu = new wxMenu;
   EditMenu = new wxMenu;
+  VideoMenu = new wxMenu;
   UndoMenu = new wxMenu;
   RedoMenu = new wxMenu;
   SequencerMenu = new wxMenu;
@@ -242,6 +244,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar->Append(RacksMenu, "&Racks");
   MenuBar->Append(CreateInstrMenu, "&Instruments");
   MenuBar->Append(CreateEffectMenu, "Effec&ts");
+  MenuBar->Append(VideoMenu, "&Video");
   MenuBar->Append(WindowMenu, "&Window");
   MenuBar->Append(HelpMenu, "&Help");
     
@@ -312,6 +315,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
 
   InitUndoRedoMenuItems();
+  InitVideoMenuItems();
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
@@ -350,6 +354,12 @@ void					MainWindow::InitUndoRedoMenuItems()
 	EditMenu->Enable(MainWin_Redo, false);
 }
 
+void					MainWindow::InitVideoMenuItems()
+{
+	VideoMenu->Append(MainWin_OpenVideo, "&Open video");
+	VideoMenu->Append(MainWin_CloseVideo, "&Close video");
+	WiredVideoObject = new WiredVideo();
+}
 
 void					MainWindow::OnClose(wxCloseEvent &event)
 {
@@ -374,6 +384,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 	  return;
 	}
     }
+  WiredVideoObject->CloseFile();
   /* for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)  
     for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
       for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
@@ -398,6 +409,8 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   }
   if (LoadedExternalPlugins)
 	  delete LoadedExternalPlugins;
+  
+  if (WiredVideoObject) delete WiredVideoObject;
   
   if(FileConverter)
   {
@@ -1086,12 +1099,12 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
     }
 }
 
-void MainWindow::OnSwitchRackOptViewEvent(wxCommandEvent &event)
+void					MainWindow::OnSwitchRackOptViewEvent(wxCommandEvent &event)
 {
   SwitchRackOptView();
 }
 
-void MainWindow::OnSwitchSeqOptViewEvent(wxCommandEvent &event)
+void					MainWindow::OnSwitchSeqOptViewEvent(wxCommandEvent &event)
 {
   SwitchSeqOptView();
 }
@@ -1306,6 +1319,16 @@ void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
 
 }
 
+void					MainWindow::OnOpenVideo(wxCommandEvent &event)
+{
+	WiredVideoObject->OpenFile();
+}
+
+void					MainWindow::OnCloseVideo(wxCommandEvent &event)
+{
+	WiredVideoObject->CloseFile();
+}
+
 void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
 {
 	SeqPanel->DeleteSelectedTrack();
@@ -1406,7 +1429,6 @@ void					MainWindow::CreateUndoRedoMenus(wxMenu *callingMenu)
 	callingMenu->Enable(MainWin_Undo, undoMenu->GetMenuItemCount() > 0);
 	callingMenu->Enable(MainWin_Redo, redoMenu->GetMenuItemCount() > 0);
 }
-
 
 void					MainWindow::OnCut(wxCommandEvent &event)
 {
@@ -1588,6 +1610,8 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
   EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
   EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
+  EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)
+  EVT_MENU(MainWin_CloseVideo, MainWindow::OnCloseVideo)
   //EVT_IDLE(MainWindow::OnIdle)
   //EVT_TEXT_MAXLEN(101010, MainWindow::OnSetPosition)
   //EVT_PLAYPOSITION(313131, MainWindow::OnSetPosition)

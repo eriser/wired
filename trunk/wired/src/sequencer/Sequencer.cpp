@@ -377,6 +377,7 @@ void					Sequencer::Play()
      CurrentPos = 0.f; */
   if (Recording)
     PrepareRecording();
+  if (WiredVideoObject->asFile == true) WiredVideoObject->PlayFile();
   SeqMutex.Unlock();
 }
 
@@ -402,7 +403,7 @@ void					Sequencer::Stop()
       }  
 
   Playing = false;
-
+	if (WiredVideoObject->asFile == true) WiredVideoObject->StopFile();
   if (Recording)
     {
       SeqMutex.Unlock();
@@ -412,7 +413,6 @@ void					Sequencer::Stop()
       SeqMutex.Lock(); 
     }
   Recording = false;    
-
   SeqMutex.Unlock();
 }
 
@@ -579,6 +579,7 @@ void					Sequencer::SetCurrentPos(double pos)
   //StartAudioPos = Audio->GetTime();
   CurAudioPos = (long)(pos / MeasurePerSample);
   CurrentPos = pos;
+  if (WiredVideoObject->asFile == true) WiredVideoObject->SeekFile(absolute, pos);
   /*CursorEvent event(wxSetCursorPos, wxSetCursorPos);
   event.SetEventObject(SeqPanel);
   event.Position = CurrentPos;
