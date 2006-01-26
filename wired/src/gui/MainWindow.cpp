@@ -1277,7 +1277,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 	{
       FileConverter->SetFormat((PaSampleFormat)Audio->SampleFormat);
       FileConverter->SetBufferSize(Audio->SamplesPerBuffer);		
-      FileConverter->SetSampleRate(Audio->SampleRate);		
+      FileConverter->SetSampleRate((long unsigned int)Audio->SampleRate);		
 	  Audio->OpenStream();
 	  if (Audio->StartStream())
 	    AudioMutex.Unlock();/* This will unlock the sequencer	\
