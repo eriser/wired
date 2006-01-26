@@ -29,7 +29,8 @@ using namespace std;
 #define INDEX_MENUITEM_UNDO		0
 #define INDEX_MENUITEM_REDO		1
 
-#include "Plugin.h"
+#include	"Plugin.h"
+#include	"../wiredvideo/WiredVideo.h"
 #include "FloatingFrame.h"
 
 typedef	struct s_PlugStartInfo		PlugStartInfo;
@@ -88,6 +89,9 @@ class					MainWindow: public wxFrame
   void					OnDelete(wxCommandEvent &event);
   void					OnSelectAll(wxCommandEvent &event);
 
+  void					OnOpenVideo(wxCommandEvent &event);
+  void					OnCloseVideo(wxCommandEvent &event);
+
   void					OnSpaceKey();
   void					SwitchRackOptView();
   void					SwitchSeqOptView();  
@@ -108,6 +112,9 @@ class					MainWindow: public wxFrame
   void					CreateUndoRedoMenus(wxMenu *callingMenu);
   void					removeAllMenuItems(wxMenu *menu);
   
+  /* Video Menu */
+  void					InitVideoMenuItems();
+  
   void					InitFileConverter();
   
   /* Config files */
@@ -118,6 +125,7 @@ class					MainWindow: public wxFrame
   wxMenuBar				*MenuBar;
   wxMenu				*FileMenu;
   wxMenu				*EditMenu;
+  wxMenu				*VideoMenu;
   wxMenu				*UndoMenu;
   wxMenu				*RedoMenu;
   wxMenu				*HistoryMenu;
@@ -197,7 +205,9 @@ enum
   MainWin_FileLoader,
   MainWin_IntHelp,
   MainWin_SwitchRack,
-  MainWin_SwitchSeq 
+  MainWin_SwitchSeq, 
+  MainWin_OpenVideo, 
+  MainWin_CloseVideo
 };
 
 extern MainWindow		*MainWin;
