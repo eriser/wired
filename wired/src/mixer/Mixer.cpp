@@ -331,11 +331,12 @@ void				Mixer::MixOutput(bool soundcard)
   MixerPanel->MasterLeft = Lrms; // used by MixerGui
   MixerPanel->MasterRight = Rrms;
   MixMutex.Unlock();
-  if (soundcard)
+  if (soundcard && Audio->UserData)
     {
       long			bytes_written;
       float			*tmp;
       i = 0;
+
       for (vector<RingBuffer<float>*>::iterator chan = 
 	     Audio->UserData->OutFIFOVector.begin(); 
 	   chan !=  Audio->UserData->OutFIFOVector.end(); chan++, i++)
@@ -345,7 +346,7 @@ void				Mixer::MixOutput(bool soundcard)
 	  tmp = ((i % 2) ?  OutputRight : OutputLeft);
 	  /* Blocking write */
 	  //cout << "[MIXER] blocking write BEGIN" << endl;
-	  for (long spb = Audio->SamplesPerBuffer; spb > 0; wxMicroSleep(100)) //nanosleep(&t, 0x0))
+	  for (long spb = Audio->SamplesPerBuffer; spb > 0 && (*chan); wxMicroSleep(100)) //nanosleep(&t, 0x0))
 	    {
 	      bytes_written = (*chan)->Write(tmp, spb); 
 	      spb -= bytes_written;
