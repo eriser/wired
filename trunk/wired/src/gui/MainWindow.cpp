@@ -406,10 +406,17 @@ void					MainWindow::OnClose(wxCloseEvent &event)
     (*k)->Unload();
     
   cout << "[MAINWIN] Unloading external plugins..." << endl;
-  if (Seq)
+  try
   {
-	  Seq->Delete();
-	  delete Seq;
+      if (Seq)
+      {
+    	  Seq->Delete();
+    	  delete Seq;
+      }
+  }
+  catch (...)
+  {
+    
   }
   if (LoadedExternalPlugins)
 	  delete LoadedExternalPlugins;
@@ -430,8 +437,8 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 	}
   if (WiredSettings)
 	  delete WiredSettings;
-  cout << "[MAINWIN] Closing..."<< endl; 
-  exit(0);
+  cout << "[MAINWIN] Closing..." << endl; 
+//  exit(0);
 }
 
 void					MainWindow::OnQuit(wxCommandEvent &WXUNUSED(event))

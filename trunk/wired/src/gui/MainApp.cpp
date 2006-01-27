@@ -7,6 +7,7 @@
 #include <wx/event.h>
 #include <wx/timer.h>
 #include <wx/splash.h>
+#include <wx/debugrpt.h>
 #include "MainApp.h"
 #include "MainWindow.h"
 
@@ -103,8 +104,34 @@ bool				MainApp::OnInit()
   MainWin = Frame;
   Frame->Show(true);
   SetTopWindow(Frame);
+  wxHandleFatalExceptions(true);
   return (true);
 }
+
+void              MainApp::OnFatalException()
+{
+    cout << "#################################" << endl;
+    cout << "###            A fatal exception has occured           ####" << endl;
+    cout << "###            A report will be auto-generated         ####" << endl;
+    cout << "#################################" << endl;
+    wxDebugReportCompress report;
+//    wxDebugReportPreviewStd preview;
+
+    report.AddAll();
+
+//    if ( preview.Show(report) )
+  //  {
+//        report.Process();
+        report.Reset();
+        //send a mail
+    //}
+    cout << "Filename == (" << report.GetCompressedFileName().c_str() << ")" << endl;
+    cout << "#################################" << endl;
+    cout << "###              Please send this report to                 ###" << endl;
+    cout << "###                debug.wired@gmail.com                 ###" << endl;
+    cout << "#################################" << endl;
+}
+
 
 int				MainApp::OnExit()
 {
