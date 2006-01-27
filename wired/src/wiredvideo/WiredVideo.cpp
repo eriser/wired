@@ -13,19 +13,19 @@ WiredVideo::WiredVideo()
 WiredVideo::~WiredVideo()
 {
 	if (mplayer)   
-        delete mplayer;
+	  delete mplayer;
 }
 
 int		WiredVideo::InitMplayer()
 {
-    if (mplayer)
-        delete mplayer;
-	mplayer = new WiredMplayer();
+//    if (mplayer)
+//        delete mplayer;
+    mplayer = new WiredMplayer();
 }
 
 int		WiredVideo::OpenFile(const std::string& path)
 {
-	wxFileDialog	*dlg = new wxFileDialog(0, "[WIREDVIDEO] Loading video file", path, "", VIDEO_FILE_FILTER, wxOPEN);
+  wxFileDialog	*dlg = new wxFileDialog(0, "[WIREDVIDEO] Loading video file", path, "", VIDEO_FILE_FILTER, wxOPEN);
 
   if (dlg->ShowModal() == wxID_OK)
 	{
@@ -35,6 +35,11 @@ int		WiredVideo::OpenFile(const std::string& path)
 		asFile = true;
   }
 	DisplayVideoFrame();
+}
+
+int		WiredVideo::SetSeek(bool SeekBool)
+{
+
 }
 
 int		WiredVideo::PlayFile()
@@ -72,7 +77,7 @@ int		WiredVideo::SeekFile(eSeekMethod seekMethod, double position)
 {
 	if (asFile == false || !mplayer) return 0;
 	std::cout << "[WIREDVIDEO] Seeking video file with method " << seekMethod << " at " << position << std::endl;
-	return mplayer->SeekFile(seekMethod, position);
+	  return mplayer->SeekFile(seekMethod, position);
 }
 
 bool	WiredVideo::DisplayVideoFrame()

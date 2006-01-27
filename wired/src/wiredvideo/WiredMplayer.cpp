@@ -2,35 +2,41 @@
 
 WiredMplayer::WiredMplayer()
 {
-	
+  Playbool = false;
 }
 
 WiredMplayer::~WiredMplayer()
 {
-	SendMPlayerMessage(ACTION_QUIT, LEN_ACTION_QUIT);
-	close(pfd[0]);
-	close(pfd[1]);
+  SendMPlayerMessage(ACTION_QUIT, LEN_ACTION_QUIT);
+  close(pfd[0]);
+  close(pfd[1]);
+  SetPlayBool(false);
 }
 
 int		WiredMplayer::PlayFile()
 {
-	return PauseFile();
+  return PauseFile();
 }
 
 int		WiredMplayer::PauseFile()
 {
-	return SendMPlayerMessage(ACTION_PAUSE, LEN_ACTION_PAUSE);
+  if (Playbool == false)
+    SetPlayBool(true);
+  else
+    SetPlayBool(false);
+  return SendMPlayerMessage(ACTION_PAUSE, LEN_ACTION_PAUSE);
 }
 
 int		WiredMplayer::StopFile()
 {
   //	SeekFile(absolute, 0);
-	PauseFile();
+  PauseFile();
 }
 
 int		WiredMplayer::CloseFile()
 {
-	return SendMPlayerMessage(ACTION_QUIT, LEN_ACTION_QUIT);
+  SetPlayBool(false);
+  return SendMPlayerMessage(ACTION_QUIT, LEN_ACTION_QUIT);
 }
 
 int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
@@ -65,12 +71,19 @@ int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 				cout << "[WIREDPLAYER] Msg: " << msg << endl;
 				break;
 	}
-	return SendMPlayerMessage(msg.c_str(), msg.size());
+	if (Playbool == false)
+	  {
+	    SendMPlayerMessage(msg.c_str(), msg.size());
+	    SetPlayBool(true);
+	    return PauseFile();
+	  }
+	else
+	  return SendMPlayerMessage(msg.c_str(), msg.size());
 }
 
 bool		WiredMplayer::DisplayVideoFrame(const std::string& videoFilePath)
 {
-	extern char **environ;
+  extern char **environ;
   int	fd;
   string	launchString;
   pid_t		cpid;
@@ -104,9 +117,16 @@ bool		WiredMplayer::DisplayVideoFrame(const std::string& videoFilePath)
     }
   else
     close(pfd[0]);
-	MuteFile();
+  MuteFile();
   PauseFile();
-	return 1;
+  //  SetPlayBool(false);
+  return 1;
+}
+
+int			WiredMplayer::SetPlayBool(bool value)
+{
+  Playbool = value;
+  return 1;
 }
 
 int			WiredMplayer::MuteFile()
@@ -116,12 +136,12 @@ int			WiredMplayer::MuteFile()
 
 int			WiredMplayer::SendMPlayerMessage(const char* message, unsigned int msgLen)
 {
-	if ((write(pfd[1], message, msgLen)) <=  0)
-	{
-  	cout << "[WIREDMPLAYER] Can't " << message << endl;
-  	return 0;
-	}
-//  else
-//  	wait();
+    if ((write(pfd[1], message, msgLen)) <=  0)
+      {
+	cout << "[WIREDMPLAYER] Can't " << message << endl;
+	return 0;
+      }
+  //  else
+  //  	wait();
   return 1;
 }

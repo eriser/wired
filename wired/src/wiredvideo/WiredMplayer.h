@@ -21,6 +21,8 @@
 #define		LEN_ACTION_QUIT				5
 #define		ACTION_MUTE						"mute\n"
 #define		LEN_ACTION_MUTE				5
+#define		ACTION_HIDE						"hide\n"
+#define		LEN_ACTION_HIDE				5
 #define		ACTION_SEEK_RELATIVE		"seek "
 #define		ACTION_SEEK_PERCENTAGE	"seek "
 #define		ACTION_SEEK_ABSOLUTE		"seek "
@@ -46,13 +48,15 @@ public:
 	int		StopFile();
 	int		CloseFile();
 	int		SeekFile(eSeekMethod seekMethod, double position);
-	bool	DisplayVideoFrame(const string& videoFilePath);
-	
+	bool		DisplayVideoFrame(const string& videoFilePath);
+
 private:
 	int		pfd[2];
+	bool		Playbool;
 	
-	int			MuteFile();
-	int			SendMPlayerMessage(const char* message, unsigned int msgLen);
+       	int		SetPlayBool(bool value);
+	int	       	MuteFile();
+	int	       	SendMPlayerMessage(const char* message, unsigned int msgLen);
 };
 
 #endif //_WIREDMPLAYER_H_
