@@ -24,7 +24,7 @@ int		WiredMplayer::PauseFile()
 
 int		WiredMplayer::StopFile()
 {
-	SeekFile(absolute, 0);
+  //	SeekFile(absolute, 0);
 	PauseFile();
 }
 
@@ -39,23 +39,25 @@ int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 	string	tmpmsg;
 	char	buf[1024];
 	
-	sprintf(buf, "%g", position);
 	switch (seekMethod)
 	{
 			case relative: 
 				msg = ACTION_SEEK_RELATIVE;
+				sprintf(buf, "%g 0", position);
 				msg += buf;
 				msg += CRLF;
 				cout << "[WIREDPLAYER] " << msg << endl;
 				break;
 			case percentage:
 				msg = ACTION_SEEK_PERCENTAGE;
+				sprintf(buf, "%g 1", position);
 				msg += buf;
 				msg += CRLF;
 				cout << "[WIREDPLAYER] " << msg << endl;
 				break;
 			case absolute:
 				msg = ACTION_SEEK_ABSOLUTE;
+				sprintf(buf, "%g 2", position);
 				tmpmsg = buf;
 				msg += tmpmsg;
 				msg += CRLF;

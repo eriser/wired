@@ -21,9 +21,9 @@
 #define		LEN_ACTION_QUIT				5
 #define		ACTION_MUTE						"mute\n"
 #define		LEN_ACTION_MUTE				5
-#define		ACTION_SEEK_RELATIVE		"seek 0 "
-#define		ACTION_SEEK_PERCENTAGE	"seek 1 "
-#define		ACTION_SEEK_ABSOLUTE		"seek 2 "
+#define		ACTION_SEEK_RELATIVE		"seek "
+#define		ACTION_SEEK_PERCENTAGE	"seek "
+#define		ACTION_SEEK_ABSOLUTE		"seek "
 #define		CRLF										"\n"
 
 using namespace std;
