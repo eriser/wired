@@ -39,8 +39,8 @@ HintedFader::HintedFader(wxWindow *parent, wxWindowID id, wxWindow* hintparent,
 
 HintedFader::~HintedFader()
 {
-	if (Label)
-		delete Label;
+  if (Label)
+    delete Label;
 }
 
  void HintedFader::OnLeftDown(wxMouseEvent& WXUNUSED(event))
@@ -77,7 +77,7 @@ void HintedFader::OnMouseEvent(wxMouseEvent &event)
   FaderCtrl::OnMouseEvent(event);
   wxString s;
   s.Printf("%d", GetValue());
-  
+  cout << "GetValue : " << GetValue() << endl;
   Label->SetLabel(s);
   if (!event.LeftIsDown())
     Label->Show(false);
