@@ -8,6 +8,7 @@ WiredLADSPAInstance::WiredLADSPAInstance(PlugStartInfo &info) : Plugin(info, NUL
 	_Properties = 0;
 	StartInfo = info;
 	_Bypass = false;
+    _IsPlaying = false;
 }
 
 WiredLADSPAInstance::~WiredLADSPAInstance()
@@ -69,6 +70,7 @@ void					WiredLADSPAInstance::SetInfo(PlugInitInfo *Info)
 void					WiredLADSPAInstance::SetInfo(PlugStartInfo *Info)
 {
 	StartInfo = *Info;
+    Info->Size = wxSize(_InputDataPluginsPorts.size() / 5 + ((_InputDataPluginsPorts.size() % 5) / 4) + 1, 1);
 }
 
 bool					WiredLADSPAInstance::Load()
@@ -317,26 +319,44 @@ void					WiredLADSPAInstance::ProcessStereo(float **input, float **output, long 
 {
 	if (IsLoaded() && _InputAudioPluginsPorts.size() >= 2 && _OutputAudioPluginsPorts.size() >= 2)
 	{
-	//	cout << "process Stereo 0, port == " << GetPortId(_InputAudioPluginsPorts, 0)<< " vers == " << GetPortId(_OutputAudioPluginsPorts, 0) << endl;
-		ConnectMonoInput(input[0], GetPortId(_InputAudioPluginsPorts, 0));
-		ConnectMonoOutput(output[0], GetPortId(_OutputAudioPluginsPorts, 0));
-		ConnectMonoInput(input[1], GetPortId(_InputAudioPluginsPorts, 1));
-		ConnectMonoOutput(output[1], GetPortId(_OutputAudioPluginsPorts, 1));
-		_Descriptor->run(_Handle, (unsigned long) sample_length);
-	}
+    	//	cout << "process Stereo 0, port == " << GetPortId(_InputAudioPluginsPorts, 0)<< " vers == " << GetPortId(_OutputAudioPluginsPorts, 0) << endl;
+        if (input[0] && output[0])
+        {
+            ConnectMonoInput(input[0], GetPortId(_InputAudioPluginsPorts, 0));
+            ConnectMonoOutput(output[0], GetPortId(_OutputAudioPluginsPorts, 0));
+            if (input[1] && output[1])
+            {
+                ConnectMonoInput(input[1], GetPortId(_InputAudioPluginsPorts, 1));
+                ConnectMonoOutput(output[1], GetPortId(_OutputAudioPluginsPorts, 1));
+                _Descriptor->run(_Handle, (unsigned long) sample_length);
+                return;
+            }
+        }
+    }
+     memcpy(output[0], input[0], sample_length * sizeof(float));
+     memcpy(output[1], input[1], sample_length * sizeof(float));
 }
 
 void					WiredLADSPAInstance::ProcessMono(float **input, float **output, long sample_length)
 {
 	if (IsLoaded() && _InputAudioPluginsPorts.size() >= 1 && _OutputAudioPluginsPorts.size() >= 1)
 	{
-		ConnectMonoInput(input[0], GetPortId(_InputAudioPluginsPorts, 0));
-		ConnectMonoOutput(output[0], GetPortId(_OutputAudioPluginsPorts, 0));
-		_Descriptor->run(_Handle, (unsigned long) sample_length);
-		ConnectMonoInput(input[1], GetPortId(_InputAudioPluginsPorts, 0));
-		ConnectMonoOutput(output[1], GetPortId(_OutputAudioPluginsPorts, 0));
-		_Descriptor->run(_Handle, (unsigned long) sample_length);
-	}
+        if (input[0] && output[0])
+        {
+    		ConnectMonoInput(input[0], GetPortId(_InputAudioPluginsPorts, 0));
+    		ConnectMonoOutput(output[0], GetPortId(_OutputAudioPluginsPorts, 0));
+    		_Descriptor->run(_Handle, (unsigned long) sample_length);
+        }
+        if (input[1] && output[1])
+        {
+            ConnectMonoInput(input[1], GetPortId(_InputAudioPluginsPorts, 0));
+        	ConnectMonoOutput(output[1], GetPortId(_OutputAudioPluginsPorts, 0));
+        	_Descriptor->run(_Handle, (unsigned long) sample_length);
+            return;
+         }
+      }      
+     memcpy(output[0], input[0], sample_length * sizeof(float));
+     memcpy(output[1], input[1], sample_length * sizeof(float));
 }
 
 void					WiredLADSPAInstance::Init()
