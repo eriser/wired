@@ -91,6 +91,7 @@ class					MainWindow: public wxFrame
 
   void					OnOpenVideo(wxCommandEvent &event);
   void					OnCloseVideo(wxCommandEvent &event);
+  void					OnSeekVideo(wxCommandEvent &event);
 
   void					OnSpaceKey();
   void					SwitchRackOptView();
@@ -207,7 +208,8 @@ enum
   MainWin_SwitchRack,
   MainWin_SwitchSeq, 
   MainWin_OpenVideo, 
-  MainWin_CloseVideo
+  MainWin_CloseVideo,
+  MainWin_SeekVideo
 };
 
 extern MainWindow		*MainWin;
