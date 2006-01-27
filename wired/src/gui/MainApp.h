@@ -23,6 +23,7 @@ class MainApp : public wxApp
  private:
   MainWindow			*Frame;
   wxSingleInstanceChecker	*Checker;
+  void                          OnFatalException();
 };
 
 #endif/*__MAINAPP_H__*/
