@@ -125,8 +125,6 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   
   Faders = (wxWindow**) new void*[_GuiControls.size()];
 
-  cout << "adresse rack : " << this << endl;
-
   for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
     {
       //wxSize(img_fader_bg->GetWidth(), img_fader_bg->GetHeight());
@@ -141,17 +139,18 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 	}
       else
 	{
-	  Faders[i] = new HintedFader(this, i + 1, this, img_fader_bg, img_fader_fg, 0, 100, 50, 
-				      wxPoint(73 + i * interspace + interspace / 2 - 5, 11) ,
+	  Faders[i] = new HintedFader(this, i + 1, this, img_fader_bg, img_fader_fg, iter->second.Data.LowerBound, 
+				      iter->second.Data.UpperBound, *(iter->second.Data.Data),
+				      wxPoint(73 + i * interspace + interspace / 2 - 5, 11),
 				      wxSize(img_fader_bg->GetWidth(), img_fader_bg->GetHeight()), GetPosition() + 
 				      wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
 	  Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
 		  wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
 	  FaderIndex[i + 1] = iter->first;
-	  //cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
-	  // 	   << iter->second.Data.UpperBound << endl;
-	  ((HintedFader*)Faders[i])->SetValue((int)(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100));
-	  
+	  cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
+	     << iter->second.Data.UpperBound << endl;
+	  //((HintedFader*)Faders[i])->SetValue((int)(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100));
+	  ((HintedFader*)Faders[i])->SetValue((int)(*(iter->second.Data.Data)));
 	  // gruik bis
 	  if (i == 13)
 	    break;
@@ -203,7 +202,7 @@ void		WiredDSSIGui::OnFaderMove(wxScrollEvent &e)
 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
 	*_GuiControls[FaderIndex[id]].Data.Data = ((HintedFader*)Faders[id - 1])->GetValue() / 100.f * range + min;	  
 	//cout << (float)_GuiControls[FaderIndex[id]].Data.LowerBound << " < " <<  
-	//   Faders[id - 1]->GetValue() << " < " << (float)_GuiControls[FaderIndex[id]].Data.UpperBound << endl;
+	//Faders[id - 1]->GetValue() << " < " << (float)_GuiControls[FaderIndex[id]].Data.UpperBound << endl;
 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
       }
 }

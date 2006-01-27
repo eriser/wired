@@ -62,10 +62,11 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
   tmp_fg = new wxBitmap(img_fg, -1);
   tmp_fg->SetMask(new wxMask(*tmp_fg, *wxWHITE));
   fg = new StaticBitmap(this, -1,*tmp_fg,wxPoint(0,(int)(Value  / coeff)), wxSize(img_fg->GetWidth(), img_fg->GetHeight()));
+  cout << "Setvalue : " << val << endl;
   SetValue(val);
   
   wxString s;
-  s.Printf("%d", val);
+  s.Printf("%f", val);
   Label = new Hint(hintparent, -1, s, 
 		   wxPoint( hintpos.x + GetSize().x, hintpos.y + GetSize().y ),
 		   wxDefaultSize, *wxWHITE, *wxBLACK);
@@ -155,6 +156,7 @@ void FaderCtrl::OnMouseEvent(wxMouseEvent &event)
     {
       if (event.GetPosition().y >= (GetSize().y - fg->GetSize().y /2 ) )
 	{
+	  //  cout << "event get pos = " << event.GetPosition().y << "GetSize().y " << GetSize().y << "fg->GetSize().y " << fg->GetSize().y<< endl;
 	  wxScrollEvent e(wxEVT_SCROLL_TOP, GetId());
 	  e.SetEventObject(this);
 	  SetValue(BeginValue);
@@ -174,6 +176,7 @@ void FaderCtrl::OnMouseEvent(wxMouseEvent &event)
     {
       wxString s;
       s.Printf("%d", GetValue());
+      cout << "GetValue : " << GetValue() << endl;
       Label->SetLabel(s);
     }
 }
@@ -184,18 +187,30 @@ int FaderCtrl::GetValue()
   return (Value);
 }
 
-void FaderCtrl::SetValue(int val)
+void		FaderCtrl::SetValue(int val)
 {
-  if (val < BeginValue)
-    val = BeginValue;
-  if (val > EndValue)
-    val = EndValue;  
-  if (val == BeginValue)
-    fg->Move(wxPoint(0, bg->GetHeight() - fg->GetSize().y));
+  int		range = EndValue - BeginValue;
+
+  if (val <= BeginValue)
+    {
+      val = BeginValue;
+      fg->Move(wxPoint(0, bg->GetHeight() - fg->GetSize().y));
+    }
+  else if (val >= EndValue)
+    {
+      val = EndValue;
+      fg->Move(wxPoint(0, 0));
+    }
   else
-    fg->Move(wxPoint(0, (int)(((EndValue - BeginValue) - val) / coeff)));
+    //fg->Move(wxPoint(0, (int)(((EndValue /*- BeginValue*/) - val) / coeff))); // bug
+    //fg->Move(wxPoint(0, (range - val + BeginValue) / coeff));
+    fg->Move(wxPoint(0, (EndValue - val) / coeff));
   Value = val;
-  // cout << "coeff = " << int(coeff) << endl;
+  
+  cout << "[] Value = " << Value << endl; 
+  //cout << "y pos = " << range - val + BeginValue << endl;
+  //cout << "moveto = " << (int)((EndValue /*- BeginValue*/) - val) / coeff << endl;
+  //cout << "coeff = " << coeff << endl;
 }
 
 
