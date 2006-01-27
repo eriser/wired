@@ -147,7 +147,7 @@ void FaderCtrl::OnMouseEvent(wxMouseEvent &event)
     {
       wxScrollEvent e(wxEVT_SCROLL_TOP, GetId());
       e.SetEventObject(this);
-      fg->Move(wxPoint(0,event.GetPosition().y - (fg->GetSize().y /2)));
+      fg->Move(wxPoint(0,(int)(event.GetPosition().y - (fg->GetSize().y /2))));
        Value = (EndValue + BeginValue) - (long)((event.GetPosition().y -(fg->GetSize().y /2)) * coeff) ;
        //      cout << "[FADER] value: " << Value << endl;
        GetEventHandler()->ProcessEvent(e);
@@ -176,7 +176,6 @@ void FaderCtrl::OnMouseEvent(wxMouseEvent &event)
     {
       wxString s;
       s.Printf("%d", GetValue());
-      cout << "GetValue : " << GetValue() << endl;
       Label->SetLabel(s);
     }
 }
