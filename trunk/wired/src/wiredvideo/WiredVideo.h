@@ -24,7 +24,8 @@ public:
 	int		StopFile();
 	int		CloseFile();
 	int		SeekFile(eSeekMethod seekMethod, double position);
-	
+	int		SetSeek(bool SeekBool);
+
 private:
 	std::string	videoFilePath;
 	

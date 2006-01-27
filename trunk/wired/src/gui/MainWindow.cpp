@@ -358,7 +358,11 @@ void					MainWindow::InitVideoMenuItems()
 {
 	VideoMenu->Append(MainWin_OpenVideo, "&Open video");
 	VideoMenu->Append(MainWin_CloseVideo, "&Close video");
+	VideoMenu->AppendCheckItem(MainWin_SeekVideo, "&Seek with video playing");
+	cout << "new wiredvideo"<< endl; 
 	WiredVideoObject = new WiredVideo();
+	VideoMenu->Enable(MainWin_OpenVideo, true);
+	VideoMenu->Enable(MainWin_CloseVideo, false);
 }
 
 void					MainWindow::OnClose(wxCloseEvent &event)
@@ -1322,11 +1326,23 @@ void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
 void					MainWindow::OnOpenVideo(wxCommandEvent &event)
 {
 	WiredVideoObject->OpenFile();
+		if (WiredVideoObject->asFile)
+	{
+	    VideoMenu->Enable(MainWin_OpenVideo, false);
+	    VideoMenu->Enable(MainWin_CloseVideo, true);
+	    	  }
 }
 
 void					MainWindow::OnCloseVideo(wxCommandEvent &event)
 {
 	WiredVideoObject->CloseFile();
+	VideoMenu->Enable(MainWin_OpenVideo, true);
+	VideoMenu->Enable(MainWin_CloseVideo, false);
+}
+
+void					MainWindow::OnSeekVideo(wxCommandEvent &event)
+{
+  //  WiredVideoObject->SetSeek(VideoMenu->IsChecked(MainWin_SeekVideo));
 }
 
 void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
@@ -1612,6 +1628,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
   EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)
   EVT_MENU(MainWin_CloseVideo, MainWindow::OnCloseVideo)
+  EVT_MENU(MainWin_SeekVideo, MainWindow::OnSeekVideo)
   //EVT_IDLE(MainWindow::OnIdle)
   //EVT_TEXT_MAXLEN(101010, MainWindow::OnSetPosition)
   //EVT_PLAYPOSITION(313131, MainWindow::OnSetPosition)
