@@ -98,6 +98,8 @@ void					*Sequencer::Entry()
       /* - Traitement des messages MIDI recus */
       MidiMutex.Lock();
       SeqMutex.Lock();
+      if (TestDestroy() == true)
+        break;
       for (MidiMsg = MidiEvents.begin(); MidiMsg != MidiEvents.end(); MidiMsg++)
 	{
 	  if (((*MidiMsg)->Msg[0] == M_START) || ((*MidiMsg)->Msg[0] == M_CONT))
@@ -261,14 +263,17 @@ void					*Sequencer::Entry()
 	  memset(buf2[1], 0, Audio->SamplesPerBuffer * sizeof(float));
 	  for (Plug = (*RacksTrack)->Racks.begin(); Plug != (*RacksTrack)->Racks.end(); Plug++)
 	    {
-	      //  printf("[SEQ] PROCESS 1: %f\n",  Audio->GetTime());
-	      (*Plug)->Process(buf1, buf2, delta);
-	      //printf("[SEQ] PROCESS 2: %f\n",  Audio->GetTime());	    
-	      buf = buf1;
-	      buf1 = buf2;	      
-	      buf2 = buf;
-	      memset(buf2[0], 0, Audio->SamplesPerBuffer * sizeof(float));
-	      memset(buf2[1], 0, Audio->SamplesPerBuffer * sizeof(float));
+            if ((*Plug))
+            {
+    	      //  printf("[SEQ] PROCESS 1: %f\n",  Audio->GetTime());
+    	      (*Plug)->Process(buf1, buf2, delta);
+    	      //printf("[SEQ] PROCESS 2: %f\n",  Audio->GetTime());	    
+    	      buf = buf1;
+    	      buf1 = buf2;	      
+    	      buf2 = buf;
+    	      memset(buf2[0], 0, Audio->SamplesPerBuffer * sizeof(float));
+    	      memset(buf2[1], 0, Audio->SamplesPerBuffer * sizeof(float));
+            }
 	    }
 	  /*
 	    for (int cpt = 0; cpt < Audio->SamplesPerBuffer; cpt++)
