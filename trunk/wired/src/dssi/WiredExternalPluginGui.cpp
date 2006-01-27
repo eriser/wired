@@ -101,9 +101,13 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   wxImage *tr_bg = NULL;
   int		width;
   int		interspace;
-
-  width = (_GuiControls.size() / 5 + (_GuiControls.size() % 5) / 4 + 1) * 200;
-  interspace = (width - 73 - 21) / _GuiControls.size();
+  unsigned int NbCtrls = _GuiControls.size();
+  
+  if (NbCtrls == 0)
+    NbCtrls = 1;
+  width = (NbCtrls / 5 + (NbCtrls % 5) / 4 + 1) * 200;
+  interspace = (width - 73 - 21) / NbCtrls;
+  rack->SetSize(wxSize(width, 100));
 
   // gruik  
   if (_GuiControls.size() <= 3)
