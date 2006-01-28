@@ -7,7 +7,6 @@
 
 #include "Plugin.h"
 #include "FaderCtrl.h"
-#include "HintedFader.h"
 #include "DownButton.h"
 #include "midi.h"
 
@@ -124,13 +123,14 @@ CrusherPlugin::CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
-  BitsFader = new HintedFader(this, Crusher_Bits, this, img_bg, img_fg, 0, 76, 16,
-			      wxPoint(83, 12), wxSize(22,78), GetPosition() +
-			      wxPoint(83, 35));
-  FreqFader = new HintedFader(this, Crusher_Freq, this, img_bg, img_fg, 0, 44100, 4000,
-			      wxPoint(140, 12), wxSize(22,78), GetPosition() + 
-			      wxPoint(140, 35));
-  Connect(Crusher_Bypass, wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction) 
+  BitsFader = new FaderCtrl(this, Crusher_Bits, img_bg, img_fg, 0, 76, 16,
+			    wxPoint(83, 12), wxSize(22,78), 
+			    this, GetPosition() + wxPoint(83, 35));
+  FreqFader = new FaderCtrl(this, Crusher_Freq, img_bg, img_fg, 0, 44100, 4000,
+			    wxPoint(140, 12), wxSize(22,78), 
+			    this, GetPosition() + wxPoint(140, 35));
+  Connect(Crusher_Bypass, wxEVT_RIGHT_DOWN, 
+	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&CrusherPlugin::OnBypassController);
   SetBackgroundColour(wxColour(237, 237, 237));
 }
