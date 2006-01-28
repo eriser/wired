@@ -32,20 +32,25 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   BypassBtn = new DownButton(this, Delay_Bypass, wxPoint(21, 58), 
 			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), bypass_off, bypass_on);
 
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(), wxBITMAP_TYPE_BMP); 
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG );
-  
-  TimeFader = new HintedFader(this, Delay_Time, this, img_bg, img_fg, 0, MAX_TIME, 1000,
-			      wxPoint(73, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
-			      GetPosition() + wxPoint(58, 25));
-  FeedbackFader = new HintedFader(this, Delay_Feedback, this, img_bg, img_fg, 0, 100, 50,
-				  wxPoint(110, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
-				  GetPosition() + wxPoint(95, 35));
-  DryWetFader = new HintedFader(this, Delay_DryWet, this, img_bg, img_fg, 0, 100, 50,
-				wxPoint(149, 11), wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
-				GetPosition() + wxPoint(135, 35));
-  
+  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(),
+		     wxBITMAP_TYPE_BMP); 
+  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(),
+		       wxBITMAP_TYPE_PNG);
+  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), 
+		       wxBITMAP_TYPE_PNG );
+  TimeFader = new FaderCtrl(this, Delay_Time, img_bg, img_fg, 0, MAX_TIME, 
+			    1000, wxPoint(73, 11), wxSize(img_bg->GetWidth(), 
+							  img_bg->GetHeight()),
+			    this, GetPosition() + wxPoint(58, 25));
+  FeedbackFader = new FaderCtrl(this, Delay_Feedback, img_bg, img_fg, 0, 100, 
+				50, wxPoint(110, 11),
+				wxSize(img_bg->GetWidth(), 
+				       img_bg->GetHeight()),
+				this, GetPosition() + wxPoint(95, 35));
+  DryWetFader = new FaderCtrl(this, Delay_DryWet, img_bg, img_fg, 0, 100, 50,
+			      wxPoint(149, 11), 
+			      wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
+			      this, GetPosition() + wxPoint(135, 35));
   SetBackgroundColour(wxColour(237, 237, 237));
 
   // Midi automation defaults

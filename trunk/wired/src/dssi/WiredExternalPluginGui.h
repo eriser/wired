@@ -9,8 +9,7 @@
 #include "Plugin.h"
 #include "WiredExternalPluginLADSPA.h"
 #include "FaderCtrl.h"
-#include "HintedFader.h"
-#include "HintedKnob.h"
+#include "KnobCtrl.h"
 #include "DownButton.h"
 
 #define IMG_DL_SINGLE_BG	"dssi/dssi_single_bg.png"
@@ -29,13 +28,13 @@
 #define IMG_BYPASS_ON		"dssi/bypass_button_down.png"
 #define IMG_BYPASS_OFF		"dssi/bypass_button_up.png"
 
-class				WiredDSSIGui : public WiredLADSPAInstance
+class		WiredDSSIGui : public WiredLADSPAInstance
 {
  public:
-	WiredDSSIGui(PlugStartInfo &startinfo);
-	WiredDSSIGui(const WiredDSSIGui& copy) {*this = copy;}
-	WiredDSSIGui operator=(const WiredDSSIGui& right);
-	~WiredDSSIGui();
+  WiredDSSIGui(PlugStartInfo &startinfo);
+  WiredDSSIGui(const WiredDSSIGui& copy) {*this = copy;}
+  WiredDSSIGui operator=(const WiredDSSIGui& right);
+  ~WiredDSSIGui();
   
   void		DestroyView();
   wxWindow	*CreateView(wxWindow *rack, wxPoint &pos, wxSize &size);
@@ -46,7 +45,7 @@ class				WiredDSSIGui : public WiredLADSPAInstance
   void		OnFaderMove(wxScrollEvent &WXUNUSED(e));
   void		OnBypass(wxCommandEvent &e);
   void		OnBypassController(wxMouseEvent &event);
-
+  
  protected:
   bool		Bypass;
   wxWindow	**Faders;

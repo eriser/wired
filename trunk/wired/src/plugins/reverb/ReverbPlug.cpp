@@ -2,7 +2,6 @@
 // Under the GNU General Public License
 
 #include "ReverbPlug.h"
-#include "HintedFader.h"
 #include "midi.h"
 
 static PlugInitInfo info;
@@ -28,61 +27,98 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 {
   Init();
 
-  wxImage *tr_bg = new wxImage(string(GetDataDir() + string(IMG_RV_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *tr_bg = 
+    new wxImage(string(GetDataDir() + string(IMG_RV_BG)).c_str(), 
+		wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);  
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_RV_BMP)).c_str(), wxBITMAP_TYPE_BMP);
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
-  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), wxBITMAP_TYPE_PNG);
-  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), wxBITMAP_TYPE_PNG);
-  BypassBtn = new DownButton(this, Reverb_Bypass, wxPoint(21, 58), 
-			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), bypass_off, bypass_on);
+  bmp = new wxBitmap(string(GetDataDir() + string(IMG_RV_BMP)).c_str(), 
+		     wxBITMAP_TYPE_BMP);
+  img_bg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_BG)).c_str(), 
+		       wxBITMAP_TYPE_PNG);
+  img_fg = new wxImage(string(GetDataDir() + string(IMG_RV_FADER_FG)).c_str(), 
+		       wxBITMAP_TYPE_PNG);
+  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(),
+			  wxBITMAP_TYPE_PNG);
+  bypass_off = 
+    new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
+		wxBITMAP_TYPE_PNG);
+  BypassBtn = 
+    new DownButton(this, Reverb_Bypass, wxPoint(21, 58), 
+		   wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), 
+		   bypass_off, bypass_on);
   
   //reverb type selector button
 
   wxImage** imgs;
 
   imgs = new wxImage*[3];
-  imgs[0] = new wxImage(_T(string(GetDataDir() + string(IMG_RV_KNOB_PRC)).c_str()));
-  imgs[1] = new wxImage(_T(string(GetDataDir() + string(IMG_RV_KNOB_JC)).c_str()));
-  imgs[2] = new wxImage(_T(string(GetDataDir() + string(IMG_RV_KNOB_N)).c_str()));
+  imgs[0] = 
+    new wxImage(_T(string(GetDataDir() + string(IMG_RV_KNOB_PRC)).c_str()));
+  imgs[1] = 
+    new wxImage(_T(string(GetDataDir() + string(IMG_RV_KNOB_JC)).c_str()));
+  imgs[2] = 
+    new wxImage(_T(string(GetDataDir() + string(IMG_RV_KNOB_N)).c_str()));
 
-  a_rev_on = new wxImage(string(GetDataDir() + string(IMG_RV_PRC)).c_str(), wxBITMAP_TYPE_PNG);
-  a_rev_off = new wxImage(string(GetDataDir() + string(IMG_RV_PRC_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  AReverbBtn = new DownButton(this, Reverb_A, wxPoint(68, 45),
-			      wxSize(a_rev_off->GetWidth(), a_rev_off->GetHeight()), a_rev_off, a_rev_on);
+  a_rev_on = new wxImage(string(GetDataDir() + string(IMG_RV_PRC)).c_str(), 
+			 wxBITMAP_TYPE_PNG);
+  a_rev_off = new wxImage(string(GetDataDir() + string(IMG_RV_PRC_UP)).c_str(),
+			  wxBITMAP_TYPE_PNG);
+  AReverbBtn = 
+    new DownButton(this, Reverb_A, wxPoint(68, 45),
+		   wxSize(a_rev_off->GetWidth(), a_rev_off->GetHeight()), 
+		   a_rev_off, a_rev_on);
 
-  b_rev_on = new wxImage(string(GetDataDir() + string(IMG_RV_JC)).c_str(), wxBITMAP_TYPE_PNG);
-  b_rev_off = new wxImage(string(GetDataDir() + string(IMG_RV_JC_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  BReverbBtn = new DownButton(this, Reverb_B, wxPoint(85, 47),
-			      wxSize(b_rev_off->GetWidth(), b_rev_off->GetHeight()), b_rev_off, b_rev_on);
+  b_rev_on = new wxImage(string(GetDataDir() + string(IMG_RV_JC)).c_str(), 
+			 wxBITMAP_TYPE_PNG);
+  b_rev_off = new wxImage(string(GetDataDir() + string(IMG_RV_JC_UP)).c_str(),
+			  wxBITMAP_TYPE_PNG);
+  BReverbBtn = 
+    new DownButton(this, Reverb_B, wxPoint(85, 47),
+		   wxSize(b_rev_off->GetWidth(), b_rev_off->GetHeight()), 
+		   b_rev_off, b_rev_on);
 
-  c_rev_on = new wxImage(string(GetDataDir() + string(IMG_RV_N)).c_str(), wxBITMAP_TYPE_PNG);
-  c_rev_off = new wxImage(string(GetDataDir() + string(IMG_RV_N_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  CReverbBtn = new DownButton(this, Reverb_C, wxPoint(102, 45),
-			      wxSize(c_rev_off->GetWidth(), c_rev_off->GetHeight()), c_rev_off, c_rev_on);
-
+  c_rev_on = new wxImage(string(GetDataDir() + string(IMG_RV_N)).c_str(),
+			 wxBITMAP_TYPE_PNG);
+  c_rev_off = new wxImage(string(GetDataDir() + string(IMG_RV_N_UP)).c_str(),
+			  wxBITMAP_TYPE_PNG);
+  CReverbBtn = 
+    new DownButton(this, Reverb_C, wxPoint(102, 45),
+		   wxSize(c_rev_off->GetWidth(), c_rev_off->GetHeight()), 
+		   c_rev_off, c_rev_on);
   AReverbBtn->SetOn();
-  SelrevKnob = new StaticPosKnob(this, Reverb_Select, 3, imgs, 15, 0, 2, 0, wxPoint(70, 7), wxDefaultSize);
+  SelrevKnob = new StaticPosKnob(this, Reverb_Select, 3, imgs, 15, 0, 2, 0, 
+				 wxPoint(70, 7), wxDefaultSize);
   
   // bypass button's stuff
 
-  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
-  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
+			  wxBITMAP_TYPE_PNG);
+  liquid_off = 
+    new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), 
+		wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
   // Knobs' background
 
-  DecayKnob = new HintedFader(this, Reverb_Decay, this, img_bg, img_fg, 0, 30, 3, wxPoint(118, 12), 
-			      wxSize(img_bg->GetWidth() - 3, img_bg->GetHeight()), GetPosition() + wxPoint(100,25));
-  MixKnob = new HintedFader(this, Reverb_Mix, this, img_bg, img_fg, 0, 100, 50, wxPoint(153, 12),
-			    wxSize(img_bg->GetWidth() - 3, img_bg->GetHeight()), GetPosition() + wxPoint(135,25));
+  DecayKnob = 
+    new FaderCtrl(this, Reverb_Decay, img_bg, img_fg, 0, 30, 3, 
+		  wxPoint(118, 12), 
+		  wxSize(img_bg->GetWidth() - 3, img_bg->GetHeight()), 
+		  this, GetPosition() + wxPoint(100,25));
+  MixKnob = 
+    new FaderCtrl(this, Reverb_Mix, img_bg, img_fg, 0, 100, 50, 
+		  wxPoint(153, 12), 
+		  wxSize(img_bg->GetWidth() - 3, img_bg->GetHeight()), 
+		  this, GetPosition() + wxPoint(135,25));
 
-  Connect(Reverb_Bypass, wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction) 
+  Connect(Reverb_Bypass, wxEVT_RIGHT_DOWN, 
+	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&ReverbPlugin::OnBypassController);
-  Connect(Reverb_Decay, wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction) 
+  Connect(Reverb_Decay, wxEVT_RIGHT_DOWN, 
+	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxMouseEventFunction)&ReverbPlugin::OnDecay);
-  Connect(Reverb_Mix, wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction)
+  Connect(Reverb_Mix, wxEVT_RIGHT_DOWN,
+	  (wxObjectEventFunction)(wxEventFunction)
 	  (wxMouseEventFunction)&ReverbPlugin::OnMix);
   SetBackgroundColour(wxColour(237, 237, 237));
 }
@@ -126,52 +162,52 @@ long ReverbPlugin::Save(int fd)
 
 void ReverbPlugin::Load(WiredPluginData& Datas)
 {
-	char		*buffer;
+  char		*buffer;
 	
-	ReverbMutex.Lock();
-	buffer = strdup(Datas.LoadValue(std::string(STR_REVERB_SELECTED)));
-	if (buffer != NULL)
-	{
-		rev_sel = atoi(buffer);
-		SelrevKnob->SetValue(rev_sel);
-	}
-	free(buffer);
-	buffer = strdup(Datas.LoadValue(std::string(STR_MIX_LEVEL)));
-	if (buffer != NULL)
-	{
-		float Mix = strtof(buffer, NULL);
-		MixKnob->SetValue((int)(Mix * EFFECT_MIX));
-		PRCreverb_stk.setEffectMix(Mix);
-		JCreverb_stk.setEffectMix(Mix);
-		Nreverb_stk.setEffectMix(Mix);
-	}
-	free(buffer);
-	buffer = strdup(Datas.LoadValue(std::string(STR_DECAY)));
-	if (buffer != NULL)
-	{
-		float Decay = strtof(buffer, NULL);
-		DecayKnob->SetValue((int)Decay);
-		PRCreverb_stk.setT60(Decay);
-		JCreverb_stk.setT60(Decay);
-		Nreverb_stk.setT60(Decay);
-	}
-	free(buffer);
-	ReverbMutex.Unlock();
+  ReverbMutex.Lock();
+  buffer = strdup(Datas.LoadValue(std::string(STR_REVERB_SELECTED)));
+  if (buffer != NULL)
+    {
+      rev_sel = atoi(buffer);
+      SelrevKnob->SetValue(rev_sel);
+    }
+  free(buffer);
+  buffer = strdup(Datas.LoadValue(std::string(STR_MIX_LEVEL)));
+  if (buffer != NULL)
+    {
+      float Mix = strtof(buffer, NULL);
+      MixKnob->SetValue((int)(Mix * EFFECT_MIX));
+      PRCreverb_stk.setEffectMix(Mix);
+      JCreverb_stk.setEffectMix(Mix);
+      Nreverb_stk.setEffectMix(Mix);
+    }
+  free(buffer);
+  buffer = strdup(Datas.LoadValue(std::string(STR_DECAY)));
+  if (buffer != NULL)
+    {
+      float Decay = strtof(buffer, NULL);
+      DecayKnob->SetValue((int)Decay);
+      PRCreverb_stk.setT60(Decay);
+      JCreverb_stk.setT60(Decay);
+      Nreverb_stk.setT60(Decay);
+    }
+  free(buffer);
+  ReverbMutex.Unlock();
 }
 
 void ReverbPlugin::Save(WiredPluginData& Datas)
 {
-	std::ostringstream 	oss;
-
-	oss << rev_sel;
-	Datas.SaveValue(std::string(STR_REVERB_SELECTED), std::string(oss.str()));
-	oss.seekp(ios_base::beg);
-	oss << (MixKnob->GetValue() / EFFECT_MIX);
-	Datas.SaveValue(std::string(STR_MIX_LEVEL), std::string(oss.str()));
-	oss.seekp(ios_base::beg);
-	oss << DecayKnob->GetValue();
-	Datas.SaveValue(std::string(STR_DECAY), std::string(oss.str()));
-	oss.seekp(ios_base::beg);
+  std::ostringstream 	oss;
+  
+  oss << rev_sel;
+  Datas.SaveValue(std::string(STR_REVERB_SELECTED), std::string(oss.str()));
+  oss.seekp(ios_base::beg);
+  oss << (MixKnob->GetValue() / EFFECT_MIX);
+  Datas.SaveValue(std::string(STR_MIX_LEVEL), std::string(oss.str()));
+  oss.seekp(ios_base::beg);
+  oss << DecayKnob->GetValue();
+  Datas.SaveValue(std::string(STR_DECAY), std::string(oss.str()));
+  oss.seekp(ios_base::beg);
 }
 
 void ReverbPlugin::Init()
@@ -188,7 +224,7 @@ void ReverbPlugin::Init()
 void ReverbPlugin::Process(float **input, float **output, long sample_length)
 {
   int	i;
-
+  
   if (!Bypass)
     switch (rev_sel)
       {
@@ -234,16 +270,16 @@ void ReverbPlugin::OnBypass(wxCommandEvent &e)
 void ReverbPlugin::OnBypassController(wxMouseEvent &event)
 {
   int *midi_data;
-
+  
   midi_data = new int[3];
   if (ShowMidiController(&midi_data))
     {
       ReverbMutex.Lock();
-
+      
       CheckExistingControllerData(midi_data);      
       MidiBypass[0] = midi_data[0];
       MidiBypass[1] = midi_data[1];
-
+      
       ReverbMutex.Unlock();
     }
   delete midi_data;
@@ -254,7 +290,7 @@ ReverbPlugin::~ReverbPlugin()
 {
   delete img_bg;
   delete img_fg;
-
+  
   delete bypass_on;
   delete bypass_off;
   delete liquid_on;
@@ -280,7 +316,7 @@ wxBitmap *ReverbPlugin::GetBitmap()
 void ReverbPlugin::OnSelect(wxCommandEvent &e)
 {
   int i;
-
+  
   i = SelrevKnob->GetValue();
   cout << "rev no: " << SelrevKnob->GetValue() << endl;
   
@@ -314,7 +350,6 @@ void ReverbPlugin::OnASelect(wxCommandEvent &e)
   //cout << "testA" << endl;
   SelrevKnob->SetValue(0);
   AReverbBtn->SetOn();
-  
 }
 
 void ReverbPlugin::OnBSelect(wxCommandEvent &e)
@@ -365,8 +400,8 @@ void ReverbPlugin::OnPaint(wxPaintEvent &event)
   wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
   while (upd)
     {    
-      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), 
-	      wxCOPY, FALSE);      
+      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, 
+	      upd.GetX(), upd.GetY(), wxCOPY, FALSE);      
       upd++;
     }
   Plugin::OnPaintEvent(event);
@@ -376,7 +411,7 @@ void ReverbPlugin::OnPaint(wxPaintEvent &event)
 
 extern "C"
 {
-
+  
   PlugInitInfo init()
   {  
     WIRED_MAKE_STR(info.UniqueId, "REVERB");
@@ -392,12 +427,12 @@ extern "C"
     Plugin *p = new ReverbPlugin(*startinfo, &info);
     return (p);
   }
-
+  
   void destroy(Plugin *p)
   {
     delete p;
   }
-
+  
 }
 
 

@@ -9,7 +9,6 @@
 
 #include "Plugin.h"
 #include "FaderCtrl.h"
-#include "HintedFader.h"
 #include "DownButton.h"
 #include "StaticPosKnob.h"
 

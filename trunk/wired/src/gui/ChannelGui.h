@@ -6,6 +6,7 @@
 
 #include <wx/wx.h>
 #include <vector>
+#include "FaderCtrl.h"
 
 #define LABEL_MAXCHAR			(20)
 #define BG				"ihm/mixer/mixer_bg.png"
@@ -43,8 +44,8 @@ class					ChannelGui : public wxPanel
   void					UpdateScreen();
   
   SeqTrack				*ConnectedSeqTrack;
-  HintedFader				*FaderLeft;
-  HintedFader				*FaderRight;
+  FaderCtrl				*FaderLeft;
+  FaderCtrl				*FaderRight;
   VUMCtrl				*VumLeft;
   VUMCtrl				*VumRight;
   Channel				*Chan;

@@ -10,7 +10,6 @@
 #include "FaderCtrl.h"
 #include "StaticLabel.h"
 #include "VUMCtrl.h"
-#include "HintedFader.h"
 #include "../engine/Settings.h"
 #include "../mixer/Channel.h"
 #include "../mixer/Mixer.h"
@@ -32,22 +31,18 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
   ImgFaderFg = img_fg;
   if (Chan->Stereo)
     {
-      FaderLeft  = new HintedFader(this, FaderLeftId, this, 
-				   ImgFaderBg, ImgFaderFg,
-				   0, 127, 0, 
-				   wxPoint(17, 10), wxDefaultSize, 
-				   GetPosition() + wxPoint(5,15));
+      FaderLeft  = new FaderCtrl(this, FaderLeftId, ImgFaderBg, ImgFaderFg,
+				   0, 127, 0,  wxPoint(17, 10), wxDefaultSize, 
+				   this, GetPosition() + wxPoint(5,15));
       //cout << ImgFaderBg->GetWidth() << " " << ImgFaderBg->GetHeight() << endl;
       wxImage *green = new wxImage(string(WiredSettings->DataDir + string(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
       wxImage *orange = new wxImage(string(WiredSettings->DataDir + string(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
       wxImage *red = new wxImage(string(WiredSettings->DataDir + string(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
       VumLeft  = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(8, 23), wxSize(4, 65), wxNO_BORDER);
       VumRight = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(60, 23), wxSize(4, 65), wxNO_BORDER);
-      FaderRight = new HintedFader(this, FaderRightId, this, 
-				   ImgFaderBg, ImgFaderFg, 
-				   0, 127, 0,
-				   wxPoint(69, 10), wxDefaultSize, 
-				   GetPosition() + wxPoint(75,15));
+      FaderRight = new FaderCtrl(this, FaderRightId, ImgFaderBg, ImgFaderFg, 
+				 0, 127, 0, wxPoint(69, 10), wxDefaultSize, 
+				 this, GetPosition() + wxPoint(75,15));
       /*VolumeLeft = new wxStaticText(this, -1, "100", wxPoint(5, 90));
       VolumeLeft->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));
       VolumeRight = new wxStaticText(this, -1, "100", wxPoint(75, 90));

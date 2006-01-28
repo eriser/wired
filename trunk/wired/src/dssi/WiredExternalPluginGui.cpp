@@ -111,46 +111,64 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 
   // gruik  
   if (_GuiControls.size() <= 3)
-    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_SINGLE_BG)).c_str(), wxBITMAP_TYPE_PNG);
+    tr_bg = 
+      new wxImage(string(GetDataDir() + string(IMG_DL_SINGLE_BG)).c_str(), 
+		  wxBITMAP_TYPE_PNG);
   else if (_GuiControls.size() < 9)
-    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(), wxBITMAP_TYPE_PNG);
+    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(),
+			wxBITMAP_TYPE_PNG);
   else
-    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(), wxBITMAP_TYPE_PNG); 
+    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(),
+			wxBITMAP_TYPE_PNG); 
   TpBmp = new wxBitmap(tr_bg);
 
-  img_fader_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  img_fader_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
-  img_knob_bg = new wxImage(string(GetDataDir() + string(IMG_DL_KNOB_FG)).c_str(), wxBITMAP_TYPE_PNG);
-  img_knob_fg = new wxImage(string(GetDataDir() + string(IMG_DL_KNOB_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  
+  img_fader_bg = 
+    new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), 
+		wxBITMAP_TYPE_PNG);
+  img_fader_fg = 
+    new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), 
+		wxBITMAP_TYPE_PNG);
+  img_knob_bg = 
+    new wxImage(string(GetDataDir() + string(IMG_DL_KNOB_FG)).c_str(), 
+		wxBITMAP_TYPE_PNG);
+  img_knob_fg = 
+    new wxImage(string(GetDataDir() + string(IMG_DL_KNOB_BG)).c_str(), 
+		wxBITMAP_TYPE_PNG);
   Faders = (wxWindow**) new void*[_GuiControls.size()];
 
-  for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
+  for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); 
+       iter++, i++)
     {
       //wxSize(img_fader_bg->GetWidth(), img_fader_bg->GetHeight());
       if (LADSPA_IS_HINT_LOGARITHMIC(iter->second.Descriptor.RangeHint.HintDescriptor))
 	{
 	  //cout << "LOG" << endl;
-	  Faders[i] = new HintedKnob(this, i + 1, this, img_knob_bg, img_knob_fg, 0, 100, 50, 10,
-				     wxPoint(73 + i * interspace + interspace / 2 - 5, 11),
-				     wxSize(img_knob_bg->GetWidth(), img_knob_bg->GetHeight()), GetPosition() + 
-				     wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
+	  Faders[i] = new KnobCtrl(this, i + 1, img_knob_bg, img_knob_fg, 
+				   0, 100, 50, 10,
+				   wxPoint(73 + i * interspace + interspace / 2 - 5, 11),
+				   wxSize(img_knob_bg->GetWidth(), img_knob_bg->GetHeight()), this, GetPosition() + 
+				   wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
 	  //cout << "knob instancie" << endl;
 	}
       else
 	{
-	  Faders[i] = new HintedFader(this, i + 1, this, img_fader_bg, img_fader_fg, iter->second.Data.LowerBound, 
-				      iter->second.Data.UpperBound, *(iter->second.Data.Data),
-				      wxPoint(73 + i * interspace + interspace / 2 - 5, 11),
-				      wxSize(img_fader_bg->GetWidth(), img_fader_bg->GetHeight()), GetPosition() + 
-				      wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
+	  Faders[i] = new FaderCtrl(this, i + 1, 
+				    img_fader_bg, img_fader_fg, 
+				    iter->second.Data.LowerBound, 
+				    iter->second.Data.UpperBound, 
+				    *(iter->second.Data.Data),
+				    wxPoint(73 + i * interspace + interspace / 2 - 5, 11),
+				    wxSize(img_fader_bg->GetWidth(), 
+					   img_fader_bg->GetHeight()), this,
+				    GetPosition() + 
+				    wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
 	  Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
 		  wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
 	  FaderIndex[i + 1] = iter->first;
 	  cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
 	     << iter->second.Data.UpperBound << endl;
 	  //((HintedFader*)Faders[i])->SetValue((int)(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100));
-	  ((HintedFader*)Faders[i])->SetValue((int)(*(iter->second.Data.Data)));
+	  ((FaderCtrl*)Faders[i])->SetValue((int)(*(iter->second.Data.Data)));
 	  // gruik bis
 	  if (i == 13)
 	    break;
@@ -200,7 +218,7 @@ void		WiredDSSIGui::OnFaderMove(wxScrollEvent &e)
 	float range = max - min;
 
 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
-	*_GuiControls[FaderIndex[id]].Data.Data = ((HintedFader*)Faders[id - 1])->GetValue() / 100.f * range + min;	  
+	*_GuiControls[FaderIndex[id]].Data.Data = ((FaderCtrl*)Faders[id - 1])->GetValue() / 100.f * range + min;	  
 	//cout << (float)_GuiControls[FaderIndex[id]].Data.LowerBound << " < " <<  
 	//Faders[id - 1]->GetValue() << " < " << (float)_GuiControls[FaderIndex[id]].Data.UpperBound << endl;
 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
@@ -238,7 +256,8 @@ void		WiredDSSIGui::OnPaint(wxPaintEvent &event)
   wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
   while (upd)
     {    
-      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), wxCOPY, FALSE);      
+      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), 
+	      &memDC, upd.GetX(), upd.GetY(), wxCOPY, FALSE);      
       upd++;
     }
   width = (_GuiControls.size() / 5 + (_GuiControls.size() % 5) / 4 + 1) * 200;
