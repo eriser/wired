@@ -104,18 +104,18 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 			  wxSize(2 * F_WIDTH / 3 - 8, F_HEIGHT - 110), 
 			  wxSUNKEN_BORDER | wxLC_REPORT | 
 			  wxLC_SINGLE_SEL);
-  files->InsertColumn(0, "Name");
+  files->InsertColumn(0, _("Name"));
   files->SetColumnWidth(0, 180);
-  files->InsertColumn(1, "Size", wxLIST_FORMAT_RIGHT);
+  files->InsertColumn(1, _("Size"), wxLIST_FORMAT_RIGHT);
   files->SetColumnWidth(1, 58);
   if (!akai)
     {
-      files->InsertColumn(2, "Modified");
+      files->InsertColumn(2, _("Modified"));
       files->SetColumnWidth(2, 180);
     }
   else
   {
-    files->InsertColumn(2, "Type");
+    files->InsertColumn(2, _("Type"));
     files->SetColumnWidth(2, 180);
   }
   wxImageList *images = new wxImageList(16, 16, TRUE);
@@ -130,7 +130,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
       
   if (!akai)
   {
-  	fntext = new wxStaticText(this, -1, _T("Filename"), 
+  	fntext = new wxStaticText(this, -1, _T(_("Filename")), 
 		  wxPoint(10, F_HEIGHT - 58), wxSize(-1, -1), wxALIGN_LEFT);
   	filename = new wxTextCtrl(this, FILENAME_ID, _T(""), 
 		            wxPoint(100, F_HEIGHT - 60), 
@@ -139,7 +139,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   }
   else
   {
-  	fntext = new wxStaticText(this, -1, _T("Akai device"), 
+  	fntext = new wxStaticText(this, -1, _T(_("Akai device")), 
 		  wxPoint(10, F_HEIGHT - 58), wxSize(-1, -1), wxALIGN_LEFT);
   	filename = new wxTextCtrl(this, FILENAME_ID, _T("/dev/cdrom"), 
 		            wxPoint(100, F_HEIGHT - 60), 
@@ -148,42 +148,42 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   }
   if (!akai)
   {
-    typtext = new wxStaticText(this, -1, _T("Type"),
+    typtext = new wxStaticText(this, -1, _T(_("Type")),
   		    wxPoint(10, F_HEIGHT - 30), wxSize(-1, -1), wxALIGN_LEFT);
     type = new wxComboBox(this, TYPE_ID, _T(" "), wxPoint(100, F_HEIGHT - 30), 
   		  wxSize(320, -1), 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);  
   }
   if (!save)
  {
-	 preview = new wxButton(this, PREVIEW_ID, _T("Preview"), 
+	 preview = new wxButton(this, PREVIEW_ID, _T(_("Preview")), 
 		  	 wxPoint(F_WIDTH - 168, F_HEIGHT - 60),
 			 wxSize(-1, -1));
  }
  if (!save)
  {
- 	btopen = new wxButton(this, OPEN_ID, _T("Open"), 
+ 	btopen = new wxButton(this, OPEN_ID, _T(_("Open")), 
 		  	 wxPoint(F_WIDTH - 84, F_HEIGHT - 60),
 			 wxSize(-1, -1));
  }
  else
 {
- 	btopen = new wxButton(this, OPEN_ID, _T("Save"), 
+ 	btopen = new wxButton(this, OPEN_ID, _T(_("Save")), 
 		  	 wxPoint(F_WIDTH - 84, F_HEIGHT - 60),
 			 wxSize(-1, -1));
 }
-  	cancel = new wxButton(this, CANCEL_ID, _T("Cancel"), 
+  	cancel = new wxButton(this, CANCEL_ID, _T(_("Cancel")), 
 		  	 wxPoint(F_WIDTH - 84, F_HEIGHT - 30),
 			 wxSize(-1, -1));
   if (!akai)
   {
-    favtext = new wxStaticText(this, -1, _T("Favorites"),
+    favtext = new wxStaticText(this, -1, _T(_("Favorites")),
 		  wxPoint(10, 10), wxSize(-1, -1), wxALIGN_LEFT);
     favorites = new wxComboBox(this, FAVORITES_ID, _T(" "), 
 		  wxPoint(70, 4), wxSize(160, -1), 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
     favdel = new wxBitmapButton(this, DELFAVORITES_ID, 
 		  wxBitmap(delete_xpm).ConvertToImage(),
 		  wxPoint(235, 0));
-    mrutext = new wxStaticText(this, -1, _T("Recents"),
+    mrutext = new wxStaticText(this, -1, _T(_("Recents")),
 		  wxPoint(330, 10), wxSize(-1, -1), wxALIGN_LEFT);
     mru = new wxComboBox(this, MRU_ID, _T(" "), 
 		  wxPoint(390, 4), wxSize(160, -1), 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
@@ -315,7 +315,7 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 
   if (allext != NULL)
   {
-	  string desc = "All supported soundfiles (*.";
+	  string desc = _("All supported soundfiles (*.");
 	  for (int i = 0; (*allext)[i]; i++)
 		  if ((*allext)[i] != ';')
 			  desc += (*allext)[i];
@@ -328,7 +328,7 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
   }
   else
 	  type->Delete(0);
-  type->Append(_T("All files (*.*)"), strdup("*"));
+  type->Append(_T(_("All files (*.*)")), strdup("*"));
   type->SetSelection(0);
 }
 
@@ -484,7 +484,7 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
   	for (int part = 1; (akaiSelectPart(akaifd, part) > 0) && (part < 27); part++)
   	{
 		  char a = 64 + part;
-	  	string partition = "Partition ";
+	  	string partition = _("Partition ");
 		partition += (char)a;
 		if (akaiReadDir(akaifd, "/") != NULL)
 	   	  folder->AppendItem(root, partition.c_str(), 0, -1, new TreeItemData(partition.c_str()));
@@ -492,7 +492,7 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
   }
   else
   {
-    if (tid->GetPath().substr(0, 10) == "Partition ")
+    if (tid->GetPath().substr(0, 10) == _("Partition "))
     {
 	string path = tid->GetPath().substr(10, tid->GetPath().size() - 10);
 	unsigned int pos = path.find("/", 0);
@@ -530,7 +530,7 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
 void FileLoader::ListAkaiVolume(string p)
 {
     files->DeleteAllItems();
-    if (p.substr(0, 10) == "Partition ")
+    if (p.substr(0, 10) == _("Partition "))
     {
 	string path = p.substr(10, p.size() - 10);
 	unsigned int pos = path.find("/", 0);
@@ -823,7 +823,7 @@ void FileLoader::PopupMenuFolder(wxTreeEvent &e)
 		TreeItemData *path = (TreeItemData *)folder->GetItemData(pm_selitem);
 		wxString str = path->GetPath().c_str();
 		wxMenu *menu = new wxMenu(str);
-		menu->Append(ADDTOFAVORITES_ID, "Add to favorites");
+		menu->Append(ADDTOFAVORITES_ID, _("Add to favorites"));
 		folder->PopupMenu(menu, e.GetPoint());
 		delete menu;
 	}
@@ -892,7 +892,7 @@ void FileLoader::OnActivateFile(wxListEvent &e)
 	 	if (fn.size() == 0)
 		{	
 		  wxMessageDialog *err = new wxMessageDialog(this, 
-				"Please enter a name", "wired",
+				_("Please enter a name"), "wired",
 				wxOK | wxICON_ERROR);
 		  err->ShowModal();
 		  return;
@@ -906,7 +906,7 @@ void FileLoader::OnActivateFile(wxListEvent &e)
 		if (wxFile::Exists(fn.c_str()))
 		{
 			wxMessageDialog *err = new wxMessageDialog(this,
-				"File already exists, replace ?", "wired",
+				_("File already exists, replace ?"), "wired",
 				wxYES_NO | wxICON_QUESTION);
 			if (err->ShowModal() == wxID_NO)
 				return;
@@ -962,7 +962,7 @@ void FileLoader::OnOpen(wxCommandEvent &e)
 		 	if (fn.size() == 0)
 			{	
 			  wxMessageDialog *err = new wxMessageDialog(this, 
-					"Please enter a name", "wired",
+					_("Please enter a name"), "wired",
 					wxOK | wxICON_ERROR);
 			  err->ShowModal();
 			  return;
@@ -976,7 +976,7 @@ void FileLoader::OnOpen(wxCommandEvent &e)
 			if (wxFile::Exists(fn.c_str()))
 			{
 				wxMessageDialog *err = new wxMessageDialog(this,
-					"File already exists, replace ?", "wired",
+					_("File already exists, replace ?"), "wired",
 					wxYES_NO | wxICON_QUESTION);
 				if (err->ShowModal() == wxID_NO)
 					return;
@@ -1017,7 +1017,7 @@ void FileLoader::OnEnterFilename(wxCommandEvent &e)
 		 	if (fn.size() == 0)
 			{	
 			  wxMessageDialog *err = new wxMessageDialog(this, 
-					"Please enter a name", "wired",
+					_("Please enter a name"), "wired",
 					wxOK | wxICON_ERROR);
 			  err->ShowModal();
 			  return;
@@ -1031,7 +1031,7 @@ void FileLoader::OnEnterFilename(wxCommandEvent &e)
 			if (wxFile::Exists(fn.c_str()))
 			{
 				wxMessageDialog *err = new wxMessageDialog(this,
-					"File already exists, replace ?", "wired",
+					_("File already exists, replace ?"), "wired",
 					wxYES_NO | wxICON_QUESTION);
 				if (err->ShowModal() == wxID_NO)
 					return;
@@ -1091,7 +1091,7 @@ void FileLoader::StopPlaying()
 {
   playing = false;
   if (!save)
-    preview->SetLabel("Preview");
+    preview->SetLabel(_("Preview"));
   files->SetFocus();
   //  wxCommandEvent event(wxEVT_FILELOADER_STOP, GetId());
   wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, FileLoader_Stop);  
@@ -1103,7 +1103,7 @@ void FileLoader::StartPlaying()
 {
   playing = true;
   if (!save)
-    preview->SetLabel("Stop");
+    preview->SetLabel(_("Stop"));
   files->SetFocus();
 
   wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, FileLoader_Start);  
