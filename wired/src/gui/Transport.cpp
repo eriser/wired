@@ -11,6 +11,7 @@
 #include "DownButton.h"
 #include "HoldButton.h"
 #include "StaticLabel.h"
+#include "VUMCtrl.h"
 #include "../engine/Settings.h"
 
 extern WiredSession				*CurrentSession;
@@ -106,7 +107,10 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   SigDenLabel->SetLabel("4");
 
   // Test VUMeter
-  //vum = new VUMCtrl(this, -1, 10, wxPoint(80,50), wxSize(50,80));
+  wxImage *green = new wxImage(string(WiredSettings->DataDir + string(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *orange = new wxImage(string(WiredSettings->DataDir + string(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *red = new wxImage(string(WiredSettings->DataDir + string(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
+  vum = new VUMCtrl((wxWindow*)this, -1, 100, green, orange, red, wxPoint(70,78), wxSize(195,5), wxNO_BORDER);
   
   PlayBtn->SetBackgroundColour(wxColour(204, 199, 219));
   StopBtn->SetBackgroundColour(wxColour(204, 199, 219));
@@ -180,7 +184,7 @@ void				Transport::OnPlay(wxCommandEvent &WXUNUSED(event))
 void				Transport::OnStop(wxCommandEvent &WXUNUSED(event))
 {
   Seq->Stop();
-  PlayBtn->SetOff();
+  PlayBtn->SetOff();;
   if (RecordBtn->GetOn())
     RecordBtn->SetOff();
 }

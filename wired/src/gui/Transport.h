@@ -28,6 +28,10 @@
 #define TRANSPORT_METRO_UP_IMG	"ihm/player/tr_window_metronom_up.png"
 #define TRANSPORT_METRO_DO_IMG	"ihm/player/tr_window_metronom_down.png"
 
+#define VUM_GREEN			"ihm/widgets/vum_green.png"
+#define VUM_ORANGE			"ihm/widgets/vum_orange.png"
+#define VUM_RED				"ihm/widgets/vum_red.png"
+
 class				MainWindow;
 class				DownButton;
 class				HoldButton;
@@ -72,7 +76,7 @@ class				Transport : public wxPanel
  protected:
   friend class			MainWindow;
 
-  VUMCtrl			*vum;
+  VUMCtrl				*vum;
   DownButton			*PlayBtn;
   DownButton			*StopBtn;
   DownButton			*RecordBtn;
