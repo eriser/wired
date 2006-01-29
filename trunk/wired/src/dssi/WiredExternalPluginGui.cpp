@@ -16,7 +16,7 @@ static PlugInitInfo info;
 
 BEGIN_EVENT_TABLE(WiredDSSIGui, wxWindow)
   EVT_BUTTON(4242, WiredDSSIGui::OnBypass)
-  //EVT_COMMAND_SCROLL(Delay_Time, DelayPlugin::OnDelayTime)
+ //  EVT_COMMAND_SCROLL(Delay_Time, DelayPlugin::OnDelayTime)
   EVT_COMMAND_SCROLL(1, WiredDSSIGui::OnFaderMove)
   EVT_COMMAND_SCROLL(2, WiredDSSIGui::OnFaderMove)
   EVT_COMMAND_SCROLL(3, WiredDSSIGui::OnFaderMove)
@@ -139,7 +139,6 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); 
        iter++, i++)
     {
-      //wxSize(img_fader_bg->GetWidth(), img_fader_bg->GetHeight());
       if (LADSPA_IS_HINT_LOGARITHMIC(iter->second.Descriptor.RangeHint.HintDescriptor))
 	{
 	  //cout << "LOG" << endl;
@@ -148,27 +147,29 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 				   wxPoint(73 + i * interspace + interspace / 2 - 5, 11),
 				   wxSize(img_knob_bg->GetWidth(), img_knob_bg->GetHeight()), this, GetPosition() + 
 				   wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
-	  //cout << "knob instancie" << endl;
 	}
       else
 	{
-	  Faders[i] = new FaderCtrl(this, i + 1, 
-				    img_fader_bg, img_fader_fg, 
-				    iter->second.Data.LowerBound, 
-				    iter->second.Data.UpperBound, 
-				    *(iter->second.Data.Data),
+	  // if LADSPA_IS_HINT_INTEGER
+	  cout << "LADSPA_IS_HINT_INTEGER" << iter->second.Descriptor.RangeHint.HintDescriptor  << endl;
+	  cout << "Dans WiredExternalPluginGui :" << LADSPA_IS_HINT_INTEGER(iter->second.Descriptor.RangeHint.HintDescriptor) << endl;
+	  Faders[i] = new FaderCtrl(this, i + 1, img_fader_bg, img_fader_fg,
+				    (float)iter->second.Data.LowerBound, 
+				    (float)iter->second.Data.UpperBound, 
+				    (float)*(iter->second.Data.Data), (bool)LADSPA_IS_HINT_INTEGER(iter->second.Descriptor.RangeHint.HintDescriptor), 
 				    wxPoint(73 + i * interspace + interspace / 2 - 5, 11),
 				    wxSize(img_fader_bg->GetWidth(), 
 					   img_fader_bg->GetHeight()), this,
 				    GetPosition() + 
 				    wxPoint(73 + i * interspace + interspace / 2 - 25, 35));
-	  Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
-		  wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
+	  //Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
+	  //  wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
 	  FaderIndex[i + 1] = iter->first;
 	  cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
 	     << iter->second.Data.UpperBound << endl;
 	  //((HintedFader*)Faders[i])->SetValue((int)(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100));
-	  ((FaderCtrl*)Faders[i])->SetValue((int)(*(iter->second.Data.Data)));
+	  //((FaderCtrl*)Faders[i])->SetValue((int)(*(iter->second.Data.Data)));
+	  ((FaderCtrl*)Faders[i])->SetValue((*(iter->second.Data.Data)));
 	  // gruik bis
 	  if (i == 13)
 	    break;
@@ -218,10 +219,12 @@ void		WiredDSSIGui::OnFaderMove(wxScrollEvent &e)
 	float range = max - min;
 
 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
-	*_GuiControls[FaderIndex[id]].Data.Data = ((FaderCtrl*)Faders[id - 1])->GetValue() / 100.f * range + min;	  
+	*_GuiControls[FaderIndex[id]].Data.Data = ((FaderCtrl*)Faders[id - 1])->GetValue() / 100.f * range + min;
+	cout << "Dans OnFaderMove : " << *_GuiControls[FaderIndex[id]].Data.Data << endl;
 	//cout << (float)_GuiControls[FaderIndex[id]].Data.LowerBound << " < " <<  
 	//Faders[id - 1]->GetValue() << " < " << (float)_GuiControls[FaderIndex[id]].Data.UpperBound << endl;
 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
+	//cout << "dans le callback" << endl;
       }
 }
 

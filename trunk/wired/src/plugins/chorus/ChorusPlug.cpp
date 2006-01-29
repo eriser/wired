@@ -59,13 +59,14 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 		wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
   BaseLengthFader = new FaderCtrl(this, Chorus_Feedback, img_bg, img_fg, 0, 
-				  10000, 5000, wxPoint(73, 11), wxSize(22,78), 
-				  this, GetPosition() + wxPoint(58, 25));
+				  true, 10000, 5000, wxPoint(73, 11), 
+				  wxSize(22,78), this, 
+				  GetPosition() + wxPoint(58, 25));
   ModDepthFader = new FaderCtrl(this, Chorus_Stage, img_bg, img_fg, 0, 10, 3, 
-				wxPoint(110, 11), wxSize(22,78), 
+				true, wxPoint(110, 11), wxSize(22,78), 
 				this, GetPosition() + wxPoint(95, 25));
   EffectMixFader = new FaderCtrl(this, Chorus_DryWet, img_bg, img_fg, 0, 100, 
-				 50, wxPoint(149, 11), wxSize(22, 78), 
+				 true, 50, wxPoint(149, 11), wxSize(22, 78), 
 				 this, GetPosition() + wxPoint(135, 25));  
   SetBackgroundColour(wxColour(237, 237, 237));
 }

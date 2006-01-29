@@ -33,7 +33,7 @@ END_EVENT_TABLE()
   
 FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id, 
 		     wxImage *img_bg, wxImage  *img_fg,
-		     long begin_value, long end_value, long val,
+		     float begin_value, float end_value, float val, bool is_int,
 		     const wxPoint &pos, const wxSize &size)
   : wxWindow(parent, id, pos, 
 	     wxSize(img_fg->GetWidth(), img_bg->GetHeight())),
@@ -45,12 +45,13 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
   tmp_fg->SetMask(new wxMask(*tmp_fg, *wxWHITE));
   fg = new StaticBitmap(this, -1,*tmp_fg,wxPoint(0,(int)(Value  / coeff)), wxSize(img_fg->GetWidth(), img_fg->GetHeight()));
   SetValue(val);
+  IsInteger = is_int;
   Label = 0x0;
 }
 
 FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id, 
 		     wxImage *img_bg, wxImage  *img_fg,
-		     long begin_value, long end_value, long val,
+		     float begin_value, float end_value, float val, bool is_int,
 		     const wxPoint &pos, const wxSize &size,
 		     wxWindow* hintparent, const wxPoint &hintpos)
   : wxWindow(parent, id, pos, wxSize(img_fg->GetWidth(), img_bg->GetHeight())),
@@ -60,16 +61,23 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
   bg = new wxBitmap(img_bg, -1);
   tmp_fg = new wxBitmap(img_fg, -1);
   tmp_fg->SetMask(new wxMask(*tmp_fg, *wxWHITE));
-  fg = new StaticBitmap(this, -1,*tmp_fg,wxPoint(0,(int)(Value  / coeff)), wxSize(img_fg->GetWidth(), img_fg->GetHeight()));
+  fg = new StaticBitmap(this, -1,*tmp_fg,wxPoint(0,(int)(Value  / coeff)), 
+			wxSize(img_fg->GetWidth(), img_fg->GetHeight()));
+  IsInteger = is_int;
   SetValue(val);
   
   wxString s;
-  s.Printf("%d", val);
+  if (IsInteger)
+    s.Printf("%d", (int)GetValue());
+  else
+    s.Printf("%.2f", GetValue());
+  cout << "Dans le constructeur : " << val << endl;
   Label = new Hint(hintparent, -1, s,
 		   wxPoint(GetPosition().x, GetPosition().y + GetSize().y), 
 		   wxDefaultSize, *wxWHITE, *wxBLACK);
   Label->Show(false);
 }
+
 
 FaderCtrl::~FaderCtrl()
 {
@@ -99,7 +107,10 @@ void		FaderCtrl::OnLeftDown(wxMouseEvent& event)
     {
       Label->Show(true);
       wxString s;
-      s.Printf("%d", GetValue());
+      if (IsInteger)
+	s.Printf("%d", (int)GetValue());
+      else
+	s.Printf("%.2f", GetValue());
       Label->SetLabel(s);
     }
   OnMouseEvent(event);
@@ -149,21 +160,25 @@ void		FaderCtrl::OnMouseEvent(wxMouseEvent &event)
   if (Label)
     {
       wxString s;
-      s.Printf("%d", GetValue());
+      if (IsInteger)
+	s.Printf("%d", (int)GetValue());
+      else
+	s.Printf("%.2f", GetValue());
       Label->SetLabel(s);
       Label->Show((event.LeftIsDown()));
     }
 }
 
-int		FaderCtrl::GetValue()
+float		FaderCtrl::GetValue()
 {
   return (Value);
 }
 
-void		FaderCtrl::SetValue(int val)
+void		FaderCtrl::SetValue(float val)
 {
-  int		range = EndValue - BeginValue;
+  float		range = EndValue - BeginValue;
 
+  cout << "Dans SetValue()" << val << endl;
   if (val <= BeginValue)
     {
       val = BeginValue;
@@ -210,7 +225,11 @@ void		FaderCtrl::OnKeyDown(wxKeyEvent& event)
     {
       Label->Show(true);
       wxString s;
-      s.Printf("%d", GetValue());
+      if (IsInteger)
+	s.Printf("%d", (int)GetValue());
+      else
+	s.Printf("%.2f", GetValue());
+
       Label->SetLabel(s);
     }
 }

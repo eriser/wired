@@ -36,11 +36,11 @@ class		FaderCtrl : public wxWindow
  public:
   FaderCtrl(wxWindow *parent, wxWindowID id, 
 	    wxImage *img_bg, wxImage *img_fg, 
-	    long begin_value, long end_value, long val, 
+	    float begin_value, float end_value, float val, bool is_int, 
 	    const wxPoint &pos, const wxSize &size = wxDefaultSize);
   FaderCtrl(wxWindow *parent, wxWindowID id,
 	    wxImage *img_bg, wxImage  *img_fg,
-	    long begin_value, long end_value, long val,
+	    float begin_value, float end_value, float val, bool is_int,
 	    const wxPoint &pos, const wxSize &size,
 	    wxWindow* hintparent, const wxPoint &hintpos);
   ~FaderCtrl();
@@ -53,15 +53,16 @@ class		FaderCtrl : public wxWindow
   virtual void		OnEnterWindow(wxMouseEvent &event);
   virtual void		OnLeaveWindow(wxMouseEvent &event);
 
-  int			GetValue();
-  void			SetValue(int val);
+  float			GetValue();
+  void			SetValue(float val);
 
  protected:
   Hint*			Label;
-  long			Value;
-  long			BeginValue;
-  long			EndValue;
+  float			Value;
+  float			BeginValue;
+  float			EndValue;
   double		coeff;
+  bool			IsInteger;
   wxBitmap		*bg;
   wxBitmap		*tmp_fg;
   wxStaticBitmap	*fg;

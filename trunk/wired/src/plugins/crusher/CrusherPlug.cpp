@@ -124,10 +124,10 @@ CrusherPlugin::CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
   BitsFader = new FaderCtrl(this, Crusher_Bits, img_bg, img_fg, 0, 76, 16,
-			    wxPoint(83, 12), wxSize(22,78), 
+			    true, wxPoint(83, 12), wxSize(22,78), 
 			    this, GetPosition() + wxPoint(83, 35));
   FreqFader = new FaderCtrl(this, Crusher_Freq, img_bg, img_fg, 0, 44100, 4000,
-			    wxPoint(140, 12), wxSize(22,78), 
+			    true, wxPoint(140, 12), wxSize(22,78), 
 			    this, GetPosition() + wxPoint(140, 35));
   Connect(Crusher_Bypass, wxEVT_RIGHT_DOWN, 
 	  (wxObjectEventFunction)(wxEventFunction) 
