@@ -72,6 +72,7 @@ class				Transport : public wxPanel
   void				OnClickHelp(wxMouseEvent &event);
 
   void				OnPaint(wxPaintEvent &event);
+  void				OnIdle(wxIdleEvent &WXUNUSED(event));
 
  protected:
   friend class			MainWindow;

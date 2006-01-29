@@ -13,6 +13,7 @@
 #include "StaticLabel.h"
 #include "VUMCtrl.h"
 #include "../engine/Settings.h"
+#include "../engine/AudioEngine.h"
 
 extern WiredSession				*CurrentSession;
 
@@ -435,6 +436,11 @@ void				Transport::SetClick(bool click)
     ClickBtn->SetOff();
 }
 
+void				Transport::OnIdle(wxIdleEvent &WXUNUSED(event))
+{
+	vum->SetValue((int)(Audio->GetCpuLoad() * 100));
+}
+
 BEGIN_EVENT_TABLE(Transport, wxPanel)
   EVT_BUTTON(Transport_Play, Transport::OnPlay)
   EVT_BUTTON(Transport_Stop, Transport::OnStop)
@@ -451,4 +457,5 @@ BEGIN_EVENT_TABLE(Transport, wxPanel)
   EVT_BUTTON(Transport_Click, Transport::OnMetronome)
   EVT_BUTTON(Transport_BpmClick, Transport::OnBpmClick)
   EVT_PAINT(Transport::OnPaint)
+  EVT_IDLE(Transport::OnIdle)
 END_EVENT_TABLE()
