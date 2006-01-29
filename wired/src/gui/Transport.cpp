@@ -111,7 +111,8 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   wxImage *green = new wxImage(string(WiredSettings->DataDir + string(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *orange = new wxImage(string(WiredSettings->DataDir + string(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *red = new wxImage(string(WiredSettings->DataDir + string(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
-  vum = new VUMCtrl((wxWindow*)this, -1, 100, green, orange, red, wxPoint(70,78), wxSize(195,5), wxNO_BORDER);
+  //vum = new VUMCtrl((wxWindow*)this, -1, 100, green, orange, red, wxPoint(70,78), wxSize(195,5), wxNO_BORDER);
+  vum = new wxGauge((wxWindow*)this, -1, 100, wxPoint(70,78), wxSize(195,5));
   
   PlayBtn->SetBackgroundColour(wxColour(204, 199, 219));
   StopBtn->SetBackgroundColour(wxColour(204, 199, 219));

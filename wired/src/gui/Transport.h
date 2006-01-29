@@ -5,6 +5,7 @@
 #define __TRANSPORT_H__
 
 #include <wx/wx.h>
+#include <wx/gauge.h>
 
 #define TRANSPORT_BACKGR_IMG	"ihm/player/tr_window_bg.png"
 #define TRANSPORT_PLAYUP_IMG	"ihm/player/tr_window_play_up2.png"
@@ -77,7 +78,7 @@ class				Transport : public wxPanel
  protected:
   friend class			MainWindow;
 
-  VUMCtrl				*vum;
+  wxGauge				*vum;
   DownButton			*PlayBtn;
   DownButton			*StopBtn;
   DownButton			*RecordBtn;
