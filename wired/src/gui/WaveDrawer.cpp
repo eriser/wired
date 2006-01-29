@@ -128,8 +128,8 @@ void					WaveDrawer::SetDrawing(wxSize s)
   int					end;
   float					f[NumberOfChannels];
 
-  printf(" [ START ] WaveDrawer::SetDrawing(size x %d y %d)\n", s.x, s.y);
-  printf(" >>> HERE : StartWavePos %d, EndWavePos %d\n", StartWavePos, EndWavePos);
+  //printf(" [ START ] WaveDrawer::SetDrawing(size x %d y %d)\n", s.x, s.y);
+  //printf(" >>> HERE : StartWavePos %d, EndWavePos %d\n", StartWavePos, EndWavePos);
   size_x = s.x;
   size_y = s.y;
   if (size_x < 2)
@@ -274,7 +274,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
       cout << "[WAVEDRAWER] [SETDRAWING] 11 s.x: " << s.x << " ; s.y: " << s.y << endl;
   RedrawBitmap(s);
   cout << "[WAVEDRAWER] [SETDRAWING] 12" << endl;
-  printf(" [  END  ] WaveDrawer::SetDrawing()\n");
+  //printf(" [  END  ] WaveDrawer::SetDrawing()\n");
 }
 
 void					WaveDrawer::RedrawBitmap(wxSize s)

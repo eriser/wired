@@ -101,31 +101,31 @@ bool			WiredSessionXml::SaveSeq()
 	Res += this->WriteAttribute(std::string(STR_CLICK), 
 		Seq->Click == true ? std::string(STR_TRUE) : std::string(STR_FALSE));
 	Res += this->StartElement(std::string(STR_BPM));
-	sprintf(Buffer, "%.2f", Seq->BPM);
+	wxSnprintf(Buffer, 20, "%.2f", Seq->BPM);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_SIG_NUM));
-	sprintf(Buffer, "%d", Seq->SigNumerator);
+	wxSnprintf(Buffer, 20, "%d", Seq->SigNumerator);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_SIG_DEN));
-	sprintf(Buffer, "%d", Seq->SigDenominator);
+	wxSnprintf(Buffer, 20, "%d", Seq->SigDenominator);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_CURRENT_POS));
-	sprintf(Buffer, "%g", Seq->CurrentPos);
+	wxSnprintf(Buffer, 20, "%g", Seq->CurrentPos);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_END_POS));
-	sprintf(Buffer, "%g", Seq->EndPos);
+	wxSnprintf(Buffer, 20, "%g", Seq->EndPos);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_BEGIN_LOOP));
-	sprintf(Buffer, "%g", Seq->BeginLoopPos);
+	wxSnprintf(Buffer, 20, "%g", Seq->BeginLoopPos);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_END_LOOP));
-	sprintf(Buffer, "%g", Seq->EndLoopPos);
+	wxSnprintf(Buffer, 20, "%g", Seq->EndLoopPos);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->EndElement();
@@ -148,7 +148,7 @@ bool			WiredSessionXml::SaveTrack(Track* TrackInfo)
 	Res += this->WriteAttribute(std::string(STR_RECORDING),
 		 TrackInfo->TrackOpt->Record == true ? std::string(STR_TRUE) : std::string(STR_FALSE));
 	Res += this->StartElement(std::string(STR_DEVIDE_ID));
-	sprintf(Buffer, "%dl", TrackInfo->TrackOpt->DeviceId);
+	wxSnprintf(Buffer, 20, "%dl", TrackInfo->TrackOpt->DeviceId);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_NAME));
@@ -224,7 +224,7 @@ bool			WiredSessionXml::SavePlugin(Plugin* PluginInfo)
 	PluginInfo->Save(Params);
 	Res += this->StartElement(std::string(STR_PLUGIN));
 	Res += this->StartElement(std::string(STR_PLUGIN_ID));
-	sprintf(Buffer, "%ld", PluginInfo->InitInfo->UniqueExternalId);
+	wxSnprintf(Buffer, 20, "%ld", PluginInfo->InitInfo->UniqueExternalId);
 	Res += this->WriteString(PluginInfo->InitInfo->UniqueExternalId == 0 ? 
 							std::string(PluginInfo->InitInfo->UniqueId).substr(0, 4) :
 							std::string(Buffer));
@@ -233,11 +233,11 @@ bool			WiredSessionXml::SavePlugin(Plugin* PluginInfo)
 	Res += this->WriteString(PluginInfo->Name);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_WIDTH));
-	sprintf(Buffer, "%d", PluginInfo->InitInfo->UnitsX);
+	wxSnprintf(Buffer, 20, "%d", PluginInfo->InitInfo->UnitsX);
 	Res += this->WriteString(std::string(Buffer));
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_HEIGHT));
-	sprintf(Buffer, "%d", PluginInfo->InitInfo->UnitsY);
+	wxSnprintf(Buffer, 20, "%d", PluginInfo->InitInfo->UnitsY);
 	Res += this->WriteString(std::string(Buffer));
 	Res += this->EndElement();
 	if (Params.GetParamsStack() != NULL)
@@ -264,10 +264,10 @@ bool			WiredSessionXml::SavePattern(Pattern* PatternInfo, bool AudioTrack)
 
 	Res += this->StartElement(std::string(STR_PATTERN));
 	Res += this->StartElement(std::string(STR_START_POS));
-	sprintf(Buffer, "%g", PatternInfo->GetPosition());
+	wxSnprintf(Buffer, 20, "%g", PatternInfo->GetPosition());
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();	
-	sprintf(Buffer, "%g", PatternInfo->GetEndPosition());
+	wxSnprintf(Buffer, 20, "%g", PatternInfo->GetEndPosition());
 	Res += this->StartElement(std::string(STR_END_POS));
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
@@ -290,11 +290,11 @@ bool			WiredSessionXml::SavePatternAudioData(AudioPattern* PatternInfo)
 	Res += this->StartElement(std::string(STR_PATTERN_DATA));
 	Res += this->StartElement(std::string(STR_PATTERN_AUDIO_DATA));
 	Res += this->StartElement(std::string(STR_START_POS));
-	sprintf(Buffer, "%ld", PatternInfo->GetStartWavePos());
+	wxSnprintf(Buffer, 20, "%ld", PatternInfo->GetStartWavePos());
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_END_POS));
-	sprintf(Buffer, "%ld", PatternInfo->GetEndWavePos());
+	wxSnprintf(Buffer, 20, "%ld", PatternInfo->GetEndWavePos());
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	Res += this->StartElement(std::string(STR_FILENAME));
@@ -314,21 +314,21 @@ bool			WiredSessionXml::SavePatternMIDIData(MidiPattern* PatternInfo)
 	Res += this->StartElement(std::string(STR_PATTERN_DATA));
 	Res += this->StartElement(std::string(STR_PATTERN_MIDI_DATA));
 	Res += this->StartElement(std::string(STR_PPQN));
-	sprintf(Buffer, "%hd", PatternInfo->GetPPQN());
+	wxSnprintf(Buffer, 20, "%hd", PatternInfo->GetPPQN());
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	for (MidiIter = PatternInfo->Events.begin(); MidiIter != PatternInfo->Events.end(); MidiIter++)
 	{
 		Res += this->StartElement(std::string(STR_START_POS));
-		sprintf(Buffer, "%g", (*MidiIter)->Position);
+		wxSnprintf(Buffer, 20, "%g", (*MidiIter)->Position);
 		Res += this->WriteString(Buffer);
 		Res += this->EndElement();
 		Res += this->StartElement(std::string(STR_END_POS));
-		sprintf(Buffer, "%g", (*MidiIter)->EndPosition);
+		wxSnprintf(Buffer, 20, "%g", (*MidiIter)->EndPosition);
 		Res += this->WriteString(Buffer);
 		Res += this->EndElement();
 		Res += this->StartElement(std::string(STR_MIDI_MESSAGE));
-		sprintf(Buffer, "%d %d %d", (*MidiIter)->Msg[0], (*MidiIter)->Msg[1], (*MidiIter)->Msg[2]);
+		wxSnprintf(Buffer, 20, "%d %d %d", (*MidiIter)->Msg[0], (*MidiIter)->Msg[1], (*MidiIter)->Msg[2]);
 		Res += this->WriteBin(Buffer, 0, (3 * sizeof(int)));
 		Res += this->EndElement();
 	}

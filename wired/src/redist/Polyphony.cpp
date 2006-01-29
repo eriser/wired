@@ -31,7 +31,7 @@ void Polyphony::SetPolyphony(int p)
   int j;
   Poly *voice;
 
-  printf("[POLYPHONY] Setting polyphony to: %d\n", p);
+  //std::cout << "[POLYPHONY] Setting polyphony to: " << p << std::endl;
   fflush(stdout);  
   PolyphonyCount = p;
   for (j = 0; j < count; j++)
@@ -52,7 +52,7 @@ void Polyphony::SetPolyphony(int p)
 void Polyphony::SetBufferSize(int size)
 {
   buffer_size = size;
-  printf("[POLYPHONY] Buffer size: %d\n", buffer_size);
+  //std::cout << "[POLYPHONY] Buffer size: " << buffer_size << std::endl;
   fflush(stdout);
   //  OnChangeSettings();
 }
@@ -66,7 +66,7 @@ float **Polyphony::GetFreeBuffer()
 	(*i)->IsFree = false;
 	return (*i)->Buffer;
       }
-  printf("[POLYPHONY] Returning No Buffer !!!\n");
+  //std::cout << "[POLYPHONY] Returning No Buffer !!!" << std::endl;
   fflush(stdout);  
   return (0x0);
 }

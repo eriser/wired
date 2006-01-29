@@ -150,7 +150,7 @@ void TestPlugin::ProcessEvent(WiredEvent &event)
       cout << "Note frequency: " << Freq << endl;
     }
   
- printf("[TESTPLUGIN] Got midi in : %2x %2x %2x\n", event.MidiData[0], event.MidiData[1], event.MidiData[2]);
+ //printf("[TESTPLUGIN] Got midi in : %2x %2x %2x\n", event.MidiData[0], event.MidiData[1], event.MidiData[2]);
 }
 
 TestPlugin::~TestPlugin()

@@ -103,7 +103,7 @@ int				Ruler::GetXPos(double pos)
 
 void				Ruler::MoveXMark(long x)
 {
-  printf("youpi ? %d\n", x);
+  //printf("youpi ? %d\n", x);
   T1->SetSize((int)     x, (int)     RULER_HEIGHT - RULER_XMARK_HEIGHT, (int) -1, -1, wxSIZE_USE_EXISTING);
   T2->SetSize((int) 1 + x, (int) 1 + RULER_HEIGHT - RULER_XMARK_HEIGHT, (int) -1, -1, wxSIZE_USE_EXISTING);
   T3->SetSize((int) 2 + x, (int)     RULER_HEIGHT - RULER_XMARK_HEIGHT, (int) -1, -1, wxSIZE_USE_EXISTING);

@@ -88,7 +88,7 @@ Plugin*				RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin 
     plug->Play();
 
   char str[128];
-  sprintf(str, "%d", ++RackCount);
+  wxSnprintf(str, 128, "%d", ++RackCount);
   plug->Name = plug->DefaultName() + " " + str;
   SeqMutex.Lock();
   Racks.push_back(plug);
