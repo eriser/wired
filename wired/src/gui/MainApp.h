@@ -6,6 +6,7 @@
 
 #include <wx/app.h>
 #include <wx/snglinst.h>
+#include <wx/debugrpt.h>
 
 #define APP_TITLE		"Wired 0.2"
 #define APP_WIDTH		(800)
@@ -21,9 +22,12 @@ class MainApp : public wxApp
   int				FilterEvent(wxEvent& event);
 
  private:
-  MainWindow			*Frame;
+  MainWindow				*Frame;
   wxSingleInstanceChecker	*Checker;
-  void                          OnFatalException();
+  wxDebugReportCompress 	*Report;
+  wxDebugReportPreviewStd 	*ReportPreview;
+  void                      OnFatalException();
+  void						OnUnhandledException();
 };
 
 #endif/*__MAINAPP_H__*/

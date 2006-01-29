@@ -7,7 +7,6 @@
 #include <wx/event.h>
 #include <wx/timer.h>
 #include <wx/splash.h>
-#include <wx/debugrpt.h>
 #include "MainApp.h"
 #include "MainWindow.h"
 
@@ -81,6 +80,8 @@ bool				MainApp::OnInit()
 #if wxUSE_LIBPNG
   wxImage::AddHandler(new wxPNGHandler);
 #endif
+	Report = new wxDebugReportCompress;
+	//ReportPreview = new wxDebugReportPreviewStd;
   if (bitmap.LoadFile("/usr/local/share/wired/data/ihm/splash/splash.png", wxBITMAP_TYPE_PNG))
     {
       wxSplashScreen*		splash = 
@@ -99,6 +100,8 @@ bool				MainApp::OnInit()
     }
 #endif
   SetUseBestVisual(true);
+  SetAppName("Wired");
+  SetVendorName("Wired Team");
   Frame = new MainWindow(APP_TITLE, wxDefaultPosition,
 			 wxSize(APP_WIDTH, APP_HEIGHT));
   MainWin = Frame;
@@ -110,28 +113,24 @@ bool				MainApp::OnInit()
 
 void              MainApp::OnFatalException()
 {
-    cout << "#################################" << endl;
-    cout << "###            A fatal exception has occured           ####" << endl;
-    cout << "###            A report will be auto-generated         ####" << endl;
-    cout << "#################################" << endl;
-    wxDebugReportCompress report;
-//    wxDebugReportPreviewStd preview;
-
-    report.AddAll();
-
-//    if ( preview.Show(report) )
-  //  {
-//        report.Process();
-        report.Reset();
+    Report->AddAll();
+//	if (ReportPreview->Show(*Report))
+//	{
+		Report->Process();
         //send a mail
-    //}
-    cout << "Filename == (" << report.GetCompressedFileName().c_str() << ")" << endl;
-    cout << "#################################" << endl;
-    cout << "###              Please send this report to                 ###" << endl;
-    cout << "###                debug.wired@gmail.com                 ###" << endl;
-    cout << "#################################" << endl;
+//	}
+    cout << "Filename == (" << Report->GetCompressedFileName().c_str() << ")" << endl;
+    //delete ReportPreview;
+    delete Report;
 }
 
+void				MainApp::OnUnhandledException()
+{
+	Report->AddAll();
+	Report->Process();
+	cout << "Filename == (" << Report->GetCompressedFileName().c_str() << ")" << endl;
+	delete Report;
+}
 
 int				MainApp::OnExit()
 {
