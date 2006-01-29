@@ -618,7 +618,7 @@ char	*FileLoader::FormatSize(off_t size)
 		unit++;
 	}
 	char tmp[1024];
-	sprintf(tmp, "%i", size);
+	wxSnprintf(tmp, 1024, "%i", size);
 	string s = tmp;
 	switch (unit)
 	{

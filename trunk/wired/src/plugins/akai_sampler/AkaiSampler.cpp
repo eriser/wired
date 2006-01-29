@@ -687,7 +687,7 @@ void AkaiSampler::ProcessEvent(WiredEvent &event)
               askg = (*i);
           if (askg)
           {
-            printf("FindKeyGroup: %p\n", askg);
+            //printf("FindKeyGroup: %p\n", askg);
             ASamplerKey *key = askg->GetKey(event.MidiData[1]);
             if (key)
             {
@@ -698,13 +698,13 @@ void AkaiSampler::ProcessEvent(WiredEvent &event)
                   Workshop.GetFreeBuffer(),
                   event.NoteLength);
               Notes.push_back(n);
-              printf("[SAMPLER] Note added: %d\n", n->Note);
+              //printf("[SAMPLER] Note added: %d\n", n->Note);
             }
           }
         }
       }
       else
-        printf("[SAMPLER] Max polyphony reached\n");
+        cout << "[SAMPLER] Max polyphony reached" << endl;
 
       Mutex.Unlock();
     }

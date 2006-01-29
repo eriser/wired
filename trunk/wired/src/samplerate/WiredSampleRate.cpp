@@ -86,7 +86,7 @@ int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 				if (!SameFormat)
 					strFormats += " and  ";
 				strFormats += "samplerate ";
-				sprintf(buf, "%d Hz to %ld Hz ?", Info.samplerate, _ApplicationSettings.SampleRate);
+				wxSnprintf(buf, 1024, "%d Hz to %ld Hz ?", Info.samplerate, _ApplicationSettings.SampleRate);
 //				oss << Info.samplerate << string(" Hz to ");
 //				oss << _ApplicationSettings.SampleRate ;
 //				oss << string(" Hz");

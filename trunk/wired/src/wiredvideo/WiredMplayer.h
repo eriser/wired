@@ -9,6 +9,7 @@
 #include	<sys/types.h>
 #include	<sys/stat.h>
 #include	<fcntl.h>
+#include	<stdio.h>
 
 #define		MPLAYER_LAUNCH_STRING	"mplayer -slave -quiet "
 #define		TRASH_OUT							"/dev/null"

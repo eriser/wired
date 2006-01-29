@@ -157,7 +157,7 @@ void	ASClavier::OnKeyDown(wxMouseEvent &event)
     midievent.MidiData[0] = 0x90;
     midievent.MidiData[1] = k->code;
     midievent.MidiData[2] = 100;
-    printf("[ASClavier] Sending 0x%02X 0X%02X 0X%02X\n", midievent.MidiData[0], midievent.MidiData[1], midievent.MidiData[2]);
+    //printf("[ASClavier] Sending 0x%02X 0X%02X 0X%02X\n", midievent.MidiData[0], midievent.MidiData[1], midievent.MidiData[2]);
     as->ProcessEvent(midievent);
   }
 }
@@ -180,7 +180,7 @@ void	ASClavier::OnKeyUp(wxMouseEvent &event)
     midievent.MidiData[0] = 0x90;
     midievent.MidiData[1] = k->code;
     midievent.MidiData[2] = 0;
-    printf("[ASClavier] Sending 0x%02X 0X%02X 0X%02X\n", midievent.MidiData[0], midievent.MidiData[1], midievent.MidiData[2]);
+    //printf("[ASClavier] Sending 0x%02X 0X%02X 0X%02X\n", midievent.MidiData[0], midievent.MidiData[1], midievent.MidiData[2]);
     as->ProcessEvent(midievent);
   }
 }

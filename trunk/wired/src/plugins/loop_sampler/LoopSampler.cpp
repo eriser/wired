@@ -719,14 +719,14 @@ void LoopSampler::ProcessEvent(WiredEvent &event)
 						 *i, event.DeltaFrames, 
 						 Workshop.GetFreeBuffer(), event.NoteLength);
 		      Notes.push_back(n);
-		      printf("[LOOPSAMPLER] Note added: %2x\n", n->Note);
+		      //printf("[LOOPSAMPLER] Note added: %2x\n", n->Note);
 
 		      break;
 		    }		
 		}			       
 	    }
 	  else
-	    printf("[LOOPSAMPLER] Max polyphony reached\n");
+	    cout << "[LOOPSAMPLER] Max polyphony reached" << endl;
 	  
 	  Mutex.Unlock();
 	}

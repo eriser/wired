@@ -58,11 +58,11 @@ bool				MidiInDevice::Read(MidiType *buf)
   
   if ((err = Pm_Read(stream, &buffer, 1)) > 0 && buf)
     {
-      printf("Got midi in : time %d, %2x %2x %2x\n",
-	     buffer.timestamp,
-	     Pm_MessageStatus(buffer.message),
-	     Pm_MessageData1(buffer.message),
-	     Pm_MessageData2(buffer.message));
+      //printf("Got midi in : time %d, %2x %2x %2x\n",
+//	     buffer.timestamp,
+//	     Pm_MessageStatus(buffer.message),
+//	     Pm_MessageData1(buffer.message),
+//	     Pm_MessageData2(buffer.message));
       
       buf[0] = Pm_MessageStatus(buffer.message);
       buf[1] = Pm_MessageData1(buffer.message);

@@ -157,7 +157,7 @@ list<string>		WiredExternalPluginMgr::GetSortedPluginsList(const string& Separat
 		for (IterDescriptor = CurrentPluginList.begin(); IterDescriptor != CurrentPluginList.end(); IterDescriptor++)
 		{
 			StrResult = string(IterDescriptor->second + Separator);
-			sprintf(buf, "%d", IterDescriptor->first);
+			wxSnprintf(buf, 1024, "%d", IterDescriptor->first);
 			Result.insert(Result.end(), StrResult + string(buf));			
 		}
 	}

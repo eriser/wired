@@ -43,27 +43,27 @@ int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 {
 	string	msg;
 	string	tmpmsg;
-	char	buf[1024];
+	char	*buf;
 	
 	switch (seekMethod)
 	{
 			case relative: 
 				msg = ACTION_SEEK_RELATIVE;
-				sprintf(buf, "%g 0", position);
+				asprintf(&buf, "%g 0", position);
 				msg += buf;
 				msg += CRLF;
 				cout << "[WIREDPLAYER] " << msg << endl;
 				break;
 			case percentage:
 				msg = ACTION_SEEK_PERCENTAGE;
-				sprintf(buf, "%g 1", position);
+				asprintf(&buf, "%g 1", position);
 				msg += buf;
 				msg += CRLF;
 				cout << "[WIREDPLAYER] " << msg << endl;
 				break;
 			case absolute:
 				msg = ACTION_SEEK_ABSOLUTE;
-				sprintf(buf, "%g 2", position);
+				asprintf(&buf, "%g 2", position);
 				tmpmsg = buf;
 				msg += tmpmsg;
 				msg += CRLF;
@@ -71,6 +71,7 @@ int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 				cout << "[WIREDPLAYER] Msg: " << msg << endl;
 				break;
 	}
+	free(buf);
 	if (Playbool == false)
 	  {
 	    SendMPlayerMessage(msg.c_str(), msg.size());
