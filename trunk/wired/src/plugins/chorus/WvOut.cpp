@@ -35,6 +35,10 @@
 
 #include "WvOut.h"
 #include <math.h>
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
 
 const WvOut::FILE_TYPE WvOut :: WVOUT_RAW = 1;
 const WvOut::FILE_TYPE WvOut :: WVOUT_WAV = 2;
@@ -546,7 +550,7 @@ bool WvOut :: setMatFile( const char *fileName )
   strcpy(hdr.heading,"MATLAB 5.0 MAT-file, Generated using the Synthesis ToolKit in C++ (STK). By Perry R. Cook and Gary P. Scavone, 1995-2004.");
 
   int i;
-  for (i=strlen(hdr.heading);i<124;i++) hdr.heading[i] = ' ';
+  for (i=wxStrlen(hdr.heading);i<124;i++) hdr.heading[i] = ' ';
 
   // Header Flag Fields
   hdr.hff[0] = (SINT16) 0x0100;   // Version field
@@ -575,7 +579,7 @@ bool WvOut :: setMatFile( const char *fileName )
   // If fileName is 4 characters or less, we have to use a compressed data element
   // format for the array name data element.  Otherwise, the array name must
   // be formatted in 8-byte increments (up to 31 characters + NULL).
-  SINT32 namelength = (SINT32) strlen(fileName);
+  SINT32 namelength = (SINT32) wxStrlen(fileName);
   if (strstr(fileName, ".mat")) namelength -= 4;
   if (namelength > 31) namelength = 31; // Truncate name to 31 characters.
   char arrayName[64];
@@ -621,7 +625,7 @@ bool WvOut :: setMatFile( const char *fileName )
   if ( fseek(fd_, 0, SEEK_END) == -1 ) goto error;
 
   byteswap_ = false;
-  printf("\nCreating MAT-file (%s) containing MATLAB array: %s\n", name, arrayName);
+  //printf("\nCreating MAT-file (%s) containing MATLAB array: %s\n", name, arrayName);
   errorString_ << "WvOut: creating MAT-file (" << name << ") containing MATLAB array: " << arrayName;
   handleError( StkError::WARNING );
 

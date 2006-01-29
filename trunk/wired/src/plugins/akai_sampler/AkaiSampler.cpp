@@ -403,14 +403,14 @@ long AkaiSampler::Save(int fd)
     cerr << "[WiredSampler] Saving sample " << (*i)->GetName() << endl;
     ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
     str = (char *)(*i)->GetName().c_str();
-    len = strlen(str);
+    len = wxStrlen(str);
     count += write(fd, &len, sizeof(len));
     count += write(fd, str, len);
     len = ass->GetID();
     cerr << "[WiredSampler] Saving ID " << len << endl;
     count += write(fd, &len, sizeof(len));
     str = (char *)ass->GetSample()->Filename.c_str();
-    len = strlen(str);
+    len = wxStrlen(str);
     cerr << "[WiredSampler] Saving wavefile " << ass->GetSample()->Filename << endl;
     count += write(fd, &len, sizeof(len));
     count += write(fd, str, len);
@@ -431,12 +431,12 @@ long AkaiSampler::Save(int fd)
     for (vector<ASPlugin *>::iterator j = effects.begin(); j != effects.end(); j++)
     {
       str = (char *)(*j)->GetType().c_str();
-      len = strlen(str);
+      len = wxStrlen(str);
       cerr << "[WiredSampler] Saving plugin type " << str << endl;
       count += write(fd, &len, sizeof(len));
       count += write(fd, str, len);
       str = (char *)(*j)->Name.c_str();
-      len = strlen(str);
+      len = wxStrlen(str);
       cerr << "[WiredSampler] Saving plugin name " << str << endl;
       count += write(fd, &len, sizeof(len));
       count += write(fd, str, len);
