@@ -12,33 +12,20 @@ using namespace std;
 WaveDrawer::WaveDrawer(const wxSize& s, bool fulldraw, bool use_settings) 
   : FullDraw(fulldraw), UseSettings(use_settings)
 {
-	cout << "[WAVEDRAWER] [NEW] 0" << endl;
   if (!s.x)
   {
-  		cout << "[WAVEDRAWER] [NEW] 1" << endl;
     size.x = 1;
   }
-  	cout << "[WAVEDRAWER] [NEW] 2" << endl;
   size.y = s.y;
-  	cout << "[WAVEDRAWER] [NEW] 3" << endl;
   Data = 0;
-  	cout << "[WAVEDRAWER] [NEW] 4" << endl;
   DrawData = 0;
-  	cout << "[WAVEDRAWER] [NEW] 5" << endl;
   NumberOfChannels = 0;  
-  	cout << "[WAVEDRAWER] [NEW] 6" << endl;
   StartWavePos = 0;
-  	cout << "[WAVEDRAWER] [NEW] 7" << endl;
   EndWavePos = 0;
-  	cout << "[WAVEDRAWER] [NEW] 8" << endl;
   Bmp = 0;
-  	cout << "[WAVEDRAWER] [NEW] 9" << endl;
   PenColor = CL_WAVE_DRAW;
-  	cout << "[WAVEDRAWER] [NEW] 10" << endl;
   BrushColor = CL_WAVEDRAWER_BRUSH;
-  	cout << "[WAVEDRAWER] [NEW] 11" << endl;
   Transparent = false;
-  	cout << "[WAVEDRAWER] [NEW] 12" << endl;
 }
 
 WaveDrawer::~WaveDrawer()
@@ -140,20 +127,15 @@ void					WaveDrawer::SetDrawing(wxSize s)
   // Cr?ation du buffer contenant les datas a dessiner
   if (DrawData)
   {
-  	cout << "[WAVEDRAWER] [SETDRAWING] 0" << endl;
     delete [] DrawData;
   }
-  cout << "[WAVEDRAWER] [SETDRAWING] 1" << endl;
   DrawData = new long[size_x];
-    	cout << "[WAVEDRAWER] [SETDRAWING] 2" << endl;
   // Coefficient d'incr?mentation
   inc = (EndWavePos - StartWavePos) / size_x;
-    	cout << "[WAVEDRAWER] [SETDRAWING] 3" << endl;
   if (UseSettings && WiredSettings->dbWaveRender)
     {
       if (!Data) // Wave sur disque
 	{
-		  	cout << "[WAVEDRAWER] [SETDRAWING] 4" << endl;
 	  for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	    {
 	      for (k = 0, cur = 0; (k < inc) && (pos < end); k++, pos++)
@@ -176,7 +158,6 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	}
       else // Wave loade? en memoire
 	{
-		  	cout << "[WAVEDRAWER] [SETDRAWING] 5" << endl;
 	  for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	    {
 	      for (k = 0, cur = 0; (k < inc) && (pos < end); k++, pos++)
@@ -204,7 +185,6 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	    float		**TempBuf;
 	    long		buf_pos;
 	    
-	      	cout << "[WAVEDRAWER] [SETDRAWING] 6" << endl;
 	    TempBuf = new float *[2];
 	    TempBuf[0] = new float[WAVEVIEW_TEMP_BUF_SIZE];
 	    TempBuf[1] = new float[WAVEVIEW_TEMP_BUF_SIZE];      	
@@ -222,20 +202,15 @@ void					WaveDrawer::SetDrawing(wxSize s)
 		  }
 		DrawData[i] = (long)(((cur / (NumberOfChannels + inc) * coeff) + 0.5));
 	      }
-	        	cout << "[WAVEDRAWER] [SETDRAWING] 7" << endl;
 	    if (TempBuf[0])
 		    delete TempBuf[0];
-	    	        	cout << "[WAVEDRAWER] [SETDRAWING] 70" << endl;
       	if (TempBuf[1])
 		    delete TempBuf[1];
-	    	        	cout << "[WAVEDRAWER] [SETDRAWING] 71" << endl;
 	    if (TempBuf)
 		    delete TempBuf;
-	    	        	cout << "[WAVEDRAWER] [SETDRAWING] 72" << endl;
 	  }	  
 	else // Wave loade? en memoire
 	  {
-	  	  	cout << "[WAVEDRAWER] [SETDRAWING] 8" << endl;
 	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
 		for (k = 0, cur = 0; (k < inc) && (pos < end); k++, pos++)
@@ -249,7 +224,6 @@ void					WaveDrawer::SetDrawing(wxSize s)
       {
 	if (!Data) // Wave sur disque
 	  {
-	  	  	cout << "[WAVEDRAWER] [SETDRAWING] 9" << endl;
 	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
 		Wave->Read(f, pos);
@@ -261,7 +235,6 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	  }
 	else
 	  {
-	  	  	cout << "[WAVEDRAWER] [SETDRAWING] 10" << endl;
 	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
 		for (j = 0, cur = 0; (j < NumberOfChannels); j++)
@@ -271,9 +244,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	      }
 	  }
       }
-      cout << "[WAVEDRAWER] [SETDRAWING] 11 s.x: " << s.x << " ; s.y: " << s.y << endl;
   RedrawBitmap(s);
-  cout << "[WAVEDRAWER] [SETDRAWING] 12" << endl;
   //printf(" [  END  ] WaveDrawer::SetDrawing()\n");
 }
 
@@ -281,31 +252,20 @@ void					WaveDrawer::RedrawBitmap(wxSize s)
 {
   long					coeff;
 
-cout << "[WAVEDRAWER] [RedrawBitmap] 00 ; " << endl;
-cout << "[WAVEDRAWER] [RedrawBitmap] s.x: " << s.x << " s.y: " << s.y << endl;
   coeff = s.y / 2;
-  cout << "[WAVEDRAWER] [RedrawBitmap] 01 ; " << endl;
   // Cr?ation de la bitmap
   if (Bmp)
   {
-  	cout << "[WAVEDRAWER] [RedrawBitmap] 000" << endl;
     delete Bmp;
   }
-  cout << "[WAVEDRAWER] [RedrawBitmap] 02" << endl;
   Bmp = new wxBitmap(5000, s.y);
-  cout << "[WAVEDRAWER] [RedrawBitmap] 03" << endl;
   memDC.SelectObject(*Bmp);
-  cout << "[WAVEDRAWER] [RedrawBitmap] 1" << endl;
   memDC.SetPen(PenColor);
-  cout << "[WAVEDRAWER] [RedrawBitmap] 2" << endl;
   memDC.SetBrush((!Transparent) ? BrushColor : *wxTRANSPARENT_BRUSH);
-  cout << "[WAVEDRAWER] [RedrawBitmap] 3" << endl;
   memDC.DrawRectangle(0, 0, s.x, s.y);
-  cout << "[WAVEDRAWER] [RedrawBitmap] 4" << endl;
   if (s.x > 2)
     for (int i = 0; i < s.x; i++)
       memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
-  cout << "[WAVEDRAWER] [RedrawBitmap] 5" << endl;
 }
 
 void					WaveDrawer::SetSize(wxSize s)
