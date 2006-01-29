@@ -259,9 +259,9 @@ void					EditMidi::OnAttach()
 void					EditMidi::OnDetach(wxFrame *f)
 {
   toolbar = new wxToolBar(f, ID_TOOLBAR_EDITMIDI, wxPoint(-1, -1), wxSize(-1, -1), wxTB_FLAT | wxTB_DOCKABLE);
-  toolbar->AddRadioTool(ID_TOOL_MOVE_MIDIPART, "Move", wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/hand_up.png").c_str()), wxBITMAP_TYPE_PNG), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/hand_down.png").c_str()), wxBITMAP_TYPE_PNG), "Move", "Moves notes", NULL);
-  toolbar->AddRadioTool(ID_TOOL_EDIT_MIDIPART, "Edit", wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/draw_up.png").c_str()), wxBITMAP_TYPE_PNG), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/draw_down.png").c_str()), wxBITMAP_TYPE_PNG), "Edit", "Resizes notes", NULL);
-  toolbar->AddRadioTool(ID_TOOL_DEL_MIDIPART, "Del", wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/erase_up.png").c_str()), wxBITMAP_TYPE_PNG), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/erase_down.png").c_str()), wxBITMAP_TYPE_PNG), "Del", "Deletes notes", NULL);
+  toolbar->AddRadioTool(ID_TOOL_MOVE_MIDIPART, _("Move"), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/hand_up.png").c_str()), wxBITMAP_TYPE_PNG), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/hand_down.png").c_str()), wxBITMAP_TYPE_PNG), _("Move"), _("Moves notes"), NULL);
+  toolbar->AddRadioTool(ID_TOOL_EDIT_MIDIPART, _("Edit"), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/draw_up.png").c_str()), wxBITMAP_TYPE_PNG), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/draw_down.png").c_str()), wxBITMAP_TYPE_PNG), _("Edit"), _("Resizes notes"), NULL);
+  toolbar->AddRadioTool(ID_TOOL_DEL_MIDIPART, _("Del"), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/erase_up.png").c_str()), wxBITMAP_TYPE_PNG), wxBitmap(wxString(string(WiredSettings->DataDir + "ihm/toolbar/erase_down.png").c_str()), wxBITMAP_TYPE_PNG), _("Del"), _("Deletes notes"), NULL);
   toolbar->Realize();
   ((WiredFrame *)f)->em = this;
   f->SetToolBar(toolbar);
