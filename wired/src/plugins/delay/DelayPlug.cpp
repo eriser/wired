@@ -39,16 +39,16 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), 
 		       wxBITMAP_TYPE_PNG );
   TimeFader = new FaderCtrl(this, Delay_Time, img_bg, img_fg, 0, MAX_TIME, 
-			    1000, wxPoint(73, 11), wxSize(img_bg->GetWidth(), 
-							  img_bg->GetHeight()),
+			    1000, true, wxPoint(73, 11), 
+			    wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
 			    this, GetPosition() + wxPoint(58, 25));
   FeedbackFader = new FaderCtrl(this, Delay_Feedback, img_bg, img_fg, 0, 100, 
-				50, wxPoint(110, 11),
+				true, 50, wxPoint(110, 11),
 				wxSize(img_bg->GetWidth(), 
 				       img_bg->GetHeight()),
 				this, GetPosition() + wxPoint(95, 35));
   DryWetFader = new FaderCtrl(this, Delay_DryWet, img_bg, img_fg, 0, 100, 50,
-			      wxPoint(149, 11), 
+			      true, wxPoint(149, 11), 
 			      wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
 			      this, GetPosition() + wxPoint(135, 35));
   SetBackgroundColour(wxColour(237, 237, 237));

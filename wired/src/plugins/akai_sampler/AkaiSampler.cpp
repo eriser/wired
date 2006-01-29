@@ -19,7 +19,7 @@ static wxString EFFECTSNAMES[NB_EFFECTS] = {
 
 static PlugInitInfo info;
 
-  BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
+BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
   EVT_PAINT(AkaiSampler::OnPaint)
   EVT_BUTTON(Sampler_Open, AkaiSampler::OnOpenFile)
   EVT_BUTTON(Sampler_Save, AkaiSampler::OnSaveFile)
@@ -119,7 +119,7 @@ END_EVENT_TABLE()
 
   /* Envelope */
 
-  VolumeFader = new FaderCtrl(this, Sampler_Volume, fader_bg, fader_fg, 0, 127, 100,
+  VolumeFader = new FaderCtrl(this, Sampler_Volume, fader_bg, fader_fg, 0, 127, 100, true, 
       wxPoint(11, 21), wxSize(15, 102));
 
   AkaiPrefix = _T("");
