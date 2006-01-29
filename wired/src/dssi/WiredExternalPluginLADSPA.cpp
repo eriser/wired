@@ -475,45 +475,45 @@ std::string				WiredLADSPAInstance::GetHelpString()
 		std::string						HelpMsg;
 		list<t_ladspa_port>::iterator	Iter;
 		
-		HelpMsg = "This is a LADSPA or DSSI Plugin, named '";
+		HelpMsg = _("This is a LADSPA or DSSI Plugin, named '");
 		HelpMsg += _Descriptor->Name;
 		HelpMsg += "'";
 		if (_Descriptor->Maker)
 		{
-			HelpMsg += "<BR>Maker is : ";
+			HelpMsg += _("<BR>Maker is : ");
 			HelpMsg += _Descriptor->Maker;
 		}
 		if (_Descriptor->Copyright)
 		{
-			HelpMsg += "<BR>Copyright : ";
+			HelpMsg += _("<BR>Copyright : ");
 			HelpMsg += _Descriptor->Copyright;
 		}
-		HelpMsg += "<BR>This plugin is currently ";
+		HelpMsg += _("<BR>This plugin is currently ");
 		if (_Bypass == true)
-			HelpMsg += "disabled.<BR>";
+			HelpMsg += _("disabled.<BR>");
 		else
-			HelpMsg += "enabled.<BR>";
+			HelpMsg += _("enabled.<BR>");
 		if (_InputAudioPluginsPorts.size() > 0)
 		{
-			HelpMsg += "Audio Inputs are : ";
+			HelpMsg += _("Audio Inputs are : ");
 			for (Iter = _InputAudioPluginsPorts.begin(); Iter != _InputAudioPluginsPorts.end(); Iter++)
 			{
 				HelpMsg += Iter->Name.c_str();
-				HelpMsg += "<BR>";
+				HelpMsg += _("<BR>");
 			}
 		}
 		if (_InputDataPluginsPorts.size() > 0)
 		{
-			HelpMsg += "Data Inputs are : ";
+			HelpMsg += _("Data Inputs are : ");
 			for (Iter = _InputDataPluginsPorts.begin(); Iter != _InputDataPluginsPorts.end(); Iter++)
 			{
 				HelpMsg += Iter->Name.c_str();
-				HelpMsg += "<BR>";
+				HelpMsg += _("<BR>");
 			}
 		}
 		if (_OutputAudioPluginsPorts.size() > 0)
 		{
-			HelpMsg += "Audio Outputs are : ";
+			HelpMsg += _("Audio Outputs are : ");
 			for (Iter = _OutputAudioPluginsPorts.begin(); Iter != _OutputAudioPluginsPorts.end(); Iter++)
 			{
 				HelpMsg += Iter->Name.c_str();
@@ -522,7 +522,7 @@ std::string				WiredLADSPAInstance::GetHelpString()
 		}
 		if (_OutputDataPluginsPorts.size() > 0)
 		{			
-			HelpMsg += "Data Outputs are : ";
+			HelpMsg += _("Data Outputs are : ");
 			for (Iter = _OutputDataPluginsPorts.begin(); Iter != _OutputDataPluginsPorts.end(); Iter++)
 			{
 				HelpMsg += Iter->Name.c_str();
