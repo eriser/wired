@@ -75,13 +75,15 @@ MainWindow			*MainWin;
 
 bool				MainApp::OnInit()
 {
-	std::set_new_handler(&AllocationErrorHandler);
+  wxHandleFatalExceptions();
+	//std::set_new_handler(&AllocationErrorHandler);
   wxBitmap			bitmap;
 #if wxUSE_LIBPNG
   wxImage::AddHandler(new wxPNGHandler);
 #endif
-	Report = new wxDebugReportCompress;
-	//ReportPreview = new wxDebugReportPreviewStd;
+	SetAppName("wired");
+	if (!wxApp::OnInit())
+		return false;
   if (bitmap.LoadFile("/usr/local/share/wired/data/ihm/splash/splash.png", wxBITMAP_TYPE_PNG))
     {
       wxSplashScreen*		splash = 
@@ -98,38 +100,35 @@ bool				MainApp::OnInit()
       cout << "Another Wired is already running, aborting." << endl;      
       return (false);
     }
-#endif
+  delete Checker;
+#endif  
   SetUseBestVisual(true);
-  SetAppName("Wired");
   SetVendorName("Wired Team");
   Frame = new MainWindow(APP_TITLE, wxDefaultPosition,
 			 wxSize(APP_WIDTH, APP_HEIGHT));
   MainWin = Frame;
   Frame->Show(true);
   SetTopWindow(Frame);
-  wxHandleFatalExceptions(true);
   return (true);
 }
 
 void              MainApp::OnFatalException()
 {
-    Report->AddAll();
+	
+	wxDebugReportCompress Report;
+    Report.AddAll();
+    if (wxDebugReportPreviewStd().Show(Report))
 //	if (ReportPreview->Show(*Report))
-//	{
-		Report->Process();
+	{
+		Report.Process();
+		Report.Reset();
         //send a mail
-//	}
-    cout << "Filename == (" << Report->GetCompressedFileName().c_str() << ")" << endl;
-    //delete ReportPreview;
-    delete Report;
+	}
 }
 
 void				MainApp::OnUnhandledException()
 {
-	Report->AddAll();
-	Report->Process();
-	cout << "Filename == (" << Report->GetCompressedFileName().c_str() << ")" << endl;
-	delete Report;
+
 }
 
 int				MainApp::OnExit()
