@@ -24,8 +24,6 @@ class MainApp : public wxApp
  private:
   MainWindow				*Frame;
   wxSingleInstanceChecker	*Checker;
-  wxDebugReportCompress 	*Report;
-  wxDebugReportPreviewStd 	*ReportPreview;
   void                      OnFatalException();
   void						OnUnhandledException();
 };
