@@ -315,7 +315,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
 
   InitUndoRedoMenuItems();
-  InitVideoMenuItems();
+  //  InitVideoMenuItems();
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
