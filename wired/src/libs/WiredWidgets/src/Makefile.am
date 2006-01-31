@@ -23,8 +23,6 @@ libWiredWidgets_la_SOURCES = 			\
 		VUMCtrl.h		\
 		Hint.cpp		\
 		Hint.h			\
-		#HintedFader.cpp		\
-		#HintedFader.h		\
 		HintedKnob.cpp		\
 		HintedKnob.h		\
 		StaticPosKnob.cpp	\
