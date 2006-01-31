@@ -17,6 +17,8 @@ WiredCodec::~WiredCodec()
 	
 	for (iter = _WLib.begin(); iter != _WLib.end(); iter++)
 		dlclose((*iter).handle);
+	if (path)
+	  delete path;
 }
 
 WiredCodec		WiredCodec::operator=(const WiredCodec& right)
@@ -80,6 +82,7 @@ bool WiredCodec::CanConvert(const string &filename, int Decode)
   bool					result = false;
   int					Note = 0;
 
+  std::cout << "Can decode file == {" << filename.c_str() << "}" << std::endl;
   WiredCodecMutex.Lock();
   for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
     for (iterTLibInfo = (*iterTWLib).Info.begin();  iterTLibInfo != (*iterTWLib).Info.end(); iterTLibInfo++)
@@ -162,7 +165,6 @@ unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned lo
   unsigned long						id;
   unsigned long						retLenght = 0;
   
- cout << "lu" << endl;
   WiredCodecMutex.Lock();
   if (codecToUse.find(filename) != codecToUse.end())
     id = codecToUse[filename];
@@ -174,8 +176,8 @@ unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned lo
     }
   if (!path)
     {
-      path = new char(filename.size() * sizeof(char));
-      strcpy(path, filename.c_str());
+      path = new char(filename.size() * sizeof(char) + 1);
+      strncpy(path, filename.c_str(), filename.size());
     }
   for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
     {
