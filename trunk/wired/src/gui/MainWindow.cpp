@@ -388,7 +388,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 	  return;
 	}
     }
-  WiredVideoObject->CloseFile();
+  //WiredVideoObject->CloseFile();
   /* for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)  
     for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
       for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
@@ -421,7 +421,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   if (LoadedExternalPlugins)
 	  delete LoadedExternalPlugins;
   
-  if (WiredVideoObject) delete WiredVideoObject;
+  //if (WiredVideoObject) delete WiredVideoObject;
   
   if(FileConverter)
   {
@@ -1633,9 +1633,9 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
   EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
   EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
-  EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)
-  EVT_MENU(MainWin_CloseVideo, MainWindow::OnCloseVideo)
-  EVT_MENU(MainWin_SeekVideo, MainWindow::OnSeekVideo)
+//  EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)
+//  EVT_MENU(MainWin_CloseVideo, MainWindow::OnCloseVideo)
+//  EVT_MENU(MainWin_SeekVideo, MainWindow::OnSeekVideo)
   //EVT_IDLE(MainWindow::OnIdle)
   //EVT_TEXT_MAXLEN(101010, MainWindow::OnSetPosition)
   //EVT_PLAYPOSITION(313131, MainWindow::OnSetPosition)
