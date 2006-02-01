@@ -17,27 +17,27 @@ SettingWindow::SettingWindow()
   MidiLoaded = false;
   AudioLoaded = false;
   Center();
-  GeneralBtn = new wxToggleButton(this, Setting_General, "General", 
+  GeneralBtn = new wxToggleButton(this, Setting_General, _("General"), 
 				  wxPoint(8, 8), wxSize(80, 28));
-  AudioBtn = new wxToggleButton(this, Setting_Audio, "Audio", 
+  AudioBtn = new wxToggleButton(this, Setting_Audio, _("Audio"), 
 				wxPoint(92, 8), wxSize(80, 28));
-  MidiBtn = new wxToggleButton(this, Setting_Midi, "MIDI", wxPoint(176, 8), wxSize(80, 28));
+  MidiBtn = new wxToggleButton(this, Setting_Midi, _("MIDI"), wxPoint(176, 8), wxSize(80, 28));
   
   // GENERAL panel
   GeneralPanel = new wxPanel(this, -1, wxPoint(8, 42), wxSize(384, 436), wxNO_BORDER);
-  QuickWaveBox = new wxCheckBox(GeneralPanel, -1, "Quickly render waveforms", wxPoint(8, 8));
-  dBWaveBox = new wxCheckBox(GeneralPanel, -1, "Render waveforms in dB mode", wxPoint(8, 28));
+  QuickWaveBox = new wxCheckBox(GeneralPanel, -1, _("Quickly render waveforms"), wxPoint(8, 8));
+  dBWaveBox = new wxCheckBox(GeneralPanel, -1, _("Render waveforms in dB mode"), wxPoint(8, 28));
   undoRedoMaxDepthTextCtrl = new wxTextCtrl(GeneralPanel, -1, "", wxPoint(218, 50), wxSize(45, 25));
-  undoRedoMaxDepthStaticText = new wxStaticText(GeneralPanel, -1, "Undo redo maximum depth", wxPoint(10, 50));
+  undoRedoMaxDepthStaticText = new wxStaticText(GeneralPanel, -1, _("Undo redo maximum depth"), wxPoint(10, 50));
   
   // AUDIO panel
   AudioPanel = new wxPanel(this, -1, wxPoint(8, 38), wxSize(384, 436), wxNO_BORDER);
 
   // AUDIO/Output
-  new wxStaticText(AudioPanel, -1, "Select Output sound card:", 
+  new wxStaticText(AudioPanel, -1, _("Select Output sound card:"), 
 		   wxPoint(8, 8));
   OutputChoice = new wxChoice(AudioPanel, Setting_OutputDev, wxPoint(8, 30), wxSize(368, -1), 0, 0x0);
-  OutputChoice->Append(wxString("None"));
+  OutputChoice->Append(wxString(_("None")));
   OutputChoice->SetSelection(0);
 
   for (i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++)
@@ -45,25 +45,25 @@ SettingWindow::SettingWindow()
       OutputChoice->Append(wxString((*i)->Name.c_str()));
     }
 
-  new wxStaticText(AudioPanel, -1, "Select left and right Output channels for this sound card:", 
+  new wxStaticText(AudioPanel, -1, _("Select left and right Output channels for this sound card:"), 
 		   wxPoint(8, 70));
   OutputList = new wxCheckListBox(AudioPanel, Setting_OutputChan, wxPoint(8, 94), wxSize(368, 68), 0);
 
-  wxStaticText *t = new wxStaticText(AudioPanel, -1, "Sample format:", wxPoint(8, 180));
+  wxStaticText *t = new wxStaticText(AudioPanel, -1, _("Sample format:"), wxPoint(8, 180));
 
   int x1, x2;
   t->GetSize(&x1, 0x0);
 
   BitsChoice = new wxChoice(AudioPanel, Setting_Bits, wxPoint(12 + x1, 172), wxSize(80, -1), 0, 0x0);  
 
-  t = new wxStaticText(AudioPanel, -1, "Sample rate:", 
+  t = new wxStaticText(AudioPanel, -1, _("Sample rate:"), 
 				     wxPoint(22 + x1 + BitsChoice->GetSize().x, 180));
   
   t->GetSize(&x2, 0x0);
   RateChoice = new wxChoice(AudioPanel, Setting_Rate, wxPoint(26 + x1 + BitsChoice->GetSize().x + x2, 172), 
 			    wxSize(96, -1), 0, 0x0);
 
-  Latency = new wxStaticText(AudioPanel, -1, "Latency:", wxPoint(8, 212));
+  Latency = new wxStaticText(AudioPanel, -1, _("Latency:"), wxPoint(8, 212));
   LatencySlider = new wxSlider(AudioPanel, Setting_Latency, 4096, 0, 65536, wxPoint(8, 232), wxSize(368, -1));
   LatencySlider->SetRange(0, 8);
   LatencySlider->SetPageSize(1);
@@ -79,10 +79,10 @@ SettingWindow::SettingWindow()
   Latencies[8] = 16 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
     
   // AUDIO/Input
-  new wxStaticText(AudioPanel, -1, "Select Input sound card:", 
+  new wxStaticText(AudioPanel, -1, _("Select Input sound card:"), 
 		   wxPoint(8, 270));
   InputChoice = new wxChoice(AudioPanel, Setting_InputDev, wxPoint(8, 290), wxSize(368, -1), 0, 0x0);
-  InputChoice->Append(wxString("None"));
+  InputChoice->Append(wxString(_("None")));
   InputChoice->SetSelection(0);
 
   for (i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++)
@@ -90,7 +90,7 @@ SettingWindow::SettingWindow()
       InputChoice->Append(wxString((*i)->Name.c_str()));
     }
 
-  new wxStaticText(AudioPanel, -1, "Select Input channels to use with this sound card:", 
+  new wxStaticText(AudioPanel, -1, _("Select Input channels to use with this sound card:"), 
 		   wxPoint(8, 330));
   InputList = new wxCheckListBox(AudioPanel, Setting_InputChan, wxPoint(8, 352), wxSize(368, 68), 0);
   /*  wxStaticText* restart = 
@@ -99,7 +99,7 @@ SettingWindow::SettingWindow()
   
   // MIDI panel
   MidiPanel = new wxPanel(this, -1, wxPoint(8, 38), wxSize(384, 436), wxNO_BORDER);
-  new wxStaticText(MidiPanel, -1, "Select MIDI In devices to use:", 
+  new wxStaticText(MidiPanel, -1, _("Select MIDI In devices to use:"), 
 		   wxPoint(8, 8));
   MidiInList = new wxCheckListBox(MidiPanel, Setting_MidiIn, wxPoint(8, 30), wxSize(368, 200), 0);
 
@@ -112,9 +112,9 @@ SettingWindow::SettingWindow()
   GeneralPanel->Show(true);
   GeneralBtn->SetValue(true);
 
-  OkBtn = new wxButton(this, Setting_Ok, "OK", wxPoint(180, 484), wxSize(64, 28));
-  ApplyBtn = new wxButton(this, Setting_Apply, "Apply", wxPoint(248, 484), wxSize(64, 28));
-  CancelBtn = new wxButton(this, Setting_Cancel, "Cancel", wxPoint(316, 484), wxSize(64, 28));
+  OkBtn = new wxButton(this, Setting_Ok, _("OK"), wxPoint(180, 484), wxSize(64, 28));
+  ApplyBtn = new wxButton(this, Setting_Apply, _("Apply"), wxPoint(248, 484), wxSize(64, 28));
+  CancelBtn = new wxButton(this, Setting_Cancel, _("Cancel"), wxPoint(316, 484), wxSize(64, 28));
   
   Load();
 }
@@ -159,7 +159,7 @@ void SettingWindow::OnAudioClick(wxCommandEvent &event)
 	      {
 		for (j = 1; j <= (*i)->MaxOutputChannels; j++)
 		  {
-		    s.Printf("Output %d", j);
+		    s.Printf(_("Output %d"), j);
 		    OutputList->Append(s);
 		  }
 		break;
@@ -173,7 +173,7 @@ void SettingWindow::OnAudioClick(wxCommandEvent &event)
 	      {
 		for (j = 1; j <= (*i)->MaxInputChannels; j++)
 		  {
-		    s.Printf("Input %d", j);
+		    s.Printf(_("Input %d"), j);
 		    InputList->Append(s);
 		  }
 		break;
@@ -221,7 +221,7 @@ void SettingWindow::OnMidiClick(wxCommandEvent &event)
       MidiInList->Clear();
       for (j = MidiEngine->DeviceList.begin(), k = 1; j != MidiEngine->DeviceList.end(); j++, k++)
 	{      
-	  s.Printf("In %d: %s", k, (*j)->Name.c_str());
+	  s.Printf(_("In %d: %s"), k, (*j)->Name.c_str());
 	  MidiInList->Append(s);
 	}
       for (i = WiredSettings->MidiIn.begin(); i != WiredSettings->MidiIn.end(); i++)
@@ -282,7 +282,7 @@ void SettingWindow::OnInputDevClick(wxCommandEvent &event)
 	{
 	  for (j = 1; j <= (*i)->MaxInputChannels; j++)
 	    {
-	      s.Printf("Input %d", j);
+	      s.Printf(_("Input %d"), j);
 	      InputList->Append(s);
 	    }
 	  return;
@@ -305,7 +305,7 @@ void SettingWindow::OnOutputDevClick(wxCommandEvent &event)
 	    {
 	      for (j = 1; j <= (*i)->MaxOutputChannels; j++)
 		{
-		  s.Printf("Output %d", j);
+		  s.Printf(_("Output %d"), j);
 		  OutputList->Append(s);
 		  // on check les premieres sorties l/r
 		  if (j < 3)
@@ -330,7 +330,7 @@ void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
   if (j > 2)
     {
       OutputList->Check(event.GetInt(), false);
-      wxMessageDialog msg(this, "No more than 2 output channels can be selected", "Wired", 
+      wxMessageDialog msg(this, _("No more than 2 output channels can be selected"), "Wired", 
 			  wxOK | wxICON_EXCLAMATION);
       msg.ShowModal();
     }
@@ -418,33 +418,33 @@ void SettingWindow::LoadSampleFormat()
 	      {
 	      case paInt8 : 
 		{
-		  BitsChoice->Append(wxString("8 bits[currently unsupported]"));
+		  BitsChoice->Append(wxString(_("8 bits[currently unsupported]")));
 		  break;
 		}
 	      case paUInt8 : 
 		{
-		  BitsChoice->Append(wxString("8 bits (unsigned)[currently unsupported]"));
+		  BitsChoice->Append(wxString(_("8 bits (unsigned)[currently unsupported]")));
 		  break;
 		}
 	      case paInt16 : 
 		{
 		  BitsChoice->SetSelection(
-		    BitsChoice->Append(wxString("16 bits[currently unsupported]")));
+		    BitsChoice->Append(wxString(_("16 bits[currently unsupported]"))));
 		  break;
 		}
 	      case paInt24 : 
 		{
-		  BitsChoice->Append(wxString("24 bits[currently unsupported]"));
+		  BitsChoice->Append(wxString(_("24 bits[currently unsupported]")));
 		  break;
 		}
 	      case paInt32 : 
 		{
-		  BitsChoice->Append(wxString("32 bits[currently unsupported]"));
+		  BitsChoice->Append(wxString(_("32 bits[currently unsupported]")));
 		  break;
 		}
 	      case paFloat32 : 
 		{
-		  BitsChoice->Append(wxString("32 bits (float)"));
+		  BitsChoice->Append(wxString(_("32 bits (float)")));
 		  break;
 		}
 	      }
@@ -532,7 +532,7 @@ void SettingWindow::UpdateLatency()
 	}
     }
   
-  s.Printf("Latency: %d samples per buffer, %.2f msec", 
+  s.Printf(_("Latency: %d samples per buffer, %.2f msec"), 
 	   Latencies[LatencySlider->GetValue()], 
 	   static_cast<float>( static_cast<double>(
 	   (Latencies[LatencySlider->GetValue()]/res)*1000.0) ) );

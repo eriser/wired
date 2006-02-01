@@ -238,7 +238,7 @@ MasterChannelGui::MasterChannelGui( Channel *channel, wxImage *img_bg,
 				    wxImage *img_fg, wxWindow* parent, 
 				    wxWindowID id, const wxPoint& pos, 
 				    const wxSize& size )
-  : ChannelGui(channel, img_bg, img_fg, parent, id, pos, size, "MASTER")
+  : ChannelGui(channel, img_bg, img_fg, parent, id, pos, size, _("MASTER"))
 {
   //  Label = new wxStaticText(this, -1, "MASTER", wxPoint(20, 0));
 }

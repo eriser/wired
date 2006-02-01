@@ -157,7 +157,7 @@ void				Transport::OnLoopHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      wxString s("Turns On or Off Loop mode. If On, the sequencer will loop between the L and R marker in the sequencer.");
+      wxString s(_("Turns On or Off Loop mode. If On, the sequencer will loop between the L and R marker in the sequencer."));
       HelpWin->SetText(s);
     }
 }
@@ -166,7 +166,7 @@ void				Transport::OnClickHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      wxString s("Turns On or Off Click mode. If On, a click will be played over each beat per bar.");
+      wxString s(_("Turns On or Off Click mode. If On, a click will be played over each beat per bar."));
       HelpWin->SetText(s);
     }
 }
@@ -198,7 +198,7 @@ void				Transport::OnRecord(wxCommandEvent &WXUNUSED(event))
       wxFileName f(CurrentSession->AudioDir.c_str());
       if (CurrentSession->AudioDir.empty() || (!f.DirExists()))
 	{
-	  wxDirDialog dir(this, "Choose the Audio file directory", 
+	  wxDirDialog dir(this, _("Choose the Audio file directory"), 
 			  wxFileName::GetCwd());
 	  if (dir.ShowModal() == wxID_OK)
 	    {

@@ -290,7 +290,7 @@ void				FileConversion::ImportWavePattern(string *FileName)
 void				FileConversion::CopyToWorkingDir(string *FileName)
 {
 
-	wxMessageDialog msg(_Parent, "Do you want to copy this file to your project directory ?", "Wired", 
+	wxMessageDialog msg(_Parent, _("Do you want to copy this file to your project directory ?"), "Wired", 
 						wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
 	int res = msg.ShowModal();
 	if (res == wxID_OK)
@@ -301,7 +301,7 @@ void				FileConversion::CopyToWorkingDir(string *FileName)
 		cout << "[FILECONVERT] Will copy File {" << FileName->c_str() << "} TO {" << fn.GetFullPath().c_str() << "}" << endl;
 		if (!wxCopyFile(FileName->c_str(), fn.GetFullPath().c_str()))
 		{
-			wxMessageDialog copymsg(_Parent, "Could not copy file", "Wired", wxOK | wxICON_EXCLAMATION | wxCENTRE);
+			wxMessageDialog copymsg(_Parent, _("Could not copy file"), "Wired", wxOK | wxICON_EXCLAMATION | wxCENTRE);
 			copymsg.ShowModal();
 		}
 		else

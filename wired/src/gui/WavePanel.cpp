@@ -42,24 +42,24 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
   
   Toolbar = new wxToolBar(this, ID_TOOLBAR_WAVE, wxPoint(0, 0), wxSize(size.GetWidth(),WAVE_TOOLBAR_HEIGHT ), wxTB_FLAT);
  
-  Toolbar->AddTool(ID_TOOL_COPY_WAVE, "Copy", wxBitmap("data/toolbar/copy_up.bmp", wxBITMAP_TYPE_BMP), 
-		   wxBitmap("data/toolbar/copy_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Copy", "Copy wave", NULL);
-  Toolbar->AddTool(ID_TOOL_PASTE_WAVE, "Paste", wxBitmap("data/toolbar/paste_up.bmp", wxBITMAP_TYPE_BMP), 
-		   wxBitmap("data/toolbar/paste_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Paste", "Paste wave", NULL);
-  Toolbar->AddTool(ID_TOOL_CUT_WAVE, "Cut", wxBitmap("data/toolbar/cut_up.bmp", wxBITMAP_TYPE_BMP), 
-		   wxBitmap("data/toolbar/cut_down.bmp", wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Cut", "Cut wave", NULL);
-  Toolbar->AddTool(ID_TOOL_DEL_WAVE, "Delete", wxBitmap("data/toolbar/delete.png", wxBITMAP_TYPE_PNG), 
-		   wxBitmap("data/toolbar/delete.png", wxBITMAP_TYPE_PNG), wxITEM_NORMAL, "Delete", "Delete", NULL);
+  Toolbar->AddTool(ID_TOOL_COPY_WAVE, _("Copy"), wxBitmap("data/toolbar/copy_up.bmp", wxBITMAP_TYPE_BMP), 
+		   wxBitmap("data/toolbar/copy_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Copy"), _("Copy wave"), NULL);
+  Toolbar->AddTool(ID_TOOL_PASTE_WAVE, _("Paste"), wxBitmap("data/toolbar/paste_up.bmp", wxBITMAP_TYPE_BMP), 
+		   wxBitmap("data/toolbar/paste_down.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Paste"), _("Paste wave"), NULL);
+  Toolbar->AddTool(ID_TOOL_CUT_WAVE, _("Cut"), wxBitmap("data/toolbar/cut_up.bmp", wxBITMAP_TYPE_BMP), 
+		   wxBitmap("data/toolbar/cut_down.bmp", wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Cut"), _("Cut wave"), NULL);
+  Toolbar->AddTool(ID_TOOL_DEL_WAVE, _("Delete"), wxBitmap("data/toolbar/delete.png", wxBITMAP_TYPE_PNG), 
+		   wxBitmap("data/toolbar/delete.png", wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Delete"), _("Delete"), NULL);
   Toolbar->AddSeparator();
-  Toolbar->AddTool(ID_TOOL_UNDO_WAVE, "Undo", wxBitmap("data/toolbar/undo.bmp", wxBITMAP_TYPE_BMP), 
-		   wxBitmap("data/toolbar/undo.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Undo", "Undo last action", NULL);
-  Toolbar->AddTool(ID_TOOL_REDO_WAVE, "Redo", wxBitmap("data/toolbar/redo.bmp", wxBITMAP_TYPE_BMP), 
-		   wxBitmap("data/toolbar/redo.bmp", wxBITMAP_TYPE_BMP), wxITEM_NORMAL, "Redo", "Redo", NULL);
+  Toolbar->AddTool(ID_TOOL_UNDO_WAVE, _("Undo"), wxBitmap("data/toolbar/undo.bmp", wxBITMAP_TYPE_BMP), 
+		   wxBitmap("data/toolbar/undo.bmp",wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Undo"), _("Undo last action"), NULL);
+  Toolbar->AddTool(ID_TOOL_REDO_WAVE, _("Redo"), wxBitmap("data/toolbar/redo.bmp", wxBITMAP_TYPE_BMP), 
+		   wxBitmap("data/toolbar/redo.bmp", wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Redo"), _("Redo"), NULL);
   Toolbar->AddSeparator();
   
   for (c = 0; c < NB_CHOICE; c++)
     combochoice[c] = Choice[c].s;
-  combobox = new wxComboBox(Toolbar, ID_TOOL_COMBO_WAVE, "ZOOM", 
+  combobox = new wxComboBox(Toolbar, ID_TOOL_COMBO_WAVE, _("ZOOM"), 
 			    wxPoint(-1, -1), wxSize(68, -1), 5, combochoice, wxCB_DROPDOWN);
   
   Toolbar->AddControl(combobox);

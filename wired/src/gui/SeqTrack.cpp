@@ -43,7 +43,7 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   SetBackgroundColour(CL_RULER_BACKGROUND);
   
   if (audio)
-    s.Printf("Audio %d", ++AudioTrackCount);
+    s.Printf(_("Audio %d"), ++AudioTrackCount);
   else
     s.Printf("MIDI %d", ++MidiTrackCount);
   
@@ -104,7 +104,7 @@ void					SeqTrack::OnConnectToHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      wxString s("Click on this button to show the list of instruments and effects you can connect your track to.");
+      wxString s(_("Click on this button to show the list of instruments and effects you can connect your track to."));
       HelpWin->SetText(s);
     }
 }
@@ -113,7 +113,7 @@ void					SeqTrack::OnDeviceHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      wxString s("Click on this box to select the device you would like to record from.");
+      wxString s(_("Click on this box to select the device you would like to record from."));
       HelpWin->SetText(s);
     }
 }
@@ -125,13 +125,13 @@ void					SeqTrack::FillChoices()
   vector<long>::iterator		i;
 
   DeviceBox->Clear();
-  DeviceBox->Append(wxString("None"));
+  DeviceBox->Append(wxString(_("None")));
   DeviceBox->SetSelection(0);
   if (IsAudio)
     {
       for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end(); i++)
 	{
-	  s.Printf("Input %d", (int)((*i) + 1));
+	  s.Printf(_("Input %d"), (int)((*i) + 1));
 	  DeviceBox->Append(s);
 	}
     }
@@ -139,7 +139,7 @@ void					SeqTrack::FillChoices()
     {
       for (i = WiredSettings->MidiIn.begin(); i != WiredSettings->MidiIn.end(); i++)
 	{
-	  s.Printf("Midi In %d", (int)((*i) + 1));
+	  s.Printf(_("Midi In %d"), (int)((*i) + 1));
 	  DeviceBox->Append(s);
 	}
     }
@@ -157,7 +157,7 @@ void					SeqTrack::OnConnectTo(wxCommandEvent &event)
   if (menu)
     delete menu;
   menu = new wxMenu();  
-  menu->Append(NONE_SELECTED_ID, "None");
+  menu->Append(NONE_SELECTED_ID, _("None"));
   Connect(NONE_SELECTED_ID, wxEVT_COMMAND_MENU_SELECTED, 
 	  (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&SeqTrack::OnConnectSelected);
