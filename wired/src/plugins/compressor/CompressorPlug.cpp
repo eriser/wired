@@ -73,13 +73,11 @@ void CompressorPlugin::OnTarget(wxScrollEvent &e)
   Target = - (100 - TargetFader->GetValue());
   //if (Target <= 0.f)
   //Target = 0.01f;
-  cout << "Target: " << Target << "; Res: " << Res << endl;
 }
   
 void CompressorPlugin::OnResonance(wxScrollEvent &e)
 {
   Res = ResFader->GetValue() / 100.f;
-  cout << "Target: " << Target << "; Res: " << Res << endl;
 }
 
 void CompressorPlugin::OnPaint(wxPaintEvent &event)
