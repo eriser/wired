@@ -176,8 +176,8 @@ unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned lo
     }
   if (!path)
     {
-      path = new char(filename.size() * sizeof(char) + 1);
-      strncpy(path, filename.c_str(), filename.size());
+      path = new char(filename.size() * sizeof(*path) + 1);
+      strncpy(path, filename.c_str(), filename.size() + 1);
     }
   for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
     {

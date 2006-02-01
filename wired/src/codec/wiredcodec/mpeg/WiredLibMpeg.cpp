@@ -146,6 +146,7 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 	
 	if (file == NULL)
 	{
+	  cout << path<< endl;
 		file = mpeg3_open_func((char*)path);
 		if (file == NULL)
 		{
@@ -157,12 +158,13 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 		pcm->Channels = mpeg3_audio_channels_func(file, 0);
 		pcm->TotalSample = mpeg3_audio_samples_func(file, 0);
 		pcm->SampleRate = mpeg3_sample_rate_func(file, 0);
+		cout << " | " << pcm->Channels << " | " << pcm->TotalSample << " | " << pcm->SampleRate << endl;
 	}
-	if (length >= pcm->TotalSample)
-	{
-		cout << "[WIREDLIBMPEG] Not enought samples" << endl;
-		return 0;
-	}
+// 	if (length >= pcm->TotalSample)
+// 	{
+// 		cout << "[WIREDLIBMPEG] Not enought samples" << endl;
+// 		return 0;
+// 	}
 	//filePosInSample = mpeg3_get_sample_func(file, 0);
 	if (filePosInSample > pcm->TotalSample)
 	{
@@ -200,7 +202,7 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 //				cout << "[2] currentPosInSample: " << mpeg3_get_sample_func(file, 0) << endl;
 //				mpeg3_set_sample_func(file, filePosInSample, 0);
 //				cout << "[3] currentPosInSample: " << mpeg3_get_sample_func(file, 0) << endl;
-//				mpeg3_read_audio_func(file, rightChan, NULL, cpt, length, 0);
+				mpeg3_read_audio_func(file, rightChan, NULL, cpt, length, 0);
 //				cout << "[4] currentPosInSample: " << mpeg3_get_sample_func(file, 0) << endl;
 			}
 		}
