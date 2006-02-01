@@ -7,10 +7,10 @@
 #define PLUGIN_NAME	"Chorus"
 
 //Names used t stre and retreive parameters
-#define STR_BASE_LENGHT "BaseLength"
-#define STR_MODE_DEPTH "ModDepth"
-#define STR_FREQUENCY "Frequency"
-#define STR_EFFECT_MIX "EffectMix"
+#define STR_BASE_LENGHT _("BaseLength")
+#define STR_MODE_DEPTH _("ModDepth")
+#define STR_FREQUENCY _("Frequency")
+#define STR_EFFECT_MIX _("EffectMix")
 
 static PlugInitInfo info;
 
