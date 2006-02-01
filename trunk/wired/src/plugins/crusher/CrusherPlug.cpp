@@ -238,14 +238,14 @@ void CrusherPlugin::OnBits(wxScrollEvent &WXUNUSED(e))
   Step = powf(0.5f, Bits);
   //if (Bits <= 0.f)
   //Bits = 0.01f;
-  cout << "Bits: " << Bits << "; Step: " << Step << endl;
+//  cout << "Bits: " << Bits << "; Step: " << Step << endl;
 }
   
 void CrusherPlugin::OnFreq(wxScrollEvent &WXUNUSED(e))
 {
   Freq = FreqFader->GetValue();
   NormFreq = Freq / 44100.f;
-  cout << "Freq: " << Freq << "; NormFreq: " << NormFreq << endl;
+//  cout << "Freq: " << Freq << "; NormFreq: " << NormFreq << endl;
 }
 
 void CrusherPlugin::OnPaint(wxPaintEvent &event)
