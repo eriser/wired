@@ -62,12 +62,12 @@ void ASKeygroupEditor::PaintSelection()
     ASamplerKeygroup *askg = ass->GetKeygroup();
     if (!askg)
       return;
-    wxString notes[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-    wxString s("Low key: ");
+    wxString notes[12] = { _("C"), _("C#"), _("D"), _("D#"), _("E"), _("F"), _("F#"), _("G"), _("G#"), _("A"), _("A#"), _("B") };
+    wxString s(_("Low key: "));
     s += notes[askg->GetLowKey() % 12] + " ";
     s << (int)(askg->GetLowKey() / 12 - 2);
     lokey->SetLabel(s);
-    s = "High key: ";
+    s = _("High key: ");
     s += notes[askg->GetHighKey() % 12] + " ";
     s << (int)(askg->GetHighKey() / 12 - 2);
     hikey->SetLabel(s);
