@@ -13,11 +13,11 @@
 #include "DownButton.h"
 
 #define IMG_DL_SINGLE_BG	"dssi/dssi_single_bg.png"
-#define IMG_DL_MIDDLE_BG	"dssi/dssi_middle_bg.png"
+#define IMG_DL_MID_BG		"dssi/dssi_middle_bg.png"
 #define IMG_DL_END_BG		"dssi/dssi_end_bg.png"
 #define IMG_DL_WIDE_BG		"dssi/dssi_wide_bg.png"
 #define IMG_DL_VWIDE_BG		"dssi/dssi_very_wide_bg.png"
-#define IMG_DL_BEGIN_BG		"dssi/dssi_begin_bg.png"
+#define IMG_DL_BEG_BG		"dssi/dssi_begin_bg.png"
 #define IMG_DL_BMP		"dssi/DelayPlug.bmp"
 #define IMG_DL_FADER_BG		"dssi/fader_bg.png"
 #define IMG_DL_FADER_FG		"dssi/fader_button.png"

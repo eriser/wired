@@ -111,16 +111,39 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 
   // gruik  
   if (_GuiControls.size() <= 3)
-    tr_bg = 
-      new wxImage(string(GetDataDir() + string(IMG_DL_SINGLE_BG)).c_str(), 
-		  wxBITMAP_TYPE_PNG);
-  else if (_GuiControls.size() < 9)
-    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_WIDE_BG)).c_str(),
-			wxBITMAP_TYPE_PNG);
+    {
+      tr_bg = 
+	new wxImage(string(GetDataDir() + string(IMG_DL_SINGLE_BG)).c_str(), 
+		    wxBITMAP_TYPE_PNG);
+      TpBmp = new wxBitmap(tr_bg);
+      delete tr_bg;
+    }
   else
-    tr_bg = new wxImage(string(GetDataDir() + string(IMG_DL_VWIDE_BG)).c_str(),
-			wxBITMAP_TYPE_PNG); 
-  TpBmp = new wxBitmap(tr_bg);
+    {
+      wxImage		*beg = new wxImage(string(GetDataDir() + string(IMG_DL_BEG_BG)).c_str());
+      wxImage		*mid = new wxImage(string(GetDataDir() + string(IMG_DL_MID_BG)).c_str());
+      wxImage		*end = new wxImage(string(GetDataDir() + string(IMG_DL_END_BG)).c_str());
+      wxMemoryDC	dc;
+
+      TpBmp = new wxBitmap(width, 100);
+      dc.SelectObject(*TpBmp);
+
+      wxBitmap *tmp1 = new wxBitmap(beg);
+      dc.DrawBitmap(*tmp1, wxPoint(0, 0), false);
+      wxBitmap *tmp2 = new wxBitmap(end);
+      dc.DrawBitmap(*tmp2, wxPoint(width - 200, 0), false);
+      wxBitmap *tmp = new wxBitmap(mid);
+
+      for (int i = 200; i < width - 200; i += 200)
+	dc.DrawBitmap(*tmp, wxPoint(i, 0), false);
+
+      delete tmp;
+      delete tmp1;
+      delete tmp2;
+      delete beg;
+      delete mid;
+      delete end;
+    }
 
   img_fader_bg = 
     new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), 
@@ -151,7 +174,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       else
 	{
 	  // if LADSPA_IS_HINT_INTEGER
-	  cout << "LADSPA_IS_HINT_INTEGER" << iter->second.Descriptor.RangeHint.HintDescriptor  << endl;
+	  cout << hex << "LADSPA_IS_HINT_INTEGER " << iter->second.Descriptor.RangeHint.HintDescriptor  << endl;
 	  cout << "Dans WiredExternalPluginGui :" << LADSPA_IS_HINT_INTEGER(iter->second.Descriptor.RangeHint.HintDescriptor) << endl;
 	  Faders[i] = new FaderCtrl(this, i + 1, img_fader_bg, img_fader_fg,
 				    (float)iter->second.Data.LowerBound, 
