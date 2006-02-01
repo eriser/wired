@@ -194,8 +194,6 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 	  //((FaderCtrl*)Faders[i])->SetValue((int)(*(iter->second.Data.Data)));
 	  ((FaderCtrl*)Faders[i])->SetValue((*(iter->second.Data.Data)));
 	  // gruik bis
-	  if (i == 13)
-	    break;
 	}
     }
   
