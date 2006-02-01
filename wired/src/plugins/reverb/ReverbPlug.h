@@ -47,9 +47,9 @@
 #define IMG_RV_KNOB_JC		"plugins/reverb/reverb_knob_jc.png"
 
 
-#define STR_REVERB_SELECTED	"ReverbSelected"
-#define STR_MIX_LEVEL		"MixLevel"
-#define STR_DECAY		"Decay"
+#define STR_REVERB_SELECTED	_("ReverbSelected")
+#define STR_MIX_LEVEL	_("MixLevel")
+#define STR_DECAY _("Decay")
 
 typedef struct s_param
 {

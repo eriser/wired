@@ -318,7 +318,6 @@ void ReverbPlugin::OnSelect(wxCommandEvent &e)
   int i;
   
   i = SelrevKnob->GetValue();
-  cout << "rev no: " << SelrevKnob->GetValue() << endl;
   
   if (i == 0)
     {
