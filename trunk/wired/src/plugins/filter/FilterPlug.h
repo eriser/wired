@@ -44,16 +44,16 @@
 
 #define FILTER_SIZE		5		// 3 inputs, 2 outpus
 
-#define STR_FILTER "Filter"
-#define STR_CUTOFF "Cutoff"
-#define STR_RESONANCE "Resonance"
-#define STR_BYPASS "Bypass"
-#define STR_MIDI_BYPASS1 "MIDIBypass1"
-#define STR_MIDI_CUTOFF1 "MIDICutoff1"
-#define STR_MIDI_RESONANCE1 "MIDIResonance1"
-#define STR_MIDI_BYPASS2 "MIDIBypass2"
-#define STR_MIDI_CUTOFF2 "MIDICutoff2"
-#define STR_MIDI_RESONANCE2 "MIDIResonance2"
+#define STR_FILTER _("Filter")
+#define STR_CUTOFF _("Cutoff")
+#define STR_RESONANCE _("Resonance")
+#define STR_BYPASS _("Bypass")
+#define STR_MIDI_BYPASS1 _("MIDIBypass1")
+#define STR_MIDI_CUTOFF1 _("MIDICutoff1")
+#define STR_MIDI_RESONANCE1 _("MIDIResonance1")
+#define STR_MIDI_BYPASS2 _("MIDIBypass2")
+#define STR_MIDI_CUTOFF2 _("MIDICutoff2")
+#define STR_MIDI_RESONANCE2 _("MIDIResonance2")
 
 static PlugInitInfo info;
 
