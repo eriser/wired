@@ -6,8 +6,8 @@
 #include 						"cImportMidiAction.h"
 #include 						<wx/menu.h>
 
-#define	UNDO_LABEL				"Undo "
-#define	REDO_LABEL				"Redo "
+#define	UNDO_LABEL				_("Undo ")
+#define	REDO_LABEL				_("Redo ")
 #define BEGIN_HISTORY_ID		424242
 
 
