@@ -1,0 +1,1 @@
+find  \( -iname "*.cpp" -o -iname "*.h" \) -exec xgettext -j -C -n -k_ -kwxPLURAL:1,2 -kwxTRANSLATE -o data/i18n/fr/wired_fr.po {} \;
