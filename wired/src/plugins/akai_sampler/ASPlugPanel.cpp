@@ -57,7 +57,7 @@ ASPlugPanel::ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
   ToolbarPanel = new wxPanel(this, -1, wxPoint(0, 0), wxSize(GetSize().x, OPT_TOOLBAR_HEIGHT),
 			     wxSIMPLE_BORDER);
   ToolbarPanel->SetBackgroundColour(CL_OPTION_TOOLBAR);
-  Title = new wxStaticText(ToolbarPanel, -1, "Plugin", wxPoint(18, 0), 
+  Title = new wxStaticText(ToolbarPanel, -1, _("Plugin"), wxPoint(18, 0), 
 			   wxSize(-1, OPT_TOOLBAR_HEIGHT));
   Title->SetForegroundColour(*wxWHITE);
   wxImage *detach_up = new wxImage(string(as->GetDataDir() + string(OPT_DETACH_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
@@ -174,7 +174,7 @@ void				ASPlugPanel::ShowLastPlug()
 	ShowPlug(*i);
 	return;
       }
-  Title->SetLabel("No Plug");      
+  Title->SetLabel(_("No Plugin"));
   CurrentPlug = 0x0;
 }
 

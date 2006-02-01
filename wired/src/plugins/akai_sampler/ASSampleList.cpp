@@ -47,7 +47,7 @@ void  ASSampleList::OnAddSample(wxCommandEvent &e)
 {
   int fk = 24;
   vector<string> exts;
-  string s = as->OpenFileLoader("Load Sample", 0x0, false);
+  string s = as->OpenFileLoader(_("Load Sample"), 0x0, false);
   if (!s.empty())
   {
     WaveFile *w = new WaveFile(s, true);

@@ -18,7 +18,7 @@ ASClavier::ASClavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
   int		posY = BLACKASKEY_WIDTH * 3 / 2 - BLACKASKEY_WIDTH / 2;
   int		posYW = 0; 
   int		wkeyh = BLACKASKEY_WIDTH * 3 / 2;
-  wxString	gamme = "CDEFGAB";
+  wxString	gamme = _("CDEFGAB");
   int		oct = 0; //-2;
   int		note = 0;
   int		code = 24; //0;
@@ -131,7 +131,7 @@ void	ASClavier::OnPaint(wxPaintEvent &event)
   dc.SetFont(f);
   for (int i = NB_WHITEASKEY; i > 0; i = i - 7)
   {
-    wxString str = "C";
+    wxString str = _("C");
     str = str << j;
     dc.DrawText(str, posY + (BLACKASKEY_WIDTH * 3 / 2 - 6) / 2, s.GetHeight() - WHITEASKEY_HEIGHT - 10); 
     j++;

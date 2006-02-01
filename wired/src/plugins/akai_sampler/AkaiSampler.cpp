@@ -49,7 +49,7 @@ END_EVENT_TABLE()
   PlugPanel = new ASPlugPanel(this, wxPoint(149, 8), wxSize(642, 120),//GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), 
             wxTHICK_FRAME , this);
 
-  Samples = new ASSampleList(this, "Samples");
+  Samples = new ASSampleList(this, _("Samples"));
 
   clavier = new ASClavier(this, -1, wxPoint(23, 142), //GetSize().GetWidth() - ASCLAVIER_WIDTH, GetSize().GetHeight() - ASCLAVIER_HEIGHT),
           wxSize(ASCLAVIER_WIDTH, ASCLAVIER_HEIGHT),
@@ -503,7 +503,7 @@ void AkaiSampler::LoadProgram()
       Keygroups.push_back(askg);
       ass->SetKeygroup(askg);
       askg->SetSample(ass);
-      ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + " #0 for " + group->zone_sample[0]->name);
+      ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + _(" #0 for ") + group->zone_sample[0]->name);
       p->SetSample(ass);
       ass->AddEffect(p);
       PlugPanel->AddPlug(p);
@@ -594,7 +594,7 @@ void AkaiSampler::Process(float **input, float **output, long sample_length)
 
   Workshop.GetMix(output);
 
-  // Suppression des notes termin~Aées
+  // Suppression des notes termin~A?es
   for (i = Notes.begin(); i != Notes.end();)
   {
     long endtotest;
@@ -651,7 +651,7 @@ void AkaiSampler::ProcessEvent(WiredEvent &event)
     {
       Mutex.Lock();
 
-      // Suppression des notes termin~Aées
+      // Suppression des notes termin~A?es
       list<ASamplerNote *>::iterator i;
       for (i = Notes.begin(); i != Notes.end(); i++)
       {
@@ -754,14 +754,14 @@ void AkaiSampler::Update()
 void AkaiSampler::OnOpenFile(wxCommandEvent &event)
 {
   //  FileLoader *dlg = new FileLoader(this, -1, "Load AKAI patch", true, false, NULL);
-  string s = OpenFileLoader("Load AKAI program", 0x0, true);
+  string s = OpenFileLoader(_("Load AKAI program"), 0x0, true);
   if (!s.empty()) //dlg->ShowModal() == wxID_OK)
   {
     string filename = s; //dlg->GetSelectedFile();
     //dlg->Destroy();
 
-    wxProgressDialog *Progress = new wxProgressDialog("Loading AKAI program",
-        "Please wait...",
+    wxProgressDialog *Progress = new wxProgressDialog(_("Loading AKAI program"),
+        _("Please wait..."),
         100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
         | wxPD_REMAINING_TIME);
     Progress->Update(1);
@@ -863,7 +863,7 @@ void AkaiSampler::OnKgroupButton(wxCommandEvent &event)
     ASamplerKeygroup *askg = ass->GetKeygroup();
     if (!aske)
     {
-      aske = new ASKeygroupEditor(this, wxString(_T("Keygroup editor for ")) + e->GetName());
+      aske = new ASKeygroupEditor(this, wxString(_("Keygroup editor for ")) + e->GetName());
       aske->SetSample(ass);
       ass->SetKgEditor(aske);
       PlugPanel->AddPlug(aske);
@@ -900,7 +900,7 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
         s << EFFECTSNAMES[0];
         s << " #";
         s << count;
-        s << " for " ;
+        s << _(" for ") ;
         s << e->GetName();
         p = new ASEnvel(this, s);
         break;
@@ -912,7 +912,7 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
         s << EFFECTSNAMES[1];
         s << " #";
         s << count;
-        s << " for " ;
+        s << _(" for ") ;
         s << e->GetName();
         p = new ASLoop(this, s);
         break;
@@ -973,7 +973,7 @@ void AkaiSampler::OnEffectButton(wxCommandEvent &event)
           (wxCommandEventFunction)&AkaiSampler::OnAddEffect);
     }
     int num = NB_EFFECTS + 1;
-    menu->Append(num++, "New effect", newplug);
+    menu->Append(num++, _("New effect"), newplug);
     for (vector<ASPlugin *>::iterator i = p.begin(); i != p.end(); i++)
     {
       menu->Append(num, (*i)->Name);
