@@ -6,15 +6,15 @@ BEGIN_EVENT_TABLE(BeatDialog, wxDialog)
 END_EVENT_TABLE()
 
 BeatDialog::BeatDialog(wxWindow *parent) : 
-  wxDialog(parent, -1, "Set loop's number of beat per bar", wxDefaultPosition, 
+  wxDialog(parent, -1, _("Set loop's number of beat per bar"), wxDefaultPosition, 
 	   wxSize(206, 114))
 {
   Centre();
 
-  OkBtn = new wxButton(this, ID_OK, "OK", wxPoint(20, 78));
+  OkBtn = new wxButton(this, ID_OK, _("OK"), wxPoint(20, 78));
   CancelBtn = new wxButton(this, ID_CANCEL, "Cancel", wxPoint(110, 78));
   
-  BeatText = new wxStaticText(this, -1, "Number of beat per bar:", wxPoint(30, 10));
+  BeatText = new wxStaticText(this, -1, _("Number of beat per bar:"), wxPoint(30, 10));
   BeatCtrl = new wxSpinCtrl(this, -1, "4", wxPoint(60, 40));
 }
 

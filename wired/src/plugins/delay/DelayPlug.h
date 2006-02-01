@@ -23,18 +23,18 @@
 #define IMG_BYPASS_ON	"plugins/delay/bypass_button_down.png"
 #define IMG_BYPASS_OFF	"plugins/delay/bypass_button_up.png"
 
-#define STR_DELAY_TIME "DelayTime"
-#define STR_FEEDBACK "Feedback"
-#define STR_DRY_LEVEL "DryLevel"
-#define STR_WET_LEVEL "WetLevel"
-#define STR_MIDI_BYPASS1 "MIDIBypass1"
-#define STR_MIDI_BYPASS2 "MIDIBypass2"
-#define STR_MIDI_TIME1 "MIDITime1"
-#define STR_MIDI_TIME2 "MIDITime2"
-#define STR_MIDI_FEEDBACK1 "MIDIFeedback1"
-#define STR_MIDI_FEEDBACK2 "MIDIFeedback2"
-#define STR_MIDI_DRY_WET1 "MIDIDryWet1"
-#define STR_MIDI_DRY_WET2 "MIDIDryWet2"
+#define STR_DELAY_TIME _("DelayTime")
+#define STR_FEEDBACK _("Feedback")
+#define STR_DRY_LEVEL _("DryLevel")
+#define STR_WET_LEVEL _("WetLevel")
+#define STR_MIDI_BYPASS1 _("MIDIBypass1")
+#define STR_MIDI_BYPASS2 _("MIDIBypass2")
+#define STR_MIDI_TIME1 _("MIDITime1")
+#define STR_MIDI_TIME2 _("MIDITime2")
+#define STR_MIDI_FEEDBACK1 _("MIDIFeedback1")
+#define STR_MIDI_FEEDBACK2 _("MIDIFeedback2")
+#define STR_MIDI_DRY_WET1 _("MIDIDryWet1")
+#define STR_MIDI_DRY_WET2 _("MIDIDryWet2")
 
 #define MAX_TIME	5000
 

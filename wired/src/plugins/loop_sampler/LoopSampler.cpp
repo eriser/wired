@@ -344,62 +344,62 @@ LoopSampler::~LoopSampler()
 void LoopSampler::OnHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("This is Wired's Loop Sampler. It enables you to load loops and modify them, by cutting them into slices for automatic loop scaling, with pitch shifting and time stretching.");
+    SendHelp(_("This is Wired's Loop Sampler. It enables you to load loops and modify them, by cutting them into slices for automatic loop scaling, with pitch shifting and time stretching."));
 }
 
 void LoopSampler::OnOctaveHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("This knob sets the octave of the loaded sample. It will use a pitch shifting algorithm to achieve that effect. Right click on it to set the MIDI automation controller.");
+    SendHelp(_("This knob sets the octave of the loaded sample. It will use a pitch shifting algorithm to achieve that effect. Right click on it to set the MIDI automation controller."));
 }
 
 void LoopSampler::OnPitchHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Changes the pitch (speed) of the whole loaded sample. Right click on it to set the MIDI automation controller.");
+    SendHelp(_("Changes the pitch (speed) of the whole loaded sample. Right click on it to set the MIDI automation controller."));
 }
 
 void LoopSampler::OnAutoStretchHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Stretch the whole sample that it synchronizes with the sequencer BPM Right click on it to set the MIDI automation controller.");
+    SendHelp(_("Stretch the whole sample that it synchronizes with the sequencer BPM Right click on it to set the MIDI automation controller."));
 }
 
 void LoopSampler::OnInvertHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Inverts the sample audio data. Right click on it to set the MIDI automation controller.");
+    SendHelp(_("Inverts the sample audio data. Right click on it to set the MIDI automation controller."));
 }
 
 
 void LoopSampler::OnPlayHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Plays the sample, synchronized with the sequencer.");
+    SendHelp(_("Plays the sample, synchronized with the sequencer."));
 }
 
 void LoopSampler::OnOpenHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Opens an audio file or Loop Sampler patch.");
+    SendHelp(_("Opens an audio file or Loop Sampler patch."));
 }
 
 void LoopSampler::OnSaveHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Saves current configuration to a Loop Sampler patch file.");
+    SendHelp(_("Saves current configuration to a Loop Sampler patch file."));
 }
 
 void LoopSampler::OnSendSeqHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Send current slices configuration to the selected MIDI tracks, as MIDI notes.");
+    SendHelp(_("Send current slices configuration to the selected MIDI tracks, as MIDI notes."));
 }
 
 void LoopSampler::OnOptViewHelp(wxMouseEvent &event)
 {
   if (HelpMode)
-    SendHelp("Shows Loop Sampler's optional view.");
+    SendHelp(_("Shows Loop Sampler's optional view."));
 }
 
 void LoopSampler::SetBufferSize(long size) 
@@ -640,7 +640,7 @@ void LoopSampler::Process(float **input, float **output, long sample_length)
 
   Workshop.GetMix(output);
 
-  // Suppression des notes terminées
+  // Suppression des notes termin?es
   for (i = Notes.begin(); i != Notes.end();)
     {  
       //if ((*i)->Position >= (*i)->SliceNote->EndPosition)      
@@ -664,7 +664,7 @@ void LoopSampler::ProcessEvent(WiredEvent &event)
 	{
 	  Mutex.Lock();
 
-	  // Suppression des notes terminées
+	  // Suppression des notes termin?es
 	  list<LoopNote *>::iterator i;
 	  for (i = Notes.begin(); i != Notes.end(); i++)
 	    {  
@@ -1205,12 +1205,12 @@ void LoopSampler::OnOpenFile(wxCommandEvent &event)
   exts.push_back("pvf\tPortable Voice Format (*.pvf)");
   exts.push_back("xi\tFastracker 2 format (*.xi)");
 
-  string s = OpenFileLoader("Loading sound file", &exts);
+  string s = OpenFileLoader(_("Loading sound file"), &exts);
   if (!s.empty())
     {
       string selfile = s;
 
-      wxProgressDialog *Progress = new wxProgressDialog("Loading wave file", "Please wait...", 
+      wxProgressDialog *Progress = new wxProgressDialog(_("Loading wave file"), _("Please wait..."), 
 							100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
                                                         | wxPD_REMAINING_TIME);
       Progress->Update(1);
@@ -1275,7 +1275,7 @@ void LoopSampler::OnSaveFile(wxCommandEvent &event)
   string s;
 
   exts.push_back("wls\tLoop Sampler patch (*.wls)");
-  s = SaveFileLoader("Save Loop Sampler patch", &exts);
+  s = SaveFileLoader(_("Save Loop Sampler patch"), &exts);
 
   if (!s.empty())
     {

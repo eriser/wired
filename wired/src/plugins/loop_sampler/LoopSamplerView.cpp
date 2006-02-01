@@ -64,10 +64,10 @@ LoopSamplerView::LoopSamplerView(wxMutex *mutex, wxWindow *parent, const wxPoint
   PitchLabel->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   PitchLabel->SetForegroundColour(*wxWHITE);
 
-  t = new wxStaticText(Toolbar, -1, "Note", wxPoint(48, 50), wxSize(10, -1));
+  t = new wxStaticText(Toolbar, -1, _("Note"), wxPoint(48, 50), wxSize(10, -1));
   t->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   t->SetForegroundColour(*wxWHITE);
-  t = new wxStaticText(Toolbar, -1, "Pitch", wxPoint(86, 50), wxSize(10, -1));
+  t = new wxStaticText(Toolbar, -1, _("Pitch"), wxPoint(86, 50), wxSize(10, -1));
   t->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   t->SetForegroundColour(*wxWHITE);
 
@@ -79,10 +79,10 @@ LoopSamplerView::LoopSamplerView(wxMutex *mutex, wxWindow *parent, const wxPoint
   AffectLabel->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   AffectLabel->SetForegroundColour(*wxWHITE);
 
-  t = new wxStaticText(Toolbar, -1, "Volume", wxPoint(40, 112), wxSize(10, -1));
+  t = new wxStaticText(Toolbar, -1, _("Volume"), wxPoint(40, 112), wxSize(10, -1));
   t->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   t->SetForegroundColour(*wxWHITE);
-  t = new wxStaticText(Toolbar, -1, "Affect", wxPoint(84, 112), wxSize(10, -1));
+  t = new wxStaticText(Toolbar, -1, _("Affect"), wxPoint(84, 112), wxSize(10, -1));
   t->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   t->SetForegroundColour(*wxWHITE);
 
