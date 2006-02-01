@@ -5,7 +5,7 @@
 
 HelpCtrl::HelpCtrl(wxWindow *parent, wxWindowID id, wxString data_zip,
 		   const wxPoint &pos, const wxSize &size)
-  : wxHtmlWindow(parent, id, pos , size, wxHW_SCROLLBAR_AUTO | wxHW_NO_SELECTION, "Wired Help")
+  : wxHtmlWindow(parent, id, pos , size, wxHW_SCROLLBAR_AUTO | wxHW_NO_SELECTION, _("Wired Help"))
 {
   data_zip_path = data_zip;
   path_file = data_zip_path;

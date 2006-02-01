@@ -41,6 +41,7 @@
 #include "../xml/WiredSessionXml.h"
 #include "../dssi/WiredExternalPluginMgr.h"
 #include "FileConversion.h"
+#include "config.h"
 
 
 Rack					*RackPanel;
@@ -62,8 +63,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
 	    wxDEFAULT_FRAME_STYLE | wxWS_EX_PROCESS_IDLE)
 {
+  InitLocale();
   WiredSettings = new Settings(); // FIXME catch what we can here
-
   CurrentSession = new WiredSession("");
   CurrentXmlSession = new WiredSessionXml("");
   LoadedExternalPlugins = new WiredExternalPluginMgr();
@@ -91,7 +92,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
     {
       cout << "[MAINWIN] Invalid Device Settings" << endl;
       Audio->IsOk = false;
-      AlertDialog("audio engine", "you may check for your audio settings if you want to use wired..");
+      AlertDialog(_("audio engine"), _("You may check for your audio settings if you want to use Wired.."));
       
       AudioMutex.Lock();/* This will lock the sequencer			\
 			   until audio parameters are properly set */
@@ -191,62 +192,62 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   HelpMenu = new wxMenu;
   WindowMenu = new wxMenu;
   
-  FileMenu->Append(MainWin_New, "&New\tCtrl-N");
-  FileMenu->Append(MainWin_Open, "&Open...\tCtrl-O");
-  FileMenu->Append(MainWin_Save, "&Save\tCtrl-S");
-  FileMenu->Append(MainWin_SaveAs, "Save &as...\tF12");
+  FileMenu->Append(MainWin_New, _("&New\tCtrl-N"));
+  FileMenu->Append(MainWin_Open, _("&Open...\tCtrl-O"));
+  FileMenu->Append(MainWin_Save, _("&Save\tCtrl-S"));
+  FileMenu->Append(MainWin_SaveAs, _("Save &as...\tF12"));
   FileMenu->AppendSeparator();
-  FileMenu->Append(MainWin_ImportWave, "&Import Wave file...");
-  FileMenu->Append(MainWin_ImportMIDI, "&Import MIDI file...");
-  FileMenu->Append(MainWin_ImportAKAI, "&Import AKAI sample...");
+  FileMenu->Append(MainWin_ImportWave, _("&Import Wave file..."));
+  FileMenu->Append(MainWin_ImportMIDI, _("&Import MIDI file..."));
+  FileMenu->Append(MainWin_ImportAKAI, _("&Import AKAI sample..."));
   FileMenu->AppendSeparator();
-  FileMenu->Append(MainWin_ExportWave, "&Export Wave file...");
-  FileMenu->Append(MainWin_ExportMIDI, "&Export MIDI file...");
+  FileMenu->Append(MainWin_ExportWave, _("&Export Wave file..."));
+  FileMenu->Append(MainWin_ExportMIDI, _("&Export MIDI file..."));
 
   FileMenu->AppendSeparator();
-  FileMenu->Append(MainWin_Quit, "&Quit");
+  FileMenu->Append(MainWin_Quit, _("&Quit\tCtrl-Q"));
 
 
   EditMenu->AppendSeparator();
-  EditMenu->Append(MainWin_Cut, "C&ut\tCtrl+X");
-  EditMenu->Append(MainWin_Copy, "&Copy\tCtrl+C");
-  EditMenu->Append(MainWin_Paste, "&Paste\tCtrl+V");
+  EditMenu->Append(MainWin_Cut, _("C&ut\tCtrl+X"));
+  EditMenu->Append(MainWin_Copy, _("&Copy\tCtrl+C"));
+  EditMenu->Append(MainWin_Paste, _("&Paste\tCtrl+V"));
   EditMenu->AppendSeparator();
-  EditMenu->Append(MainWin_Delete, "&Delete\tDel");
-  EditMenu->Append(MainWin_SelectAll, "&Select all\tCtrl+A");
+  EditMenu->Append(MainWin_Delete, _("&Delete\tDel"));
+  EditMenu->Append(MainWin_SelectAll, _("&Select all\tCtrl+A"));
   EditMenu->AppendSeparator();
-  EditMenu->Append(MainWin_Settings, "&Settings...");
+  EditMenu->Append(MainWin_Settings, _("&Settings..."));
   
-  SequencerMenu->Append(MainWin_AddTrackAudio, "&Add Audio Track");
-  SequencerMenu->Append(MainWin_AddTrackMidi, "&Add MIDI Track");
-  SequencerMenu->Append(MainWin_DeleteTrack, "&Delete Track");
+  SequencerMenu->Append(MainWin_AddTrackAudio, _("&Add Audio Track"));
+  SequencerMenu->Append(MainWin_AddTrackMidi, _("&Add MIDI Track"));
+  SequencerMenu->Append(MainWin_DeleteTrack, _("&Delete Track"));
   SequencerMenu->AppendSeparator();
-  SequencerMenu->Append(MainWin_ChangeAudioDir, "&Change Audio directory...");
+  SequencerMenu->Append(MainWin_ChangeAudioDir, _("&Change Audio directory..."));
   
-  RacksMenu->Append(MainWin_DeleteRack, "D&elete Rack");
+  RacksMenu->Append(MainWin_DeleteRack, _("D&elete Rack"));
 
-  HelpMenu->Append(MainWin_IntHelp, "&Show Integrated Help");
-  HelpMenu->Append(MainWin_About, "&About...");
+  HelpMenu->Append(MainWin_IntHelp, _("&Show Integrated Help"));
+  HelpMenu->Append(MainWin_About, _("&About..."));
   
-  WindowMenu->Append(MainWin_SwitchRack, "Switch &Rack/Optional view\tTAB");
-  WindowMenu->Append(MainWin_SwitchSeq, "Switch &Sequencer/Optional view\tCtrl+TAB");
+  WindowMenu->Append(MainWin_SwitchRack, _("Switch &Rack/Optional view\tTAB"));
+  WindowMenu->Append(MainWin_SwitchSeq, _("Switch &Sequencer/Optional view\tCtrl+TAB"));
   WindowMenu->AppendSeparator();
-  ItemFloatingTrans = WindowMenu->AppendCheckItem(MainWin_FloatTransport, "Floating Transport");
-  ItemFloatingSeq = WindowMenu->AppendCheckItem(MainWin_FloatSequencer, "Floating Sequencer");
-  ItemFloatingRacks = WindowMenu->AppendCheckItem(MainWin_FloatRacks, "Floating Racks");
-  ItemFloatingOptView = WindowMenu->AppendCheckItem(MainWin_FloatView, "Floating Optional View");
+  ItemFloatingTrans = WindowMenu->AppendCheckItem(MainWin_FloatTransport, _("Floating Transport"));
+  ItemFloatingSeq = WindowMenu->AppendCheckItem(MainWin_FloatSequencer,_("Floating Sequencer"));
+  ItemFloatingRacks = WindowMenu->AppendCheckItem(MainWin_FloatRacks, _("Floating Racks"));
+  ItemFloatingOptView = WindowMenu->AppendCheckItem(MainWin_FloatView, _("Floating Optional View"));
   WindowMenu->AppendSeparator();
-  WindowMenu->AppendCheckItem(MainWin_FullScreen, "&Fullscreen");
+  WindowMenu->AppendCheckItem(MainWin_FullScreen, _("&Fullscreen"));
   
-  MenuBar->Append(FileMenu, "&File");
-  MenuBar->Append(EditMenu, "&Edit");
-  MenuBar->Append(SequencerMenu, "&Sequencer");
-  MenuBar->Append(RacksMenu, "&Racks");
-  MenuBar->Append(CreateInstrMenu, "&Instruments");
-  MenuBar->Append(CreateEffectMenu, "Effec&ts");
-  MenuBar->Append(VideoMenu, "&Video");
-  MenuBar->Append(WindowMenu, "&Window");
-  MenuBar->Append(HelpMenu, "&Help");
+  MenuBar->Append(FileMenu, _("&File"));
+  MenuBar->Append(EditMenu, _("&Edit"));
+  MenuBar->Append(SequencerMenu, _("&Sequencer"));
+  MenuBar->Append(RacksMenu, _("&Racks"));
+  MenuBar->Append(CreateInstrMenu, _("&Instruments"));
+  MenuBar->Append(CreateEffectMenu, _("Effec&ts"));
+  MenuBar->Append(VideoMenu, _("&Video"));
+  MenuBar->Append(WindowMenu, _("&Window"));
+  MenuBar->Append(HelpMenu, _("&Help"));
     
   SetMenuBar(MenuBar);
 
@@ -321,6 +322,20 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   SeqTimer->Start(40);
 }
 
+void                MainWindow::InitLocale()
+{
+    mLocale = new wxLocale();
+    if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
+    {
+        string      LookupPath(string(INSTALL_PREFIX) + string(WIRED_DATADIR) + string("i18n"));
+        mLocale->AddCatalogLookupPathPrefix(LookupPath);
+        mLocale->AddCatalog(wxT("fr"));
+        mLocale->AddCatalog(wxT("wired_fr"));
+    }
+    else
+        cout << "[MAINWIN] Could not initialize locale, falling down on default" << endl;
+}
+
 void					MainWindow::InitFileConverter()
 {
 	FileConverter = new FileConversion();
@@ -328,7 +343,7 @@ void					MainWindow::InitFileConverter()
 	
 	if (Audio->UserData->Sets->WorkingDir.empty())
 	{
-		wxDirDialog dir(this, "Choose the audio working directory", wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
+		wxDirDialog dir(this, _("Choose the audio working directory"), wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
 		if (dir.ShowModal() == wxID_OK)
 			CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str();
 		else
@@ -348,17 +363,17 @@ void					MainWindow::InitFileConverter()
 
 void					MainWindow::InitUndoRedoMenuItems()
 {
-	EditMenu->Insert(INDEX_MENUITEM_UNDO, MainWin_Undo, "U&ndo", UndoMenu);
-	EditMenu->Insert(INDEX_MENUITEM_REDO, MainWin_Redo, "&Redo", RedoMenu);
+	EditMenu->Insert(INDEX_MENUITEM_UNDO, MainWin_Undo, _("U&ndo"), UndoMenu);
+	EditMenu->Insert(INDEX_MENUITEM_REDO, MainWin_Redo, _("&Redo"), RedoMenu);
 	EditMenu->Enable(MainWin_Undo, false);
 	EditMenu->Enable(MainWin_Redo, false);
 }
 
 void					MainWindow::InitVideoMenuItems()
 {
-	VideoMenu->Append(MainWin_OpenVideo, "&Open video");
-	VideoMenu->Append(MainWin_CloseVideo, "&Close video");
-	VideoMenu->AppendCheckItem(MainWin_SeekVideo, "&Seek with video playing");
+	VideoMenu->Append(MainWin_OpenVideo, _("&Open video"));
+	VideoMenu->Append(MainWin_CloseVideo, _("&Close video"));
+	VideoMenu->AppendCheckItem(MainWin_SeekVideo, _("&Seek with video playing"));
 	cout << "new wiredvideo"<< endl; 
 	WiredVideoObject = new WiredVideo();
 	VideoMenu->Enable(MainWin_OpenVideo, true);
@@ -372,7 +387,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   vector<PluginLoader *>::iterator	k;
   int					res;
 
-  wxMessageDialog msg(this, "Save current session ?", "Wired", 
+  wxMessageDialog msg(this, _("Save current session ?"), "Wired", 
 		      wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
   res = msg.ShowModal();
   if (res == wxID_YES)
@@ -455,7 +470,7 @@ bool					MainWindow::NewSession()
 {
   // une session existe d?ja, demande de confirmation d'enregistrement
 
-  wxMessageDialog			msg(this, "Save current session ?", "Wired", 
+  wxMessageDialog			msg(this, _("Save current session ?"), "Wired", 
 					    wxYES_NO | wxCANCEL | wxICON_QUESTION);
   int					res;
   
@@ -492,9 +507,9 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
   vector<string>			exts;
   FileLoader				*dlg;
   
-  exts.insert(exts.begin(), "wrd\tWired session file (*.wrd)");
-  exts.insert(exts.begin(), "xml\tWired session file (*.xml)");
-  dlg = new FileLoader(this, MainWin_FileLoader, "Open session", false, false, &exts);
+  exts.insert(exts.begin(), _("wrd\tWired session file (*.wrd)"));
+  exts.insert(exts.begin(), _("xml\tWired session file (*.xml)"));
+  dlg = new FileLoader(this, MainWin_FileLoader, _("Open session"), false, false, &exts);
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();    
@@ -551,8 +566,8 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   vector<string>			exts;
   FileLoader				*dlg;
   
-  exts.insert(exts.begin(), "xml\tWired session file (*.xml)");
-  dlg = new FileLoader(this, MainWin_FileLoader, "Save session", false, true, &exts);
+  exts.insert(exts.begin(), _("xml\tWired session file (*.xml)"));
+  dlg = new FileLoader(this, MainWin_FileLoader, _("Save session"), false, true, &exts);
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();    
@@ -586,7 +601,7 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 
 void					MainWindow::OnImportWave(wxCommandEvent &event)
 {
-  FileLoader				*dlg = new FileLoader(this, MainWin_FileLoader, "Loading sound file", false, false, FileConverter->GetCodecsExtensions(), true);
+  FileLoader				*dlg = new FileLoader(this, MainWin_FileLoader, _("Loading sound file"), false, false, FileConverter->GetCodecsExtensions(), true);
   int						res;
 
   if (dlg->ShowModal() == wxID_OK)
@@ -599,7 +614,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 	      res = wxID_OK;
       else	     
       {
-	    wxDirDialog dir(this, "Choose the Audio file directory", wxFileName::GetCwd());
+	    wxDirDialog dir(this, _("Choose the Audio file directory"), wxFileName::GetCwd());
 		if (dir.ShowModal() == wxID_OK)
 		{
 			CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str(); 
@@ -648,14 +663,14 @@ void					MainWindow::OnImportMIDI(wxCommandEvent &event)
   vector<string>			exts;
   FileLoader				*dlg;
   
-  exts.insert(exts.begin(), "mid\tMidi file (*.mid)");
-  dlg = new FileLoader(this, MainWin_FileLoader, "Import MIDI file", false, false, &exts);
+  exts.insert(exts.begin(), _("mid\tMidi file (*.mid)"));
+  dlg = new FileLoader(this, MainWin_FileLoader, _("Import MIDI file"), false, false, &exts);
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();
 
       cout << "[MAINWIN] Users imports MIDI file : " << selfile << endl;
-      wxProgressDialog *Progress = new wxProgressDialog("Loading midi file", "Please wait...", 100, 
+      wxProgressDialog *Progress = new wxProgressDialog(_("Loading midi file"), _("Please wait..."), 100, 
 							this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
 							| wxPD_REMAINING_TIME);
       Progress->Update(1);
@@ -695,12 +710,12 @@ void					MainWindow::OnImportAKAI(wxCommandEvent &event)
   //TransportPanel->OnStop(event);
   FileLoader				*dlg;
   
-  dlg = new FileLoader(this, MainWin_FileLoader, "Import AKAI samples", true, false, NULL);
+  dlg = new FileLoader(this, MainWin_FileLoader, _("Import AKAI samples"), true, false, NULL);
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();
 
-      wxProgressDialog *Progress = new wxProgressDialog("Loading midi file", "Please wait...", 100, 
+      wxProgressDialog *Progress = new wxProgressDialog(_("Loading midi file"), _("Please wait..."), 100, 
 							this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
 							| wxPD_REMAINING_TIME);
       Progress->Update(1);
@@ -758,13 +773,13 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 
   if (total <= 0)
     {
-      wxMessageDialog msg(this, "Please correctly place the Left and Right markers", "Wired", 
+      wxMessageDialog msg(this, _("Please correctly place the Left and Right markers"), "Wired", 
 			  wxOK | wxICON_EXCLAMATION | wxCENTRE);
       msg.ShowModal();
       return;
     }
   
-  dlg = new FileLoader(this, MainWin_FileLoader, "Exporting sound file", false, true, NULL);
+  dlg = new FileLoader(this, MainWin_FileLoader, _("Exporting sound file"), false, true, NULL);
   if (dlg->ShowModal() == wxID_OK)
     {
       string selfile = dlg->GetSelectedFile();    
@@ -811,7 +826,7 @@ void					MainWindow::OnExportMIDI(wxCommandEvent &event)
   vector<string>			exts;
   FileLoader				*dlg;
   
-  exts.insert(exts.begin(), "mid\tMidi file (*.mid)");
+  exts.insert(exts.begin(), _("mid\tMidi file (*.mid)"));
   dlg = new FileLoader(this, MainWin_FileLoader, 
 		       "Export MIDI file", false, true, &exts);
   if (dlg->ShowModal() == wxID_OK)
@@ -1061,7 +1076,7 @@ void					MainWindow::OnFloatTransport(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatTransport))
     {
-      TransportFrame = new FloatingFrame(0x0, -1, "Transport", TransportPanel->GetPosition(), 
+      TransportFrame = new FloatingFrame(0x0, -1, _("Transport"), TransportPanel->GetPosition(), 
 					 TransportPanel->GetSize(), TransportPanel, this, ItemFloatingTrans);
       TransportPanel->Reparent(TransportFrame);
       TransportFrame->Show();
@@ -1078,7 +1093,7 @@ void					MainWindow::OnFloatSequencer(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatSequencer))
     {
-      SequencerFrame = new FloatingFrame(0x0, -1, "Sequencer", SeqPanel->GetPosition(), 
+      SequencerFrame = new FloatingFrame(0x0, -1, _("Sequencer"), SeqPanel->GetPosition(), 
 					 SeqPanel->GetSize(), SeqPanel, this, ItemFloatingSeq);
       SeqPanel->Reparent(SequencerFrame);
       //SeqPanel->Floating = true;
@@ -1097,7 +1112,7 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatRacks))
     {
-      RackFrame = new FloatingFrame(0x0, -1, "Racks", RackPanel->GetPosition(), 
+      RackFrame = new FloatingFrame(0x0, -1, _("Racks"), RackPanel->GetPosition(), 
 				    RackPanel->GetSize(), RackPanel, this, ItemFloatingRacks);
       RackPanel->Reparent(RackFrame);
       RackFrame->Show();
@@ -1287,8 +1302,8 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 	{
 	  cout << "[MAINWIN] Invalid Device Settings" << endl;
 	  Audio->IsOk = false;
-	  AlertDialog("audio engine", 
-		      "you may check for your audio settings if you want to use wired..");
+	  AlertDialog(_("audio engine"), 
+		      _("You may check for your audio settings if you want to use wired.."));
 	  if (AudioMutex.TryLock() == wxMUTEX_NO_ERROR)
 	    {
 	      AudioMutex.Lock();/* This will lock the sequencer		\
@@ -1363,7 +1378,7 @@ void					MainWindow::OnChangeAudioDir(wxCommandEvent &event)
 {
   assert(CurrentXmlSession);
   
-  wxDirDialog dir(this, "Choose the Audio file directory", 
+  wxDirDialog dir(this, _("Choose the Audio file directory"), 
   			CurrentXmlSession->GetAudioDir().empty() == true ? 
 		  wxFileName::GetCwd() : CurrentXmlSession->GetAudioDir());
   if (dir.ShowModal() == wxID_OK)

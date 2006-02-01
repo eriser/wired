@@ -94,7 +94,7 @@ OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
   ToolbarPanel = new wxPanel(this, -1, wxPoint(0, 0), wxSize(GetSize().x, OPT_TOOLBAR_HEIGHT),
 			     wxSIMPLE_BORDER);
   ToolbarPanel->SetBackgroundColour(CL_OPTION_TOOLBAR);
-  Title = new wxStaticText(ToolbarPanel, -1, "Midi pattern", wxPoint(4, 0), 
+  Title = new wxStaticText(ToolbarPanel, -1, _("Midi pattern"), wxPoint(4, 0), 
 			   wxSize(-1, OPT_TOOLBAR_HEIGHT));
   //Title->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   Title->SetForegroundColour(*wxWHITE);
@@ -125,11 +125,11 @@ OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
   // Creation Mixer
   MixerPanel = new MixerGui(this, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
 			    wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT));
-  MixerTool = new WiredTool("Wired Mixer", ID_TOOL_MIXER_OPTIONPANEL, MixerPanel);
+  MixerTool = new WiredTool(_("Wired Mixer"), ID_TOOL_MIXER_OPTIONPANEL, MixerPanel);
 
   HelpWin = new HelpPanel(this, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
 			  wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT));
-  HelpTool = new WiredTool("Wired Help", ID_TOOL_HELP_OPTIONPANEL, HelpWin);
+  HelpTool = new WiredTool(_("Wired Help"), ID_TOOL_HELP_OPTIONPANEL, HelpWin);
   ToolsList.push_back(MixerTool);
   ToolsList.push_back(HelpTool);
   ShowTool(MixerTool);
@@ -334,7 +334,7 @@ void				OptionPanel::ShowLastTool()
 	ShowTool(*i);
 	return;
       }
-  Title->SetLabel("No Tool");      
+  Title->SetLabel(_("No Tool"));
   CurrentTool = 0x0;
 }
 

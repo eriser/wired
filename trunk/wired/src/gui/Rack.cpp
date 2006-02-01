@@ -28,7 +28,7 @@ RackTrack::RackTrack(Rack *parent, int index)
   Units = 0;
   CurrentBuffer = 0x0;
   wxString s;
-  s.Printf("Rack %d", index + 1);
+  s.Printf(_("Rack %d"), index + 1);
   Output = Mix->AddStereoOutputChannel(true);
   ChanGui = MixerPanel->AddChannel(Output, s);
 }
@@ -225,14 +225,14 @@ void				Rack::InitContextMenu()
 	instr_menu = new wxMenu();
 	effects_menu  = new wxMenu();
 
-	menu->Append(ID_MENU_ADD, _T("Add"), submenu);
-	submenu->Append(ID_INSTR_MENU, _T("&Instruments"), instr_menu);
-	submenu->Append(ID_EFFECTS_MENU, _T("&Effects"), effects_menu);
-	menu->Append(ID_MENU_CUT, _T("Cut"));
-	menu->Append(ID_MENU_COPY, _T("Copy"));
-	menu->Append(ID_MENU_PASTE, _T("Paste"), false);
+	menu->Append(ID_MENU_ADD, _("Add"), submenu);
+	submenu->Append(ID_INSTR_MENU, _("&Instruments"), instr_menu);
+	submenu->Append(ID_EFFECTS_MENU, _("&Effects"), effects_menu);
+	menu->Append(ID_MENU_CUT, _("Cut"));
+	menu->Append(ID_MENU_COPY, _("Copy"));
+	menu->Append(ID_MENU_PASTE, _("Paste"), false);
 	menu->AppendSeparator();
-	menu->Append(ID_MENU_DELETE, _T("Delete"));
+	menu->Append(ID_MENU_DELETE, _("Delete"));
 	menu->Enable(ID_MENU_PASTE, false);
 
 	AddPlugToMenu();
@@ -742,7 +742,6 @@ inline void			Rack::OnPasteClick()
    if (is_cut && copy_plug)
     {
       //RemoveChild(copy_plug);
-      cout << "CUTTTTTTTTTTT" << endl;
     }
   
 }
@@ -810,7 +809,7 @@ void				Rack::OnHelp(wxMouseEvent &event)
     	}
     	else
     	{
-      		wxString s("This is the Rack view of Wired, where you can add plugins. Plugins are organized into tracks vertically, meaning the first plugin in a column will send its output signal to the plugin below it. You can connect sequencer tracks to plugins");
+      		wxString s(_("This is the Rack view of Wired, where you can add plugins. Plugins are organized into tracks vertically, meaning the first plugin in a column will send its output signal to the plugin below it. You can connect sequencer tracks to plugins"));
      		HelpWin->SetText(s);
     	}
     }
@@ -818,7 +817,6 @@ void				Rack::OnHelp(wxMouseEvent &event)
 
 void				Rack::OnClick(wxMouseEvent &event)
 {
-	cout << "In OnClick" << endl;
 	//selectedTrack = 0x0;
 	//selectedPlugin = 0x0;
 }

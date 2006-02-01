@@ -26,13 +26,9 @@ AudioPattern::AudioPattern(double pos, double endpos, long trackindex)
   : Pattern(pos, endpos, trackindex),
     WaveDrawer(Pattern::GetSize())
 {
-	cout << "[AUDIOPATTERN] [New] 0" << endl;
   Init();
-  	cout << "[AUDIOPATTERN] [New] 1" << endl;
   Wave = 0;
-  	cout << "[AUDIOPATTERN] [New] 2" << endl;
   SetWave(0);
-  	cout << "[AUDIOPATTERN] [New] 3" << endl;
 }
 
 AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
@@ -94,7 +90,7 @@ void					AudioPattern::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      wxString s("This is an Audio pattern. Double-click on it to open the Audio editor.");
+      wxString s(_("This is an Audio pattern. Double-click on it to open the Audio editor."));
       HelpWin->SetText(s);
     }
 }

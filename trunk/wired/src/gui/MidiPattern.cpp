@@ -75,7 +75,7 @@ void					MidiPattern::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      wxString s("This is a MIDI pattern. Double-click on it to open the MIDI editor.");
+      wxString s(_("This is a MIDI pattern. Double-click on it to open the MIDI editor."));
       HelpWin->SetText(s);
     }
 }

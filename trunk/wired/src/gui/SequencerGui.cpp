@@ -266,7 +266,7 @@ void					SequencerView::OnHelp(wxMouseEvent &event)
 {
   if (HelpWin->IsShown())
     {
-      wxString s(_T("This is the Wired sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above to choose one of the sequencer editing tools."));
+      wxString s(_("This is the Wired sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above to choose one of the sequencer editing tools."));
       HelpWin->SetText(s);
     }
 }
@@ -352,19 +352,19 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   SetBackgroundColour(CL_SEQ_BACKGROUND);
   SetForegroundColour(CL_SEQ_FOREGROUND);
   Toolbar = new wxToolBar(this, -1, wxPoint(-1, -1), wxSize(-1, TOOLS_HEIGHT), wxTB_FLAT);
-  Toolbar->AddRadioTool(ID_SEQ_MOVE, "Move", wxBitmap(string(WiredSettings->DataDir + string(HAND_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(HAND_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "Move Pattern", "Move Pattern", NULL);
-  Toolbar->AddRadioTool(ID_SEQ_EDIT, "Draw", wxBitmap(string(WiredSettings->DataDir + string(DRAW_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(DRAW_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "Draw Pattern", "Draw Pattern", NULL);
-  Toolbar->AddRadioTool(ID_SEQ_DEL, "Delete", wxBitmap(string(WiredSettings->DataDir + string(ERASE_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(ERASE_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "Delete Pattern", "Deletes notes", NULL);
-  Toolbar->AddRadioTool(ID_SEQ_SPLIT, "Split", wxBitmap(string(WiredSettings->DataDir + string(SPLIT_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "Split Pattern", "Split Pattern", NULL);
+  Toolbar->AddRadioTool(ID_SEQ_MOVE, _("Move"), wxBitmap(string(WiredSettings->DataDir + string(HAND_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(HAND_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Move Pattern"), _("Move Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_EDIT, _("Draw"), wxBitmap(string(WiredSettings->DataDir + string(DRAW_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(DRAW_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Draw Pattern"), _("Draw Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_DEL, _("Delete"), wxBitmap(string(WiredSettings->DataDir + string(ERASE_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(ERASE_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Delete Pattern"), _("Deletes notes"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Split Pattern"), _"Split Pattern"), NULL);
   Toolbar->AddSeparator();
-  Toolbar->AddCheckTool(ID_SEQ_MAGNET, "Magnet", wxBitmap(string(WiredSettings->DataDir + string(MAGN_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(MAGN_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "", "", NULL);
+  Toolbar->AddCheckTool(ID_SEQ_MAGNET, _("Magnet"), wxBitmap(string(WiredSettings->DataDir + string(MAGN_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(MAGN_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "", "", NULL);
   for (c = 0; c < NB_COMBO_CHOICES; c++)
     combo_choices[c] = ComboChoices[c].s;
   MagnetQuant = new wxComboBox(Toolbar, ID_SEQ_COMBO_MAGNET, DEFAULT_MAGNETISM_COMBO_VALUE, 
 			       wxPoint(-1, -1), wxSize(72, -1), 9, combo_choices);
   Toolbar->AddControl(MagnetQuant);
   Toolbar->AddSeparator();
-  Toolbar->AddTool(ID_SEQ_COLOR, "Color", wxBitmap(string(WiredSettings->DataDir + string(COLOR_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(COLOR_DOWN)).c_str(), wxBITMAP_TYPE_PNG));
+  Toolbar->AddTool(ID_SEQ_COLOR, _("Color"), wxBitmap(string(WiredSettings->DataDir + string(COLOR_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(COLOR_DOWN)).c_str(), wxBITMAP_TYPE_PNG));
   Toolbar->Realize();
   Toolbar->ToggleTool(ID_SEQ_MAGNET, MAGNETISM);
 //   SetToolBar(Toolbar);
@@ -376,7 +376,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   HorizScrollBar = new wxScrollBar(this, ID_SEQ_SCROLLING, wxPoint(-1, -1), wxSize(-1, -1), wxSB_HORIZONTAL);
   TrackView = new wxScrolledWindow(this, ID_TRACK_VIEW, wxPoint(-1, -1), wxSize(TRACK_WIDTH, -1), wxSUNKEN_BORDER);
   VertZoomSlider = new wxSlider(this, ID_SEQ_VSLIDER, 100, 100, 400, wxPoint(-1, -1), wxSize(-1, RULER_HEIGHT),
-				wxMAXIMIZE_BOX | wxNO_BORDER, wxDefaultValidator, _T("Vertical Zoom"));
+				wxMAXIMIZE_BOX | wxNO_BORDER, wxDefaultValidator, _("Vertical Zoom"));
   HoriZoomSlider = new wxSlider(this, ID_SEQ_HSLIDER, 100, 25, 400, wxPoint(-1, -1),
 				wxSize(-1, HorizScrollBar->GetSize().y));
   RulerPanel = new Ruler(this, ID_SEQ_RULER, wxPoint(-1, -1), wxSize(-1, RULER_HEIGHT));
@@ -437,14 +437,14 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Connect(ID_SEQ_DRAWMIDI, TYPE_SEQ_DRAWMIDI, (wxObjectEventFunction)&SequencerGui::OnDrawMidi);
   // Cr?ation du popup menu
   PopMenu = new wxMenu();  
-  PopMenu->Append(ID_POPUP_MOVE_TO_CURSOR, "Move to cursor");
-  PopMenu->Append(ID_POPUP_DELETE, "Delete");
+  PopMenu->Append(ID_POPUP_MOVE_TO_CURSOR, _("Move to cursor"));
+  PopMenu->Append(ID_POPUP_DELETE, _("Delete"));
   PopMenu->AppendSeparator();
-  PopMenu->Append(ID_POPUP_CUT, "Cut");
-  PopMenu->Append(ID_POPUP_COPY, "Copy");
-  PopMenu->Append(ID_POPUP_PASTE, "Paste");
+  PopMenu->Append(ID_POPUP_CUT, _("Cut"));
+  PopMenu->Append(ID_POPUP_COPY, _("Copy"));
+  PopMenu->Append(ID_POPUP_PASTE, _("Paste"));
   PopMenu->AppendSeparator();
-  PopMenu->Append(ID_POPUP_SELECT_ALL, "Select all");
+  PopMenu->Append(ID_POPUP_SELECT_ALL, _("Select all"));
 
   Connect(ID_POPUP_MOVE_TO_CURSOR, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)

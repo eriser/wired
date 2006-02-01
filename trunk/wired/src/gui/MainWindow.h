@@ -103,6 +103,10 @@ class					MainWindow: public wxFrame
   bool					RackModeView;
   bool					SeqModeView;
 
+    /* Locale */
+    wxLocale            *mLocale;
+    void                    InitLocale();
+
   /* DSSI & LADSPA Plugins Menus */
   void					LoadExternalPlugins();
   int					AddPluginMenuItem(int Type, bool IsEffect, const string& MenuName);

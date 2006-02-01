@@ -32,17 +32,17 @@ WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
   PopMenu = new wxMenu();  
   SubMenuEffect = new wxMenu();
   
-  SubMenuEffect->Append(ID_SUBMENU_GAIN_WAVEEDITOR, "Gain...");
-  SubMenuEffect->Append(ID_SUBMENU_NORMA_WAVEEDITOR, "Normalize..");
+  SubMenuEffect->Append(ID_SUBMENU_GAIN_WAVEEDITOR, _("Gain..."));
+  SubMenuEffect->Append(ID_SUBMENU_NORMA_WAVEEDITOR, _("Normalize.."));
   
-  PopMenu->Append(ID_TOOL_CUT_WAVE, "Cut");
-  PopMenu->Append(ID_TOOL_COPY_WAVE, "Copy");
-  PopMenu->Append(ID_TOOL_PASTE_WAVE, "Paste");
-  PopMenu->Append(ID_TOOL_DEL_WAVE, "Delete");
+  PopMenu->Append(ID_TOOL_CUT_WAVE, _("Cut"));
+  PopMenu->Append(ID_TOOL_COPY_WAVE, _("Copy"));
+  PopMenu->Append(ID_TOOL_PASTE_WAVE, _("Paste"));
+  PopMenu->Append(ID_TOOL_DEL_WAVE, _("Delete"));
   PopMenu->AppendSeparator();
-  PopMenu->Append(ID_TOOL_SELECT_WAVE, "Select All");
+  PopMenu->Append(ID_TOOL_SELECT_WAVE, _("Select All"));
   PopMenu->AppendSeparator();
-  PopMenu->Append(ID_SEBMENU_EFFECTS_WAVEEDITOR, "Effects", SubMenuEffect);
+  PopMenu->Append(ID_SEBMENU_EFFECTS_WAVEEDITOR, _("Effects"), SubMenuEffect);
   
   
   Connect(ID_SUBMENU_GAIN_WAVEEDITOR, wxEVT_COMMAND_MENU_SELECTED,
@@ -180,7 +180,7 @@ void 					WaveEditor::OnScroll(wxScrollBar *sbh)
   wxSize 	s = GetSize();
   long		inc;
   
-  // Coefficient d'incrémentation
+  // Coefficient d'incr?mentation
   if (PAINT_WIDTH < EndWavePos)
     inc = (long) ceill(PAINT_WIDTH / s.x);
   else
@@ -261,7 +261,7 @@ void					WaveEditor::OnZoom(wxComboBox *combobox)
   if ( item == "1/100")
     PAINT_WIDTH = zoomx / 100;
   //zoomy = 5;
-  if ( item == "ZOOM")
+  if ( item == _("ZOOM"))
     PAINT_WIDTH = zoomx;
   //zoomy = 1;
   
@@ -304,7 +304,7 @@ void					WaveEditor::OnCut(wxCommandEvent &event)
 
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -339,7 +339,7 @@ void					WaveEditor::OnPaste(wxCommandEvent &event)
 
  if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -373,7 +373,7 @@ void					WaveEditor::OnDelete(wxCommandEvent &event)
 
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -437,7 +437,7 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -445,7 +445,7 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
   }
   else
   {
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, "Enter gain ", "Please enter text", "1", 
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter gain "), _("Please enter text"), "1", 
 			wxOK | wxCANCEL, wxPoint(-1, -1));
 	text = dlg->GetValue();
 	int res = dlg->ShowModal();
@@ -523,7 +523,7 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
   width = savew = mSelectedRegion.width*inc;
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, "File opened in read only mode", "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -531,7 +531,7 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
   }
   else
   {
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, "Enter le niveau de normlisation ", "Please enter text", "1", 
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter normalize level "), _("Please enter text"), "1", 
 			wxOK | wxCANCEL, wxPoint(-1, -1));
 	text = dlg->GetValue();
 	int res = dlg->ShowModal();
