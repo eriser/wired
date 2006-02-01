@@ -69,37 +69,28 @@ int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 		{
 //			cout << "Successfully opend file, info : format == " << Info.format << ", samplerate == " << Info.samplerate 
 //					<< ", NbFrames == " << Info.frames << ", sections == " << Info.sections << ", Seekable == " << Info.seekable << endl;
-			wxString			strFormats;
+			wxString			strFormats(_("Would you like to convert your file from "));
 			char				buf[1024];
 			int					res;
-//			ostringstream	oss;
-
-			strFormats = "Would you like to convert your file from ";
+            
 			if (!SameFormat)
 			{
 				strFormats += GetFormatName(Info.format);
-				strFormats += " to ";
+				strFormats += _(" to ");
 				strFormats += GetFormatName(_ApplicationSettings.Format);
 			}
 			if (!SameSampleRate)
 			{
 				if (!SameFormat)
-					strFormats += " and  ";
-				strFormats += "samplerate ";
-				wxSnprintf(buf, 1024, "%d Hz to %ld Hz ?", Info.samplerate, _ApplicationSettings.SampleRate);
-//				oss << Info.samplerate << string(" Hz to ");
-//				oss << _ApplicationSettings.SampleRate ;
-//				oss << string(" Hz");
+					strFormats += _(" and  ");
+				strFormats += _("samplerate ");
+				wxSnprintf(buf, 1024, _("%d Hz to %ld Hz ?"), Info.samplerate, _ApplicationSettings.SampleRate);
 			}
 			strFormats += buf;
-//			strFormats += oss.str();
-//			strFormats += " ?";
-//			oss.clear();
 
-			wxMessageDialog msg(parent, strFormats, "File format mismatch", 
+			wxMessageDialog msg(parent, strFormats, _("File format mismatch"), 
 								wxYES_NO | wxCANCEL  | wxICON_QUESTION | wxCENTRE);
 			res = msg.ShowModal();
-			//msg.Destroy();
         	if (res == wxID_YES)
         	{
         		//SampleRateMutex.Lock();
@@ -123,8 +114,8 @@ int						WiredSampleRate::GetConverterQuality()
 	wxArrayString			Choices;
 	int						Values[NB_SAMPLERATE_QUALITY];
 	int						Result;
-	wxString				Msg("Please Choose conversion quality (default is better)");
-	wxString				Title("Conversion quality");
+	wxString				Msg(_("Please Choose conversion quality (default is better)"));
+	wxString				Title(_("Conversion quality"));
 	
 	for (int pos = 0; pos < NB_SAMPLERATE_QUALITY; pos ++)
 	{
@@ -186,7 +177,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 		if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)))
 		{
 			ConversionQuality = GetConverterQuality();
-			wxProgressDialog ProgressBar("Converting wave file", "Please wait...", 
+			wxProgressDialog ProgressBar(_("Converting wave file"), _("Please wait..."), 
 										SrcInfo->frames , NULL, wxPD_SMOOTH | wxPD_ELAPSED_TIME |
 										wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_APP_MODAL);
 			if (sf_seek(SrcData, 0, SEEK_SET) != -1)
@@ -235,15 +226,12 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 				{
 					cout << "[FILECONVERT] Sndfile error {" << sf_strerror(SrcData) << "}" << endl;
 					sf_close(Result);
-					delete Buffer;
+					delete[] Buffer;
 					src_delete(Converter);
 					return false;
 				}
-//				cout << "sndfile error {" << sf_strerror(SrcData) << "}" << endl;
-//				src_delete(Converter);
-//				delete Buffer;
 				src_delete(Converter);
-				delete Buffer;
+				delete[] Buffer;
 			
 			}
 			sf_close(Result);
@@ -284,7 +272,7 @@ const char*				WiredSampleRate::GetFormatName(int SndFileFormat)
 	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0; pos++)
 		if (_FormatTypes[pos].SndFileFormat & SndFileFormat)
 			return _FormatTypes[pos].FormatName;
-	return STR_UNKNOWN_FORMAT;	
+	return STR_UNKNOWN_FORMAT;
 }
 
 const char*				WiredSampleRate::GetFormatName(PaSampleFormat PaFormat)
@@ -312,9 +300,9 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 	wxSize				DialogSize(350, 150);
 	wxSize				ComboSize(140, 20);
 	wxPoint				ComboPos(40, 70);
-	wxDialog 			Dialog(NULL, -1, "File format selection", wxDefaultPosition, DialogSize, 
+	wxDialog 			Dialog(NULL, -1, _("File format selection"), wxDefaultPosition, DialogSize, 
 								wxCENTRE | wxCAPTION | wxTHICK_FRAME | wxSTAY_ON_TOP);	
-	wxStaticText		DialogText(&Dialog, -1, wxString("Please select the options that\nyou want for the downmix.\n(Defaults are current project's configuration)"),
+	wxStaticText		DialogText(&Dialog, -1, wxString(_("Please select the options that\nyou want for the downmix.\n(Defaults are current project's configuration)")),
 									wxPoint(13, 10), wxSize(-1, -1), wxALIGN_CENTER);
 	wxButton			DialogButton(&Dialog, wxID_OK, "", wxPoint(135, 110));
 	wxComboBox			CBFormat(&Dialog, -1, "", ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);

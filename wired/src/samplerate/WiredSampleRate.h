@@ -16,7 +16,7 @@
 #include <wx/combobox.h>
 #include <wx/stattext.h>
 #include <wx/button.h>
-//#include <sstream>
+#include <wx/intl.h>
 
 
 #include <sys/types.h>
@@ -26,7 +26,7 @@
 
 using namespace std;
 
-#define STR_UNKNOWN_FORMAT "Unknown format"
+#define STR_UNKNOWN_FORMAT _("Unknown format")
 #define	NB_SAMPLERATE_QUALITY 5
 
 typedef struct s_format_types
