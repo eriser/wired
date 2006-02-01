@@ -10,12 +10,12 @@ using namespace				std;
 #include "PluginLoader.h"
 
 #define	INVALID_VALUE								-42
-#define	HISTORY_LABEL_CREATE_EFFECT_ACTION			"creating rack effect"
-#define	HISTORY_LABEL_IMPORT_WAVE_ACTION			"importing wave"
-#define	HISTORY_LABEL_IMPORT_MIDI_ACTION			"importing midi"
-#define	HISTORY_LABEL_IMPORT_AKAI_ACTION			"importing AKAI"
-#define	HISTORY_LABEL_CREATE_RACK_ACTION			"creating rack"
-#define	HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION	"changing rack effect parameters"
+#define	HISTORY_LABEL_CREATE_EFFECT_ACTION			_("creating rack effect")
+#define	HISTORY_LABEL_IMPORT_WAVE_ACTION			_("importing wave")
+#define	HISTORY_LABEL_IMPORT_MIDI_ACTION			_("importing midi")
+#define	HISTORY_LABEL_IMPORT_AKAI_ACTION			_("importing AKAI")
+#define	HISTORY_LABEL_CREATE_RACK_ACTION			_("creating rack")
+#define	HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION	_("changing rack effect parameters")
 
 #define	INVALID_VALUE								-42
 

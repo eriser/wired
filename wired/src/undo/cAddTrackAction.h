@@ -7,7 +7,7 @@
 #include "Visitor.h"
 #include "SequencerGui.h"
 
-#define	HISTORY_LABEL_ADD_TRACK_ACTION	"AddTrackAction"
+#define	HISTORY_LABEL_ADD_TRACK_ACTION	_("AddTrackAction")
 
 class SequencerGui;
 
