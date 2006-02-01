@@ -169,6 +169,7 @@ void				FileConversion::Decode(string *FileName)
 		
 		Data.pcm = new float[2 * _BufferSize];
 		bzero(Data.pcm, _BufferSize * 2);
+		std::cout << "_Buffersize: " << _BufferSize << std::endl;
 		while ((Readen = _CodecConverter.Decode(FileNameLocal, &Data, _BufferSize)) > 0)
 		{
 //			cout << "000 file {" << DestFileName.c_str() << "}" << endl;
@@ -192,7 +193,7 @@ void				FileConversion::Decode(string *FileName)
 				}
 			}
 			if (Data.PType == Float32)
-				sf_write_result = sf_writef_float(Result, (float *)Data.pcm,Readen * Info.channels);
+				sf_write_result = sf_write_float(Result, (float *)Data.pcm,Readen * Info.channels);
 			else
 				sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen * Info.channels);
 			bzero(Data.pcm, _BufferSize * 2);				
