@@ -62,11 +62,11 @@ typedef struct s_plugParams
   float res;
 }	       t_plugParams;
 
-#define STR_FREQUENCY "Frequency"
-#define STR_START_PHASE "StartPhase"
-#define STR_DEPTH "Depth"
-#define STR_FREQUENCY_OFS "FrequencyOFS"
-#define STR_RESOLUTION "Resolution"
+#define STR_FREQUENCY _("Frequency")
+#define STR_START_PHASE _("StartPhase")
+#define STR_DEPTH _("Depth")
+#define STR_FREQUENCY_OFS _("FrequencyOFS")
+#define STR_RESOLUTION _("Resolution")
 
 #define IMG_LIQUID_ON	"plugins/reverb/liquid-cristal_play.png"
 #define IMG_LIQUID_OFF	"plugins/reverb/liquid-cristal_stop.png"
