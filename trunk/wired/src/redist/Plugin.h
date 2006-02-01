@@ -223,13 +223,13 @@ class Plugin: public wxWindow
   virtual void	 Update() {}
 
   /* Called when host needs to show the plugin's help */
-  virtual std::string GetHelpString() { return "No help provided for this plugin"; }
+  virtual std::string GetHelpString() { return _("No help provided for this plugin"); }
 
   /* Is the Help window being shown ? */
   virtual void SetHelpMode(bool On) { }
 
   /* Returns the default name for the plugin */
-  virtual std::string DefaultName() { return "Rack"; }
+  virtual std::string DefaultName() { return _("Rack"); }
 
   /* Returns a 32x16 bitmap used for displaying the connected to track plugin */
   virtual wxBitmap *GetBitmap() = 0;  
