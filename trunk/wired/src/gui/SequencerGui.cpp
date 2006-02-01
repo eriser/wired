@@ -355,7 +355,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Toolbar->AddRadioTool(ID_SEQ_MOVE, _("Move"), wxBitmap(string(WiredSettings->DataDir + string(HAND_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(HAND_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Move Pattern"), _("Move Pattern"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_EDIT, _("Draw"), wxBitmap(string(WiredSettings->DataDir + string(DRAW_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(DRAW_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Draw Pattern"), _("Draw Pattern"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_DEL, _("Delete"), wxBitmap(string(WiredSettings->DataDir + string(ERASE_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(ERASE_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Delete Pattern"), _("Deletes notes"), NULL);
-  Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Split Pattern"), _"Split Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Split Pattern"), _("Split Pattern"), NULL);
   Toolbar->AddSeparator();
   Toolbar->AddCheckTool(ID_SEQ_MAGNET, _("Magnet"), wxBitmap(string(WiredSettings->DataDir + string(MAGN_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(MAGN_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "", "", NULL);
   for (c = 0; c < NB_COMBO_CHOICES; c++)
