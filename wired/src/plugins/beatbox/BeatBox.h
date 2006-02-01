@@ -146,7 +146,7 @@ class WiredBeatBox : public Plugin
   bool		IsAudio()	{ return false; }
   bool		IsMidi()	{ return true; }
   
-  string	GetHelpString() { return "No help provided for this plugin"; }
+  string	GetHelpString() { return _("No help provided for this plugin"); }
   string	DefaultName() { return "WiredBeatBox"; }
   
   void		OnPaint(wxPaintEvent& event);

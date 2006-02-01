@@ -79,7 +79,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
   
   /* Wave label */
   WaveLabel = 
-    new wxStaticText(this, -1, "empty", wxPoint(10,5), wxSize(25, 10), 
+    new wxStaticText(this, -1, _("empty"), wxPoint(10,5), wxSize(25, 10), 
 		     wxALIGN_RIGHT);
   WaveLabel->SetFont(wxFont(8, wxNORMAL, wxNORMAL, wxNORMAL));
   WaveLabel->SetForegroundColour(*wxWHITE);
@@ -548,13 +548,13 @@ void BeatBoxChannel::OnSelectChannel(wxCommandEvent& WXUNUSED(e))
 
 void BeatBoxChannel::OnLoadSound(wxCommandEvent& WXUNUSED(e))
 {
-  string selfile = DRM31->OpenFileLoader("Loading sound file", 0x0);
+  string selfile = DRM31->OpenFileLoader(_("Loading sound file"), 0x0);
   if (!selfile.empty())
     {
       WaveFile *w;
       
       wxProgressDialog *Progress = 
-	new wxProgressDialog("Loading wave file", "Please wait...", 
+	new wxProgressDialog(_("Loading wave file"), _("Please wait..."), 
 			     100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 			     | wxPD_REMAINING_TIME);
       Progress->Update(1);
@@ -975,77 +975,77 @@ void BeatBoxChannel::OnLeave(wxMouseEvent& event)
 void BeatBoxChannel::OnSelectHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Use this button to display and edit the tracker associated to this channel");
+    DRM31->SendHelp(_("Use this button to display and edit the tracker associated to this channel"));
 }
 
 void BeatBoxChannel::OnLoadHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Use this button to open the sound file browser");
+    DRM31->SendHelp(_("Use this button to open the sound file browser"));
 }
 
 void BeatBoxChannel::OnReverseHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Invert playing order of samples");
+    DRM31->SendHelp(_("Invert playing order of samples"));
 }
 
 void BeatBoxChannel::OnMuteHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Mute the channel");
+    DRM31->SendHelp(_("Mute the channel"));
 }
 
 void BeatBoxChannel::OnSoloHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Mute all other channels");
+    DRM31->SendHelp(_("Mute all other channels"));
 }
 
 void BeatBoxChannel::OnPlayHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Play the sound instantaneously");
+    DRM31->SendHelp(_("Play the sound instantaneously"));
 }
 
 void BeatBoxChannel::OnLevHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Set level of the channel");
+    DRM31->SendHelp(_("Set level of the channel"));
 }
 
 void BeatBoxChannel::OnPanHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Panoramic left - right");
+    DRM31->SendHelp(_("Panoramic left - right"));
 }
 
 void BeatBoxChannel::OnStaHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Set the starting point of the playing sound");
+    DRM31->SendHelp(_("Set the starting point of the playing sound"));
 }
 
 void BeatBoxChannel::OnEndHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Set the ending point of the playing sound");
+    DRM31->SendHelp(_("Set the ending point of the playing sound"));
 }
 
 void BeatBoxChannel::OnPitHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Set channel's pitch");
+    DRM31->SendHelp(_("Set channel's pitch"));
 }
 
 void BeatBoxChannel::OnVelHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Set channel's velocity");
+    DRM31->SendHelp(_("Set channel's velocity"));
 }
 
 void BeatBoxChannel::OnPolHelp(wxMouseEvent& event)
 {
   if (DRM31->HelpMode)
-    DRM31->SendHelp("Set the number of voices for this channel");
+    DRM31->SendHelp(_("Set the number of voices for this channel"));
 }

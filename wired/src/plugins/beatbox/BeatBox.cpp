@@ -70,8 +70,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   PopMenu = new wxMenu();
   
-  PopMenu->Append(BB_PatternCopy, _T("Copy pattern"));
-  PopMenu->Append(BB_PatternPaste, _T("Paste pattern"));
+  PopMenu->Append(BB_PatternCopy, _("Copy pattern"));
+  PopMenu->Append(BB_PatternPaste, _("Paste pattern"));
   
   Connect(BB_PatternCopy, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
@@ -544,69 +544,69 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 void WiredBeatBox::OnChannelHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("One of the 11 channels available, each channel can load a soundfile and can contain up to 40 different rythms providing fine tunings for them");
+    SendHelp(_("One of the 11 channels available, each channel can load a soundfile and can contain up to 40 different rythms providing fine tunings for them"));
 }
 
 void WiredBeatBox::OnPlayHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("This is the auto play button, when enabled, DRM31 will play selected pattern synchronously with Wired's Sequencer");
+    SendHelp(_("This is the auto play button, when enabled, DRM31 will play selected pattern synchronously with Wired's Sequencer"));
 }
 
 void WiredBeatBox::OnPatternHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("This is a tracker edition control, it can be clicked in 5 different places to obtain different velocities, right click returns to unclicked state");
+    SendHelp(_("This is a tracker edition control, it can be clicked in 5 different places to obtain different velocities, right click returns to unclicked state"));
 }
 
 void WiredBeatBox::OnHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("This is Wired's Beat Box plugin (DRM31). It brings you 11 channels to make up to 40 complex and realistic drum sequences within the traditional tracker or the optional sequencer view attached");
+    SendHelp(_("This is Wired's Beat Box plugin (DRM31). It brings you 11 channels to make up to 40 complex and realistic drum sequences within the traditional tracker or the optional sequencer view attached"));
 }
 
 void WiredBeatBox::OnMasterLevHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("This knob sets the master level output of the DRM31 plugin");
+    SendHelp(_("This knob sets the master level output of the DRM31 plugin"));
 }
 
 void WiredBeatBox::OnPositionHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("These buttons control the position of the 16 strokes represented below");
+    SendHelp(_("These buttons control the position of the 16 strokes represented below"));
 }
 
 void WiredBeatBox::OnSignatureHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("These buttons control the signature of the current rythm, note that the greater the denominator is, the faster the rythm will play");
+    SendHelp(_("These buttons control the signature of the current rythm, note that the greater the denominator is, the faster the rythm will play"));
 }
 
 void WiredBeatBox::OnStepsHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("Set the number of steps for the current rythm");
+    SendHelp(_("Set the number of steps for the current rythm"));
 }
 void WiredBeatBox::OnBankHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("The bank control allows you to choose one of the 5 banks proposed, each bank contains 8 rythms");
+    SendHelp(_("The bank control allows you to choose one of the 5 banks proposed, each bank contains 8 rythms"));
 }
 void WiredBeatBox::OnEditHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("This button switches the plugin to edit mode, when activated, you can edit other rythms on an other bank while playing the old selected rythm");
+    SendHelp(_("This button switches the plugin to edit mode, when activated, you can edit other rythms on an other bank while playing the old selected rythm"));
 }
 void WiredBeatBox::OnPatternsSelectionHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("These buttons represent 8 different rythms");
+    SendHelp(_("These buttons represent 8 different rythms"));
 }
 void WiredBeatBox::OnSaveLoadHelp(wxMouseEvent& WXUNUSED(event))
 {
   if (HelpMode)
-    SendHelp("These buttons are used if you want to import or export a patch apart from the session");
+    SendHelp(_("These buttons are used if you want to import or export a patch apart from the session"));
 }
 
 
@@ -1697,10 +1697,10 @@ void WiredBeatBox::ShowOpt(wxCommandEvent& WXUNUSED(e))
 void WiredBeatBox::OnSavePatch(wxCommandEvent& WXUNUSED(e))
 {
   vector<string> exts;
-  exts.push_back("drm\tDRM-31 patch file (*.drm)");
+  exts.push_back(_("drm\tDRM-31 patch file (*.drm)"));
   //cout << "OnSavePatch(): begin" << endl;
   
-  string selfile = SaveFileLoader("Save Patch", &exts);
+  string selfile = SaveFileLoader(_("Save Patch"), &exts);
   if (!selfile.empty())
     {
       int fd = open(selfile.c_str(),  O_CREAT | O_TRUNC | O_WRONLY, 
@@ -1734,9 +1734,9 @@ void WiredBeatBox::OnSavePatch(wxCommandEvent& WXUNUSED(e))
 void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
 {
   vector<string> exts;
-  exts.push_back("drm\tDRM-31 patch file (*.drm)");
+  exts.push_back(_("drm\tDRM-31 patch file (*.drm)"));
   
-  string selfile = OpenFileLoader("Load Patch", &exts);
+  string selfile = OpenFileLoader(_("Load Patch"), &exts);
   if (!selfile.empty())
     {
       int fd = open(selfile.c_str(), O_RDONLY);
@@ -1758,7 +1758,7 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
 	   << endl;
       
       wxProgressDialog *Progress = 
-	new wxProgressDialog("Loading patch file", "Please wait...", 
+	new wxProgressDialog(_("Loading patch file"), _("Please wait..."), 
 			     100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 			     | wxPD_REMAINING_TIME);
       Progress->Update(1);

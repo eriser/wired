@@ -160,7 +160,7 @@ void BeatBoxTrackView::OnPaint(wxPaintEvent& event)
 	  s = fn.GetName();
 	}
       else
-	s = _T("channel empty");
+	s = _("channel empty");
       //s.Truncate(5);
 
       dc.DrawText(s, 5, y + 5);
@@ -225,14 +225,14 @@ BeatBoxScrollView::BeatBoxScrollView(wxWindow *parent, wxWindowID id,
   
   PopMenu = new wxMenu();
   //PopMenu->Append(ID_POPUP_MOVE_TO_CURSOR, "Move to cursor");
-  PopMenu->Append(ID_PopNew, "Add");
-  PopMenu->Append(ID_PopDelete, "Delete");
+  PopMenu->Append(ID_PopNew, _("Add"));
+  PopMenu->Append(ID_PopDelete, _("Delete"));
   PopMenu->AppendSeparator();
-  PopMenu->Append(ID_PopCut, "Cut");
-  PopMenu->Append(ID_PopCopy, "Copy");
-  PopMenu->Append(ID_PopPaste, "Paste");
+  PopMenu->Append(ID_PopCut, _("Cut"));
+  PopMenu->Append(ID_PopCopy, _("Copy"));
+  PopMenu->Append(ID_PopPaste, _("Paste"));
   PopMenu->AppendSeparator();
-  PopMenu->Append(ID_PopSelect, "Select all");
+  PopMenu->Append(ID_PopSelect, _("Select all"));
   //PopMenu->AppendSeparator();
   //PopMenu->Append(ID_PopNotes, "Notes");
   
@@ -922,14 +922,14 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   VZoomSlider->SetBackgroundColour(SCROLLBAR_COLOUR);
   /* ToolBar */
   
-  ToolBar->AddCheckTool(ID_Magnet, "Magnet", 
+  ToolBar->AddCheckTool(ID_Magnet, _("Magnet"), 
 			wxBitmap(_T(string(DRM31->GetDataDir()
 					   + string(MAGN_UP)).c_str()), 
 				 wxBITMAP_TYPE_PNG), 
 			wxBitmap(_T(string(DRM31->GetDataDir() 
 					   + string(MAGN_DOWN)).c_str()), 
 				 wxBITMAP_TYPE_PNG), 
-			"Activate magnetism", "Deactivate magnetism", NULL);
+			_("Activate magnetism"), _("Deactivate magnetism"), NULL);
   
   
   wxString choices[NB_COMBO_CHOICES];
@@ -956,15 +956,15 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   params[4].Printf("start");
   params[5].Printf("end");
   */
-  params[0].Printf("LEVEL");
-  params[1].Printf("VELOCITY");
-  params[2].Printf("PITCH");
-  params[3].Printf("PAN");
-  params[4].Printf("START");
-  params[5].Printf("END");
+  params[0].Printf(_("LEVEL"));
+  params[1].Printf(_("VELOCITY"));
+  params[2].Printf(_("PITCH"));
+  params[3].Printf(_("PAN"));
+  params[4].Printf(_("START"));
+  params[5].Printf(_("END"));
   
   //ParamsCombo = new wxComboBox(ToolBar, ID_ParamsCombo, _T("level"), 
-  ParamsCombo = new wxComboBox(ToolBar, ID_ParamsCombo, _T("LEVEL"), 
+  ParamsCombo = new wxComboBox(ToolBar, ID_ParamsCombo, _("LEVEL"), 
 			       wxPoint(-1, -1), wxSize(96, -1), 
 			       NB_PARAMS_CHOICES, params, wxCB_READONLY);
     
