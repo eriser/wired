@@ -168,11 +168,13 @@ AC_CONFIG_FILES([Makefile
 		src/data/plugins/reverb/Makefile
 		src/data/plugins/wahwah/Makefile
 		src/data/plugins/chorus/Makefile
+		src/data/dssi/Makefile
+		src/data/i18n/Makefile
+		src/data/i18n/fr/Makefile
 		src/conf/Makefile
 		src/xml/Makefile
 		src/dssi/Makefile
 		src/samplerate/Makefile
-		src/data/dssi/Makefile
 		src/codec/Makefile
 		src/codec/wiredcodec/Makefile
 		src/codec/wiredcodec/flac/Makefile
