@@ -63,8 +63,8 @@ class   WiredLibFlac: public WiredApiCodec
 {
  public:
   
-  WiredLibFlac(){std::cout << "[WIRED_FLAC_CODEC] Child Flac created" << std::endl;}
-  ~WiredLibFlac(){}
+  WiredLibFlac(){std::cout << "[WIRED_FLAC_CODEC] Child Flac created" << std::endl; handle = NULL;}
+  ~WiredLibFlac(){if (handle) dlclose(handle);}
   WiredLibFlac(const WiredLibFlac& copy){*this = copy;};
   
   /* Inits codec */
