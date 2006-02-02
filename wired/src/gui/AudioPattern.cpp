@@ -29,6 +29,8 @@ AudioPattern::AudioPattern(double pos, double endpos, long trackindex)
   Init();
   Wave = 0;
   SetWave(0);
+  InputChan = NULL;
+  RecordWave = NULL;
 }
 
 AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
@@ -45,6 +47,8 @@ AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
   SetSize(s);
   WaveDrawer::SetWave(w, s);
   FileName = w->Filename;
+  InputChan = NULL;
+  RecordWave = NULL;
 #ifdef __DEBUG__
   cout << " ---  OK AUDIO PATTERN ---\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
        << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
