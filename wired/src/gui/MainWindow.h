@@ -23,6 +23,7 @@ using namespace std;
 #include <wx/timer.h>
 #include <wx/splash.h>
 #include <wx/splitter.h>
+#include <wx/log.h>
 
 #define WIRED_VERSION			(0.2f)
 #define PLUG_MENU_INDEX_START		(50000)
@@ -88,6 +89,8 @@ class					MainWindow: public wxFrame
   void					OnPaste(wxCommandEvent &event);
   void					OnDelete(wxCommandEvent &event);
   void					OnSelectAll(wxCommandEvent &event);
+
+  void                    OnShowDebug(wxCommandEvent &event);
 
   void					OnOpenVideo(wxCommandEvent &event);
   void					OnCloseVideo(wxCommandEvent &event);
@@ -165,6 +168,8 @@ class					MainWindow: public wxFrame
 
   /* List of plugins that need to be updated for their gui */
   list<Plugin *>			UpdatePlugins;
+    
+  wxLogWindow           *LogWin;
 
   DECLARE_EVENT_TABLE()
 };
@@ -213,7 +218,8 @@ enum
   MainWin_SwitchSeq, 
   MainWin_OpenVideo, 
   MainWin_CloseVideo,
-  MainWin_SeekVideo
+  MainWin_SeekVideo,
+  MainWin_ShowLog
 };
 
 extern MainWindow		*MainWin;
