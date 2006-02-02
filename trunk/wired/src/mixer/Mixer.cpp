@@ -439,8 +439,8 @@ void				Mixer::MixInput(void)
 		  (*mix_chan)->PushBuffer(Input[i], bytes);
 		}
 	    }
-	  if (i + 1 == PREBUF_NUM)
-	    throw MixerError::InputBuffersFull();
+//	  if (i + 1 == PREBUF_NUM)
+//	    throw MixerError::InputBuffersFull();
 	    //	    cout << "MIX INPUT ERROR\n";
 	}
       //cout << << endl;
