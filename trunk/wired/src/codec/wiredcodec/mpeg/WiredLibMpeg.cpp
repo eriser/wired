@@ -160,17 +160,8 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 		pcm->SampleRate = mpeg3_sample_rate_func(file, 0);
 		cout << " | " << pcm->Channels << " | " << pcm->TotalSample << " | " << pcm->SampleRate << endl;
 	}
-// 	if (length >= pcm->TotalSample)
-// 	{
-// 		cout << "[WIREDLIBMPEG] Not enought samples" << endl;
-// 		return 0;
-// 	}
-	//filePosInSample = mpeg3_get_sample_func(file, 0);
 	if (filePosInSample > pcm->TotalSample)
-	{
-		cout << "[WIREDLIBMPEG] should not be called" << endl;
 		return 0;
-	}
 	if (pcm->Channels > 0)
 	{
 		float* leftChan = new float[length];
@@ -185,26 +176,17 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 			delete[] rightChan;
 			return 0;
 		}
+//				mpeg3_read_audio_func(file, leftChan, NULL, 0, length, 0);
+//				mpeg3_set_sample_func(file, filePosInSample, 0);
+//				mpeg3_read_audio_func(file, rightChan, NULL, 1, length, 0);
+//				mpeg3_reread_audio_func(file, rightChan, NULL, 1, length, 0);
+
 		for (int cpt = 0; cpt < pcm->Channels && cpt != 2; cpt++)
 		{
 			if (cpt == 0)
-			{
-//				cout << "[0] currentPosInSample: " << mpeg3_get_sample_func(file, 0) << endl;
 				mpeg3_read_audio_func(file, leftChan, NULL, cpt, length, 0);
-//				if (filePosInSample == 0)
-//					mpeg3_read_audio_func(file, leftChan, NULL, cpt, length, 0);
-//				else
-//					mpeg3_reread_audio_func(file, leftChan, NULL, cpt, length, 0);
-//				cout << "[1] currentPosInSample: " << mpeg3_get_sample_func(file, 0) << endl;
-			}
 			else
-			{
-//				cout << "[2] currentPosInSample: " << mpeg3_get_sample_func(file, 0) << endl;
-//				mpeg3_set_sample_func(file, filePosInSample, 0);
-//				cout << "[3] currentPosInSample: " << mpeg3_get_sample_func(file, 0) << endl;
-				mpeg3_read_audio_func(file, rightChan, NULL, cpt, length, 0);
-//				cout << "[4] currentPosInSample: " << mpeg3_get_sample_func(file, 0) << endl;
-			}
+				mpeg3_reread_audio_func(file, rightChan, NULL, cpt, length, 0);
 		}
 		if (pcm->Channels == 2)
 		{
@@ -219,14 +201,12 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 		return 0;
 	}
 	filePosInSample += length;
-	//filePosInSample = mpeg3_get_sample_func(file, 0);
 	if (filePosInSample > pcm->TotalSample)
 	{
-		cout << "[WIREDLIBMPEG] done: " << filePosInSample << " / " << pcm->TotalSample << endl;
-		cout << "pcm->TotalSample % filePosInSample: " << (pcm->TotalSample % filePosInSample) << endl;
+		cout << "[WIREDLIBMPEG] decoding done: " << filePosInSample << " / " << pcm->TotalSample << endl;
 		return (filePosInSample % pcm->TotalSample);
 	}
-	cout << "[WIREDLIBMPEG] during: " << filePosInSample << " / " << pcm->TotalSample << endl;
+//	cout << "[WIREDLIBMPEG] during: " << filePosInSample << " / " << pcm->TotalSample << endl;
 	return length;
 }
 
