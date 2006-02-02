@@ -25,11 +25,13 @@ CompressorPlugin::CompressorPlugin(PlugStartInfo &startinfo, PlugInitInfo *initi
   img_bg = new wxImage(string(GetDataDir() + string(IMG_CP_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG );
   img_fg = new wxImage(string(GetDataDir() + string(IMG_CP_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG );
   
+  Target = 0;
   TargetFader = new 
-    FaderCtrl(this, Compressor_Target, img_bg, img_fg, 0, 100, 100, true,
+    FaderCtrl(this, Compressor_Target, img_bg, img_fg, 0, 100, &Target, true,
 	      wxPoint(18, 8)/*wxPoint(GetSize().x / 2, 10)*/, wxSize(22,78));
+  Res = 0;
   ResFader = new 
-    FaderCtrl(this, Compressor_Res, img_bg, img_fg, 0, 100, 0, true,
+    FaderCtrl(this, Compressor_Res, img_bg, img_fg, 0, 100, &Target, true,
 	      wxPoint(142, 8)/*wxPoint(GetSize().x / 2 + 40, 10)*/, wxSize(22,78));
   
   SetBackgroundColour(wxColour(237, 237, 237));

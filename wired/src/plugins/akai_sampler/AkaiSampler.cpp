@@ -119,7 +119,7 @@ END_EVENT_TABLE()
 
   /* Envelope */
 
-  VolumeFader = new FaderCtrl(this, Sampler_Volume, fader_bg, fader_fg, 0, 127, 100, true, 
+  VolumeFader = new FaderCtrl(this, Sampler_Volume, fader_bg, fader_fg, 0, 127, &Volume, true, 
       wxPoint(11, 21), wxSize(15, 102));
 
   AkaiPrefix = _T("");

@@ -32,7 +32,7 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
   if (Chan->Stereo)
     {
       FaderLeft  = new FaderCtrl(this, FaderLeftId, ImgFaderBg, ImgFaderFg, 0, 
-				 127, 0, true, wxPoint(17, 10), wxDefaultSize, 
+				 127, &Chan->VolumeLeft, true, wxPoint(17, 10), wxDefaultSize, 
 				 this, GetPosition() + wxPoint(5,15));
       wxImage *green = new wxImage(string(WiredSettings->DataDir + string(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
       wxImage *orange = new wxImage(string(WiredSettings->DataDir + string(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
@@ -40,7 +40,7 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
       VumLeft  = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(8, 23), wxSize(4, 65), wxNO_BORDER);
       VumRight = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(60, 23), wxSize(4, 65), wxNO_BORDER);
       FaderRight = new FaderCtrl(this, FaderRightId, ImgFaderBg, ImgFaderFg, 0,
-				 127, 0, true, wxPoint(69, 10), wxDefaultSize, 
+				 127, &Chan->VolumeRight, true, wxPoint(69, 10), wxDefaultSize, 
 				 this, GetPosition() + wxPoint(75,15));
       /*VolumeLeft = new wxStaticText(this, -1, "100", wxPoint(5, 90));
       VolumeLeft->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));
@@ -116,6 +116,7 @@ void				ChannelGui::OnFaderLeft(wxScrollEvent& WXUNUSED(e))
       MixMutex.Unlock();
     }
   //VolumeLeft->SetLabel(s);
+  cout << Mix->VolumeLeft << " | " << Mix->VolumeRight << endl;
 }
 
 void				ChannelGui::OnFaderRight(wxScrollEvent& WXUNUSED(e))
@@ -140,6 +141,7 @@ void				ChannelGui::OnFaderRight(wxScrollEvent& WXUNUSED(e))
       MixMutex.Unlock();
     }
   //VolumeRight->SetLabel(s);
+  cout << Mix->VolumeLeft << " | " << Mix->VolumeRight << endl;
 }
 
 void				ChannelGui::SetLabel(const wxString& label)
@@ -257,8 +259,8 @@ void				MasterChannelGui::OnFaderLeft(wxScrollEvent &e)
   if (Lock) 
     {
       MixMutex.Lock();			//mutex used by Mixer::Mixouput()
-      Mix->VolumeRight = res;
-      Mix->VolumeLeft = res;
+      //Mix->VolumeRight = res;
+      //Mix->VolumeLeft = res;
       MixMutex.Unlock();
       FaderRight->SetValue(FaderLeft->GetValue());
       //VolumeRight->SetLabel(s);
@@ -266,9 +268,10 @@ void				MasterChannelGui::OnFaderLeft(wxScrollEvent &e)
   else 
     {
       MixMutex.Lock();			//mutex used by Channel::PushBuffer()
-      Chan->VolumeLeft = res;
+      //Chan->VolumeLeft = res;
       MixMutex.Unlock();
     }
+  cout << Mix->VolumeLeft << " | " << Mix->VolumeRight << endl;
   //VolumeLeft->SetLabel(s); 
 }
 

@@ -101,12 +101,12 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   // Knobs' background
 
   DecayKnob = 
-    new FaderCtrl(this, Reverb_Decay, img_bg, img_fg, 0, 30, 3, true,
+    new FaderCtrl(this, Reverb_Decay, img_bg, img_fg, 0, 30, &param.Decay, true,
 		  wxPoint(118, 12), 
 		  wxSize(img_bg->GetWidth() - 3, img_bg->GetHeight()), 
 		  this, GetPosition() + wxPoint(100,25));
   MixKnob = 
-    new FaderCtrl(this, Reverb_Mix, img_bg, img_fg, 0, 100, 50, true,
+    new FaderCtrl(this, Reverb_Mix, img_bg, img_fg, 0, 100, &param.Mix, true,
 		  wxPoint(153, 12), 
 		  wxSize(img_bg->GetWidth() - 3, img_bg->GetHeight()), 
 		  this, GetPosition() + wxPoint(135,25));

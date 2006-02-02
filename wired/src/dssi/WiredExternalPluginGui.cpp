@@ -180,7 +180,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 	  Faders[i] = new FaderCtrl(this, i + 1, img_fader_bg, img_fader_fg,
 				    (float)iter->second.Data.LowerBound, 
 				    (float)iter->second.Data.UpperBound, 
-				    (float)*(iter->second.Data.Data), (bool)LADSPA_IS_HINT_INTEGER(iter->second.Descriptor.RangeHint.HintDescriptor), 
+				    (iter->second.Data.Data), (bool)LADSPA_IS_HINT_INTEGER(iter->second.Descriptor.RangeHint.HintDescriptor), 
 				    wxPoint(73 + i * interspace + interspace / 2 - 5, 11),
 				    wxSize(img_fader_bg->GetWidth(), 
 					   img_fader_bg->GetHeight()), this,

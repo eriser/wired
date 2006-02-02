@@ -24,23 +24,23 @@
 
 static PlugInitInfo info;
 
-class CrusherPlugin: public Plugin
+class		CrusherPlugin: public Plugin
 {
  public:
   CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo);
   ~CrusherPlugin();
 
-  void	 Init();
-  void	 Process(float **input, float **output, long sample_length);
-  void	 CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
+  void		Init();
+  void		Process(float **input, float **output, long sample_length);
+  void		CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
 
-  void	 Load(int fd, long size);
-  long   Save(int fd);
+  void		Load(int fd, long size);
+  long		Save(int fd);
 
-  std::string DefaultName() { return "Crusher"; }
+  std::string	DefaultName() { return "Crusher"; }
   
-  bool	 IsAudio();
-  bool	 IsMidi();
+  bool		IsAudio();
+  bool		IsMidi();
 
   void		OnButtonClick(wxCommandEvent &e); 
   void		OnBits(wxScrollEvent &e);  
@@ -50,8 +50,8 @@ class CrusherPlugin: public Plugin
   void		OnBypassController(wxMouseEvent &event);
 
   wxBitmap	*GetBitmap();
-  int		Bits;
-  int		Freq;
+  float		Bits;
+  float		Freq;
   
  protected:
   wxBitmap	*bmp;   
@@ -80,7 +80,6 @@ class CrusherPlugin: public Plugin
   wxMutex	CrusherMutex;
 
   DECLARE_EVENT_TABLE()  
-
 };
 
 enum
@@ -123,10 +122,10 @@ CrusherPlugin::CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
-  BitsFader = new FaderCtrl(this, Crusher_Bits, img_bg, img_fg, 0, 76, 16,
+  BitsFader = new FaderCtrl(this, Crusher_Bits, img_bg, img_fg, 0, 76, &Bits,
 			    true, wxPoint(83, 12), wxSize(22,78), 
 			    this, GetPosition() + wxPoint(83, 35));
-  FreqFader = new FaderCtrl(this, Crusher_Freq, img_bg, img_fg, 0, 44100, 4000,
+  FreqFader = new FaderCtrl(this, Crusher_Freq, img_bg, img_fg, 0, 44100, &Freq,
 			    true, wxPoint(140, 12), wxSize(22,78), 
 			    this, GetPosition() + wxPoint(140, 35));
   Connect(Crusher_Bypass, wxEVT_RIGHT_DOWN, 
@@ -136,7 +135,7 @@ CrusherPlugin::CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 }
 
 
-void CrusherPlugin::Init()
+void			CrusherPlugin::Init()
 {
   Bits = 16;
   Freq = 4000;
@@ -147,9 +146,9 @@ void CrusherPlugin::Init()
   Last = 0.f;
 }
 
-#define IS_DENORMAL(f) (((*(unsigned int *)&f)&0x7f800000)==0)
+#define IS_DENORMAL(f)	(((*(unsigned int *)&f)&0x7f800000)==0)
 
-void CrusherPlugin::Process(float **input, float **output, long sample_length)
+void			CrusherPlugin::Process(float **input, float **output, long sample_length)
 {
   long i;
   int chan;
@@ -181,9 +180,9 @@ CrusherPlugin::~CrusherPlugin()
 
 }
 
-void CrusherPlugin::Load(int fd, long size)
+void			CrusherPlugin::Load(int fd, long size)
 {
-  int filter;
+  int			filter;
 
   if (read(fd, &Bits, sizeof (Bits)) <= 0)
     {
@@ -196,8 +195,8 @@ void CrusherPlugin::Load(int fd, long size)
       return;
     }
 
-  BitsFader->SetValue(Bits);
-  FreqFader->SetValue(Freq);
+  //BitsFader->SetValue(Bits);
+  //FreqFader->SetValue(Freq);
 
   NormFreq = Freq / 44100.f;
   Step = powf(0.5f, Bits);
@@ -206,9 +205,9 @@ void CrusherPlugin::Load(int fd, long size)
   Last = 0.f;
 }
  
-long CrusherPlugin::Save(int fd)
+long			CrusherPlugin::Save(int fd)
 {
-  long size;
+  long			size;
 
   size = write(fd, &Bits, sizeof (Bits));
   size += write(fd, &Freq, sizeof (Freq));
@@ -217,41 +216,42 @@ long CrusherPlugin::Save(int fd)
 }
 
 
-bool CrusherPlugin::IsAudio()
+bool			CrusherPlugin::IsAudio()
 {
   return (true);
 }
 
-bool CrusherPlugin::IsMidi()
+bool			CrusherPlugin::IsMidi()
 {
   return (true);
 }
 
-wxBitmap *CrusherPlugin::GetBitmap()
+wxBitmap		*CrusherPlugin::GetBitmap()
 {
   return (bmp);
 }
 
-void CrusherPlugin::OnBits(wxScrollEvent &WXUNUSED(e))
+void			CrusherPlugin::OnBits(wxScrollEvent &WXUNUSED(e))
 {
-  Bits = BitsFader->GetValue();
+  //Bits = BitsFader->GetValue();
   Step = powf(0.5f, Bits);
+  cout << "Bits = " << Bits << endl;
   //if (Bits <= 0.f)
   //Bits = 0.01f;
 //  cout << "Bits: " << Bits << "; Step: " << Step << endl;
 }
   
-void CrusherPlugin::OnFreq(wxScrollEvent &WXUNUSED(e))
+void			CrusherPlugin::OnFreq(wxScrollEvent &WXUNUSED(e))
 {
-  Freq = FreqFader->GetValue();
+  //*Freq = FreqFader->GetValue();
   NormFreq = Freq / 44100.f;
 //  cout << "Freq: " << Freq << "; NormFreq: " << NormFreq << endl;
 }
 
-void CrusherPlugin::OnPaint(wxPaintEvent &event)
+void			CrusherPlugin::OnPaint(wxPaintEvent &event)
 {
-  wxMemoryDC memDC;
-  wxPaintDC dc(this);
+  wxMemoryDC	memDC;
+  wxPaintDC	dc(this);
   
   memDC.SelectObject(*TpBmp);    
   wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
@@ -264,7 +264,7 @@ void CrusherPlugin::OnPaint(wxPaintEvent &event)
   Plugin::OnPaintEvent(event);
 }
 
-void	CrusherPlugin::OnBypass(wxCommandEvent &e)
+void			CrusherPlugin::OnBypass(wxCommandEvent &e)
 {
   CrusherMutex.Lock();
   Bypass = BypassBtn->GetOn();
@@ -272,9 +272,9 @@ void	CrusherPlugin::OnBypass(wxCommandEvent &e)
   CrusherMutex.Unlock();
 }
 
-void	CrusherPlugin::OnBypassController(wxMouseEvent &event)
+void			CrusherPlugin::OnBypassController(wxMouseEvent &event)
 {
-  int	*midi_data;
+  int			*midi_data;
 
   midi_data = new int[3];
   if (ShowMidiController(&midi_data))

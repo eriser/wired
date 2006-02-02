@@ -59,15 +59,21 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 		wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
   BaseLengthFader = new FaderCtrl(this, Chorus_Feedback, img_bg, img_fg, 0, 
-				  true, 10000, 5000, wxPoint(73, 11), 
+				  10000, (float*)&BaseLength, true, wxPoint(73, 11), 
 				  wxSize(22,78), this, 
 				  GetPosition() + wxPoint(58, 25));
-  ModDepthFader = new FaderCtrl(this, Chorus_Stage, img_bg, img_fg, 0, 10, 3, 
-				true, wxPoint(110, 11), wxSize(22,78), 
+  ModDepthFader = new FaderCtrl(this, Chorus_Stage, img_bg, img_fg, 0, 10, 
+				(float*)&ModDepth, true, wxPoint(110, 11), wxSize(22,78), 
 				this, GetPosition() + wxPoint(95, 25));
   EffectMixFader = new FaderCtrl(this, Chorus_DryWet, img_bg, img_fg, 0, 100, 
-				 true, 50, wxPoint(149, 11), wxSize(22, 78), 
+				 (float*)&EffectMix, true, wxPoint(149, 11), wxSize(22, 78), 
 				 this, GetPosition() + wxPoint(135, 25));  
+
+  cout << "BaseLength : " << BaseLength << endl;
+  cout << "ModDepth : " << ModDepth << endl;
+  cout << "Frequency : " << Frequency << endl;
+  cout << "EffectMix : " << EffectMix << endl;
+
   SetBackgroundColour(wxColour(237, 237, 237));
 }
 
@@ -153,7 +159,7 @@ void ChorusPlugin::Load(int fd, long size)
     }
 
   if (read(fd, &Frequency, sizeof (Frequency)) <= 0)
-    {
+     {
       cout << "[CHORUSPLUG] Error while loading patch !" << endl;
       return;
     }
@@ -274,7 +280,7 @@ void ChorusPlugin::OnChorusTime(wxScrollEvent &WXUNUSED(e))
 {
   ChorusMutex.Lock();
   
-  Frequency = FrequencyFader->GetValue()/1000.f;
+  //Frequency = FrequencyFader->GetValue()/1000.f;
   AllocateMem();
 
   ChorusMutex.Unlock();
@@ -285,7 +291,7 @@ void ChorusPlugin::OnChorusTime(wxScrollEvent &WXUNUSED(e))
 
 void ChorusPlugin::OnFeedback(wxScrollEvent &WXUNUSED(e))
 {
-  BaseLength = BaseLengthFader->GetValue();
+  //BaseLength = BaseLengthFader->GetValue();
   
   chorus1->setBaseLength(BaseLength);
   chorus2->setBaseLength(BaseLength);
@@ -296,7 +302,7 @@ void ChorusPlugin::OnChorusStage(wxScrollEvent &WXUNUSED(e))
 {
   ChorusMutex.Lock();
   
-  ModDepth = ModDepthFader->GetValue()/100.f;
+  //ModDepth = ModDepthFader->GetValue()/100.f;
   
   //cout << "ModDepth:" << ModDepth << endl;
   chorus1->setModDepth(ModDepth);
@@ -310,9 +316,9 @@ void ChorusPlugin::OnDryWet(wxScrollEvent &WXUNUSED(e))
   EffectMix = (100 - EffectMixFader->GetValue()) / 100.f;
   chorus1->setEffectMix(EffectMix);
   chorus2->setEffectMix(EffectMix);
-  //cout << "EffectMix: " << EffectMix << endl;
-  //cout << "Delay: " << BaseLength << endl;
-  //cout << "Frequency: " << Frequency << endl;
+  cout << "EffectMix: " << EffectMix << endl;
+  cout << "Delay: " << BaseLength << endl;
+  cout << "Frequency: " << Frequency << endl;
 }
 
 void ChorusPlugin::OnPaint(wxPaintEvent &event)
