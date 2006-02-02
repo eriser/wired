@@ -13,6 +13,29 @@ WiredLibFlac			WiredLibFlac::operator=(const WiredLibFlac& right)
   if (this != &right)
     {
       handle = right.handle;
+      decoder = right.decoder;
+      client_data = right.client_data;
+      Pass = right.Pass;
+      FileDecoderNew = right.FileDecoderNew;
+      FileDecoderDelete = right.FileDecoderDelete;
+      FileDecoderSetMd5Checking = right.FileDecoderSetMd5Checking;
+      FileDecoderSetFilename = right.FileDecoderSetFilename;
+      FileDecoderSetWriteCallback = right.FileDecoderSetWriteCallback;
+      FileDecoderSetMetadataCallback = right.FileDecoderSetMetadataCallback;
+      FileDecoderSetErrorCallback = right.FileDecoderSetErrorCallback;
+      FileDecoderSetClientData = right.FileDecoderSetClientData;
+      FileDecoderSetMetadataRespondAll = right.FileDecoderSetMetadataRespondAll;
+      FileDecoderGetState = right.FileDecoderGetState;
+      FileDecoderGetResolvedStateString = right.FileDecoderGetResolvedStateString;
+      FileDecoderGetChannels = right.FileDecoderGetChannels;
+      FileDecoderGetSampleRate = right.FileDecoderGetSampleRate;
+      FileDecoderInit = right.FileDecoderInit;
+      FileDecoderFinish = right.FileDecoderFinish;
+      FileDecoderProcessSingle = right.FileDecoderProcessSingle;
+      FileDecoderGetDecodePosition = right.FileDecoderGetDecodePosition;
+      FileDecoderSeekAbsolute = right.FileDecoderSeekAbsolute;
+      FileDecoderMetadataCallback = right.FileDecoderMetadataCallback;
+      FileDecoderWriteCallback = right.FileDecoderWriteCallback;
     }
   return *this;
 }
