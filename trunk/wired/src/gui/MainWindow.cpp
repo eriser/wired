@@ -68,6 +68,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   CurrentSession = new WiredSession("");
   CurrentXmlSession = new WiredSessionXml("");
   LoadedExternalPlugins = new WiredExternalPluginMgr();
+  LogWin = new wxLogWindow(this, "Wired log", false);
   
   try
     {
@@ -238,6 +239,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   ItemFloatingOptView = WindowMenu->AppendCheckItem(MainWin_FloatView, _("Floating Optional View"));
   WindowMenu->AppendSeparator();
   WindowMenu->AppendCheckItem(MainWin_FullScreen, _("&Fullscreen"));
+  WindowMenu->AppendSeparator();
+  WindowMenu->AppendCheckItem(MainWin_ShowLog, _("&Log window"));
   
   MenuBar->Append(FileMenu, _("&File"));
   MenuBar->Append(EditMenu, _("&Edit"));
@@ -424,7 +427,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   try
   {
       if (Seq)
-      {
+      {        
     	  Seq->Delete();
     	  delete Seq;
       }
@@ -1608,6 +1611,18 @@ void					MainWindow::OnIntegratedHelp(wxCommandEvent &event)
   OptPanel->ShowHelp();
 }
 
+void                  MainWindow::OnShowDebug(wxCommandEvent &event)
+{
+   if(WindowMenu->IsChecked(MainWin_ShowLog))
+   {
+        LogWin->Show(true);
+   }
+   else
+   {
+        LogWin->Show(false);    
+   }
+}
+
 BEGIN_DECLARE_EVENT_TYPES()
     DECLARE_EVENT_TYPE(wxSetCursorPos, 313131)
 END_DECLARE_EVENT_TYPES()
@@ -1644,7 +1659,8 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_FullScreen,  MainWindow::OnFullScreen)
   EVT_MENU(MainWin_About, MainWindow::OnAbout)
   EVT_MENU(MainWin_IntHelp, MainWindow::OnIntegratedHelp)
-  EVT_CLOSE(MainWindow::OnClose)
+  EVT_MENU(MainWin_ShowLog, MainWindow::OnShowDebug)
+  EVT_CLOSE(MainWindow::OnClose) 
   EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
   EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
   EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
