@@ -11,6 +11,8 @@
 #include "../samplerate/WiredSampleRate.h"
 #include "../codec/WiredCodec.h"
 
+#define		PROGRESS_DIALOG_UNIT	100
+
 using namespace std;
 
 typedef enum {
@@ -61,6 +63,10 @@ private:
 	unsigned long		_BufferSize;
 	wxWindow			*_Parent;
 	deque<FileConversionAction *>	_ActionsList;
+	
+private:
+	SNDFILE			*OpenDecodeFile(t_Pcm	&Data, const std::string &DestFileName, SF_INFO &Info, 
+															unsigned long *TotalReaden, int *sf_write_result);
 };
 
 static wxMutex FileConversionMutex;

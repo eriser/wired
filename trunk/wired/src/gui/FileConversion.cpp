@@ -1,6 +1,7 @@
 #include <wx/filename.h>
 #include <sndfile.h>
 #include <strings.h>
+#include <wx/progdlg.h>
 
 #include "FileConversion.h"
 #include "../undo/cAddTrackAction.h"
@@ -146,62 +147,64 @@ int						FileConversion::GetSndFFormat(PcmType Type)
 	}
 }
 
+SNDFILE			*FileConversion::OpenDecodeFile(t_Pcm	&Data, const std::string &DestFileName, 
+																						SF_INFO &Info, unsigned long *TotalReaden, int *sf_write_result)
+{
+  SNDFILE					*Result = NULL;
+
+ 	Info.samplerate = Data.SampleRate;
+	Info.channels = Data.Channels;
+	Info.format = 0;
+	Info.format |= SF_FORMAT_WAV;	
+	Info.format |= GetSndFFormat(Data.PType);
+	if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)) == NULL)
+	{
+		cout << "[FILECONVERT] Codec 2 - Could not open file " << DestFileName.c_str();
+		cout << "} because of error : " << sf_strerror(Result) << endl;
+		*TotalReaden = 0;
+		*sf_write_result = 0;
+	}
+	return Result;
+}
+
 void				FileConversion::Decode(string *FileName)
 {
 	if (_ShouldRun == false)
 		return;
 	if (_CodecConverter.CanConvert(string(FileName->c_str()), DECODE) == true)
 	{
-		string			FileNameLocal(FileName->c_str());
-		t_Pcm			Data;
-      	wxFileName		RelativeFileName;
-      	string			DestFileName;
-	  	SNDFILE			*Result = NULL;
-		SF_INFO			Info;
-		unsigned long	Readen = 0;
-		unsigned long 	TotalReaden = 0;
-		int				sf_write_result = 0;
+		string						FileNameLocal(FileName->c_str());
+		t_Pcm							Data;
+    wxFileName				RelativeFileName;
+    string						DestFileName;
+	  SNDFILE						*Result = NULL;
+		SF_INFO						Info;
+		unsigned long			Readen = 0;
+		unsigned long 		TotalReaden = 0;
+		int								sf_write_result = 0;
+		wxProgressDialog	ProgressDialog(_("Conversion"), _("Decoding file, please wait."), 
+																		PROGRESS_DIALOG_UNIT, NULL, wxPD_SMOOTH | wxPD_ELAPSED_TIME |
+																		wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_APP_MODAL);
 
 		RelativeFileName = FileNameLocal.substr(FileNameLocal.find_last_of("/"));
 		RelativeFileName.SetExt(wxString("wav"));
 		DestFileName = _WorkingDir + string("/") + RelativeFileName.GetFullName();
-//		cout << "file {" << DestFileName.c_str() << "}" << endl;
-		
 		Data.pcm = new float[2 * _BufferSize];
 		bzero(Data.pcm, _BufferSize * 2);
-		std::cout << "_Buffersize: " << _BufferSize << std::endl;
 		while ((Readen = _CodecConverter.Decode(FileNameLocal, &Data, _BufferSize)) > 0)
 		{
-//			cout << "000 file {" << DestFileName.c_str() << "}" << endl;
 			TotalReaden += Readen;
 			if (Result == NULL)
-			{
-		      	Info.samplerate = Data.SampleRate;
-				Info.channels = Data.Channels;
-				Info.format = 0;
-				Info.format |= SF_FORMAT_WAV;	
-				Info.format |= GetSndFFormat(Data.PType);
-//				cout << "samplerate == " << Info.samplerate << ", Channels == " << Info.channels
-//					<< ", Enum == " << GetSndFFormat(Data.PType) << endl;
-				if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)) == NULL)
-				{
-					cout << "[FILECONVERT] Codec 2 - Could not open file " << DestFileName.c_str();
-					cout << "} because of error : " << sf_strerror(Result) << endl;
-					TotalReaden = 0;
-					sf_write_result = 0;
-					break;
-				}
-			}
+				if ((Result = OpenDecodeFile(Data, DestFileName, Info, &TotalReaden, &sf_write_result)) == NULL) break;
+			ProgressDialog.Update((int)(TotalReaden * PROGRESS_DIALOG_UNIT / Data.TotalSample));
 			if (Data.PType == Float32)
 				sf_write_result = sf_write_float(Result, (float *)Data.pcm,Readen * Info.channels);
 			else
 				sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen * Info.channels);
-			bzero(Data.pcm, _BufferSize * 2);				
+			bzero(Data.pcm, _BufferSize * 2);
 		}
 		
-//		cout << "01 file {" << DestFileName.c_str() << "}" << endl;
 		_CodecConverter.EndDecode();
-//		cout << "Total Readen == " << TotalReaden << endl;
 		delete[] (float *)Data.pcm;
 		if (!TotalReaden || !sf_write_result)
 		{
@@ -210,6 +213,7 @@ void				FileConversion::Decode(string *FileName)
 		}
 		else
 			*FileName = DestFileName;
+		ProgressDialog.Update(PROGRESS_DIALOG_UNIT);
 		sf_close(Result);  
 	}
 
