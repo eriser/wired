@@ -79,6 +79,7 @@ WiredDSSIGui WiredDSSIGui::operator=(const WiredDSSIGui& right)
 		BypassBtn = right.BypassBtn;
 		StartInfo = right.StartInfo;
 		InitInfo = right.InitInfo;
+        FaderIndex = right.FaderIndex;
 	}
 	return *this;
 }

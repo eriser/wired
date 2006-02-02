@@ -13,6 +13,7 @@ WiredLibVorbis			WiredLibVorbis::operator=(const WiredLibVorbis& right)
       OvReadFloat = right.OvReadFloat;
       OvInfo = right.OvInfo;
       OvClear = right.OvClear;
+      OvPcmTotal = right.OvPcmTotal;
       Pass = right.Pass;
       TotalRead = right.TotalRead;
       pcmout = right.pcmout;
