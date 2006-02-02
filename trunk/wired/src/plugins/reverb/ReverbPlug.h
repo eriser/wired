@@ -51,44 +51,44 @@
 #define STR_MIX_LEVEL	_("MixLevel")
 #define STR_DECAY _("Decay")
 
-typedef struct s_param
+typedef struct	s_param
 {
   int		sel_rev;
   float		Mix;
   float		Decay;
 }		t_param;
 
-class ReverbPlugin: public Plugin
+class		ReverbPlugin: public Plugin
 {
  public:
   ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo);
   ~ReverbPlugin();
 
-  void	 Init();
+  void		Init();
 
-  void	 Process(float **input, float **output, long sample_length);
-  void	 CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
-  void   Load(int fd, long size);
-  long   Save(int fd);
+  void		Process(float **input, float **output, long sample_length);
+  void		CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
+  void		Load(int fd, long size);
+  long		Save(int fd);
 
-  void	 Load(WiredPluginData& Datas);
-  void	 Save(WiredPluginData& Datas);
+  void		Load(WiredPluginData& Datas);
+  void		Save(WiredPluginData& Datas);
 
-  bool	 IsAudio();
-  bool	 IsMidi();
+  bool		IsAudio();
+  bool		IsMidi();
 
-  std::string DefaultName() { return "Reverb"; }
+  std::string	DefaultName() { return "Reverb"; }
 
-  void OnSelect(wxCommandEvent &e);
-  void OnASelect(wxCommandEvent &e);
-  void OnBSelect(wxCommandEvent &e);
-  void OnCSelect(wxCommandEvent &e);
-  void OnDecay(wxScrollEvent &e);
-  void OnMix(wxScrollEvent &e);
-  void OnBypass(wxCommandEvent &e);
-  void OnBypassController(wxMouseEvent &event);
+  void		OnSelect(wxCommandEvent &e);
+  void		OnASelect(wxCommandEvent &e);
+  void		OnBSelect(wxCommandEvent &e);
+  void		OnCSelect(wxCommandEvent &e);
+  void		OnDecay(wxScrollEvent &e);
+  void		OnMix(wxScrollEvent &e);
+  void		OnBypass(wxCommandEvent &e);
+  void		OnBypassController(wxMouseEvent &event);
 
-  void OnPaint(wxPaintEvent &event);
+  void		OnPaint(wxPaintEvent &event);
 
   wxBitmap	*GetBitmap();
   float		Wide;

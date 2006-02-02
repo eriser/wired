@@ -439,7 +439,7 @@ void				Transport::SetClick(bool click)
 
 void				Transport::OnIdle(wxIdleEvent &WXUNUSED(event))
 {
-	vum->SetValue((int)(Audio->GetCpuLoad() * 100));
+  vum->SetValue((int)(Audio->GetCpuLoad() * 100));
 }
 
 BEGIN_EVENT_TABLE(Transport, wxPanel)

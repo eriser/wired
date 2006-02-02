@@ -99,10 +99,10 @@ FilterPlugin::FilterPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 		       wxBITMAP_TYPE_PNG);
   
   CutoffFader = new FaderCtrl(this, Filter_Cutoff, img_bg, img_fg, 1, 
-			      SIZE_CUTOFF, SIZE_CUTOFF, true, wxPoint(118, 12),
+			      SIZE_CUTOFF, &Cutoff, true, wxPoint(118, 12),
 			      wxSize(img_bg->GetWidth(), img_bg->GetHeight()), 
 			      this, GetPosition() + wxPoint(103, 25));
-  ResFader = new FaderCtrl(this, Filter_Res, img_bg, img_fg, 0, SIZE_RES, 0,
+  ResFader = new FaderCtrl(this, Filter_Res, img_bg, img_fg, 0, SIZE_RES, &Res,
 			   true, wxPoint(153, 12), 
 			   wxSize(img_bg->GetWidth(), img_bg->GetHeight()), 
 			   this, GetPosition() + wxPoint(138, 25));

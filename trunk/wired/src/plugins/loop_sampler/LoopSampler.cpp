@@ -141,21 +141,20 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   /* Envelope */
 
-  VolumeFader = new FaderCtrl(this, LoopSampler_Volume, fader_vol_bg, fader_vol_fg, 0, 127, 100, true, 
+  VolumeFader = new FaderCtrl(this, LoopSampler_Volume, fader_vol_bg, fader_vol_fg, 0, 127, &Volume, true, 
                              wxPoint(13, 56), wxSize(23, 132));
 
-
-  AttackFader = new FaderCtrl(this, LoopSampler_Attack, fader_bg, fader_fg, 0, 1000, 0, true,
+  AttackFader = new FaderCtrl(this, LoopSampler_Attack, fader_bg, fader_fg, 0, 1000, &Attack, true,
 			      wxPoint(51, 56), wxSize(26, 132));
 
-  DecayFader = new FaderCtrl(this, LoopSampler_Decay, fader_bg, fader_fg, 0, 127, 100, true, 
+  DecayFader = new FaderCtrl(this, LoopSampler_Decay, fader_bg, fader_fg, 0, 127, &Decay, true, 
                              wxPoint(89, 56), wxSize(26, 132));
 
-  SustainFader = new FaderCtrl(this, LoopSampler_Sustain, fader_bg, fader_fg, 0, 127, 100, true,
+  SustainFader = new FaderCtrl(this, LoopSampler_Sustain, fader_bg, fader_fg, 0, 127, &Sustain, true,
                              wxPoint(127, 56), wxSize(26, 132));
 
 
-  ReleaseFader = new FaderCtrl(this, LoopSampler_Release, fader_bg, fader_fg, 0, 127, 100, true, 
+  ReleaseFader = new FaderCtrl(this, LoopSampler_Release, fader_bg, fader_fg, 0, 127, &Release, true, 
                              wxPoint(166, 56), wxSize(26, 132));
 
   /* Global tuning */

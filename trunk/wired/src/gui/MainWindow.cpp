@@ -360,7 +360,7 @@ void					MainWindow::InitFileConverter()
 	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
 	info.SampleRate = (unsigned long) Audio->SampleRate;
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
-	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) Audio->SamplesPerBuffer, this) == false)
+	if (FileConverter->Init(&info, string(CurrentXmlSession->GetAudioDir()), (unsigned long) 16889235, this) == false)
 		cout << "[MAINWIN] Create file converter thread failed !" << endl; 
 }
 

@@ -22,7 +22,7 @@ BEGIN_EVENT_TABLE(EffectWahwah, wxWindow)
 END_EVENT_TABLE()
 
 EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
-  : Plugin(startinfo, initinfo)
+  : Plugin(startinfo, initinfo), Bypass(false)
 {
   //cout << "WahWah - Construction" << endl;
   Init();
@@ -49,23 +49,23 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 		   wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), 
 		   bypass_off, bypass_on);
   FreqFader = new FaderCtrl(this, Wahwah_Frequency, img_bg, img_fg, 0, 
-			    TO_GUI_FREQ(4.0), TO_GUI_FREQ(DEFAULT_FREQ), true,
+			    4.0, &LeftChannel.freq, false,
 			    wxPoint(83, 12), wxSize(22, 78), 
 			    this, GetPosition() + wxPoint(83, 35));
   StartPhaseFader = new FaderCtrl(this, Wahwah_StartPhase, img_bg, img_fg, 
-				  true, 0, 1, DEFAULT_STARTPHASE,
+				  0, 1, &LeftChannel.startphase, true,
 				  wxPoint(142, 12), wxSize(22, 78), 
 				  this, GetPosition() + wxPoint(142, 35));
-  DepthFader = new FaderCtrl(this, Wahwah_Depth, img_bg, img_fg, 0, 100, 
-			     TO_GUI_DEPTH(DEFAULT_DEPTH), true, 
+  DepthFader = new FaderCtrl(this, Wahwah_Depth, img_bg, img_fg, 0, 1, 
+			     &LeftChannel.depth, false, 
 			     wxPoint(200, 12), wxSize(22, 78), 
 			     this, GetPosition() + wxPoint(200, 35));
-  FreqOfsFader = new FaderCtrl(this, Wahwah_FreqOfs, img_bg, img_fg, 0, 99, 
-			       TO_GUI_FREQOFS(DEFAULT_FREQOFS), true, 
+  FreqOfsFader = new FaderCtrl(this, Wahwah_FreqOfs, img_bg, img_fg, 0, 0.99,
+			       &LeftChannel.freqofs, false, 
 			       wxPoint(258, 12), wxSize(22, 78), 
 			       this, wxPoint(258, 35));
-  ResFader = new FaderCtrl(this, Wahwah_Res, img_bg, img_fg, TO_GUI_RES(0.1),
-			   TO_GUI_RES(10.0), TO_GUI_RES(DEFAULT_RES), true, 
+  ResFader = new FaderCtrl(this, Wahwah_Res, img_bg, img_fg, 0.1,
+			   10.0, &LeftChannel.res, false, 
 			   wxPoint(320, 12), wxSize(22, 78), 
 			   this, GetPosition() + wxPoint(320, 35));
   
@@ -76,6 +76,12 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 		wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
   SetBackgroundColour(wxColour(237, 237, 237));
+
+  cout << "freq : " << LeftChannel.freq<< endl;
+  cout << "startphase : " << LeftChannel.startphase << endl;
+  cout << "depth : " << LeftChannel.depth << endl;
+  cout << "freqofs : " << LeftChannel.freqofs << endl;
+  cout << "res : " << LeftChannel.res << endl;
 }
 
 void		EffectWahwah::Init()
@@ -118,7 +124,7 @@ wxBitmap*	EffectWahwah::GetBitmap()
 void		EffectWahwah::OnFrequency(wxScrollEvent &e)
 {
 	WahwahMutex.Lock();
-	LeftChannel.freq = FROM_GUI_FREQ(FreqFader->GetValue());
+	//LeftChannel.freq = FROM_GUI_FREQ(FreqFader->GetValue());
 	LeftChannel.lfoskip = LeftChannel.freq * 2 * M_PI / mCurRate;
 	RightChannel.freq = LeftChannel.freq;
 	RightChannel.lfoskip = RightChannel.freq * 2 * M_PI / mCurRate;
@@ -131,7 +137,7 @@ void		EffectWahwah::OnStartPhase(wxScrollEvent &e)
   float	shouldDo;
 
 	WahwahMutex.Lock();
-	shouldDo = (float) StartPhaseFader->GetValue();
+	shouldDo = (float) StartPhaseFader->GetValue(); // TO MODIFY
 	if (shouldDo == 0)
     {
     	LeftChannel.startphase = M_PI;
@@ -160,27 +166,24 @@ void		EffectWahwah::OnStartPhase(wxScrollEvent &e)
 void		EffectWahwah::OnDepth(wxScrollEvent &e)
 {
 	WahwahMutex.Lock();
-	LeftChannel.depth = FROM_GUI_DEPTH(DepthFader->GetValue());
 	RightChannel.depth = LeftChannel.depth;
-	//cout << "Depth: " << LeftChannel.depth << endl;
+	cout << "Depth: " << LeftChannel.depth << endl;
 	WahwahMutex.Unlock();
 }
 
 void		EffectWahwah::OnFreqOfs(wxScrollEvent &e)
 {
 	WahwahMutex.Lock();
-	LeftChannel.freqofs = FROM_GUI_FREQOFS(FreqOfsFader->GetValue());
 	RightChannel.freqofs = LeftChannel.freqofs;
-	//cout << "Frequency OFS : " << LeftChannel.freqofs << endl;
+	cout << "Frequency OFS : " << LeftChannel.freqofs << endl;
 	WahwahMutex.Unlock();
 }
 
 void		EffectWahwah::OnRes(wxScrollEvent &e)
 {
 	WahwahMutex.Lock();
-	LeftChannel.res = FROM_GUI_RES(ResFader->GetValue());
 	RightChannel.res = LeftChannel.res;
-	//cout << "Res: " << LeftChannel.res << endl;
+	cout << "Res: " << LeftChannel.res << endl;
 	WahwahMutex.Unlock();
 }
 
@@ -204,23 +207,23 @@ void		EffectWahwah::Load(int fd, long size)
 {
   t_plugParams	params;
 
-   	WahwahMutex.Lock();
-   	cout << "Wrong Load" << endl;
-	if (read (fd, &params, size) <= 0)
+  WahwahMutex.Lock();
+  cout << "Wrong Load" << endl;
+  if (read (fd, &params, size) <= 0)
     {
-    	cout << "[WAHWAHPLUG] Error while loading patch !" << endl;
+      cout << "[WAHWAHPLUG] Error while loading patch !" << endl;
     }
-	else
+  else
     {
-    	ResFader->SetValue((int)(TO_GUI_RES(params.res)));
-	    FreqOfsFader->SetValue((int)(TO_GUI_FREQOFS(params.freqofs)));
-	    FreqFader->SetValue((int)(TO_GUI_FREQ(params.freq)));
-	    StartPhaseFader->SetValue((int)(params.startphase * M_PI));
-	    DepthFader->SetValue((int)(TO_GUI_DEPTH(params.depth)));
-	    LeftChannel.SetValues(params);
-	    RightChannel.SetValues(params);
+      ResFader->SetValue(params.res);
+      FreqOfsFader->SetValue(params.freqofs);
+      FreqFader->SetValue(params.freq);
+      StartPhaseFader->SetValue(params.startphase * M_PI); // TO MODIFY
+      DepthFader->SetValue(params.depth);
+      LeftChannel.SetValues(params);
+      RightChannel.SetValues(params);
     }
-	WahwahMutex.Unlock();
+  WahwahMutex.Unlock();
 }
 
 long		EffectWahwah::Save(int fd)
