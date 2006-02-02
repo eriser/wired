@@ -45,9 +45,9 @@ class   WiredLibMpeg: public WiredApiCodec
 {
  public:
 
-  WiredLibMpeg(){std::cout << "[WIRED_MPEG_CODEC] Mpeg child created" << std::endl;file = NULL;}
+  WiredLibMpeg(){std::cout << "[WIRED_MPEG_CODEC] Mpeg child created" << std::endl;file = NULL; handle = NULL;}
   WiredLibMpeg(const WiredLibMpeg& copy){*this = copy;};
-  ~WiredLibMpeg(){dlclose(handle);};
+  ~WiredLibMpeg(){if (handle) dlclose(handle);};
 
   void				init(list<t_LibInfo> &Info);				/* Inits codec */
   int				encode(float** pcm);						/* Encode methodes */

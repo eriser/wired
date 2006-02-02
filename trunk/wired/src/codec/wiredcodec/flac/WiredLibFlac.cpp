@@ -242,7 +242,7 @@ bool WiredLibFlac::LoadSymbol()
 
 int	WiredLibFlac::EndDecode()
 {
-  dlclose(handle);
+  
 }
 
 int WiredLibFlac::decode(const char *path, t_Pcm *pcm, unsigned long length)
