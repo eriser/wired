@@ -210,6 +210,19 @@ WiredLibMpeg			WiredLibMpeg::operator=(const WiredLibMpeg& right)
 	{
 		handle = right.handle;
 		file = right.file;
+        mpeg3_check_sig_func = right.mpeg3_check_sig_func;
+        mpeg3_open_func = right.mpeg3_open_func;
+        mpeg3_total_astreams_func = right.mpeg3_total_astreams_func;
+        mpeg3_audio_channels_func = right.mpeg3_audio_channels_func;
+        mpeg3_audio_samples_func = right.mpeg3_audio_samples_func;
+        mpeg3_sample_rate_func = right.mpeg3_sample_rate_func;
+        mpeg3_read_audio_func = right.mpeg3_read_audio_func;
+        mpeg3_reread_audio_func = right.mpeg3_reread_audio_func;
+        mpeg3_seek_byte_func = right.mpeg3_seek_byte_func;
+        mpeg3_close_func = right.mpeg3_close_func;
+        mpeg3_tell_byte_func = right.mpeg3_tell_byte_func;
+        mpeg3_set_sample_func = right.mpeg3_set_sample_func;
+        mpeg3_get_sample_func = right.mpeg3_get_sample_func;
 	}
 	return *this;
 }
