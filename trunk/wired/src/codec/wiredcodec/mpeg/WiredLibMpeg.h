@@ -77,7 +77,7 @@ class   WiredLibMpeg: public WiredApiCodec
   
   void				InitAccesLib();
   void				fillLibInfo(t_LibInfo& info, char *extension);
-  void				mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen);
+  void				mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen, unsigned int NbChannels);
 };
 
 extern "C" WiredApiCodec  *const WiredCodecConstruct();

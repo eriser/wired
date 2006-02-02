@@ -189,8 +189,8 @@ void				FileConversion::Decode(string *FileName)
 		RelativeFileName = FileNameLocal.substr(FileNameLocal.find_last_of("/"));
 		RelativeFileName.SetExt(wxString("wav"));
 		DestFileName = _WorkingDir + string("/") + RelativeFileName.GetFullName();
-		Data.pcm = new float[2 * _BufferSize];
-		bzero(Data.pcm, _BufferSize * 2);
+		Data.pcm = new float[_BufferSize];
+		bzero(Data.pcm, _BufferSize);
 		while ((Readen = _CodecConverter.Decode(FileNameLocal, &Data, _BufferSize)) > 0)
 		{
 			TotalReaden += Readen;
@@ -198,10 +198,10 @@ void				FileConversion::Decode(string *FileName)
 				if ((Result = OpenDecodeFile(Data, DestFileName, Info, &TotalReaden, &sf_write_result)) == NULL) break;
 			ProgressDialog.Update((int)(TotalReaden * PROGRESS_DIALOG_UNIT / Data.TotalSample));
 			if (Data.PType == Float32)
-				sf_write_result = sf_write_float(Result, (float *)Data.pcm,Readen * Info.channels);
+				sf_write_result = sf_write_float(Result, (float *)Data.pcm,Readen);
 			else
-				sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen * Info.channels);
-			bzero(Data.pcm, _BufferSize * 2);
+				sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen);
+			bzero(Data.pcm, _BufferSize);
 		}
 		
 		_CodecConverter.EndDecode();

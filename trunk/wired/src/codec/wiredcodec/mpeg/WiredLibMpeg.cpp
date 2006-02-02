@@ -119,16 +119,13 @@ bool	WiredLibMpeg::CanConvert(const char* path, int Decode)
 	return true;
 }
 
-void	WiredLibMpeg::mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen)
+void	WiredLibMpeg::mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen, unsigned int NbChannels)
 {
 	int cpt;
 	
 	for (cpt = 0; cpt < totalLen; cpt++)
 	{
-		if ((cpt % 2) == 0)
-			dst[cpt] = leftChan[cpt / 2];
-		else
-			dst[cpt] = rightChan[cpt / 2];
+		dst[cpt] = leftChan[cpt / NbChannels];
 	}
 }
 
@@ -158,20 +155,20 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 		pcm->Channels = mpeg3_audio_channels_func(file, 0);
 		pcm->TotalSample = mpeg3_audio_samples_func(file, 0);
 		pcm->SampleRate = mpeg3_sample_rate_func(file, 0);
-		cout << " | " << pcm->Channels << " | " << pcm->TotalSample << " | " << pcm->SampleRate << endl;
+		cout << "[WIREDLIBMPEG] " << pcm->Channels << " | " << pcm->TotalSample << " | " << pcm->SampleRate << endl;
 	}
 	if (filePosInSample > pcm->TotalSample)
 		return 0;
 	if (pcm->Channels > 0)
 	{
-		float* leftChan = new float[length];
-		float* rightChan = new float[length];
-		bzero(leftChan, length);
-		bzero(rightChan, length);
+		float* leftChan = new float[length / pcm->Channels];
+		float* rightChan = new float[length / pcm->Channels];
+		bzero(leftChan, length / pcm->Channels);
+		bzero(rightChan, length / pcm->Channels);
 		
 		if (filePosInSample < 0)
 		{
-			cout << "[WIREDLIBMPEG] Can't tel position" << endl;
+			cout << "[WIREDLIBMPEG] Can't tell position" << endl;
 			delete[] leftChan;
 			delete[] rightChan;
 			return 0;
@@ -184,14 +181,11 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 		for (int cpt = 0; cpt < pcm->Channels && cpt != 2; cpt++)
 		{
 			if (cpt == 0)
-				mpeg3_read_audio_func(file, leftChan, NULL, cpt, length, 0);
+				mpeg3_read_audio_func(file, leftChan, NULL, 0, length / pcm->Channels, 0);
 			else
-				mpeg3_reread_audio_func(file, rightChan, NULL, cpt, length, 0);
+				mpeg3_reread_audio_func(file, rightChan, NULL, 0, length / pcm->Channels, 0);
 		}
-		if (pcm->Channels == 2)
-		{
-			mergeChannels(leftChan, rightChan, (float*)pcm->pcm, length * 2);
-		}
+		mergeChannels(leftChan, rightChan, (float*)pcm->pcm, length, pcm->Channels);
 		delete[] leftChan;
 		delete[] rightChan;
 	}
@@ -200,7 +194,7 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 		cout << "[WIREDLIBMPEG] No channel found" << endl;
 		return 0;
 	}
-	filePosInSample += length;
+	filePosInSample += (length / pcm->Channels);
 	if (filePosInSample > pcm->TotalSample)
 	{
 		cout << "[WIREDLIBMPEG] decoding done: " << filePosInSample << " / " << pcm->TotalSample << endl;
