@@ -103,7 +103,7 @@ void Channel::PushBuffer(float *buffer)
   float rms = 0.f, vol;
   
   MixMutex.Lock();
-  vol = VolumeLeft;
+  //vol = VolumeLeft;
   //rvol = VolumeRight;
   MixMutex.Unlock();
   
@@ -114,7 +114,7 @@ void Channel::PushBuffer(float *buffer)
 	  int abs;
 	  for (unsigned long i = 0; i < Audio->SamplesPerBuffer; i++)
 	    {
-	      (MonoBuffers[0])[i] = buffer[i] * vol;
+	      (MonoBuffers[0])[i] = buffer[i] * VolumeLeft / 100.f;
 	      rms += fabsf( (MonoBuffers[0])[i] );
 	      
 	      //abs = ((*(int*)&((MonoBuffers[0])[i]))&0x7fffffff);
@@ -156,8 +156,8 @@ void Channel::PushBuffer(float **buffer)
 	{
 	  for (unsigned long i = 0; i < Audio->SamplesPerBuffer; i++)
 	    {
-	      (StereoBuffers[0])[0][i] = buffer[0][i] * lvol;
-	      (StereoBuffers[0])[1][i] = buffer[1][i] * rvol;
+	      (StereoBuffers[0])[0][i] = buffer[0][i] * lvol / 100.f;
+	      (StereoBuffers[0])[1][i] = buffer[1][i] * rvol / 100.f;
 	      
 	      lrms += fabsf( (StereoBuffers[0])[0][i] );
 	      rrms += fabsf( (StereoBuffers[0])[1][i] );
