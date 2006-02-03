@@ -156,8 +156,8 @@ void Channel::PushBuffer(float **buffer)
 	{
 	  for (unsigned long i = 0; i < Audio->SamplesPerBuffer; i++)
 	    {
-	      (StereoBuffers[0])[0][i] = buffer[0][i] * lvol / 100.f;
-	      (StereoBuffers[0])[1][i] = buffer[1][i] * rvol / 100.f;
+	      (StereoBuffers[0])[0][i] = buffer[0][i] * (lvol / 100.f);
+	      (StereoBuffers[0])[1][i] = buffer[1][i] * (rvol / 100.f);
 	      
 	      lrms += fabsf( (StereoBuffers[0])[0][i] );
 	      rrms += fabsf( (StereoBuffers[0])[1][i] );
