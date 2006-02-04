@@ -43,7 +43,7 @@ long					HostCallback(Plugin *plug, long param, void *value)
       }
     case wiredHostProductVersion :
       {
-	*(float *)value = 0.1f;
+	*(float *)value = 0.2f;
 	break;
       }
     case wiredHostVendorName :
