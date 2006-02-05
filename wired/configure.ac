@@ -17,11 +17,6 @@ AM_INIT_AUTOMAKE([1.8.2 foreign check-news dist-bzip2 no-dist-gzip])
 # Look for a C++ compiler.
 AC_LANG([C++])
 
-# Accelerate the compilation.
-if test "$GXX" = yes; then
-  CXXFLAGS="-ggdb"
-fi
-
 # for autoheader .. investigate this further :)
 AC_CONFIG_HEADER(src/include/config.h)
 
@@ -88,6 +83,12 @@ AC_C_VOLATILE
 AC_ARG_ENABLE(dssi, 
 	[  --enable-dssi Enable or disable DSSI plugins support (default disabled)])
 
+AC_ARG_ENABLE(debug, 
+	[  --enable-debug Enable or disable debug symbol generation (default disabled)])
+	
+	
+AC_ARG_ENABLE(optimize, 
+	[  --disable-optimize Enable or disable compilation optimizations (default enabled)],disable_optimize=yes, disable_optimize=no)
 
 # Checks for library functions.
 AC_FUNC_CLOSEDIR_VOID
@@ -114,6 +115,22 @@ then
 else
  CFGDSSI=No
  OPTION_DSSI="DSSI_DISABLED"
+fi
+
+ CXXFLAGS="-O3"
+
+if test "$disable_optimize" = "yes";
+then
+ CFGOPTIMIZE=No
+ CXXFLAGS=""
+fi
+
+if test x$enable_debug = xyes;
+then
+ CFGDEBUG=Yes
+ CXXFLAGS="${CXXFLAGS} -ggdb3"
+else
+ CFGDEBUG=No
 fi
 
 AC_CONFIG_FILES([Makefile
