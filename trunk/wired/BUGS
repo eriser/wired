@@ -2,4 +2,4 @@ Major bug:
 
 Minor bug:
 
--When a window is flotting and you try to use the switching option window>Switch x/x the flotting window loses the focus and becomes empty, the application doesn't crash
+-When a window is flotting and you try to use the switching option window>Switch x/x the flotting window loses the focus and becomes empty, the application doesn't crash -- FIXED
