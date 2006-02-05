@@ -3,7 +3,7 @@ SUBDIRS =		\
 
 LDFLAGS = 
 
-CPPFLAGS = -DPMALSA -ggdb -Ipm_common -Iporttime
+CPPFLAGS = -DPMALSA -Ipm_common -Iporttime
 
 noinst_LIBRARIES = libportmidi.a
 

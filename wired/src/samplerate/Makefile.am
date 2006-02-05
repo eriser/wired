@@ -1,4 +1,4 @@
-CPPFLAGS = $(shell wx-config --cflags) @SAMPLERATE_CFLAGS@ -Wall -Wunused -g3 -O3 
+CPPFLAGS = $(shell wx-config --cflags) @SAMPLERATE_CFLAGS@ -Wall -Wunused
 
 LDFLAGS = $(shell wx-config --libs) -lm @SAMPLERATE_LIBS@
 

@@ -1,6 +1,6 @@
 SUBDIRS = wiredcodec
 
-CPPFLAGS = $(shell wx-config --cflags) -g3 -O3
+CPPFLAGS = $(shell wx-config --cflags)
 
 LDFLAGS = $(shell wx-config --libs) -ldl
 

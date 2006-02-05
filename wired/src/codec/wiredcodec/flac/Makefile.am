@@ -1,6 +1,6 @@
-LDFLAGS = -lFLAC++ -g3 -O3
+LDFLAGS = -lFLAC++
 
-CPPFLAGS =  -g3 -O3
+CPPFLAGS =  
 
 lib_LTLIBRARIES = libWiredFlac.la
 
