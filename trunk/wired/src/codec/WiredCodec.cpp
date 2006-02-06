@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <wx/dir.h>
 
 WiredCodec::WiredCodec()
 {
@@ -191,21 +192,22 @@ unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned lo
   return retLenght;
 }
 
-void WiredCodec::InitWLib()
+void		WiredCodec::InitWLib()
 {
-  DIR		 *dir;
-  struct dirent	*sdir;
-  string	pathname;
   
-  if (dir = opendir(_WiredPath.c_str()))
+  wxDir		dir(_WiredPath.c_str());
+  wxString	filename;
+  bool		cont;
+  
+  if (dir.IsOpened())
     {
-      while (sdir = readdir(dir))
+      cont = dir.GetFirst(&filename, "", wxDIR_FILES);
+      while (cont)
 	{
-	  pathname = sdir->d_name;
-	  if (pathname.find(".so", pathname.length() - 3) != -1)
-	    _WiredSo.push_back(pathname);
+	  if (filename.find(".so", filename.length() - 3) != -1)
+	    _WiredSo.push_back((string)filename);
+	  cont = dir.GetNext(&filename);
 	}
-      closedir(dir);
     }
 }
 
