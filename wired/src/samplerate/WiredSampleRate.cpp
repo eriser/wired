@@ -125,7 +125,7 @@ int						WiredSampleRate::GetConverterQuality()
 
 	wxSingleChoiceDialog	Dlg(NULL, Msg, Title, Choices, (char **)&Values);
 	if (Dlg.ShowModal() == wxID_OK)
-		Result = (int) Dlg.GetSelectionClientData();
+		Result = atoi(Dlg.GetSelectionClientData());
 	else 
 		Result = 0;
 	return Result;
