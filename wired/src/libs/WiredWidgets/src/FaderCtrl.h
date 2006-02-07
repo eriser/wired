@@ -63,7 +63,8 @@ class		FaderCtrl : public wxWindow
   float			*Value;
   float			BeginValue;
   float			EndValue;
-  double		coeff;
+  float			Coeff;
+  float			Ord;
   bool			IsInteger;
   wxBitmap		*bg;
   wxBitmap		*tmp_fg;
