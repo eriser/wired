@@ -18,7 +18,7 @@
 
 #include "TreeItemData.h"
 
-TreeItemData::TreeItemData(string _path) : wxTreeItemData()
+TreeItemData::TreeItemData(wxString _path) : wxTreeItemData()
 {
 	path = _path;
 }
@@ -27,7 +27,7 @@ TreeItemData::~TreeItemData()
 {
 }
 
-string TreeItemData::GetPath()
+wxString TreeItemData::GetPath()
 {
 	return path;
 }

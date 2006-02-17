@@ -25,18 +25,18 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <string>
-using std::string;
+using		std::string;
 
-class TreeItemData: public wxTreeItemData
+class		TreeItemData: public wxTreeItemData
 {
  public:
-  TreeItemData(string _path);
+  TreeItemData(wxString _path);
   ~TreeItemData();
-  string GetPath();
-
-
+  
+  wxString	GetPath();
+  
  private:
-  string path;
-};
+  wxString	path;
+}		;
 
 #endif
