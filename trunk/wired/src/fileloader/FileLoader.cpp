@@ -88,10 +88,8 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   
   wxFileName f;
 
-
   f.AssignHomeDir();
   f.AppendDir(".wired");
-  filters = ";";
   favdir = f.GetFullPath() + FAVORITE_FILE;
   mrudir = f.GetFullPath() + MRU_FILE;
   akai = pakai;
@@ -330,7 +328,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 // }
 
 //
-// Reads the ${PREFIX}/wired_exts.conf file for loading supported
+// Reads the ${PREFIX}/etc/wired_exts.conf file for loading supported
 // files extensions.
 // If a parameter Exts is given, add the extensions specified into
 // the supported extensions
@@ -347,8 +345,10 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
   wxTextFile	file(WiredSettings->ConfDir + EXT_FILE);
   wxString	l;
   wxString	itemdesc;
-  wxString	*itemdata;
+  wxString	*itemdata = NULL;
 
+  filters = "";
+  //allext = "";
   file.Open();
   for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
     {
@@ -356,18 +356,17 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
       l = l.BeforeFirst('#');
       if (!l.IsEmpty())
 	{
-	  itemdesc = l.BeforeFirst('\t');
-	  itemdata = new wxString(l.AfterLast('\t'));
+	  itemdesc = l.AfterLast('\t');
+	  itemdata = new wxString(l.BeforeFirst('\t'));
 	  type->Append(itemdesc, itemdata);
-	  filters += itemdesc + ";";
-	  allext += ";" + itemdesc;
+	  filters += *itemdata + ";";
+	  //	  allext += *itemdata + ";";
 	}
     }
-  itemdesc = l.BeforeFirst('\t');
-  itemdata = new wxString(l.AfterLast('\t'));
+  itemdesc = l.AfterLast('\t');
+  itemdata = new wxString(l.BeforeFirst('\t'));
   type->Append(itemdesc, itemdata);
-  filters += itemdesc + ";";
-  allext += ";" + itemdesc;
+  filters += *itemdata + ";";
   file.Close();
   
   if (Exts)
@@ -377,8 +376,8 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 	  unsigned int j;
 	  wxString ext = (*Exts)[i];
 	  
-	  itemdesc = ext.BeforeFirst('\t');
-	  itemdata = new wxString(ext.AfterLast('\t'));
+	  itemdesc = ext.AfterLast('\t');
+	  itemdata = new wxString(ext.BeforeFirst('\t'));
 
 	  if ((j = ext.find("\t", 0)) != (unsigned int) string::npos)
 	    type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
@@ -386,7 +385,7 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 	  else
 	    type->Append(_T(ext.c_str()), strdup(ext.c_str()));
 // 	  if (allext != NULL)
-	  allext += ";" + ext.substr(0, j);
+	  filters += *itemdata + ";";
 // 	  else
 // 	    allext = new wxString(ext.substr(0, j));
 	}
@@ -411,22 +410,15 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 //	      }
 //	  }
 
-  if (!allext.IsEmpty())
+  if (!filters.IsEmpty())
     {
-      filters = allext;
+      allext = filters;
+      allext = allext.substr(0, allext.Len() - 1);
       allext.Replace(";", ";*.");
       itemdesc = "All supported soundfiles (*." + allext + ")";
-      itemdata = new wxString(allext);
-//       for (int i = 0; (*allext)[i]; i++)
-// 	if ((*allext)[i] != ';')
-// 	  itemdesc += (*allext)[i];
-// 	else
-// 	  itemdesc += ";*.";
-
-//      itemdesc += ")";
+      itemdata = new wxString(filters);
       type->SetString(0, itemdesc);
       type->SetClientData(0, itemdata);
-      //      delete allext;
     }
   else
     type->Delete(0);
@@ -712,17 +704,20 @@ void FileLoader::ListAkaiVolume(string p)
 
 //
 // Checks if the file extension matches wired supported ones
-// ";;" means no filter
+// ";*;" means no filter
+// ";;" in filters' pattern means file without extension
 // match is case-insensitive
 //
 
-bool		FileLoader::ExtMatch(wxString path)
+bool			FileLoader::ExtMatch(wxString path)
 {
-  wxFileName	filename(path);
-  wxString	ext = ";" + filename.GetExt() + ";";
+  wxFileName		filename(path);
+  wxString		ext = ";" + filename.GetExt() + ";";
  
-  if (filters == ";;")
+  if (filters == ";*;")
     return (true);
+  if ((filters.Find(";;") == -1) && (ext == ";;"))
+    return (false);
   return (filters.Find(ext.MakeLower()) != -1);
 }
 
@@ -1103,10 +1098,11 @@ void			FileLoader::OnChangeFilter(wxCommandEvent &e)
   StopPlaying();
   filename->SetValue("");
  
-  filters = ";" + entry.substr(start, len) + ";";
+  cout << "entry = " << entry << endl;
+  filters = ";" + entry.substr(start, len);
   filters.Replace("*.", "");
   filters.Replace(" ", "");
-
+  filters += ";";
   cout << "filter = \t" << filters << endl;
 
   if (!save)
