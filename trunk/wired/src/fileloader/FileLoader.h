@@ -65,7 +65,7 @@ class FileLoader: public wxDialog
   void OnSelectFile(wxListEvent &e);
   void OnActivateFile(wxListEvent &e);
 
-  void OnChangeType(wxCommandEvent &e);
+  void OnChangeFilter(wxCommandEvent &e);
 
   void OnPreview(wxCommandEvent &e);
   void OnOpen(wxCommandEvent &e);
@@ -97,32 +97,34 @@ class FileLoader: public wxDialog
   void StartPlaying();
   void StopPlaying();
   void GotoDir(char *);
-  bool ExtMatch(char *, char *);
-  char *FormatSize(off_t);
-  
-  wxTreeCtrl	*folder;
-  wxListView	*files;
-  wxTextCtrl	*filename;
-  wxStaticText  *fntext;
-  wxStaticText  *typtext;
-  wxStaticText  *favtext;
-  wxStaticText  *mrutext;
-  wxComboBox	*type;
-  wxButton	*preview;
-  wxButton	*btopen;
-  wxButton	*cancel;
-  bool		playing;
-  wxTreeItemId  pm_selitem;
-  wxComboBox	*mru;
-  wxComboBox	*favorites;
-  wxBitmapButton *mrudel;
-  wxBitmapButton *favdel;
-  bool		akai;
-  bool		save;
-  int		akaifd;
 
-  string	favdir;
-  string	mrudir;
+  bool			ExtMatch(wxString);
+  wxString		FormatSize(off_t);
+  
+  wxTreeCtrl		*folder;
+  wxListView		*files;
+  wxTextCtrl		*filename;
+  wxStaticText		*fntext;
+  wxStaticText		*typtext;
+  wxStaticText		*favtext;
+  wxStaticText		*mrutext;
+  wxComboBox		*type;
+  wxButton		*preview;
+  wxButton		*btopen;
+  wxButton		*cancel;
+  bool			playing;
+  wxTreeItemId		pm_selitem;
+  wxComboBox		*mru;
+  wxComboBox		*favorites;
+  wxBitmapButton	*mrudel;
+  wxBitmapButton	*favdel;
+  bool			akai;
+  bool			save;
+  int			akaifd;
+  wxString		filters;
+
+  wxString		favdir;
+  wxString		mrudir;
 
 
   DECLARE_EVENT_TABLE()
