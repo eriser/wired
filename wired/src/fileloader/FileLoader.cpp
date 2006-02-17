@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <wx/file.h>
 #include <wx/filename.h>
+#include <wx/dir.h>
 
 using namespace std;
 
@@ -63,7 +64,7 @@ BEGIN_EVENT_TABLE(FileLoader, wxDialog)
 
   EVT_TEXT_ENTER(FILENAME_ID, FileLoader::OnEnterFilename)
 
-  EVT_COMBOBOX(TYPE_ID, FileLoader::OnChangeType)
+  EVT_COMBOBOX(TYPE_ID, FileLoader::OnChangeFilter)
 
   EVT_BUTTON(PREVIEW_ID, FileLoader::OnPreview)
   EVT_BUTTON(OPEN_ID, FileLoader::OnOpen)
@@ -90,10 +91,9 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 
   f.AssignHomeDir();
   f.AppendDir(".wired");
-  favdir = f.GetFullPath().c_str();
-  favdir += FAVORITE_FILE;
-  mrudir = f.GetFullPath().c_str();
-  mrudir += MRU_FILE;
+  filters = ";";
+  favdir = f.GetFullPath() + FAVORITE_FILE;
+  mrudir = f.GetFullPath() + MRU_FILE;
   akai = pakai;
   save = psave;
   folder = new wxTreeCtrl(this, FOLDER_ID, wxPoint(4, 34), 
@@ -198,102 +198,99 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   }
   if (!akai)
     {
-    	
       if (exts == NULL)
-		LoadSoundExt();	
-  	else
+	LoadSoundExt();	
+      else
   	{	
   	  if (LoadExt == true)
-  	  	LoadSoundExt(exts);
+	    LoadSoundExt(exts);
   	  else
-		  for (unsigned int i = 0; i < exts->size(); i++)
-		  {
-			  unsigned int j;
-			string ext = (*exts)[i];
-	      		if ((j = ext.find("\t", 0)) != string::npos)
-	        		type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
-	                     strdup(ext.substr(0, j).c_str()));
-			else
-				type->Append(_T(ext.c_str()), strdup(ext.c_str()));
-			  
-		  }
+	    for (unsigned int i = 0; i < exts->size(); i++)
+	      {
+		unsigned int j;
+		string ext = (*exts)[i];
+		if ((j = ext.find("\t", 0)) 
+		    != (unsigned int) string::npos)
+		  type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
+			       strdup(ext.substr(0, j).c_str()));
+		else
+		  type->Append(_T(ext.c_str()), strdup(ext.c_str()));
+	      }
   	}
-  	LoadFolders();
-  	if (folder != NULL)
-	  	ListDirectories(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
-	if (OldPath.empty())
-	  {
-	    char cwd[PATH_MAX];
-	    getcwd(cwd, PATH_MAX);
-	    GotoDir(cwd);
-	  }
-	else
-	  GotoDir((char *)OldPath.c_str());
-  }
+      LoadFolders();
+      if (folder != NULL)
+	ListDirectories(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
+      if (OldPath.empty())
+	{
+	  char cwd[PATH_MAX];
+	  getcwd(cwd, PATH_MAX);
+	  GotoDir(cwd);
+	}
+      else
+	GotoDir((char *)OldPath.c_str());
+    }
   else
-  {
-	  akaifd = -1;
-
-	  ListAkaiCD(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
-  }
+    {
+      akaifd = -1;     
+      ListAkaiCD(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
+    }
 }
 
-void FileLoader::LoadSoundExt(vector<string> *Exts)
-{
-  type->Append(_T("will be replaced by allfiles at the end of the function"));
-  string *allext = NULL;
+// void FileLoader::LoadSoundExt(vector<string> *Exts)
+// {
+//   type->Append(_T("will be replaced by allfiles at the end of the function"));
+//   string *allext = NULL;
   
-  string extfile = WiredSettings->ConfDir;
-  extfile += EXT_FILE;
+//   string extfile = WiredSettings->ConfDir;
+//   extfile += EXT_FILE;
   
-  ifstream f(extfile.c_str());
+//   ifstream f(extfile.c_str());
+  
+//   string line;
+//   unsigned int i, j;
 
-  string line;
-  unsigned int i, j;
-
-  while (getline(f, line, '\n'))
-  {
-    for (i = 0; line[i] == ' '; i++) ;
-    if (line[i] != '#')
-    {
-      if ((j = line.find("\t", 0)) != string::npos)
-      {
-        type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
-                     strdup(line.substr(i, j).c_str()));
-        if (allext != NULL)
-        {
-	  *allext += ";";
-	  *allext += line.substr(i, j);
-        }
-        else
-	  allext = new string(line.substr(i, j));
-      }
-    }
-  }
-  f.close();
-  if (Exts)
-  {
-  for (unsigned int i = 0; i < Exts->size(); i++)
-  {
-	  unsigned int j;
-	string ext = (*Exts)[i];
-
-	if ((j = ext.find("\t", 0)) != string::npos)
-		type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
-	                strdup(ext.substr(0, j).c_str()));
-	else
-		type->Append(_T(ext.c_str()), strdup(ext.c_str()));
-	if (allext != NULL)
-    {
-	  *allext += ";";
-	  *allext += ext.substr(0, j);
-    }
-    else
-	  allext = new string(ext.substr(0, j));
-			  
-  }
-  }
-
+//   while (getline(f, line, '\n'))
+//     {
+//       for (i = 0; line[i] == ' '; i++);
+//       if (line[i] != '#')
+// 	{
+// 	  if ((j = line.find("\t", 0)) != (unsigned int) string::npos)
+// 	    {
+// 	      type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
+// 			   strdup(line.substr(i, j).c_str()));
+// 	      if (allext != NULL)
+// 		{
+// 		  *allext += ";";
+// 		  *allext += line.substr(i, j);
+// 		}
+// 	      else
+// 		allext = new string(line.substr(i, j));
+// 	    }
+// 	}
+//     }
+//   f.close();
+//   if (Exts)
+//     {
+//       for (unsigned int i = 0; i < Exts->size(); i++)
+// 	{
+// 	  unsigned int j;
+// 	  string ext = (*Exts)[i];
+	  
+// 	  if ((j = ext.find("\t", 0)) != (unsigned int) string::npos)
+// 	    type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
+// 			 strdup(ext.substr(0, j).c_str()));
+// 	  else
+// 	    type->Append(_T(ext.c_str()), strdup(ext.c_str()));
+// 	  if (allext != NULL)
+// 	    {
+// 	      *allext += ";";
+// 	      *allext += ext.substr(0, j);
+// 	    }
+// 	  else
+// 	    allext = new string(ext.substr(0, j));
+// 	}
+//     }
+  
 //	  list<string>	CodecsList = _CodecsMgr.GetExtension();
 //	  list<string>::iterator	iter;
 //	  for (iter = CodecsList.begin(); iter != CodecsList.end(); iter++)
@@ -313,21 +310,126 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 //	      }
 //	  }
 
-  if (allext != NULL)
-  {
-	  string desc = _("All supported soundfiles (*.");
-	  for (int i = 0; (*allext)[i]; i++)
-		  if ((*allext)[i] != ';')
-			  desc += (*allext)[i];
-	  	  else
-			  desc += ";*.";
-	  desc += ")";
-	  type->SetString(0, _T(desc.c_str()));
-	  type->SetClientData(0, strdup(allext->c_str()));
-	  delete allext;
-  }
+//   if (allext != NULL)
+//     {
+//       string desc = _("All supported soundfiles (*.");
+//       for (int i = 0; (*allext)[i]; i++)
+// 	if ((*allext)[i] != ';')
+// 	  desc += (*allext)[i];
+// 	else
+// 	  desc += ";*.";
+//       desc += ")";
+//       type->SetString(0, _T(desc.c_str()));
+//       type->SetClientData(0, strdup(allext->c_str()));
+//       delete allext;
+//     }
+//   else
+//     type->Delete(0);
+//   type->Append(_T(_("All files (*.*)")), strdup("*"));
+//   type->SetSelection(0);
+// }
+
+//
+// Reads the ${PREFIX}/wired_exts.conf file for loading supported
+// files extensions.
+// If a parameter Exts is given, add the extensions specified into
+// the supported extensions
+// Objects allocated with the operator "new" and given to the
+// Append method should be deleted automatically. See wxwidgets doc
+// for further details.
+//
+
+void FileLoader::LoadSoundExt(vector<string> *Exts)
+{
+  type->Append(_T("will be replaced by allfiles at the end of the function"));
+  wxString	allext;
+  
+  wxTextFile	file(WiredSettings->ConfDir + EXT_FILE);
+  wxString	l;
+  wxString	itemdesc;
+  wxString	*itemdata;
+
+  file.Open();
+  for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
+    {
+      l.Trim(false);
+      l = l.BeforeFirst('#');
+      if (!l.IsEmpty())
+	{
+	  itemdesc = l.BeforeFirst('\t');
+	  itemdata = new wxString(l.AfterLast('\t'));
+	  type->Append(itemdesc, itemdata);
+	  filters += itemdesc + ";";
+	  allext += ";" + itemdesc;
+	}
+    }
+  itemdesc = l.BeforeFirst('\t');
+  itemdata = new wxString(l.AfterLast('\t'));
+  type->Append(itemdesc, itemdata);
+  filters += itemdesc + ";";
+  allext += ";" + itemdesc;
+  file.Close();
+  
+  if (Exts)
+    {
+      for (unsigned int i = 0; i < Exts->size(); i++)
+	{
+	  unsigned int j;
+	  wxString ext = (*Exts)[i];
+	  
+	  itemdesc = ext.BeforeFirst('\t');
+	  itemdata = new wxString(ext.AfterLast('\t'));
+
+	  if ((j = ext.find("\t", 0)) != (unsigned int) string::npos)
+	    type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
+			 strdup(ext.substr(0, j).c_str()));
+	  else
+	    type->Append(_T(ext.c_str()), strdup(ext.c_str()));
+// 	  if (allext != NULL)
+	  allext += ";" + ext.substr(0, j);
+// 	  else
+// 	    allext = new wxString(ext.substr(0, j));
+	}
+    }
+  
+//	  list<string>	CodecsList = _CodecsMgr.GetExtension();
+//	  list<string>::iterator	iter;
+//	  for (iter = CodecsList.begin(); iter != CodecsList.end(); iter++)
+//	  {
+//	  	line = *iter;
+//		  if ((j = line.find("\t", 0)) != string::npos)
+//	      {
+//	        type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
+//	                     strdup(line.substr(i, j).c_str()));
+//	        if (allext != NULL)
+//	        {
+//			  *allext += ";";
+//			  *allext += line.substr(i, j);
+//	        }
+//	        else
+//		  allext = new string(line.substr(i, j));
+//	      }
+//	  }
+
+  if (!allext.IsEmpty())
+    {
+      filters = allext;
+      allext.Replace(";", ";*.");
+      itemdesc = "All supported soundfiles (*." + allext + ")";
+      itemdata = new wxString(allext);
+//       for (int i = 0; (*allext)[i]; i++)
+// 	if ((*allext)[i] != ';')
+// 	  itemdesc += (*allext)[i];
+// 	else
+// 	  itemdesc += ";*.";
+
+//      itemdesc += ")";
+      type->SetString(0, itemdesc);
+      type->SetClientData(0, itemdata);
+      //      delete allext;
+    }
   else
-	  type->Delete(0);
+    type->Delete(0);
   type->Append(_T(_("All files (*.*)")), strdup("*"));
   type->SetSelection(0);
 }
@@ -336,45 +438,48 @@ void FileLoader::AddIcon(wxImageList *images, wxIcon icon)
 {
   int sizeInit = icon.GetWidth();
 
-	      if (16 == sizeInit)
-	      {
-	         images->Add(icon);
-	      }
-              else
-	      {
-	        images->Add(wxBitmap(wxBitmap(icon).ConvertToImage().Rescale(16, 16)));
-	      }
-		
+  if (16 == sizeInit)
+    images->Add(icon);
+  else
+    images->Add(wxBitmap(wxBitmap(icon).ConvertToImage().Rescale(16, 16)));
 }
 
-void FileLoader::LoadFolders()
+void			FileLoader::LoadFolders()
 {
-	string line;
-
-	if (favorites != NULL)
+  wxString		l;
+  wxTextFile		file;
+  
+  if (favorites != NULL)
+    {
+      file.Create(favdir);
+      if (file.IsOpened())
 	{
-		ifstream f(favdir.c_str());	
-		if (f.is_open())
-			while (getline(f, line, '\n'))
-			{
-				if (favorites->FindString(line.c_str()) == -1)
-					favorites->Append(line.c_str());
-			}
-		f.close();
+	  for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
+	    if (favorites->FindString(l.c_str()) == -1)
+	      favorites->Append(l);
+	  if (favorites->FindString(l.c_str()) == -1)
+	    favorites->Append(l);
+	  file.Close();
 	}
-	if (mru != NULL)
+    }
+  if (mru != NULL)
+    {
+      file.Create(mrudir);
+      if (file.IsOpened())
 	{
-		ifstream f2(mrudir.c_str());
-		while (getline(f2, line, '\n'))
-			if (mru->FindString(line.c_str()) == -1)
-				mru->Append(line.c_str());
-		f2.close();
+	  for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
+	    if (mru->FindString(l.c_str()) == -1)
+	      mru->Append(l);
+	  if (mru->FindString(l.c_str()) == -1)
+	    mru->Append(l);
+	  file.Close();
 	}
-	if (files != NULL)
-		files->SetFocus();
-	if (mru != NULL)
-		while (mru->GetCount() > 10)
-			mru->Delete(0);
+    }
+  if (files != NULL)
+    files->SetFocus();
+  if (mru != NULL)
+    while (mru->GetCount() > 10)
+      mru->Delete(0);
 }
 
 void FileLoader::SaveFolders()
@@ -396,77 +501,73 @@ void FileLoader::SaveFolders()
 
 FileLoader::~FileLoader()
 {
-	StopPlaying();
-	if (!akai)
-		SaveFolders();
-	if (akaifd != -1)
-	  close(akaifd);	  
-	if (folder)	
-	  	delete folder;
-	if	(files)
-		delete files;
-	if (filename)
-		delete filename;	
-	if (fntext)
-		delete fntext;
-	if (typtext)
-		delete typtext;
-	if (favtext)
-		delete favtext;
-	if (mrutext)
-		delete mrutext;
-	if (type)
-		delete type;
-	if (preview)
-		delete preview;
-	if (btopen)
-		delete btopen;		
-	if (cancel)
-		delete cancel;
-	if (mru)
-		delete mru;
-	if (favorites)
-		delete favorites;
-	if (mrudel)
-		delete mrudel;
-	if  (favdel)
-		delete favdel;
-	Destroy();
+  StopPlaying();
+  if (!akai)
+    SaveFolders();
+  if (akaifd != -1)
+    close(akaifd);	  
+  if (folder)	
+    delete folder;
+  if	(files)
+    delete files;
+  if (filename)
+    delete filename;	
+  if (fntext)
+    delete fntext;
+  if (typtext)
+    delete typtext;
+  if (favtext)
+    delete favtext;
+  if (mrutext)
+    delete mrutext;
+  if (type)
+    delete type;
+  if (preview)
+    delete preview;
+  if (btopen)
+    delete btopen;		
+  if (cancel)
+    delete cancel;
+  if (mru)
+    delete mru;
+  if (favorites)
+    delete favorites;
+  if (mrudel)
+    delete mrudel;
+  if  (favdel)
+    delete favdel;
+  Destroy();
 }
 
-void	FileLoader::ListDirectories(wxTreeItemId root)
+//
+// Reads the file system to displays the directory tree 
+// displayed on the left of the fileloader
+//
+
+void			FileLoader::ListDirectories(wxTreeItemId root)
 {
  
-  DIR		*dir;
-  struct	dirent	*de;
-  int		i;
-  struct stat	st;
-  vector<string> v;
-	
-  TreeItemData *path = (TreeItemData *)folder->GetItemData(root);
-  dir = opendir(path->GetPath().c_str());
-  if (dir)
-  {
-    i = 0;
-    while ((de = readdir(dir)))
+  bool			cont;
+  wxString		name;
+  vector<string>	v;
+  TreeItemData		*path = (TreeItemData *)folder->GetItemData(root);
+  wxDir			dir(path->GetPath().c_str());
+
+  if (dir.IsOpened())
     {
-	    string p = path->GetPath();
-	    p += de->d_name;
-	stat(p.c_str(), &st);
-	if((strcmp(de->d_name, ".")) && (strcmp(de->d_name, ".."))
-		&& (S_ISDIR(st.st_mode)))
-		v.insert(v.begin(), de->d_name);
+      cont = dir.GetFirst(&name, "", wxDIR_DIRS);
+      while (cont)
+	{
+	  v.insert(v.begin(), (string) name);
+	  cont = dir.GetNext(&name);
+	}
+      stable_sort(v.begin(), v.end());
+      for (unsigned int i = 0; i < v.size(); i++)
+	{
+	  wxString subdir = path->GetPath() + v[i] + "/";
+	  folder->AppendItem(root, v[i].c_str(), 0, -1, new TreeItemData(subdir));
+	}
     }
-    closedir(dir);
-    stable_sort(v.begin(), v.end());
-    for (unsigned int i = 0; i < v.size(); i++)
-    {
-      string subdir = path->GetPath();
-      subdir += v[i];
-      subdir += "/";
-      folder->AppendItem(root, v[i].c_str(), 0, -1, new TreeItemData(subdir));
-    }
-  }
 }
 
 void	FileLoader::ListAkaiCD(wxTreeItemId root)
@@ -482,22 +583,22 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
   if (tid->GetPath() == "/")
   {
   	for (int part = 1; (akaiSelectPart(akaifd, part) > 0) && (part < 27); part++)
-  	{
-		  char a = 64 + part;
-	  	string partition = _("Partition ");
-		partition += (char)a;
-		if (akaiReadDir(akaifd, "/") != NULL)
-	   	  folder->AppendItem(root, partition.c_str(), 0, -1, new TreeItemData(partition.c_str()));
-  	}
+	  {
+	    char a = 64 + part;
+	    string partition = _("Partition ");
+	    partition += (char)a;
+	    if (akaiReadDir(akaifd, "/") != NULL)
+	      folder->AppendItem(root, partition.c_str(), 0, -1, new TreeItemData(partition.c_str()));
+	  }
   }
   else
   {
     if (tid->GetPath().substr(0, 10) == _("Partition "))
     {
-	string path = tid->GetPath().substr(10, tid->GetPath().size() - 10);
+	wxString path = tid->GetPath().substr(10, tid->GetPath().size() - 10);
 	unsigned int pos = path.find("/", 0);
 	int part = 0;
-	if (pos != string::npos)
+	if (pos != (unsigned int) string::npos)
 	{
 		part = path.substr(0, pos).c_str()[0] - 64;
 		path = path.substr(pos, path.size() - pos);
@@ -515,7 +616,7 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
 			for (t_list *t = dir; t; t = t->next)
 				if (akaiReadDir(akaifd, (char *)elt(t, t_akaiDirent *)->name))
 				{
-					string str = tid->GetPath().c_str();
+					wxString str = tid->GetPath();
 					str += "/";
 					str += elt(t, t_akaiDirent *)->name;
 					str += "/";
@@ -535,7 +636,7 @@ void FileLoader::ListAkaiVolume(string p)
 	string path = p.substr(10, p.size() - 10);
 	unsigned int pos = path.find("/", 0);
 	int part = 0;
-	if (pos != string::npos)
+	if (pos != (unsigned int) string::npos)
 	{
 		part = path.substr(0, pos).c_str()[0] - 64;
 		path = path.substr(pos + 1, path.size() - pos - 2);
@@ -575,114 +676,177 @@ void FileLoader::ListAkaiVolume(string p)
     }
 }
 
-bool FileLoader::ExtMatch(char *fname, char *extlist)
+// bool FileLoader::ExtMatch(char *fname, char *extlist)
+// {
+//   string exts = extlist;
+//   if (!strcmp(exts.c_str(), "*"))
+//     return (true);
+//   string fn = fname;
+//   unsigned int opos = string::npos;
+//   unsigned int pos = 0;
+//   while ((pos = fn.find(".", pos)) != (unsigned int) string::npos)
+//     opos = ++pos;
+//   if (opos == (unsigned int) string::npos)
+//     return (false);
+//   fn = fn.substr(opos, fn.size() - opos);
+//   pos = opos = 0;
+//   string pat = "";
+//   while ((pos = exts.find(";", pos)) != (unsigned int) string::npos)
+//     {
+//       pat = exts.substr(opos, pos - opos);
+//       if ((fn.size() >= pat.size()) &&
+// 	  (!strcmp(fn.substr(fn.size() - pat.size(), 
+// 			     pat.size()).c_str(), 
+// 		   pat.c_str())))
+// 	return (true);
+//       opos = ++pos;
+//     }
+//   pat = exts.substr(opos, exts.size() - opos).c_str();
+//   if ((fn.size() >= pat.size()) &&
+//       (!strcmp(fn.substr(fn.size() - pat.size(), 
+// 			 pat.size()).c_str(), 
+// 	       pat.c_str())))
+//     return (true);
+//   return (false);
+// }
+
+//
+// Checks if the file extension matches wired supported ones
+// ";;" means no filter
+// match is case-insensitive
+//
+
+bool		FileLoader::ExtMatch(wxString path)
 {
-	string exts = extlist;
-	if (!strcmp(exts.c_str(), "*"))
-		return (true);
-	string fn = fname;
-	unsigned int opos = string::npos;
-	unsigned int pos = 0;
-	while ((pos = fn.find(".", pos)) != string::npos)
-		opos = ++pos;
-	if (opos == string::npos)
-		return (false);
-	fn = fn.substr(opos, fn.size() - opos);
-	pos = opos = 0;
-	string pat = "";
-	while ((pos = exts.find(";", pos)) != string::npos)
-	{
-		pat = exts.substr(opos, pos - opos);
-		if ((fn.size() >= pat.size()) &&
-		    (!strcmp(fn.substr(fn.size() - pat.size(), 
-				       pat.size()).c_str(), 
-			     pat.c_str())))
-			  return (true);
-		opos = ++pos;
-	}
-	pat = exts.substr(opos, exts.size() - opos).c_str();
-	if ((fn.size() >= pat.size()) &&
-	    (!strcmp(fn.substr(fn.size() - pat.size(), 
-			       pat.size()).c_str(), 
-		     pat.c_str())))
-		  return (true);
-	return (false);
+  wxFileName	filename(path);
+  wxString	ext = ";" + filename.GetExt() + ";";
+ 
+  if (filters == ";;")
+    return (true);
+  return (filters.Find(ext.MakeLower()) != -1);
 }
 
-char	*FileLoader::FormatSize(off_t size)
+//
+// Returns a string containing a human readable file size
+//
+
+wxString		FileLoader::FormatSize(off_t size)
 {
-	int unit = 0;
-	while (size > 1024)
-	{
-		size /= 1024;
-		unit++;
-	}
-	char tmp[1024];
-	wxSnprintf(tmp, 1024, "%i", size);
-	string s = tmp;
-	switch (unit)
-	{
-		case 0:
-			s += " oct";
-			break;
-		case 1:
-			s += " Ko";
-			break;
-		case 2:
-			s += " Mo";
-			break;
-		case 3:
-			s += " Go";
-			break;
-		case 4:
-			s += " To";
-			break;
-	}
-	return ((char *)s.c_str());
+  int			unit = 0;
+  char			tmp[1024];
+  
+  for (unit = 0; size > 1024; unit++)
+    size /= 1024;
+  wxSnprintf(tmp, 1024, "%i", size);
+  wxString s = tmp;
+  switch (unit)
+    {
+    case 0:
+      s += " bytes";
+      break;
+    case 1:
+      s += " Kb";
+      break;
+    case 2:
+      s += " Mb";
+      break;
+    case 3:
+      s += " Gb";
+      break;
+    case 4:
+      s += " Tb";
+      break;
+    }
+  return (s);
 }
 
-void	FileLoader::ListFiles(string path)
-{
+//
+// list the files in the selected directory
+//
+
+// void			FileLoader::ListFiles(string path)
+// {
 	
-	DIR           *dir;
-	struct        dirent  *de;
-	char	      *exts;
-	struct stat   st;
-	vector<string> v;
+// //   DIR		*dir;
+//   wxDir			dir(path);
+//   wxString		filename;
+//   bool			cont;
+//   //struct		dirent  *de;
+//   char			*exts;
+//   struct stat		st;
+//   vector<string>	v;
 
-	int sel = type->GetSelection();
-	if (sel != -1)
-		exts = (char *)type->GetClientData(sel);
-	else
-		exts = "*";
-	files->DeleteAllItems();
-	dir = opendir(path.c_str());
-	if (dir)
+//   int sel = type->GetSelection();
+//   if (sel != -1)
+//     exts = (char *)type->GetClientData(sel);
+//   else
+//     exts = strdup("*");
+//   files->DeleteAllItems();
+//   //dir = opendir(path.c_str());
+//   if (dir.IsOpened())
+//     {
+//       cont = dir.GetFirst(&filename, "", wxDIR_FILES);
+//       while (cont)
+// 	//while ((de = readdir(dir)))
+// 	{
+// 	  //string fp = path;
+// 	  //fp += de->d_name;
+// 	  //stat(fp.c_str(), &st);
+// 	  if ((ExtMatch((char*)filename.c_str(), exts)))
+// 	    v.insert(v.begin(), filename.c_str());
+// 	  cont = dir.GetNext(&filename);
+// 	}
+//       //      closedir(dir);
+//     }
+//   stable_sort(v.begin(), v.end());
+//   for (unsigned int i = 0; i < v.size(); i++)
+//     {
+//       wxStructStat	st;
+
+//       string fp = path + v[i];
+      
+//       wxStat(fp.c_str(), &st);
+//       long item = files->InsertItem(i, v[i].c_str());
+//       files->SetItem(item, 1, FormatSize(st.st_size));
+//       files->SetItem(item, 2, ctime(&st.st_mtime));
+//       if (ExtMatch((char *)v[i].c_str(), (char *)type->GetClientData(0)))
+// 	files->SetItemImage(item, 0, -1);
+//       else
+// 	files->SetItemImage(item, 1, -1);
+//     }
+// }
+
+void			FileLoader::ListFiles(string path)
+{
+  wxDir			dir(path);
+  wxStructStat		st;
+  wxString		name;
+  
+  bool			cont;
+  //char			*exts;
+  vector<wxString>	v;
+
+  files->DeleteAllItems();
+  if (dir.IsOpened())
+    {
+      cont = dir.GetFirst(&name, "", wxDIR_FILES);
+      cout << filters << endl;
+      while (cont)
 	{
-	    while ((de = readdir(dir)))
-	    {
-		string fp = path;
-		fp += de->d_name;
-		stat(fp.c_str(), &st);
-	        if ((!S_ISDIR(st.st_mode)) && (ExtMatch(de->d_name, exts)))
-			v.insert(v.begin(), de->d_name);
-            }
-	    closedir(dir);
-	}
-	stable_sort(v.begin(), v.end());
-	for (unsigned int i = 0; i < v.size(); i++)
-	{
-		string fp = path;
-		fp += v[i];
-		stat(fp.c_str(), &st);
-		long item = files->InsertItem(i, v[i].c_str());
-		files->SetItem(item, 1, FormatSize(st.st_size));
-		files->SetItem(item, 2, ctime(&st.st_mtime));
-		if (ExtMatch((char *)v[i].c_str(), (char *)type->GetClientData(0)))
-			files->SetItemImage(item, 0, -1);
-		else
-			files->SetItemImage(item, 1, -1);
-	}
+	  if (ExtMatch(name))
+	    v.insert(v.begin(), name);
+	  cont = dir.GetNext(&name);
+	} 
+    }
+  stable_sort(v.begin(), v.end());
+  for (unsigned int i = 0; i < v.size(); i++)
+    {
+      wxStat(path + v[i], &st);
+      long item = files->InsertItem(i, v[i]);
+      files->SetItem(item, 1, FormatSize(st.st_size));
+      files->SetItem(item, 2, ctime(&st.st_mtime));
+      files->SetItemImage(item, 0, -1);
+    }
 }
 
 void FileLoader::GotoDir(char *path)
@@ -692,399 +856,420 @@ void FileLoader::GotoDir(char *path)
   string pt = path;
   string dir = "";
   wxTreeItemId dir_tree = folder->GetRootItem();
-
+  
   if (pt[0] == '/')
-	  pt.erase(0, 1);
-  while ((pos = pt.find("/", pos)) != string::npos)
-  {
-	  if (!folder->ItemHasChildren(dir_tree))
-	  {
-	  	folder->SelectItem(dir_tree);
-	  	folder->ScrollTo(dir_tree);
-		return;
-	  }
-	  folder->Expand(dir_tree);
-	  dir = pt.substr(opos, pos - opos);
-	  wxTreeItemIdValue cookie;
-	  wxTreeItemId son = folder->GetFirstChild(dir_tree, cookie);
-	  bool found = false;
-	  while ((!found) && (son.IsOk()))
-	  {
+    pt.erase(0, 1);
+  while ((pos = pt.find("/", pos)) != (unsigned int) string::npos)
+    {
+      if (!folder->ItemHasChildren(dir_tree))
+	{
+	  folder->SelectItem(dir_tree);
+	  folder->ScrollTo(dir_tree);
+	  return;
+	}
+      folder->Expand(dir_tree);
+      dir = pt.substr(opos, pos - opos);
+      wxTreeItemIdValue cookie;
+      wxTreeItemId son = folder->GetFirstChild(dir_tree, cookie);
+      bool found = false;
+      while ((!found) && (son.IsOk()))
+	{
 		  if (!strcmp(folder->GetItemText(son).c_str(), dir.c_str()))
-		  {
-			  dir_tree = son;
-			  found = true;
-		  }
+		    {
+		      dir_tree = son;
+		      found = true;
+		    }
 		  else
 		    son = folder->GetNextChild(dir_tree, cookie);
-	  }
-	  if (!found)
-	  {
-	  	folder->SelectItem(dir_tree);
-	  	folder->ScrollTo(dir_tree);
-	  	return;
-	  }
-	  opos = ++pos;
-  }
+	}
+      if (!found)
+	{
+	  folder->SelectItem(dir_tree);
+	  folder->ScrollTo(dir_tree);
+	  return;
+	}
+      opos = ++pos;
+    }
   if (!folder->ItemHasChildren(dir_tree))
-  {
-  	folder->SelectItem(dir_tree);
-  	folder->ScrollTo(dir_tree);
-	return;
-  }
+    {
+      folder->SelectItem(dir_tree);
+      folder->ScrollTo(dir_tree);
+      return;
+    }
   folder->Expand(dir_tree);
   dir = pt.substr(opos, pt.size() - opos);
   wxTreeItemIdValue cookie;
   wxTreeItemId son = folder->GetFirstChild(dir_tree, cookie);
   bool found = false;
   while ((!found) && (son.IsOk()))
-  {
-	  if (!strcmp(folder->GetItemText(son).c_str(), dir.c_str()))
+    {
+      if (!strcmp(folder->GetItemText(son).c_str(), dir.c_str()))
 	  {
-		  dir_tree = son;
-		  found = true;
+	    dir_tree = son;
+	    found = true;
 	  }
-	  else
-		  son = folder->GetNextChild(dir_tree, cookie);
-  }
+      else
+	son = folder->GetNextChild(dir_tree, cookie);
+    }
   folder->Expand(dir_tree);
   folder->SelectItem(dir_tree);
   folder->ScrollTo(dir_tree);
   if (!found)
-  {
-    long file = files->FindItem(-1, dir.c_str());
-    if (file != -1)
-	    files->Select(file);
-  }
+    {
+      long file = files->FindItem(-1, dir.c_str());
+      if (file != -1)
+	files->Select(file);
+    }
 }
 
 void FileLoader::OnExpandFolder(wxTreeEvent &e)
 {
-	wxTreeItemIdValue cookie;
-	wxTreeItemId item = e.GetItem();
-	folder->SetItemImage(item, 1);
-	if (folder->ItemHasChildren(item))
+  wxTreeItemIdValue cookie;
+  wxTreeItemId item = e.GetItem();
+  folder->SetItemImage(item, 1);
+  if (folder->ItemHasChildren(item))
+    {
+      wxTreeItemId son = folder->GetFirstChild(item, cookie);
+      while (son.IsOk())
 	{
-		wxTreeItemId son = folder->GetFirstChild(item, cookie);
-		while (son.IsOk())
-  		{
-			folder->DeleteChildren(son);
-			if (!akai)
-				ListDirectories(son);
-			else
-				ListAkaiCD(son);
-			son = folder->GetNextChild(item, cookie);
-		}
+	  folder->DeleteChildren(son);
+	  if (!akai)
+	    ListDirectories(son);
+	  else
+	    ListAkaiCD(son);
+	  son = folder->GetNextChild(item, cookie);
 	}
+    }
 }
 
 void FileLoader::OnCollapseFolder(wxTreeEvent &e)
 {
-	wxTreeItemId item = e.GetItem();
-	folder->SetItemImage(item, 0);
+  wxTreeItemId item = e.GetItem();
+  folder->SetItemImage(item, 0);
 }
 
 void FileLoader::OnSelectFolder(wxTreeEvent &e)
 {
-	StopPlaying();
-	wxTreeItemId item = e.GetItem();
-	TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-	if (!akai)
-	{
-		ListFiles(path->GetPath().c_str());
-		filename->SetValue("");
-	}
-	else
-		ListAkaiVolume(path->GetPath().c_str());
+  StopPlaying();
+  wxTreeItemId item = e.GetItem();
+  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+  if (!akai)
+    {
+      ListFiles(path->GetPath().c_str());
+      filename->SetValue("");
+    }
+  else
+    ListAkaiVolume(path->GetPath().c_str());
 	if (!save)
-	{
-		preview->Disable();
-		btopen->Disable();
-	}
+	  {
+	    preview->Disable();
+	    btopen->Disable();
+	  }
 }
 
 void FileLoader::OnActivateFolder(wxTreeEvent &e)
 {
-	wxTreeItemId item = e.GetItem();
-	if (folder->ItemHasChildren(item))
-	{
-		if (folder->IsExpanded(item))
+  wxTreeItemId item = e.GetItem();
+  if (folder->ItemHasChildren(item))
+    {
+      if (folder->IsExpanded(item))
 			folder->Collapse(item);	
-		else
-			folder->Expand(item);
-	}
+      else
+	folder->Expand(item);
+    }
 }
 
 void FileLoader::PopupMenuFolder(wxTreeEvent &e)
 {
-	if (!akai)
-	{
-		pm_selitem = e.GetItem();
-		TreeItemData *path = (TreeItemData *)folder->GetItemData(pm_selitem);
-		wxString str = path->GetPath().c_str();
-		wxMenu *menu = new wxMenu(str);
-		menu->Append(ADDTOFAVORITES_ID, _("Add to favorites"));
-		folder->PopupMenu(menu, e.GetPoint());
-		delete menu;
-	}
+  if (!akai)
+    {
+      pm_selitem = e.GetItem();
+      TreeItemData *path = (TreeItemData *)folder->GetItemData(pm_selitem);
+      wxString str = path->GetPath().c_str();
+      wxMenu *menu = new wxMenu(str);
+      menu->Append(ADDTOFAVORITES_ID, _("Add to favorites"));
+      folder->PopupMenu(menu, e.GetPoint());
+      delete menu;
+    }
 }
 
 void FileLoader::OnSelectFile(wxListEvent &e)
 {
-	if (!akai)
+  if (!akai)
+    {
+      wxTreeItemId item = folder->GetSelection();
+      TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+      wxString fn = path->GetPath();
+      fn += e.GetText();
+      filename->SetValue(fn.c_str());	
+      btopen->Enable();
+      StopPlaying();
+      if (!save)
 	{
-		wxTreeItemId item = folder->GetSelection();
-		TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-		string fn = path->GetPath();
-		fn += e.GetText();
-		filename->SetValue(fn.c_str());	
-		btopen->Enable();
-		StopPlaying();
-		if (!save)
-		{
-			if (ExtMatch((char *)e.GetText().c_str(), (char *)type->GetClientData(0)))
-				preview->Enable();
-			else
-				preview->Disable();
-		}
+	  //	  if (ExtMatch((char *)e.GetText().c_str(), (char *)type->GetClientData(0)))
+	  if (e.GetText())
+	    preview->Enable();
+	  else
+	    preview->Disable();
 	}
-	else
+    }
+  else
+    {
+      StopPlaying();
+      btopen->Enable();
+      wxListItem it;
+      it.SetId(e.GetIndex());
+      it.SetColumn(2);
+      files->GetItem(it);
+      if(!save)
 	{
-		StopPlaying();
-		btopen->Enable();
-		wxListItem it;
-		it.SetId(e.GetIndex());
-		it.SetColumn(2);
-		files->GetItem(it);
-		if(!save)
-		{
-			if (it.GetText().Contains("SAMPLE"))
-				preview->Enable();
-	  		else
-				preview->Disable();
-		}
-		
+	  if (it.GetText().Contains("SAMPLE"))
+	    preview->Enable();
+	  else
+	    preview->Disable();
 	}
+      
+    }
 }
 
 void FileLoader::OnActivateFile(wxListEvent &e)
 {
-	StopPlaying();
-	if (!akai)
-	{
-		wxTreeItemId item = folder->GetSelection();
-		TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-		string fn = path->GetPath();
-		fn += e.GetText();
-		filename->SetValue(fn.c_str());	
-          if (!save)
+  StopPlaying();
+  if (!akai)
+    {
+      wxTreeItemId item = folder->GetSelection();
+      TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+      wxString fn = path->GetPath();
+      fn += e.GetText();
+      filename->SetValue(fn.c_str());	
+      if (!save)
 	  {
-		if (mru->FindString(path->GetPath().c_str()) == -1)
-		{
-			mru->Append(path->GetPath().c_str());
-			while (mru->GetCount() > 10)
-				mru->Delete(0);
-		}
-	   }
-	   else
-	   {
-	  	fn = filename->GetValue().c_str();
-	 	if (fn.size() == 0)
-		{	
-		  wxMessageDialog *err = new wxMessageDialog(this, 
-				_("Please enter a name"), "wired",
-				wxOK | wxICON_ERROR);
-		  err->ShowModal();
-		  return;
-		}
-	  	if (fn.c_str()[0] != '/')
-	  	{
-            	  wxTreeItemId item = folder->GetSelection();
-            	  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-	    	  fn = path->GetPath() + fn;
-	  	}
-		if (wxFile::Exists(fn.c_str()))
-		{
-			wxMessageDialog *err = new wxMessageDialog(this,
-				_("File already exists, replace ?"), "wired",
-				wxYES_NO | wxICON_QUESTION);
-			if (err->ShowModal() == wxID_NO)
-				return;
-		}	
+	    if (mru->FindString(path->GetPath().c_str()) == -1)
+	      {
+		mru->Append(path->GetPath().c_str());
+		while (mru->GetCount() > 10)
+		  mru->Delete(0);
+	      }
 	  }
+      else
+	{
+	  fn = filename->GetValue().c_str();
+	  if (fn.size() == 0)
+	    {	
+	      wxMessageDialog *err = 
+		new wxMessageDialog(this, _("Please enter a name"), "wired",
+				    wxOK | wxICON_ERROR);
+	      err->ShowModal();
+	      return;
+	    }
+	  if (fn.c_str()[0] != '/')
+	    {
+	      wxTreeItemId item = folder->GetSelection();
+	      TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+	      fn = path->GetPath() + fn;
+	    }
+	  if (wxFile::Exists(fn.c_str()))
+	    {
+	      wxMessageDialog *err = 
+		new wxMessageDialog(this, _("File already exists, replace ?"), 
+				    "wired", wxYES_NO | wxICON_QUESTION);
+	      if (err->ShowModal() == wxID_NO)
+		return;
+	    }	
 	}
-	if (akaifd != -1)
-		close(akaifd);
-	EndModal(wxID_OK);
+    }
+  if (akaifd != -1)
+    close(akaifd);
+  EndModal(wxID_OK);
 }
 
-void FileLoader::OnChangeType(wxCommandEvent &e)
+//
+// Called when the user changes the extension filter
+// Update the displayed files in the list
+//
+// (Contains some ugly code because of wxwidget's
+// wxComboBox::GetSelection() bug returning the previous
+// value.)
+//
+
+void			FileLoader::OnChangeFilter(wxCommandEvent &e)
 {
-	wxTreeItemId item = folder->GetSelection();
-	TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-	StopPlaying();
-	ListFiles(path->GetPath().c_str());
-	filename->SetValue("");
-	if (!save)
-	{
-		preview->Disable();
-		btopen->Disable();
-	}
+  wxString		entry = type->GetValue();
+  int			start =  entry.find_last_of("(") + 1;
+  int			len = entry.find_last_of(")") - start;
+  wxTreeItemId		item = folder->GetSelection();
+  TreeItemData		*path = (TreeItemData *)folder->GetItemData(item);
+
+  StopPlaying();
+  filename->SetValue("");
+ 
+  filters = ";" + entry.substr(start, len) + ";";
+  filters.Replace("*.", "");
+  filters.Replace(" ", "");
+
+  cout << "filter = \t" << filters << endl;
+
+  if (!save)
+    {
+      preview->Disable();
+      btopen->Disable();
+    }
+  ListFiles(path->GetPath().c_str());
 }
 
 void FileLoader::OnPreview(wxCommandEvent &e)
 {
-	if (!playing)
-		StartPlaying();
-	else
-		StopPlaying();
+  if (!playing)
+    StartPlaying();
+  else
+    StopPlaying();
 }
 
 void FileLoader::OnOpen(wxCommandEvent &e)
 {
-	StopPlaying();
-	if (!akai)
+  StopPlaying();
+  if (!akai)
+    {
+      if (!save)
 	{
-		if (!save)
-		{
-        	  wxTreeItemId item = folder->GetSelection();
-		  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-		  if (mru->FindString(path->GetPath().c_str()) == -1)
-		  {
-			mru->Append(path->GetPath().c_str());
-			while (mru->GetCount() > 10)
-				mru->Delete(0);
-		  }
-		}
-		else
-		{
-	  		string fn = filename->GetValue().c_str();
-		 	if (fn.size() == 0)
-			{	
-			  wxMessageDialog *err = new wxMessageDialog(this, 
-					_("Please enter a name"), "wired",
-					wxOK | wxICON_ERROR);
-			  err->ShowModal();
-			  return;
-			}
-	  		if (fn.c_str()[0] != '/')
-	  		{
-            		  wxTreeItemId item = folder->GetSelection();
-            		  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-	    		  fn = path->GetPath() + fn;
-	  		}
-			if (wxFile::Exists(fn.c_str()))
-			{
-				wxMessageDialog *err = new wxMessageDialog(this,
-					_("File already exists, replace ?"), "wired",
-					wxYES_NO | wxICON_QUESTION);
-				if (err->ShowModal() == wxID_NO)
-					return;
-			}	
-		}
+	  wxTreeItemId item = folder->GetSelection();
+	  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+	  if (mru->FindString(path->GetPath().c_str()) == -1)
+	    {
+	      mru->Append(path->GetPath().c_str());
+	      while (mru->GetCount() > 10)
+		mru->Delete(0);
+	    }
 	}
-	if (akaifd != -1)
-		close(akaifd);
-	EndModal(wxID_OK);
+      else
+	{
+	  string fn = filename->GetValue().c_str();
+	  if (fn.size() == 0)
+	    {	
+	      wxMessageDialog *err = 
+		new wxMessageDialog(this, _("Please enter a name"), 
+				    "wired", wxOK | wxICON_ERROR);
+	      err->ShowModal();
+	      return;
+	    }
+	  if (fn.c_str()[0] != '/')
+	    {
+	      wxTreeItemId item = folder->GetSelection();
+	      TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+	      fn = path->GetPath() + fn;
+	    }
+	  if (wxFile::Exists(fn.c_str()))
+	    {
+	      wxMessageDialog *err = 
+		new wxMessageDialog(this, _("File already exists, replace ?"), 
+				    "wired", wxYES_NO | wxICON_QUESTION);
+	      if (err->ShowModal() == wxID_NO)
+		return;
+	    }	
+	}
+    }
+  if (akaifd != -1)
+    close(akaifd);
+  EndModal(wxID_OK);
 }
 
 void FileLoader::OnCancel(wxCommandEvent &e)
 {
-	StopPlaying();
-	if (akaifd != -1)
-		close(akaifd);
-	EndModal(wxID_CANCEL);
+  StopPlaying();
+  if (akaifd != -1)
+    close(akaifd);
+  EndModal(wxID_CANCEL);
 }
 
 void FileLoader::OnEnterFilename(wxCommandEvent &e)
 {
-	StopPlaying();
-	if (!save)
+  StopPlaying();
+  if (!save)
+    {
+      preview->Disable();
+      btopen->Disable();
+    }
+  if (!akai)
+    {
+      if (!save)
 	{
-		preview->Disable();
-		btopen->Disable();
+	  GotoDir((char *)filename->GetValue().c_str());
+	  files->SetFocus();
 	}
-	if (!akai)
+      else
 	{
-		if (!save)
-		{
-			GotoDir((char *)filename->GetValue().c_str());
-			files->SetFocus();
-		}
-		else
-		{
-	  		string fn = filename->GetValue().c_str();
-		 	if (fn.size() == 0)
-			{	
-			  wxMessageDialog *err = new wxMessageDialog(this, 
-					_("Please enter a name"), "wired",
-					wxOK | wxICON_ERROR);
-			  err->ShowModal();
-			  return;
-			}
-	  		if (fn.c_str()[0] != '/')
-	  		{
-            		  wxTreeItemId item = folder->GetSelection();
-            		  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-	    		  fn = path->GetPath() + fn;
-	  		}
-			if (wxFile::Exists(fn.c_str()))
-			{
-				wxMessageDialog *err = new wxMessageDialog(this,
-					_("File already exists, replace ?"), "wired",
-					wxYES_NO | wxICON_QUESTION);
-				if (err->ShowModal() == wxID_NO)
-					return;
-			}	
-			EndModal(wxID_OK);
-		}
+	  string fn = filename->GetValue().c_str();
+	  if (fn.size() == 0)
+	    {	
+	      wxMessageDialog *err = 
+		new wxMessageDialog(this, _("Please enter a name"), 
+				    "wired", wxOK | wxICON_ERROR);
+	      err->ShowModal();
+	      return;
+	    }
+	  if (fn.c_str()[0] != '/')
+	    {
+	      wxTreeItemId item = folder->GetSelection();
+	      TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+	      fn = path->GetPath() + fn;
+	    }
+	  if (wxFile::Exists(fn.c_str()))
+	    {
+	      wxMessageDialog *err = 
+		new wxMessageDialog(this, _("File already exists, replace ?"), 
+				    "wired", wxYES_NO | wxICON_QUESTION);
+	      if (err->ShowModal() == wxID_NO)
+		return;
+	    }	
+	  EndModal(wxID_OK);
 	}
-	else
-	{
-		if (akaifd != -1)
-			close(akaifd);
-		akaifd = -1; 
-		files->DeleteAllItems();
-		folder->DeleteAllItems();
-	  	ListAkaiCD(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
-	}
+    }
+  else
+    {
+      if (akaifd != -1)
+	close(akaifd);
+      akaifd = -1; 
+      files->DeleteAllItems();
+      folder->DeleteAllItems();
+      ListAkaiCD(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
+    }
 }
 
 string FileLoader::GetSelectedFile()
 {
-	if (!save)
+  if (!save)
+    {
+      long sel = files->GetFirstSelected();
+      if (sel != -1)
 	{
-		long sel = files->GetFirstSelected();
-		if (sel != -1)
-		{
-			string fn = files->GetItemText(sel).c_str();
-        		wxTreeItemId item = folder->GetSelection();
-        		TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-			if (!akai)
-		  	  fn = path->GetPath() + fn;
-                	else
-                	{
-                  	  fn = path->GetPath() + fn;
-                  	  fn = ":" + fn;
-		  	  fn = filename->GetValue().c_str() + fn;
-                	}
-			return (fn);
-		}
-		else
-		  return (NULL);
-	}
-	else
-	{
-	  string fn = filename->GetValue().c_str();
-	  if (fn.c_str()[0] != '/')
-	  {
-            wxTreeItemId item = folder->GetSelection();
-            TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+	  string fn = files->GetItemText(sel).c_str();
+	  wxTreeItemId item = folder->GetSelection();
+	  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+	  if (!akai)
 	    fn = path->GetPath() + fn;
-	  }
+	  else
+	    {
+	      fn = path->GetPath() + fn;
+	      fn = ":" + fn;
+	      fn = filename->GetValue().c_str() + fn;
+	    }
 	  return (fn);
 	}
-   return(NULL);
+      else
+	return (NULL);
+    }
+  else
+    {
+      string fn = filename->GetValue().c_str();
+      if (fn.c_str()[0] != '/')
+	{
+	  wxTreeItemId item = folder->GetSelection();
+	  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+	  fn = path->GetPath() + fn;
+	}
+      return (fn);
+    }
+  return(NULL);
 }
 
 void FileLoader::StopPlaying()
@@ -1113,54 +1298,54 @@ void FileLoader::StartPlaying()
 
 void FileLoader::OnAddToFavorites(wxCommandEvent &e)
 {
-	TreeItemData *path = (TreeItemData *)folder->GetItemData(pm_selitem);
-	if (favorites->FindString(path->GetPath().c_str()) == -1)
-		favorites->Append(path->GetPath().c_str());
-	files->SetFocus();
+  TreeItemData *path = (TreeItemData *)folder->GetItemData(pm_selitem);
+  if (favorites->FindString(path->GetPath().c_str()) == -1)
+    favorites->Append(path->GetPath().c_str());
+  files->SetFocus();
 }
 
 void FileLoader::OnSelectFavoriteDir(wxCommandEvent &e)
 {
-	files->SetFocus();
-	long item = favorites->GetSelection();
-	if (item != -1)
-		GotoDir((char *)favorites->GetString(item).c_str());
+  files->SetFocus();
+  long item = favorites->GetSelection();
+  if (item != -1)
+    GotoDir((char *)favorites->GetString(item).c_str());
 }
 
 void FileLoader::OnSelectRecentDir(wxCommandEvent &e)
 {
-	files->SetFocus();
-	long item = mru->GetSelection();
-	if (item != -1)
-		GotoDir((char *)mru->GetString(item).c_str());
+  files->SetFocus();
+  long item = mru->GetSelection();
+  if (item != -1)
+    GotoDir((char *)mru->GetString(item).c_str());
 }
 
 void FileLoader::OnDeleteFavorite(wxCommandEvent &e)
 {
-	files->SetFocus();
-	long item = favorites->GetSelection();
-	if (item != -1)
-		favorites->Delete(item);
-	favorites->SetSelection(0);
-	if (favorites->GetCount() == 0)
-	{
-		favorites->SetWindowStyle(favorites->GetWindowStyle() & (~wxCB_READONLY));
-		favorites->SetValue("");
-		favorites->SetWindowStyle(favorites->GetWindowStyle() | wxCB_READONLY);
-	}
+  files->SetFocus();
+  long item = favorites->GetSelection();
+  if (item != -1)
+    favorites->Delete(item);
+  favorites->SetSelection(0);
+  if (favorites->GetCount() == 0)
+    {
+      favorites->SetWindowStyle(favorites->GetWindowStyle() & (~wxCB_READONLY));
+      favorites->SetValue("");
+      favorites->SetWindowStyle(favorites->GetWindowStyle() | wxCB_READONLY);
+    }
 }
 
 void FileLoader::OnDeleteRecent(wxCommandEvent &e)
 {
-	files->SetFocus();
-	long item = mru->GetSelection();
-	if (item != -1)
-		mru->Delete(item);
-	mru->SetSelection(0);
-	if (mru->GetCount() == 0)
-	{
-		mru->SetWindowStyle(mru->GetWindowStyle() & (~wxCB_READONLY));
-		mru->SetValue("");
-		mru->SetWindowStyle(mru->GetWindowStyle() | wxCB_READONLY);
-	}
+  files->SetFocus();
+  long item = mru->GetSelection();
+  if (item != -1)
+    mru->Delete(item);
+  mru->SetSelection(0);
+  if (mru->GetCount() == 0)
+    {
+      mru->SetWindowStyle(mru->GetWindowStyle() & (~wxCB_READONLY));
+      mru->SetValue("");
+      mru->SetWindowStyle(mru->GetWindowStyle() | wxCB_READONLY);
+    }
 }
