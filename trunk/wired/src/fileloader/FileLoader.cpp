@@ -412,16 +412,20 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 
   if (!filters.IsEmpty())
     {
-      allext = filters;
-      allext = allext.substr(0, allext.Len() - 1);
+      //allext = filters;
+      cout << "filters = " << filters << endl;
+      allext = filters.Mid(0, filters.Len() - 1);
+      cout << "allext = " << allext << endl;
       allext.Replace(";", ";*.");
       itemdesc = "All supported soundfiles (*." + allext + ")";
       itemdata = new wxString(filters);
+      filters = ";" + filters;
       type->SetString(0, itemdesc);
       type->SetClientData(0, itemdata);
     }
   else
     type->Delete(0);
+  //cout << "filters in constructor : " << filters << endl;
   type->Append(_T(_("All files (*.*)")), strdup("*"));
   type->SetSelection(0);
 }
