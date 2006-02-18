@@ -508,19 +508,18 @@ bool					MainWindow::NewSession()
 void					MainWindow::OnOpen(wxCommandEvent &event)
 {
   vector<string>			exts;
-  FileLoader				*dlg;
   
   exts.insert(exts.begin(), _("wrd\tWired session file (*.wrd)"));
   exts.insert(exts.begin(), _("xml\tWired session file (*.xml)"));
-  dlg = new FileLoader(this, MainWin_FileLoader, _("Open session"), false, false, &exts);
-  if (dlg->ShowModal() == wxID_OK)
+  FileLoader				dlg(this, MainWin_FileLoader, _("Open session"), false, false, &exts);
+  if (dlg.ShowModal() == wxID_OK)
     {
-      string selfile = dlg->GetSelectedFile();    
+      string selfile = dlg.GetSelectedFile();    
 
       cout << "[MAINWIN] User opens " << selfile << endl;
       if (!NewSession())
 	{
-	  dlg->Destroy();
+	  //dlg->Destroy();
 	  return;
 	}
 		if (selfile.size() > 4)
@@ -547,7 +546,7 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
-  dlg->Destroy();  
+  //dlg->Destroy();  
 }
 
 void					MainWindow::OnSave(wxCommandEvent &event)
@@ -567,13 +566,12 @@ void					MainWindow::OnSave(wxCommandEvent &event)
 void					MainWindow::OnSaveAs(wxCommandEvent &event)
 {
   vector<string>			exts;
-  FileLoader				*dlg;
   
   exts.insert(exts.begin(), _("xml\tWired session file (*.xml)"));
-  dlg = new FileLoader(this, MainWin_FileLoader, _("Save session"), false, true, &exts);
-  if (dlg->ShowModal() == wxID_OK)
+  FileLoader				dlg(this, MainWin_FileLoader, _("Save session"), false, true, &exts);
+  if (dlg.ShowModal() == wxID_OK)
     {
-      string selfile = dlg->GetSelectedFile();    
+      string selfile = dlg.GetSelectedFile();    
 
       wxFileName f(selfile.c_str());
       if (!f.HasExt())
@@ -599,17 +597,17 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
-  dlg->Destroy();
+  //dlg->Destroy();
 }
 
 void					MainWindow::OnImportWave(wxCommandEvent &event)
 {
-  FileLoader				*dlg = new FileLoader(this, MainWin_FileLoader, _("Loading sound file"), false, false, FileConverter->GetCodecsExtensions(), true);
+  FileLoader				dlg(this, MainWin_FileLoader, _("Loading sound file"), false, false, FileConverter->GetCodecsExtensions(), true);
   int						res;
 
-  if (dlg->ShowModal() == wxID_OK)
+  if (dlg.ShowModal() == wxID_OK)
     {
-      string 	selfile = dlg->GetSelectedFile();
+      string 	selfile = dlg.GetSelectedFile();
       
       //dlg->Destroy();
       
@@ -664,23 +662,22 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 void					MainWindow::OnImportMIDI(wxCommandEvent &event)
 {
   vector<string>			exts;
-  FileLoader				*dlg;
   
   exts.insert(exts.begin(), _("mid\tMidi file (*.mid)"));
-  dlg = new FileLoader(this, MainWin_FileLoader, _("Import MIDI file"), false, false, &exts);
-  if (dlg->ShowModal() == wxID_OK)
+  FileLoader				dlg(this, MainWin_FileLoader, _("Import MIDI file"), false, false, &exts);
+  if (dlg.ShowModal() == wxID_OK)
     {
-      string selfile = dlg->GetSelectedFile();
+      string selfile = dlg.GetSelectedFile();
 
       cout << "[MAINWIN] Users imports MIDI file : " << selfile << endl;
-      wxProgressDialog *Progress = new wxProgressDialog(_("Loading midi file"), _("Please wait..."), 100, 
+      wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100, 
 							this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
 							| wxPD_REMAINING_TIME);
-      Progress->Update(1);
+      Progress.Update(1);
       cImportMidiAction* action = new cImportMidiAction(selfile, false);
       action->Do();
-      Progress->Update(99);	
-      delete Progress;
+      Progress.Update(99);	
+      //delete Progress;
       /*
 	MidiFile *m;
 	m = new MidiFile(selfile);
@@ -705,27 +702,26 @@ void					MainWindow::OnImportMIDI(wxCommandEvent &event)
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
-  dlg->Destroy();
+  //dlg->Destroy();
 }
 
 void					MainWindow::OnImportAKAI(wxCommandEvent &event)
 {
   //TransportPanel->OnStop(event);
-  FileLoader				*dlg;
+  FileLoader				dlg(this, MainWin_FileLoader, _("Import AKAI samples"), true, false, NULL);
   
-  dlg = new FileLoader(this, MainWin_FileLoader, _("Import AKAI samples"), true, false, NULL);
-  if (dlg->ShowModal() == wxID_OK)
+  if (dlg.ShowModal() == wxID_OK)
     {
-      string selfile = dlg->GetSelectedFile();
+      string selfile = dlg.GetSelectedFile();
 
-      wxProgressDialog *Progress = new wxProgressDialog(_("Loading midi file"), _("Please wait..."), 100, 
+      wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100, 
 							this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
 							| wxPD_REMAINING_TIME);
-      Progress->Update(1);
+      Progress.Update(1);
       cImportAkaiAction* action = new cImportAkaiAction(selfile, true);
       action->Do();
-      Progress->Update(99);	
-      delete Progress;
+      Progress.Update(99);	
+      //delete Progress;
       /*
 	cout << "[MAINWIN] Users imports AKAI sample : " << selfile << endl;
 	string dev = selfile.substr(0, selfile.find(":", 0));
@@ -765,13 +761,12 @@ void					MainWindow::OnImportAKAI(wxCommandEvent &event)
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
-  dlg->Destroy();
+  //dlg->Destroy();
 }
 
 void					MainWindow::OnExportWave(wxCommandEvent &event)
 {
   //  TransportPanel->OnStop(event);
-  FileLoader				*dlg;
   double total = Seq->EndLoopPos - Seq->BeginLoopPos; 
 
   if (total <= 0)
@@ -781,11 +776,11 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
       msg.ShowModal();
       return;
     }
+  FileLoader				dlg(this, MainWin_FileLoader, _("Exporting sound file"), false, true, NULL);
   
-  dlg = new FileLoader(this, MainWin_FileLoader, _("Exporting sound file"), false, true, NULL);
-  if (dlg->ShowModal() == wxID_OK)
+  if (dlg.ShowModal() == wxID_OK)
     {
-      string selfile = dlg->GetSelectedFile();    
+      string selfile = dlg.GetSelectedFile();    
       
       //dlg->Destroy();
       wxFileName f(selfile.c_str());
@@ -827,20 +822,20 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 void					MainWindow::OnExportMIDI(wxCommandEvent &event)
 {
   vector<string>			exts;
-  FileLoader				*dlg;
   
   exts.insert(exts.begin(), _("mid\tMidi file (*.mid)"));
-  dlg = new FileLoader(this, MainWin_FileLoader, 
+  FileLoader				dlg(this, MainWin_FileLoader, 
 		       "Export MIDI file", false, true, &exts);
-  if (dlg->ShowModal() == wxID_OK)
+		       
+  if (dlg.ShowModal() == wxID_OK)
     {
-      string selfile = dlg->GetSelectedFile();
+      string selfile = dlg.GetSelectedFile();
       cout << "[MAINWIN] Users exports MIDI file : " << selfile << endl;
       
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
-  dlg->Destroy();
+  //dlg->Destroy();
 }
 
 void					MainWindow::LoadPlugins()
