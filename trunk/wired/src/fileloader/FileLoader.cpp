@@ -417,7 +417,7 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
       allext = filters.Mid(0, filters.Len() - 1);
       cout << "allext = " << allext << endl;
       allext.Replace(";", ";*.");
-      itemdesc = "All supported soundfiles (*." + allext + ")";
+      itemdesc = _("All supported soundfiles (*.") + allext + ")";
       itemdata = new wxString(filters);
       filters = ";" + filters;
       type->SetString(0, itemdesc);
@@ -502,36 +502,36 @@ FileLoader::~FileLoader()
     SaveFolders();
   if (akaifd != -1)
     close(akaifd);	  
-  if (folder)	
-    delete folder;
-  if	(files)
-    delete files;
-  if (filename)
-    delete filename;	
-  if (fntext)
-    delete fntext;
-  if (typtext)
-    delete typtext;
-  if (favtext)
-    delete favtext;
-  if (mrutext)
-    delete mrutext;
-  if (type)
-    delete type;
-  if (preview)
-    delete preview;
-  if (btopen)
-    delete btopen;		
-  if (cancel)
-    delete cancel;
-  if (mru)
-    delete mru;
-  if (favorites)
-    delete favorites;
-  if (mrudel)
-    delete mrudel;
-  if  (favdel)
-    delete favdel;
+//  if (folder)	
+//    delete folder;
+//  if	(files)
+//    delete files;
+//  if (filename)
+//    delete filename;	
+//  if (fntext)
+//    delete fntext;
+//  if (typtext)
+//    delete typtext;
+//  if (favtext)
+//    delete favtext;
+//  if (mrutext)
+//    delete mrutext;
+//  if (type)
+//    delete type;
+//  if (preview)
+//    delete preview;
+//  if (btopen)
+//    delete btopen;		
+//  if (cancel)
+//    delete cancel;
+//  if (mru)
+//    delete mru;
+//  if (favorites)
+//    delete favorites;
+//  if (mrudel)
+//    delete mrudel;
+//  if  (favdel)
+//    delete favdel;
   Destroy();
 }
 
@@ -1102,12 +1102,10 @@ void			FileLoader::OnChangeFilter(wxCommandEvent &e)
   StopPlaying();
   filename->SetValue("");
  
-  cout << "entry = " << entry << endl;
   filters = ";" + entry.substr(start, len);
   filters.Replace("*.", "");
   filters.Replace(" ", "");
   filters += ";";
-  cout << "filter = \t" << filters << endl;
 
   if (!save)
     {
