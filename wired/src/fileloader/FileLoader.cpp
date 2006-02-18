@@ -413,9 +413,7 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
   if (!filters.IsEmpty())
     {
       //allext = filters;
-      cout << "filters = " << filters << endl;
       allext = filters.Mid(0, filters.Len() - 1);
-      cout << "allext = " << allext << endl;
       allext.Replace(";", ";*.");
       itemdesc = _("All supported soundfiles (*.") + allext + ")";
       itemdata = new wxString(filters);
@@ -829,7 +827,6 @@ void			FileLoader::ListFiles(string path)
   if (dir.IsOpened())
     {
       cont = dir.GetFirst(&name, "", wxDIR_FILES);
-      cout << filters << endl;
       while (cont)
 	{
 	  if (ExtMatch(name))
