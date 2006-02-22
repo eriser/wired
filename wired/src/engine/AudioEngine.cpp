@@ -248,6 +248,7 @@ void AudioEngine::GetDeviceSettings()
   cout << "[AUDIO] INPUT MAX LATENCY "
        << SelectedInputDevice->InputLatencyRange[MAX] * 1000 << " msec" << endl; 
   
+  
   if ( (WiredSettings->OutputLatency > 
 	SelectedOutputDevice->OutputLatencyRange[MAX]) ||
        (WiredSettings->OutputLatency < 
@@ -442,6 +443,13 @@ void AudioEngine::OpenStream()
   if (!WiredSettings->InputChannels.empty())
     cout << ", Input Device is " << SelectedInputDevice->Name;
   cout << endl;
+  
+  PaHostApiIndex Num = Pa_GetHostApiCount();
+  while (Num--)  
+  {
+  	const PaHostApiInfo	*Infos = Pa_GetHostApiInfo(Num);
+	  cout << "[AUDIO] Host API Number " << Num << " is " << Infos->name << ", devices count : " << Infos->deviceCount << endl;
+  }
   StreamIsOpened = true;
 }
 
