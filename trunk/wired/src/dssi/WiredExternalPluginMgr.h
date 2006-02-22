@@ -5,6 +5,7 @@
 #include <sys/types.h>
 //#include <dirent.h>
 #include <wx/dir.h>
+#include <wx/log.h>
 
 #include "WiredExternalPluginGui.h"
 #include "WiredExternalPlugin.h"
