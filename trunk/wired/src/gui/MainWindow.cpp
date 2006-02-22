@@ -780,10 +780,8 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
   
   if (dlg.ShowModal() == wxID_OK)
     {
-      string selfile = dlg.GetSelectedFile();    
-      
-      //dlg->Destroy();
-      wxFileName f(selfile.c_str());
+      string            selfile = dlg.GetSelectedFile();    
+      wxFileName   f(selfile.c_str());
       if (f.GetExt().IsEmpty())
 	{
 	  f.SetExt("wav");
@@ -796,25 +794,23 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
       	return;
       }
 
-      //wxProgressDialog Progress("Exporting mix", "Please wait...", 
-	//					       (int)Seq->EndLoopPos * 1000, this, 
-		//				       wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
+      wxProgressDialog Progress(_("Exporting mix"), _("Please wait..."), 
+						       (int)Seq->EndLoopPos * 1000, this, 
+						       wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_AUTO_HIDE | 
+                               wxPD_APP_MODAL | wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME);
       bool done = false;
 
       while (!done)
 	{
-	  //Progress.Update((int) Seq->CurrentPos * 1000);
-	  //cout << "pos: " << Seq->CurrentPos << "; end: " << Seq->EndLoopPos << endl;
+	  if (Progress.Update((int) Seq->CurrentPos * 1000) == false)
+        break;
 	  wxMilliSleep(50);
-	  //SeqMutex.Lock();
 	  if (Seq->CurrentPos >= Seq->EndLoopPos)
 	    done = true;
-	  //SeqMutex.Unlock();
 	}
     }
   else
     {
-      //dlg->Destroy();  
       cout << "[MAINWIN] User cancels open dialog" << endl;
     }
 }

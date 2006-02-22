@@ -169,7 +169,9 @@ class					MainWindow: public wxFrame
   /* List of plugins that need to be updated for their gui */
   list<Plugin *>			UpdatePlugins;
     
-  wxLogWindow           *LogWin;
+  wxLogWindow           *LogWin;  
+  wxLogStderr             *LogTarget;
+  FILE                          *LogFile;
 
   DECLARE_EVENT_TABLE()
 };
