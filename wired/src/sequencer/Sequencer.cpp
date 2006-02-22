@@ -887,11 +887,14 @@ bool					Sequencer::ExportToWave(string &filename)
       Exporting = true;
       Loop = false;
       SeqMutex.Unlock();
-      Play();
+      Play();      
       return true;
 	}
 	else
+    {
+        wxMutexGuiLeave();
 		return false;
+    }
 
 //  try
 //    {
@@ -925,36 +928,15 @@ void					Sequencer::StopExport()
     DeleteBuffer(ExportBuf);
   }
   SeqMutex.Unlock();
-  return;
-  
-//  if (ExportWave)
-//    {
-//      delete ExportWave;
-//      ExportWave = 0x0;
-//    }
-//  SeqMutex.Unlock();
+  return;  
 }
 
 void					Sequencer::WriteExport()
 {
 	if (SampleRateConverter)
 	{
-		cout << "Write Export began" << endl;
-//		  for (i = 0, j = 0; i < Audio->SamplesPerBuffer; j++)
-//		    {
-//		      AllocBuf1[0][i++] = Mix->OutputLeft[j];
-//		      AllocBuf1[0][i++] = Mix->OutputRight[j];
-//		    }
-//		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, AllocBuf1, 2);
-//		  for (i = 0; i < Audio->SamplesPerBuffer; j++)
-//		    {
-//		      AllocBuf1[0][i++] = Mix->OutputLeft[j];
-//		      AllocBuf1[0][i++] = Mix->OutputRight[j];  
-//		    }		    
-//		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, AllocBuf1, 2);
-		//SeqMutex.Lock();
-//		memcpy(ExportBuf[0], Mix->OutputLeft, Audio->SamplesPerBuffer);
-//		memcpy(ExportBuf[1], Mix->OutputRight, Audio->SamplesPerBuffer);
+//		bcopy(Mix->OutputLeft, ExportBuf[0], Audio->SamplesPerBuffer);
+//		bcopy(Mix->OutputRight, ExportBuf[1], Audio->SamplesPerBuffer);
 		long				j;
 
 		for (j = 0; j < Audio->SamplesPerBuffer; j++)
@@ -963,25 +945,8 @@ void					Sequencer::WriteExport()
 	      ExportBuf[1][j] = Mix->OutputRight[j];
 	    }
 		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, ExportBuf, 2);
-		cout << "Write Export ended" << endl;
-		//SeqMutex.Unlock();
 	}
 	return;
-
-//  long					i, j, chan;
-//  
-//  for (i = 0, j = 0; i < Audio->SamplesPerBuffer; j++)
-//    {
-//      AllocBuf1[0][i++] = Mix->OutputLeft[j];
-//      AllocBuf1[0][i++] = Mix->OutputRight[j];
-//    }
-//  ExportWave->WriteFloat(AllocBuf1[0], Audio->SamplesPerBuffer); 
-//  for (i = 0; i < Audio->SamplesPerBuffer; j++)
-//    {
-//      AllocBuf1[0][i++] = Mix->OutputLeft[j];
-//      AllocBuf1[0][i++] = Mix->OutputRight[j];  
-//    }
-//  ExportWave->WriteFloat(AllocBuf1[0], Audio->SamplesPerBuffer); 
 }
 
 void					Sequencer::PlayFile(string filename, bool isakai)

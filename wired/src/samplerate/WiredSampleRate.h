@@ -63,7 +63,7 @@ public:
 	WiredSampleRate		operator=(const WiredSampleRate& right);
 
 	void		Init(t_samplerate_info *Info);
-	int			OpenFile(string *Path, wxWindow* parent);					//return wxID_NO if not modified (or invalid), 	
+	int		OpenFile(string *Path, wxWindow* parent);					//return wxID_NO if not modified (or invalid), 	
 														//else return wxID_YES r wxID_CANCEL if canceled
 														// and set Path to the new FilePath
 	bool		SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples, bool interleaved);					//return false if saving canceled
@@ -91,9 +91,7 @@ private:
 	int			_Quality;
 	int			_ConverterError;
 	float		*_Buffer;
-	float		**_ChannelBuffer;
+    float      *_RateBuffer;
 };
-
-//extern wxMutex				SampleRateMutex;
 
 #endif //_WIREDSAMPLERATE_H_
