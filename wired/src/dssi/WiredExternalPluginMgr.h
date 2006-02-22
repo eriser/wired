@@ -1,8 +1,8 @@
 #ifndef _WIREDEXTERNALPLUGINMGR_H_
 #define _WIREDEXTERNALPLUGINMGR_H_
 
-#include <stdlib.h>
-#include <sys/types.h>
+//#include <stdlib.h>
+//#include <sys/types.h>
 //#include <dirent.h>
 #include <wx/dir.h>
 #include <wx/log.h>

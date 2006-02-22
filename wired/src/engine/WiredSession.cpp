@@ -1,9 +1,9 @@
 // Copyright (C) 2004 by Wired Team
 // Under the GNU General Public License#include "HostCallback.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+//#include <sys/types.h>
+//#include <sys/stat.h>
+//#include <fcntl.h>
 #include <unistd.h>
 #include <iostream>
 #include <wx/filename.h>
@@ -345,7 +345,7 @@ bool WiredSession::Save()
 
 	  track.NameLen = (*k)->TrackOpt->Text->GetLineLength(0);
 	  s = (*k)->TrackOpt->Text->GetValue();
-	  track.Name = (char *)string(s.c_str()).c_str(); // trop laid mais pas trouvé mieux...
+	  track.Name = (char *)string(s.c_str()).c_str(); // trop laid mais pas trouv? mieux...
 	  track.NumberOfPatterns = (*k)->TrackPattern->Patterns.size();
 	  write(fd, &(track.Type), sizeof (track.Type));
 	  write(fd, &(track.Mute), sizeof (track.Mute));
