@@ -71,24 +71,27 @@ void			WiredExternalPluginMgr::LoadPLugins(int Type)
 void			WiredExternalPluginMgr::LoadPluginsFromPath(const char *Dirs, int Type)
 {
 	list <string>::iterator 	Iter;
-	DIR 						*CurrentDir = NULL;
-	struct dirent 				*CurrentFile = NULL;
+//	DIR 						*CurrentDir = NULL;
+//	struct dirent 				*CurrentFile = NULL;
 	string						DirsFromEnv = string(Dirs);
 	list<string>				Paths = SplitPath(DirsFromEnv);
 	
 	for (Iter = Paths.begin(); Iter != Paths.end(); Iter++)
 	{
-		if ((CurrentDir = opendir((*Iter).c_str())) != NULL)
+		wxDir 					CurrentDir((*Iter));
+		if (CurrentDir.IsOpened())
 		{
-			while ((CurrentFile = readdir(CurrentDir)))
-			{
+			wxString filename;
+		    bool cont = CurrentDir.GetFirst(&filename, wxEmptyString, wxDIR_FILES);
+		    while (cont)
+		    {
 				//TODO bring back LADSPA / DSSI Load.
 				if (Type == TYPE_PLUGINS_DSSI)
-					LoadPlugins(string(*Iter) + string("/") + string(CurrentFile->d_name));
+					LoadPlugins(string(*Iter) + string("/") + (string)filename);
 				else if (Type == TYPE_PLUGINS_LADSPA)
-					LoadPlugins(string(*Iter) + string("/") + string(CurrentFile->d_name));
-			}	
-			closedir(CurrentDir);
+					LoadPlugins(string(*Iter) + string("/") + (string)filename);
+		        cont = CurrentDir.GetNext(&filename);
+		    }
 		}
 	}
 	//_Plugins.sort(SortByName<WiredLADSPAInstance>());
