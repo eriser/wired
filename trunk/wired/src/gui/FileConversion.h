@@ -40,9 +40,9 @@ public:
 	virtual void		*Entry();
 	bool				Init(t_samplerate_info *RateInit, string WorkingDir, unsigned long BufferSize, wxWindow *Parent);
 	vector<string>		*GetCodecsExtensions();
-	void				ConvertFromCodec(string *FileName);
+	bool				ConvertFromCodec(string *FileName);
 	void				ConvertToCodec(string *FileName);
-	void				ConvertSamplerate(string *FileName);
+	bool				ConvertSamplerate(string *FileName);
 	void				ImportWaveFile(string *FileName);
 	void				Stop();
 	void				SetBufferSize(unsigned long Size){_BufferSize = Size; _SampleRateConverter.SetBufferSize(Size);}
@@ -52,8 +52,8 @@ private:
 	void				CopyToWorkingDir(string *FileName);
 	void				ImportWavePattern(string *FileName);
 	bool				ConvertSamplerate(string *FileName, bool &HasChangedPath);
-	int					GetSndFFormat(PcmType Type);
-	void				Decode(string *FileName);
+	int				GetSndFFormat(PcmType Type);
+	bool				Decode(string *FileName);
 	void				EnqueueAction(FileConversionTypeAction ActionType, string *SrcFile, string *DstFile);
 	bool 				_ShouldRun;
 	WiredSampleRate		_SampleRateConverter;

@@ -627,29 +627,16 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       }
       if (res != wxID_CANCEL)
       {
-      	//SeqMutex.Lock();
       	MidiMutex.Lock();
       	MidiDeviceMutex.Lock();
-      	//Audio->StopStream();
       	AudioMutex.Lock();
       	SeqMutex.Unlock();
-      	//int result = Seq->Pause();
-      	//MidiEngine->Pause();
-//      	cout << "Result == " << result << "wxTHREAD_NO_ERROR == " << wxTHREAD_NO_ERROR << ", wxTHREAD_RUNNING" << wxTHREAD_RUNNING << endl;
-     	//cout << "[MAINWIN] Importing file" << endl;
-      	FileConverter->ConvertFromCodec(&selfile);
-      	//cout << "[MAINWIN] Importing file 01" << endl;
-		FileConverter->ConvertSamplerate(&selfile);
-      	//cout << "[MAINWIN] Importing file 02" << endl;
-      	FileConverter->ImportWaveFile(&selfile);
-      	//cout << "[MAINWIN] Importing file done" << endl;
-      	//Seq->Resume();
-      	//MidiEngine->Resume();
-      	//SeqMutex.Unlock();
+      	if (FileConverter->ConvertFromCodec(&selfile))
+		  if (FileConverter->ConvertSamplerate(&selfile))
+      	     FileConverter->ImportWaveFile(&selfile);
       	MidiMutex.Unlock();  
       	MidiDeviceMutex.Unlock();
       	AudioMutex.Unlock();
-      	//Audio->StartStream();    	
       }
     }
   else
