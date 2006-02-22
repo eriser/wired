@@ -3,7 +3,7 @@
 
 #include "MainWindow.h"
 
-#include <dlfcn.h>
+//#include <dlfcn.h>
 #include <wx/splitter.h>
 #include <wx/progdlg.h>
 #include <wx/filename.h>
