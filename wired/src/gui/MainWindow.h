@@ -9,10 +9,10 @@ using namespace std;
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stdlib.h>
+//#include <stdlib.h>
 
 //a enlever
-#include <sndfile.h>
+//#include <sndfile.h>
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
