@@ -2,9 +2,6 @@
 #define __WiredCodec_H__
 
 #include <wx/thread.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <dirent.h>
 #include <dlfcn.h>
 #include <vector>
 #include <list>

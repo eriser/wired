@@ -1,8 +1,5 @@
 #include	"WiredCodec.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <wx/dir.h>
 
 WiredCodec::WiredCodec()
@@ -53,6 +50,7 @@ int	WiredCodec::EndDecode()
 	  break;
 	}
     }
+  delete path;
   path = NULL;
   return 0;
 }
