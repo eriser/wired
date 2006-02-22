@@ -112,20 +112,18 @@ int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 int						WiredSampleRate::GetConverterQuality()
 {
 	wxArrayString			Choices;
-	int						Values[NB_SAMPLERATE_QUALITY];
 	int						Result;
 	wxString				Msg(_("Please Choose conversion quality (default is better)"));
 	wxString				Title(_("Conversion quality"));
 	
 	for (int pos = 0; pos < NB_SAMPLERATE_QUALITY; pos ++)
 	{
-		Values[pos] = pos;
 		Choices.Add(src_get_name(pos));
 	}
 
-	wxSingleChoiceDialog	Dlg(NULL, Msg, Title, Choices, (char **)&Values);
+	wxSingleChoiceDialog	Dlg(NULL, Msg, Title, Choices, NULL);
 	if (Dlg.ShowModal() == wxID_OK)
-		Result = atoi(Dlg.GetSelectionClientData());
+		Result = Dlg.GetSelection();
 	else 
 		Result = 0;
 	return Result;
@@ -349,7 +347,7 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigne
 		return false;
 	}
 	_Quality = GetConverterQuality();
-	StaticConverter = src_new(_Quality, (interleaved == true ? NbChannel : 1 ), &_ConverterError);
+	StaticConverter = src_new(_Quality, (interleaved == true ? NbChannel : 1), &_ConverterError);
 	_Buffer = new float[NbChannel * NbSamples];
 	_ChannelBuffer = new float *[NbChannel];
 	//TO FIX bad allocation ....
