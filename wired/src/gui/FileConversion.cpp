@@ -167,10 +167,12 @@ SNDFILE			*FileConversion::OpenDecodeFile(t_Pcm	&Data, const std::string &DestFi
 	return Result;
 }
 
-void				FileConversion::Decode(string *FileName)
+bool				FileConversion::Decode(string *FileName)
 {
+    bool        Res= true;
+    
 	if (_ShouldRun == false)
-		return;
+		return false;
 	if (_CodecConverter.CanConvert(string(FileName->c_str()), DECODE) == true)
 	{
 		string						FileNameLocal(FileName->c_str());
@@ -210,20 +212,21 @@ void				FileConversion::Decode(string *FileName)
 		{
 			cout << "[FILECONVERT] Codec 1 - Could not write decoded file {" << FileName->c_str();
 			cout << "} because of error : " << sf_strerror(Result) << endl;
+            Res = false;
 		}
 		else
 			*FileName = DestFileName;
 		ProgressDialog.Update(PROGRESS_DIALOG_UNIT);
 		sf_close(Result);  
 	}
-
+    return Res;
 }
 
-void				FileConversion::ConvertFromCodec(string *FileName)
+bool				FileConversion::ConvertFromCodec(string *FileName)
 {
-	Decode(FileName);
+	return Decode(FileName);
 //	EnqueueAction(AImportWaveFile, FileName, NULL);
-	FileConversionMutex.Unlock();
+	//FileConversionMutex.Unlock();
 }
 
 void				FileConversion::ConvertToCodec(string *FileName)
@@ -232,12 +235,12 @@ void				FileConversion::ConvertToCodec(string *FileName)
 	FileConversionMutex.Unlock();
 }
 
-void				FileConversion::ConvertSamplerate(string *FileName)
+bool				FileConversion::ConvertSamplerate(string *FileName)
 {
 	bool HasChangedPath;
-	ConvertSamplerate(FileName, HasChangedPath);	
+	return ConvertSamplerate(FileName, HasChangedPath);	
 //	EnqueueAction(AConvertSampleRate, FileName, NULL);
-	FileConversionMutex.Unlock();
+//	FileConversionMutex.Unlock();
 }
 
 bool				FileConversion::ConvertSamplerate(string *FileName, bool &HasChangedPath)
