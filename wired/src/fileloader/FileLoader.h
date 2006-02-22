@@ -96,7 +96,7 @@ class FileLoader: public wxDialog
 
   void StartPlaying();
   void StopPlaying();
-  void GotoDir(char *);
+  void GotoDir(const char *);
 
   bool			ExtMatch(wxString);
   wxString		FormatSize(off_t);

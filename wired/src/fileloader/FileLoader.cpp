@@ -195,7 +195,8 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   	btopen->Disable();
   }
   if (!akai)
-    {
+    {    	
+	wxLogNull logNo;
       if (exts == NULL)
 	LoadSoundExt();	
       else
@@ -220,12 +221,10 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 	ListDirectories(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
       if (OldPath.empty())
 	{
-	  char cwd[PATH_MAX];
-	  getcwd(cwd, PATH_MAX);
-	  GotoDir(cwd);
+	  GotoDir(wxGetCwd());
 	}
       else
-	GotoDir((char *)OldPath.c_str());
+	GotoDir((const char *)OldPath.c_str());
     }
   else
     {
@@ -845,7 +844,7 @@ void			FileLoader::ListFiles(string path)
     }
 }
 
-void FileLoader::GotoDir(char *path)
+void FileLoader::GotoDir(const char *path)
 {
   unsigned int pos = 0;
   int opos = 0;
