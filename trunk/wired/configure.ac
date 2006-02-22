@@ -17,6 +17,21 @@ AM_INIT_AUTOMAKE([1.8.2 foreign check-news dist-bzip2 no-dist-gzip])
 # Look for a C++ compiler.
 AC_LANG([C++])
 
+# Look for a gnu compiler
+if test $ac_cv_c_compiler_gnu = yes ; then
+	AC_DEFINE([COMPILER_IS_GCC],1, [Set to 1 if the compile is GNU GCC.])
+	GCC_MAJOR_VERSION=`$CC -dumpversion | sed "s/\..*//"`
+	AC_DEFINE_UNQUOTED([GCC_MAJOR_VERSION],${GCC_MAJOR_VERSION}, [Major version of GCC or 3 otherwise.])
+fi
+
+#Get some libs versions
+
+GTK_VERSION=`pkg-config gtk+-2.0 --modversion`
+WXWIDGET_VERSION=`wx-config --version`
+SAMPLERATE_VERSION=`pkg-config samplerate --modversion`
+SNDFILE_VERSION=`pkg-config sndfile --modversion`
+
+
 # for autoheader .. investigate this further :)
 AC_CONFIG_HEADER(src/include/config.h)
 
@@ -123,6 +138,8 @@ if test "$disable_optimize" = "yes";
 then
  CFGOPTIMIZE=No
  CXXFLAGS=""
+else
+ CFGOPTIMIZE=Yes
 fi
 
 if test x$enable_debug = xyes;
@@ -200,3 +217,38 @@ AC_CONFIG_FILES([Makefile
 		src/wiredvideo/Makefile])
 
 AC_OUTPUT
+
+AC_MSG_RESULT([
+-=-=-=-=-=-=-=-=-=-= Configuration Complete =-=-=-=-=-=-=-=-=-=-=-
+
+  Configuration summary :
+
+    Version : ..................... ${VERSION}])
+AC_MSG_RESULT([    Enable debugging : ............ ${CFGDEBUG}])
+AC_MSG_RESULT([    Enable optimizations : ........ ${CFGOPTIMIZE}
+])
+
+if test x$ac_cv_c_compiler_gnu = xyes ; then
+	echo -e "  Tools :\n"
+	echo "    Compiler is GCC : ............. ${ac_cv_c_compiler_gnu}"
+	echo "    GCC major version : ........... ${GCC_MAJOR_VERSION}"
+	fi
+
+AC_MSG_RESULT([
+  Extra tools required :
+
+    GTK : ......................... ${GTK_VERSION}
+    wxWidgets : ................... ${WXWIDGET_VERSION}
+    libsamplerate : ............... ${SAMPLERATE_VERSION}
+    libsndfile : .................. ${SNDFILE_VERSION}
+ ])
+#    Portaudio : .................... ${ac_cv_fftw3}])
+#  Soundtouch : .................... ${ac_cv_fftw3}])
+
+
+AC_MSG_RESULT([  Installation directories :
+
+    Library directory : ........... ${prefix}/lib
+    Program directory : ........... ${prefix}/bin
+    Data directory : .............. ${prefix}/lib/shared/wired
+])

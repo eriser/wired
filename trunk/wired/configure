@@ -18599,6 +18599,29 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
+# Look for a gnu compiler
+if test $ac_cv_c_compiler_gnu = yes ; then
+
+cat >>confdefs.h <<\_ACEOF
+#define COMPILER_IS_GCC 1
+_ACEOF
+
+	GCC_MAJOR_VERSION=`$CC -dumpversion | sed "s/\..*//"`
+
+cat >>confdefs.h <<_ACEOF
+#define GCC_MAJOR_VERSION ${GCC_MAJOR_VERSION}
+_ACEOF
+
+fi
+
+#Get some libs versions
+
+GTK_VERSION=`pkg-config gtk+-2.0 --modversion`
+WXWIDGET_VERSION=`wx-config --version`
+SAMPLERATE_VERSION=`pkg-config samplerate --modversion`
+SNDFILE_VERSION=`pkg-config sndfile --modversion`
+
+
 # for autoheader .. investigate this further :)
           ac_config_headers="$ac_config_headers src/include/config.h"
 
@@ -22975,6 +22998,8 @@ if test "$disable_optimize" = "yes";
 then
  CFGOPTIMIZE=No
  CXXFLAGS=""
+else
+ CFGOPTIMIZE=Yes
 fi
 
 if test x$enable_debug = xyes;
@@ -24483,3 +24508,61 @@ if test "$no_create" != yes; then
   $ac_cs_success || { (exit 1); exit 1; }
 fi
 
+
+echo "$as_me:$LINENO: result:
+-=-=-=-=-=-=-=-=-=-= Configuration Complete =-=-=-=-=-=-=-=-=-=-=-
+
+  Configuration summary :
+
+    Version : ..................... ${VERSION}" >&5
+echo "${ECHO_T}
+-=-=-=-=-=-=-=-=-=-= Configuration Complete =-=-=-=-=-=-=-=-=-=-=-
+
+  Configuration summary :
+
+    Version : ..................... ${VERSION}" >&6
+echo "$as_me:$LINENO: result:     Enable debugging : ............ ${CFGDEBUG}" >&5
+echo "${ECHO_T}    Enable debugging : ............ ${CFGDEBUG}" >&6
+echo "$as_me:$LINENO: result:     Enable optimizations : ........ ${CFGOPTIMIZE}
+" >&5
+echo "${ECHO_T}    Enable optimizations : ........ ${CFGOPTIMIZE}
+" >&6
+
+if test x$ac_cv_c_compiler_gnu = xyes ; then
+	echo -e "  Tools :\n"
+	echo "    Compiler is GCC : ............. ${ac_cv_c_compiler_gnu}"
+	echo "    GCC major version : ........... ${GCC_MAJOR_VERSION}"
+	fi
+
+echo "$as_me:$LINENO: result:
+  Extra tools required :
+
+    GTK : ......................... ${GTK_VERSION}
+    wxWidgets : ................... ${WXWIDGET_VERSION}
+    libsamplerate : ............... ${SAMPLERATE_VERSION}
+    libsndfile : .................. ${SNDFILE_VERSION}
+ " >&5
+echo "${ECHO_T}
+  Extra tools required :
+
+    GTK : ......................... ${GTK_VERSION}
+    wxWidgets : ................... ${WXWIDGET_VERSION}
+    libsamplerate : ............... ${SAMPLERATE_VERSION}
+    libsndfile : .................. ${SNDFILE_VERSION}
+ " >&6
+#    Portaudio : .................... ${ac_cv_fftw3}])
+#  Soundtouch : .................... ${ac_cv_fftw3}])
+
+
+echo "$as_me:$LINENO: result:   Installation directories :
+
+    Library directory : ........... ${prefix}/lib
+    Program directory : ........... ${prefix}/bin
+    Data directory : .............. ${prefix}/lib/shared/wired
+" >&5
+echo "${ECHO_T}  Installation directories :
+
+    Library directory : ........... ${prefix}/lib
+    Program directory : ........... ${prefix}/bin
+    Data directory : .............. ${prefix}/lib/shared/wired
+" >&6
