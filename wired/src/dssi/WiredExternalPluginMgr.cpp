@@ -51,6 +51,7 @@ WiredExternalPluginMgr		WiredExternalPluginMgr::operator=(const WiredExternalPlu
 void			WiredExternalPluginMgr::LoadPLugins(int Type)
 {
 	char			*Dirs = NULL;
+	wxLogNull		NoLog;
 	
 	if (Type & TYPE_PLUGINS_DSSI)
 	{
