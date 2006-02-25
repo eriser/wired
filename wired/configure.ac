@@ -31,7 +31,6 @@ WXWIDGET_VERSION=`wx-config --version`
 SAMPLERATE_VERSION=`pkg-config samplerate --modversion`
 SNDFILE_VERSION=`pkg-config sndfile --modversion`
 
-
 # for autoheader .. investigate this further :)
 AC_CONFIG_HEADER(src/include/config.h)
 
@@ -101,9 +100,12 @@ AC_ARG_ENABLE(dssi,
 AC_ARG_ENABLE(debug, 
 	[  --enable-debug Enable or disable debug symbol generation (default disabled)])
 	
-	
+
 AC_ARG_ENABLE(optimize, 
 	[  --disable-optimize Enable or disable compilation optimizations (default enabled)],disable_optimize=yes, disable_optimize=no)
+
+AC_ARG_ENABLE(purify, 
+	[  --enable-purify Enable building process with purify (default disabled)])
 
 # Checks for library functions.
 AC_FUNC_CLOSEDIR_VOID
@@ -132,6 +134,12 @@ else
  OPTION_DSSI="DSSI_DISABLED"
 fi
 
+if test x$enable_purify = xyes;
+then
+ CXX='g++' 
+ CC='gcc'
+fi
+
  CXXFLAGS="-O3"
 
 if test "$disable_optimize" = "yes";
@@ -145,12 +153,19 @@ fi
 if test x$enable_debug = xyes;
 then
  CFGDEBUG=Yes
- CXXFLAGS="${CXXFLAGS} -ggdb3"
+ CXXFLAGS="${CXXFLAGS} -g"
 else
  CFGDEBUG=No
 fi
 
-AC_CONFIG_FILES([Makefile
+#Some locale things
+
+ALL_LINGUAS="fr" 
+AM_GNU_GETTEXT 
+
+AC_DEFINE(PACKAGE_LOCALE_DIR, "${INSTALL_PREFIX}/${DATADIRNAME}/locale", [Directory for locale files]) 
+
+AC_CONFIG_FILES([Makefile po/Makefile.in
 		src/Makefile
 		src/audio/Makefile
 		src/editmidi/Makefile
