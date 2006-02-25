@@ -1,0 +1,1342 @@
+# Wired French Package
+# Copyright (C) 2005 Wired Team
+# This file is distributed under the GPL
+# Pierre-Jean Leger <pj-leger@users.sourceforge.net>, 2005.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Wired 0.2\n"
+"Report-Msgid-Bugs-To: wired@bloodshed.net\n"
+"POT-Creation-Date: 2006-02-25 23:55+0100\n"
+"PO-Revision-Date: 2006-02-01 16:59+0100\n"
+"Last-Translator: Pierre-Jean Leger <pj-leger@users.sourceforge.net>\n"
+"Language-Team: French <FR@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso8859-15\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:478
+msgid "This is a LADSPA or DSSI Plugin, named '"
+msgstr "Ceci est un module LADSPA/DSSI, nommé '"
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:483
+msgid "<BR>Maker is : "
+msgstr "<BR>Créé par : "
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:488
+msgid "<BR>Copyright : "
+msgstr ""
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:491
+msgid "<BR>This plugin is currently "
+msgstr "<BR>Ce module est actuellement "
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:493
+msgid "disabled.<BR>"
+msgstr "inactif.<BR>"
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:495
+msgid "enabled.<BR>"
+msgstr "actif.<BR>"
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:498
+msgid "Audio Inputs are : "
+msgstr "Les entrées sonores sont : "
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:502
+#: src/dssi/WiredExternalPluginLADSPA.cpp:511
+msgid "<BR>"
+msgstr ""
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:507
+msgid "Data Inputs are : "
+msgstr "Les entrées données sont : "
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:516
+msgid "Audio Outputs are : "
+msgstr "Les sorties sonores sont : "
+
+#: src/dssi/WiredExternalPluginLADSPA.cpp:525
+msgid "Data Outputs are : "
+msgstr "Les sorties données sont : "
+
+#: src/editmidi/EditMidi.cpp:262 src/gui/SequencerGui.cpp:355
+msgid "Move"
+msgstr "Déplacer"
+
+#: src/editmidi/EditMidi.cpp:262
+msgid "Moves notes"
+msgstr "Déplacer les notes"
+
+#: src/editmidi/EditMidi.cpp:263
+msgid "Edit"
+msgstr "Modifier"
+
+#: src/editmidi/EditMidi.cpp:263
+msgid "Resizes notes"
+msgstr "Redimensionner les notes"
+
+#: src/editmidi/EditMidi.cpp:264
+msgid "Del"
+msgstr "Suppr"
+
+#: src/editmidi/EditMidi.cpp:264 src/gui/SequencerGui.cpp:357
+msgid "Deletes notes"
+msgstr "Supprimer les notes"
+
+#: src/fileloader/FileLoader.cpp:105
+msgid "Name"
+msgstr "Nom"
+
+#: src/fileloader/FileLoader.cpp:107
+msgid "Size"
+msgstr "Taille"
+
+#: src/fileloader/FileLoader.cpp:111
+msgid "Modified"
+msgstr "Modifié"
+
+#: src/fileloader/FileLoader.cpp:116 src/fileloader/FileLoader.cpp:149
+msgid "Type"
+msgstr ""
+
+#: src/fileloader/FileLoader.cpp:131
+msgid "Filename"
+msgstr "Nom de fichier"
+
+#: src/fileloader/FileLoader.cpp:140
+msgid "Akai device"
+msgstr "Péripherique AKAI"
+
+#: src/fileloader/FileLoader.cpp:156 src/fileloader/FileLoader.cpp:1273
+msgid "Preview"
+msgstr "Prévisualisation"
+
+#: src/fileloader/FileLoader.cpp:162
+msgid "Open"
+msgstr "Ouvrir"
+
+#: src/fileloader/FileLoader.cpp:168
+msgid "Save"
+msgstr "Enregistrer"
+
+#: src/fileloader/FileLoader.cpp:172 src/gui/SettingWindow.cpp:117
+#: src/midi/MidiController.cpp:18
+msgid "Cancel"
+msgstr "Annuler"
+
+#: src/fileloader/FileLoader.cpp:177
+msgid "Favorites"
+msgstr "Favoris"
+
+#: src/fileloader/FileLoader.cpp:184
+msgid "Recents"
+msgstr "Récents"
+
+#: src/fileloader/FileLoader.cpp:417
+msgid "All supported soundfiles (*."
+msgstr "Tous les formats supportés (*."
+
+#: src/fileloader/FileLoader.cpp:426
+msgid "All files (*.*)"
+msgstr "Tous les fichiers (*.*)"
+
+#: src/fileloader/FileLoader.cpp:581 src/fileloader/FileLoader.cpp:589
+#: src/fileloader/FileLoader.cpp:627
+msgid "Partition "
+msgstr ""
+
+#: src/fileloader/FileLoader.cpp:985
+msgid "Add to favorites"
+msgstr "Ajouter aux favoris"
+
+#: src/fileloader/FileLoader.cpp:1055 src/fileloader/FileLoader.cpp:1144
+#: src/fileloader/FileLoader.cpp:1199
+msgid "Please enter a name"
+msgstr "Veuillez entrer un nom"
+
+#: src/fileloader/FileLoader.cpp:1069 src/fileloader/FileLoader.cpp:1158
+#: src/fileloader/FileLoader.cpp:1213
+msgid "File already exists, replace ?"
+msgstr "Le fichier existe déjà, remplacer ?"
+
+#: src/fileloader/FileLoader.cpp:1285
+msgid "Stop"
+msgstr ""
+
+#: src/gui/AudioPattern.cpp:97
+msgid "This is an Audio pattern. Double-click on it to open the Audio editor."
+msgstr "Ceci est un échantillon audio. Double-cliquez dessus pour ouvrir l'éditeur audio."
+
+#: src/gui/ChannelGui.cpp:244
+msgid "MASTER"
+msgstr ""
+
+#: src/gui/FileConversion.cpp:192
+#, fuzzy
+msgid "Conversion"
+msgstr "Qualité de conversion"
+
+#: src/gui/FileConversion.cpp:192
+msgid "Decoding file, please wait."
+msgstr ""
+
+#: src/gui/FileConversion.cpp:306
+msgid "Do you want to copy this file to your project directory ?"
+msgstr "Souhaitez-vous copier ce fichier dans le répertoire de travail ?"
+
+#: src/gui/FileConversion.cpp:317
+msgid "Could not copy file"
+msgstr "Impossible de copier le fichier"
+
+#: src/gui/HelpCtrl.cpp:8 src/gui/OptionPanel.cpp:132
+msgid "Wired Help"
+msgstr "Aide de Wired"
+
+#: src/gui/MainWindow.cpp:96 src/gui/MainWindow.cpp:1286
+msgid "audio engine"
+msgstr "moteur audio"
+
+#: src/gui/MainWindow.cpp:96
+msgid "You may check for your audio settings if you want to use Wired.."
+msgstr "Vous devriez vérifier vos parametre audio si vous souhaitez utiliser Wired..."
+
+#: src/gui/MainWindow.cpp:196
+msgid "&New\tCtrl-N"
+msgstr "&Nouveau\tCtrl-N"
+
+#: src/gui/MainWindow.cpp:197
+msgid "&Open...\tCtrl-O"
+msgstr "&Ouvrir...\tCtrl-O"
+
+#: src/gui/MainWindow.cpp:198
+msgid "&Save\tCtrl-S"
+msgstr "&Enregistrer\tCtrl-S"
+
+#: src/gui/MainWindow.cpp:199
+msgid "Save &as...\tF12"
+msgstr "Enregistrer &sous...\tF12"
+
+#: src/gui/MainWindow.cpp:201
+msgid "&Import Wave file..."
+msgstr "&Importer un fichier son..."
+
+#: src/gui/MainWindow.cpp:202
+msgid "&Import MIDI file..."
+msgstr "&Importer un fichier MIDI..."
+
+#: src/gui/MainWindow.cpp:203
+msgid "&Import AKAI sample..."
+msgstr "&Importer un CD de sample AKAI..."
+
+#: src/gui/MainWindow.cpp:205
+msgid "&Export Wave file..."
+msgstr "&Exporter vers un fichier son..."
+
+#: src/gui/MainWindow.cpp:206
+msgid "&Export MIDI file..."
+msgstr "&Exporter vers un fichier MIDI..."
+
+#: src/gui/MainWindow.cpp:209
+msgid "&Quit\tCtrl-Q"
+msgstr "&Quitter\tCtrl-Q"
+
+#: src/gui/MainWindow.cpp:213
+msgid "C&ut\tCtrl+X"
+msgstr "C&ouper\tCtrl-X"
+
+#: src/gui/MainWindow.cpp:214
+msgid "&Copy\tCtrl+C"
+msgstr "&Copier\tCtrl-C"
+
+#: src/gui/MainWindow.cpp:215
+msgid "&Paste\tCtrl+V"
+msgstr "&Coller\tCtrl-V"
+
+#: src/gui/MainWindow.cpp:217
+msgid "&Delete\tDel"
+msgstr "&Supprimer\tDel"
+
+#: src/gui/MainWindow.cpp:218
+msgid "&Select all\tCtrl+A"
+msgstr "&Tout sélectionner\tCtrl+A"
+
+#: src/gui/MainWindow.cpp:220
+msgid "&Settings..."
+msgstr "&Parametres..."
+
+#: src/gui/MainWindow.cpp:222
+msgid "&Add Audio Track"
+msgstr "&Ajouter une piste audio"
+
+#: src/gui/MainWindow.cpp:223
+msgid "&Add MIDI Track"
+msgstr "&Ajouter une piste MIDI"
+
+#: src/gui/MainWindow.cpp:224
+msgid "&Delete Track"
+msgstr "&Supprimer la piste"
+
+#: src/gui/MainWindow.cpp:226
+msgid "&Change Audio directory..."
+msgstr "&Modifier le répertoire de travail..."
+
+#: src/gui/MainWindow.cpp:228
+msgid "D&elete Rack"
+msgstr "&Supprimer le rack"
+
+#: src/gui/MainWindow.cpp:230
+msgid "&Show Integrated Help"
+msgstr "&Afficher l'aide contextuelle"
+
+#: src/gui/MainWindow.cpp:231
+msgid "&About..."
+msgstr "&A propos de Wired..."
+
+#: src/gui/MainWindow.cpp:233
+msgid "Switch &Rack/Optional view\tTAB"
+msgstr "Mode rack/vue optionelle\tTAB"
+
+#: src/gui/MainWindow.cpp:234
+msgid "Switch &Sequencer/Optional view\tCtrl+TAB"
+msgstr "Mode Séquenceur/vue optionelle\tCtrl-TAB"
+
+#: src/gui/MainWindow.cpp:236
+msgid "Floating Transport"
+msgstr "Fenêtre de transport flottante"
+
+#: src/gui/MainWindow.cpp:237
+msgid "Floating Sequencer"
+msgstr "Fenêtre séquenceur flottante"
+
+#: src/gui/MainWindow.cpp:238
+msgid "Floating Racks"
+msgstr "Fenêtre de racks flottante"
+
+#: src/gui/MainWindow.cpp:239
+msgid "Floating Optional View"
+msgstr "Fenêtre optionelle flotante"
+
+#: src/gui/MainWindow.cpp:241
+msgid "&Fullscreen"
+msgstr "&Plein écran"
+
+#: src/gui/MainWindow.cpp:243
+#, fuzzy
+msgid "&Log window"
+msgstr "&Fenêtre"
+
+#: src/gui/MainWindow.cpp:245
+msgid "&File"
+msgstr "&Fichier"
+
+#: src/gui/MainWindow.cpp:246
+msgid "&Edit"
+msgstr "&Modifier"
+
+#: src/gui/MainWindow.cpp:247
+msgid "&Sequencer"
+msgstr "&Séquenceur"
+
+#: src/gui/MainWindow.cpp:248
+msgid "&Racks"
+msgstr ""
+
+#: src/gui/MainWindow.cpp:249 src/gui/Rack.cpp:229
+msgid "&Instruments"
+msgstr ""
+
+#: src/gui/MainWindow.cpp:250
+msgid "Effec&ts"
+msgstr "Effe&ts"
+
+#: src/gui/MainWindow.cpp:251
+msgid "&Video"
+msgstr "&Vidéo"
+
+#: src/gui/MainWindow.cpp:252
+msgid "&Window"
+msgstr "&Fenêtre"
+
+#: src/gui/MainWindow.cpp:253
+msgid "&Help"
+msgstr "&Aide"
+
+#: src/gui/MainWindow.cpp:349
+msgid "Choose the audio working directory"
+msgstr "Choisissez le répertoire de travail"
+
+#: src/gui/MainWindow.cpp:369
+msgid "U&ndo"
+msgstr "Annu&ler"
+
+#: src/gui/MainWindow.cpp:370
+msgid "&Redo"
+msgstr "&Répéter"
+
+#: src/gui/MainWindow.cpp:377
+msgid "&Open video"
+msgstr "&Ouvrir vidéo"
+
+#: src/gui/MainWindow.cpp:378
+msgid "&Close video"
+msgstr "&Fermer vidéo"
+
+#: src/gui/MainWindow.cpp:379
+msgid "&Seek with video playing"
+msgstr "&Avancer vidéo synchrone"
+
+#: src/gui/MainWindow.cpp:393 src/gui/MainWindow.cpp:476
+msgid "Save current session ?"
+msgstr "Enregistrer la session ?"
+
+#: src/gui/MainWindow.cpp:512
+msgid "wrd\tWired session file (*.wrd)"
+msgstr "wrd\tFichier de session Wired (*.wrd)"
+
+#: src/gui/MainWindow.cpp:513 src/gui/MainWindow.cpp:570
+msgid "xml\tWired session file (*.xml)"
+msgstr "xml\tFichier de session Wired (*.xml)"
+
+#: src/gui/MainWindow.cpp:514
+msgid "Open session"
+msgstr "Ouvrir une session"
+
+#: src/gui/MainWindow.cpp:571
+msgid "Save session"
+msgstr "Enregistrer la session"
+
+#: src/gui/MainWindow.cpp:605 src/plugins/beatbox/BeatBoxChannel.cpp:551
+#: src/plugins/loop_sampler/LoopSampler.cpp:1207
+msgid "Loading sound file"
+msgstr "Chargement du fichier son"
+
+#: src/gui/MainWindow.cpp:618 src/gui/MainWindow.cpp:1362
+#: src/gui/Transport.cpp:201
+msgid "Choose the Audio file directory"
+msgstr "Choisissez le répertoire de travail"
+
+#: src/gui/MainWindow.cpp:653 src/gui/MainWindow.cpp:809
+msgid "mid\tMidi file (*.mid)"
+msgstr "mid\tFichier MIDI (*.mid)"
+
+#: src/gui/MainWindow.cpp:654
+msgid "Import MIDI file"
+msgstr "Importer un fichier MIDI"
+
+#: src/gui/MainWindow.cpp:660 src/gui/MainWindow.cpp:704
+msgid "Loading midi file"
+msgstr "Chargement du fichier MIDI"
+
+#: src/gui/MainWindow.cpp:660 src/gui/MainWindow.cpp:704
+#: src/gui/MainWindow.cpp:784 src/plugins/akai_sampler/AkaiSampler.cpp:764
+#: src/plugins/beatbox/BeatBoxChannel.cpp:557
+#: src/plugins/beatbox/BeatBox.cpp:1761
+#: src/plugins/loop_sampler/LoopSampler.cpp:1212
+#: src/samplerate/WiredSampleRate.cpp:168
+msgid "Please wait..."
+msgstr "Veuillez patienter..."
+
+#: src/gui/MainWindow.cpp:698
+msgid "Import AKAI samples"
+msgstr "Ouvrir des échantillons AKAI"
+
+#: src/gui/MainWindow.cpp:761
+msgid "Please correctly place the Left and Right markers"
+msgstr "Veuillez placer correctement les balises droite et gauche"
+
+#: src/gui/MainWindow.cpp:766
+msgid "Exporting sound file"
+msgstr "Export du fichier son"
+
+#: src/gui/MainWindow.cpp:784
+#, fuzzy
+msgid "Exporting mix"
+msgstr "import MIDI"
+
+#: src/gui/MainWindow.cpp:1060
+msgid "Transport"
+msgstr ""
+
+#: src/gui/MainWindow.cpp:1077
+msgid "Sequencer"
+msgstr "Séquenceur"
+
+#: src/gui/MainWindow.cpp:1096
+msgid "Racks"
+msgstr ""
+
+#: src/gui/MainWindow.cpp:1287
+msgid "You may check for your audio settings if you want to use wired.."
+msgstr "Vous devriez vérifier vos parametres de péripherique son si vous souhaitez utiliser Wired..."
+
+#: src/gui/MidiPattern.cpp:78
+msgid "This is a MIDI pattern. Double-click on it to open the MIDI editor."
+msgstr "Ceci est un échantillon MIDI. Double-cliquez dessus pour ouvrir l'éditeur MIDI."
+
+#: src/gui/OptionPanel.cpp:97
+msgid "Midi pattern"
+msgstr "Echantillon MIDI"
+
+#: src/gui/OptionPanel.cpp:128
+msgid "Wired Mixer"
+msgstr "Console Wired"
+
+#: src/gui/OptionPanel.cpp:337
+msgid "No Tool"
+msgstr "Pas d'outil"
+
+#: src/gui/Rack.cpp:31
+#, c-format
+msgid "Rack %d"
+msgstr ""
+
+#: src/gui/Rack.cpp:228 src/plugins/beatbox/BeatBoxView.cpp:228
+msgid "Add"
+msgstr "Ajouter"
+
+#: src/gui/Rack.cpp:230
+msgid "&Effects"
+msgstr "&Effets"
+
+#: src/gui/Rack.cpp:231 src/gui/SequencerGui.cpp:443 src/gui/WaveEditor.cpp:38
+#: src/gui/WavePanel.cpp:49 src/gui/WavePanel.cpp:50
+#: src/plugins/beatbox/BeatBoxView.cpp:231
+msgid "Cut"
+msgstr "Couper"
+
+#: src/gui/Rack.cpp:232 src/gui/SequencerGui.cpp:444 src/gui/WaveEditor.cpp:39
+#: src/gui/WavePanel.cpp:45 src/gui/WavePanel.cpp:46
+#: src/plugins/beatbox/BeatBoxView.cpp:232
+msgid "Copy"
+msgstr "Copier"
+
+#: src/gui/Rack.cpp:233 src/gui/SequencerGui.cpp:445 src/gui/WaveEditor.cpp:40
+#: src/gui/WavePanel.cpp:47 src/gui/WavePanel.cpp:48
+#: src/plugins/beatbox/BeatBoxView.cpp:233
+msgid "Paste"
+msgstr "Coller"
+
+#: src/gui/Rack.cpp:235 src/gui/SequencerGui.cpp:357
+#: src/gui/SequencerGui.cpp:441 src/gui/WaveEditor.cpp:41
+#: src/gui/WavePanel.cpp:51 src/gui/WavePanel.cpp:52
+#: src/plugins/beatbox/BeatBoxView.cpp:229
+msgid "Delete"
+msgstr "Supprimer"
+
+#: src/gui/Rack.cpp:812
+msgid ""
+"This is the Rack view of Wired, where you can add plugins. Plugins are "
+"organized into tracks vertically, meaning the first plugin in a column will "
+"send its output signal to the plugin below it. You can connect sequencer "
+"tracks to plugins"
+msgstr "Ceci est la vue des racks de Wired, où vous pouvez ajouter des modules. Les modules sont organisés en tranches verticales, le premier module d'une tranche envoie son signal de sortie aux entrées du module situé dessous. Vous pouvez brancher les pistes du séquenceur aux modules."
+
+#: src/gui/SeqTrack.cpp:46
+#, c-format
+msgid "Audio %d"
+msgstr ""
+
+#: src/gui/SeqTrack.cpp:107
+msgid ""
+"Click on this button to show the list of instruments and effects you can "
+"connect your track to."
+msgstr "Cliquez sur ce bouton pour visualiser la liste des modules que vous pouvez connecter à une piste."
+
+#: src/gui/SeqTrack.cpp:116
+msgid "Click on this box to select the device you would like to record from."
+msgstr "Cliquer sur ce bouton pour sélectionner le périphérique à partir duquel vous souhaitez enregistrer."
+
+#: src/gui/SeqTrack.cpp:128 src/gui/SeqTrack.cpp:160
+#: src/gui/SettingWindow.cpp:40 src/gui/SettingWindow.cpp:85
+msgid "None"
+msgstr "Aucun"
+
+#: src/gui/SeqTrack.cpp:134 src/gui/SettingWindow.cpp:176
+#: src/gui/SettingWindow.cpp:285
+#, c-format
+msgid "Input %d"
+msgstr "Entrée %d"
+
+#: src/gui/SeqTrack.cpp:142
+#, c-format
+msgid "Midi In %d"
+msgstr "Entrée MIDI %d"
+
+#: src/gui/SequencerGui.cpp:269
+msgid ""
+"This is the Wired sequencer. You can add here Audio or MIDI tracks, which "
+"can be output to plugins. Use the toolbar above to choose one of the "
+"sequencer editing tools."
+msgstr "Ceci est le séquenceur de Wired. Vous pouvez y placer des pistes audio ou MIDI, qui peuvent être connectées à des modules. Utilisez la barre d'outils ci-dessus pour sélectionner un outil d'édition."
+
+#: src/gui/SequencerGui.cpp:355
+msgid "Move Pattern"
+msgstr "Déplacer l'échantillon"
+
+#: src/gui/SequencerGui.cpp:356
+msgid "Draw"
+msgstr "Dessiner"
+
+#: src/gui/SequencerGui.cpp:356
+msgid "Draw Pattern"
+msgstr "Dessiner l'échantillon"
+
+#: src/gui/SequencerGui.cpp:357
+msgid "Delete Pattern"
+msgstr "Supprimer l'échantillon"
+
+#: src/gui/SequencerGui.cpp:358
+msgid "Split"
+msgstr "Découper"
+
+#: src/gui/SequencerGui.cpp:358
+msgid "Split Pattern"
+msgstr "Découper l'échantillon"
+
+#: src/gui/SequencerGui.cpp:360 src/plugins/beatbox/BeatBoxView.cpp:925
+msgid "Magnet"
+msgstr ""
+
+#: src/gui/SequencerGui.cpp:367
+msgid "Color"
+msgstr "Couleur"
+
+#: src/gui/SequencerGui.cpp:379
+msgid "Vertical Zoom"
+msgstr "Zoom vertical"
+
+#: src/gui/SequencerGui.cpp:440
+msgid "Move to cursor"
+msgstr "Déplacer vers le curseur"
+
+#: src/gui/SequencerGui.cpp:447 src/plugins/beatbox/BeatBoxView.cpp:235
+msgid "Select all"
+msgstr "Tout sélectionner"
+
+#: src/gui/SettingWindow.cpp:20
+msgid "General"
+msgstr "Général"
+
+#: src/gui/SettingWindow.cpp:22
+msgid "Audio"
+msgstr ""
+
+#: src/gui/SettingWindow.cpp:24
+msgid "MIDI"
+msgstr ""
+
+#: src/gui/SettingWindow.cpp:28
+msgid "Quickly render waveforms"
+msgstr "Rendu rapide des formes d'ondes"
+
+#: src/gui/SettingWindow.cpp:29
+msgid "Render waveforms in dB mode"
+msgstr "Rendu des formes d'ondes en décibels"
+
+#: src/gui/SettingWindow.cpp:31
+msgid "Undo redo maximum depth"
+msgstr ""
+"Taille du cache de \n"
+"l'historique des actions"
+
+#: src/gui/SettingWindow.cpp:37
+msgid "Select Output sound card:"
+msgstr "Sélectionnez le périphérique de sortie"
+
+#: src/gui/SettingWindow.cpp:48
+msgid "Select left and right Output channels for this sound card:"
+msgstr "Sélectionnez les canaux de sortie droit et gauche pour ce périphérique"
+
+#: src/gui/SettingWindow.cpp:52
+msgid "Sample format:"
+msgstr "Format d'échantillonage"
+
+#: src/gui/SettingWindow.cpp:59
+msgid "Sample rate:"
+msgstr "Taux d'échantillonage"
+
+#: src/gui/SettingWindow.cpp:66
+msgid "Latency:"
+msgstr "Latence"
+
+#: src/gui/SettingWindow.cpp:82
+msgid "Select Input sound card:"
+msgstr "Sélectionnez le périphérique d'entrée"
+
+#: src/gui/SettingWindow.cpp:93
+msgid "Select Input channels to use with this sound card:"
+msgstr "Sélectionnez les canaux d'entrée droit et gauche pour ce périphérique"
+
+#: src/gui/SettingWindow.cpp:102
+msgid "Select MIDI In devices to use:"
+msgstr "Sélectionnez le périphérique MIDI"
+
+#: src/gui/SettingWindow.cpp:115 src/midi/MidiController.cpp:17
+#: src/plugins/loop_sampler/BeatDialog.cpp:14
+msgid "OK"
+msgstr ""
+
+#: src/gui/SettingWindow.cpp:116
+msgid "Apply"
+msgstr "Appliquer"
+
+#: src/gui/SettingWindow.cpp:162 src/gui/SettingWindow.cpp:308
+#, c-format
+msgid "Output %d"
+msgstr "Sortie %d"
+
+#: src/gui/SettingWindow.cpp:224
+#, c-format
+msgid "In %d: %s"
+msgstr "Entrée %d: %s"
+
+#: src/gui/SettingWindow.cpp:333
+msgid "No more than 2 output channels can be selected"
+msgstr "Vous ne pouvez pas sélectionner plus de 2 canaux de sortie"
+
+#: src/gui/SettingWindow.cpp:421
+msgid "8 bits[currently unsupported]"
+msgstr "8 bits[non supporté]"
+
+#: src/gui/SettingWindow.cpp:426
+msgid "8 bits (unsigned)[currently unsupported]"
+msgstr "8 bits (non signé)[non supporté]"
+
+#: src/gui/SettingWindow.cpp:432
+msgid "16 bits[currently unsupported]"
+msgstr "16 bits[non supporté]"
+
+#: src/gui/SettingWindow.cpp:437
+msgid "24 bits[currently unsupported]"
+msgstr "24 bits[non supporté]"
+
+#: src/gui/SettingWindow.cpp:442
+msgid "32 bits[currently unsupported]"
+msgstr "32 bits[non supporté]"
+
+#: src/gui/SettingWindow.cpp:447
+msgid "32 bits (float)"
+msgstr "32 bits (flottant)"
+
+#: src/gui/SettingWindow.cpp:535
+#, c-format
+msgid "Latency: %d samples per buffer, %.2f msec"
+msgstr "Latence: %d échantillons par buffer, %.2f msec"
+
+#: src/gui/Transport.cpp:160
+msgid ""
+"Turns On or Off Loop mode. If On, the sequencer will loop between the L and "
+"R marker in the sequencer."
+msgstr "Active ou désactive le mode boucle. Si actif, le séquenceur bouclera entre les balises L et R dans le séquenceur."
+
+#: src/gui/Transport.cpp:169
+msgid ""
+"Turns On or Off Click mode. If On, a click will be played over each beat per "
+"bar."
+msgstr "Active ou désactive le mode métronome. Si actif, un clic sera émis à chaque temps par mesure"
+
+#: src/gui/WaveEditor.cpp:35
+msgid "Gain..."
+msgstr ""
+
+#: src/gui/WaveEditor.cpp:36
+msgid "Normalize.."
+msgstr "Normaliser..."
+
+#: src/gui/WaveEditor.cpp:43
+msgid "Select All"
+msgstr "Tout sélectionner"
+
+#: src/gui/WaveEditor.cpp:45
+msgid "Effects"
+msgstr "Effets"
+
+#: src/gui/WaveEditor.cpp:264 src/gui/WavePanel.cpp:62
+msgid "ZOOM"
+msgstr "Zoom"
+
+#: src/gui/WaveEditor.cpp:307 src/gui/WaveEditor.cpp:342
+#: src/gui/WaveEditor.cpp:376 src/gui/WaveEditor.cpp:440
+#: src/gui/WaveEditor.cpp:526
+msgid "File opened in read only mode"
+msgstr "Fichier ouvert en lecture seule"
+
+#: src/gui/WaveEditor.cpp:448
+msgid "Enter gain "
+msgstr "Entrez le gain"
+
+#: src/gui/WaveEditor.cpp:448 src/gui/WaveEditor.cpp:534
+msgid "Please enter text"
+msgstr "Entrez le texte"
+
+#: src/gui/WaveEditor.cpp:534
+msgid "Enter normalize level "
+msgstr "Entrez le niveau de normalisation"
+
+#: src/gui/WavePanel.cpp:46
+msgid "Copy wave"
+msgstr "Copier l'échantillon"
+
+#: src/gui/WavePanel.cpp:48
+msgid "Paste wave"
+msgstr "Coller l'échantillon"
+
+#: src/gui/WavePanel.cpp:50
+msgid "Cut wave"
+msgstr "Couper l'échantillon"
+
+#: src/gui/WavePanel.cpp:54 src/gui/WavePanel.cpp:55
+msgid "Undo"
+msgstr "Annuler"
+
+#: src/gui/WavePanel.cpp:55
+msgid "Undo last action"
+msgstr "Annuler la dernière action"
+
+#: src/gui/WavePanel.cpp:56 src/gui/WavePanel.cpp:57
+msgid "Redo"
+msgstr "Répéter"
+
+#: src/midi/MidiController.cpp:13
+msgid "Assign Midi Controller"
+msgstr "Assigner un contrôleur MIDI"
+
+#: src/midi/MidiController.cpp:16
+msgid "Assign to controller number :"
+msgstr "Assigner au contrôle numéro :"
+
+#: src/midi/MidiController.cpp:20
+msgid "Channel:"
+msgstr "Canal : "
+
+#: src/midi/MidiController.cpp:23
+msgid "Control:"
+msgstr "Contrôle : "
+
+#: src/midi/MidiController.cpp:26
+msgid "Value:"
+msgstr "Valeur : "
+
+#: src/plugins/akai_sampler/AkaiSampler.cpp:52
+msgid "Samples"
+msgstr "Echantillon"
+
+#: src/plugins/akai_sampler/AkaiSampler.cpp:506
+msgid " #0 for "
+msgstr ""
+
+#: src/plugins/akai_sampler/AkaiSampler.cpp:757
+msgid "Load AKAI program"
+msgstr "Charger un program AKAI"
+
+#: src/plugins/akai_sampler/AkaiSampler.cpp:763
+msgid "Loading AKAI program"
+msgstr "Chargement AKAI en cours"
+
+#: src/plugins/akai_sampler/AkaiSampler.cpp:866
+msgid "Keygroup editor for "
+msgstr "Editeur de touche pour "
+
+#: src/plugins/akai_sampler/AkaiSampler.cpp:903
+#: src/plugins/akai_sampler/AkaiSampler.cpp:915
+msgid " for "
+msgstr " pour "
+
+#: src/plugins/akai_sampler/AkaiSampler.cpp:976
+msgid "New effect"
+msgstr "Nouvel effet"
+
+#: src/plugins/akai_sampler/ASClavier.cpp:21
+msgid "CDEFGAB"
+msgstr "DoRéMiFaSolLaSi"
+
+#: src/plugins/akai_sampler/ASClavier.cpp:134
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "C"
+msgstr "Do"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "C#"
+msgstr "Do#"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "D"
+msgstr "Ré"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "D#"
+msgstr "Ré#"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "E"
+msgstr "Mi"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "F"
+msgstr "Fa"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "F#"
+msgstr "Fa#"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "G"
+msgstr "Sol"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "G#"
+msgstr "Sol#"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "A"
+msgstr "La"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "A#"
+msgstr "La#"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:65
+msgid "B"
+msgstr "Si"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:66
+msgid "Low key: "
+msgstr "Première touche:"
+
+#: src/plugins/akai_sampler/ASKeygroupEditor.cpp:70
+msgid "High key: "
+msgstr "Dernière touche : "
+
+#: src/plugins/akai_sampler/ASPlugPanel.cpp:60
+msgid "Plugin"
+msgstr "Module"
+
+#: src/plugins/akai_sampler/ASPlugPanel.cpp:177
+msgid "No Plugin"
+msgstr "Pas de module"
+
+#: src/plugins/akai_sampler/ASSampleList.cpp:50
+msgid "Load Sample"
+msgstr "Charger un échantillon"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:82
+msgid "empty"
+msgstr "vide"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:557
+#: src/plugins/loop_sampler/LoopSampler.cpp:1212
+msgid "Loading wave file"
+msgstr "Charger le fichier sonore"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:978
+msgid ""
+"Use this button to display and edit the tracker associated to this channel"
+msgstr "Utilisez ce bouton pour afficher et éditer le tracker associé à ce canal "
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:984
+msgid "Use this button to open the sound file browser"
+msgstr "Utilisez ce bouton pour ourvrir l'expolrateur de fichier"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:990
+msgid "Invert playing order of samples"
+msgstr "Inverse l'ordre de lecture des échantillons"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:996
+msgid "Mute the channel"
+msgstr "Rend muet le canal"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:1002
+msgid "Mute all other channels"
+msgstr "Rend muets tous les canaux"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:1008
+msgid "Play the sound instantaneously"
+msgstr "Joue immédiatement le son"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:1014
+msgid "Set level of the channel"
+msgstr "Ajuste le niveau du canal"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:1020
+msgid "Panoramic left - right"
+msgstr "Panoramique gauche - droite"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:1026
+msgid "Set the starting point of the playing sound"
+msgstr "Ajuste le point de départ du son joué"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:1032
+msgid "Set the ending point of the playing sound"
+msgstr "Ajuste le point d'arrêt du son joué"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:1038
+msgid "Set channel's pitch"
+msgstr "Ajuste le pitch du canal"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:1044
+msgid "Set channel's velocity"
+msgstr "Ajuste la vitesse du canal"
+
+#: src/plugins/beatbox/BeatBoxChannel.cpp:1050
+msgid "Set the number of voices for this channel"
+msgstr "Ajuste le nombre de voies pour ce canal"
+
+#: src/plugins/beatbox/BeatBox.cpp:73
+msgid "Copy pattern"
+msgstr "Copier l'échantillon"
+
+#: src/plugins/beatbox/BeatBox.cpp:74
+msgid "Paste pattern"
+msgstr "Coller l'échantillon"
+
+#: src/plugins/beatbox/BeatBox.cpp:547
+msgid ""
+"One of the 11 channels available, each channel can load a soundfile and can "
+"contain up to 40 different rythms providing fine tunings for them"
+msgstr "L'un des 11 canaux disponible, chaque canal peut charger un fichier son et peu contenir jusqu'à 40 rythmes différents, permettant des réglages précis."
+
+#: src/plugins/beatbox/BeatBox.cpp:553
+msgid ""
+"This is the auto play button, when enabled, DRM31 will play selected pattern "
+"synchronously with Wired's Sequencer"
+msgstr "Ceci est le bouton de lecture automatique, si il est activé, le DRM31 jouera l'échantillon en même temps que le séquenceur de Wired"
+
+#: src/plugins/beatbox/BeatBox.cpp:559
+msgid ""
+"This is a tracker edition control, it can be clicked in 5 different places "
+"to obtain different velocities, right click returns to unclicked state"
+msgstr "Ceci est un tracker, il peut avoir 5 valeurs afin d'obtenir des vitesses différentes, un clic droit rétabli l'état"
+
+#: src/plugins/beatbox/BeatBox.cpp:565
+msgid ""
+"This is Wired's Beat Box plugin (DRM31). It brings you 11 channels to make "
+"up to 40 complex and realistic drum sequences within the traditional tracker "
+"or the optional sequencer view attached"
+msgstr "Ceci est la boîte à rythme de Wired (DRM31). Il comporte 11 canaux permettant jusqu'à 40 séquences de percussions complexes et réalistes dans l'une des deux vues disponibles"
+
+#: src/plugins/beatbox/BeatBox.cpp:571
+msgid "This knob sets the master level output of the DRM31 plugin"
+msgstr "Ce potentiomètre agit sur le niveau de sortie du DRM31"
+
+#: src/plugins/beatbox/BeatBox.cpp:577
+msgid "These buttons control the position of the 16 strokes represented below"
+msgstr "Ces boutons contrôlent la position des 16 courses représentées en dessous"
+
+#: src/plugins/beatbox/BeatBox.cpp:583
+msgid ""
+"These buttons control the signature of the current rythm, note that the "
+"greater the denominator is, the faster the rythm will play"
+msgstr "Ces boutons contrôle la signature de la rythmique en cours, notez que le plus grand dénominateur donne le rythme le plus rapide"
+
+#: src/plugins/beatbox/BeatBox.cpp:589
+msgid "Set the number of steps for the current rythm"
+msgstr "Choisissez le nombre d'étape pour le rythme en cours"
+
+#: src/plugins/beatbox/BeatBox.cpp:594
+msgid ""
+"The bank control allows you to choose one of the 5 banks proposed, each bank "
+"contains 8 rythms"
+msgstr "Le contrôle de banque vous permet de sélectionner l'une des 5 banques proposées, chaque banque contenant 8 rythmes"
+
+#: src/plugins/beatbox/BeatBox.cpp:599
+msgid ""
+"This button switches the plugin to edit mode, when activated, you can edit "
+"other rythms on an other bank while playing the old selected rythm"
+msgstr "Ce bouton permet de basculer le module en mode édition, si actif, vous pouvez éditer d'autres rythmes dans une autre banque tout en jouant le rythme sélectionné précédement"
+
+#: src/plugins/beatbox/BeatBox.cpp:604
+msgid "These buttons represent 8 different rythms"
+msgstr "Ces boutons représentent les 8 rythmes disponibles"
+
+#: src/plugins/beatbox/BeatBox.cpp:609
+msgid ""
+"These buttons are used if you want to import or export a patch apart from "
+"the session"
+msgstr ""
+"Ces boutons vous permettent d'importer ou d'exporter un morceaux en dehors "
+"de la session"
+
+#: src/plugins/beatbox/BeatBox.cpp:1700 src/plugins/beatbox/BeatBox.cpp:1737
+msgid "drm\tDRM-31 patch file (*.drm)"
+msgstr "drm\tFichier DRM-31 (*.drm)"
+
+#: src/plugins/beatbox/BeatBox.cpp:1703
+msgid "Save Patch"
+msgstr "Sauvegarder l'échantillon"
+
+#: src/plugins/beatbox/BeatBox.cpp:1739
+msgid "Load Patch"
+msgstr "Charger l'échantillon"
+
+#: src/plugins/beatbox/BeatBox.cpp:1761
+msgid "Loading patch file"
+msgstr "Charger le fichier d'échantillon"
+
+#: src/plugins/beatbox/BeatBoxView.cpp:163
+msgid "channel empty"
+msgstr "canal vide"
+
+#: src/plugins/beatbox/BeatBoxView.cpp:932
+msgid "Activate magnetism"
+msgstr "Active le magnétisme"
+
+#: src/plugins/beatbox/BeatBoxView.cpp:932
+msgid "Deactivate magnetism"
+msgstr "Désactive le magnétisme"
+
+#: src/plugins/beatbox/BeatBoxView.cpp:959
+#: src/plugins/beatbox/BeatBoxView.cpp:967
+msgid "LEVEL"
+msgstr "NIVEAU"
+
+#: src/plugins/beatbox/BeatBoxView.cpp:960
+msgid "VELOCITY"
+msgstr "VITESSE"
+
+#: src/plugins/beatbox/BeatBoxView.cpp:961
+msgid "PITCH"
+msgstr ""
+
+#: src/plugins/beatbox/BeatBoxView.cpp:962
+msgid "PAN"
+msgstr ""
+
+#: src/plugins/beatbox/BeatBoxView.cpp:963
+msgid "START"
+msgstr "DEBUT"
+
+#: src/plugins/beatbox/BeatBoxView.cpp:964
+msgid "END"
+msgstr "FIN"
+
+#: src/plugins/loop_sampler/BeatDialog.cpp:9
+msgid "Set loop's number of beat per bar"
+msgstr "Ajuste le nombre de boucle par temps"
+
+#: src/plugins/loop_sampler/BeatDialog.cpp:17
+msgid "Number of beat per bar:"
+msgstr "Nombre de temps par mesure"
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:346
+msgid ""
+"This is Wired's Loop Sampler. It enables you to load loops and modify them, "
+"by cutting them into slices for automatic loop scaling, with pitch shifting "
+"and time stretching."
+msgstr "Ceci est l'échantilloneur de boucle de Wired. Il permet de charger des boucles et de les modifier en les découpant pour une graduation automatique des boucles, avec un décalage de lancement et modification de la durée."
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:352
+msgid ""
+"This knob sets the octave of the loaded sample. It will use a pitch shifting "
+"algorithm to achieve that effect. Right click on it to set the MIDI "
+"automation controller."
+msgstr "Ce potentiomètre ajuste l'octave de l'échantillon chargé. Il utilise pour ce faire un algorithme de décalage de temps. Clic-droit pour ajuster le contrôleur MIDI d'automation."
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:358
+msgid ""
+"Changes the pitch (speed) of the whole loaded sample. Right click on it to "
+"set the MIDI automation controller."
+msgstr "Modifie la vitesse de l'ensemble de l'échantillon. Clic-droit pour ajuster le contrôleur MIDI d'automation."
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:364
+msgid ""
+"Stretch the whole sample that it synchronizes with the sequencer BPM Right "
+"click on it to set the MIDI automation controller."
+msgstr "Modifie l'ensemble de l'échantillon afin qu'il soit synchrone avec le BPM du séquenceur. Clic-droit pour ajuster le contrôleur MIDI d'automation."
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:370
+msgid ""
+"Inverts the sample audio data. Right click on it to set the MIDI automation "
+"controller."
+msgstr "Inverse les données audio de l'échantillon. Clic-droit pour ajuster le contrôleur MIDI d'automation"
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:377
+msgid "Plays the sample, synchronized with the sequencer."
+msgstr "Joue l'échantillon, synchronisé avec le séquenceur"
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:383
+msgid "Opens an audio file or Loop Sampler patch."
+msgstr "Charge un fichier audio ou une boucle."
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:389
+msgid "Saves current configuration to a Loop Sampler patch file."
+msgstr "Enregistre la configuration actuelle dans un fichier."
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:395
+msgid ""
+"Send current slices configuration to the selected MIDI tracks, as MIDI notes."
+msgstr "Envoie la configuration courante aux pistes MIDI sélectionnées, sous forme de notes MIDI."
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:401
+msgid "Shows Loop Sampler's optional view."
+msgstr "Affiche l'aide optionnelle de l'échantilloneur"
+
+#: src/plugins/loop_sampler/LoopSampler.cpp:1277
+msgid "Save Loop Sampler patch"
+msgstr "Enregistre le fichier de l'échantilloneur"
+
+#: src/plugins/loop_sampler/LoopSamplerView.cpp:67
+msgid "Note"
+msgstr ""
+
+#: src/plugins/loop_sampler/LoopSamplerView.cpp:70
+msgid "Pitch"
+msgstr ""
+
+#: src/plugins/loop_sampler/LoopSamplerView.cpp:82
+msgid "Volume"
+msgstr ""
+
+#: src/plugins/loop_sampler/LoopSamplerView.cpp:85
+msgid "Affect"
+msgstr "Affecte"
+
+#: src/samplerate/WiredSampleRate.cpp:65
+msgid "Would you like to convert your file from "
+msgstr "Souhaitez-vous convertir votre fichier de "
+
+#: src/samplerate/WiredSampleRate.cpp:72
+msgid " to "
+msgstr " à "
+
+#: src/samplerate/WiredSampleRate.cpp:78
+msgid " and  "
+msgstr " et "
+
+#: src/samplerate/WiredSampleRate.cpp:79
+msgid "samplerate "
+msgstr "(taux d'échantillonage) "
+
+#: src/samplerate/WiredSampleRate.cpp:80
+#, c-format
+msgid "%d Hz to %ld Hz ?"
+msgstr "%d Hz vers %ld Hz ?"
+
+#: src/samplerate/WiredSampleRate.cpp:84
+msgid "File format mismatch"
+msgstr "Formats de fichier différent"
+
+#: src/samplerate/WiredSampleRate.cpp:106
+msgid "Please Choose conversion quality (default is better)"
+msgstr "Veuillez sélectionner la qualité de conversion (meilleure par défaut)"
+
+#: src/samplerate/WiredSampleRate.cpp:107
+msgid "Conversion quality"
+msgstr "Qualité de conversion"
+
+#: src/samplerate/WiredSampleRate.cpp:168
+msgid "Converting wave file"
+msgstr "Conversion du fichier sonore"
+
+#: src/samplerate/WiredSampleRate.cpp:291
+msgid "File format selection"
+msgstr "Sélection du format de fichier"
+
+#: src/samplerate/WiredSampleRate.cpp:293
+msgid ""
+"Please select the options that\n"
+"you want for the downmix.\n"
+"(Defaults are current project's configuration)"
+msgstr ""
+"Veuillez choisir les options que\n"
+"vous souhaitez pour le mixage final.\n"
+"(Configuration du projet par défaut)"
+
+#: src/samplerate/WiredSampleRateTypes.cpp:5
+msgid "Unsigned 8 bits"
+msgstr "8 bits non signé"
+
+#: src/samplerate/WiredSampleRateTypes.cpp:6
+msgid "8 bits"
+msgstr ""
+
+#: src/samplerate/WiredSampleRateTypes.cpp:7
+msgid "16 bits"
+msgstr ""
+
+#: src/samplerate/WiredSampleRateTypes.cpp:8
+msgid "24 bits"
+msgstr ""
+
+#: src/samplerate/WiredSampleRateTypes.cpp:9
+msgid "Floating 32 bits"
+msgstr "32 bits (flottant)"
+
+#~ msgid "No help provided for this plugin"
+#~ msgstr "Aucune aide fournie par ce module"
+
+#~ msgid "BaseLength"
+#~ msgstr "Taille de base"
+
+#~ msgid "Frequency"
+#~ msgstr "Fréquence"
+
+#~ msgid "Feedback"
+#~ msgstr "Retour"
+
+#~ msgid "Filter"
+#~ msgstr "Fitre"
+
+#~ msgid "Cutoff"
+#~ msgstr "Coupure"
+
+#~ msgid "Resonance"
+#~ msgstr "Résonnance"
+
+#~ msgid "MIDICutoff1"
+#~ msgstr "CoupureMIDI1"
+
+#~ msgid "MIDIResonance1"
+#~ msgstr "RésonnanceMIDI1"
+
+#~ msgid "MIDICutoff2"
+#~ msgstr "CoupureMIDI2"
+
+#~ msgid "MIDIResonance2"
+#~ msgstr "RésonnanceMIDI2"
+
+#~ msgid "ReverbSelected"
+#~ msgstr "Reverb sélectionnée"
+
+#~ msgid "MixLevel"
+#~ msgstr "Niveau de mélange"
+
+#~ msgid "Decay"
+#~ msgstr "Décalage"
+
+#~ msgid "Depth"
+#~ msgstr "Profondeur"
+
+#~ msgid "FrequencyOFS"
+#~ msgstr "FréquenceOFS"
+
+#~ msgid "Resolution"
+#~ msgstr "Résolution"
+
+#~ msgid "Unknown format"
+#~ msgstr "Format inconnu"
+
+#~ msgid "Undo "
+#~ msgstr "Annuler "
+
+#~ msgid "Redo "
+#~ msgstr "Répéter "
+
+#~ msgid "AddTrackAction"
+#~ msgstr "Ajout de piste"
+
+#~ msgid "creating rack effect"
+#~ msgstr "création de rack"
+
+#~ msgid "importing wave"
+#~ msgstr "import d'un son"
+
+#~ msgid "importing AKAI"
+#~ msgstr "import AKAI"
+
+#~ msgid "creating rack"
+#~ msgstr "Création de rack"
+
+#~ msgid "changing rack effect parameters"
+#~ msgstr "Changement de parametre d'un module"
