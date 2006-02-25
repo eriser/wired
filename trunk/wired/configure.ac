@@ -217,9 +217,7 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
 		src/data/plugins/reverb/Makefile
 		src/data/plugins/wahwah/Makefile
 		src/data/plugins/chorus/Makefile
-		src/data/dssi/Makefile
-		src/data/i18n/Makefile
-		src/data/i18n/fr/Makefile
+		src/data/dssi/Makefile		
 		src/conf/Makefile
 		src/xml/Makefile
 		src/dssi/Makefile
