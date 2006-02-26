@@ -22,9 +22,14 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 {
   SetBackgroundColour(CL_RULER_BACKGROUND);
   //wxColour(204, 199, 219));//*wxLIGHT_GREY);
+  BpmText = NULL;
   wxImage *tr_bg = 
     new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_BACKGR_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   TrBmp = new wxBitmap(tr_bg);
+  
+  wxImage *tr_bg_loop = 
+    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_BACKGR_LOOP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+  TrLoopBmp = new wxBitmap(tr_bg_loop);
     
   wxImage *play_up = 
     new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_PLAYUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
@@ -150,6 +155,7 @@ Transport::~Transport()
 	if (SigDenUpBtn) delete SigDenUpBtn;
 	if (SigDenDownBtn) delete SigDenDownBtn;  
 	if (TrBmp) delete TrBmp;
+	if (TrLoopBmp) delete TrLoopBmp;
 	if (BpmText) delete BpmText;
 }
 
@@ -221,6 +227,8 @@ void				Transport::OnLoop(wxCommandEvent &WXUNUSED(event))
   wxMutexLocker m(SeqMutex);
 
   Seq->Loop = LoopBtn->GetOn();
+  Refresh();
+  
 }
 
 void				Transport::OnMetronome(wxCommandEvent &WXUNUSED(event))
@@ -254,7 +262,10 @@ void				Transport::OnPaint(wxPaintEvent &WXUNUSED(event))
   wxMemoryDC			memDC;
   wxPaintDC			dc(this);
   
-  memDC.SelectObject(*TrBmp);    
+  if (LoopBtn->GetOn())
+	  memDC.SelectObject(*TrLoopBmp);    
+  else
+	  memDC.SelectObject(*TrBmp);
   wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
   while (upd)
     {    
@@ -374,7 +385,7 @@ void				Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
 
 void				Transport::OnBpmClick(wxCommandEvent &WXUNUSED(event))
 {
-  if (BpmText) delete BpmText;	
+  if (BpmText) BpmText->Destroy();	
   BpmText = new wxTextCtrl(this, Transport_BpmEnter, BpmLabel->GetLabel(), 
 			   BpmLabel->GetPosition(), wxSize(50, BpmLabel->GetSize().y), 
 			   wxTE_PROCESS_ENTER);
@@ -397,6 +408,7 @@ void				Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
 	  BpmLabel->SetLabel(s);      
 	}
       BpmText->Destroy();
+      BpmText = NULL;
     }
 }
 
