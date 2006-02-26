@@ -330,7 +330,7 @@ void                MainWindow::InitLocale()
     mLocale = new wxLocale();
     if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
     {
-        mLocale->AddCatalogLookupPathPrefix(string(PACKAGE_LOCALE_DIR));
+        //mLocale->AddCatalogLookupPathPrefix(string(PACKAGE_LOCALE_DIR));
         mLocale->AddCatalog(wxT("wired"));
         mLocale->AddCatalog(wxT("wxstd"));
     }
