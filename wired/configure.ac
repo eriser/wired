@@ -163,7 +163,11 @@ fi
 ALL_LINGUAS="fr" 
 AM_GNU_GETTEXT 
 
-AC_DEFINE(PACKAGE_LOCALE_DIR, "${INSTALL_PREFIX}/${DATADIRNAME}/locale", [Directory for locale files]) 
+if test "x${prefix}" = "xNONE"; then 
+ AC_DEFINE(PACKAGE_LOCALE_DIR, "/usr/local/share/wired/locale") 
+else 
+ AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale") 
+fi 
 
 AC_CONFIG_FILES([Makefile po/Makefile.in
 		src/Makefile
