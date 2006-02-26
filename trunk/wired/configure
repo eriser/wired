@@ -29446,11 +29446,17 @@ _ACEOF
 
 
 
-
-cat >>confdefs.h <<\_ACEOF
-#define PACKAGE_LOCALE_DIR "${INSTALL_PREFIX}/${DATADIRNAME}/locale"
+if test "x${prefix}" = "xNONE"; then
+ cat >>confdefs.h <<\_ACEOF
+#define PACKAGE_LOCALE_DIR "/usr/local/share/wired/locale"
 _ACEOF
 
+else
+ cat >>confdefs.h <<\_ACEOF
+#define PACKAGE_LOCALE_DIR "${prefix}/share/wired/locale"
+_ACEOF
+
+fi
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ac_config_files="$ac_config_files Makefile po/Makefile.in src/Makefile src/audio/Makefile src/editmidi/Makefile src/engine/Makefile src/fileloader/Makefile src/gui/Makefile src/midi/Makefile src/midi/portmidi/Makefile src/midi/portmidi/porttime/Makefile src/mixer/Makefile src/plugins/Makefile src/plugins/beatbox/Makefile src/plugins/compressor/Makefile src/plugins/crusher/Makefile src/plugins/delay/Makefile src/plugins/filter/Makefile src/plugins/loop_sampler/Makefile src/plugins/akai_sampler/Makefile src/plugins/reverb/Makefile src/plugins/synth/Makefile src/plugins/chorus/Makefile src/plugins/wahwah/Makefile src/plugins/test/Makefile src/redist/Makefile src/sequencer/Makefile src/undo/Makefile src/libs/Makefile src/libs/WiredWidgets/Makefile src/libs/WiredWidgets/src/Makefile src/libs/WiredAkai/Makefile src/libs/WiredAkai/src/Makefile src/data/Makefile src/data/ihm/Makefile src/data/ihm/mixer/Makefile src/data/ihm/opt/Makefile src/data/ihm/player/Makefile src/data/ihm/seqtrack/Makefile src/data/ihm/splash/Makefile src/data/ihm/toolbar/Makefile src/data/ihm/widgets/Makefile src/data/plugins/Makefile src/data/plugins/akaisampler/Makefile src/data/plugins/beatbox/Makefile src/data/plugins/compressor/Makefile src/data/plugins/crusher/Makefile src/data/plugins/delay/Makefile src/data/plugins/filter/Makefile src/data/plugins/loopsampler/Makefile src/data/plugins/reverb/Makefile src/data/plugins/wahwah/Makefile src/data/plugins/chorus/Makefile src/data/dssi/Makefile src/conf/Makefile src/xml/Makefile src/dssi/Makefile src/samplerate/Makefile src/codec/Makefile src/codec/wiredcodec/Makefile src/codec/wiredcodec/flac/Makefile src/codec/wiredcodec/mpeg/Makefile src/codec/wiredcodec/vorbis/Makefile src/wiredvideo/Makefile"
 

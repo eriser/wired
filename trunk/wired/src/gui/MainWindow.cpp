@@ -330,10 +330,9 @@ void                MainWindow::InitLocale()
     mLocale = new wxLocale();
     if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
     {
-        string      LookupPath(string(INSTALL_PREFIX) + string(WIRED_DATADIR) + string("i18n"));
-        mLocale->AddCatalogLookupPathPrefix(LookupPath);
-        mLocale->AddCatalog(wxT("fr"));
-        mLocale->AddCatalog(wxT("wired_fr"));
+        mLocale->AddCatalogLookupPathPrefix(string(PACKAGE_LOCALE_DIR));
+        mLocale->AddCatalog(wxT("wired"));
+        mLocale->AddCatalog(wxT("wxstd"));
     }
     else
         cout << "[MAINWIN] Could not initialize locale, falling down on default" << endl;
