@@ -8,6 +8,7 @@
 #include <wx/gauge.h>
 
 #define TRANSPORT_BACKGR_IMG	"ihm/player/tr_window_bg.png"
+#define TRANSPORT_BACKGR_LOOP_IMG	"ihm/player/tr_window_bg_loop.png"
 #define TRANSPORT_PLAYUP_IMG	"ihm/player/tr_window_play_up2.png"
 #define TRANSPORT_PLAYDO_IMG	"ihm/player/tr_window_play_up.png"
 #define TRANSPORT_STOPUP_IMG	"ihm/player/tr_window_stop_up.png"
@@ -95,6 +96,7 @@ class				Transport : public wxPanel
   HoldButton			*SigDenDownBtn;
   
   wxBitmap			*TrBmp;
+  wxBitmap			*TrLoopBmp;
 
   wxStaticText			*MesLabel;
   wxStaticText			*SigLabel;
