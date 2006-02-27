@@ -161,8 +161,8 @@ int WiredCodec::Encode(float **pcm, string OutExtension)
 unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned long length)
 {
   list<t_WLib>::const_iterator		iterTWLib;
-  unsigned long						id;
-  unsigned long						retLenght = 0;
+  unsigned long				id;
+  unsigned long				retLenght = 0;
   
   WiredCodecMutex.Lock();
   if (codecToUse.find(filename) != codecToUse.end())
@@ -190,20 +190,24 @@ unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned lo
   return retLenght;
 }
 
-void		WiredCodec::InitWLib()
+//
+// search for every .so file in the _WiredPath dir
+// and push it in the _WiredSo list.
+//
+
+void			WiredCodec::InitWLib()
 {
-  
-  wxDir		dir(_WiredPath.c_str());
-  wxString	filename;
-  bool		cont;
+  wxDir			dir(_WiredPath.c_str());
+  wxString		filename;
+  bool			cont;
   
   if (dir.IsOpened())
     {
       cont = dir.GetFirst(&filename, "", wxDIR_FILES);
       while (cont)
 	{
-	  if (filename.find(".so", filename.length() - 3) != -1)
-	    _WiredSo.push_back((string)filename);
+	  if (filename.AfterLast('.') == "so")
+	    _WiredSo.push_back(filename);
 	  cont = dir.GetNext(&filename);
 	}
     }
@@ -211,7 +215,7 @@ void		WiredCodec::InitWLib()
 
 void WiredCodec::WLoadLib()
 {
-  list<string>::const_iterator	iter;
+  list<wxString>::const_iterator	iter;
   
   for (iter = _WiredSo.begin(); iter != _WiredSo.end(); iter++)
     WLibLoader(_WiredPath + string("/") + *iter);
@@ -242,7 +246,7 @@ void	WiredCodec::FeelExtension(list<t_LibInfo> Info)
     }
 }
 
-void WiredCodec::WLibLoader(const string& filename)
+void WiredCodec::WLibLoader(const wxString& filename)
 {
   list<t_LibInfo>::const_iterator	iter;
   void					*handle;

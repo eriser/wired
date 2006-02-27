@@ -2,6 +2,7 @@
 #define __WiredCodec_H__
 
 #include <wx/thread.h>
+#include <wx/string.h>
 #include <dlfcn.h>
 #include <vector>
 #include <list>
@@ -35,7 +36,7 @@ class			WiredCodec
  private:
   list<t_WLib>				_WLib;														/* Instance of codec found */
   string       				_WiredPath;													/* path of codecs */
-  list<string>				_WiredSo;													/* list of codec.so */
+  list<wxString>				_WiredSo;													/* list of codec.so */
   std::map<string, int>			codecToUse;													/* Codec to use :) */
   unsigned long				_CurrentUniqueID;											/* */
   char					*path;
@@ -45,7 +46,7 @@ class			WiredCodec
   void					FeelExtension(list<t_LibInfo> Info);
   void	       				InitWLib();													/* look for .so */
   void	       				WLoadLib();													/* load all .so */
-  void	       				WLibLoader(const string& filename);							/* load .so */
+  void	       				WLibLoader(const wxString& filename);							/* load .so */
   int	       				CheckExtension(const string& str, const list<string>& ExtList);	/* check same occurence extensions */
   t_WLib       				FindBestCodec(string extension);							/* Not implemented yet */
   void	       				DumpCodec();
