@@ -728,8 +728,8 @@ bool			FileLoader::ExtMatch(wxString path)
 
 wxString		FileLoader::FormatSize(off_t size)
 {
-  int			unit = 0;
-  char			tmp[1024];
+  int			            unit = 0;
+  char			        tmp[1024];
   
   for (unit = 0; size > 1024; unit++)
     size /= 1024;
