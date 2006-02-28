@@ -27,6 +27,7 @@
 #include <iostream>
 #include "StaticBitmap.h"
 #include <wx/cshelp.h>
+#include <wx/thread.h>
 #include "Hint.h"
 
 using namespace std;
@@ -74,3 +75,5 @@ DECLARE_EVENT_TABLE()
 };
 
 #endif
+
+//extern wxMutex		*FaderCtrlMutex;

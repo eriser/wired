@@ -1315,7 +1315,8 @@ void LoopSampler::OnVolume(wxScrollEvent &event)
 {
   Mutex.Lock();
 
-  Volume = VolumeFader->GetValue() / 100.f;
+  //Volume = VolumeFader->GetValue() / 100.f;
+  cout << "Volume = " << Volume << endl;
   Workshop.SetVolume(Volume);
 
   Mutex.Unlock();
@@ -1325,7 +1326,8 @@ void LoopSampler::OnAttack(wxScrollEvent &event)
 {
   Mutex.Lock();
 
-  AttackMs = AttackFader->GetValue() / 1000.f;
+  cout << "Attack = " << Attack << endl;
+  //AttackMs = AttackFader->GetValue() / 1000.f;
 
   if (AttackMs)
     {

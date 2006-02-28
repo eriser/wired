@@ -386,7 +386,7 @@ void FilterPlugin::SetFilter(int type, float cutoff, float resonance)
   double sn = sin(omega);
   double cs = cos(omega);
   double mcs = 1 - cs;
-  double alpha = sn * sinh(M_LN2 / 2 * exp(-3 * Res) * omega / sn);
+  double alpha = sn * sinh(M_LN2 / 2 * exp(-3 * Res / 100.f) * omega / sn);
 
   if (IS_DENORMAL(omega))
     omega = 0.0;
@@ -505,7 +505,7 @@ void FilterPlugin::ProcessEvent(WiredEvent &event)
       Cutoff = event.MidiData[2] * step;
       if (Cutoff < 1.f)
 	Cutoff = 1.f;
-      SetFilter(FilterSelect->GetValue(), Cutoff, Res);
+      SetFilter(FilterSelect->GetValue(), Cutoff, Res / 100.f);
 
       UpdateCutoff = true;
       AskUpdate();
@@ -516,7 +516,7 @@ void FilterPlugin::ProcessEvent(WiredEvent &event)
       float step = 100.f / 127.f;
       
       Res = (event.MidiData[2] * step) / 100.f;
-      SetFilter(FilterSelect->GetValue(), Cutoff, Res);
+      SetFilter(FilterSelect->GetValue(), Cutoff, Res / 100.f);
 
       UpdateRes = true;
       AskUpdate();
@@ -547,7 +547,8 @@ void FilterPlugin::Update()
     }
   if (UpdateRes)
     {
-      ResFader->SetValue((long)(Res * 100.f));
+      //ResFader->SetValue((long)(Res * 100.f));
+      ResFader->SetValue((long)Res);
       UpdateRes = false;      
     }
   if (UpdateBypass)
@@ -586,7 +587,7 @@ void FilterPlugin::ApplyFilter()
   memset(History[0], 0, sizeof (float) * FILTER_SIZE);  
   memset(History[1], 0, sizeof (float) * FILTER_SIZE);  
   
-  SetFilter(FilterSelect->GetValue(), Cutoff, Res);
+  SetFilter(FilterSelect->GetValue(), Cutoff, Res / 100.f);
   
   Mutex.Unlock();     
 }
@@ -814,8 +815,8 @@ void FilterPlugin::OnCutoff(wxScrollEvent &e)
 {
   Mutex.Lock();
 
-  Cutoff = CutoffFader->GetValue();
-  SetFilter(FilterSelect->GetValue(), Cutoff, Res);
+  //Cutoff = CutoffFader->GetValue();
+  SetFilter(FilterSelect->GetValue(), Cutoff, Res / 100.f);
 
   //cout << "Cutoff: " << Cutoff << "; Res: " << Res << endl;
 
@@ -826,7 +827,7 @@ void FilterPlugin::OnResonance(wxScrollEvent &e)
 {
   Mutex.Lock();
 
-  Res = ResFader->GetValue() / 100.f;
+  //Res = ResFader->GetValue() / 100.f;
   SetFilter(FilterSelect->GetValue(), Cutoff, Res);
 
   //cout << "Cutoff: " << Cutoff << "; Res: " << Res << endl;
