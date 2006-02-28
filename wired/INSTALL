@@ -12,7 +12,7 @@ Please read them below :
 
   - GTK 2 : http://www.gtk.org
 
-  - wxGTK 2.5.x (recommended 2.5.0 or 2.5.3) : www.wxwidgets.org
+  - wxGTK 2.6.x (recommended 2.6.1 or 2.6.2) : www.wxwidgets.org
 	* When compiling wxWidgets, be sure you are using GTK2 support by 
 	passing to configure script: --enable-gtk2
 
