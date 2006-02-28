@@ -19,6 +19,7 @@
 #include "../redist/Plugin.h"
 #include "../audio/WriteWaveFile.h"
 #include "../samplerate/WiredSampleRate.h"
+#include "../gui/Threads.h"
 
 Sequencer::Sequencer() 
   : wxThread(), BPM(96), SigNumerator(4), SigDenominator(4), Loop(false), 
@@ -358,11 +359,6 @@ void					*Sequencer::Entry()
   cout << "[SEQ] Thread finished !" << endl;
   //return (Wait());
   return NULL;
-}
-
-void					Sequencer::OnExit()
-{
-  cout << "[SEQ] Thread terminated" << endl;
 }
 
 void					Sequencer::Play()
@@ -1025,4 +1021,15 @@ void					Sequencer::StopFile()
 		if (w)
 	      delete w;
     }
+}
+
+void                    Sequencer::OnExit()
+{
+    wxCriticalSectionLocker locker(wxGetApp().m_critsect);
+
+    wxArrayThread& threads = wxGetApp().m_threads;
+    threads.Remove(this);
+    if (threads.IsEmpty())
+            wxGetApp().m_semAllDone.Post();
+    cout << "[SEQ] Thread terminated" << endl;
 }

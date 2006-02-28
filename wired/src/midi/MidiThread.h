@@ -19,7 +19,7 @@ class					MidiThread : public wxThread
   ~MidiThread();
 
   virtual void				*Entry();
-  virtual void				OnExit();
+  void          				OnExit();
   
   void					OpenDevice(int id);
   void					OpenDefaultDevices();

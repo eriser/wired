@@ -3,6 +3,7 @@
 #include "Settings.h"
 #include "MidiController.h"
 #include "MidiInDevice.h"
+#include "../gui/Threads.h"
 
 wxMutex					MidiMutex;
 wxMutex					MidiDeviceMutex;
@@ -20,11 +21,6 @@ MidiThread::~MidiThread()
   for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
   	if (*i)
 	    delete *i;
-}
-
-void MidiThread::OnExit()
-{
-
 }
 
 void					MidiThread::OpenDevice(int id)
@@ -134,6 +130,7 @@ void					*MidiThread::Entry()
       	break;
       wxMilliSleep(1);
     }
+     cout << "[MIDITHREAD] Thread finished !" << endl;    
   return (0x0);
 }
 
@@ -166,4 +163,15 @@ void					MidiThread::AnalyzeMidi(int id)
     Seq->AddMidiEvent(id, midi_msg);
 
   MidiMutex.Unlock();
+}
+
+void                    MidiThread::OnExit()
+{
+    wxCriticalSectionLocker locker(wxGetApp().m_critsect);
+
+    wxArrayThread& threads = wxGetApp().m_threads;
+    threads.Remove(this);
+    if (threads.IsEmpty())
+            wxGetApp().m_semAllDone.Post();
+     cout << "[MIDITHREAD] Thread terminated !" << endl;    
 }
