@@ -8,9 +8,14 @@
 #include <wx/snglinst.h>
 #include <wx/debugrpt.h>
 
+#include "wx/thread.h"
+#include "wx/dynarray.h"
+
 #define APP_TITLE		"Wired 0.2"
 #define APP_WIDTH		(800)
 #define APP_HEIGHT		(600)
+
+WX_DEFINE_ARRAY_PTR(wxThread *, wxArrayThread);
 
 class MainWindow;
 
@@ -20,6 +25,9 @@ class MainApp : public wxApp
   virtual bool			OnInit();
   virtual int			OnExit();
   int				FilterEvent(wxEvent& event);
+  wxArrayThread 	m_threads;
+  wxCriticalSection m_critsect;
+  wxSemaphore 		m_semAllDone;
 
  private:
   MainWindow				*Frame;
@@ -27,5 +35,7 @@ class MainApp : public wxApp
   void                      OnFatalException();
   void						OnUnhandledException();
 };
+
+DECLARE_APP(MainApp)
 
 #endif/*__MAINAPP_H__*/

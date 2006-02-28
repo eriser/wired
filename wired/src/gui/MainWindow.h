@@ -105,6 +105,7 @@ class					MainWindow: public wxFrame
   int					PluginMenuIndexCount;			
   bool					RackModeView;
   bool					SeqModeView;
+  void					OnIdle(wxIdleEvent &event);
 
     /* Locale */
     wxLocale            *mLocale;

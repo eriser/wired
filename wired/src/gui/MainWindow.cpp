@@ -7,6 +7,7 @@
 #include <wx/splitter.h>
 #include <wx/progdlg.h>
 #include <wx/filename.h>
+#include <wx/utils.h>
 #include <algorithm>
 #include "SequencerGui.h"
 #include "HostCallback.h"
@@ -42,6 +43,7 @@
 #include "../dssi/WiredExternalPluginMgr.h"
 #include "FileConversion.h"
 #include "config.h"
+#include "Threads.h"
 
 
 Rack					*RackPanel;
@@ -62,8 +64,13 @@ FileConversion				*FileConverter;
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
 	    wxDEFAULT_FRAME_STYLE | wxWS_EX_PROCESS_IDLE)
-{
+{	
+  SeqTimer = NULL;
   InitLocale();
+  
+#if wxUSE_STATUSBAR
+    CreateStatusBar(2);
+#endif
   WiredSettings = new Settings(); // FIXME catch what we can here
   CurrentSession = new WiredSession("");
   CurrentXmlSession = new WiredSessionXml("");
@@ -165,7 +172,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   
   // Le Mixer doit etre declarer apres AudioEngine 
   Mix = new Mixer();
-  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 150), wxSIMPLE_BORDER);
+  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 120), wxSIMPLE_BORDER);
   Seq = new Sequencer();
   MidiEngine = new MidiThread();
   MidiEngine->OpenDefaultDevices();
@@ -173,6 +180,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
     cout << "[MAINWIN] Create MidiEngine thread failed !" << endl;
   if (MidiEngine->Run() != wxTHREAD_NO_ERROR)
     cout << "[MAINWIN] Run MidiEngine thread failed !" << endl;  
+   else
+   	wxGetApp().m_threads.Add(MidiEngine);
   /* Creation Menu */
 
   TransportFrame = 0x0;
@@ -312,6 +321,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   Seq->SetPriority(WXTHREAD_MAX_PRIORITY);
   if (Seq->Run() != wxTHREAD_NO_ERROR)
     cout << "[MAINWIN] Run sequencer thread failed !" << endl; 
+  else
+  	wxGetApp().m_threads.Add(Seq);
 
   Connect(MainWin_ImportWave, wxEVT_COMMAND_MENU_SELECTED, 
 	  (wxObjectEventFunction)(wxEventFunction) 
@@ -423,18 +434,20 @@ void					MainWindow::OnClose(wxCloseEvent &event)
     (*k)->Unload();
     
   cout << "[MAINWIN] Unloading external plugins..." << endl;
-  try
-  {
-      if (Seq)
-      {        
-    	  Seq->Delete();
-    	  delete Seq;
-      }
-  }
-  catch (...)
-  {
-    
-  }
+//  delete Mix;
+//  Mix = NULL;
+ if (Seq)
+  {      
+  	SeqTimer->Stop();
+  	delete SeqTimer;
+	  //Seq->Delete();
+	  delete Seq;
+  }  
+  if (MidiEngine)
+	{
+  	//MidiEngine->Delete();
+	  delete MidiEngine;
+	}
   if (LoadedExternalPlugins)
 	  delete LoadedExternalPlugins;
   
@@ -447,13 +460,13 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   }
   if (Audio)
 	  delete Audio;
-  if (MidiEngine)
-	{
-  	MidiEngine->Delete();
-	  delete MidiEngine;
-	}
   if (WiredSettings)
 	  delete WiredSettings;
+//  delete Mix;
+//  delete OptPanel;
+//  delete CurrentSession;
+//  delete CurrentXmlSession;
+//  delete LogWin;
   cout << "[MAINWIN] Closing..." << endl; 
 //  exit(0);
 }
@@ -1600,6 +1613,25 @@ void                  MainWindow::OnShowDebug(wxCommandEvent &event)
    }
 }
 
+void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
+{
+	if (SeqTimer)
+	{
+		wxString			LeftSpace(_("Left space on drive : ")), LeftMemory(_("Free memory : "));
+		wxLongLong			Total, Free;
+		
+		wxLongLong Size = wxGetFreeMemory();
+		LeftMemory += Size.ToString();
+		if (CurrentXmlSession)
+			wxGetDiskSpace(CurrentXmlSession->GetAudioDir(), &Total, &Free);
+		else
+			wxGetDiskSpace(wxFileName::GetCwd(), &Total, &Free);
+		LeftSpace += Free.ToString() + "/" + Total.ToString();
+		SetStatusText(LeftSpace, 0);
+		SetStatusText(LeftMemory, 1);
+	}
+}
+
 BEGIN_DECLARE_EVENT_TYPES()
     DECLARE_EVENT_TYPE(wxSetCursorPos, 313131)
 END_DECLARE_EVENT_TYPES()
@@ -1647,5 +1679,6 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   //EVT_IDLE(MainWindow::OnIdle)
   //EVT_TEXT_MAXLEN(101010, MainWindow::OnSetPosition)
   //EVT_PLAYPOSITION(313131, MainWindow::OnSetPosition)
+  EVT_IDLE(MainWindow::OnIdle)
 END_EVENT_TABLE()
 
