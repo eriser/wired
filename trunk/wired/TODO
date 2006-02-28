@@ -1,7 +1,1 @@
 WiredCodec ::
-
-Gestion des listes des extensions dans WLoadLib.
-conserver les listes.
-CanDecode doit egalement gerer le encode  / booleen.
-GetExtension => booleen encode/decode
-gestion des notes dans le candecode.
