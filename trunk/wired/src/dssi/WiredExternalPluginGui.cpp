@@ -16,29 +16,6 @@ static PlugInitInfo info;
 
 BEGIN_EVENT_TABLE(WiredDSSIGui, wxWindow)
   EVT_BUTTON(4242, WiredDSSIGui::OnBypass)
- //  EVT_COMMAND_SCROLL(Delay_Time, DelayPlugin::OnDelayTime)
-  EVT_COMMAND_SCROLL(1, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(2, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(3, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(4, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(5, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(6, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(7, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(8, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(9, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(10, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(11, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(12, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(13, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(14, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(15, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(16, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(17, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(18, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(19, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(20, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(21, WiredDSSIGui::OnFaderMove)
-  EVT_COMMAND_SCROLL(22, WiredDSSIGui::OnFaderMove)
   EVT_PAINT(WiredDSSIGui::OnPaint)
 END_EVENT_TABLE()
 
@@ -229,26 +206,26 @@ void		WiredDSSIGui::OnBypassController(wxMouseEvent &e)
   //_Bypass();
 }
 
-void		WiredDSSIGui::OnFaderMove(wxScrollEvent &e)
-{
-  int		id = e.GetId();
+// void		WiredDSSIGui::OnFaderMove(wxScrollEvent &e)
+// {
+//   int		id = e.GetId();
 
-  if (FaderIndex.find(id) != FaderIndex.end())
-    if (_GuiControls.find(FaderIndex[id]) != _GuiControls.end())
-      {
-	float min = _GuiControls[FaderIndex[id]].Data.LowerBound;
-	float max = _GuiControls[FaderIndex[id]].Data.UpperBound;
-	float range = max - min;
+//   if (FaderIndex.find(id) != FaderIndex.end())
+//     if (_GuiControls.find(FaderIndex[id]) != _GuiControls.end())
+//       {
+// 	float min = _GuiControls[FaderIndex[id]].Data.LowerBound;
+// 	float max = _GuiControls[FaderIndex[id]].Data.UpperBound;
+// 	float range = max - min;
 
-	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
-	*_GuiControls[FaderIndex[id]].Data.Data = ((FaderCtrl*)Faders[id - 1])->GetValue() / 100.f * range + min;
-	cout << "Dans OnFaderMove : " << *_GuiControls[FaderIndex[id]].Data.Data << endl;
-	//cout << (float)_GuiControls[FaderIndex[id]].Data.LowerBound << " < " <<  
-	//Faders[id - 1]->GetValue() << " < " << (float)_GuiControls[FaderIndex[id]].Data.UpperBound << endl;
-	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
-	//cout << "dans le callback" << endl;
-      }
-}
+// 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
+// 	*_GuiControls[FaderIndex[id]].Data.Data = ((FaderCtrl*)Faders[id - 1])->GetValue() / 100.f * range + min;
+// 	cout << "Dans OnFaderMove : " << *_GuiControls[FaderIndex[id]].Data.Data << endl;
+// 	//cout << (float)_GuiControls[FaderIndex[id]].Data.LowerBound << " < " <<  
+// 	//Faders[id - 1]->GetValue() << " < " << (float)_GuiControls[FaderIndex[id]].Data.UpperBound << endl;
+// 	//cout << "* " << (*(_GuiControls[FaderIndex[id]].Data.Data)) * 100 << endl;
+// 	//cout << "dans le callback" << endl;
+//       }
+// }
 
 void		WiredDSSIGui::DestroyView()
 {
