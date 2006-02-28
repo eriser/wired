@@ -23,6 +23,7 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   SetBackgroundColour(CL_RULER_BACKGROUND);
   //wxColour(204, 199, 219));//*wxLIGHT_GREY);
   BpmText = NULL;
+  BpmDownBtn = NULL;
   wxImage *tr_bg = 
     new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_BACKGR_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   TrBmp = new wxBitmap(tr_bg);
@@ -134,12 +135,13 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   MilliSigLabel = new wxStaticText(this, -1, "000", wxPoint(237, 34), wxSize(32, 32));
   MilliSigLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   MilliSigLabel->SetForegroundColour(*wxWHITE);
-
+  Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &Transport::OnIdle);
   
 }
 
 Transport::~Transport()
 {
+    Disconnect(wxEVT_IDLE, (wxObjectEventFunction) &Transport::OnIdle);
 	//if (vum) delete vum;
 	if (PlayBtn) delete PlayBtn;
 	if (StopBtn) delete StopBtn;
