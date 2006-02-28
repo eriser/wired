@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wired 0.2\n"
 "Report-Msgid-Bugs-To: wired@bloodshed.net\n"
-"POT-Creation-Date: 2006-02-25 23:55+0100\n"
+"POT-Creation-Date: 2006-02-28 21:04+0100\n"
 "PO-Revision-Date: 2006-02-01 16:59+0100\n"
 "Last-Translator: Pierre-Jean Leger <pj-leger@users.sourceforge.net>\n"
 "Language-Team: French <FR@li.org>\n"
@@ -61,7 +61,7 @@ msgstr "Les sorties sonores sont : "
 msgid "Data Outputs are : "
 msgstr "Les sorties données sont : "
 
-#: src/editmidi/EditMidi.cpp:262 src/gui/SequencerGui.cpp:355
+#: src/editmidi/EditMidi.cpp:262 src/gui/SequencerGui.cpp:356
 msgid "Move"
 msgstr "Déplacer"
 
@@ -81,7 +81,7 @@ msgstr "Redimensionner les notes"
 msgid "Del"
 msgstr "Suppr"
 
-#: src/editmidi/EditMidi.cpp:264 src/gui/SequencerGui.cpp:357
+#: src/editmidi/EditMidi.cpp:264 src/gui/SequencerGui.cpp:358
 msgid "Deletes notes"
 msgstr "Supprimer les notes"
 
@@ -173,20 +173,20 @@ msgstr "Ceci est un échantillon audio. Double-cliquez dessus pour ouvrir l'édite
 msgid "MASTER"
 msgstr ""
 
-#: src/gui/FileConversion.cpp:192
+#: src/gui/FileConversion.cpp:188
 #, fuzzy
 msgid "Conversion"
 msgstr "Qualité de conversion"
 
-#: src/gui/FileConversion.cpp:192
+#: src/gui/FileConversion.cpp:188
 msgid "Decoding file, please wait."
-msgstr ""
+msgstr "Decodage en cours, veuillez patienter."
 
-#: src/gui/FileConversion.cpp:306
+#: src/gui/FileConversion.cpp:302
 msgid "Do you want to copy this file to your project directory ?"
 msgstr "Souhaitez-vous copier ce fichier dans le répertoire de travail ?"
 
-#: src/gui/FileConversion.cpp:317
+#: src/gui/FileConversion.cpp:313
 msgid "Could not copy file"
 msgstr "Impossible de copier le fichier"
 
@@ -194,243 +194,243 @@ msgstr "Impossible de copier le fichier"
 msgid "Wired Help"
 msgstr "Aide de Wired"
 
-#: src/gui/MainWindow.cpp:96 src/gui/MainWindow.cpp:1286
+#: src/gui/MainWindow.cpp:103 src/gui/MainWindow.cpp:1300
 msgid "audio engine"
 msgstr "moteur audio"
 
-#: src/gui/MainWindow.cpp:96
+#: src/gui/MainWindow.cpp:103
 msgid "You may check for your audio settings if you want to use Wired.."
 msgstr "Vous devriez vérifier vos parametre audio si vous souhaitez utiliser Wired..."
 
-#: src/gui/MainWindow.cpp:196
+#: src/gui/MainWindow.cpp:205
 msgid "&New\tCtrl-N"
 msgstr "&Nouveau\tCtrl-N"
 
-#: src/gui/MainWindow.cpp:197
+#: src/gui/MainWindow.cpp:206
 msgid "&Open...\tCtrl-O"
 msgstr "&Ouvrir...\tCtrl-O"
 
-#: src/gui/MainWindow.cpp:198
+#: src/gui/MainWindow.cpp:207
 msgid "&Save\tCtrl-S"
 msgstr "&Enregistrer\tCtrl-S"
 
-#: src/gui/MainWindow.cpp:199
+#: src/gui/MainWindow.cpp:208
 msgid "Save &as...\tF12"
 msgstr "Enregistrer &sous...\tF12"
 
-#: src/gui/MainWindow.cpp:201
+#: src/gui/MainWindow.cpp:210
 msgid "&Import Wave file..."
 msgstr "&Importer un fichier son..."
 
-#: src/gui/MainWindow.cpp:202
+#: src/gui/MainWindow.cpp:211
 msgid "&Import MIDI file..."
 msgstr "&Importer un fichier MIDI..."
 
-#: src/gui/MainWindow.cpp:203
+#: src/gui/MainWindow.cpp:212
 msgid "&Import AKAI sample..."
 msgstr "&Importer un CD de sample AKAI..."
 
-#: src/gui/MainWindow.cpp:205
+#: src/gui/MainWindow.cpp:214
 msgid "&Export Wave file..."
 msgstr "&Exporter vers un fichier son..."
 
-#: src/gui/MainWindow.cpp:206
+#: src/gui/MainWindow.cpp:215
 msgid "&Export MIDI file..."
 msgstr "&Exporter vers un fichier MIDI..."
 
-#: src/gui/MainWindow.cpp:209
+#: src/gui/MainWindow.cpp:218
 msgid "&Quit\tCtrl-Q"
 msgstr "&Quitter\tCtrl-Q"
 
-#: src/gui/MainWindow.cpp:213
+#: src/gui/MainWindow.cpp:222
 msgid "C&ut\tCtrl+X"
 msgstr "C&ouper\tCtrl-X"
 
-#: src/gui/MainWindow.cpp:214
+#: src/gui/MainWindow.cpp:223
 msgid "&Copy\tCtrl+C"
 msgstr "&Copier\tCtrl-C"
 
-#: src/gui/MainWindow.cpp:215
+#: src/gui/MainWindow.cpp:224
 msgid "&Paste\tCtrl+V"
 msgstr "&Coller\tCtrl-V"
 
-#: src/gui/MainWindow.cpp:217
+#: src/gui/MainWindow.cpp:226
 msgid "&Delete\tDel"
 msgstr "&Supprimer\tDel"
 
-#: src/gui/MainWindow.cpp:218
+#: src/gui/MainWindow.cpp:227
 msgid "&Select all\tCtrl+A"
 msgstr "&Tout sélectionner\tCtrl+A"
 
-#: src/gui/MainWindow.cpp:220
+#: src/gui/MainWindow.cpp:229
 msgid "&Settings..."
 msgstr "&Parametres..."
 
-#: src/gui/MainWindow.cpp:222
+#: src/gui/MainWindow.cpp:231
 msgid "&Add Audio Track"
 msgstr "&Ajouter une piste audio"
 
-#: src/gui/MainWindow.cpp:223
+#: src/gui/MainWindow.cpp:232
 msgid "&Add MIDI Track"
 msgstr "&Ajouter une piste MIDI"
 
-#: src/gui/MainWindow.cpp:224
+#: src/gui/MainWindow.cpp:233
 msgid "&Delete Track"
 msgstr "&Supprimer la piste"
 
-#: src/gui/MainWindow.cpp:226
+#: src/gui/MainWindow.cpp:235
 msgid "&Change Audio directory..."
 msgstr "&Modifier le répertoire de travail..."
 
-#: src/gui/MainWindow.cpp:228
+#: src/gui/MainWindow.cpp:237
 msgid "D&elete Rack"
 msgstr "&Supprimer le rack"
 
-#: src/gui/MainWindow.cpp:230
+#: src/gui/MainWindow.cpp:239
 msgid "&Show Integrated Help"
 msgstr "&Afficher l'aide contextuelle"
 
-#: src/gui/MainWindow.cpp:231
+#: src/gui/MainWindow.cpp:240
 msgid "&About..."
 msgstr "&A propos de Wired..."
 
-#: src/gui/MainWindow.cpp:233
+#: src/gui/MainWindow.cpp:242
 msgid "Switch &Rack/Optional view\tTAB"
 msgstr "Mode rack/vue optionelle\tTAB"
 
-#: src/gui/MainWindow.cpp:234
+#: src/gui/MainWindow.cpp:243
 msgid "Switch &Sequencer/Optional view\tCtrl+TAB"
 msgstr "Mode Séquenceur/vue optionelle\tCtrl-TAB"
 
-#: src/gui/MainWindow.cpp:236
+#: src/gui/MainWindow.cpp:245
 msgid "Floating Transport"
 msgstr "Fenêtre de transport flottante"
 
-#: src/gui/MainWindow.cpp:237
+#: src/gui/MainWindow.cpp:246
 msgid "Floating Sequencer"
 msgstr "Fenêtre séquenceur flottante"
 
-#: src/gui/MainWindow.cpp:238
+#: src/gui/MainWindow.cpp:247
 msgid "Floating Racks"
 msgstr "Fenêtre de racks flottante"
 
-#: src/gui/MainWindow.cpp:239
+#: src/gui/MainWindow.cpp:248
 msgid "Floating Optional View"
 msgstr "Fenêtre optionelle flotante"
 
-#: src/gui/MainWindow.cpp:241
+#: src/gui/MainWindow.cpp:250
 msgid "&Fullscreen"
 msgstr "&Plein écran"
 
-#: src/gui/MainWindow.cpp:243
+#: src/gui/MainWindow.cpp:252
 #, fuzzy
 msgid "&Log window"
 msgstr "&Fenêtre"
 
-#: src/gui/MainWindow.cpp:245
+#: src/gui/MainWindow.cpp:254
 msgid "&File"
 msgstr "&Fichier"
 
-#: src/gui/MainWindow.cpp:246
+#: src/gui/MainWindow.cpp:255
 msgid "&Edit"
 msgstr "&Modifier"
 
-#: src/gui/MainWindow.cpp:247
+#: src/gui/MainWindow.cpp:256
 msgid "&Sequencer"
 msgstr "&Séquenceur"
 
-#: src/gui/MainWindow.cpp:248
+#: src/gui/MainWindow.cpp:257
 msgid "&Racks"
 msgstr ""
 
-#: src/gui/MainWindow.cpp:249 src/gui/Rack.cpp:229
+#: src/gui/MainWindow.cpp:258 src/gui/Rack.cpp:229
 msgid "&Instruments"
 msgstr ""
 
-#: src/gui/MainWindow.cpp:250
+#: src/gui/MainWindow.cpp:259
 msgid "Effec&ts"
 msgstr "Effe&ts"
 
-#: src/gui/MainWindow.cpp:251
+#: src/gui/MainWindow.cpp:260
 msgid "&Video"
 msgstr "&Vidéo"
 
-#: src/gui/MainWindow.cpp:252
+#: src/gui/MainWindow.cpp:261
 msgid "&Window"
 msgstr "&Fenêtre"
 
-#: src/gui/MainWindow.cpp:253
+#: src/gui/MainWindow.cpp:262
 msgid "&Help"
 msgstr "&Aide"
 
-#: src/gui/MainWindow.cpp:349
+#: src/gui/MainWindow.cpp:360
 msgid "Choose the audio working directory"
 msgstr "Choisissez le répertoire de travail"
 
-#: src/gui/MainWindow.cpp:369
+#: src/gui/MainWindow.cpp:380
 msgid "U&ndo"
 msgstr "Annu&ler"
 
-#: src/gui/MainWindow.cpp:370
+#: src/gui/MainWindow.cpp:381
 msgid "&Redo"
 msgstr "&Répéter"
 
-#: src/gui/MainWindow.cpp:377
+#: src/gui/MainWindow.cpp:388
 msgid "&Open video"
 msgstr "&Ouvrir vidéo"
 
-#: src/gui/MainWindow.cpp:378
+#: src/gui/MainWindow.cpp:389
 msgid "&Close video"
 msgstr "&Fermer vidéo"
 
-#: src/gui/MainWindow.cpp:379
+#: src/gui/MainWindow.cpp:390
 msgid "&Seek with video playing"
 msgstr "&Avancer vidéo synchrone"
 
-#: src/gui/MainWindow.cpp:393 src/gui/MainWindow.cpp:476
+#: src/gui/MainWindow.cpp:404 src/gui/MainWindow.cpp:514
 msgid "Save current session ?"
 msgstr "Enregistrer la session ?"
 
-#: src/gui/MainWindow.cpp:512
+#: src/gui/MainWindow.cpp:550
 msgid "wrd\tWired session file (*.wrd)"
 msgstr "wrd\tFichier de session Wired (*.wrd)"
 
-#: src/gui/MainWindow.cpp:513 src/gui/MainWindow.cpp:570
+#: src/gui/MainWindow.cpp:551 src/gui/MainWindow.cpp:605
 msgid "xml\tWired session file (*.xml)"
 msgstr "xml\tFichier de session Wired (*.xml)"
 
-#: src/gui/MainWindow.cpp:514
+#: src/gui/MainWindow.cpp:552
 msgid "Open session"
 msgstr "Ouvrir une session"
 
-#: src/gui/MainWindow.cpp:571
+#: src/gui/MainWindow.cpp:606
 msgid "Save session"
 msgstr "Enregistrer la session"
 
-#: src/gui/MainWindow.cpp:605 src/plugins/beatbox/BeatBoxChannel.cpp:551
+#: src/gui/MainWindow.cpp:637 src/plugins/beatbox/BeatBoxChannel.cpp:551
 #: src/plugins/loop_sampler/LoopSampler.cpp:1207
 msgid "Loading sound file"
 msgstr "Chargement du fichier son"
 
-#: src/gui/MainWindow.cpp:618 src/gui/MainWindow.cpp:1362
-#: src/gui/Transport.cpp:201
+#: src/gui/MainWindow.cpp:648 src/gui/MainWindow.cpp:1376
+#: src/gui/Transport.cpp:209
 msgid "Choose the Audio file directory"
 msgstr "Choisissez le répertoire de travail"
 
-#: src/gui/MainWindow.cpp:653 src/gui/MainWindow.cpp:809
+#: src/gui/MainWindow.cpp:677 src/gui/MainWindow.cpp:823
 msgid "mid\tMidi file (*.mid)"
 msgstr "mid\tFichier MIDI (*.mid)"
 
-#: src/gui/MainWindow.cpp:654
+#: src/gui/MainWindow.cpp:678
 msgid "Import MIDI file"
 msgstr "Importer un fichier MIDI"
 
-#: src/gui/MainWindow.cpp:660 src/gui/MainWindow.cpp:704
+#: src/gui/MainWindow.cpp:684 src/gui/MainWindow.cpp:725
 msgid "Loading midi file"
 msgstr "Chargement du fichier MIDI"
 
-#: src/gui/MainWindow.cpp:660 src/gui/MainWindow.cpp:704
-#: src/gui/MainWindow.cpp:784 src/plugins/akai_sampler/AkaiSampler.cpp:764
+#: src/gui/MainWindow.cpp:684 src/gui/MainWindow.cpp:725
+#: src/gui/MainWindow.cpp:802 src/plugins/akai_sampler/AkaiSampler.cpp:764
 #: src/plugins/beatbox/BeatBoxChannel.cpp:557
 #: src/plugins/beatbox/BeatBox.cpp:1761
 #: src/plugins/loop_sampler/LoopSampler.cpp:1212
@@ -438,38 +438,51 @@ msgstr "Chargement du fichier MIDI"
 msgid "Please wait..."
 msgstr "Veuillez patienter..."
 
-#: src/gui/MainWindow.cpp:698
+#: src/gui/MainWindow.cpp:719
 msgid "Import AKAI samples"
 msgstr "Ouvrir des échantillons AKAI"
 
-#: src/gui/MainWindow.cpp:761
+#: src/gui/MainWindow.cpp:779
 msgid "Please correctly place the Left and Right markers"
 msgstr "Veuillez placer correctement les balises droite et gauche"
 
-#: src/gui/MainWindow.cpp:766
+#: src/gui/MainWindow.cpp:784
 msgid "Exporting sound file"
 msgstr "Export du fichier son"
 
-#: src/gui/MainWindow.cpp:784
+#: src/gui/MainWindow.cpp:802
 #, fuzzy
 msgid "Exporting mix"
 msgstr "import MIDI"
 
-#: src/gui/MainWindow.cpp:1060
+#: src/gui/MainWindow.cpp:1074
 msgid "Transport"
 msgstr ""
 
-#: src/gui/MainWindow.cpp:1077
+#: src/gui/MainWindow.cpp:1091
 msgid "Sequencer"
 msgstr "Séquenceur"
 
-#: src/gui/MainWindow.cpp:1096
+#: src/gui/MainWindow.cpp:1110
 msgid "Racks"
 msgstr ""
 
-#: src/gui/MainWindow.cpp:1287
+#: src/gui/MainWindow.cpp:1301
 msgid "You may check for your audio settings if you want to use wired.."
 msgstr "Vous devriez vérifier vos parametres de péripherique son si vous souhaitez utiliser Wired..."
+
+#: src/gui/MainWindow.cpp:1622
+msgid "Left space on drive : "
+msgstr "Espace disque restant : "
+
+#: src/gui/MainWindow.cpp:1622
+msgid "Free memory : "
+msgstr "Memoire disponibe : "
+
+#: src/gui/MainWindow.cpp:1629
+#, fuzzy
+msgid "Unknown"
+msgstr "Format inconnu"
 
 #: src/gui/MidiPattern.cpp:78
 msgid "This is a MIDI pattern. Double-click on it to open the MIDI editor."
@@ -500,26 +513,26 @@ msgstr "Ajouter"
 msgid "&Effects"
 msgstr "&Effets"
 
-#: src/gui/Rack.cpp:231 src/gui/SequencerGui.cpp:443 src/gui/WaveEditor.cpp:38
+#: src/gui/Rack.cpp:231 src/gui/SequencerGui.cpp:444 src/gui/WaveEditor.cpp:38
 #: src/gui/WavePanel.cpp:49 src/gui/WavePanel.cpp:50
 #: src/plugins/beatbox/BeatBoxView.cpp:231
 msgid "Cut"
 msgstr "Couper"
 
-#: src/gui/Rack.cpp:232 src/gui/SequencerGui.cpp:444 src/gui/WaveEditor.cpp:39
+#: src/gui/Rack.cpp:232 src/gui/SequencerGui.cpp:445 src/gui/WaveEditor.cpp:39
 #: src/gui/WavePanel.cpp:45 src/gui/WavePanel.cpp:46
 #: src/plugins/beatbox/BeatBoxView.cpp:232
 msgid "Copy"
 msgstr "Copier"
 
-#: src/gui/Rack.cpp:233 src/gui/SequencerGui.cpp:445 src/gui/WaveEditor.cpp:40
+#: src/gui/Rack.cpp:233 src/gui/SequencerGui.cpp:446 src/gui/WaveEditor.cpp:40
 #: src/gui/WavePanel.cpp:47 src/gui/WavePanel.cpp:48
 #: src/plugins/beatbox/BeatBoxView.cpp:233
 msgid "Paste"
 msgstr "Coller"
 
-#: src/gui/Rack.cpp:235 src/gui/SequencerGui.cpp:357
-#: src/gui/SequencerGui.cpp:441 src/gui/WaveEditor.cpp:41
+#: src/gui/Rack.cpp:235 src/gui/SequencerGui.cpp:358
+#: src/gui/SequencerGui.cpp:442 src/gui/WaveEditor.cpp:41
 #: src/gui/WavePanel.cpp:51 src/gui/WavePanel.cpp:52
 #: src/plugins/beatbox/BeatBoxView.cpp:229
 msgid "Delete"
@@ -564,54 +577,54 @@ msgstr "Entrée %d"
 msgid "Midi In %d"
 msgstr "Entrée MIDI %d"
 
-#: src/gui/SequencerGui.cpp:269
+#: src/gui/SequencerGui.cpp:270
 msgid ""
 "This is the Wired sequencer. You can add here Audio or MIDI tracks, which "
 "can be output to plugins. Use the toolbar above to choose one of the "
 "sequencer editing tools."
 msgstr "Ceci est le séquenceur de Wired. Vous pouvez y placer des pistes audio ou MIDI, qui peuvent être connectées à des modules. Utilisez la barre d'outils ci-dessus pour sélectionner un outil d'édition."
 
-#: src/gui/SequencerGui.cpp:355
+#: src/gui/SequencerGui.cpp:356
 msgid "Move Pattern"
 msgstr "Déplacer l'échantillon"
 
-#: src/gui/SequencerGui.cpp:356
+#: src/gui/SequencerGui.cpp:357
 msgid "Draw"
 msgstr "Dessiner"
 
-#: src/gui/SequencerGui.cpp:356
+#: src/gui/SequencerGui.cpp:357
 msgid "Draw Pattern"
 msgstr "Dessiner l'échantillon"
 
-#: src/gui/SequencerGui.cpp:357
+#: src/gui/SequencerGui.cpp:358
 msgid "Delete Pattern"
 msgstr "Supprimer l'échantillon"
 
-#: src/gui/SequencerGui.cpp:358
+#: src/gui/SequencerGui.cpp:359
 msgid "Split"
 msgstr "Découper"
 
-#: src/gui/SequencerGui.cpp:358
+#: src/gui/SequencerGui.cpp:359
 msgid "Split Pattern"
 msgstr "Découper l'échantillon"
 
-#: src/gui/SequencerGui.cpp:360 src/plugins/beatbox/BeatBoxView.cpp:925
+#: src/gui/SequencerGui.cpp:361 src/plugins/beatbox/BeatBoxView.cpp:925
 msgid "Magnet"
 msgstr ""
 
-#: src/gui/SequencerGui.cpp:367
+#: src/gui/SequencerGui.cpp:368
 msgid "Color"
 msgstr "Couleur"
 
-#: src/gui/SequencerGui.cpp:379
+#: src/gui/SequencerGui.cpp:380
 msgid "Vertical Zoom"
 msgstr "Zoom vertical"
 
-#: src/gui/SequencerGui.cpp:440
+#: src/gui/SequencerGui.cpp:441
 msgid "Move to cursor"
 msgstr "Déplacer vers le curseur"
 
-#: src/gui/SequencerGui.cpp:447 src/plugins/beatbox/BeatBoxView.cpp:235
+#: src/gui/SequencerGui.cpp:448 src/plugins/beatbox/BeatBoxView.cpp:235
 msgid "Select all"
 msgstr "Tout sélectionner"
 
@@ -725,13 +738,13 @@ msgstr "32 bits (flottant)"
 msgid "Latency: %d samples per buffer, %.2f msec"
 msgstr "Latence: %d échantillons par buffer, %.2f msec"
 
-#: src/gui/Transport.cpp:160
+#: src/gui/Transport.cpp:168
 msgid ""
 "Turns On or Off Loop mode. If On, the sequencer will loop between the L and "
 "R marker in the sequencer."
 msgstr "Active ou désactive le mode boucle. Si actif, le séquenceur bouclera entre les balises L et R dans le séquenceur."
 
-#: src/gui/Transport.cpp:169
+#: src/gui/Transport.cpp:177
 msgid ""
 "Turns On or Off Click mode. If On, a click will be played over each beat per "
 "bar."
@@ -1313,9 +1326,6 @@ msgstr "32 bits (flottant)"
 
 #~ msgid "Resolution"
 #~ msgstr "Résolution"
-
-#~ msgid "Unknown format"
-#~ msgstr "Format inconnu"
 
 #~ msgid "Undo "
 #~ msgstr "Annuler "
