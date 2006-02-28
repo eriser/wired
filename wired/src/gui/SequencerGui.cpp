@@ -1025,8 +1025,11 @@ void					SequencerGui::OnResizePattern(wxCommandEvent &event)
   Pattern				*p;
 
   p = (Pattern *) event.GetEventObject();
-  p->Modify(-1, Seq->CurrentPos);
-  p->Update();
+  if (p)
+  {
+      p->Modify(-1, Seq->CurrentPos);
+      p->Update();
+  }
 }
 
 void					SequencerGui::OnDrawMidi(wxCommandEvent &event)
@@ -1034,8 +1037,11 @@ void					SequencerGui::OnDrawMidi(wxCommandEvent &event)
   MidiPattern				*p;
 
   p = (MidiPattern *)event.GetEventObject();  
-  p->DrawMidi();  
-  p->Update();
+  if (p)
+  {
+      p->DrawMidi();  
+      p->Update();
+  }
 }
 
 void					SequencerGui::OnDeleteClick(wxCommandEvent &event)
