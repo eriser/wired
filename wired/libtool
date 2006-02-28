@@ -44,7 +44,7 @@ available_tags=" CXX"
 
 # ### BEGIN LIBTOOL CONFIG
 
-# Libtool was configured on host hermes:
+# Libtool was configured on host finalcut:
 
 # Shell to use when invoking shell scripts.
 SHELL="/bin/sh"
@@ -328,7 +328,7 @@ link_all_deplibs=no
 sys_lib_search_path_spec=" /usr/lib/gcc/i486-linux-gnu/4.0.3/ /usr/lib/gcc/i486-linux-gnu/4.0.3/ /usr/lib/gcc/i486-linux-gnu/4.0.3/../../../../i486-linux-gnu/lib/i486-linux-gnu/4.0.3/ /usr/lib/gcc/i486-linux-gnu/4.0.3/../../../../i486-linux-gnu/lib/ /usr/lib/gcc/i486-linux-gnu/4.0.3/../../../i486-linux-gnu/4.0.3/ /usr/lib/gcc/i486-linux-gnu/4.0.3/../../../ /lib/i486-linux-gnu/4.0.3/ /lib/ /usr/lib/i486-linux-gnu/4.0.3/ /usr/lib/"
 
 # Run-time system search path for libraries
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/X11R6/lib /usr/local/lib /usr/lib "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib /usr/X11R6/lib /usr/local/lib "
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""
@@ -6778,7 +6778,7 @@ build_old_libs=`case $build_libtool_libs in yes) $echo no;; *) $echo yes;; esac`
 # End:
 # ### BEGIN LIBTOOL TAG CONFIG: CXX
 
-# Libtool was configured on host hermes:
+# Libtool was configured on host finalcut:
 
 # Shell to use when invoking shell scripts.
 SHELL="/bin/sh"
@@ -7059,7 +7059,7 @@ link_all_deplibs=no
 sys_lib_search_path_spec=" /usr/lib/gcc/i486-linux-gnu/4.0.3/ /usr/lib/gcc/i486-linux-gnu/4.0.3/ /usr/lib/gcc/i486-linux-gnu/4.0.3/../../../../i486-linux-gnu/lib/i486-linux-gnu/4.0.3/ /usr/lib/gcc/i486-linux-gnu/4.0.3/../../../../i486-linux-gnu/lib/ /usr/lib/gcc/i486-linux-gnu/4.0.3/../../../i486-linux-gnu/4.0.3/ /usr/lib/gcc/i486-linux-gnu/4.0.3/../../../ /lib/i486-linux-gnu/4.0.3/ /lib/ /usr/lib/i486-linux-gnu/4.0.3/ /usr/lib/"
 
 # Run-time system search path for libraries
-sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/X11R6/lib /usr/local/lib /usr/lib "
+sys_lib_dlsearch_path_spec="/lib /usr/lib /usr/lib /usr/X11R6/lib /usr/local/lib "
 
 # Fix the shell variable $srcfile for the compiler.
 fix_srcfile_path=""

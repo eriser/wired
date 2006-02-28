@@ -235,7 +235,7 @@ void			CrusherPlugin::OnBits(wxScrollEvent &WXUNUSED(e))
 {
   //Bits = BitsFader->GetValue();
   Step = powf(0.5f, Bits);
-  cout << "Bits = " << Bits << endl;
+  //cout << "Bits = " << Bits << endl;
   //if (Bits <= 0.f)
   //Bits = 0.01f;
 //  cout << "Bits: " << Bits << "; Step: " << Step << endl;

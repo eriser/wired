@@ -36,29 +36,29 @@ WiredDSSIGui::~WiredDSSIGui()
 
 WiredDSSIGui WiredDSSIGui::operator=(const WiredDSSIGui& right)
 {
-	if (this != &right)
-	{
-		(WiredLADSPAInstance)*this = (WiredLADSPAInstance) right;
-		Bypass = right.Bypass;
-		Faders = right.Faders;
-		Background= right.Background;
-		TpBmp = right.TpBmp;
-		img_fader_bg = right.img_fader_bg;
-		img_fader_fg = right.img_fader_fg;
-		img_knob_bg = right.img_knob_bg;
-		img_knob_fg = right.img_knob_fg;
-		tr_bg = right.tr_bg;
-		liquid_off = right.liquid_off;
-		liquid_on = right.liquid_on;
-		bypass_on = right.bypass_on;
-		bypass_off = right.bypass_off;
-		Liquid = right.Liquid;
-		BypassBtn = right.BypassBtn;
-		StartInfo = right.StartInfo;
-		InitInfo = right.InitInfo;
-        FaderIndex = right.FaderIndex;
-	}
-	return *this;
+  if (this != &right)
+    {
+      (WiredLADSPAInstance)*this = (WiredLADSPAInstance) right;
+      Bypass = right.Bypass;
+      Faders = right.Faders;
+      Background= right.Background;
+      TpBmp = right.TpBmp;
+      img_fader_bg = right.img_fader_bg;
+      img_fader_fg = right.img_fader_fg;
+      img_knob_bg = right.img_knob_bg;
+      img_knob_fg = right.img_knob_fg;
+      tr_bg = right.tr_bg;
+      liquid_off = right.liquid_off;
+      liquid_on = right.liquid_on;
+      bypass_on = right.bypass_on;
+      bypass_off = right.bypass_off;
+      Liquid = right.Liquid;
+      BypassBtn = right.BypassBtn;
+      StartInfo = right.StartInfo;
+      InitInfo = right.InitInfo;
+      FaderIndex = right.FaderIndex;
+    }
+  return *this;
 }
 
 void		WiredDSSIGui::SetInfo(PlugInitInfo *info)
@@ -124,7 +124,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
     }
 
   img_fader_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(), 
+    new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(),
 		wxBITMAP_TYPE_PNG);
   img_fader_fg = 
     new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), 
@@ -152,8 +152,8 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       else
 	{
 	  // if LADSPA_IS_HINT_INTEGER
-	  cout << hex << "LADSPA_IS_HINT_INTEGER " << iter->second.Descriptor.RangeHint.HintDescriptor  << endl;
-	  cout << "Dans WiredExternalPluginGui :" << LADSPA_IS_HINT_INTEGER(iter->second.Descriptor.RangeHint.HintDescriptor) << endl;
+	 //  cout << hex << "LADSPA_IS_HINT_INTEGER " << iter->second.Descriptor.RangeHint.HintDescriptor  << endl;
+// 	  cout << "Dans WiredExternalPluginGui :" << LADSPA_IS_HINT_INTEGER(iter->second.Descriptor.RangeHint.HintDescriptor) << endl;
 	  Faders[i] = new FaderCtrl(this, i + 1, img_fader_bg, img_fader_fg,
 				    (float)iter->second.Data.LowerBound, 
 				    (float)iter->second.Data.UpperBound, 
@@ -166,8 +166,8 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 	  //Connect(i + 1, wxEVT_RIGHT_DOWN, /*(wxObjectEventFunction)(wxEventFunction) */
 	  //  wxScrollEventHandler(WiredDSSIGui::OnFaderMove));
 	  FaderIndex[i + 1] = iter->first;
-	  cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
-	     << iter->second.Data.UpperBound << endl;
+	  // cout << "** " << iter->second.Data.LowerBound << "<" << *(iter->second.Data.Data) << "<" 
+// 	       << iter->second.Data.UpperBound << endl;
 	  //((HintedFader*)Faders[i])->SetValue((int)(*(iter->second.Data.Data) / (iter->second.Data.UpperBound - iter->second.Data.LowerBound) * 100));
 	  //((FaderCtrl*)Faders[i])->SetValue((int)(*(iter->second.Data.Data)));
 	  ((FaderCtrl*)Faders[i])->SetValue((*(iter->second.Data.Data)));

@@ -48,7 +48,7 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 				       img_bg->GetHeight()),
 				this, GetPosition() + wxPoint(95, 35));
   DryWetFader = new FaderCtrl(this, Delay_DryWet, img_bg, img_fg, 0, 100, 
-			      &DryLevel, true, wxPoint(149, 11), 
+			      &WetLevel, true, wxPoint(149, 11), 
 			      wxSize(img_bg->GetWidth(), img_bg->GetHeight()),
 			      this, GetPosition() + wxPoint(135, 35));
   SetBackgroundColour(wxColour(237, 237, 237));
@@ -95,10 +95,14 @@ void DelayPlugin::Init()
   DelayMutex.Lock();
 
   DelayTime = 1000;
-  Feedback = 0.5f;
-  DryLevel = 0.5f;
-  WetLevel = 0.5f;
+  // Feedback = 0.5f;
+//   DryLevel = 0.5f;
+//   WetLevel = 0.5f;
   
+  Feedback = 50;
+  DryLevel = 50;
+  WetLevel = 50;
+
   AllocateMem();
 
   DelayMutex.Unlock();
@@ -145,10 +149,10 @@ void DelayPlugin::Process(float **input, float **output, long sample_length)
 	  {
 	    out[chan] = *BufPtr[chan];
 	    
-	    output[chan][i] = DryLevel * input[chan][i] + 
-	      WetLevel * out[chan];
+	    output[chan][i] = DryLevel / 100.f * input[chan][i] + 
+	      WetLevel / 100.f * out[chan];
 	    
-	    *BufPtr[chan] = input[chan][i] + Feedback * out[chan];
+	    *BufPtr[chan] = input[chan][i] + Feedback / 100.f * out[chan];
 	    
 	    if (++(BufPtr[chan]) >= BufEnd[chan])
 	      BufPtr[chan] = BufStart[chan];
@@ -378,7 +382,7 @@ void DelayPlugin::OnDelayTime(wxScrollEvent &WXUNUSED(e))
 {
   DelayMutex.Lock();
 
-  DelayTime = TimeFader->GetValue();
+//   DelayTime = TimeFader->GetValue();
   AllocateMem();
 
   DelayMutex.Unlock();
@@ -388,14 +392,14 @@ void DelayPlugin::OnDelayTime(wxScrollEvent &WXUNUSED(e))
   
 void DelayPlugin::OnFeedback(wxScrollEvent &WXUNUSED(e))
 {
-  Feedback = FeedbackFader->GetValue() / 100.f;
+//   Feedback = FeedbackFader->GetValue() / 100.f;
   //cout << "Feedback: " << Feedback << endl;
 }
 
 void DelayPlugin::OnDryWet(wxScrollEvent &WXUNUSED(e))
 {
-  DryLevel = (100 - DryWetFader->GetValue()) / 100.f;
-  WetLevel = DryWetFader->GetValue() / 100.f;
+//   DryLevel = (100 - DryWetFader->GetValue()) / 100.f;
+//   WetLevel = DryWetFader->GetValue() / 100.f;
   //cout << "DryLevel: " << DryLevel << "; WetLevel: " << WetLevel << endl;
 }
 
