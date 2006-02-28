@@ -72,16 +72,16 @@ KnobCtrl::KnobCtrl(wxWindow *parent, wxWindowID id,
 
 KnobCtrl::~KnobCtrl()
 {
-	if (Label)
-		delete Label;
-	if (knob_fg)
-		delete knob_fg;
-	if (knob_bg)
-		delete knob_bg;
+//	if (Label)
+//		delete Label;
+//	if (knob_fg)
+//		delete knob_fg;
+//	if (knob_bg)
+//		delete knob_bg;
 //	if (fg_tmp)
 //		delete fg_tmp;
-	if (fg)
-		delete fg;
+//	if (fg)
+//		delete fg;
 //	if (fg_mask)
 //		delete fg_mask;
 }
