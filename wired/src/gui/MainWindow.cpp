@@ -334,6 +334,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
+  Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
 }
 
 void                MainWindow::InitLocale()
@@ -400,9 +401,10 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   vector<PluginLoader *>::iterator	k;
   int					res;
 
-  wxMessageDialog msg(this, _("Save current session ?"), "Wired", 
+  wxMessageDialog *msg = new wxMessageDialog(this, _("Save current session ?"), "Wired", 
 		      wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
-  res = msg.ShowModal();
+  res = msg->ShowModal();
+  delete msg;
   if (res == wxID_YES)
     {
       wxCommandEvent evt;
@@ -416,6 +418,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 	  return;
 	}
     }
+    Disconnect(wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);    
   //WiredVideoObject->CloseFile();
   /* for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)  
     for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
@@ -432,43 +435,66 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   cout << "[MAINWIN] Unloading shared libraries..."<< endl;
   for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
     (*k)->Unload();
+    SeqTimer->Stop();
+    delete SeqTimer;
+    SeqTimer = NULL;
+    cout << "[MAINWIN] Stopping threads..."<< endl;
+    wxThread *thread;
     
+    wxGetApp().m_critsect.Enter();
+    const wxArrayThread& threads = wxGetApp().m_threads;
+    size_t count = threads.GetCount();
+    if (count)
+    {
+        while (threads.IsEmpty() == false)
+        {
+            thread = threads.Last();
+            wxGetApp().m_critsect.Leave();
+            thread->Delete();
+            wxGetApp().m_critsect.Enter();
+        }
+    }
+    wxGetApp().m_critsect.Leave();
+    if (count)
+    {
+        cout << "[MAINWIN] Waiting for Threads to really stop..."<< endl;
+        //wxGetApp().m_semAllDone.Wait();
+    }
+    cout << "[MAINWIN] Done !"<< endl;
   cout << "[MAINWIN] Unloading external plugins..." << endl;
 //  delete Mix;
 //  Mix = NULL;
- if (Seq)
-  {      
-  	SeqTimer->Stop();
-  	delete SeqTimer;
-	  //Seq->Delete();
-	  delete Seq;
-  }  
-  if (MidiEngine)
-	{
-  	//MidiEngine->Delete();
-	  delete MidiEngine;
-	}
-  if (LoadedExternalPlugins)
-	  delete LoadedExternalPlugins;
+// if (Seq)
+//  {      
+//	  //Seq->Delete();
+//	  delete Seq;
+//  }  
+//  if (MidiEngine)
+//	{
+//  	//MidiEngine->Delete();
+//	  delete MidiEngine;
+//	}
+//  if (LoadedExternalPlugins)
+//	  delete LoadedExternalPlugins;
   
   //if (WiredVideoObject) delete WiredVideoObject;
   
   if(FileConverter)
-  {
-	  //FileConverter->Stop();
     delete FileConverter;
-  }
-  if (Audio)
-	  delete Audio;
-  if (WiredSettings)
-	  delete WiredSettings;
 //  delete Mix;
 //  delete OptPanel;
-//  delete CurrentSession;
-//  delete CurrentXmlSession;
-//  delete LogWin;
-  cout << "[MAINWIN] Closing..." << endl; 
-//  exit(0);
+  delete CurrentSession;
+  delete CurrentXmlSession;
+  delete LogWin;  
+  if (Audio)
+      delete Audio;
+   delete TransportPanel;
+//  if (WiredSettings)
+//      delete WiredSettings;
+  cout << "[MAINWIN] Closing..." << endl;
+  wxGetApp().ExitMainLoop();
+  exit (0);
+  Destroy();
 }
 
 void					MainWindow::OnQuit(wxCommandEvent &WXUNUSED(event))
@@ -556,9 +582,6 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
 			cout << "[MAINWIN] Invalid Filename" << endl;
 		
     }
-  else
-    cout << "[MAINWIN] User cancels open dialog" << endl;
-  //dlg->Destroy();  
 }
 
 void					MainWindow::OnSave(wxCommandEvent &event)
@@ -607,9 +630,6 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
       CurrentXmlSession = new WiredSessionXml(selfile, audiodir);
       CurrentXmlSession->Save();
     }
-  else
-    cout << "[MAINWIN] User cancels open dialog" << endl;
-  //dlg->Destroy();
 }
 
 void					MainWindow::OnImportWave(wxCommandEvent &event)
@@ -620,9 +640,7 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
   if (dlg.ShowModal() == wxID_OK)
     {
       string 	selfile = dlg.GetSelectedFile();
-      
-      //dlg->Destroy();
-      
+            
       if (CurrentXmlSession->GetAudioDir().empty() == false)
 	      res = wxID_OK;
       else	     
@@ -635,7 +653,6 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 		}
 	    else
 			res = wxID_CANCEL;
-		//dir.Destroy();
       }
       if (res != wxID_CANCEL)
       {
@@ -650,11 +667,6 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       	MidiDeviceMutex.Unlock();
       	AudioMutex.Unlock();
       }
-    }
-  else
-    {
-      //dlg->Destroy();  
-      cout << "[MAINWIN] User cancels open dialog" << endl;
     }
 }
 
@@ -699,9 +711,6 @@ void					MainWindow::OnImportMIDI(wxCommandEvent &event)
 	  delete Progress;
       */
     }
-  else
-    cout << "[MAINWIN] User cancels open dialog" << endl;
-  //dlg->Destroy();
 }
 
 void					MainWindow::OnImportAKAI(wxCommandEvent &event)
@@ -758,9 +767,6 @@ void					MainWindow::OnImportAKAI(wxCommandEvent &event)
 	  }
       */
     }
-  else
-    cout << "[MAINWIN] User cancels open dialog" << endl;
-  //dlg->Destroy();
 }
 
 void					MainWindow::OnExportWave(wxCommandEvent &event)
@@ -807,10 +813,6 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 	  if (Seq->CurrentPos >= Seq->EndLoopPos)
 	    done = true;
 	}
-    }
-  else
-    {
-      cout << "[MAINWIN] User cancels open dialog" << endl;
     }
 }
 
@@ -1618,15 +1620,18 @@ void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
 	if (SeqTimer)
 	{
 		wxString			LeftSpace(_("Left space on drive : ")), LeftMemory(_("Free memory : "));
-		wxLongLong			Total, Free;
+		wxLongLong		Total, Free;
 		
 		wxLongLong Size = wxGetFreeMemory();
-		LeftMemory += Size.ToString();
+        if (Size > 0)        
+            LeftMemory += Size.ToString();
+        else
+            LeftMemory += _("Unknown");
 		if (CurrentXmlSession)
 			wxGetDiskSpace(CurrentXmlSession->GetAudioDir(), &Total, &Free);
 		else
 			wxGetDiskSpace(wxFileName::GetCwd(), &Total, &Free);
-		LeftSpace += Free.ToString() + "/" + Total.ToString();
+		LeftSpace += FileLoader::FormatSize((off_t) Free.GetValue()) + "/" + FileLoader::FormatSize((off_t)Total.GetValue());
 		SetStatusText(LeftSpace, 0);
 		SetStatusText(LeftMemory, 1);
 	}
@@ -1679,6 +1684,6 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   //EVT_IDLE(MainWindow::OnIdle)
   //EVT_TEXT_MAXLEN(101010, MainWindow::OnSetPosition)
   //EVT_PLAYPOSITION(313131, MainWindow::OnSetPosition)
-  EVT_IDLE(MainWindow::OnIdle)
+//  EVT_IDLE(MainWindow::OnIdle)
 END_EVENT_TABLE()
 

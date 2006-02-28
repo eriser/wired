@@ -136,7 +136,10 @@ int				MainApp::OnExit()
 #if 0
   delete Checker;
 #endif
-  return (0);
+std::cout << "Bouh ?" << std::endl;
+    Frame->Destroy();
+//    delete Frame;
+  return (wxApp::OnExit());
 }
 
 int				MainApp::FilterEvent(wxEvent& event)

@@ -40,12 +40,12 @@ bool				FileConversion::Init(t_samplerate_info *RateInit, string WorkingDir, uns
 	_BufferSize = BufferSize;
 	_Parent = Parent;
 	cout << "[FILECONVERT] Loading Codec management..." << endl;
-	_CodecConverter.Init();
-	list<string>			CodecsListExtensions = _CodecConverter.GetExtension(DECODE);
-	list<string>::iterator	Iter;
+	//_CodecConverter.Init();
+	//list<string>			CodecsListExtensions = _CodecConverter.GetExtension(DECODE);
+	//list<string>::iterator	Iter;
 
-	for (Iter = CodecsListExtensions.begin(); Iter != CodecsListExtensions.end(); Iter++)
-  		_CodecsExtensions.insert(_CodecsExtensions.end(), *Iter);
+//	for (Iter = CodecsListExtensions.begin(); Iter != CodecsListExtensions.end(); Iter++)
+//  		_CodecsExtensions.insert(_CodecsExtensions.end(), *Iter);
   	cout << "...done" << endl << "[FILECONVERT] Loading samplerate management..." << endl;
 	_SampleRateConverter.Init(RateInit);
 	cout << "...done" << endl;
@@ -169,6 +169,7 @@ SNDFILE			*FileConversion::OpenDecodeFile(t_Pcm	&Data, const std::string &DestFi
 
 bool				FileConversion::Decode(string *FileName)
 {
+    return false; // temp....
     bool        Res= true;
     
 	if (_ShouldRun == false)
