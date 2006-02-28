@@ -9,65 +9,13 @@
 #include <wx/splash.h>
 #include "MainApp.h"
 #include "MainWindow.h"
-
-//void*	operator new(size_t size)
-//{
-//	write(1, "new\n", 4);
-//	return (malloc(size));
-//}
-//
-//void	operator delete(void *ptr)
-//{
-//	write(1, "delete\n", 7);
-//	free(ptr);
-//}
-//
-//void*	operator new[](size_t size, int index)
-//{
-//	write(1, "new[]\n", 6);
-//	return (malloc(size * index));
-//}
-//
-//void	operator delete[](void *ptr)
-//{
-//	write(1, "delete[]\n", 9);
-//	free(ptr);
-//}
-
+#include "../include/config.h"
 
 void	AllocationErrorHandler(void)
 {
 	cout << "[MAINAPP] Allocation error or not enough memory, exiting" << endl;
 	exit(-1);
 }
-
-//void*		operator new(size_t size)
-//{
-//	void	*res = NULL;
-//	
-//	try
-//	{
-//		res = malloc(size) ;
-//		
-//		if (res == NULL)
-//		{
-//			cout << "[MAINAPP] Out of memory" << endl;
-//			return res;
-//		}
-//		return res;
-//	}
-//	catch (std::bad_alloc)
-//	{
-//		res = NULL;
-//		return res;
-//	}
-//}
-//
-//void		operatordelete(void *ptr)
-//{
-//	free(ptr);
-//}
-
 
 IMPLEMENT_APP(MainApp)
 
@@ -84,7 +32,7 @@ bool				MainApp::OnInit()
 	SetAppName("wired");
 	if (!wxApp::OnInit())
 		return false;
-  if (bitmap.LoadFile("/usr/local/share/wired/data/ihm/splash/splash.png", wxBITMAP_TYPE_PNG))
+  if (bitmap.LoadFile(string(string(INSTALL_PREFIX) + string("/share/wired/data/ihm/splash/splash.png")).c_str(), wxBITMAP_TYPE_PNG))
     {
       wxSplashScreen*		splash = 
 	new wxSplashScreen(bitmap,
@@ -136,7 +84,6 @@ int				MainApp::OnExit()
 #if 0
   delete Checker;
 #endif
-std::cout << "Bouh ?" << std::endl;
     Frame->Destroy();
 //    delete Frame;
   return (wxApp::OnExit());

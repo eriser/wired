@@ -458,22 +458,12 @@ void					MainWindow::OnClose(wxCloseEvent &event)
     if (count)
     {
         cout << "[MAINWIN] Waiting for Threads to really stop..."<< endl;
-        //wxGetApp().m_semAllDone.Wait();
+        wxGetApp().m_semAllDone.Wait();
     }
     cout << "[MAINWIN] Done !"<< endl;
   cout << "[MAINWIN] Unloading external plugins..." << endl;
 //  delete Mix;
 //  Mix = NULL;
-// if (Seq)
-//  {      
-//	  //Seq->Delete();
-//	  delete Seq;
-//  }  
-//  if (MidiEngine)
-//	{
-//  	//MidiEngine->Delete();
-//	  delete MidiEngine;
-//	}
 //  if (LoadedExternalPlugins)
 //	  delete LoadedExternalPlugins;
   
@@ -489,8 +479,8 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   if (Audio)
       delete Audio;
    delete TransportPanel;
-//  if (WiredSettings)
-//      delete WiredSettings;
+  if (WiredSettings)
+      delete WiredSettings;
   cout << "[MAINWIN] Closing..." << endl;
   wxGetApp().ExitMainLoop();
   exit (0);
