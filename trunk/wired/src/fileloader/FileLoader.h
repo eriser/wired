@@ -54,6 +54,7 @@ class FileLoader: public wxDialog
   ~FileLoader();
   string GetSelectedFile();
   bool	 IsAkai() { return akai; }
+  static wxString      FormatSize(off_t);
 
  private:
   void OnExpandFolder(wxTreeEvent &e);
@@ -99,7 +100,6 @@ class FileLoader: public wxDialog
   void GotoDir(const char *);
 
   bool			ExtMatch(wxString);
-  wxString		FormatSize(off_t);
   
   wxTreeCtrl		*folder;
   wxListView		*files;
