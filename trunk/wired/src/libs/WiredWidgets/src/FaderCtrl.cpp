@@ -41,8 +41,9 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
 { 
   //FaderCtrlMutex = new wxMutex();
 
-  Coeff = (begin_value - end_value) / (double)(img_bg->GetHeight() - img_fg->GetHeight());
-  Ord = /*-Coeff * */end_value - begin_value;
+  Ord = end_value - begin_value;
+  Coeff = Ord / (double)(img_fg->GetHeight() - img_bg->GetHeight());
+
   cout << "f(x) = " << Coeff << " * x + " << Ord << endl;
   bg = new wxBitmap(img_bg, -1);
   tmp_fg = new wxBitmap(img_fg, -1);
@@ -59,22 +60,23 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
 }
 
 FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id, 
-		     wxImage *img_bg, wxImage  *img_fg,
+		     wxImage *img_bg, wxImage *img_fg,
 		     float begin_value, float end_value, float *val, bool is_int,
 		     const wxPoint &pos, const wxSize &size,
 		     wxWindow* hintparent, const wxPoint &hintpos)
   : wxWindow(parent, id, pos, wxSize(img_fg->GetWidth(), img_bg->GetHeight())),
     Value(val), BeginValue(begin_value), EndValue(end_value)
 { 
-  //Coeff = (end_value - begin_value) / (double)(img_bg->GetHeight() - img_fg->GetHeight());
-  Coeff = (float) (img_bg->GetHeight() - img_fg->GetHeight()) / (float) (begin_value - end_value);
-  Ord = /*-Coeff */ end_value;
+  IsInteger = is_int;
+  Ord = end_value - begin_value;
+  Coeff = Ord / (img_fg->GetHeight() - img_bg->GetHeight());
+
   bg = new wxBitmap(img_bg, -1);
   tmp_fg = new wxBitmap(img_fg, -1);
   tmp_fg->SetMask(new wxMask(*tmp_fg, *wxWHITE));
-  fg = new StaticBitmap(this, -1, *tmp_fg, wxPoint(0, (int)(Coeff * *Value + Ord)), 
+  fg = new StaticBitmap(this, -1, *tmp_fg, wxPoint(0, (int)(img_bg->GetHeight() - Coeff * *Value)),
 			wxSize(img_fg->GetWidth(), img_fg->GetHeight()));
-  IsInteger = is_int;
+
   SetValue(val);
   wxString s;
   if (IsInteger)
@@ -137,39 +139,28 @@ void		FaderCtrl::OnLeftUp(wxMouseEvent& WXUNUSED(event))
 
 void		FaderCtrl::OnMouseEvent(wxMouseEvent &event)
 {
-  if(event.LeftIsDown() && ((event.GetPosition().y > (fg->GetSize().y / 2))) 
-     && ((event.GetPosition().y < (((bg->GetHeight()) - fg->GetSize().y /2)))))
+  //       if ((event.GetPosition().y > (fg->GetSize().y / 2)) && 
+  // 	  ((event.GetPosition().y < (bg->GetHeight() - fg->GetSize().y / 2))))
+
+  if (event.LeftIsDown())
     {
       wxScrollEvent e(wxEVT_SCROLL_TOP, GetId());
       e.SetEventObject(this);
-      //fg->Move(wxPoint(0,(int)(event.GetPosition().y - (fg->GetSize().y /2))));
-      //SetValue((EndValue + BeginValue) - (long)((event.GetPosition().y - (fg->GetSize().y / 2)) * Coeff));
-      *Value = (float) ((event.GetPosition().y - (fg->GetSize().y / 2) - Ord) / Coeff);
+      if (event.GetPosition().y >= (GetSize().y - fg->GetSize().y / 2))
+	SetValue(&BeginValue);
+      else if (event.GetPosition().y < fg->GetSize().y / 2)
+	SetValue(&EndValue);
+      else
+	SetValue(Ord + (event.GetPosition().y - fg->GetSize().y / 2) * Coeff);
+      GetEventHandler()->ProcessEvent(e);
+
       //if (IsInteger)
       //*Value = (int) *Value;
       //cout << "Value = " << *Value << endl;
       //cout << "cursor pos = " << event.GetPosition().y << endl;
       //cout << "Value before SetValue = " << *Value << endl;
-      SetValue(Value);
+      //SetValue(Value);
       //cout << "Value after SetValue = " << *Value << endl;
-      GetEventHandler()->ProcessEvent(e);
-    }
-  else if (event.LeftIsDown())
-    {
-      if (event.GetPosition().y >= (GetSize().y - fg->GetSize().y /2 ) )
-	{
-	  wxScrollEvent e(wxEVT_SCROLL_TOP, GetId());
-	  e.SetEventObject(this);
-	  SetValue(&BeginValue);
-	  GetEventHandler()->ProcessEvent(e);
-	}
-      else if (event.GetPosition().y < fg->GetSize().y /2)
-	{
-	  wxScrollEvent e(wxEVT_SCROLL_TOP, GetId());
-	  e.SetEventObject(this);
-	  SetValue(&EndValue);
-	  GetEventHandler()->ProcessEvent(e);
-	}
     }
   else if (event.RightDown())
     wxPostEvent(GetParent(), event);
@@ -183,11 +174,8 @@ void		FaderCtrl::OnMouseEvent(wxMouseEvent &event)
       Label->SetLabel(s);
       Label->Show((event.LeftIsDown()));
     }
-
-  // cout << BeginValue << " < "<< "Value : " << GetValue() << " < " << EndValue << endl;
-//   cout << "Coeff = " << Coeff << endl;
-//   cout << "Ord = " << Ord << endl;
 }
+
 
 float		FaderCtrl::GetValue()
 {
@@ -196,13 +184,16 @@ float		FaderCtrl::GetValue()
 
 //
 // Sets the fader's value at *val and moves the fader
+// to the matching position
 //
 
 void		FaderCtrl::SetValue(float *val)
 {
+
+  cout << "in SetValue() ; Value = " << *val << endl;
   if (!val)
     return ;
-//   cout << "Value = " << *Value << endl;
+  //cout << "Value = " << *Value << endl;
   if (*val <= BeginValue)
     {
       *Value = BeginValue;
@@ -216,14 +207,14 @@ void		FaderCtrl::SetValue(float *val)
   else
     {
       *Value = *val;
-      fg->Move(wxPoint(0, (int) (Coeff * *Value + Ord)));
+      fg->Move(wxPoint(0, (int) (bg->GetHeight() - fg->GetSize().y + *Value / Coeff)));//(Coeff * *Value + fg->GetSize().y / 2)));
     }
 //   cout << "val = " << (float) *Value << endl;
 //   cout << "moveto : " << (int) (Coeff * *Value + Ord) << endl;
 }
 
 //
-// call the method SetValue(float *)
+// calls the method SetValue(float *)
 //
 
 void		FaderCtrl::SetValue(float val)
@@ -234,31 +225,51 @@ void		FaderCtrl::SetValue(float val)
 void		FaderCtrl::OnKeyUp(wxKeyEvent& event)
 {
   if (Label)
-    {
-      Label->Show(false);
-    }
+    Label->Show(false);
 }
 
 void		FaderCtrl::OnKeyDown(wxKeyEvent& event)
 {
-  if(event.GetKeyCode() == WXK_UP)
+  float		step = 0;
+
+  if (event.GetKeyCode() == WXK_UP)
+    step = -Coeff;
+  else if (event.GetKeyCode() == WXK_DOWN)
+    step = Coeff;
+  else if (event.GetKeyCode() == WXK_NEXT)
+    step = -Ord / 10;
+  else if (event.GetKeyCode() == WXK_PRIOR)
+    step = Ord / 10;
+  else
+    cout << "KeyCode = " << event.GetKeyCode() << endl;
+
+  if (step)
     {
-      //(*Value)++;
-      cout << "Value = " << *Value << endl;
-      SetValue(*Value + 1);
+      SetValue(*Value + step);
       wxScrollEvent e(wxEVT_SCROLL_TOP, GetId());
       e.SetEventObject(this);
       GetEventHandler()->ProcessEvent(e);
     }
-  else if(event.GetKeyCode() == WXK_DOWN)
-    {
-      //      (*Value)--;
-      //cout << "Value = " << *Value << endl;
-      SetValue(*Value - 1);
-      wxScrollEvent e(wxEVT_SCROLL_TOP, GetId());
-      e.SetEventObject(this);
-      GetEventHandler()->ProcessEvent(e);
-    }
+
+//   if(event.GetKeyCode() == WXK_UP)
+//     {
+//       //(*Value)++;
+//       cout << "Value = " << *Value << endl;
+//       if ()
+//       SetValue(*Value + 1);
+//       wxScrollEvent e(wxEVT_SCROLL_TOP, GetId());
+//       e.SetEventObject(this);
+//       GetEventHandler()->ProcessEvent(e);
+//     }
+//   else if(event.GetKeyCode() == WXK_DOWN)
+//     {
+//       //      (*Value)--;
+//       //cout << "Value = " << *Value << endl;
+//       SetValue(*Value - 1);
+//       wxScrollEvent e(wxEVT_SCROLL_TOP, GetId());
+//       e.SetEventObject(this);
+//       GetEventHandler()->ProcessEvent(e);
+//     }
   if (Label)
     {
       Label->Show(true);
