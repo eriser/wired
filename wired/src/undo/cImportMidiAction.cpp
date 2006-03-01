@@ -31,15 +31,10 @@ void cImportWaveAction::AddWaveTrack()
 	
 	if (w) 
     {
-    	cout << "[AddWaveTrack] 0" << endl;
     	Track *t = SeqPanel->AddTrack(_TrackKindFlag);
-    	cout << "[AddWaveTrack] 1" << endl;
 		t->AddPattern(w);
-		cout << "[AddWaveTrack] 2" << endl;
 		_trackIndex = t->Index;
-		cout << "[AddWaveTrack] 3" << endl;
 		NotifyActionManager();
-		cout << "[AddWaveTrack] 4" << endl;
     }
 }
 
