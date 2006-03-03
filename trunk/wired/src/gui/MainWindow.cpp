@@ -458,6 +458,8 @@ void					MainWindow::OnClose(wxCloseEvent &event)
     if (count)
     {
         cout << "[MAINWIN] Waiting for Threads to really stop..."<< endl;
+        wxTimer		*KillTimer = new wxTimer(this, MainWin_KillTimer);
+		KillTimer->Start(1000);
         wxGetApp().m_semAllDone.Wait();
     }
     cout << "[MAINWIN] Done !"<< endl;
@@ -1605,6 +1607,12 @@ void                  MainWindow::OnShowDebug(wxCommandEvent &event)
    }
 }
 
+void					MainWindow::OnKillTimer(wxTimerEvent &WXUNUSED(event))
+{
+	cout << "[MAINWIN] Killing Threads" << endl;
+	exit (0);
+}
+
 void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
 {
 	if (SeqTimer)
@@ -1666,6 +1674,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_ShowLog, MainWindow::OnShowDebug)
   EVT_CLOSE(MainWindow::OnClose) 
   EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
+  EVT_TIMER(MainWin_KillTimer, MainWindow::OnKillTimer)
   EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
   EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
 //  EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)
