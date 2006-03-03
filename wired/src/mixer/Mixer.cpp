@@ -41,16 +41,16 @@ Mixer::~Mixer()
   InChannels.clear();
   
   if (OutputLeft)
-	  delete OutputLeft;
+	  delete[] OutputLeft;
   if (OutputRight)
-	  delete OutputRight;
+	  delete[] OutputRight;
   for (int i = 0; i < PREBUF_NUM; i++)
   {
   	if (Input[i])
-	    delete Input[i];
+	    delete[] Input[i];
   }
   if (Input)
-	  delete Input;
+	  delete[] Input;
 }
 
 Mixer 	Mixer::operator=(const Mixer& right)
@@ -196,9 +196,9 @@ bool				Mixer::RemoveChannel(Channel *chan)
 bool				Mixer::InitOutputBuffers(void)
 {
   if (OutputLeft)
-    delete OutputLeft;
+    delete[] OutputLeft;
   if (OutputRight)
-    delete OutputRight;
+    delete[] OutputRight;
   OutputLeft = OutputRight = 0x0;
   try
     {
@@ -216,7 +216,7 @@ bool				Mixer::InitOutputBuffers(void)
   catch (std::bad_alloc)
     {
     	if (OutputLeft)
-	      delete OutputLeft;
+	      delete[] OutputLeft;
       cout << "[MIXER] insufficient memory"<< endl;
       return false;
     }
@@ -250,6 +250,7 @@ void				Mixer::MixOutput(bool soundcard)
 	{
 	  if ((*c)->Stereo)
 	    {
+	    	if ((*c)->StereoBuffers[0])
 	      for (i = 0; i < Audio->SamplesPerBuffer; i++)
 		{
 		  // Les Volumes sont appliques lors de PushBuffer
@@ -261,6 +262,7 @@ void				Mixer::MixOutput(bool soundcard)
 	    }
 	  else
 	    {
+	    	if ((*c)->MonoBuffers[0])
 	      for (i = 0; i < Audio->SamplesPerBuffer; i++)
 		{
 		  OutputLeft[i]  += ((*c)->MonoBuffers[0])[i];
@@ -272,6 +274,7 @@ void				Mixer::MixOutput(bool soundcard)
 	{
 	  if ((*c)->Stereo)
 	    {
+	    	if ((*c)->StereoBuffers[0])
 	      for (i = 0; i < Audio->SamplesPerBuffer; i++)
 		{
 		  OutputLeft[i]  += 
@@ -282,6 +285,7 @@ void				Mixer::MixOutput(bool soundcard)
 	    }
 	  else
 	    {
+	    	if ((*c)->MonoBuffers[0])
 	      for (i = 0; i < Audio->SamplesPerBuffer; i++)
 		{
 		  OutputLeft[i]  += 

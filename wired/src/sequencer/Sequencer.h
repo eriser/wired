@@ -33,11 +33,11 @@ class ChanBuf
   void					DeleteBuffer() 
     { 
    	if (Buffer[0])
-      delete Buffer[0];
+      delete[] Buffer[0];
       if (Buffer[1])
-	delete Buffer[1];
+	delete[] Buffer[1];
 	if (Buffer)
-      delete Buffer;
+      delete[] Buffer;
     }
 
   float					**Buffer;
