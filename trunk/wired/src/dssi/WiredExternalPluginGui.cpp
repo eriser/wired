@@ -264,7 +264,10 @@ void		WiredDSSIGui::OnPaint(wxPaintEvent &event)
     }
   width = (_GuiControls.size() / 5 + (_GuiControls.size() % 5) / 4 + 1) * 200;
   
-  interspace = (width - 73 - 21) / _GuiControls.size();
+  if (_GuiControls.size() > 0)
+	  interspace = (width - 73 - 21) / _GuiControls.size();
+  else
+	  interspace = 1;
   for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
     dc.DrawRotatedText(iter->second.Descriptor.Name, 73 + i * interspace + interspace / 2 - 13 , 80, 90);
   Plugin::OnPaintEvent(event);
