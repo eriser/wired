@@ -284,11 +284,11 @@ void					*Sequencer::Entry()
 	  if ((*RacksTrack)->CurrentBuffer)
 	    {
     	if ((*RacksTrack)->CurrentBuffer[0])
-	      delete (*RacksTrack)->CurrentBuffer[0];
+	      delete[] (*RacksTrack)->CurrentBuffer[0];
 	    if ((*RacksTrack)->CurrentBuffer[1])	      
-	      delete (*RacksTrack)->CurrentBuffer[1];
+	      delete[] (*RacksTrack)->CurrentBuffer[1];
 	    if ((*RacksTrack)->CurrentBuffer)
-	      delete (*RacksTrack)->CurrentBuffer;
+	      delete[] (*RacksTrack)->CurrentBuffer;
 	      (*RacksTrack)->CurrentBuffer = 0x0;  
 	    } 
 	}
@@ -803,7 +803,7 @@ void					Sequencer::DeleteBuffer(float** &Buffer, unsigned int NbChannels)
 	  {
 		  if (Buffer)
 			  if (Buffer[CurrentChannel])
-			  	delete Buffer[CurrentChannel];
+			  	delete[] Buffer[CurrentChannel];
 	  }
 	  if (Buffer)
 	  	delete [] Buffer;

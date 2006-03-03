@@ -29,17 +29,17 @@ Channel::~Channel()
   if (!Stereo)
     for (vector<float*>::iterator b = MonoBuffers.begin(); 
 	 b != MonoBuffers.end(); b++)
-      delete *b;
+      delete[] *b;
   else
     for (vector<float**>::iterator b = StereoBuffers.begin(); 
 	 b != StereoBuffers.end(); b++)
       {
       	if ((*b)[0])
-			delete (*b)[0];
+			delete[] (*b)[0];
 		if ((*b)[1])
-			delete (*b)[1];
+			delete[] (*b)[1];
 		if (*b)
-			delete (*b);
+			delete[] (*b);
       }
   MonoBuffers.clear();
   StereoBuffers.clear();
@@ -248,17 +248,17 @@ void Channel::ClearAllBuffers(void)
     for (vector<float*>::iterator b = MonoBuffers.begin(); 
 	 b != MonoBuffers.end(); b++)
 	 if (*b)
-	    delete *b;
+	    delete[] *b;
   else
     for (vector<float**>::iterator b = StereoBuffers.begin(); 
 	 b != StereoBuffers.end(); b++)
       {
       	if ((*b)[0])
-			delete (*b)[0];
+			delete[] (*b)[0];
 		if ((*b)[1])
-			delete (*b)[1];
+			delete[] (*b)[1];
 		if (*b)
-			delete (*b);
+			delete[] (*b);
       }
   MonoBuffers.clear();
   StereoBuffers.clear();
