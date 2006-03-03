@@ -42,7 +42,6 @@ RackTrack::~RackTrack()
 //  	delete *iter;
 //  if (Output) delete Output;
 //  if (ChanGui) delete ChanGui;
-	cout << "[RackTrack] End destructor" << endl;
   //TODO delete CurrentBuffer
 }
 
