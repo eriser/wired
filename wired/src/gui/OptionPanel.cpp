@@ -32,9 +32,9 @@ WiredTool::~WiredTool()
 {
   if (Type == ID_TOOL_OTHER_OPTIONPANEL)
     ((Plugin *)Data)->DestroyView();
-  else
+  else if (Panel)
     Panel->Destroy();
-  if (IsDetached)
+  if (IsDetached && Frame)
     Frame->Destroy();
 }
 
@@ -354,6 +354,26 @@ void				OptionPanel::DeleteTools()
   ShowTool(MixerTool);
 }
 
+void				OptionPanel::DeleteTools(void *DataPointer)
+{
+  if (!DataPointer)
+    return;
+  vector<WiredTool *>::iterator	i;
+  
+  for (i = ToolsList.begin(); i != ToolsList.end(); i++)
+    {
+      if (((*i)->Type != ID_TOOL_MIXER_OPTIONPANEL) 
+	  && ((*i)->Type != ID_TOOL_HELP_OPTIONPANEL)) 
+	    if ((*i)->Data == DataPointer)
+  	    {
+          ShowTool(MixerTool);
+          ToolsList.erase(i);
+	      delete *i;
+	      break;
+	    }
+    }
+}
+
 void				OptionPanel::ClosePlug(Plugin *p)
 {
   vector<WiredTool *>::iterator	i;
@@ -363,11 +383,11 @@ void				OptionPanel::ClosePlug(Plugin *p)
       if ((*i)->Data == p)
 	{
 	  if (*i == CurrentTool)
-	    {	    
+	    {
 	      ShowLastTool();
   	    }     
-	  delete *i;
 	  ToolsList.erase(i);
+	  delete *i;
 	  break;
 	}
     }

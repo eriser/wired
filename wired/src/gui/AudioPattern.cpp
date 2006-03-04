@@ -57,6 +57,7 @@ AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
 
 AudioPattern::~AudioPattern()
 {
+  OptPanel->DeleteTools(this);
   if (InputChan) delete InputChan;
   if (RecordWave) delete RecordWave;
 }

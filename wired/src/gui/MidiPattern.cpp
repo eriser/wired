@@ -43,7 +43,7 @@ MidiPattern::MidiPattern(double pos, MidiTrack *t, long trackindex)
 
 MidiPattern::~MidiPattern()
 {
-
+  OptPanel->DeleteTools(this);
 }
 
 void					MidiPattern::Init()

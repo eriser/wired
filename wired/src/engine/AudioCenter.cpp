@@ -35,6 +35,18 @@ WaveFile *AudioCenter::AddWaveFile(string filename)
   return (w);
 }
 
+void		AudioCenter::RemoveWaveFile(WaveFile *File)
+{
+  list<WaveFile *>::iterator i;
+
+  for (i = WaveFiles.begin(); i != WaveFiles.end(); i++)
+  	if (*i == File)
+  	{
+	  	WaveFiles.erase(i);
+	    delete *i;
+  	}
+}
+
 void AudioCenter::Clear()
 {
   list<WaveFile *>::iterator i;

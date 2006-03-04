@@ -59,7 +59,7 @@ WaveEditor::WaveEditor(wxWindow *parent, wxWindowID id, const wxPoint& pos, cons
 
 WaveEditor::~WaveEditor()
 {
-  //cout << "WaveEditor::~WaveEditor" << endl;
+  cout << "WaveEditor::~WaveEditor" << endl;
 }
 
 

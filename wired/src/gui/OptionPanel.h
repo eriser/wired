@@ -106,6 +106,7 @@ class OptionPanel : public wxPanel
 
   void				ClosePlug(Plugin *p);
   void				DeleteTools();
+  void				DeleteTools(void *DataPointer);		//Delete tool(s) associated with some data, for example delete editor for a pattern
 
  protected:
   wxPanel			*ToolbarPanel;
