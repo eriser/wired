@@ -16,6 +16,7 @@ class AudioCenter
   ~AudioCenter();
 
   WaveFile *AddWaveFile(string filename);
+  void		RemoveWaveFile(WaveFile *File);
   void	    Clear();
 
   list<WaveFile *> WaveFiles;

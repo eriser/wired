@@ -787,7 +787,10 @@ void					Sequencer::DeletePattern(Pattern *p)
 	    t->Patterns.erase(k);
 	    SeqMutex.Unlock();
 		if (p)
+		{
+			//RemoveWaveFile(p->Wave);
 		    delete (p);
+		}
 	    break;
 	  }
     }
