@@ -31,7 +31,7 @@ BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
 END_EVENT_TABLE()
 
   AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
-: Plugin(startinfo, initinfo), PolyphonyCount(8), Volume(1.f), AkaiProgram(0x0)
+: Plugin(startinfo, initinfo), PolyphonyCount(8), Volume(100.f), AkaiProgram(0x0)
 {
 
   sampleid = 0;
@@ -119,7 +119,7 @@ END_EVENT_TABLE()
 
   /* Envelope */
 
-  VolumeFader = new FaderCtrl(this, Sampler_Volume, fader_bg, fader_fg, 0, 127, &Volume, true, 
+  VolumeFader = new FaderCtrl(this, Sampler_Volume, fader_bg, fader_fg, 0, 127, &Volume, false, 
       wxPoint(11, 21), wxSize(15, 102));
 
   AkaiPrefix = _T("");
@@ -817,9 +817,8 @@ void AkaiSampler::OnOpenFile(wxCommandEvent &event)
 void AkaiSampler::OnVolume(wxScrollEvent &event)
 {
   Mutex.Lock();
-
-  Volume = VolumeFader->GetValue() / 100.f;
-  Workshop.SetVolume(Volume);
+  float RealVolume = VolumeFader->GetValue() / 127.f;
+  Workshop.SetVolume(RealVolume);
 
   Mutex.Unlock();
 }
