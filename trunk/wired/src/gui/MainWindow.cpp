@@ -455,13 +455,15 @@ void					MainWindow::OnClose(wxCloseEvent &event)
         }
     }
     wxGetApp().m_critsect.Leave();
+    
+    wxTimer		*KillTimer = new wxTimer(this, MainWin_KillTimer);
     if (count)
     {
         cout << "[MAINWIN] Waiting for Threads to really stop..."<< endl;
-        wxTimer		*KillTimer = new wxTimer(this, MainWin_KillTimer);
 		KillTimer->Start(1000);
         wxGetApp().m_semAllDone.Wait();
     }
+    KillTimer->Stop();
     cout << "[MAINWIN] Done !"<< endl;
   cout << "[MAINWIN] Unloading external plugins..." << endl;
 //  delete Mix;
@@ -475,12 +477,16 @@ void					MainWindow::OnClose(wxCloseEvent &event)
     delete FileConverter;
 //  delete Mix;
 //  delete OptPanel;
+  cout << "[MAINWIN] Unloading session manager..." << endl;
   delete CurrentSession;
   delete CurrentXmlSession;
+  cout << "[MAINWIN] Unloading logging manager..." << endl;
   delete LogWin;  
+  cout << "[MAINWIN] Closing all audio devices and streams..." << endl;
   if (Audio)
       delete Audio;
    delete TransportPanel;
+   cout << "[MAINWIN] Unloading user settings manager..." << endl;
   if (WiredSettings)
       delete WiredSettings;
   cout << "[MAINWIN] Closing..." << endl;
