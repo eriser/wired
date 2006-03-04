@@ -334,7 +334,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
+#if wxUSE_STATUSBAR
   Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
+#endif
 }
 
 void                MainWindow::InitLocale()
@@ -418,7 +420,9 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 	  return;
 	}
     }
+#if wxUSE_STATUSBAR
     Disconnect(wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);    
+#endif
   //WiredVideoObject->CloseFile();
   /* for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)  
     for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
@@ -1621,6 +1625,7 @@ void					MainWindow::OnKillTimer(wxTimerEvent &WXUNUSED(event))
 
 void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
 {
+#if wxUSE_STATUSBAR
 	if (SeqTimer)
 	{
 		wxString			LeftSpace(_("Left space on drive : ")), LeftMemory(_("Free memory : "));
@@ -1639,6 +1644,7 @@ void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
 		SetStatusText(LeftSpace, 0);
 		SetStatusText(LeftMemory, 1);
 	}
+#endif
 }
 
 BEGIN_DECLARE_EVENT_TYPES()
