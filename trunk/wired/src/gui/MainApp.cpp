@@ -62,7 +62,7 @@ bool				MainApp::OnInit()
 
 void              MainApp::OnFatalException()
 {
-	
+#if wxUSE_DEBUGREPORT
 	wxDebugReportCompress Report;
     Report.AddAll();
     if (wxDebugReportPreviewStd().Show(Report))
@@ -72,6 +72,7 @@ void              MainApp::OnFatalException()
 		Report.Reset();
         //send a mail
 	}
+#endif
 }
 
 void				MainApp::OnUnhandledException()
