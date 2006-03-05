@@ -448,7 +448,7 @@ void			FileLoader::LoadFolders()
   if (favorites != NULL)
     {
       file.Create(favdir);
-      if (file.IsOpened())
+      if (file.Open(favdir) && file.GetLineCount() > 0)
 	{
 	  for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
 	    if (favorites->FindString(l.c_str()) == -1)
@@ -461,7 +461,7 @@ void			FileLoader::LoadFolders()
   if (mru != NULL)
     {
       file.Create(mrudir);
-      if (file.IsOpened())
+      if (file.Open(mrudir) && file.GetLineCount() > 0)
 	{
 	  for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
 	    if (mru->FindString(l.c_str()) == -1)
