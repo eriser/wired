@@ -23,6 +23,7 @@
      ../src/engine/WiredSession.cpp \
      ../src/fileloader/FileLoader.cpp \
      ../src/fileloader/TreeItemData.cpp \
+     ../src/fileloader/FileStat.cpp \
      ../src/gui/AccelCenter.cpp \
      ../src/gui/AudioPattern.cpp \
      ../src/gui/ChannelGui.cpp \
