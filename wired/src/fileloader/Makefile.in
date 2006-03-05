@@ -50,7 +50,7 @@ ARFLAGS = cru
 libfileloader_a_AR = $(AR) $(ARFLAGS)
 libfileloader_a_LIBADD =
 am_libfileloader_a_OBJECTS = FileLoader.$(OBJEXT) \
-	TreeItemData.$(OBJEXT)
+	TreeItemData.$(OBJEXT) FileStat.$(OBJEXT)
 libfileloader_a_OBJECTS = $(am_libfileloader_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)/src/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -212,7 +212,8 @@ libfileloader_a_SOURCES = \
 		TreeItemData.cpp	\
 		TreeItemData.h		\
 		akai.h			\
-		list.h
+		list.h		\
+		FileStat.cpp
 
 all: all-am
 
@@ -262,6 +263,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileLoader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileStat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TreeItemData.Po@am__quote@
 
 .cpp.o:

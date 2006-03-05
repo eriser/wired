@@ -33,9 +33,10 @@ using namespace std;
 #include "file.xpm"
 #include "audio.xpm"
 #include "delete.xpm"
+#include "FileStat.h"
 
 #define F_WIDTH		640
-#define F_HEIGHT	480
+#define F_HEIGHT	520
 
 #define FOLDER_ID		2001
 #define FILE_ID			2002
@@ -95,11 +96,11 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   akai = pakai;
   save = psave;
   folder = new wxTreeCtrl(this, FOLDER_ID, wxPoint(4, 34), 
-			  wxSize(F_WIDTH / 3 - 8, F_HEIGHT - 110),
+			  wxSize(F_WIDTH / 3 - 8, F_HEIGHT - 150),
 			  wxTR_HAS_BUTTONS | wxTR_SINGLE | 
 			  wxSUNKEN_BORDER | wxTR_NO_LINES);
   files = new wxListView(this, FILE_ID, wxPoint(F_WIDTH / 3, 34), 
-			  wxSize(2 * F_WIDTH / 3 - 8, F_HEIGHT - 110), 
+			  wxSize(2 * F_WIDTH / 3 - 8, F_HEIGHT - 150), 
 			  wxSUNKEN_BORDER | wxLC_REPORT | 
 			  wxLC_SINGLE_SEL);
   files->InsertColumn(0, _("Name"));
@@ -116,6 +117,8 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
     files->InsertColumn(2, _("Type"));
     files->SetColumnWidth(2, 180);
   }
+  FileInfo = new wxStaticText(this, -1, (""), 
+          wxPoint(10, F_HEIGHT - 105), wxSize(-1, -1), wxALIGN_LEFT);
   wxImageList *images = new wxImageList(16, 16, TRUE);
   AddIcon(images, wxIcon(icon3_xpm));
   AddIcon(images, wxIcon(icon5_xpm));
@@ -945,6 +948,7 @@ void FileLoader::OnCollapseFolder(wxTreeEvent &e)
 
 void FileLoader::OnSelectFolder(wxTreeEvent &e)
 {
+  FileInfo->SetLabel(wxString(""));
   StopPlaying();
   wxTreeItemId item = e.GetItem();
   TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
@@ -964,6 +968,7 @@ void FileLoader::OnSelectFolder(wxTreeEvent &e)
 
 void FileLoader::OnActivateFolder(wxTreeEvent &e)
 {
+  FileInfo->SetLabel(wxString(""));
   wxTreeItemId item = e.GetItem();
   if (folder->ItemHasChildren(item))
     {
@@ -990,6 +995,7 @@ void FileLoader::PopupMenuFolder(wxTreeEvent &e)
 
 void FileLoader::OnSelectFile(wxListEvent &e)
 {
+  FileInfo->SetLabel(wxString(""));
   if (!akai)
     {
       wxTreeItemId item = folder->GetSelection();
@@ -1006,7 +1012,14 @@ void FileLoader::OnSelectFile(wxListEvent &e)
 	    preview->Enable();
 	  else
 	    preview->Disable();
-	}
+      string FileName = fn.c_str();
+      FileStat      Stats;
+      if (Stats.StatFile(FileName.c_str()))
+        FileInfo->SetLabel(wxString(Stats.GetFormat() + wxString(", ") + Stats.GetBitNess() + 
+                            Stats.GetLenght().Format("\t\t\t %H hours - %M minutes - %S seconds") +
+                            wxString("\n") + Stats.GetNbChannels().ToString() + wxString(" channel(s), ") + 
+                            Stats.GetSampleRate().ToString() + " Hz"));
+    }
     }
   else
     {
@@ -1268,6 +1281,7 @@ string FileLoader::GetSelectedFile()
 
 void FileLoader::StopPlaying()
 {
+  FileInfo->SetLabel(wxString(""));
   playing = false;
   if (!save)
     preview->SetLabel(_("Preview"));
