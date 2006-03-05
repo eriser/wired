@@ -10,4 +10,5 @@ libfileloader_a_SOURCES =		\
 		TreeItemData.cpp	\
 		TreeItemData.h		\
 		akai.h			\
-		list.h
+		list.h		\
+		FileStat.cpp

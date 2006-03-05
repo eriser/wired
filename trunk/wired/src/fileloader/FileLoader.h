@@ -108,6 +108,7 @@ class FileLoader: public wxDialog
   wxStaticText		*typtext;
   wxStaticText		*favtext;
   wxStaticText		*mrutext;
+  wxStaticText      *FileInfo;
   wxComboBox		*type;
   wxButton		*preview;
   wxButton		*btopen;
