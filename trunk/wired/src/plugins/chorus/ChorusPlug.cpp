@@ -69,10 +69,10 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 				 (float*)&EffectMix, true, wxPoint(149, 11), wxSize(22, 78), 
 				 this, GetPosition() + wxPoint(135, 25));  
 
-  cout << "BaseLength : " << BaseLength << endl;
-  cout << "ModDepth : " << ModDepth << endl;
-  cout << "Frequency : " << Frequency << endl;
-  cout << "EffectMix : " << EffectMix << endl;
+  // cout << "BaseLength : " << BaseLength << endl;
+//   cout << "ModDepth : " << ModDepth << endl;
+//   cout << "Frequency : " << Frequency << endl;
+//   cout << "EffectMix : " << EffectMix << endl;
 
   SetBackgroundColour(wxColour(237, 237, 237));
 }
@@ -92,21 +92,21 @@ void ChorusPlugin::Init()
   ChorusMutex.Lock();
 
   BaseLength = 10000;
-  ModDepth = 0.03;
+  ModDepth = 3.0;
   Frequency = 0.003;
-  EffectMix = 0.5;
+  EffectMix = 50;
   
-  Stk::setSampleRate( 44100.0 );
+  Stk::setSampleRate(44100.0);
 
   chorus1 = new Chorus(BaseLength, GetDataDir());
-  chorus1->setModDepth(ModDepth);
+  chorus1->setModDepth(ModDepth / 100.f);
   chorus1->setModFrequency(Frequency);
-  chorus1->setEffectMix(EffectMix);
+  chorus1->setEffectMix(EffectMix / 100.f);
 
   chorus2 = new Chorus(BaseLength, GetDataDir());
-  chorus2->setModDepth(ModDepth);
+  chorus2->setModDepth(ModDepth / 100.f);
   chorus2->setModFrequency(Frequency);
-  chorus2->setEffectMix(EffectMix);
+  chorus2->setEffectMix(EffectMix / 100.f);
 
   
   ChorusMutex.Unlock();
@@ -185,50 +185,48 @@ void ChorusPlugin::Load(int fd, long size)
   chorus2->setModDepth(ModDepth);
   chorus2->setModFrequency(Frequency);
   chorus2->setEffectMix(EffectMix);
-  
-
 }
 
 void ChorusPlugin::Load(WiredPluginData& Datas)
 {
-	char	*buffer;
-	
-	buffer = strdup(Datas.LoadValue(std::string(STR_BASE_LENGHT)));
-	if (buffer != NULL)
-	  {
-	    BaseLength = atof(buffer);
-	    BaseLengthFader->SetValue(int(BaseLength));
-	    chorus1->setBaseLength(BaseLength);
-	    chorus2->setBaseLength(BaseLength);
-	  }
-	free(buffer);
-	buffer = strdup(Datas.LoadValue(std::string(STR_MODE_DEPTH)));
-	if (buffer != NULL)
-	  {
-	    ModDepth = atof(buffer);
-	    ModDepthFader->SetValue(int(ModDepth * 100)); 
-	  chorus1->setModDepth(ModDepth);
-	  chorus2->setModDepth(ModDepth);
-	  }
-	free(buffer);
-	buffer = strdup(Datas.LoadValue(std::string(STR_FREQUENCY)));
-	if (buffer != NULL)
-	  {
-	    Frequency = atof(buffer);
-	    FrequencyFader->SetValue(int(Frequency * 1000));
-	    chorus1->setModFrequency(Frequency);
-	    chorus2->setModFrequency(Frequency);
-	  }
-	free(buffer);
-	buffer = strdup(Datas.LoadValue(std::string(STR_EFFECT_MIX)));
-	if (buffer != NULL)
-	  {
-	    EffectMix = atof(buffer);
-	    EffectMixFader->SetValue(int(100 - (EffectMix * 100)));
-	    chorus1->setEffectMix(EffectMix);  
-	    chorus2->setEffectMix(EffectMix);
-	  }
-	free(buffer);
+  char	*buffer;
+  
+  buffer = strdup(Datas.LoadValue(std::string(STR_BASE_LENGHT)));
+  if (buffer != NULL)
+    {
+      BaseLength = atof(buffer);
+      BaseLengthFader->SetValue(int(BaseLength));
+      chorus1->setBaseLength(BaseLength);
+      chorus2->setBaseLength(BaseLength);
+    }
+  free(buffer);
+  buffer = strdup(Datas.LoadValue(std::string(STR_MODE_DEPTH)));
+  if (buffer != NULL)
+    {
+      ModDepth = atof(buffer);
+      ModDepthFader->SetValue(int(ModDepth * 100)); 
+      chorus1->setModDepth(ModDepth);
+      chorus2->setModDepth(ModDepth);
+    }
+  free(buffer);
+  buffer = strdup(Datas.LoadValue(std::string(STR_FREQUENCY)));
+  if (buffer != NULL)
+    {
+      Frequency = atof(buffer);
+      FrequencyFader->SetValue(int(Frequency * 1000));
+      chorus1->setModFrequency(Frequency);
+      chorus2->setModFrequency(Frequency);
+    }
+  free(buffer);
+  buffer = strdup(Datas.LoadValue(std::string(STR_EFFECT_MIX)));
+  if (buffer != NULL)
+    {
+      EffectMix = atof(buffer);
+      EffectMixFader->SetValue(int(100 - (EffectMix * 100)));
+      chorus1->setEffectMix(EffectMix);  
+      chorus2->setEffectMix(EffectMix);
+    }
+  free(buffer);
 }
 
 long ChorusPlugin::Save(int fd)
@@ -282,7 +280,6 @@ void ChorusPlugin::OnChorusTime(wxScrollEvent &WXUNUSED(e))
   
   //Frequency = FrequencyFader->GetValue()/1000.f;
   AllocateMem();
-
   ChorusMutex.Unlock();
   chorus1->setModFrequency(Frequency);
   chorus2->setModFrequency(Frequency);
@@ -303,22 +300,21 @@ void ChorusPlugin::OnChorusStage(wxScrollEvent &WXUNUSED(e))
   ChorusMutex.Lock();
   
   //ModDepth = ModDepthFader->GetValue()/100.f;
-  
-  //cout << "ModDepth:" << ModDepth << endl;
-  chorus1->setModDepth(ModDepth);
-  chorus2->setModDepth(ModDepth);
+  chorus1->setModDepth(ModDepth / 100.f);
+  chorus2->setModDepth(ModDepth / 100.f);
   ChorusMutex.Unlock();
+  //cout << "ModDepth:" << ModDepth << endl;
 }
 
 
 void ChorusPlugin::OnDryWet(wxScrollEvent &WXUNUSED(e))
 {
-  EffectMix = (100 - EffectMixFader->GetValue()) / 100.f;
-  chorus1->setEffectMix(EffectMix);
-  chorus2->setEffectMix(EffectMix);
-  cout << "EffectMix: " << EffectMix << endl;
-  cout << "Delay: " << BaseLength << endl;
-  cout << "Frequency: " << Frequency << endl;
+  //EffectMix = (100 - EffectMixFader->GetValue()) / 100.f;
+  chorus1->setEffectMix(EffectMix / 100.f);
+  chorus2->setEffectMix(EffectMix / 100.f);
+  //cout << "EffectMix: " << EffectMix << endl;
+  // cout << "Delay: " << BaseLength << endl;
+//   cout << "Frequency: " << Frequency << endl;
 }
 
 void ChorusPlugin::OnPaint(wxPaintEvent &event)

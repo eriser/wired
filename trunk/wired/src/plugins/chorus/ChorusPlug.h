@@ -49,10 +49,10 @@ class		ChorusPlugin: public Plugin
   Chorus	*chorus2;
 
 
-  double	BaseLength;
-  double	ModDepth;
-  double	Frequency;
-  double	EffectMix;
+  float		BaseLength;
+  float		ModDepth;
+  float		Frequency;
+  float		EffectMix;
 
  protected:
   bool		Bypass;
