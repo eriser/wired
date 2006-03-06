@@ -46,11 +46,17 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Pitch = 1.f;  
   Invert = false;
   Tempo = false;
-  Volume = 1.f;
-  Attack = 1.f;
-  Decay = 1.f;
-  Sustain = 1.f;
-  Release = 1.f;
+ //  Volume = 1.f;
+//   Attack = 1.f;
+//   Decay = 1.f;
+//   Sustain = 1.f;
+//   Release = 1.f;
+
+  Volume = 100.f;
+  Attack = 100.f;
+  Decay = 100.f;
+  Sustain = 100.f;
+  Release = 100.f;  
 
   AttackMs = 0.f;
   AttackCoef = 0.f;
@@ -144,7 +150,7 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   VolumeFader = new FaderCtrl(this, LoopSampler_Volume, fader_vol_bg, fader_vol_fg, 0, 127, &Volume, true, 
                              wxPoint(13, 56), wxSize(23, 132));
 
-  AttackFader = new FaderCtrl(this, LoopSampler_Attack, fader_bg, fader_fg, 0, 1000, &Attack, true,
+  AttackFader = new FaderCtrl(this, LoopSampler_Attack, fader_bg, fader_fg, 0, 1000, &AttackMs, true,
 			      wxPoint(51, 56), wxSize(26, 132));
 
   DecayFader = new FaderCtrl(this, LoopSampler_Decay, fader_bg, fader_fg, 0, 127, &Decay, true, 
@@ -824,7 +830,7 @@ void	LoopSampler::Update()
   else if (UpdateAttack)
     {
       UpdateAttack = false;
-      AttackFader->SetValue((int)(Attack * 1000));
+      AttackFader->SetValue((int)(Attack/* * 1000*/));
     }
   else if (UpdateOctave)
     {
@@ -1317,7 +1323,7 @@ void LoopSampler::OnVolume(wxScrollEvent &event)
 
   //Volume = VolumeFader->GetValue() / 100.f;
   cout << "Volume = " << Volume << endl;
-  Workshop.SetVolume(Volume);
+  Workshop.SetVolume(Volume / 100.f);
 
   Mutex.Unlock();
 }
@@ -1331,7 +1337,7 @@ void LoopSampler::OnAttack(wxScrollEvent &event)
 
   if (AttackMs)
     {
-      AttackLen = (long)(AttackMs * SamplingRate);
+      AttackLen = (long)((AttackMs / 100.f) * SamplingRate);
       AttackCoef = 1.f / (float)AttackLen;
     }
   //  cout << "ms: " << AttackMs << "; len: " << AttackLen << "; coef: " << AttackCoef << endl;
