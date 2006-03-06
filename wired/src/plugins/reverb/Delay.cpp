@@ -201,7 +201,6 @@ void Delay :: call_setgain(StkFloat gain)
 
 void Delay :: call_setCoef(std::vector<StkFloat> &bCoefficients, std::vector<StkFloat> &aCoefficients)
 {
-  std::cout << "coucoudelay" << std::endl;
   setCoefficients(bCoefficients, aCoefficients);
 }
 

@@ -77,11 +77,11 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
   SetBackgroundColour(wxColour(237, 237, 237));
 
-  cout << "freq : " << LeftChannel.freq<< endl;
-  cout << "startphase : " << LeftChannel.startphase << endl;
-  cout << "depth : " << LeftChannel.depth << endl;
-  cout << "freqofs : " << LeftChannel.freqofs << endl;
-  cout << "res : " << LeftChannel.res << endl;
+  // cout << "freq : " << LeftChannel.freq<< endl;
+//   cout << "startphase : " << LeftChannel.startphase << endl;
+//   cout << "depth : " << LeftChannel.depth << endl;
+//   cout << "freqofs : " << LeftChannel.freqofs << endl;
+//   cout << "res : " << LeftChannel.res << endl;
 }
 
 void		EffectWahwah::Init()
@@ -167,7 +167,7 @@ void		EffectWahwah::OnDepth(wxScrollEvent &e)
 {
 	WahwahMutex.Lock();
 	RightChannel.depth = LeftChannel.depth;
-	cout << "Depth: " << LeftChannel.depth << endl;
+	// cout << "Depth: " << LeftChannel.depth << endl;
 	WahwahMutex.Unlock();
 }
 
@@ -175,7 +175,7 @@ void		EffectWahwah::OnFreqOfs(wxScrollEvent &e)
 {
 	WahwahMutex.Lock();
 	RightChannel.freqofs = LeftChannel.freqofs;
-	cout << "Frequency OFS : " << LeftChannel.freqofs << endl;
+	// cout << "Frequency OFS : " << LeftChannel.freqofs << endl;
 	WahwahMutex.Unlock();
 }
 
@@ -183,14 +183,14 @@ void		EffectWahwah::OnRes(wxScrollEvent &e)
 {
 	WahwahMutex.Lock();
 	RightChannel.res = LeftChannel.res;
-	cout << "Res: " << LeftChannel.res << endl;
+	// cout << "Res: " << LeftChannel.res << endl;
 	WahwahMutex.Unlock();
 }
 
 void		EffectWahwah::OnPaint(wxPaintEvent &event)
 {
-  wxMemoryDC memDC;
-  wxPaintDC dc(this);
+  wxMemoryDC	memDC;
+  wxPaintDC	dc(this);
   
   memDC.SelectObject(*TpBmp);    
   wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
@@ -208,7 +208,7 @@ void		EffectWahwah::Load(int fd, long size)
   t_plugParams	params;
 
   WahwahMutex.Lock();
-  cout << "Wrong Load" << endl;
+  //cout << "Wrong Load" << endl;
   if (read (fd, &params, size) <= 0)
     {
       cout << "[WAHWAHPLUG] Error while loading patch !" << endl;
@@ -264,7 +264,7 @@ void		EffectWahwah::Load(WiredPluginData& Datas)
 	t_plugParams	param;
 
    	WahwahMutex.Lock();		
-   	cout << "Good Load" << endl;
+   	// cout << "Good Load" << endl;
 	buffer = strdup(Datas.LoadValue(std::string(STR_RESOLUTION)));
 	if (buffer != NULL)
 		param.res = strtof(buffer, NULL);

@@ -188,8 +188,8 @@ StkFloat Filter :: tick(StkFloat sample)
 {
   unsigned int i;
 
-  std::cout << "-------------- a_ = " << a_[0] << std::endl;
-  std::cout << "-------------- a_ = " << b_[0] << std::endl;
+  // std::cout << "-------------- a_ = " << a_[0] << std::endl;
+//   std::cout << "-------------- a_ = " << b_[0] << std::endl;
   outputs_[0] = 0.0;
   inputs_[0] = gain_ * sample;
   for (i=b_.size()-1; i>0; i--) {
