@@ -97,7 +97,8 @@ class FileLoader: public wxDialog
 
   void StartPlaying();
   void StopPlaying();
-  void GotoDir(const char *);
+  //void GotoDir(const char *);
+  void GotoDir(wxString path, wxTreeItemId parent);
 
   bool			ExtMatch(wxString);
   

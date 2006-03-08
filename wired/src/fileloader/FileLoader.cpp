@@ -134,69 +134,72 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   	fntext = new wxStaticText(this, -1, _T(_("Filename")), 
 		  wxPoint(10, F_HEIGHT - 58), wxSize(-1, -1), wxALIGN_LEFT);
   	filename = new wxTextCtrl(this, FILENAME_ID, _T(""), 
-		            wxPoint(100, F_HEIGHT - 60), 
-		            wxSize(320, -1),
-		  	    wxTE_PROCESS_ENTER);
+				  wxPoint(100, F_HEIGHT - 60), 
+				  wxSize(320, -1), wxTE_PROCESS_ENTER);
+	typtext = new wxStaticText(this, -1, _T(_("Type")),
+				   wxPoint(10, F_HEIGHT - 30), 
+				   wxSize(-1, -1), wxALIGN_LEFT);
+	type = new wxComboBox(this, TYPE_ID, _T(" "), 
+			      wxPoint(100, F_HEIGHT - 30), wxSize(320, -1), 0, 
+			      NULL, wxCB_DROPDOWN | wxCB_READONLY);  
   }
   else
   {
   	fntext = new wxStaticText(this, -1, _T(_("Akai device")), 
 		  wxPoint(10, F_HEIGHT - 58), wxSize(-1, -1), wxALIGN_LEFT);
   	filename = new wxTextCtrl(this, FILENAME_ID, _T("/dev/cdrom"), 
-		            wxPoint(100, F_HEIGHT - 60), 
-		            wxSize(320, -1),
-		  	    wxTE_PROCESS_ENTER);
+				  wxPoint(100, F_HEIGHT - 60), 
+				  wxSize(320, -1), wxTE_PROCESS_ENTER);
   }
-  if (!akai)
-  {
-    typtext = new wxStaticText(this, -1, _T(_("Type")),
-  		    wxPoint(10, F_HEIGHT - 30), wxSize(-1, -1), wxALIGN_LEFT);
-    type = new wxComboBox(this, TYPE_ID, _T(" "), wxPoint(100, F_HEIGHT - 30), 
-  		  wxSize(320, -1), 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);  
-  }
+//   if (!akai)
+//   {
+//     typtext = new wxStaticText(this, -1, _T(_("Type")),
+//   		    wxPoint(10, F_HEIGHT - 30), wxSize(-1, -1), wxALIGN_LEFT);
+//     type = new wxComboBox(this, TYPE_ID, _T(" "), wxPoint(100, F_HEIGHT - 30), 
+//   		  wxSize(320, -1), 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);  
+//   }
   if (!save)
- {
-	 preview = new wxButton(this, PREVIEW_ID, _T(_("Preview")), 
-		  	 wxPoint(F_WIDTH - 168, F_HEIGHT - 60),
-			 wxSize(-1, -1));
- }
- if (!save)
- {
- 	btopen = new wxButton(this, OPEN_ID, _T(_("Open")), 
-		  	 wxPoint(F_WIDTH - 84, F_HEIGHT - 60),
-			 wxSize(-1, -1));
- }
- else
-{
- 	btopen = new wxButton(this, OPEN_ID, _T(_("Save")), 
-		  	 wxPoint(F_WIDTH - 84, F_HEIGHT - 60),
-			 wxSize(-1, -1));
-}
-  	cancel = new wxButton(this, CANCEL_ID, _T(_("Cancel")), 
-		  	 wxPoint(F_WIDTH - 84, F_HEIGHT - 30),
-			 wxSize(-1, -1));
+    {
+      preview = new wxButton(this, PREVIEW_ID, _T(_("Preview")), 
+			     wxPoint(F_WIDTH - 168, F_HEIGHT - 60),
+			     wxSize(-1, -1));
+      btopen = new wxButton(this, OPEN_ID, _T(_("Open")), 
+			    wxPoint(F_WIDTH - 84, F_HEIGHT - 60),
+			    wxSize(-1, -1));
+      preview->Disable();
+      btopen->Disable();
+    }
+  else
+    btopen = new wxButton(this, OPEN_ID, _T(_("Save")), 
+			  wxPoint(F_WIDTH - 84, F_HEIGHT - 60), 
+			  wxSize(-1, -1));
+  cancel = new wxButton(this, CANCEL_ID, _T(_("Cancel")), 
+			wxPoint(F_WIDTH - 84, F_HEIGHT - 30), wxSize(-1, -1));
   if (!akai)
-  {
-    favtext = new wxStaticText(this, -1, _T(_("Favorites")),
-		  wxPoint(10, 10), wxSize(-1, -1), wxALIGN_LEFT);
-    favorites = new wxComboBox(this, FAVORITES_ID, _T(" "), 
-		  wxPoint(70, 4), wxSize(160, -1), 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
-    favdel = new wxBitmapButton(this, DELFAVORITES_ID, 
-		  wxBitmap(delete_xpm).ConvertToImage(),
-		  wxPoint(235, 0));
-    mrutext = new wxStaticText(this, -1, _T(_("Recents")),
-		  wxPoint(330, 10), wxSize(-1, -1), wxALIGN_LEFT);
-    mru = new wxComboBox(this, MRU_ID, _T(" "), 
-		  wxPoint(390, 4), wxSize(160, -1), 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
-    mrudel = new wxBitmapButton(this, DELMRU_ID, 
-		  wxBitmap(delete_xpm).ConvertToImage(),
-		  wxPoint(555, 0));
-  }
-  if (!save)
-  {
-  	preview->Disable();
-  	btopen->Disable();
-  }
+    {
+      favtext = new wxStaticText(this, -1, _T(_("Favorites")), wxPoint(10, 10),
+				 wxSize(-1, -1), wxALIGN_LEFT);
+      favorites = new wxComboBox(this, FAVORITES_ID, _T(" "), wxPoint(70, 4),
+				 wxSize(160, -1), 0, NULL, 
+				 wxCB_DROPDOWN | wxCB_READONLY);
+      favdel = new wxBitmapButton(this, DELFAVORITES_ID, 
+				  wxBitmap(delete_xpm).ConvertToImage(),
+				  wxPoint(235, 0));
+      mrutext = new wxStaticText(this, -1, _T(_("Recents")),
+				 wxPoint(330, 10), wxSize(-1, -1), 
+				 wxALIGN_LEFT);
+      mru = new wxComboBox(this, MRU_ID, _T(" "), wxPoint(390, 4), 
+			   wxSize(160, -1), 0, NULL, 
+			   wxCB_DROPDOWN | wxCB_READONLY);
+      mrudel = new wxBitmapButton(this, DELMRU_ID, 
+				  wxBitmap(delete_xpm).ConvertToImage(),
+				  wxPoint(555, 0));
+    }
+  // if (!save)
+//     {
+//       preview->Disable();
+//       btopen->Disable();
+//     }
   if (!akai)
     {    	
 	wxLogNull logNo;
@@ -224,10 +227,11 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 	ListDirectories(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
       if (OldPath.empty())
 	{
-	  GotoDir(wxGetCwd());
+	  GotoDir(wxGetCwd(), folder->GetRootItem());
 	}
       else
-	GotoDir((const char *)OldPath.c_str());
+	//GotoDir((const char *)OldPath.c_str());
+	GotoDir(OldPath, folder->GetRootItem());
     }
   else
     {
@@ -847,78 +851,99 @@ void			FileLoader::ListFiles(string path)
     }
 }
 
-void FileLoader::GotoDir(const char *path)
+void			FileLoader::GotoDir(wxString path, wxTreeItemId parent)
 {
-  unsigned int pos = 0;
-  int opos = 0;
-  string pt = path;
-  string dir = "";
-  wxTreeItemId dir_tree = folder->GetRootItem();
+  wxTreeItemId		child; 
+  wxTreeItemIdValue	cookie;
+  wxString		dir;
   
-  if (pt[0] == '/')
-    pt.erase(0, 1);
-  while ((pos = pt.find("/", pos)) != (unsigned int) string::npos)
-    {
-      if (!folder->ItemHasChildren(dir_tree))
-	{
-	  folder->SelectItem(dir_tree);
-	  folder->ScrollTo(dir_tree);
-	  return;
-	}
-      folder->Expand(dir_tree);
-      dir = pt.substr(opos, pos - opos);
-      wxTreeItemIdValue cookie;
-      wxTreeItemId son = folder->GetFirstChild(dir_tree, cookie);
-      bool found = false;
-      while ((!found) && (son.IsOk()))
-	{
-		  if (!strcmp(folder->GetItemText(son).c_str(), dir.c_str()))
-		    {
-		      dir_tree = son;
-		      found = true;
-		    }
-		  else
-		    son = folder->GetNextChild(dir_tree, cookie);
-	}
-      if (!found)
-	{
-	  folder->SelectItem(dir_tree);
-	  folder->ScrollTo(dir_tree);
-	  return;
-	}
-      opos = ++pos;
-    }
-  if (!folder->ItemHasChildren(dir_tree))
-    {
-      folder->SelectItem(dir_tree);
-      folder->ScrollTo(dir_tree);
-      return;
-    }
-  folder->Expand(dir_tree);
-  dir = pt.substr(opos, pt.size() - opos);
-  wxTreeItemIdValue cookie;
-  wxTreeItemId son = folder->GetFirstChild(dir_tree, cookie);
-  bool found = false;
-  while ((!found) && (son.IsOk()))
-    {
-      if (!strcmp(folder->GetItemText(son).c_str(), dir.c_str()))
-	  {
-	    dir_tree = son;
-	    found = true;
-	  }
-      else
-	son = folder->GetNextChild(dir_tree, cookie);
-    }
-  folder->Expand(dir_tree);
-  folder->SelectItem(dir_tree);
-  folder->ScrollTo(dir_tree);
-  if (!found)
-    {
-      long file = files->FindItem(-1, dir.c_str());
-      if (file != -1)
-	files->Select(file);
-    }
+  path.StartsWith("/", &path);
+  dir = path.BeforeFirst('/');
+  child = folder->GetFirstChild(parent, cookie);
+  while (child.IsOk())
+    if (dir == folder->GetItemText(child))
+      {
+	folder->SelectItem(child);
+	folder->ScrollTo(child);
+	GotoDir(path.AfterFirst('/'), child);
+	break ;
+      }
+    else
+      child = folder->GetNextChild(parent, cookie);
 }
+
+// void FileLoader::GotoDir(const char *path)
+// {
+//   unsigned int pos = 0;
+//   int opos = 0;
+//   string pt = path;
+//   string dir = "";
+//   wxTreeItemId dir_tree = folder->GetRootItem();
+  
+//   if (pt[0] == '/')
+//     pt.erase(0, 1);
+//   while ((pos = pt.find("/", pos)) != (unsigned int) string::npos)
+//     {
+//       if (!folder->ItemHasChildren(dir_tree))
+// 	{
+// 	  folder->SelectItem(dir_tree);
+// 	  folder->ScrollTo(dir_tree);
+// 	  return ;
+// 	}
+//       folder->Expand(dir_tree);
+//       dir = pt.substr(opos, pos - opos);
+//       wxTreeItemIdValue cookie;
+//       wxTreeItemId son = folder->GetFirstChild(dir_tree, cookie);
+//       bool found = false;
+//       while ((!found) && (son.IsOk()))
+// 	{
+// 		  if (!strcmp(folder->GetItemText(son).c_str(), dir.c_str()))
+// 		    {
+// 		      dir_tree = son;
+// 		      found = true;
+// 		    }
+// 		  else
+// 		    son = folder->GetNextChild(dir_tree, cookie);
+// 	}
+//       if (!found)
+// 	{
+// 	  folder->SelectItem(dir_tree);
+// 	  folder->ScrollTo(dir_tree);
+// 	  return;
+// 	}
+//       opos = ++pos;
+//     }
+//   if (!folder->ItemHasChildren(dir_tree))
+//     {
+//       folder->SelectItem(dir_tree);
+//       folder->ScrollTo(dir_tree);
+//       return;
+//     }
+//   folder->Expand(dir_tree);
+//   dir = pt.substr(opos, pt.size() - opos);
+//   wxTreeItemIdValue cookie;
+//   wxTreeItemId son = folder->GetFirstChild(dir_tree, cookie);
+//   bool found = false;
+//   while ((!found) && (son.IsOk()))
+//     {
+//       if (!strcmp(folder->GetItemText(son).c_str(), dir.c_str()))
+// 	  {
+// 	    dir_tree = son;
+// 	    found = true;
+// 	  }
+//       else
+// 	son = folder->GetNextChild(dir_tree, cookie);
+//     }
+//   folder->Expand(dir_tree);
+//   folder->SelectItem(dir_tree);
+//   folder->ScrollTo(dir_tree);
+//   if (!found)
+//     {
+//       long file = files->FindItem(-1, dir.c_str());
+//       if (file != -1)
+// 	files->Select(file);
+//     }
+// }
 
 void FileLoader::OnExpandFolder(wxTreeEvent &e)
 {
@@ -1200,7 +1225,8 @@ void FileLoader::OnEnterFilename(wxCommandEvent &e)
     {
       if (!save)
 	{
-	  GotoDir((char *)filename->GetValue().c_str());
+	  //GotoDir((char *)filename->GetValue().c_str());
+	  GotoDir(filename->GetValue(), folder->GetRootItem());
 	  files->SetFocus();
 	}
       else
@@ -1317,7 +1343,8 @@ void FileLoader::OnSelectFavoriteDir(wxCommandEvent &e)
   files->SetFocus();
   long item = favorites->GetSelection();
   if (item != -1)
-    GotoDir((char *)favorites->GetString(item).c_str());
+    //GotoDir((char *)favorites->GetString(item).c_str());
+    GotoDir(favorites->GetString(item), folder->GetRootItem());
 }
 
 void FileLoader::OnSelectRecentDir(wxCommandEvent &e)
@@ -1325,7 +1352,8 @@ void FileLoader::OnSelectRecentDir(wxCommandEvent &e)
   files->SetFocus();
   long item = mru->GetSelection();
   if (item != -1)
-    GotoDir((char *)mru->GetString(item).c_str());
+    //    GotoDir((char *)mru->GetString(item).c_str());
+    GotoDir(favorites->GetString(item), folder->GetRootItem());
 }
 
 void FileLoader::OnDeleteFavorite(wxCommandEvent &e)
