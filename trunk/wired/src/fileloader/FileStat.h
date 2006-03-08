@@ -2,6 +2,7 @@
 #define FILESTAT_H_
 
 #include <string>
+#include <map>
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
    #include <wx/wx.h>
@@ -22,7 +23,7 @@ typedef struct				s_file_info
 class		FileStat
 {
 public:
-    FileStat() {;}
+    FileStat();
 	FileStat(const FileStat& copy){;}
 	~FileStat(){;}
 	
@@ -34,7 +35,12 @@ public:
     wxTimeSpan      GetLenght();
     
 private:
+    void            LoadSubTypes();
+    void            LoadMajorTypes();
+
     SF_INFO              _FileInfo;
+    map<int, wxString>   _SubTypes;
+    map<int, wxString>   _MajorTypes;
 };
 
 #endif /*FILESTAT_H_*/

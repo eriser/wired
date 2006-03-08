@@ -950,6 +950,7 @@ void FileLoader::OnExpandFolder(wxTreeEvent &e)
   wxTreeItemIdValue cookie;
   wxTreeItemId item = e.GetItem();
   folder->SetItemImage(item, 1);
+  wxLogNull logNo;
   if (folder->ItemHasChildren(item))
     {
       wxTreeItemId son = folder->GetFirstChild(item, cookie);
