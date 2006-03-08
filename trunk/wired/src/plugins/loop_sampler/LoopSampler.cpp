@@ -53,7 +53,7 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 //   Release = 1.f;
 
   Volume = 100.f;
-  Attack = 100.f;
+  Attack = 0.f;
   Decay = 100.f;
   Sustain = 100.f;
   Release = 100.f;  
@@ -1328,20 +1328,15 @@ void LoopSampler::OnVolume(wxScrollEvent &event)
   Mutex.Unlock();
 }
 
-void LoopSampler::OnAttack(wxScrollEvent &event)
+void	LoopSampler::OnAttack(wxScrollEvent &event)
 {
   Mutex.Lock();
-
-  cout << "Attack = " << Attack << endl;
-  //AttackMs = AttackFader->GetValue() / 1000.f;
-
+  AttackMs = Attack / 1000.f;
   if (AttackMs)
     {
-      AttackLen = (long)((AttackMs / 100.f) * SamplingRate);
+      AttackLen = (long)(AttackMs * SamplingRate);
       AttackCoef = 1.f / (float)AttackLen;
     }
-  //  cout << "ms: " << AttackMs << "; len: " << AttackLen << "; coef: " << AttackCoef << endl;
-
   Mutex.Unlock();
 }
 
