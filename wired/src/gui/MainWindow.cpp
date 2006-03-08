@@ -460,14 +460,11 @@ void					MainWindow::OnClose(wxCloseEvent &event)
     }
     wxGetApp().m_critsect.Leave();
     
-    wxTimer		*KillTimer = new wxTimer(this, MainWin_KillTimer);
     if (count)
     {
         cout << "[MAINWIN] Waiting for Threads to really stop..."<< endl;
-		KillTimer->Start(1000);
-        wxGetApp().m_semAllDone.Wait();
+        wxGetApp().m_semAllDone.WaitTimeout(2000);
     }
-    KillTimer->Stop();
     cout << "[MAINWIN] Done !"<< endl;
   cout << "[MAINWIN] Unloading external plugins..." << endl;
 //  delete Mix;
