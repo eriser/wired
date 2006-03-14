@@ -6,6 +6,7 @@
 
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
+#include <wx/treectrl.h>
 
 class					SettingWindow : public wxDialog
 {
@@ -13,9 +14,15 @@ class					SettingWindow : public wxDialog
   SettingWindow();
   ~SettingWindow();
 
+  void					GeneralPanelView();
+  void					AudioPanelView();
+  void					AudioInputPanelView();
+  void					AudioOutputPanelView();
+  void					MidiPanelView();
+
   void					Load();
   void					Save();
-  void					OnGeneralClick(wxCommandEvent &event);
+  //void					OnGeneralClick(wxCommandEvent &event);
   void					OnAudioClick(wxCommandEvent &event);
   void					OnMidiClick(wxCommandEvent &event);
   void					OnOkClick(wxCommandEvent &event);
@@ -27,6 +34,7 @@ class					SettingWindow : public wxDialog
   void					OnSampleFormatClick(wxCommandEvent &event);
   void					OnSampleRateClick(wxCommandEvent &event);
   void					OnLatencyChange(wxCommandEvent &event);
+  void					OnSelPrefCategory(wxTreeEvent &event);
 
   bool					MidiLoaded; // a cause d'un bug wx...
   bool					AudioLoaded; // la meme mais pour l'audio...
@@ -37,16 +45,13 @@ class					SettingWindow : public wxDialog
   void					UpdateLatency();
   void					SetDefaultSampleFormat(void);
 
-  wxToggleButton			*GeneralBtn;
-  wxToggleButton			*AudioBtn;
-  wxToggleButton			*MidiBtn;
   wxButton				*OkBtn;
   wxButton				*ApplyBtn;
   wxButton				*CancelBtn;
-  wxPanel				*GeneralPanel;
   wxCheckBox				*QuickWaveBox;
   wxCheckBox				*dBWaveBox;
-  wxPanel				*AudioPanel;
+  wxPanel				*AudioInputPanel;
+  wxPanel				*AudioOutputPanel;
   wxChoice				*OutputChoice;
   wxChoice				*InputChoice;
   wxCheckListBox			*OutputList;
@@ -55,13 +60,19 @@ class					SettingWindow : public wxDialog
   wxChoice				*BitsChoice;
   wxStaticText				*Latency;
   wxSlider				*LatencySlider;
-  wxTextCtrl			*undoRedoMaxDepthTextCtrl;
-  wxStaticText			*undoRedoMaxDepthStaticText;
+  wxTextCtrl				*undoRedoMaxDepthTextCtrl;
+  wxStaticText				*undoRedoMaxDepthStaticText;
   int					*Latencies;
+  wxTreeCtrl				*SettingsTree;
 
+  wxPanel				*CurrentPanel;
   wxPanel				*MidiPanel;
+  wxPanel				*AudioPanel;
+  wxPanel				*GeneralPanel;
   wxCheckListBox			*MidiInList;
  
+
+
   DECLARE_EVENT_TABLE()
 };
 
