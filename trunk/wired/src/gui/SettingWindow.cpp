@@ -9,114 +9,168 @@
 #include "../midi/MidiDevice.h"
 #include <sstream>
 
+#define	CATEGORY_ID	45001
+
+
+#define	WIN_WIDTH	650
+#define WIN_HEIGHT	500
+#define WIN_SIZE	wxSize(WIN_WIDTH, WIN_HEIGHT)
+
+#define WIN_MARGIN	12
+
+#define	BTN_WIDTH	88
+#define BTN_HEIGHT	32
+#define	BTN_SIZE	wxSize(BTN_WIDTH, BTN_HEIGHT)
+#define	BTN_POS_Y	(WIN_HEIGHT - WIN_MARGIN - BTN_HEIGHT)
+#define BTN_CANCEL_POS	wxPoint(WIN_WIDTH - 3 * (BTN_WIDTH + 6) + 6 - WIN_MARGIN, BTN_POS_Y)
+#define BTN_OK_POS	wxPoint(WIN_WIDTH - BTN_WIDTH - WIN_MARGIN, BTN_POS_Y)
+#define BTN_APPLY_POS	wxPoint(WIN_WIDTH - 2 * BTN_WIDTH - 6 - WIN_MARGIN, BTN_POS_Y)
+
+#define PAN_SIZE	wxSize(584, 436)
+#define PAN_POS		wxPoint(222, WIN_MARGIN)
+
 SettingWindow::SettingWindow()
-  : wxDialog(0x0, -1, "Wired Settings", wxDefaultPosition, wxSize(400, 516))
+  : wxDialog(0x0, -1, "Wired Settings", wxDefaultPosition, WIN_SIZE)
 {
-  vector<Device*>::iterator i;
+  wxTreeItemId	root;
+  wxTreeItemId	id;
 
   MidiLoaded = false;
   AudioLoaded = false;
   Center();
-  GeneralBtn = new wxToggleButton(this, Setting_General, _("General"), 
-				  wxPoint(8, 8), wxSize(80, 28));
-  AudioBtn = new wxToggleButton(this, Setting_Audio, _("Audio"), 
-				wxPoint(92, 8), wxSize(80, 28));
-  MidiBtn = new wxToggleButton(this, Setting_Midi, _("MIDI"), wxPoint(176, 8), wxSize(80, 28));
   
-  // GENERAL panel
-  GeneralPanel = new wxPanel(this, -1, wxPoint(8, 42), wxSize(384, 436), wxNO_BORDER);
-  QuickWaveBox = new wxCheckBox(GeneralPanel, -1, _("Quickly render waveforms"), wxPoint(8, 8));
-  dBWaveBox = new wxCheckBox(GeneralPanel, -1, _("Render waveforms in dB mode"), wxPoint(8, 28));
-  undoRedoMaxDepthTextCtrl = new wxTextCtrl(GeneralPanel, -1, "", wxPoint(218, 50), wxSize(45, 25));
-  undoRedoMaxDepthStaticText = new wxStaticText(GeneralPanel, -1, _("Undo redo maximum depth"), wxPoint(10, 50));
+  // GeneralBtn = new wxToggleButton(this, Setting_General, _("General"), 
+// 				  wxPoint(8, 8), wxSize(80, 28));
+//   AudioBtn = new wxToggleButton(this, Setting_Audio, _("Audio"), 
+// 				wxPoint(92, 8), wxSize(80, 28));
+//   MidiBtn = new wxToggleButton(this, Setting_Midi, _("MIDI"), wxPoint(176, 8), wxSize(80, 28));
   
-  // AUDIO panel
-  AudioPanel = new wxPanel(this, -1, wxPoint(8, 38), wxSize(384, 436), wxNO_BORDER);
+  SettingsTree = new wxTreeCtrl(this, CATEGORY_ID, wxPoint(WIN_MARGIN, WIN_MARGIN), 
+				wxSize(206, 400), wxSUNKEN_BORDER | wxTR_NO_LINES |
+				wxTR_HAS_BUTTONS | wxTR_SINGLE | wxTR_HIDE_ROOT |
+				wxTR_FULL_ROW_HIGHLIGHT);
+  //SettingsTree->SetIndent(20);
+  GeneralPanelView();
+  AudioPanelView();
+  AudioInputPanelView();
+  AudioOutputPanelView();
+  MidiPanelView();
+  
+  SettingsTree->AddRoot("", -1, -1);
+  root = SettingsTree->GetRootItem();
+  SettingsTree->AppendItem(root, "General", -1, -1, (wxTreeItemData*)GeneralPanel);
+  id = SettingsTree->AppendItem(root, "Audio", -1, -1, (wxTreeItemData*)AudioPanel);
+  SettingsTree->AppendItem(id, "Output", -1, -1, (wxTreeItemData*)AudioOutputPanel);
+  SettingsTree->AppendItem(id, "Input", -1, -1, (wxTreeItemData*)AudioInputPanel);
+  SettingsTree->AppendItem(root, wxString("Midi"), -1, -1, (wxTreeItemData*)MidiPanel);
 
-  // AUDIO/Output
-  new wxStaticText(AudioPanel, -1, _("Select Output sound card:"), 
-		   wxPoint(8, 8));
-  OutputChoice = new wxChoice(AudioPanel, Setting_OutputDev, wxPoint(8, 30), wxSize(368, -1), 0, 0x0);
-  OutputChoice->Append(wxString(_("None")));
-  OutputChoice->SetSelection(0);
+  AudioPanel->Show(false);
+  MidiPanel->Show(false);
+  AudioInputPanel->Show(false);
+  AudioOutputPanel->Show(false);
+  GeneralPanel->Show(true);
+  CurrentPanel = GeneralPanel;
 
-  for (i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++)
-    {
-      OutputChoice->Append(wxString((*i)->Name.c_str()));
-    }
+  OkBtn = new wxButton(this, wxID_OK, _("OK"), BTN_OK_POS, BTN_SIZE);
+  ApplyBtn = new wxButton(this, wxID_APPLY, _("Apply"), BTN_APPLY_POS, BTN_SIZE);
+  CancelBtn = new wxButton(this, wxID_CANCEL, _("Cancel"), BTN_CANCEL_POS, BTN_SIZE);
+  
+  Load();
+}
 
-  new wxStaticText(AudioPanel, -1, _("Select left and right Output channels for this sound card:"), 
-		   wxPoint(8, 70));
-  OutputList = new wxCheckListBox(AudioPanel, Setting_OutputChan, wxPoint(8, 94), wxSize(368, 68), 0);
+//
+// Creates the general panel prefs
+//
 
-  wxStaticText *t = new wxStaticText(AudioPanel, -1, _("Sample format:"), wxPoint(8, 180));
+void				SettingWindow::GeneralPanelView()
+{
+   GeneralPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
+   QuickWaveBox = new wxCheckBox(GeneralPanel, -1, _("Quickly render waveforms"), wxPoint(8, 8));
+   dBWaveBox = new wxCheckBox(GeneralPanel, -1, _("Render waveforms in dB mode"), wxPoint(8, 28));
+   undoRedoMaxDepthTextCtrl = new wxTextCtrl(GeneralPanel, -1, "", wxPoint(218, 50), wxSize(45, 25));
+   undoRedoMaxDepthStaticText = new wxStaticText(GeneralPanel, -1, _("Undo redo maximum depth"), wxPoint(10, 50));
+}
+
+// Creates the panel for global audio settings
+
+void				SettingWindow::AudioPanelView()
+{
+  AudioPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
+  wxStaticText *t = new wxStaticText(AudioPanel, -1, _("Sample format:"), wxPoint(8, 10));
 
   int x1, x2;
   t->GetSize(&x1, 0x0);
-
-  BitsChoice = new wxChoice(AudioPanel, Setting_Bits, wxPoint(12 + x1, 172), wxSize(80, -1), 0, 0x0);  
-
+  BitsChoice = new wxChoice(AudioPanel, Setting_Bits, wxPoint(12 + x1, 2), wxSize(80, -1), 0, 0x0);  
   t = new wxStaticText(AudioPanel, -1, _("Sample rate:"), 
-				     wxPoint(22 + x1 + BitsChoice->GetSize().x, 180));
-  
+				     wxPoint(22 + x1 + BitsChoice->GetSize().x, 10));
   t->GetSize(&x2, 0x0);
-  RateChoice = new wxChoice(AudioPanel, Setting_Rate, wxPoint(26 + x1 + BitsChoice->GetSize().x + x2, 172), 
+  RateChoice = new wxChoice(AudioPanel, Setting_Rate, wxPoint(26 + x1 + BitsChoice->GetSize().x + x2, 2), 
 			    wxSize(96, -1), 0, 0x0);
 
-  Latency = new wxStaticText(AudioPanel, -1, _("Latency:"), wxPoint(8, 212));
-  LatencySlider = new wxSlider(AudioPanel, Setting_Latency, 4096, 0, 65536, wxPoint(8, 232), wxSize(368, -1));
+  Latency = new wxStaticText(AudioPanel, -1, _("Latency:"), wxPoint(8, 50));
+  LatencySlider = new wxSlider(AudioPanel, Setting_Latency, 4096, 0, 65536, wxPoint(8, 70), wxSize(368, -1));
   LatencySlider->SetRange(0, 8);
   LatencySlider->SetPageSize(1);
   Latencies = new int [9];
-  Latencies[0] = 16;
-  Latencies[1] = 16 * 2;
-  Latencies[2] = 16 * 2 * 2;
-  Latencies[3] = 16 * 2 * 2 * 2;
-  Latencies[4] = 16 * 2 * 2 * 2 * 2;
-  Latencies[5] = 16 * 2 * 2 * 2 * 2 * 2;
-  Latencies[6] = 16 * 2 * 2 * 2 * 2 * 2 * 2;
-  Latencies[7] = 16 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
-  Latencies[8] = 16 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;
-    
-  // AUDIO/Input
-  new wxStaticText(AudioPanel, -1, _("Select Input sound card:"), 
-		   wxPoint(8, 270));
-  InputChoice = new wxChoice(AudioPanel, Setting_InputDev, wxPoint(8, 290), wxSize(368, -1), 0, 0x0);
+  for (int i = 0; i < 9; i++)
+    Latencies[i] = 16 << i;
+}
+
+//
+// Creates the panel for audio input settings
+//
+
+void				SettingWindow::AudioInputPanelView()
+{
+  vector<Device*>::iterator	i;
+
+  AudioInputPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
+  new wxStaticText(AudioInputPanel, -1, _("Select Input sound card:"),
+		   wxPoint(8, 8));
+  InputChoice = new wxChoice(AudioInputPanel, Setting_InputDev, wxPoint(8, 30), wxSize(368, -1), 0, 0x0);
   InputChoice->Append(wxString(_("None")));
   InputChoice->SetSelection(0);
-
   for (i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++)
-    {
-      InputChoice->Append(wxString((*i)->Name.c_str()));
-    }
+    InputChoice->Append(wxString((*i)->Name.c_str()));
+  new wxStaticText(AudioInputPanel, -1, _("Select Input channels to use with this sound card:"), 
+		   wxPoint(8, 70));
+  InputList = new wxCheckListBox(AudioInputPanel, Setting_InputChan, wxPoint(8, 94), wxSize(368, 68), 0);
+}
 
-  new wxStaticText(AudioPanel, -1, _("Select Input channels to use with this sound card:"), 
-		   wxPoint(8, 330));
-  InputList = new wxCheckListBox(AudioPanel, Setting_InputChan, wxPoint(8, 352), wxSize(368, 68), 0);
-  /*  wxStaticText* restart = 
-      new wxStaticText(AudioPanel, -1, "Please restart wired to store and apply changes", wxPoint(8, 420)); That's not true :) */
+//
+// Creates the panel for audio output settings
+//
 
-  
-  // MIDI panel
-  MidiPanel = new wxPanel(this, -1, wxPoint(8, 38), wxSize(384, 436), wxNO_BORDER);
+void				SettingWindow::AudioOutputPanelView()
+{
+  vector<Device*>::iterator	i;
+
+  AudioOutputPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
+  new wxStaticText(AudioOutputPanel, -1, _("Select Output sound card:"), 
+		   wxPoint(8, 8));
+  OutputChoice = new wxChoice(AudioOutputPanel, Setting_OutputDev, wxPoint(8, 30), wxSize(368, -1), 0, 0x0);
+  OutputChoice->Append(wxString(_("None")));
+  OutputChoice->SetSelection(0);
+  for (i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++)
+    OutputChoice->Append(wxString((*i)->Name.c_str()));
+  new wxStaticText(AudioOutputPanel, -1, _("Select left and right Output channels for this sound card:"), 
+		   wxPoint(8, 70));
+  OutputList = new wxCheckListBox(AudioOutputPanel, Setting_OutputChan, wxPoint(8, 94), wxSize(368, 68), 0);
+}
+
+// Creates the panel for midi settings
+
+void				SettingWindow::MidiPanelView()
+{
+  MidiPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
   new wxStaticText(MidiPanel, -1, _("Select MIDI In devices to use:"), 
 		   wxPoint(8, 8));
   MidiInList = new wxCheckListBox(MidiPanel, Setting_MidiIn, wxPoint(8, 30), wxSize(368, 200), 0);
 
-  AudioPanel->SetBackgroundColour(CL_SEQ_BACKGROUND);
-  MidiPanel->SetBackgroundColour(CL_SEQ_BACKGROUND);
-  GeneralPanel->SetBackgroundColour(CL_SEQ_BACKGROUND);
+  // wxListCtrl *list = new wxListCtrl(MidiPanel, -1, wxPoint(10, 300), wxSize(368, 50), wxSUNKEN_BORDER);
+//   list->InsertColumn(0, _("Item"), wxLIST_FORMAT_LEFT, 200);
+//   list->InsertColumn(1, _("Value"), wxLIST_FORMAT_LEFT, 80);
 
-  AudioPanel->Show(false);
-  MidiPanel->Show(false);
-  GeneralPanel->Show(true);
-  GeneralBtn->SetValue(true);
-
-  OkBtn = new wxButton(this, Setting_Ok, _("OK"), wxPoint(180, 484), wxSize(64, 28));
-  ApplyBtn = new wxButton(this, Setting_Apply, _("Apply"), wxPoint(248, 484), wxSize(64, 28));
-  CancelBtn = new wxButton(this, Setting_Cancel, _("Cancel"), wxPoint(316, 484), wxSize(64, 28));
-  
-  Load();
 }
 
 SettingWindow::~SettingWindow()
@@ -124,21 +178,25 @@ SettingWindow::~SettingWindow()
   delete [] Latencies;
 }
 
-void SettingWindow::OnGeneralClick(wxCommandEvent &event)
+//
+// Callback when user selects a settings' category
+//
+
+void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
 {
-  GeneralBtn->SetValue(true);
-  AudioBtn->SetValue(false);
-  MidiBtn->SetValue(false);
-  AudioPanel->Show(false);
-  MidiPanel->Show(false);
-  GeneralPanel->Show(true);
+  wxTreeItemId		item = e.GetItem();
+  wxPanel		*tmp = (wxPanel *)SettingsTree->GetItemData(item);
+  
+  if (tmp)
+    {
+      CurrentPanel->Show(false);
+      CurrentPanel = tmp;
+      tmp->Show(true);
+    }
 }
 
 void SettingWindow::OnAudioClick(wxCommandEvent &event)
 {
-  GeneralBtn->SetValue(false);
-  AudioBtn->SetValue(true);
-  MidiBtn->SetValue(false);
   AudioPanel->Show(true);
   MidiPanel->Show(false);
   GeneralPanel->Show(false);
@@ -163,8 +221,8 @@ void SettingWindow::OnAudioClick(wxCommandEvent &event)
 		    OutputList->Append(s);
 		  }
 		break;
-	    }
-	}
+	      }
+	  }
       InputList->Clear();
       if ((val = InputChoice->GetSelection()) > 0)
 	for (j = 1, i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++, j++)
@@ -203,9 +261,6 @@ void SettingWindow::OnAudioClick(wxCommandEvent &event)
 
 void SettingWindow::OnMidiClick(wxCommandEvent &event)
 {
-  GeneralBtn->SetValue(false);
-  AudioBtn->SetValue(false);
-  MidiBtn->SetValue(true);
   AudioPanel->Show(false);
   MidiPanel->Show(true);
   GeneralPanel->Show(false);
@@ -540,16 +595,17 @@ void SettingWindow::UpdateLatency()
 }
 
 BEGIN_EVENT_TABLE(SettingWindow, wxDialog)
-  EVT_TOGGLEBUTTON(Setting_General, SettingWindow::OnGeneralClick)
-  EVT_TOGGLEBUTTON(Setting_Audio, SettingWindow::OnAudioClick)
-  EVT_TOGGLEBUTTON(Setting_Midi, SettingWindow::OnMidiClick)
-  EVT_BUTTON(Setting_Ok, SettingWindow::OnOkClick)
-  EVT_BUTTON(Setting_Cancel,SettingWindow:: OnCancelClick)
-  EVT_BUTTON(Setting_Apply, SettingWindow::OnApplyClick)
+  // EVT_TOGGLEBUTTON(Setting_General, SettingWindow::OnGeneralClick)
+//   EVT_TOGGLEBUTTON(Setting_Audio, SettingWindow::OnAudioClick)
+//   EVT_TOGGLEBUTTON(Setting_Midi, SettingWindow::OnMidiClick)
+  EVT_BUTTON(wxID_OK, SettingWindow::OnOkClick)
+  EVT_BUTTON(wxID_CANCEL,SettingWindow:: OnCancelClick)
+  EVT_BUTTON(wxID_APPLY, SettingWindow::OnApplyClick)
   EVT_CHOICE(Setting_OutputDev, SettingWindow::OnOutputDevClick)
   EVT_CHOICE(Setting_InputDev, SettingWindow::OnInputDevClick)
   EVT_CHOICE(Setting_Bits, SettingWindow::OnSampleFormatClick)
   EVT_CHOICE(Setting_Rate, SettingWindow::OnSampleRateClick)
   EVT_CHECKLISTBOX(Setting_OutputChan, SettingWindow::OnOutputChanClick)
   EVT_SLIDER(Setting_Latency, SettingWindow::OnLatencyChange)
+  EVT_TREE_SEL_CHANGED(CATEGORY_ID, SettingWindow::OnSelPrefCategory)
 END_EVENT_TABLE()
