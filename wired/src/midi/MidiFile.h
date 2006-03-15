@@ -1,12 +1,16 @@
 #ifndef __MIDIFILE_H__
 #define __MIDIFILE_H__
 
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
+
 #include <string>
 #include <vector>
 #include <iostream>
 
 using namespace std;
-using std::string;
 using std::vector;
 
 
@@ -143,7 +147,7 @@ class NonMidiEvent : public Event
     NonMidiEvent(unsigned long pos, unsigned char ID, unsigned long len, 
                  unsigned char *data);
     ~NonMidiEvent();
-    string GetBufferAsString() { return string((const char *)data, 0, len); }
+    wxString GetBufferAsString() { return wxString(wxString((const char *)data, *wxConvCurrent), 0, len); }
     unsigned char GetBufferAt(unsigned long pos) { return (pos < len) ? data[pos] : 0; }
 
   private:
@@ -172,7 +176,7 @@ class MidiTrack
 class MidiFile
 {
  public:
-  MidiFile(string filename);
+  MidiFile(wxString filename);
   ~MidiFile();
 
   long GetNumberOfTracks() { return NbTracks; }
@@ -181,7 +185,7 @@ class MidiFile
                                    return Tracks[num]; else return NULL; }
 
  protected:
-   string filename;
+   wxString filename;
    unsigned short Division;
    unsigned short Type;
    unsigned short NbTracks;
