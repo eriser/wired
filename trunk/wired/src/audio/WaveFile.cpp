@@ -30,12 +30,12 @@ WaveFile::WaveFile()
   {
     Error = true;
     cout << "[WAVEFILE] Unable to create temporary file in read/write mode " << endl;
-    throw Error::File("", sf_strerror(0));
+    throw Error::File(wxString(wxT("")), wxString(sf_strerror(0), wxConvCurrent));
   }    
 }
 
 
-  WaveFile::WaveFile(string filename, bool loadmem, t_opening_mode open_mode, int channel) 
+  WaveFile::WaveFile(wxString filename, bool loadmem, t_opening_mode open_mode, int channel) 
 : Filename(filename), LoadedInMem(loadmem), TempBuf(0), Pitch(1), 
   Invert(false), Data(0), Error(false),   m_open_mode (open_mode)
 {
@@ -65,13 +65,13 @@ WaveFile::WaveFile()
   switch (open_mode)
   {
     case read : 
-      sffile = sf_open (Filename.c_str(), SFM_READ, &sfinfo);
+      sffile = sf_open (Filename.mb_str(*wxConvCurrent), SFM_READ, &sfinfo);
       break;
     case write : 
-      sffile = sf_open (Filename.c_str(), SFM_WRITE, &sfinfo);
+      sffile = sf_open (Filename.mb_str(*wxConvCurrent), SFM_WRITE, &sfinfo);
       break;
     case rwrite :
-      sffile = sf_open (Filename.c_str(), SFM_RDWR, &sfinfo);
+      sffile = sf_open (Filename.mb_str(*wxConvCurrent), SFM_RDWR, &sfinfo);
       cout << "[WAVEFILE] Temporary file created" << endl;
       break;
     case tmp :
@@ -81,7 +81,7 @@ WaveFile::WaveFile()
       //cout << "Temporary file created" << endl;
       break;
     default: 
-      throw cException ("[WAVEFILE] : Unknow opening mode!!");
+      throw cException (wxT("[WAVEFILE] : Unknow opening mode!!"));
   }
 
   if (sffile == NULL )
@@ -94,13 +94,13 @@ WaveFile::WaveFile()
     if (open_mode == rwrite)
     {
       cout << "[WAVEFILE] Could not open file for writing, trying read-only..." << endl;
-      sffile = sf_open (Filename.c_str(), SFM_READ, &sfinfo);
+      sffile = sf_open (Filename.mb_str(*wxConvCurrent), SFM_READ, &sfinfo);
       m_open_mode =0;
       if (sffile == NULL)
-        throw Error::File(filename, sf_strerror(0));
+        throw Error::File(filename, wxString(sf_strerror(0), *wxConvCurrent));
     }
     else
-      throw Error::File(filename, sf_strerror(0));
+      throw Error::File(filename, wxString(sf_strerror(0), *wxConvCurrent));
   }    
   /*  sf_close(sffile);
 
@@ -147,7 +147,7 @@ WaveFile::WaveFile()
 }
 
 WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
-  : Filename(""), LoadedInMem(true), sffile(0),  TempBuf(0), Pitch(1), Invert(false), 
+  : Filename(wxT("")), LoadedInMem(true), sffile(0),  TempBuf(0), Pitch(1), Invert(false), 
   Error(false)
 {
   memset (&sfinfo, 0, sizeof (sfinfo));
@@ -359,7 +359,7 @@ bool WaveFile::Read(float *buf, long pos)
 int WaveFile::SetCurrentPosition (int position)
 { 
   if ( position > sfinfo.frames )
-    throw cException ("Seek error : index overflow");
+    throw cException (wxT("Seek error : index overflow"));
   return sf_seek (sffile, position, SEEK_SET); 
 };
 
