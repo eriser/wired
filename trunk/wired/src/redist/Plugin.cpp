@@ -105,7 +105,7 @@ void Plugin::AskUpdate()
   StartInfo.HostCallback(this, wiredAskUpdateGui, 0x0);
 }
 
-void Plugin::SendHelp(std::string str)
+void Plugin::SendHelp(wxString str)
 {
   StartInfo.HostCallback(this, wiredSendHelp, (void *)&str);
 }
@@ -148,16 +148,16 @@ void Plugin::CloseOptionalView()
   StartInfo.HostCallback(this, wiredCloseOptionalView, 0x0);
 }
 
-std::string Plugin::OpenFileLoader(std::string title, 
-				   std::vector<std::string> *exts,
+wxString Plugin::OpenFileLoader(wxString title, 
+				   std::vector<wxString> *exts,
 				   bool akai)
 {
   struct
   {
-    std::string *t;
-    std::vector<std::string> *e;
+    wxString *t;
+    std::vector<wxString> *e;
     bool ak;
-    std::string result;
+    wxString result;
   } w_filel;
  
   w_filel.t = &title;
@@ -167,14 +167,14 @@ std::string Plugin::OpenFileLoader(std::string title,
   return (w_filel.result);
 }
 
-std::string Plugin::SaveFileLoader(std::string title, 
-				   std::vector<std::string> *exts)
+wxString Plugin::SaveFileLoader(wxString title, 
+				   std::vector<wxString> *exts)
 {
   struct
   {
-    std::string *t;
-    std::vector<std::string> *e;
-    std::string result;
+    wxString *t;
+    std::vector<wxString> *e;
+    wxString result;
   } w_filel;
  
   w_filel.t = &title;
@@ -184,10 +184,10 @@ std::string Plugin::SaveFileLoader(std::string title,
 }
 
 // Host info
-std::string Plugin::GetHostProductName()
+wxString Plugin::GetHostProductName()
 {
-  char str[256];
-  std::string s;
+  wxChar str[256];
+  wxString s;
 
   StartInfo.HostCallback(0x0, wiredHostProductName, (void *)str); 
   s = str;
@@ -202,19 +202,19 @@ float  Plugin::GetHostProductVersion()
   return (f);
 }
 
-std::string Plugin::GetHostVendorName()
+wxString Plugin::GetHostVendorName()
 {
-  char str[256];
-  std::string s;
+  wxChar str[256];
+  wxString s;
 
   StartInfo.HostCallback(0x0, wiredHostVendorName, (void *)str); 
   s = str;
   return (s);
 }
 
-std::string Plugin::GetDataDir()
+wxString Plugin::GetDataDir()
 {
-  std::string s;
+  wxString s;
   
   StartInfo.HostCallback(0x0, wiredGetDataDir, (void *)&s); 
   return (s); 
@@ -239,17 +239,17 @@ WiredPluginData	WiredPluginData::operator=(const WiredPluginData& right)
 	return *this;
 }
 
-bool			WiredPluginData::SaveValue(const std::string& Name, char *Value)
+bool			WiredPluginData::SaveValue(const wxString& Name, char *Value)
 {
 	if (_Data.find(Name) == _Data.end())
 	{
-		_Data[Name] = std::string(Value);
+		_Data[Name] = wxString(Value, *wxConvCurrent);
 		return true;
 	}
 	return false;
 }
 
-bool			WiredPluginData::SaveValue(const std::string& Name, std::string Value)
+bool			WiredPluginData::SaveValue(const wxString& Name, wxString Value)
 {
 	if (_Data.find(Name) == _Data.end())
 	{
@@ -259,10 +259,10 @@ bool			WiredPluginData::SaveValue(const std::string& Name, std::string Value)
 	return false;	
 }
 
-const char			*WiredPluginData::LoadValue(const std::string& Name)
+const char			*WiredPluginData::LoadValue(const wxString& Name)
 {
 	if (_Data.find(Name) != _Data.end())
-		return _Data[Name].c_str();
+		return _Data[Name].mb_str(*wxConvCurrent);
 	return NULL;
 }
 

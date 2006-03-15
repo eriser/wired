@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <wx/wx.h>
 #include "Rack.h"
 #include "Sequencer.h"
 #include "OptionPanel.h"
@@ -53,15 +54,15 @@ long					HostCallback(Plugin *plug, long param, void *value)
       }
     case wiredGetDataDir :
       {
-	std::string *s;
-	s = (string *)value;
+	wxString *s;
+	s = (wxString *)value;
 	*s = WiredSettings->DataDir;
 	break;
       }
     case wiredSendHelp :
       {
 	if (HelpWin->IsShown())
-	  HelpWin->Help->Load_Text((*(string *)value).c_str());
+	  HelpWin->Help->Load_Text((*(wxString *)value));
 	break;
       }
     case wiredSendKeyEvent :
@@ -118,10 +119,10 @@ long					HostCallback(Plugin *plug, long param, void *value)
       {
 	struct s_wired_l
 	{
-	  std::string *t;
-	  std::vector<std::string> *e;
+	  wxString *t;
+	  std::vector<wxString> *e;
 	  bool ak;
-	  std::string result;
+	  wxString result;
 	} *w;
 	
 	w = (s_wired_l *)value;
@@ -135,9 +136,9 @@ long					HostCallback(Plugin *plug, long param, void *value)
       {
 	struct s_wired_l
 	{
-	  std::string *t;
-	  std::vector<std::string> *e;
-	  std::string result;
+	  wxString *t;
+	  std::vector<wxString> *e;
+	  wxString result;
 	} *w;
 	
 	w = (s_wired_l *)value;

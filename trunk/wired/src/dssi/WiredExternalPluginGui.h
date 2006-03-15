@@ -12,21 +12,21 @@
 #include "KnobCtrl.h"
 #include "DownButton.h"
 
-#define IMG_DL_SINGLE_BG	"dssi/dssi_single_bg.png"
-#define IMG_DL_MID_BG		"dssi/dssi_middle_bg.png"
-#define IMG_DL_END_BG		"dssi/dssi_end_bg.png"
-#define IMG_DL_WIDE_BG		"dssi/dssi_wide_bg.png"
-#define IMG_DL_VWIDE_BG		"dssi/dssi_very_wide_bg.png"
-#define IMG_DL_BEG_BG		"dssi/dssi_begin_bg.png"
-#define IMG_DL_BMP		"dssi/DelayPlug.bmp"
-#define IMG_DL_FADER_BG		"dssi/fader_bg.png"
-#define IMG_DL_FADER_FG		"dssi/fader_button.png"
-#define IMG_DL_KNOB_FG		"dssi/knob_fg.png"
-#define IMG_DL_KNOB_BG		"dssi/knob_bg.png"
-#define IMG_LIQUID_ON		"dssi/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF		"dssi/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON		"dssi/bypass_button_down.png"
-#define IMG_BYPASS_OFF		"dssi/bypass_button_up.png"
+#define IMG_DL_SINGLE_BG	wxT("dssi/dssi_single_bg.png")
+#define IMG_DL_MID_BG		wxT("dssi/dssi_middle_bg.png")
+#define IMG_DL_END_BG		wxT("dssi/dssi_end_bg.png")
+#define IMG_DL_WIDE_BG		wxT("dssi/dssi_wide_bg.png")
+#define IMG_DL_VWIDE_BG		wxT("dssi/dssi_very_wide_bg.png")
+#define IMG_DL_BEG_BG		wxT("dssi/dssi_begin_bg.png")
+#define IMG_DL_BMP		wxT("dssi/DelayPlug.bmp")
+#define IMG_DL_FADER_BG		wxT("dssi/fader_bg.png")
+#define IMG_DL_FADER_FG		wxT("dssi/fader_button.png")
+#define IMG_DL_KNOB_FG		wxT("dssi/knob_fg.png")
+#define IMG_DL_KNOB_BG		wxT("dssi/knob_bg.png")
+#define IMG_LIQUID_ON		wxT("dssi/liquid-cristal_play.png")
+#define IMG_LIQUID_OFF		wxT("dssi/liquid-cristal_stop.png")
+#define IMG_BYPASS_ON		wxT("dssi/bypass_button_down.png")
+#define IMG_BYPASS_OFF		wxT("dssi/bypass_button_up.png")
 
 class		WiredDSSIGui : public WiredLADSPAInstance
 {

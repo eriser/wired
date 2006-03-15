@@ -5,7 +5,7 @@ WiredDSSIPlugin::WiredDSSIPlugin()
 	_Handle = NULL;
 	_DSSIDescriptorFunction = NULL;
 	_LADSPADescriptorFunction = NULL;
-	_FileName = "";
+	_FileName = wxT("");
 }
 
 WiredDSSIPlugin::WiredDSSIPlugin(const WiredDSSIPlugin& copy)
@@ -33,11 +33,11 @@ WiredDSSIPlugin		WiredDSSIPlugin::operator=(const WiredDSSIPlugin& right)
 	return *this;
 }
 
-bool				WiredDSSIPlugin::Load(const string& FileName, int& FirstIndex)
+bool				WiredDSSIPlugin::Load(const wxString& FileName, int& FirstIndex)
 {
 	bool			Found = false;
 	
-	_Handle = dlopen(FileName.c_str(), RTLD_NOW);
+	_Handle = dlopen(FileName.mb_str(*wxConvCurrent), RTLD_NOW);
 	if (_Handle != NULL)
 	{
 		_DSSIDescriptorFunction = (DSSI_Descriptor_Function) dlsym(_Handle, STR_DSSI_DESCRIPTOR_FUNCTION_NAME);
@@ -110,23 +110,23 @@ bool				WiredDSSIPlugin::Load(const string& FileName, int& FirstIndex)
 	return Found;
 }
 
-map<int, string>	WiredDSSIPlugin::GetPluginsList()
+map<int, wxString>	WiredDSSIPlugin::GetPluginsList()
 {
-	map<int, string>	Result;
+	map<int, wxString>	Result;
 	
 	if (_LADSPADescriptorFunction)
 	{
 		map<int, const LADSPA_Descriptor*>::iterator	Iter;
 
 		for (Iter = _LADSPADescriptors.begin(); Iter != _LADSPADescriptors.end(); Iter++)
-			Result[Iter->first] = Iter->second->Name;
+			Result[Iter->first] = wxString(Iter->second->Name, *wxConvCurrent);
 	}
 	else if (_DSSIDescriptorFunction)
 	{
 		map<int, const DSSI_Descriptor*>::iterator	Iter;
 		
 		for (Iter = _DSSIDescriptors.begin(); Iter != _DSSIDescriptors.end(); Iter++)
-			Result[Iter->first] = Iter->second->LADSPA_Plugin->Name;
+			Result[Iter->first] = wxString(Iter->second->LADSPA_Plugin->Name, *wxConvCurrent);
 	}
 	return Result;
 }

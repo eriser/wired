@@ -20,8 +20,8 @@ using namespace std;
 #define	TYPE_PLUGINS_INSTR 4
 #define	TYPE_PLUGINS_EFFECT 8
 
-#define STR_DEFAULT_NAME "LADSPA Plugin"
-#define STR_DEFAULT_HELP "No help provided by this plugin"
+#define STR_DEFAULT_NAME wxT("LADSPA Plugin")
+#define STR_DEFAULT_HELP wxT("No help provided by this plugin")
 
 typedef struct			s_gui_port
 {
@@ -35,7 +35,7 @@ typedef struct			s_ladspa_port
 	LADSPA_PortDescriptor	Descriptor;
 	LADSPA_PortRangeHint	RangeHint;
 	unsigned long		Id;	
-	string			Name;
+	wxString			Name;
 }				t_ladspa_port;
 
 typedef struct			s_gui_control
@@ -79,9 +79,9 @@ public:
   bool				IsMidi();
   void				AskUpdate(){}
   void				Update() {}
-  std::string			GetHelpString();
+  wxString			GetHelpString();
   void				SetHelpMode(bool On);
-  std::string			DefaultName();
+  wxString			DefaultName();
   wxBitmap* 			GetBitmap(){return NULL;}
   //</Wired Plugin Implementation>
   

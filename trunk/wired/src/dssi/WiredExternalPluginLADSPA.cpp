@@ -82,7 +82,7 @@ bool					WiredLADSPAInstance::Load()
 			if ((_Handle = _Descriptor->instantiate(_Descriptor, (unsigned long) Audio->SampleRate)))
 			{
 				_Properties = _Descriptor->Properties;
-				Name = _Descriptor->Name;
+				Name = wxString(_Descriptor->Name, *wxConvCurrent);
 				LoadPorts();
 				return true;
 			}
@@ -154,7 +154,7 @@ void					WiredLADSPAInstance::LoadPorts()
 		CurrentPort.Descriptor = _Descriptor->PortDescriptors[pos];
 		CurrentPort.RangeHint = _Descriptor->PortRangeHints[pos];
 		CurrentPort.Id = pos;
-		CurrentPort.Name = _Descriptor->PortNames[pos];
+		CurrentPort.Name = wxString(_Descriptor->PortNames[pos], *wxConvCurrent);
 		if (LADSPA_IS_PORT_INPUT(CurrentPort.Descriptor))
 		{
 			if (LADSPA_IS_PORT_CONTROL(CurrentPort.Descriptor))
@@ -418,7 +418,7 @@ void					WiredLADSPAInstance::Save(WiredPluginData& Datas)
 		if (_GuiControls.find(Iter->Id) != _GuiControls.end())
 		{
 			Buffer << *(_GuiControls[Iter->Id].Data.Data);
-			Datas.SaveValue(Iter->Name, Buffer.str());
+			Datas.SaveValue(Iter->Name, wxString(Buffer.str().c_str(), *wxConvCurrent));
 			Buffer.clear();	
 		}
 	}
@@ -468,25 +468,25 @@ bool					WiredLADSPAInstance::IsMidi()
 	return false;
 }
 
-std::string				WiredLADSPAInstance::GetHelpString()
+wxString    			WiredLADSPAInstance::GetHelpString()
 {
 	if (IsLoaded())
 	{
-		std::string						HelpMsg;
+		wxString						HelpMsg;
 		list<t_ladspa_port>::iterator	Iter;
 		
 		HelpMsg = _("This is a LADSPA or DSSI Plugin, named '");
-		HelpMsg += _Descriptor->Name;
-		HelpMsg += "'";
+		HelpMsg += wxString(_Descriptor->Name, *wxConvCurrent);
+		HelpMsg += wxT("'");
 		if (_Descriptor->Maker)
 		{
 			HelpMsg += _("<BR>Maker is : ");
-			HelpMsg += _Descriptor->Maker;
+			HelpMsg += wxString(_Descriptor->Maker, *wxConvCurrent);
 		}
 		if (_Descriptor->Copyright)
 		{
 			HelpMsg += _("<BR>Copyright : ");
-			HelpMsg += _Descriptor->Copyright;
+			HelpMsg += wxString(_Descriptor->Copyright, *wxConvCurrent);
 		}
 		HelpMsg += _("<BR>This plugin is currently ");
 		if (_Bypass == true)
@@ -498,7 +498,7 @@ std::string				WiredLADSPAInstance::GetHelpString()
 			HelpMsg += _("Audio Inputs are : ");
 			for (Iter = _InputAudioPluginsPorts.begin(); Iter != _InputAudioPluginsPorts.end(); Iter++)
 			{
-				HelpMsg += Iter->Name.c_str();
+				HelpMsg += Iter->Name;
 				HelpMsg += _("<BR>");
 			}
 		}
@@ -507,7 +507,7 @@ std::string				WiredLADSPAInstance::GetHelpString()
 			HelpMsg += _("Data Inputs are : ");
 			for (Iter = _InputDataPluginsPorts.begin(); Iter != _InputDataPluginsPorts.end(); Iter++)
 			{
-				HelpMsg += Iter->Name.c_str();
+				HelpMsg += Iter->Name;
 				HelpMsg += _("<BR>");
 			}
 		}
@@ -516,8 +516,8 @@ std::string				WiredLADSPAInstance::GetHelpString()
 			HelpMsg += _("Audio Outputs are : ");
 			for (Iter = _OutputAudioPluginsPorts.begin(); Iter != _OutputAudioPluginsPorts.end(); Iter++)
 			{
-				HelpMsg += Iter->Name.c_str();
-				HelpMsg += "<BR>";
+				HelpMsg += Iter->Name;
+				HelpMsg += wxT("<BR>");
 			}
 		}
 		if (_OutputDataPluginsPorts.size() > 0)
@@ -525,8 +525,8 @@ std::string				WiredLADSPAInstance::GetHelpString()
 			HelpMsg += _("Data Outputs are : ");
 			for (Iter = _OutputDataPluginsPorts.begin(); Iter != _OutputDataPluginsPorts.end(); Iter++)
 			{
-				HelpMsg += Iter->Name.c_str();
-				HelpMsg += "<BR>";
+				HelpMsg += Iter->Name;
+				HelpMsg += wxT("<BR>");
 			}
 		}
 		return (HelpMsg);
@@ -539,10 +539,10 @@ void					WiredLADSPAInstance::SetHelpMode(bool On)
 	
 }
 
-std::string				WiredLADSPAInstance::DefaultName()
+wxString				WiredLADSPAInstance::DefaultName()
 {
 	if (IsLoaded())
-		return _Descriptor->Name;
+		return wxString(_Descriptor->Name, *wxConvCurrent);
 	return STR_DEFAULT_NAME;
 }
 

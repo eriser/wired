@@ -1,7 +1,10 @@
 #ifndef __PLUGIN_H__
 #define __PLUGIN_H__
 
-#include <wx/wx.h>
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
 #include <string> 
 #include <list> 
 #include <vector>
@@ -29,7 +32,7 @@ typedef struct
     // ID of an external plugin. Must not be filled if you want to comply with Wired Old API
   unsigned long	 UniqueExternalId;
   // Your plugin name
-  std::string Name;	
+  wxString Name;	
   // Type of plugin (PLUG_IS_INSTR for an instrument or PLUG_IS_EFFECT for an effect)
   int	 Type;		
   // Number of units for the width of your plugin (1 unit is 200 pixels)
@@ -114,7 +117,7 @@ enum
   The only two methods you must know are SaveValue and LoadValue. */
 
 
-typedef std::map<std::string, std::string> PluginParams;
+typedef std::map<wxString, wxString> PluginParams;
 
 class WiredPluginData
 {
@@ -124,9 +127,9 @@ public:
 	WiredPluginData(const WiredPluginData& copy) {*this = copy;}
 	WiredPluginData			operator=(const WiredPluginData& right);
 
-	bool			SaveValue(const std::string& Name, char *Value);
-	bool			SaveValue(const std::string& Name, std::string Value);
-	const char		*LoadValue(const std::string& Name);
+	bool			SaveValue(const wxString& Name, char *Value);
+	bool			SaveValue(const wxString& Name, wxString Value);
+	const char		*LoadValue(const wxString& Name);
 	PluginParams	*GetParamsStack();
 private:
 	PluginParams			_Data;
@@ -223,13 +226,13 @@ class Plugin: public wxWindow
   virtual void	 Update() {}
 
   /* Called when host needs to show the plugin's help */
-  virtual std::string GetHelpString() { return _("No help provided for this plugin"); }
+  virtual wxString GetHelpString() { return _("No help provided for this plugin"); }
 
   /* Is the Help window being shown ? */
   virtual void SetHelpMode(bool On) { }
 
   /* Returns the default name for the plugin */
-  virtual std::string DefaultName() { return _("Rack"); }
+  virtual wxString DefaultName() { return _("Rack"); }
 
   /* Returns a 32x16 bitmap used for displaying the connected to track plugin */
   virtual wxBitmap *GetBitmap() = 0;  
@@ -260,13 +263,13 @@ class Plugin: public wxWindow
   /*
   // Parameters
   void		SetNumberOfParameters(int value);
-  string	GetParameterName(int index);
+  wxString	GetParameterName(int index);
   */
   
   // User interface events
 
-  /* Send help string to the Wired help window */
-  void SendHelp(std::string str);
+  /* Send help wxString to the Wired help window */
+  void SendHelp(wxString str);
   /* Tells the host that a mouse event occured */
   void SendMouseEvent(wxMouseEvent &event);
   /* Tells the host that a key event occured */
@@ -286,33 +289,33 @@ class Plugin: public wxWindow
   void CloseOptionalView();
 
   /* Opens the Wired file loader with given title, extensions, and if it should read
-     AKAI audio cds/files or not. Returns the selected file name or an empty string if 
+     AKAI audio cds/files or not. Returns the selected file name or an empty wstring if 
      cancelled. If 'exts' is NULL, default audio extensions are used. */
-  std::string OpenFileLoader(std::string title, 
-			     std::vector<std::string> *exts, 
+  wxString OpenFileLoader(wxString title, 
+			     std::vector<wxString> *exts, 
 			     bool akai = false);
   /* Opens the Wired file loader with given title, extensions, for saving a file.
-     Returns the file name or an empty string if cancelled */
-  std::string SaveFileLoader(std::string title, 
-			     std::vector<std::string> *exts);
+     Returns the file name or an empty wstring if cancelled */
+  wxString SaveFileLoader(wxString title, 
+			     std::vector<wxString> *exts);
   
   // Host info
 
   /* Returns the host product name */
-  std::string GetHostProductName();
+  wxString GetHostProductName();
   /* Returns the host product version */
   float  GetHostProductVersion();
   /* Returns the host vendor name */
-  std::string GetHostVendorName();
+  wxString GetHostVendorName();
   /* Returns the path to the host data directory */
-  std::string GetDataDir();
+  wxString GetDataDir();
 
   // Sequencer events
   /* Create a MIDI pattern containing a list of event in the host's sequencer */
   bool CreateMidiPattern(std::list<SeqCreateEvent *> *l);
 
   // String representing the name of the plugin
-  std::string	 Name;
+  wxString	 Name;
 
   // Plugin startup and init information
   PlugStartInfo StartInfo;

@@ -71,11 +71,11 @@ void			WiredExternalPluginMgr::LoadPLugins(int Type)
 
 void			WiredExternalPluginMgr::LoadPluginsFromPath(const char *Dirs, int Type)
 {
-	list <string>::iterator 	Iter;
+	list <wxString>::iterator 	Iter;
 //	DIR 						*CurrentDir = NULL;
 //	struct dirent 				*CurrentFile = NULL;
-	string						DirsFromEnv = string(Dirs);
-	list<string>				Paths = SplitPath(DirsFromEnv);
+	wxString					DirsFromEnv = wxString(Dirs, *wxConvCurrent);
+	list<wxString>				Paths = SplitPath(DirsFromEnv);
 	
 	for (Iter = Paths.begin(); Iter != Paths.end(); Iter++)
 	{
@@ -88,9 +88,9 @@ void			WiredExternalPluginMgr::LoadPluginsFromPath(const char *Dirs, int Type)
 		    {
 				//TODO bring back LADSPA / DSSI Load.
 				if (Type == TYPE_PLUGINS_DSSI)
-					LoadPlugins(string(*Iter) + string("/") + (string)filename);
+					LoadPlugins(wxString(*Iter) + wxString(wxT("/")) + (wxString)filename);
 				else if (Type == TYPE_PLUGINS_LADSPA)
-					LoadPlugins(string(*Iter) + string("/") + (string)filename);
+					LoadPlugins(wxString(*Iter) + wxString(wxT("/")) + (wxString)filename);
 		        cont = CurrentDir.GetNext(&filename);
 		    }
 		}
@@ -99,7 +99,7 @@ void			WiredExternalPluginMgr::LoadPluginsFromPath(const char *Dirs, int Type)
 	//std::sort(_Plugins.begin(), _Plugins.end(), SortPluginsByName());
 }
 
-void			WiredExternalPluginMgr::LoadPlugins(const string& FileName)
+void			WiredExternalPluginMgr::LoadPlugins(const wxString& FileName)
 {
 	WiredDSSIPlugin		*NewPlugin = new WiredDSSIPlugin();
 	
@@ -116,26 +116,26 @@ void			WiredExternalPluginMgr::LoadPlugins(const string& FileName)
 		delete NewPlugin;
 }
 
-list<string>	WiredExternalPluginMgr::SplitPath(string& Path)
+list<wxString>	WiredExternalPluginMgr::SplitPath(wxString& Path)
 {
-	istringstream f(Path.c_str());
-	list<string> Result;
-	string		Buffer;
+	istringstream f((const char *)Path.mb_str(*wxConvCurrent));
+	list<wxString> Result;
+	std::string		Buffer;
 
 	if (Path.find(ENV_PATH_SEPARATOR) == Path.npos)
 		Result.insert(Result.end(), Path);
 	else
 		while (getline(f, Buffer, ENV_PATH_SEPARATOR))
-			Result.insert(Result.end(), Buffer);
+			Result.insert(Result.end(), wxString(Buffer.c_str(), *wxConvCurrent));
 	return Result;
 }
 
-map<int, string>	WiredExternalPluginMgr::GetPluginsList()
+map<int, wxString>	WiredExternalPluginMgr::GetPluginsList()
 {
-	map<int, string>					Result;
+	map<int, wxString>					Result;
 	list<WiredDSSIPlugin*>::iterator	Iter;
-	map<int, string>::iterator			IterDescriptor;
-	map<int, string>					CurrentPluginList;
+	map<int, wxString>::iterator			IterDescriptor;
+	map<int, wxString>					CurrentPluginList;
 
 	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
 	{
@@ -146,23 +146,23 @@ map<int, string>	WiredExternalPluginMgr::GetPluginsList()
 	return Result;
 }
 
-list<string>		WiredExternalPluginMgr::GetSortedPluginsList(const string& Separator)
+list<wxString>		WiredExternalPluginMgr::GetSortedPluginsList(const wxString& Separator)
 {
-	list<string>						Result;
+	list<wxString>						Result;
 	list<WiredDSSIPlugin*>::iterator	Iter;
-	map<int, string>::iterator			IterDescriptor;
-	map<int, string>					CurrentPluginList;
-	char								buf[1024];
-	string								StrResult;
+	map<int, wxString>::iterator			IterDescriptor;
+	map<int, wxString>					CurrentPluginList;
+	wxChar								buf[1024];
+	wxString								StrResult;
 
 	for (Iter = _Plugins.begin(); Iter != _Plugins.end(); Iter++)
 	{
 		CurrentPluginList = (*Iter)->GetPluginsList();
 		for (IterDescriptor = CurrentPluginList.begin(); IterDescriptor != CurrentPluginList.end(); IterDescriptor++)
 		{
-			StrResult = string(IterDescriptor->second + Separator);
-			wxSnprintf(buf, 1024, "%d", IterDescriptor->first);
-			Result.insert(Result.end(), StrResult + string(buf));			
+			StrResult = wxString(IterDescriptor->second + Separator);
+			wxSnprintf(buf, 1024, wxT("%d"), IterDescriptor->first);
+			Result.insert(Result.end(), StrResult + wxString(buf, *wxConvCurrent));
 		}
 	}
 	Result.sort();
