@@ -18,7 +18,7 @@ Clavier::Clavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
   int				posY = static_cast<int>(ceil(BLACKKEY_HEIGHT * 2 * ZoomY));
   int				posYW = static_cast<int>(ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2));
   int				wkeyh = static_cast<int>(ceil(BLACKKEY_HEIGHT * 3 * ZoomY / 2));
-  wxString			gamme = "CDEFGAB";
+  wxString			gamme = wxT("CDEFGAB");
   int				oct = -2;
   int				note = 0;
   int				code = 0;
@@ -28,7 +28,7 @@ Clavier::Clavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
   // creation des touches blanches
   for (int i = NB_WHITEKEY; i > 0; i--)
     {
-      wxString notestr = "";
+      wxString notestr = wxT("");
       notestr += gamme.GetChar(note);
       notestr = notestr << oct;
       keys.push_back(new Key(this, -1, wxPoint(size.GetWidth() - WHITEKEY_WIDTH, 
@@ -77,9 +77,9 @@ Clavier::Clavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
 int arf = 0;
   for (int i = NB_WHITEKEY; i > 1; i--)
     {
-      wxString notestr = "";
+      wxString notestr = wxT("");
       notestr += gamme.GetChar(note);
-      notestr += "#";
+      notestr += wxT("#");
       notestr = notestr << oct;
       note++;
       if (note == 7)
@@ -218,7 +218,7 @@ void				Clavier::OnPaint(wxPaintEvent &event)
   dc.SetFont(f);
   for (int i = NB_WHITEKEY; i > 0; i = i - 7)
     {
-      wxString str = "C";
+      wxString str = wxT("C");
       str = str << j;
       dc.DrawText(str, s.GetWidth() - WHITEKEY_WIDTH - 20, 
 		  s.GetHeight() - posY + 4);
