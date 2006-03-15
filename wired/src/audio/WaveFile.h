@@ -34,7 +34,7 @@ class WaveFile
   
  public:
   WaveFile(); 
-  WaveFile(string filename, bool loadmem = true, t_opening_mode open_mode = read, int channel = 2);
+  WaveFile(wxString filename, bool loadmem = true, t_opening_mode open_mode = read, int channel = 2);
   WaveFile(short *buffer, unsigned int size, int channels, long rate);
   ~WaveFile();
   
@@ -95,7 +95,7 @@ class WaveFile
   void		SetInvert(bool inv) { Invert = inv; }
 
   float	   **Data;
-  string   Filename;
+  wxString   Filename;
   bool	   LoadedInMem;
   bool	   Error;
 
@@ -117,14 +117,14 @@ class WaveFile
 class cException
 {
 public:
-	cException (string reason )
+	cException (wxString reason )
 	{ m_reason = reason; };
 
-	string What() const
+	wxString What() const
 	{ return m_reason; };
 
 private:
-	string m_reason;
+	wxString m_reason;
 };
 
 

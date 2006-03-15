@@ -36,7 +36,7 @@ private:
 
 	// Constructeur prive
 	// cClipBoard();
-	cClipBoard(string filename = "/tmp/tmp.wav", bool loadmem = false, t_opening_mode open_mode = WaveFile::rwrite);
+	cClipBoard(wxString filename = wxT("/tmp/tmp.wav"), bool loadmem = false, t_opening_mode open_mode = WaveFile::rwrite);
 };
 
 

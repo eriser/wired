@@ -6,7 +6,7 @@
 cClipBoard* cClipBoard::spSingleton = 0;
 
 
-cClipBoard::cClipBoard(string filename, bool loadmem, t_opening_mode open_mode) 
+cClipBoard::cClipBoard(wxString filename, bool loadmem, t_opening_mode open_mode) 
 : WaveFile (filename, loadmem, open_mode)
 {
    sizec = 0;
@@ -17,7 +17,7 @@ cClipBoard::~cClipBoard()
 {
 	if(spSingleton)
 	  delete spSingleton;
-  wxRemoveFile("/tmp/tmp.wav");
+  wxRemoveFile(wxT("/tmp/tmp.wav"));
 }
 
 
@@ -86,7 +86,7 @@ void cClipBoard::Cut (WaveFile& wave, int from, int size_of_cut)
   
   // Verifie qu'on est en mode read/write
   if ( wave.GetOpenMode() != rwrite )
-    throw cException ("File opened in read only mode");
+    throw cException (wxT("File opened in read only mode"));
   
   sizec = size_of_cut;
   // buffer destine a recevoir les donnees a copier
@@ -134,10 +134,10 @@ void cClipBoard::Paste (WaveFile& wave, int to)
   
   
   if ( wave.GetOpenMode() != rwrite )
-    throw cException ("File opened in read only mode");
+    throw cException (wxT("File opened in read only mode"));
   
   if ( GetNumberOfFrames() <= 0 )
-    throw cException ("Paste : Nothing to paste");
+    throw cException (wxT("Paste : Nothing to paste"));
   
   size_paste = sizec;
   //cout << "[cClipBoard] - Paste : " << GetNumberOfFrames() << " frames to paste" << endl;
@@ -148,7 +148,7 @@ void cClipBoard::Paste (WaveFile& wave, int to)
   float * rw_buffer = new float [wave.GetNumberOfChannels() * WAVE_TEMP_SIZE];
 
   // Cree un fichier temporaire 
-  WaveFile temp ("/tmp/tmp1.wav", false, rwrite);
+  WaveFile temp (wxT("/tmp/tmp1.wav"), false, rwrite);
 
   // Copier les frames a droite de la position d'insertion ds le fichier temp
   int frames_nbr = 0;
@@ -194,7 +194,7 @@ void cClipBoard::Paste (WaveFile& wave, int to)
   // Met a jour le header du wave
   sf_command (wave.GetFilePtr(), SFC_UPDATE_HEADER_NOW, NULL, SF_FALSE) ;
   
-  wxRemoveFile("/tmp/tmp1.wav");
+  wxRemoveFile(wxT("/tmp/tmp1.wav"));
   delete[] rw_buffer;
 }
 
@@ -209,7 +209,7 @@ void cClipBoard::Delete (WaveFile& wave, int from, int size_of_cut)
   
   // Verifie qu'on est en mode read/write
   if ( wave.GetOpenMode() != rwrite )
-    throw cException ("File opened in read only mode");
+    throw cException (wxT("File opened in read only mode"));
   
   // buffer destine a recevoir les donnees a copier
   float * rw_buffer = new float [wave.GetNumberOfChannels() * WAVE_TEMP_SIZE];

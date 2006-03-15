@@ -6,6 +6,7 @@
 
 #include <string>
 #include <iostream>
+#include <wx/wx.h>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ using namespace std;
 class WriteWaveFile
 {
  public:
-  WriteWaveFile(string filename, int sample_rate, int channels, unsigned long format, 
+  WriteWaveFile(wxString filename, int sample_rate, int channels, unsigned long format, 
 		int type = SF_FORMAT_WAV);
   ~WriteWaveFile();
 
@@ -25,14 +26,14 @@ class WriteWaveFile
   sf_count_t	WriteFloat(float *ptr, sf_count_t items);
   sf_count_t	WriteDouble(double *ptr, sf_count_t items);
 
-  bool		WriteTitle(string s);
-  bool		WriteCopyright(string s);
-  bool		WriteSoftware(string s);
-  bool		WriteArtist(string s);
-  bool		WriteComment(string s);
-  bool		WriteDate(string s);
+  bool		WriteTitle(wxString s);
+  bool		WriteCopyright(wxString s);
+  bool		WriteSoftware(wxString s);
+  bool		WriteArtist(wxString s);
+  bool		WriteComment(wxString s);
+  bool		WriteDate(wxString s);
 
-  string	Filename;
+  wxString	Filename;
 
  protected:
   SNDFILE	*sffile;

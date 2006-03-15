@@ -4,7 +4,7 @@
 #include "WriteWaveFile.h"
 #include "../error.hh"
 
-WriteWaveFile::WriteWaveFile(string filename, int sample_rate, int channels, 
+WriteWaveFile::WriteWaveFile(wxString filename, int sample_rate, int channels, 
 			     unsigned long format, int type)
   : Filename(filename)
 {
@@ -15,8 +15,8 @@ WriteWaveFile::WriteWaveFile(string filename, int sample_rate, int channels,
   sfinfo.channels = channels;
   sfinfo.format = type | format;  
 
-  if (!(sffile = sf_open(filename.c_str(), SFM_WRITE, &sfinfo)))
-    throw Error::File(filename, sf_strerror(0));
+  if (!(sffile = sf_open(filename.mb_str(*wxConvCurrent), SFM_WRITE, &sfinfo)))
+    throw Error::File(filename, wxString(sf_strerror(0), *wxConvCurrent));
   //WriteSoftware("Wired");
 }
 
@@ -54,32 +54,32 @@ sf_count_t WriteWaveFile::WriteDouble(double *ptr, sf_count_t items)
   return (sf_write_double(sffile, ptr, items));
 }
 
-bool WriteWaveFile::WriteTitle(string s)
+bool WriteWaveFile::WriteTitle(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_TITLE, s.c_str()));
+  return (sf_set_string (sffile, SF_STR_TITLE, s.mb_str(*wxConvCurrent)));
 }
 
-bool WriteWaveFile::WriteCopyright(string s)
+bool WriteWaveFile::WriteCopyright(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_COPYRIGHT, s.c_str()));
+  return (sf_set_string (sffile, SF_STR_COPYRIGHT, s.mb_str(*wxConvCurrent)));
 }
 
-bool WriteWaveFile::WriteSoftware(string s)
+bool WriteWaveFile::WriteSoftware(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_SOFTWARE, s.c_str()));
+  return (sf_set_string (sffile, SF_STR_SOFTWARE, s.mb_str(*wxConvCurrent)));
 }
 
-bool WriteWaveFile::WriteArtist(string s)
+bool WriteWaveFile::WriteArtist(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_ARTIST, s.c_str()));
+  return (sf_set_string (sffile, SF_STR_ARTIST, s.mb_str(*wxConvCurrent)));
 }
 
-bool WriteWaveFile::WriteComment(string s)
+bool WriteWaveFile::WriteComment(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_COMMENT, s.c_str()));
+  return (sf_set_string (sffile, SF_STR_COMMENT, s.mb_str(*wxConvCurrent)));
 
 }
-bool WriteWaveFile::WriteDate(string s)
+bool WriteWaveFile::WriteDate(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_DATE, s.c_str()));
+  return (sf_set_string (sffile, SF_STR_DATE, s.mb_str(*wxConvCurrent)));
 }
