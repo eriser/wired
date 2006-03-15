@@ -13,7 +13,7 @@ AudioCenter::~AudioCenter()
   Clear();
 }
 
-WaveFile *AudioCenter::AddWaveFile(string filename)
+WaveFile *AudioCenter::AddWaveFile(wxString filename)
 {
   WaveFile *w;
   

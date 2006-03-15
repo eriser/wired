@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <portaudio.h>
+#include <wx/wx.h>
 
 #define MIN	0
 #define MAX	1
@@ -50,7 +51,7 @@ class DeviceFormat
 class Device
 {
  public:
-  Device(int id, string name, int maxin, int maxout)	
+  Device(int id, wxString name, int maxin, int maxout)	
 				{					\
 				  Id = id; Name = name;			\
 				  MaxInputChannels = maxin;		\
@@ -59,7 +60,7 @@ class Device
   ~Device();
   
   int		Id;
-  string	Name;
+  wxString	Name;
   int		MaxInputChannels;
   int		MaxOutputChannels;
   double	SuggestedOutputLatency;

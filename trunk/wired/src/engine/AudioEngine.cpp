@@ -18,7 +18,7 @@ AudioEngine::AudioEngine()
 
   PaError err = Pa_Initialize();
   if ( err != paNoError ) 
-    throw Error::InitFailure(Pa_GetErrorText (err));
+    throw Error::InitFailure(wxString(Pa_GetErrorText (err), *wxConvCurrent));
   cout << "[AUDIO] Portaudio initialized" << endl; 
 }
 
@@ -352,7 +352,7 @@ void AudioEngine::GetDevices()
 	  throw Error::NoDevice();
 	}
       //      dev = 0x0;
-      dev = new Device(i, string(info->name),
+      dev = new Device(i, wxString(info->name, *wxConvCurrent),
 		       info->maxInputChannels,
 		       info->maxOutputChannels);
       DeviceList.push_back(dev);
@@ -427,8 +427,8 @@ void AudioEngine::OpenStream()
       cout << "[AUDIO] Sample rate is: " << SampleRate 
 	   << " Samples per buffer is: " << SamplesPerBuffer 
 	   << endl;
-      AlertDialog("AUDIO", wxString("Error using portaudio OpenStream(): ") + 
-		  wxString(Pa_GetErrorText(err)));
+      AlertDialog(wxT("AUDIO"), wxString(wxT("Error using portaudio OpenStream(): ")) + 
+		  wxString(Pa_GetErrorText(err), *wxConvCurrent));
       throw Error::StreamNotOpen();
     }
   cout << "[AUDIO] Stream opened:" 

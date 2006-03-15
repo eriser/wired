@@ -15,10 +15,10 @@ namespace Error
   class StreamNotOpen : public AudioEngineError {};
   class InitFailure : public AudioEngineError 
     {
-      std::string msg;
+      wxString msg;
     public:
-      InitFailure(std::string s) : msg(s) { };
-      std::string getMsg() { return msg; }
+      InitFailure(wxString s) : msg(s) { };
+      wxString getMsg() { return msg; }
     };
 };
 

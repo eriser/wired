@@ -4,6 +4,10 @@
 #ifndef __AUDIOCENTER_H__
 #define __AUDIOCENTER_H__
 
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
 #include <list>
 #include "WaveFile.h"
 
@@ -15,7 +19,7 @@ class AudioCenter
   AudioCenter();
   ~AudioCenter();
 
-  WaveFile *AddWaveFile(string filename);
+  WaveFile *AddWaveFile(wxString filename);
   void		RemoveWaveFile(WaveFile *File);
   void	    Clear();
 
