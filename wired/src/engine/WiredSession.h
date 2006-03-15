@@ -49,7 +49,7 @@ typedef struct  s_Plugin
 {
   char		Id[4];
   long		NameLen;
-  char		*Name;
+  wxChar		*Name;
   long		DataLen;
 } t_Plugin;
 
@@ -75,7 +75,7 @@ typedef struct  s_Track
   long		DeviceId;
   long		PluginId;
   long		NameLen;
-  char		*Name;
+  wxChar		*Name;
   long		NumberOfPatterns;
 } t_Track;
 
@@ -84,7 +84,7 @@ typedef struct  s_Pattern
   double	Position;
   double	EndPosition;
   long		NameLen;
-  char		*Name;
+  wxChar		*Name;
 } t_Pattern;
 
 typedef struct  s_AudioPattern
@@ -92,7 +92,7 @@ typedef struct  s_AudioPattern
   long		StartWavePos;
   long		EndWavePos;
   long		FilenameLen;
-  char		*Filename;
+  wxChar		*Filename;
 } t_AudioPattern;
 
 typedef struct  s_MidiPattern
@@ -111,14 +111,14 @@ typedef struct  s_MidiEvent
 class WiredSession
 {
  public:
-  WiredSession(string filename, string audiodir = "");
+  WiredSession(wxString filename, wxString audiodir = wxT(""));
   ~WiredSession();
 
   bool		Load();
   bool		Save();
 
-  string	FileName;
-  string	AudioDir;
+  wxString	FileName;
+  wxString	AudioDir;
  protected:
   int		fd;
 };

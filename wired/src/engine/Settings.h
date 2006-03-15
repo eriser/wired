@@ -10,10 +10,10 @@
 
 using namespace std;
 
-#define WIRED_DIRECTORY ".wired"
-#define WIRED_CONF	".wired/wired.conf"
-#define PLUG_CONF_FILE  "wired_plugins.conf"
-#define WIRED_DATADIR   "/share/wired/data/"
+#define WIRED_DIRECTORY wxT(".wired")
+#define WIRED_CONF	wxT(".wired/wired.conf")
+#define PLUG_CONF_FILE  wxT("wired_plugins.conf")
+#define WIRED_DATADIR   wxT("/share/wired/data/")
 
 class Settings
 {
@@ -40,9 +40,9 @@ class Settings
   vector<long>	InputChannels;
   vector<long>	MidiIn;
 
-  string PlugConfFile;
-  string ConfDir;
-  string DataDir;
+  wxString PlugConfFile;
+  wxString ConfDir;
+  wxString DataDir;
   wxString WorkingDir;
 
   void Load();
