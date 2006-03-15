@@ -30,8 +30,8 @@ using namespace std;
 #define ENV_PATH_SEPARATOR ':'
 #define STR_DSSI_DESCRIPTOR_FUNCTION_NAME "dssi_descriptor"
 #define STR_LADSPA_DESCRIPTOR_FUNCTION_NAME "ladspa_descriptor"
-#define STR_DEFAULT_NAME "LADSPA Plugin"
-#define STR_DEFAULT_HELP "No help provided by this plugin"
+#define STR_DEFAULT_NAME wxT("LADSPA Plugin")
+#define STR_DEFAULT_HELP wxT("No help provided by this plugin")
 
 
 class 	WiredExternalPluginMgr
@@ -43,8 +43,8 @@ public:
 	WiredExternalPluginMgr		operator=(const WiredExternalPluginMgr& right);
 	
 	void				LoadPLugins(int Type);
-	map<int, string>	GetPluginsList();
-	list<string>		GetSortedPluginsList(const string& Separator = "#");
+	map<int, wxString>	GetPluginsList();
+	list<wxString>		GetSortedPluginsList(const wxString& Separator = wxT("#"));
 	void				SetMenuItemId(int ModuleId, int MenuItemId);
 	int					GetPluginType(int PluginId);
 	WiredDSSIGui		*CreatePlugin(int MenuItemId, PlugStartInfo &info);
@@ -53,8 +53,8 @@ public:
 	void				SetStartInfo(PlugStartInfo &Info);
 	
 private:
-	void			LoadPlugins(const string& FileName);
-	list<string>	SplitPath(string& Path);
+	void			LoadPlugins(const wxString& FileName);
+	list<wxString>	SplitPath(wxString& Path);
 	void			LoadPluginsFromPath(const char *Dirs, int Type);
 
 	list<WiredDSSIPlugin*>		_Plugins;

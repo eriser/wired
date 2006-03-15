@@ -18,9 +18,9 @@ public:
 	~WiredDSSIPlugin();
 	WiredDSSIPlugin(const WiredDSSIPlugin& copy);
 	WiredDSSIPlugin		operator=(const WiredDSSIPlugin& right);
-	bool				Load(const string& FileName, int& FirstIndex);
+	bool				Load(const wxString& FileName, int& FirstIndex);
 	void				UnLoad();
-	map<int, string>	GetPluginsList();
+	map<int, wxString>	GetPluginsList();
 	int					GetPluginType(int PluginId);
 	bool				Contains(int PluginId);
 	bool				CreatePlugin(int PluginId, WiredLADSPAInstance *Plugin);
@@ -28,7 +28,7 @@ public:
 	map<int, unsigned long>	GetPluginsListUniqueId();
 
 private:
-	string								_FileName;
+	wxString								_FileName;
 	void								*_Handle;
 	DSSI_Descriptor_Function			_DSSIDescriptorFunction;
 	map<int, const DSSI_Descriptor*>	_DSSIDescriptors;						//Key == PluginId; Value == PluginDescriptor
