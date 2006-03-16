@@ -6,8 +6,9 @@
 #include	<vector>
 #include	<stdlib.h>
 #include	"WiredMplayer.h"
+#include <wx/wx.h>
 
-#define		VIDEO_FILE_FILTER		"AVI files (*.avi)|*.avi|MPEG files (*.mpg)|*.mpg"
+#define		VIDEO_FILE_FILTER		wxT("AVI files (*.avi)|*.avi|MPEG files (*.mpg)|*.mpg")
 
 class			WiredVideo
 {
@@ -18,7 +19,7 @@ public:
 	bool	asFile;
 	bool	isDisplayed;
 	
-	int		OpenFile(const std::string& path = "");
+	int		OpenFile(const wxString& path = wxT(""));
 	int		PlayFile();
 	int		PauseFile();
 	int		StopFile();
@@ -27,7 +28,7 @@ public:
 	int		SetSeek(bool SeekBool);
 
 private:
-	std::string	videoFilePath;
+	wxString	videoFilePath;
 	
 	bool	DisplayVideoFrame();
 	int		InitMplayer();

@@ -4,7 +4,7 @@
 
 WiredVideo::WiredVideo()
 {
-	videoFilePath = "";
+	videoFilePath = wxT("");
 	asFile = false;
 	isDisplayed = false;
     mplayer = NULL;
@@ -23,13 +23,13 @@ int		WiredVideo::InitMplayer()
     mplayer = new WiredMplayer();
 }
 
-int		WiredVideo::OpenFile(const std::string& path)
+int		WiredVideo::OpenFile(const wxString& path)
 {
-  wxFileDialog	*dlg = new wxFileDialog(0, "[WIREDVIDEO] Loading video file", path, "", VIDEO_FILE_FILTER, wxOPEN);
+  wxFileDialog	*dlg = new wxFileDialog(0, wxString(wxT("[WIREDVIDEO] Loading video file"), *wxConvCurrent), path, wxString(wxT(""), *wxConvCurrent), VIDEO_FILE_FILTER, wxOPEN);
 
   if (dlg->ShowModal() == wxID_OK)
 	{
-		if (videoFilePath != "") CloseFile();
+		if (videoFilePath != wxT("")) CloseFile();
 		videoFilePath = dlg->GetPath();
 		InitMplayer();
 		asFile = true;
@@ -68,7 +68,7 @@ int		WiredVideo::CloseFile()
 	if (asFile == false || !mplayer) return 0;
 	isDisplayed = false;
 	std::cout << "[WIREDVIDEO] Closing video file" << std::endl;
-	videoFilePath = "";
+	videoFilePath = wxT("");
 	asFile = false;
 	return mplayer->CloseFile();
 }
