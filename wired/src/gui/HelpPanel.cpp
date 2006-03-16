@@ -15,7 +15,7 @@ HelpPanel::HelpPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size)
   /*  Text = new wxTextCtrl(this, -1, "This is Wired Help panel.", wxPoint(2, 2),
 			wxSize(GetSize().x + 4, GetSize().y), 
 			wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP | wxNO_BORDER);*/
-  Help = new HelpCtrl(this, -1, string(WiredSettings->DataDir + string("help.zip")).c_str(), wxPoint(0,0), size);
+  Help = new HelpCtrl(this, -1, wxString(WiredSettings->DataDir + wxString(L"help.zip")).c_str(), wxPoint(0,0), size);
 }
 
 HelpPanel::~HelpPanel()

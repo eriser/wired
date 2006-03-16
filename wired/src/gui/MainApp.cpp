@@ -29,10 +29,10 @@ bool				MainApp::OnInit()
 #if wxUSE_LIBPNG
   wxImage::AddHandler(new wxPNGHandler);
 #endif
-	SetAppName("wired");
+	SetAppName(L"wired");
 	if (!wxApp::OnInit())
 		return false;
-  if (bitmap.LoadFile(string(string(INSTALL_PREFIX) + string("/share/wired/data/ihm/splash/splash.png")).c_str(), wxBITMAP_TYPE_PNG))
+  if (bitmap.LoadFile(wxString(INSTALL_PREFIX, *wxConvCurrent) + wxString(wxT("/share/wired/data/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
     {
       wxSplashScreen*		splash = 
 	new wxSplashScreen(bitmap,
@@ -41,7 +41,7 @@ bool				MainApp::OnInit()
 			   wxSIMPLE_BORDER|wxSTAY_ON_TOP);
     }
 #if 0
-  const wxString		name = wxString::Format("wired-%s", wxGetUserId().c_str());
+  const wxString		name = wxString::Format(L"wired-%s", wxGetUserId().c_str());
   Checker = new wxSingleInstanceChecker(name);
   if (Checker->IsAnotherRunning())
     {
@@ -51,8 +51,8 @@ bool				MainApp::OnInit()
   delete Checker;
 #endif  
   SetUseBestVisual(true);
-  SetVendorName("Wired Team");
-  Frame = new MainWindow(APP_TITLE, wxDefaultPosition,
+  SetVendorName(L"Wired Team");
+  Frame = new MainWindow(wxString(APP_TITLE, *wxConvCurrent), wxDefaultPosition,
 			 wxSize(APP_WIDTH, APP_HEIGHT));
   MainWin = Frame;
   Frame->Show(true);

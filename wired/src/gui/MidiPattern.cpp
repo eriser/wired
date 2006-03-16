@@ -50,7 +50,7 @@ void					MidiPattern::Init()
 {
   wxString	s;
 
-  s.Printf("T%d M%d", TrackIndex + 1, midi_pattern_count++);
+  s.Printf(wxT("T%d M%d"), TrackIndex + 1, midi_pattern_count++);
   PenColor = CL_MIDI_DRAW;
   BrushColor = CL_MIDIDRAWER_BRUSH;
   Name = s.c_str();

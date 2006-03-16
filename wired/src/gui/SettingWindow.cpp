@@ -30,7 +30,7 @@
 #define PAN_POS		wxPoint(222, WIN_MARGIN)
 
 SettingWindow::SettingWindow()
-  : wxDialog(0x0, -1, "Wired Settings", wxDefaultPosition, WIN_SIZE)
+  : wxDialog(0x0, -1, _("Wired Settings"), wxDefaultPosition, WIN_SIZE)
 {
   wxTreeItemId	root;
   wxTreeItemId	id;
@@ -56,13 +56,13 @@ SettingWindow::SettingWindow()
   AudioOutputPanelView();
   MidiPanelView();
   
-  SettingsTree->AddRoot("", -1, -1);
+  SettingsTree->AddRoot(wxT(""), -1, -1);
   root = SettingsTree->GetRootItem();
-  SettingsTree->AppendItem(root, "General", -1, -1, (wxTreeItemData*)GeneralPanel);
-  id = SettingsTree->AppendItem(root, "Audio", -1, -1, (wxTreeItemData*)AudioPanel);
-  SettingsTree->AppendItem(id, "Output", -1, -1, (wxTreeItemData*)AudioOutputPanel);
-  SettingsTree->AppendItem(id, "Input", -1, -1, (wxTreeItemData*)AudioInputPanel);
-  SettingsTree->AppendItem(root, wxString("Midi"), -1, -1, (wxTreeItemData*)MidiPanel);
+  SettingsTree->AppendItem(root, _("General"), -1, -1, (wxTreeItemData*)GeneralPanel);
+  id = SettingsTree->AppendItem(root, _("Audio"), -1, -1, (wxTreeItemData*)AudioPanel);
+  SettingsTree->AppendItem(id, _("Output"), -1, -1, (wxTreeItemData*)AudioOutputPanel);
+  SettingsTree->AppendItem(id, _("Input"), -1, -1, (wxTreeItemData*)AudioInputPanel);
+  SettingsTree->AppendItem(root, wxString(_("Midi"), *wxConvCurrent), -1, -1, (wxTreeItemData*)MidiPanel);
 
   AudioPanel->Show(false);
   MidiPanel->Show(false);
@@ -87,7 +87,7 @@ void				SettingWindow::GeneralPanelView()
    GeneralPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
    QuickWaveBox = new wxCheckBox(GeneralPanel, -1, _("Quickly render waveforms"), wxPoint(8, 8));
    dBWaveBox = new wxCheckBox(GeneralPanel, -1, _("Render waveforms in dB mode"), wxPoint(8, 28));
-   undoRedoMaxDepthTextCtrl = new wxTextCtrl(GeneralPanel, -1, "", wxPoint(218, 50), wxSize(45, 25));
+   undoRedoMaxDepthTextCtrl = new wxTextCtrl(GeneralPanel, -1, wxT(""), wxPoint(218, 50), wxSize(45, 25));
    undoRedoMaxDepthStaticText = new wxStaticText(GeneralPanel, -1, _("Undo redo maximum depth"), wxPoint(10, 50));
 }
 
@@ -128,10 +128,10 @@ void				SettingWindow::AudioInputPanelView()
   new wxStaticText(AudioInputPanel, -1, _("Select Input sound card:"),
 		   wxPoint(8, 8));
   InputChoice = new wxChoice(AudioInputPanel, Setting_InputDev, wxPoint(8, 30), wxSize(368, -1), 0, 0x0);
-  InputChoice->Append(wxString(_("None")));
+  InputChoice->Append(wxString(_("None"), *wxConvCurrent));
   InputChoice->SetSelection(0);
   for (i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++)
-    InputChoice->Append(wxString((*i)->Name.c_str()));
+    InputChoice->Append(wxString((*i)->Name.mb_str(*wxConvCurrent), *wxConvCurrent));
   new wxStaticText(AudioInputPanel, -1, _("Select Input channels to use with this sound card:"), 
 		   wxPoint(8, 70));
   InputList = new wxCheckListBox(AudioInputPanel, Setting_InputChan, wxPoint(8, 94), wxSize(368, 68), 0);
@@ -149,10 +149,10 @@ void				SettingWindow::AudioOutputPanelView()
   new wxStaticText(AudioOutputPanel, -1, _("Select Output sound card:"), 
 		   wxPoint(8, 8));
   OutputChoice = new wxChoice(AudioOutputPanel, Setting_OutputDev, wxPoint(8, 30), wxSize(368, -1), 0, 0x0);
-  OutputChoice->Append(wxString(_("None")));
+  OutputChoice->Append(wxString(_("None"), *wxConvCurrent));
   OutputChoice->SetSelection(0);
   for (i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++)
-    OutputChoice->Append(wxString((*i)->Name.c_str()));
+    OutputChoice->Append(wxString((*i)->Name.mb_str(*wxConvCurrent), *wxConvCurrent));
   new wxStaticText(AudioOutputPanel, -1, _("Select left and right Output channels for this sound card:"), 
 		   wxPoint(8, 70));
   OutputList = new wxCheckListBox(AudioOutputPanel, Setting_OutputChan, wxPoint(8, 94), wxSize(368, 68), 0);
@@ -276,7 +276,7 @@ void SettingWindow::OnMidiClick(wxCommandEvent &event)
       MidiInList->Clear();
       for (j = MidiEngine->DeviceList.begin(), k = 1; j != MidiEngine->DeviceList.end(); j++, k++)
 	{      
-	  s.Printf(_("In %d: %s"), k, (*j)->Name.c_str());
+	  s.Printf(_("In %d: %s"), k, (const char *)(*j)->Name.mb_str(*wxConvCurrent));
 	  MidiInList->Append(s);
 	}
       for (i = WiredSettings->MidiIn.begin(); i != WiredSettings->MidiIn.end(); i++)
@@ -385,7 +385,7 @@ void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
   if (j > 2)
     {
       OutputList->Check(event.GetInt(), false);
-      wxMessageDialog msg(this, _("No more than 2 output channels can be selected"), "Wired", 
+      wxMessageDialog msg(this, _("No more than 2 output channels can be selected"), wxT("Wired"), 
 			  wxOK | wxICON_EXCLAMATION);
       msg.ShowModal();
     }
@@ -398,7 +398,7 @@ void SettingWindow::Load()
   QuickWaveBox->SetValue(WiredSettings->QuickWaveRender);
   dBWaveBox->SetValue(WiredSettings->dbWaveRender);
   oss << WiredSettings->maxUndoRedoDepth;
-  undoRedoMaxDepthTextCtrl->SetValue(oss.str());
+  undoRedoMaxDepthTextCtrl->SetValue(wxString(oss.str().c_str(), *wxConvCurrent));
   if (WiredSettings->OutputDev > -1)
     OutputChoice->SetSelection(WiredSettings->OutputDev + 1);
   if (WiredSettings->InputDev > -1)
@@ -417,7 +417,7 @@ void SettingWindow::Save()
 //	AudioMutex.Lock();
 //	MidiMutex.Lock();
   long i;
-  istringstream	iss((string)undoRedoMaxDepthTextCtrl->GetValue());
+  istringstream	iss((string)undoRedoMaxDepthTextCtrl->GetValue().mb_str(*wxConvCurrent));
 
   WiredSettings->QuickWaveRender = QuickWaveBox->IsChecked();
   WiredSettings->dbWaveRender = dBWaveBox->IsChecked();
@@ -526,7 +526,7 @@ void SettingWindow::LoadSampleRates()
 	  DeviceFormat *f = dev->SupportedFormats.at(k);
 	  for (i = f->SampleRates.begin(); i != f->SampleRates.end(); i++)
 	    {
-	      s.Printf("%.0f Hz", *i);
+	      s.Printf(wxT("%.0f Hz"), *i);
 	      k = RateChoice->Append(s);
 	      if (*i == 44100.f)
 		RateChoice->SetSelection(k);

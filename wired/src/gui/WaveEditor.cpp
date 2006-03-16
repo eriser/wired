@@ -6,6 +6,12 @@
 #include 	"Colour.h"
 #include 	"Settings.h"
 #include 	"ClipBoard.h"
+
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
+
 #include 	<wx/menu.h>
 #include 	<math.h>
 #include 	<iostream>
@@ -249,16 +255,16 @@ void					WaveEditor::OnZoom(wxComboBox *combobox)
   wxSize 					s = GetSize();
   
   item = combobox->GetStringSelection();
-  if ( item == "1/25")
+  if ( item == wxT("1/25"))
     PAINT_WIDTH = zoomx / 25;
   //zoomy = 2;	  
-  if ( item == "1/50")
+  if ( item == wxT("1/50"))
     PAINT_WIDTH = zoomx / 50;
   //zoomy = 3; 
-  if ( item == "1/75")
+  if ( item == wxT("1/75"))
     PAINT_WIDTH = zoomx / 75;
   //zoomy = 4;
-  if ( item == "1/100")
+  if ( item == wxT("1/100"))
     PAINT_WIDTH = zoomx / 100;
   //zoomy = 5;
   if ( item == _("ZOOM"))
@@ -304,7 +310,7 @@ void					WaveEditor::OnCut(wxCommandEvent &event)
 
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), wxT("Wired"), 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -339,7 +345,7 @@ void					WaveEditor::OnPaste(wxCommandEvent &event)
 
  if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), wxT("Wired"), 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -373,7 +379,7 @@ void					WaveEditor::OnDelete(wxCommandEvent &event)
 
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), wxT("Wired"), 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -437,7 +443,7 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), wxT("Wired"), 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -445,7 +451,7 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
   }
   else
   {
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter gain "), _("Please enter text"), "1", 
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter gain "), _("Please enter text"), wxT("1"), 
 			wxOK | wxCANCEL, wxPoint(-1, -1));
 	text = dlg->GetValue();
 	int res = dlg->ShowModal();
@@ -453,23 +459,23 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 	  text = dlg->GetValue();
 	else
 	  return;
-	float gain = atof(text); 
+	float gain = atof(text.mb_str(*wxConvCurrent)); 
 	
 	WaveFile *input;
 	WaveFile *output;
 	if (input)
-	  wxRemoveFile("/tmp/tmp2.wav");
+	  wxRemoveFile(wxT("/tmp/tmp2.wav"));
 	if (output)
-	  wxRemoveFile("/tmp/tmp3.wav");
+	  wxRemoveFile(wxT("/tmp/tmp3.wav"));
 	if (Wave->GetNumberOfChannels() == 1)
 	{
-	input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite, 1);
-	output= new WaveFile("/tmp/tmp3.wav", false, WaveFile::rwrite, 1);
+	input = new WaveFile(wxT("/tmp/tmp2.wav"), false, WaveFile::rwrite, 1);
+	output= new WaveFile(wxT("/tmp/tmp3.wav"), false, WaveFile::rwrite, 1);
 	}
 	else
 	{
-	  input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite);
-	  output = new WaveFile("/tmp/tmp3.wav", false, WaveFile::rwrite);
+	  input = new WaveFile(wxT("/tmp/tmp2.wav"), false, WaveFile::rwrite);
+	  output = new WaveFile(wxT("/tmp/tmp3.wav"), false, WaveFile::rwrite);
 	}
 	float * rw_buffer = new float [Wave->GetNumberOfChannels() * WAVE_TEMP_SIZE];
 
@@ -496,8 +502,8 @@ void					WaveEditor::OnGain(wxCommandEvent &event)
 	  Wave->WriteFloatF(rw_buffer, nb_read);
 	  nb_read = output->ReadFloatF(rw_buffer);
 	}
-    wxRemoveFile("/tmp/tmp2.wav");
-    wxRemoveFile("/tmp/tmp3.wav");
+    wxRemoveFile(wxT("/tmp/tmp2.wav"));
+    wxRemoveFile(wxT("/tmp/tmp3.wav"));
   }
   mSelectedRegion.width = 0;
   SetDrawing();
@@ -523,7 +529,7 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
   width = savew = mSelectedRegion.width*inc;
   if ( Wave->GetOpenMode() != WaveFile::rwrite )
   {
-     wxMessageDialog msg(this, _("File opened in read only mode"), "Wired", 
+     wxMessageDialog msg(this, _("File opened in read only mode"), wxT("Wired"), 
  		  wxOK | wxCENTRE);
     int res = msg.ShowModal();
     if (res == wxOK)
@@ -531,7 +537,7 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
   }
   else
   {
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter normalize level "), _("Please enter text"), "1", 
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(this, _("Enter normalize level "), _("Please enter text"), wxT("1"), 
 			wxOK | wxCANCEL, wxPoint(-1, -1));
 	text = dlg->GetValue();
 	int res = dlg->ShowModal();
@@ -540,23 +546,23 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
 	else 
 	  return;
 	
-	float norma = atof(text); 
+	float norma = atof(text.mb_str(*wxConvCurrent)); 
 	WaveFile *input;
 	WaveFile *output;
 	
 	if (input)
-	  wxRemoveFile("/tmp/tmp2.wav");
+	  wxRemoveFile(wxT("/tmp/tmp2.wav"));
 	if (output)
-	  wxRemoveFile("/tmp/tmp3.wav");
+	  wxRemoveFile(wxT("/tmp/tmp3.wav"));
 	if (Wave->GetNumberOfChannels() == 1)
 	{
-	  input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite, 1);
-	  output = new WaveFile("/tmp/tmp3.wav", false, WaveFile::rwrite, 1);
+	  input = new WaveFile(wxT("/tmp/tmp2.wav"), false, WaveFile::rwrite, 1);
+	  output = new WaveFile(wxT("/tmp/tmp3.wav"), false, WaveFile::rwrite, 1);
 	}
 	else
 	{
-	  input = new WaveFile("/tmp/tmp2.wav", false, WaveFile::rwrite);
-	  output = new WaveFile("/tmp/tmp3.wav", false, WaveFile::rwrite);
+	  input = new WaveFile(wxT("/tmp/tmp2.wav"), false, WaveFile::rwrite);
+	  output = new WaveFile(wxT("/tmp/tmp3.wav"), false, WaveFile::rwrite);
 	}
 	
 	float * rw_buffer = new float [Wave->GetNumberOfChannels() * WAVE_TEMP_SIZE];
@@ -586,8 +592,8 @@ void					WaveEditor::OnNormalize(wxCommandEvent &event)
 	  Wave->WriteFloatF(rw_buffer, nb_read);
 	  nb_read = output->ReadFloatF(rw_buffer);
 	}
-	wxRemoveFile("/tmp/tmp2.wav");
-	wxRemoveFile("/tmp/tmp3.wav");
+	wxRemoveFile(wxT("/tmp/tmp2.wav"));
+	wxRemoveFile(wxT("/tmp/tmp3.wav"));
   }
   SetDrawing();
   SeqPanel->UpdateAudioPatterns(Wave);

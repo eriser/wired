@@ -45,7 +45,7 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   if (audio)
     s.Printf(_("Audio %d"), ++AudioTrackCount);
   else
-    s.Printf("MIDI %d", ++MidiTrackCount);
+    s.Printf(wxT("MIDI %d"), ++MidiTrackCount);
   
   /*
     if (Seq->Tracks[Index - 1]->Output)
@@ -57,17 +57,17 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
 			wxSize(TRACK_WIDTH - 38, 18), wxTE_PROCESS_ENTER);
   Text->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
 
-  wxImage *rec_up = new wxImage(string(WiredSettings->DataDir + string(REC_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *rec_up = new wxImage(wxString(WiredSettings->DataDir + wxString(REC_UP)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *rec_down = 
-    new wxImage(string(WiredSettings->DataDir + string(REC_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *mute_up = new wxImage(string(WiredSettings->DataDir + string(MUTE_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *mute_down = new wxImage(string(WiredSettings->DataDir + string(MUTE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(REC_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *mute_up = new wxImage(wxString(WiredSettings->DataDir + wxString(MUTE_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *mute_down = new wxImage(wxString(WiredSettings->DataDir + wxString(MUTE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
 
   RecBtn = new DownButton(this, SeqTrack_Record, wxPoint(6, 30), wxSize(25, 16), 
 			  rec_up, rec_down);
   MuteBtn = new DownButton(this, SeqTrack_Mute, wxPoint(34, 30), wxSize(25, 16),
 			   mute_up, mute_down);
-  Image = new ChoiceButton(this, SeqTrack_ConnectTo, wxPoint(62, 30), wxSize(24, 16), "");
+  Image = new ChoiceButton(this, SeqTrack_ConnectTo, wxPoint(62, 30), wxSize(24, 16), wxT(""));
   
   Image->Connect(SeqTrack_ConnectTo, wxEVT_ENTER_WINDOW, 
 		 (wxObjectEventFunction)(wxEventFunction) 
@@ -83,9 +83,9 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
 		     (wxObjectEventFunction)(wxEventFunction) 
 		     (wxMouseEventFunction)&SeqTrack::OnDeviceHelp);
 
-  wxImage *green = new wxImage(string(WiredSettings->DataDir + string(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *orange = new wxImage(string(WiredSettings->DataDir + string(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *red = new wxImage(string(WiredSettings->DataDir + string(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *green = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *orange = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *red = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
 
   Vu = new VUMCtrl(this, -1, 100, green, orange, red,wxPoint(TRACK_WIDTH - 28, 8), wxSize(16, 64));
   Vu->SetValue(0);

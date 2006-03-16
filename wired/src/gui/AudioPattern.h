@@ -36,7 +36,7 @@ class					AudioPattern: public Pattern, public WaveDrawer
 
   Channel				*InputChan;
   long					LastBlock;
-  string				FileName;
+  wxString				FileName;
 
  protected:
   void					Init();
