@@ -6,10 +6,10 @@ FileStat::FileStat()
     LoadMajorTypes();
 }
 
-bool        FileStat::StatFile(const char *FileName)
+bool        FileStat::StatFile(const wxChar *FileName)
 {
     SNDFILE *Info;
-    Info = sf_open(FileName, SFM_READ, &_FileInfo);
+    Info = sf_open((const char *)FileName, SFM_READ, &_FileInfo);
     if (Info == NULL)
         return false;
     sf_close(Info);
@@ -46,7 +46,7 @@ void            FileStat::LoadSubTypes()
     {
         format_info.format = count;
         sf_command(NULL, SFC_GET_FORMAT_SUBTYPE, &format_info, sizeof (format_info));
-        _SubTypes[(format_info.format & SF_FORMAT_SUBMASK)] = wxString(format_info.name);
+        _SubTypes[(format_info.format & SF_FORMAT_SUBMASK)] = wxString(format_info.name, *wxConvCurrent);
     }
 }
 
@@ -60,7 +60,7 @@ void            FileStat::LoadMajorTypes()
     {
         format_info.format = count;
         sf_command(NULL, SFC_GET_FORMAT_MAJOR, &format_info, sizeof (format_info));
-        _MajorTypes[(format_info.format & SF_FORMAT_TYPEMASK)] = wxString(format_info.name);
+        _MajorTypes[(format_info.format & SF_FORMAT_TYPEMASK)] = wxString(format_info.name, *wxConvCurrent);
     }
 }
 

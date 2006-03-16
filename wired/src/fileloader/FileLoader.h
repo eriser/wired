@@ -34,9 +34,9 @@
 using std::string;
 using std::vector;
 
-#define EXT_FILE	"wired_exts.conf"
-#define FAVORITE_FILE	"wired_favs.conf"
-#define MRU_FILE	"wired_mru.conf"
+#define EXT_FILE	wxT("wired_exts.conf")
+#define FAVORITE_FILE	wxT("wired_favs.conf")
+#define MRU_FILE	wxT("wired_mru.conf")
 
 DEFINE_EVENT_TYPE(wxEVT_FILELOADER_START)
 DEFINE_EVENT_TYPE(wxEVT_FILELOADER_STOP)
@@ -50,9 +50,9 @@ DEFINE_EVENT_TYPE(wxEVT_FILELOADER_STOP)
 class FileLoader: public wxDialog
 {
  public:
-  FileLoader(wxWindow *parent, wxWindowID id, string, bool, bool, vector<string> *, bool = false);
+  FileLoader(wxWindow *parent, wxWindowID id, wxString, bool, bool, vector<wxString> *, bool = false);
   ~FileLoader();
-  string GetSelectedFile();
+  wxString GetSelectedFile();
   bool	 IsAkai() { return akai; }
   static wxString      FormatSize(off_t);
 
@@ -85,13 +85,13 @@ class FileLoader: public wxDialog
   void OnDeleteRecent(wxCommandEvent &e);
 
   void ListDirectories(wxTreeItemId);
-  void ListFiles(string);
+  void ListFiles(wxString);
   void ListAkaiCD(wxTreeItemId);
-  void ListAkaiVolume(string);
+  void ListAkaiVolume(wxString);
   
   void AddIcon(wxImageList *, wxIcon);
   
-  void LoadSoundExt(vector<string> * = NULL);
+  void LoadSoundExt(vector<wxString> * = NULL);
   void LoadFolders();
   void SaveFolders();
 
