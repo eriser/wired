@@ -5,9 +5,9 @@ WiredXml::WiredXml()
 	_DocumentWriter = NULL;
 	_DocumentFile = NULL;
 	_DtdFile = NULL;
-	_DocumentFileName = "";	
-	_DtdFileName = "";
-	_DocumentWriterName = "";
+	_DocumentFileName = wxT("");	
+	_DtdFileName = wxT("");
+	_DocumentWriterName = wxT("");
 	//LIBXML_TEST_VERSION
 }
 
@@ -43,13 +43,13 @@ WiredXml				WiredXml::Clone()
 	return *this;
 }
 
-bool					WiredXml::OpenDocument(const std::string& FileName)
+bool					WiredXml::OpenDocument(const wxString& FileName)
 {
 	int					fd = INVALID_FD;
 		
 	if (FileName.size() > 0)
 		_DocumentFileName = FileName;
-	fd = open(_DocumentFileName.c_str(), FLAGS_OPEN_RDONLY);
+	fd = open(_DocumentFileName.mb_str(*wxConvCurrent), FLAGS_OPEN_RDONLY);
 	if (fd != INVALID_FD)
 	{
 		close(fd);
@@ -57,14 +57,14 @@ bool					WiredXml::OpenDocument(const std::string& FileName)
 		//TODO Don't bypass document validation
 		//_DocumentFile = xmlReaderForFile(_DocumentFileName.c_str(), NULL, 
 		//								XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
-		_DocumentFile = xmlReaderForFile(_DocumentFileName.c_str(), NULL, 0);
+		_DocumentFile = xmlReaderForFile(_DocumentFileName.mb_str(*wxConvCurrent), NULL, 0);
 		if (_DocumentFile != NULL)
 			return true;
 	}
 	return false;
 }
 
-bool					WiredXml::OpenDtd(const std::string& FileName)
+bool					WiredXml::OpenDtd(const wxString& FileName)
 {
 	//TODO Add the Dtd to the project ressource
 	return true;
@@ -72,7 +72,7 @@ bool					WiredXml::OpenDtd(const std::string& FileName)
 
 	if (FileName.size() > 0)
 		_DtdFileName = FileName;
-	if ((fd = open(_DtdFileName.c_str(), FLAGS_OPEN_RDONLY)) != INVALID_FD)
+	if ((fd = open(_DtdFileName.mb_str(*wxConvCurrent), FLAGS_OPEN_RDONLY)) != INVALID_FD)
 	{
 		close(fd);
 		_DtdFile = xmlParseDTD(NULL, (const xmlChar*) _DtdFileName.c_str());
@@ -104,16 +104,16 @@ bool					WiredXml::ValidDocument()
     return Valid;
 }
 
-bool					WiredXml::CreateDocument(const std::string& DocName)
+bool					WiredXml::CreateDocument(const wxString& DocName)
 {
 	CloseDocumentWriter();
-	if (strcmp(DocName.c_str(), "") == 0)
+	if (DocName.Cmp(wxT("")) == 0)
 	{
 		_DocumentWriterName = _DocumentFileName + TEMP_EXTENSION;
 	}
 	else
 		_DocumentWriterName = DocName;
-	if ((_DocumentWriter = xmlNewTextWriterFilename(_DocumentWriterName.c_str(), 0)) != NULL)
+	if ((_DocumentWriter = xmlNewTextWriterFilename(_DocumentWriterName.mb_str(*wxConvCurrent), 0)) != NULL)
 		if (xmlTextWriterSetIndent(_DocumentWriter, 4) == 0)
 			if (xmlTextWriterStartDocument(_DocumentWriter, NULL, NULL, NULL) >= 0)
 				//if (xmlTextWriterWriteDTDExternalEntity(_DocumentWriter, FALSE, ) >= 0)
@@ -121,7 +121,7 @@ bool					WiredXml::CreateDocument(const std::string& DocName)
 	return false;
 }
 
-bool					WiredXml::StartElement(const std::string& Name)
+bool					WiredXml::StartElement(const wxString& Name)
 {
 	if (_DocumentWriter != NULL)
 		return xmlTextWriterStartElement(_DocumentWriter, (xmlChar *)Name.c_str()) >= 0;
@@ -129,7 +129,7 @@ bool					WiredXml::StartElement(const std::string& Name)
 		return false;
 }
 
-bool					WiredXml::WriteElement(const std::string& Name, const std::string& Content, bool Ended)
+bool					WiredXml::WriteElement(const wxString& Name, const wxString& Content, bool Ended)
 {
 	if (_DocumentWriter != NULL)
 	{
@@ -158,7 +158,7 @@ bool					WiredXml::StartCDATA()
 		return false;
 }	
 
-bool 					WiredXml::WriteCDATA(const char* CData, bool Ended)
+bool 					WiredXml::WriteCDATA(const wxChar* CData, bool Ended)
 {
 	if (_DocumentWriter != NULL)
 	{
@@ -179,21 +179,21 @@ bool					WiredXml::EndCDATA()
 	return true;
 }
 
-bool					WiredXml::WriteBin(const char* Data, int start, int len)
+bool					WiredXml::WriteBin(const wxChar* Data, int start, int len)
 {
 	if (_DocumentWriter != NULL)
-		return xmlTextWriterWriteBinHex(_DocumentWriter, Data, start, len) >= 0;
+		return xmlTextWriterWriteBinHex(_DocumentWriter, (const char *)Data, start, len) >= 0;
 	return false;
 }
 
-bool					WiredXml::WriteString(const std::string& Content)
+bool					WiredXml::WriteString(const wxString& Content)
 {
 	if (_DocumentWriter != NULL)
 		return xmlTextWriterWriteString(_DocumentWriter, (xmlChar*) Content.c_str()) >= 0;
 	return false;
 }
 
-bool					WiredXml::WriteString(const char* Content)
+bool					WiredXml::WriteString(const wxChar* Content)
 {
 	if (_DocumentWriter != NULL)
 		return xmlTextWriterWriteString(_DocumentWriter, (xmlChar*) Content) >= 0;
@@ -207,7 +207,7 @@ bool					WiredXml::StartComment()
 	return false;
 }
 
-bool					WiredXml::WriteComment(const std::string& Comment, bool Ended)
+bool					WiredXml::WriteComment(const wxString& Comment, bool Ended)
 {
 	if (_DocumentWriter != NULL)
 	{
@@ -228,14 +228,14 @@ bool					WiredXml::EndComment()
 	return false;
 }
 
-bool					WiredXml::StartAttribute(const std::string& Name)
+bool					WiredXml::StartAttribute(const wxString& Name)
 {
 	if (_DocumentWriter != NULL)
 		return xmlTextWriterStartAttribute(_DocumentWriter, (xmlChar *) Name.c_str()) >= 0;	
 	return false;
 }
 		
-bool					WiredXml::WriteAttribute(const std::string& Name, const std::string& Content, bool Ended)
+bool					WiredXml::WriteAttribute(const wxString& Name, const wxString& Content, bool Ended)
 {
 	if (_DocumentWriter != NULL)
 	{
@@ -291,19 +291,19 @@ bool					WiredXml::Read()
 	return false;
 }
 
-char					*WiredXml::GetNodeName()
+wxChar					*WiredXml::GetNodeName()
 {
 	if (_DocumentFile != NULL)
-		return (char*)xmlTextReaderConstName(_DocumentFile);
+		return (wxChar*)xmlTextReaderConstName(_DocumentFile);
 	return NULL;
 }
 
-char					*WiredXml::GetNodeValue()
+wxChar					*WiredXml::GetNodeValue()
 {
 	if (_DocumentFile != NULL)
 	{
 		if (HasValue() == true)
-			return (char*)xmlTextReaderConstValue(_DocumentFile);
+			return (wxChar*)xmlTextReaderConstValue(_DocumentFile);
 	}
 	return NULL;
 }
@@ -316,10 +316,10 @@ bool					WiredXml::HasValue()
 	return false;
 }
  
-char					*WiredXml::GetAttribute(const char *Name)
+wxChar					*WiredXml::GetAttribute(const wxChar *Name)
 {
 	if (_DocumentFile != NULL)
-		return (char*)xmlTextReaderGetAttribute(_DocumentFile, (xmlChar*)Name);
+		return (wxChar*)xmlTextReaderGetAttribute(_DocumentFile, (xmlChar*)Name);
 	return NULL;
 }
 
@@ -356,7 +356,7 @@ int						WiredXml::GetNodeType()
 	return 0;
 }
 
-const std::string&		WiredXml::GetDocumentName()
+const wxString&		WiredXml::GetDocumentName()
 {
 	return _DocumentFileName;
 }
