@@ -6,15 +6,20 @@
 #include <iostream>
 #include <portmidi.h>
 
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
+
 using namespace				std;
 
 class MidiDeviceInfo
 {
  public:
-  MidiDeviceInfo(string n, int i) : Name(n), Id(i) {}
+  MidiDeviceInfo(wxString n, int i) : Name(n), Id(i) {}
   ~MidiDeviceInfo() {}
 
-  string Name;
+  wxString Name;
   int	 Id;
 };
 

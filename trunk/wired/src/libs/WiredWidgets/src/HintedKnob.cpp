@@ -20,7 +20,7 @@ HintedKnob::HintedKnob(wxWindow *parent, wxWindowID id, wxWindow* hintparent,
 	     pos, size)
 {
   wxString s;
-  s.Printf("%d", init_val);
+  s.Printf(wxT("%d"), init_val);
   Label = new Hint(hintparent, -1, s, 
 		   wxPoint( hintpos.x + GetSize().x, hintpos.y + GetSize().y ),
 		   wxDefaultSize, *wxWHITE, *wxBLACK);
@@ -40,7 +40,7 @@ void HintedKnob::OnMouseEvent(wxMouseEvent &event)
     Label->Show(true);
   KnobCtrl::OnMouseEvent(event);
   wxString s;
-  s.Printf("%d", GetValue());
+  s.Printf(wxT("%d"), GetValue());
   Label->SetLabel(s);
   if (!event.LeftIsDown())
     Label->Show(false);
@@ -51,7 +51,7 @@ void HintedKnob::OnKeyDown(wxKeyEvent& event)
   Label->Show(true);
   KnobCtrl::OnKeyDown(event);
   wxString s;
-  s.Printf("%d", GetValue());
+  s.Printf(wxT("%d"), GetValue());
   Label->SetLabel(s);
 }  
 

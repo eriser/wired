@@ -1,6 +1,11 @@
 #ifndef _WIREDSAMPLERATE_H_
 #define _WIREDSAMPLERATE_H_
 
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
+
 #include <wx/thread.h>
 #include <stdio.h>
 #include <sndfile.h>
@@ -33,7 +38,7 @@ typedef struct s_format_types
 {
 	int				SndFileFormat;
 	PaSampleFormat	PaFormat;
-	const char		*FormatName;
+	const wxChar		*FormatName;
 };
 
 extern struct s_format_types _FormatTypes[];
@@ -41,14 +46,14 @@ extern struct s_format_types _FormatTypes[];
 typedef struct s_samplerate_types
 {
 	unsigned long 	SampleRate;
-	const char		*SampleRateName;
+	const wxChar		*SampleRateName;
 };
 
 extern struct s_samplerate_types _SampleRateTypes[];
 
 typedef struct s_samplerate_info
 {
-	string			WorkingDirectory;
+	wxString		WorkingDirectory;
 	unsigned long	SampleRate;
 	PaSampleFormat	Format;
 	unsigned long	SamplesPerBuffer;
@@ -63,21 +68,21 @@ public:
 	WiredSampleRate		operator=(const WiredSampleRate& right);
 
 	void		Init(t_samplerate_info *Info);
-	int		OpenFile(string *Path, wxWindow* parent);					//return wxID_NO if not modified (or invalid), 	
+	int		OpenFile(wxString *Path, wxWindow* parent);					//return wxID_NO if not modified (or invalid), 	
 														//else return wxID_YES r wxID_CANCEL if canceled
 														// and set Path to the new FilePath
-	bool		SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples, bool interleaved);					//return false if saving canceled
+	bool		SaveFile(wxString& Path, unsigned int NbChannel, unsigned long NbSamples, bool interleaved);					//return false if saving canceled
 	void		EndSaveFile(unsigned int NbChannel);
 	bool		IsSameFormat(int SndFileFormat, PaSampleFormat PaFormat);
-	const char	*GetFormatName(int SndFileFormat);
-	const char	*GetFormatName(PaSampleFormat PaFormat);
+	const wxChar	*GetFormatName(int SndFileFormat);
+	const wxChar	*GetFormatName(PaSampleFormat PaFormat);
 	void		WriteToFile(unsigned long NbSamples, float **Buffer, unsigned int NbChannel); // non interleaved
 	void		WriteToFile(unsigned long NbSamples, float *Buffer, unsigned int NbChannel);  //interleaved
 	void		SetSampleRate(unsigned long SampleRate);
 	void		SetFormat(PaSampleFormat Format);
 	void		SetBufferSize(unsigned long Size);
 private:
-	bool		Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *SrcData);
+	bool		Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *SrcData);
 	int			GetConverterQuality();
 	float		*ConvertSampleRate(SRC_STATE* Converter, float *Input, unsigned long FrameNb, double Ratio, unsigned long &ToWrite, bool End, int NbChannels, unsigned long &ReallyReaden);
 	int			GetFileFormat(PaSampleFormat PaFormat);

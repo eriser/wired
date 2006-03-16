@@ -37,7 +37,7 @@ MidiDeviceList			*MidiInDevice::ListDevices(void)
       pdi = Pm_GetDeviceInfo(i);	  
       if (pdi->input)
       	{
-	  d = new MidiDeviceInfo(pdi->name, i);
+	  d = new MidiDeviceInfo(wxString(pdi->name, *wxConvCurrent), i);
 	  devices.push_back(d);
 	}
     }

@@ -183,15 +183,15 @@ MidiTrack::~MidiTrack()
 /*** Classe MidiFile                                                               ***/
 /*************************************************************************************/
 
-MidiFile::MidiFile(string filename)
+MidiFile::MidiFile(wxString filename)
 {
   this->filename = filename;
   NbTracks = 0;
   Division = 0;
   Type = 0;
 
-  cout << "[MidiFile] Loading " << filename << "..." << endl;
-  int fd = open(filename.c_str(), O_RDONLY);
+  cout << "[MidiFile] Loading " << filename.c_str() << "..." << endl;
+  int fd = open(filename.mb_str(*wxConvCurrent), O_RDONLY);
   if (fd != -1)
   {
     t_chunk ch;
@@ -248,7 +248,7 @@ MidiFile::MidiFile(string filename)
       }
     }
    else
-      cout << "[MidiFile] " << filename << " is not a valid midi file." << endl;
+      cout << "[MidiFile] " << filename.c_str() << " is not a valid midi file." << endl;
     close(fd);
   }
   else
