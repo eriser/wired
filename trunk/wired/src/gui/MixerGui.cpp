@@ -21,12 +21,12 @@ MixerGui::MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size)
   SetScrollRate(10, 0);
   SetVirtualSize(300, 131);
   SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);
-  ImgFaderBg = new wxImage(string(WiredSettings->DataDir + string(FADERBG)).c_str(), wxBITMAP_TYPE_PNG );
-  ImgFaderFg = new wxImage(string(WiredSettings->DataDir + string(FADERFG)).c_str(), wxBITMAP_TYPE_PNG );
-  ImgLockUp = new wxImage(string(WiredSettings->DataDir + string(MIXERLOCKUP)).c_str(), wxBITMAP_TYPE_PNG );
-  ImgLockDown = new wxImage(string(WiredSettings->DataDir + string(MIXERLOCKDOWN)).c_str(), wxBITMAP_TYPE_PNG );
-  ImgHpUp = new wxImage(string(WiredSettings->DataDir + string(MIXERHPUP)).c_str(), wxBITMAP_TYPE_PNG );
-  ImgHpDown = new wxImage(string(WiredSettings->DataDir + string(MIXERHPDOWN)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgFaderBg = new wxImage(wxString(WiredSettings->DataDir + wxString(FADERBG)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgFaderFg = new wxImage(wxString(WiredSettings->DataDir + wxString(FADERFG)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgLockUp = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERLOCKUP)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgLockDown = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERLOCKDOWN)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgHpUp = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERHPUP)).c_str(), wxBITMAP_TYPE_PNG );
+  ImgHpDown = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERHPDOWN)).c_str(), wxBITMAP_TYPE_PNG );
   /*
     Adding Master Channel directly
    */

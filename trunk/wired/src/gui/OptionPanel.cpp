@@ -98,12 +98,12 @@ OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
 			   wxSize(-1, OPT_TOOLBAR_HEIGHT));
   //Title->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   Title->SetForegroundColour(*wxWHITE);
-  wxImage *list_up = new wxImage(string(WiredSettings->DataDir + string(OPT_LIST_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *list_down = new wxImage(string(WiredSettings->DataDir + string(OPT_LIST_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *detach_up = new wxImage(string(WiredSettings->DataDir + string(OPT_DETACH_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *detach_down = new wxImage(string(WiredSettings->DataDir + string(OPT_DETACH_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *close_up = new wxImage(string(WiredSettings->DataDir + string(OPT_CLOSE_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *close_down = new wxImage(string(WiredSettings->DataDir + string(OPT_CLOSE_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *list_up = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_LIST_TOOL_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *list_down = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_LIST_TOOL_DOWN)), wxBITMAP_TYPE_PNG);
+  wxImage *detach_up = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_DETACH_TOOL_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *detach_down = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_DETACH_TOOL_DOWN)), wxBITMAP_TYPE_PNG);
+  wxImage *close_up = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_CLOSE_TOOL_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *close_down = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_CLOSE_TOOL_DOWN)), wxBITMAP_TYPE_PNG);
   ListToolBtn = new DownButton(this, ID_TOOL_LIST_OPTIONPANEL, wxPoint(GetSize().x - 34, 2), wxSize(14, 12), 
 			       list_up, list_down, true);
   DetachToolBtn = new DownButton(this, ID_TOOL_DETACH_OPTIONPANEL, wxPoint(GetSize().x - 18, 2), wxSize(14, 12), 

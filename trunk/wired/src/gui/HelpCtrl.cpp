@@ -9,9 +9,9 @@ HelpCtrl::HelpCtrl(wxWindow *parent, wxWindowID id, wxString data_zip,
 {
   data_zip_path = data_zip;
   path_file = data_zip_path;
-  path_file += "#zip:index.html" ;
+  path_file += L"#zip:index.html";
   wxFileSystem::AddHandler(new wxZipFSHandler);
-  LoadPage(wxT(path_file));
+  LoadPage(path_file);
 }
 
 void HelpCtrl::Load(wxString file)
@@ -19,13 +19,13 @@ void HelpCtrl::Load(wxString file)
   wxString tmp;
   tmp = data_zip_path ;//+= "#zip:" ;
   tmp += file;
-  LoadPage(wxT(tmp));
+  LoadPage(tmp);
 }
 
 void HelpCtrl::Load_Text(wxString text)
 {
   wxString tmp = HTMLTOP;
-  tmp += (text + HTMLDOWN);
+  tmp += wxString(text + wxString(HTMLDOWN));
   SetPage(tmp);
 }
 HelpCtrl::~HelpCtrl()

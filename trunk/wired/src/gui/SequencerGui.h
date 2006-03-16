@@ -43,22 +43,22 @@ using namespace std;
 #define PATTERN_MASK			(0x2)
 #define PATTERN_MAGNETISM		(MAGNETISM & PATTERN_MASK)
 #define PATTERN_DEFAULT_MAGNETISM	(4)
-#define DEFAULT_MAGNETISM_COMBO_VALUE	"1/4"
+#define DEFAULT_MAGNETISM_COMBO_VALUE	wxT("1/4")
      
 #define PLAY_CURSOR_FOLLOWING		(42)
      
-#define HAND_UP				"ihm/toolbar/hand_up.png"
-#define HAND_DOWN			"ihm/toolbar/hand_down.png"
-#define DRAW_UP				"ihm/toolbar/draw_up.png"
-#define DRAW_DOWN			"ihm/toolbar/draw_down.png"
-#define ERASE_UP			"ihm/toolbar/erase_up.png"
-#define ERASE_DOWN			"ihm/toolbar/erase_down.png"
-#define SPLIT_UP			"ihm/toolbar/split_up.png"
-#define SPLIT_DOWN			"ihm/toolbar/split_up.png"
-#define MAGN_UP				"ihm/toolbar/magn_up.png"
-#define MAGN_DOWN			"ihm/toolbar/magn_down.png"
-#define COLOR_UP			"ihm/toolbar/color_up.png"
-#define COLOR_DOWN			"ihm/toolbar/color_down.png"
+#define HAND_UP				wxT("ihm/toolbar/hand_up.png")
+#define HAND_DOWN			wxT("ihm/toolbar/hand_down.png")
+#define DRAW_UP				wxT("ihm/toolbar/draw_up.png")
+#define DRAW_DOWN			wxT("ihm/toolbar/draw_down.png")
+#define ERASE_UP			wxT("ihm/toolbar/erase_up.png")
+#define ERASE_DOWN			wxT("ihm/toolbar/erase_down.png")
+#define SPLIT_UP			wxT("ihm/toolbar/split_up.png")
+#define SPLIT_DOWN			wxT("ihm/toolbar/split_up.png")
+#define MAGN_UP				wxT("ihm/toolbar/magn_up.png")
+#define MAGN_DOWN			wxT("ihm/toolbar/magn_down.png")
+#define COLOR_UP			wxT("ihm/toolbar/color_up.png")
+#define COLOR_DOWN			wxT("ihm/toolbar/color_down.png")
 
 #define COLORBOX_MARGINS		(8)
 

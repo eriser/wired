@@ -23,7 +23,7 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
   
   ConnectedSeqTrack = 0x0;
   SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);
-  bg = new wxImage(string(WiredSettings->DataDir + string(BG)).c_str(), wxBITMAP_TYPE_PNG);
+  bg = new wxImage(wxString(WiredSettings->DataDir + wxString(BG)).c_str(), wxBITMAP_TYPE_PNG);
   MixerBmp = new wxBitmap(bg);
   //cout << bg->GetWidth() << " " << bg->GetHeight() << endl;
   Chan = channel;
@@ -34,9 +34,9 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
       FaderLeft  = new FaderCtrl(this, FaderLeftId, ImgFaderBg, ImgFaderFg, 0, 
 				 127, &Chan->VolumeLeft, true, wxPoint(17, 10), wxDefaultSize, 
 				 this, GetPosition() + wxPoint(5,15));
-      wxImage *green = new wxImage(string(WiredSettings->DataDir + string(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
-      wxImage *orange = new wxImage(string(WiredSettings->DataDir + string(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
-      wxImage *red = new wxImage(string(WiredSettings->DataDir + string(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
+      wxImage *green = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
+      wxImage *orange = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
+      wxImage *red = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
       VumLeft  = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(8, 23), wxSize(4, 65), wxNO_BORDER);
       VumRight = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(60, 23), wxSize(4, 65), wxNO_BORDER);
       FaderRight = new FaderCtrl(this, FaderRightId, ImgFaderBg, ImgFaderFg, 0,
@@ -55,10 +55,10 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
       FaderRight->SetValue((int)(Chan->VolumeRight * 100));
       VumLeft->SetValue(0);
       VumRight->SetValue(0);
-      hp_up = new wxImage(string(WiredSettings->DataDir + string(MIXERHPUP)).c_str(), wxBITMAP_TYPE_PNG);
-      hp_dn = new wxImage(string(WiredSettings->DataDir + string(MIXERHPDOWN)).c_str(), wxBITMAP_TYPE_PNG);
-      lock_up = new wxImage(string(WiredSettings->DataDir + string(MIXERLOCKUP)).c_str(), wxBITMAP_TYPE_PNG);
-      lock_dn = new wxImage(string(WiredSettings->DataDir + string(MIXERLOCKDOWN)).c_str(), wxBITMAP_TYPE_PNG);
+      hp_up = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERHPUP)).c_str(), wxBITMAP_TYPE_PNG);
+      hp_dn = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERHPDOWN)).c_str(), wxBITMAP_TYPE_PNG);
+      lock_up = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERLOCKUP)).c_str(), wxBITMAP_TYPE_PNG);
+      lock_dn = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERLOCKDOWN)).c_str(), wxBITMAP_TYPE_PNG);
       MuteLeftButton = 	new DownButton(this, MuteLeftId, wxPoint(24, 105), 
 				       wxSize(13, 13), hp_up, hp_dn, false);
       MuteRightButton = new DownButton(this, MuteRightId, wxPoint(63, 105), 

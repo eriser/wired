@@ -21,7 +21,7 @@ CursorH::CursorH(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 		 const wxSize &size, Cursor *C, const char name)
   : wxWindow(parent, id, pos, size, wxNO_BORDER)
 {
-  Name = wxString(name);
+  Name = (wxChar)name;
   c = C;
   /*
   Connect(c->L->GetId(), wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)

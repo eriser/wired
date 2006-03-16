@@ -114,7 +114,7 @@ class					MainWindow: public wxFrame
 
   /* DSSI & LADSPA Plugins Menus */
   void					LoadExternalPlugins();
-  int					AddPluginMenuItem(int Type, bool IsEffect, const string& MenuName);
+  int					AddPluginMenuItem(int Type, bool IsEffect, const wxString& MenuName);
   void					OnCreateExternalPlugin(wxCommandEvent &event);
 
   /* Undo Redo Menus */

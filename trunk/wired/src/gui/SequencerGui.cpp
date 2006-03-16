@@ -32,16 +32,16 @@ SequencerGui				*SeqGui;
 
 const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1] =
 {
-  { "Bar"	,	1	},
-  { "1/2"	,	2	},
-  { "1/4"	,	4	},
-  { "1/8"	,	8	},
-  { "1/16"	,	16	},
-  { "1/32"	,	32	},
-  { "1/64"	,	64	},
-  { "1/128"	,	128	},
-  { "1/256"	,	256	},
-  { ""		,	4242	}
+  { wxT("Bar")	,	1	},
+  { wxT("1/2")	,	2	},
+  { wxT("1/4")	,	4	},
+  { wxT("1/8")	,	8	},
+  { wxT("1/16")	,	16	},
+  { wxT("1/32")	,	32	},
+  { wxT("1/64")	,	64	},
+  { wxT("1/128")	,	128	},
+  { wxT("1/256")	,	256	},
+  { wxT("")		,	4242	}
 };
 
 SequencerView::SequencerView(wxWindow *parent, const wxPoint &pos, 
@@ -352,19 +352,19 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   SetBackgroundColour(CL_SEQ_BACKGROUND);
   SetForegroundColour(CL_SEQ_FOREGROUND);
   Toolbar = new wxToolBar(this, -1, wxPoint(-1, -1), wxSize(-1, TOOLS_HEIGHT), wxTB_FLAT);
-  Toolbar->AddRadioTool(ID_SEQ_MOVE, _("Move"), wxBitmap(string(WiredSettings->DataDir + string(HAND_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(HAND_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Move Pattern"), _("Move Pattern"), NULL);
-  Toolbar->AddRadioTool(ID_SEQ_EDIT, _("Draw"), wxBitmap(string(WiredSettings->DataDir + string(DRAW_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(DRAW_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Draw Pattern"), _("Draw Pattern"), NULL);
-  Toolbar->AddRadioTool(ID_SEQ_DEL, _("Delete"), wxBitmap(string(WiredSettings->DataDir + string(ERASE_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(ERASE_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Delete Pattern"), _("Deletes notes"), NULL);
-  Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(SPLIT_DOWN)).c_str(), wxBITMAP_TYPE_PNG), _("Split Pattern"), _("Split Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_MOVE, _("Move"), wxBitmap(wxString(WiredSettings->DataDir + wxString(HAND_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(HAND_DOWN)), wxBITMAP_TYPE_PNG), _("Move Pattern"), _("Move Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_EDIT, _("Draw"), wxBitmap(wxString(WiredSettings->DataDir + wxString(DRAW_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(DRAW_DOWN)), wxBITMAP_TYPE_PNG), _("Draw Pattern"), _("Draw Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_DEL, _("Delete"), wxBitmap(wxString(WiredSettings->DataDir + wxString(ERASE_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(ERASE_DOWN)), wxBITMAP_TYPE_PNG), _("Delete Pattern"), _("Deletes notes"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(wxString(WiredSettings->DataDir + wxString(SPLIT_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(SPLIT_DOWN)), wxBITMAP_TYPE_PNG), _("Split Pattern"), _("Split Pattern"), NULL);
   Toolbar->AddSeparator();
-  Toolbar->AddCheckTool(ID_SEQ_MAGNET, _("Magnet"), wxBitmap(string(WiredSettings->DataDir + string(MAGN_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(MAGN_DOWN)).c_str(), wxBITMAP_TYPE_PNG), "", "", NULL);
+  Toolbar->AddCheckTool(ID_SEQ_MAGNET, _("Magnet"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MAGN_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MAGN_DOWN)), wxBITMAP_TYPE_PNG), wxT(""), wxT(""), NULL);
   for (c = 0; c < NB_COMBO_CHOICES; c++)
     combo_choices[c] = ComboChoices[c].s;
   MagnetQuant = new wxComboBox(Toolbar, ID_SEQ_COMBO_MAGNET, DEFAULT_MAGNETISM_COMBO_VALUE, 
-			       wxPoint(-1, -1), wxSize(72, -1), 9, combo_choices);
+			       wxPoint(-1, -1), wxSize(72, -1), 9, combo_choices, wxCB_READONLY);
   Toolbar->AddControl(MagnetQuant);
   Toolbar->AddSeparator();
-  Toolbar->AddTool(ID_SEQ_COLOR, _("Color"), wxBitmap(string(WiredSettings->DataDir + string(COLOR_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(string(WiredSettings->DataDir + string(COLOR_DOWN)).c_str(), wxBITMAP_TYPE_PNG));
+  Toolbar->AddTool(ID_SEQ_COLOR, _("Color"), wxBitmap(wxString(WiredSettings->DataDir + wxString(COLOR_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(COLOR_DOWN)).c_str(), wxBITMAP_TYPE_PNG));
   Toolbar->Realize();
   Toolbar->ToggleTool(ID_SEQ_MAGNET, MAGNETISM);
 //   SetToolBar(Toolbar);

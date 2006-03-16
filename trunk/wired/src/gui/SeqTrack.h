@@ -11,13 +11,13 @@ using namespace std;
 
 #define NONE_SELECTED_ID		(999)
 
-#define VUM_GREEN			"ihm/widgets/vum_green.png"
-#define VUM_ORANGE			"ihm/widgets/vum_orange.png"
-#define VUM_RED				"ihm/widgets/vum_red.png"
-#define REC_UP				"ihm/seqtrack/rec_up.png"
-#define REC_DOWN			"ihm/seqtrack/rec_down.png"
-#define MUTE_UP				"ihm/seqtrack/mute_up.png"
-#define MUTE_DOWN			"ihm/seqtrack/mute_down.png"
+#define VUM_GREEN			L"ihm/widgets/vum_green.png"
+#define VUM_ORANGE			L"ihm/widgets/vum_orange.png"
+#define VUM_RED				L"ihm/widgets/vum_red.png"
+#define REC_UP				L"ihm/seqtrack/rec_up.png"
+#define REC_DOWN			L"ihm/seqtrack/rec_down.png"
+#define MUTE_UP				L"ihm/seqtrack/mute_up.png"
+#define MUTE_DOWN			L"ihm/seqtrack/mute_down.png"
 
 class					ChannelGui;
 class					Plugin;

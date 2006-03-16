@@ -25,49 +25,49 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   BpmText = NULL;
   BpmDownBtn = NULL;
   wxImage *tr_bg = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_BACKGR_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_BACKGR_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   TrBmp = new wxBitmap(tr_bg);
   
   wxImage *tr_bg_loop = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_BACKGR_LOOP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_BACKGR_LOOP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   TrLoopBmp = new wxBitmap(tr_bg_loop);
     
   wxImage *play_up = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_PLAYUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_PLAYUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *play_down = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_PLAYDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_PLAYDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *stop_up =
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_STOPUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_STOPUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *stop_down =
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_STOPDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_STOPDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *rec_up = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_REC_UP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_REC_UP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *rec_down = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_REC_DO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_REC_DO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *backward_down = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_BAC_DO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_BAC_DO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *backward_up = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_BAC_UP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_BAC_UP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *forward_down = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_FOR_DO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_FOR_DO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *forward_up = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_FOR_UP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_FOR_UP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *loop_down = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_LOOPDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_LOOPDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *loop_up = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_LOOPUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_LOOPUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *up_up = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_UPUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_UPUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *up_down = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_UPDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_UPDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *down_up = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_DOWNUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_DOWNUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *down_down = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_DOWNDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_DOWNDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *click_up = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_METRO_UP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_METRO_UP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   wxImage *click_down = 
-    new wxImage(string(WiredSettings->DataDir + string(TRANSPORT_METRO_DO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_METRO_DO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
   
   PlayBtn = 
     new DownButton(this, Transport_Play, wxPoint(138, 95), wxSize(41, 42), play_up, play_down);
@@ -92,9 +92,9 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 			    up_up, up_down);
   BpmUpBtn = new HoldButton(this, Transport_BpmDown, wxPoint(112, 30), wxSize(11, 8), 
 			    down_up, down_down);
-  BpmLabel = new StaticLabel(this, Transport_BpmClick, "096.00", wxPoint(49, 20), wxSize(-1, 12));
+  BpmLabel = new StaticLabel(this, Transport_BpmClick, wxT("096.00"), wxPoint(49, 20), wxSize(-1, 12));
   BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));
-  BpmLabel->SetLabel("096.00");
+  BpmLabel->SetLabel(wxT("096.00"));
 
   SigNumUpBtn = new HoldButton(this, Transport_SigNumUp, wxPoint(42, 48), wxSize(11, 8), 
 			       up_up, up_down);
@@ -105,18 +105,18 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   SigDenDownBtn = new HoldButton(this, Transport_SigDenDown, wxPoint(95, 57), wxSize(11, 8), 
 				 down_up, down_down);
 
-  SigNumLabel = new wxStaticText(this, -1, "4", wxPoint(59, 48), wxSize(-1, 12));
+  SigNumLabel = new wxStaticText(this, -1, wxT("4"), wxPoint(59, 48), wxSize(-1, 12));
   SigNumLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
-  SigNumLabel->SetLabel("4");
+  SigNumLabel->SetLabel(wxT("4"));
 
-  SigDenLabel = new wxStaticText(this, -1, "4", wxPoint(81, 48), wxSize(-1, 12));
+  SigDenLabel = new wxStaticText(this, -1, wxT("4"), wxPoint(81, 48), wxSize(-1, 12));
   SigDenLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
-  SigDenLabel->SetLabel("4");
+  SigDenLabel->SetLabel(wxT("4"));
 
   // Test VUMeter
-  wxImage *green = new wxImage(string(WiredSettings->DataDir + string(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *orange = new wxImage(string(WiredSettings->DataDir + string(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *red = new wxImage(string(WiredSettings->DataDir + string(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *green = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *orange = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *red = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
   //vum = new VUMCtrl((wxWindow*)this, -1, 100, green, orange, red, wxPoint(70,78), wxSize(195,5), wxNO_BORDER);
   vum = new wxGauge((wxWindow*)this, -1, 100, wxPoint(70,78), wxSize(195,5));
   
@@ -124,15 +124,15 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   StopBtn->SetBackgroundColour(wxColour(204, 199, 219));
   RecordBtn->SetBackgroundColour(wxColour(204, 199, 219));
 
-  MesLabel = new wxStaticText(this, -1, "1", wxPoint(182, 34), wxSize(32, 32));
+  MesLabel = new wxStaticText(this, -1, wxT("1"), wxPoint(182, 34), wxSize(32, 32));
   MesLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   MesLabel->SetForegroundColour(*wxWHITE);
 
-  SigLabel = new wxStaticText(this, -1, "1", wxPoint(215, 34), wxSize(30, 32));
+  SigLabel = new wxStaticText(this, -1, wxT("1"), wxPoint(215, 34), wxSize(30, 32));
   SigLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigLabel->SetForegroundColour(*wxWHITE);
 
-  MilliSigLabel = new wxStaticText(this, -1, "000", wxPoint(237, 34), wxSize(32, 32));
+  MilliSigLabel = new wxStaticText(this, -1, wxT("000"), wxPoint(237, 34), wxSize(32, 32));
   MilliSigLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   MilliSigLabel->SetForegroundColour(*wxWHITE);
   Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &Transport::OnIdle);
@@ -287,13 +287,13 @@ void				Transport::SetPlayPosition(double pos)
   millisig = (int)((pos - mes) * 1000.f);
   if (millisig < 0)
     millisig = 0;
-  s.Printf("%d", mes);
+  s.Printf(wxT("%d"), mes);
   GetTextExtent(s, &w, 0x0);
   MesLabel->SetPosition(wxPoint(196 - w, -1));
   MesLabel->SetLabel(s);
-  s.Printf("%d", sig);
+  s.Printf(wxT("%d"), sig);
   SigLabel->SetLabel(s);
-  s.Printf("%d", millisig);
+  s.Printf(wxT("%d"), millisig);
   MilliSigLabel->SetLabel(s);
 }
 
@@ -306,7 +306,7 @@ void				Transport::OnBpmUp(wxCommandEvent &WXUNUSED(event))
       Seq->SetBPM(Seq->BPM + 0.01f);
 
       wxString s;
-      s.Printf("%#06.2f", Seq->BPM);
+      s.Printf(wxT("%#06.2f"), Seq->BPM);
       BpmLabel->SetLabel(s);
     }      
 }
@@ -320,7 +320,7 @@ void				Transport::OnBpmDown(wxCommandEvent &WXUNUSED(event))
       Seq->SetBPM(Seq->BPM - 0.01f);
 
       wxString s;
-      s.Printf("%#06.2f", Seq->BPM);
+      s.Printf(wxT("%#06.2f"), Seq->BPM);
       BpmLabel->SetLabel(s);   
     }
 }
@@ -334,7 +334,7 @@ void				Transport::OnSigNumUp(wxCommandEvent &WXUNUSED(event))
 
       Seq->SetSigNumerator(Seq->SigNumerator + 1);
       
-      s.Printf("%d", Seq->SigNumerator);
+      s.Printf(wxT("%d"), Seq->SigNumerator);
       SigNumLabel->SetLabel(s); 
       SeqPanel->AdjustHScrolling();
     }    
@@ -349,7 +349,7 @@ void				Transport::OnSigNumDown(wxCommandEvent &WXUNUSED(event))
 
       Seq->SetSigNumerator(Seq->SigNumerator - 1);
      
-      s.Printf("%d", Seq->SigNumerator);
+      s.Printf(wxT("%d"), Seq->SigNumerator);
       SigNumLabel->SetLabel(s); 
       SeqPanel->AdjustHScrolling();
     }    
@@ -364,7 +364,7 @@ void				Transport::OnSigDenUp(wxCommandEvent &WXUNUSED(event))
 
       Seq->SetSigDenominator(Seq->SigDenominator + 1);
 
-      s.Printf("%d", Seq->SigDenominator);
+      s.Printf(wxT("%d"), Seq->SigDenominator);
       SigDenLabel->SetLabel(s); 
       SeqPanel->AdjustHScrolling();
     }    
@@ -379,7 +379,7 @@ void				Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
 
       Seq->SetSigDenominator(Seq->SigDenominator - 1);
     
-      s.Printf("%d", Seq->SigDenominator);
+      s.Printf(wxT("%d"), Seq->SigDenominator);
       SigDenLabel->SetLabel(s); 
       SeqPanel->AdjustHScrolling();
     }    
@@ -417,21 +417,21 @@ void				Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
 void				Transport::SetBpm(float bpm)
 {
   wxString s;
-  s.Printf("%#06.2f", bpm);
+  s.Printf(wxT("%#06.2f"), bpm);
   BpmLabel->SetLabel(s);
 }
 
 void				Transport::SetSigNumerator(int n)
 {
   wxString s;
-  s.Printf("%d", n);
+  s.Printf(wxT("%d"), n);
   SigNumLabel->SetLabel(s);
 }
 
 void				Transport::SetSigDenominator(int d)
 {
   wxString s;
-  s.Printf("%d", d);
+  s.Printf(wxT("%d"), d);
   SigDenLabel->SetLabel(s);
 }
 

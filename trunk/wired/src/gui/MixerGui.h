@@ -13,12 +13,12 @@ using namespace					std;
 #define TYPE_MIXER_REFRESH			(9876600)
 #define CHANNELGUI_WIDTH			(100)
 #define CHANNELGUI_HEIGHT			(120)
-#define FADERFG					"ihm/mixer/mixer_fader.png"
-#define FADERBG					"ihm/mixer/mixer_fader_bg.png"
-#define MIXERLOCKUP				"ihm/mixer/mixer_lock_up.png"
-#define MIXERLOCKDOWN				"ihm/mixer/mixer_lock_down.png"
-#define MIXERHPUP				"ihm/mixer/mixer_mute_up.png"
-#define MIXERHPDOWN				"ihm/mixer/mixer_mute_down.png"
+#define FADERFG					L"ihm/mixer/mixer_fader.png"
+#define FADERBG					L"ihm/mixer/mixer_fader_bg.png"
+#define MIXERLOCKUP				L"ihm/mixer/mixer_lock_up.png"
+#define MIXERLOCKDOWN				L"ihm/mixer/mixer_lock_down.png"
+#define MIXERHPUP				L"ihm/mixer/mixer_mute_up.png"
+#define MIXERHPDOWN				L"ihm/mixer/mixer_mute_down.png"
 
 class						Channel;
 class						ChannelGui;

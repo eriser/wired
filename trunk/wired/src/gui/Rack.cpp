@@ -86,9 +86,9 @@ Plugin*				RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin 
   if (Seq->Playing)
     plug->Play();
 
-  char str[128];
-  wxSnprintf(str, 128, "%d", ++RackCount);
-  plug->Name = plug->DefaultName() + " " + str;
+  wxChar str[128];
+  wxSnprintf(str, 128, wxT("%d"), ++RackCount);
+  plug->Name = plug->DefaultName() + wxT(" ") + str;
   SeqMutex.Lock();
   Racks.push_back(plug);
   SeqMutex.Unlock();
@@ -206,7 +206,7 @@ t_ListRackTrack		RackTracks;
   if(fd_copy != -1)
   {
   	close(fd_copy);
-    if(wxRemoveFile("/tmp/.tmpccp") == false)
+    if(wxRemoveFile(wxT("/tmp/.tmpccp")) == false)
 			cout << "error supression\n" <<endl;
   }
 	if (copy_plug) delete copy_plug;

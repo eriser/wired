@@ -68,7 +68,7 @@ void					AudioPattern::Init()
 
   Pattern::PenColor = CL_PATTERN_NORM;
   Pattern::BrushColor = CL_WAVEDRAWER_BRUSH;
-  s.Printf("T%d A%d", TrackIndex + 1, audio_pattern_count++);
+  s.Printf(wxT("T%d A%d"), TrackIndex + 1, audio_pattern_count++);
   Name = s.c_str();
   LastBlock = -1;  
   RecordWave = 0;
@@ -205,7 +205,7 @@ bool					AudioPattern::PrepareRecord(int type)
        << " with audio dir : " << CurrentXmlSession->GetAudioDir().c_str() << endl;
   while (!done)
     {
-      s.Printf("%s/wired_audio%d.wav", CurrentXmlSession->GetAudioDir().c_str(), i);
+      s.Printf(wxT("%s/wired_audio%d.wav"), CurrentXmlSession->GetAudioDir().c_str(), i);
       wxFileName f(s);
       if (!f.FileExists())
 	done = true;
@@ -236,7 +236,7 @@ bool					AudioPattern::PrepareRecord(int type)
 
 void					AudioPattern::StopRecord()
 {
-  string				s = RecordWave->Filename;
+  wxString				s = RecordWave->Filename;
   WaveFile				*w;
   WriteWaveFile				*recw;
 
