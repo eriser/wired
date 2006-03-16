@@ -29,7 +29,7 @@ void WiredLibMpeg::init(list<t_LibInfo> &Info)
 
 void	WiredLibMpeg::fillLibInfo(t_LibInfo& info, char *extension)
 {
-	info.Extension = extension;
+	info.Extension = wxString(extension, *wxConvCurrent);
 	info.Note = 5;
 	info.CodecMask = EXIST | DECODE;
 }

@@ -40,8 +40,8 @@ int	WiredCodec::EndDecode()
   list<t_WLib>::const_iterator		iterTWLib;
   unsigned long						id;
     
-  if (codecToUse.find(path) != codecToUse.end())
-    id = codecToUse[path];
+  if (codecToUse.find(wxString(path, *wxConvCurrent)) != codecToUse.end())
+    id = codecToUse[wxString(path, *wxConvCurrent)];
   for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
     {
       if ((*iterTWLib).Codec->GetUniqueId() == id)
@@ -74,7 +74,7 @@ void WiredCodec::DumpCodec()
     }
 }
 
-bool WiredCodec::CanConvert(const string &filename, int Decode)
+bool WiredCodec::CanConvert(const wxString &filename, int Decode)
 {
   list<t_WLib>::const_iterator		iterTWLib;
   list<t_LibInfo>::const_iterator	iterTLibInfo;
@@ -105,9 +105,9 @@ void WiredCodec::Init()
   WiredCodecMutex.Unlock();
 }
 
-int WiredCodec::CheckExtension(const string& str, const list<string>& ExtList)
+int WiredCodec::CheckExtension(const wxString& str, const list<wxString>& ExtList)
 {
-  list<string>::const_iterator	iter;
+  list<wxString>::const_iterator	iter;
   
   for (iter = ExtList.begin(); iter != ExtList.end(); iter++)
     if (!(*iter).compare(str))
@@ -115,14 +115,14 @@ int WiredCodec::CheckExtension(const string& str, const list<string>& ExtList)
   return 1;
 }
 
-list<string> WiredCodec::GetExtension(int Decode)
+list<wxString> WiredCodec::GetExtension(int Decode)
 {  
   if (Decode & DECODE)
     return _DecodeExtList;
   return _EncodeExtList;
 }
 
-t_WLib WiredCodec::FindBestCodec(string extension)
+t_WLib WiredCodec::FindBestCodec(wxString extension)
 {
   list<t_WLib>::const_iterator		iterTWLib;
   list<t_LibInfo>::const_iterator	iterTLibInfo;
@@ -141,7 +141,7 @@ t_WLib WiredCodec::FindBestCodec(string extension)
   return TheLib;
 }
 
-int WiredCodec::Encode(float **pcm, string OutExtension)
+int WiredCodec::Encode(float **pcm, wxString OutExtension)
 {
   list<t_WLib>::const_iterator	iterTWLib;
   t_WLib			lib;
@@ -158,7 +158,7 @@ int WiredCodec::Encode(float **pcm, string OutExtension)
   return 1;
 }
 
-unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned long length)
+unsigned long WiredCodec::Decode(const wxString &filename, t_Pcm *pcm, unsigned long length)
 {
   list<t_WLib>::const_iterator		iterTWLib;
   unsigned long				id;
@@ -176,7 +176,8 @@ unsigned long WiredCodec::Decode(const string &filename, t_Pcm *pcm, unsigned lo
   if (!path)
     {
       path = new char(filename.size() * sizeof(*path) + 1);
-      strncpy(path, filename.c_str(), filename.size() + 1);
+      
+      strncpy(path, (const char *)filename.mb_str(*wxConvCurrent), filename.size() + 1);
     }
   for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
     {
@@ -203,10 +204,10 @@ void			WiredCodec::InitWLib()
   
   if (dir.IsOpened())
     {
-      cont = dir.GetFirst(&filename, "", wxDIR_FILES);
+      cont = dir.GetFirst(&filename, wxT(""), wxDIR_FILES);
       while (cont)
 	{
-	  if (filename.AfterLast('.') == "so")
+	  if (filename.AfterLast('.') == wxT("so"))
 	    _WiredSo.push_back(filename);
 	  cont = dir.GetNext(&filename);
 	}
@@ -218,7 +219,7 @@ void WiredCodec::WLoadLib()
   list<wxString>::const_iterator	iter;
   
   for (iter = _WiredSo.begin(); iter != _WiredSo.end(); iter++)
-    WLibLoader(_WiredPath + string("/") + *iter);
+    WLibLoader(_WiredPath + wxString(wxT("/"), *wxConvCurrent) + *iter);
 }
 
 void	WiredCodec::FeelExtension(list<t_LibInfo> Info)
@@ -255,7 +256,7 @@ void WiredCodec::WLibLoader(const wxString& filename)
   list<t_LibInfo>			Infos;
   bool					shouldDeleteNewLib = true;
   
-  handle = dlopen(filename.c_str(), RTLD_LAZY);
+  handle = dlopen(filename.mb_str(*wxConvCurrent), RTLD_LAZY);
   if (!handle)
     return;
   construct = (WiredCodecConstruct) dlsym(handle, WLIBCONSTRUCT);

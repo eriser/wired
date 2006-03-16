@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define CODEC_PATH	"/usr/local/lib"
+#define CODEC_PATH	wxT("/usr/local/lib")
 #define	WLIBCONSTRUCT	"WiredCodecConstruct"
 
 class			WiredCodec
@@ -25,30 +25,30 @@ class			WiredCodec
   ~WiredCodec();
   
   void			      		Init();														/* Init and loads codecs */
-  unsigned long				Decode(const string &filename, t_Pcm *pcm, 
+  unsigned long				Decode(const wxString &filename, t_Pcm *pcm, 
   									unsigned long length);								/* Decode file */
-  int			       		Encode(float **pcm, string OutExtension);					/* Encode stream */
+  int			       		Encode(float **pcm, wxString OutExtension);					/* Encode stream */
   int			       		EndDecode();												/* Close file */
 
-  list<string>				GetExtension(int Decode);												/* Returns a list of extensions readable by all codecs */
-  bool						CanConvert(const string &filename, int Decode);							/* Proper codec installed ? */
+  list<wxString>				GetExtension(int Decode);												/* Returns a list of extensions readable by all codecs */
+  bool						CanConvert(const wxString &filename, int Decode);							/* Proper codec installed ? */
 
  private:
   list<t_WLib>				_WLib;														/* Instance of codec found */
-  string       				_WiredPath;													/* path of codecs */
+  wxString       				_WiredPath;													/* path of codecs */
   list<wxString>				_WiredSo;													/* list of codec.so */
-  std::map<string, int>			codecToUse;													/* Codec to use :) */
+  std::map<wxString, int>			codecToUse;													/* Codec to use :) */
   unsigned long				_CurrentUniqueID;											/* */
   char					*path;
-  list<string>				_DecodeExtList;
-  list<string>				_EncodeExtList;
+  list<wxString>				_DecodeExtList;
+  list<wxString>				_EncodeExtList;
 
   void					FeelExtension(list<t_LibInfo> Info);
   void	       				InitWLib();													/* look for .so */
   void	       				WLoadLib();													/* load all .so */
   void	       				WLibLoader(const wxString& filename);							/* load .so */
-  int	       				CheckExtension(const string& str, const list<string>& ExtList);	/* check same occurence extensions */
-  t_WLib       				FindBestCodec(string extension);							/* Not implemented yet */
+  int	       				CheckExtension(const wxString& str, const list<wxString>& ExtList);	/* check same occurence extensions */
+  t_WLib       				FindBestCodec(wxString extension);							/* Not implemented yet */
   void	       				DumpCodec();
 };
 
