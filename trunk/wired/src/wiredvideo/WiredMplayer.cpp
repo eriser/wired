@@ -41,8 +41,8 @@ int		WiredMplayer::CloseFile()
 
 int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 {
-	string	msg;
-	string	tmpmsg;
+	wxString	msg;
+	wxString	tmpmsg;
 	char	*buf;
 	
 	switch (seekMethod)
@@ -50,21 +50,21 @@ int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 			case relative: 
 				msg = ACTION_SEEK_RELATIVE;
 				asprintf(&buf, "%g 0", position);
-				msg += buf;
+				msg += wxString(buf, *wxConvCurrent);
 				msg += CRLF;
 				cout << "[WIREDPLAYER] " << msg << endl;
 				break;
 			case percentage:
 				msg = ACTION_SEEK_PERCENTAGE;
 				asprintf(&buf, "%g 1", position);
-				msg += buf;
+				msg += wxString(buf, *wxConvCurrent);
 				msg += CRLF;
 				cout << "[WIREDPLAYER] " << msg << endl;
 				break;
 			case absolute:
 				msg = ACTION_SEEK_ABSOLUTE;
 				asprintf(&buf, "%g 2", position);
-				tmpmsg = buf;
+				tmpmsg = wxString(buf, *wxConvCurrent);
 				msg += tmpmsg;
 				msg += CRLF;
 				cout << "[WIREDPLAYER] Pos: " << buf << endl;
@@ -82,11 +82,11 @@ int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 	  return SendMPlayerMessage(msg.c_str(), msg.size());
 }
 
-bool		WiredMplayer::DisplayVideoFrame(const std::string& videoFilePath)
+bool		WiredMplayer::DisplayVideoFrame(const wxString& videoFilePath)
 {
   extern char **environ;
   int	fd;
-  string	launchString;
+  wxString	launchString;
   pid_t		cpid;
 
   if (pipe(pfd) == -1)
@@ -99,7 +99,7 @@ bool		WiredMplayer::DisplayVideoFrame(const std::string& videoFilePath)
   char *argv[4];
   argv[0] = SHELL;
   argv[1] = SHELL_PARAM;
-  argv[2] = strdup(launchString.c_str());
+  argv[2] = strdup(launchString.mb_str(*wxConvCurrent));
   argv[3] = 0;
   cpid = fork();
   if (cpid == -1)
@@ -135,7 +135,7 @@ int			WiredMplayer::MuteFile()
 	return SendMPlayerMessage(ACTION_MUTE, LEN_ACTION_MUTE);
 }
 
-int			WiredMplayer::SendMPlayerMessage(const char* message, unsigned int msgLen)
+int			WiredMplayer::SendMPlayerMessage(const wxChar* message, unsigned int msgLen)
 {
     if ((write(pfd[1], message, msgLen)) <=  0)
       {
