@@ -1,6 +1,11 @@
 #ifndef __TRACK_H__
 #define __TRACK_H__
 
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
+
 #define IS_MIDI_TRACK			(0x0)
 #define IS_AUDIO_TRACK		      	(0x1)
 #define MAX_AUTO_COLOURS		(16)		
