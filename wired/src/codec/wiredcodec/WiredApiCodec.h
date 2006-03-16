@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <list>
 #include <string>
+#include <wx/wx.h>
 
 #define	EXIST	0x1
 #define	DECODE	0x2
@@ -19,7 +20,7 @@ using namespace std;
 typedef struct		s_LibInfo
 {
   int  		CodecMask;					/* Codec capabilities */
-  string	Extension;					/* Hanfled extension */
+  wxString	Extension;					/* Hanfled extension */
   short		Note;						/* Note to determine if that codec is the best suited for this extension */
 }			t_LibInfo;
 
