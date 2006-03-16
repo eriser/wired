@@ -51,7 +51,7 @@ using namespace std;
 #define DELFAVORITES_ID		2011
 #define DELMRU_ID		2012
 
-string  OldPath; // Used to store last visited path
+wxString  OldPath; // Used to store last visited path
 
 BEGIN_EVENT_TABLE(FileLoader, wxDialog)
   EVT_TREE_ITEM_EXPANDING(FOLDER_ID, FileLoader::OnExpandFolder)
@@ -82,7 +82,7 @@ BEGIN_EVENT_TABLE(FileLoader, wxDialog)
   EVT_BUTTON(DELMRU_ID, FileLoader::OnDeleteRecent)
 END_EVENT_TABLE()
 
-FileLoader::FileLoader(wxWindow *parent, wxWindowID id, string title, bool pakai, bool psave, vector<string> *exts, bool LoadExt) :
+FileLoader::FileLoader(wxWindow *parent, wxWindowID id, wxString title, bool pakai, bool psave, vector<wxString> *exts, bool LoadExt) :
 wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT))
 {
   Center();
@@ -90,7 +90,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   wxFileName f;
 
   f.AssignHomeDir();
-  f.AppendDir(".wired");
+  f.AppendDir(wxT(".wired"));
   favdir = f.GetFullPath() + FAVORITE_FILE;
   mrudir = f.GetFullPath() + MRU_FILE;
   akai = pakai;
@@ -117,7 +117,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
     files->InsertColumn(2, _("Type"));
     files->SetColumnWidth(2, 180);
   }
-  FileInfo = new wxStaticText(this, -1, (""), 
+  FileInfo = new wxStaticText(this, -1, wxT(""), 
           wxPoint(10, F_HEIGHT - 105), wxSize(-1, -1), wxALIGN_LEFT);
   wxImageList *images = new wxImageList(16, 16, TRUE);
   AddIcon(images, wxIcon(icon3_xpm));
@@ -131,12 +131,12 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
       
   if (!akai)
   {
-  	fntext = new wxStaticText(this, -1, _T(_("Filename")), 
+  	fntext = new wxStaticText(this, -1, _("Filename"), 
 		  wxPoint(10, F_HEIGHT - 58), wxSize(-1, -1), wxALIGN_LEFT);
   	filename = new wxTextCtrl(this, FILENAME_ID, _T(""), 
 				  wxPoint(100, F_HEIGHT - 60), 
 				  wxSize(320, -1), wxTE_PROCESS_ENTER);
-	typtext = new wxStaticText(this, -1, _T(_("Type")),
+	typtext = new wxStaticText(this, -1, _("Type"),
 				   wxPoint(10, F_HEIGHT - 30), 
 				   wxSize(-1, -1), wxALIGN_LEFT);
 	type = new wxComboBox(this, TYPE_ID, _T(" "), 
@@ -145,7 +145,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   }
   else
   {
-  	fntext = new wxStaticText(this, -1, _T(_("Akai device")), 
+  	fntext = new wxStaticText(this, -1, _("Akai device"), 
 		  wxPoint(10, F_HEIGHT - 58), wxSize(-1, -1), wxALIGN_LEFT);
   	filename = new wxTextCtrl(this, FILENAME_ID, _T("/dev/cdrom"), 
 				  wxPoint(100, F_HEIGHT - 60), 
@@ -160,24 +160,24 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 //   }
   if (!save)
     {
-      preview = new wxButton(this, PREVIEW_ID, _T(_("Preview")), 
+      preview = new wxButton(this, PREVIEW_ID, _("Preview"), 
 			     wxPoint(F_WIDTH - 168, F_HEIGHT - 60),
 			     wxSize(-1, -1));
-      btopen = new wxButton(this, OPEN_ID, _T(_("Open")), 
+      btopen = new wxButton(this, OPEN_ID, _("Open"), 
 			    wxPoint(F_WIDTH - 84, F_HEIGHT - 60),
 			    wxSize(-1, -1));
       preview->Disable();
       btopen->Disable();
     }
   else
-    btopen = new wxButton(this, OPEN_ID, _T(_("Save")), 
+    btopen = new wxButton(this, OPEN_ID, _("Save"), 
 			  wxPoint(F_WIDTH - 84, F_HEIGHT - 60), 
 			  wxSize(-1, -1));
-  cancel = new wxButton(this, CANCEL_ID, _T(_("Cancel")), 
+  cancel = new wxButton(this, CANCEL_ID, _("Cancel"), 
 			wxPoint(F_WIDTH - 84, F_HEIGHT - 30), wxSize(-1, -1));
   if (!akai)
     {
-      favtext = new wxStaticText(this, -1, _T(_("Favorites")), wxPoint(10, 10),
+      favtext = new wxStaticText(this, -1, _("Favorites"), wxPoint(10, 10),
 				 wxSize(-1, -1), wxALIGN_LEFT);
       favorites = new wxComboBox(this, FAVORITES_ID, _T(" "), wxPoint(70, 4),
 				 wxSize(160, -1), 0, NULL, 
@@ -185,7 +185,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
       favdel = new wxBitmapButton(this, DELFAVORITES_ID, 
 				  wxBitmap(delete_xpm).ConvertToImage(),
 				  wxPoint(235, 0));
-      mrutext = new wxStaticText(this, -1, _T(_("Recents")),
+      mrutext = new wxStaticText(this, -1, _("Recents"),
 				 wxPoint(330, 10), wxSize(-1, -1), 
 				 wxALIGN_LEFT);
       mru = new wxComboBox(this, MRU_ID, _T(" "), wxPoint(390, 4), 
@@ -201,7 +201,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 //       btopen->Disable();
 //     }
   if (!akai)
-    {    	
+    {
 	wxLogNull logNo;
       if (exts == NULL)
 	LoadSoundExt();	
@@ -213,18 +213,21 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 	    for (unsigned int i = 0; i < exts->size(); i++)
 	      {
 		unsigned int j;
-		string ext = (*exts)[i];
-		if ((j = ext.find("\t", 0)) 
-		    != (unsigned int) string::npos)
-		  type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
-			       strdup(ext.substr(0, j).c_str()));
+		wxString ext = (*exts)[i];
+		if ((j = ext.find(wxT("\t"), 0)) 
+		    != (unsigned int) wxString::npos)
+            {
+                const char *temp = wxString(strdup(wxString(ext.substr(0, j).c_str(), *wxConvCurrent).mb_str(*wxConvCurrent)), *wxConvCurrent).mb_str(*wxConvCurrent);
+		  type->Append(ext.substr(j + 1, ext.size() - j - 1),
+			       (void *)temp);
+            }
 		else
-		  type->Append(_T(ext.c_str()), strdup(ext.c_str()));
+		  type->Append(ext, strdup(ext.mb_str(*wxConvCurrent)));
 	      }
   	}
       LoadFolders();
       if (folder != NULL)
-	ListDirectories(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
+	ListDirectories(folder->AddRoot(wxT("/"), 0, -1, new TreeItemData(wxT("/"))));
       if (OldPath.empty())
 	{
 	  GotoDir(wxGetCwd(), folder->GetRootItem());
@@ -236,21 +239,21 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   else
     {
       akaifd = -1;     
-      ListAkaiCD(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
+      ListAkaiCD(folder->AddRoot(wxT("/"), 0, -1, new TreeItemData(wxT("/"))));
     }
 }
 
 // void FileLoader::LoadSoundExt(vector<string> *Exts)
 // {
 //   type->Append(_T("will be replaced by allfiles at the end of the function"));
-//   string *allext = NULL;
+//   wstring *allext = NULL;
   
-//   string extfile = WiredSettings->ConfDir;
+//   wstring extfile = WiredSettings->ConfDir;
 //   extfile += EXT_FILE;
   
 //   ifstream f(extfile.c_str());
   
-//   string line;
+//   wstring line;
 //   unsigned int i, j;
 
 //   while (getline(f, line, '\n'))
@@ -258,7 +261,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 //       for (i = 0; line[i] == ' '; i++);
 //       if (line[i] != '#')
 // 	{
-// 	  if ((j = line.find("\t", 0)) != (unsigned int) string::npos)
+// 	  if ((j = line.find("\t", 0)) != (unsigned int) wstring::npos)
 // 	    {
 // 	      type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
 // 			   strdup(line.substr(i, j).c_str()));
@@ -268,7 +271,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 // 		  *allext += line.substr(i, j);
 // 		}
 // 	      else
-// 		allext = new string(line.substr(i, j));
+// 		allext = new wstring(line.substr(i, j));
 // 	    }
 // 	}
 //     }
@@ -278,9 +281,9 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 //       for (unsigned int i = 0; i < Exts->size(); i++)
 // 	{
 // 	  unsigned int j;
-// 	  string ext = (*Exts)[i];
+// 	  wstring ext = (*Exts)[i];
 	  
-// 	  if ((j = ext.find("\t", 0)) != (unsigned int) string::npos)
+// 	  if ((j = ext.find("\t", 0)) != (unsigned int) wstring::npos)
 // 	    type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
 // 			 strdup(ext.substr(0, j).c_str()));
 // 	  else
@@ -291,7 +294,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 // 	      *allext += ext.substr(0, j);
 // 	    }
 // 	  else
-// 	    allext = new string(ext.substr(0, j));
+// 	    allext = new wstring(ext.substr(0, j));
 // 	}
 //     }
   
@@ -300,7 +303,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 //	  for (iter = CodecsList.begin(); iter != CodecsList.end(); iter++)
 //	  {
 //	  	line = *iter;
-//		  if ((j = line.find("\t", 0)) != string::npos)
+//		  if ((j = line.find("\t", 0)) != wstring::npos)
 //	      {
 //	        type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
 //	                     strdup(line.substr(i, j).c_str()));
@@ -310,13 +313,13 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 //			  *allext += line.substr(i, j);
 //	        }
 //	        else
-//		  allext = new string(line.substr(i, j));
+//		  allext = new wstring(line.substr(i, j));
 //	      }
 //	  }
 
 //   if (allext != NULL)
 //     {
-//       string desc = _("All supported soundfiles (*.");
+//       wstring desc = _("All supported soundfiles (*.");
 //       for (int i = 0; (*allext)[i]; i++)
 // 	if ((*allext)[i] != ';')
 // 	  desc += (*allext)[i];
@@ -343,7 +346,7 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 // for further details.
 //
 
-void FileLoader::LoadSoundExt(vector<string> *Exts)
+void FileLoader::LoadSoundExt(vector<wxString> *Exts)
 {
   type->Append(_T("will be replaced by allfiles at the end of the function"));
   wxString	allext;
@@ -353,7 +356,7 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
   wxString	itemdesc;
   wxString	*itemdata = NULL;
 
-  filters = "";
+  filters = wxT("");
   //allext = "";
   file.Open();
   for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
@@ -365,14 +368,14 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 	  itemdesc = l.AfterLast('\t');
 	  itemdata = new wxString(l.BeforeFirst('\t'));
 	  type->Append(itemdesc, itemdata);
-	  filters += *itemdata + ";";
+	  filters += *itemdata + wxT(";");
 	  //	  allext += *itemdata + ";";
 	}
     }
   itemdesc = l.AfterLast('\t');
   itemdata = new wxString(l.BeforeFirst('\t'));
   type->Append(itemdesc, itemdata);
-  filters += *itemdata + ";";
+  filters += *itemdata + wxT(";");
   file.Close();
   
   if (Exts)
@@ -385,13 +388,13 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 	  itemdesc = ext.AfterLast('\t');
 	  itemdata = new wxString(ext.BeforeFirst('\t'));
 
-	  if ((j = ext.find("\t", 0)) != (unsigned int) string::npos)
-	    type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
-			 strdup(ext.substr(0, j).c_str()));
+	  if ((j = ext.find(wxT("\t"), 0)) != (unsigned int) wxString::npos)
+	    type->Append((ext.substr(j + 1, ext.size() - j - 1)),
+			 strdup(wxString(ext.substr(0, j).c_str(), *wxConvCurrent).mb_str(*wxConvCurrent)));
 	  else
-	    type->Append(_T(ext.c_str()), strdup(ext.c_str()));
+	    type->Append(ext, strdup(ext.mb_str(*wxConvCurrent)));
 // 	  if (allext != NULL)
-	  filters += *itemdata + ";";
+	  filters += *itemdata + wxT(";");
 // 	  else
 // 	    allext = new wxString(ext.substr(0, j));
 	}
@@ -402,7 +405,7 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 //	  for (iter = CodecsList.begin(); iter != CodecsList.end(); iter++)
 //	  {
 //	  	line = *iter;
-//		  if ((j = line.find("\t", 0)) != string::npos)
+//		  if ((j = line.find("\t", 0)) != wstring::npos)
 //	      {
 //	        type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
 //	                     strdup(line.substr(i, j).c_str()));
@@ -412,7 +415,7 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
 //			  *allext += line.substr(i, j);
 //	        }
 //	        else
-//		  allext = new string(line.substr(i, j));
+//		  allext = new wstring(line.substr(i, j));
 //	      }
 //	  }
 
@@ -420,17 +423,17 @@ void FileLoader::LoadSoundExt(vector<string> *Exts)
     {
       //allext = filters;
       allext = filters.Mid(0, filters.Len() - 1);
-      allext.Replace(";", ";*.");
-      itemdesc = _("All supported soundfiles (*.") + allext + ")";
+      allext.Replace(wxT(";"), wxT(";*."));
+      itemdesc = _("All supported soundfiles (*.") + allext + wxT(")");
       itemdata = new wxString(filters);
-      filters = ";" + filters;
+      filters = wxT(";") + filters;
       type->SetString(0, itemdesc);
       type->SetClientData(0, itemdata);
     }
   else
     type->Delete(0);
   //cout << "filters in constructor : " << filters << endl;
-  type->Append(_T(_("All files (*.*)")), strdup("*"));
+  type->Append(_("All files (*.*)"), strdup("*"));
   type->SetSelection(0);
 }
 
@@ -484,11 +487,11 @@ void			FileLoader::LoadFolders()
 
 void FileLoader::SaveFolders()
 {
-	ofstream f(favdir.c_str());
+	ofstream f(favdir.mb_str(*wxConvCurrent));
 	for (int i = 0; i < favorites->GetCount(); i++)
 		f << favorites->GetString(i) << "\n";
 	f.close();
-	ofstream f2(mrudir.c_str());
+	ofstream f2(mrudir.mb_str(*wxConvCurrent));
 	for (int i = 0; i < mru->GetCount(); i++)
 		f2 << mru->GetString(i) << "\n";
 	f2.close();
@@ -549,22 +552,22 @@ void			FileLoader::ListDirectories(wxTreeItemId root)
  
   bool			cont;
   wxString		name;
-  vector<string>	v;
+  vector<wxString>	v;
   TreeItemData		*path = (TreeItemData *)folder->GetItemData(root);
   wxDir			dir(path->GetPath().c_str());
 
   if (dir.IsOpened())
     {
-      cont = dir.GetFirst(&name, "", wxDIR_DIRS);
+      cont = dir.GetFirst(&name, wxT(""), wxDIR_DIRS);
       while (cont)
 	{
-	  v.insert(v.begin(), (string) name);
+	  v.insert(v.begin(), (wxString) name);
 	  cont = dir.GetNext(&name);
 	}
       stable_sort(v.begin(), v.end());
       for (unsigned int i = 0; i < v.size(); i++)
 	{
-	  wxString subdir = path->GetPath() + v[i] + "/";
+	  wxString subdir = path->GetPath() + v[i] + wxT("/");
 	  folder->AppendItem(root, v[i].c_str(), 0, -1, new TreeItemData(subdir));
 	}
     }
@@ -574,18 +577,18 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
 {
   if (akaifd == -1)
   {
-	string dev = filename->GetValue().c_str();
-    	if ((akaifd = open(dev.c_str(), O_RDONLY)) < 0)
+	wxString dev = filename->GetValue().c_str();
+    	if ((akaifd = open(dev.mb_str(*wxConvCurrent), O_RDONLY)) < 0)
 	  return;
   }
 
   TreeItemData *tid = (TreeItemData *)folder->GetItemData(root);
-  if (tid->GetPath() == "/")
+  if (tid->GetPath() == wxT("/"))
   {
   	for (int part = 1; (akaiSelectPart(akaifd, part) > 0) && (part < 27); part++)
 	  {
 	    char a = 64 + part;
-	    string partition = _("Partition ");
+	    wxString partition = _("Partition ");
 	    partition += (char)a;
 	    if (akaiReadDir(akaifd, "/") != NULL)
 	      folder->AppendItem(root, partition.c_str(), 0, -1, new TreeItemData(partition.c_str()));
@@ -596,9 +599,9 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
     if (tid->GetPath().substr(0, 10) == _("Partition "))
     {
 	wxString path = tid->GetPath().substr(10, tid->GetPath().size() - 10);
-	unsigned int pos = path.find("/", 0);
+	unsigned int pos = path.find(wxT("/"), 0);
 	int part = 0;
-	if (pos != (unsigned int) string::npos)
+	if (pos != (unsigned int) wxString::npos)
 	{
 		part = path.substr(0, pos).c_str()[0] - 64;
 		path = path.substr(pos, path.size() - pos);
@@ -606,7 +609,7 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
 	else
 	{
 		part = path.c_str()[0] - 64;
-		path = "/";
+		path = wxT("/");
 	}
 	if (akaiSelectPart(akaifd, part) > 0)
 	{
@@ -617,10 +620,10 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
 				if (akaiReadDir(akaifd, (char *)elt(t, t_akaiDirent *)->name))
 				{
 					wxString str = tid->GetPath();
-					str += "/";
-					str += elt(t, t_akaiDirent *)->name;
-					str += "/";
-					folder->AppendItem(root, elt(t, t_akaiDirent *)->name, 0, -1, new TreeItemData(str.c_str()));
+					str += wxT("/");
+					str += wxString(elt(t, t_akaiDirent *)->name, *wxConvCurrent);
+					str += wxT("/");
+					folder->AppendItem(root, wxString(elt(t, t_akaiDirent *)->name, *wxConvCurrent), 0, -1, new TreeItemData(str));
 				}	
 		}
 	}
@@ -628,15 +631,15 @@ void	FileLoader::ListAkaiCD(wxTreeItemId root)
   }
 }
 
-void FileLoader::ListAkaiVolume(string p)
+void FileLoader::ListAkaiVolume(wxString p)
 {
     files->DeleteAllItems();
     if (p.substr(0, 10) == _("Partition "))
     {
-	string path = p.substr(10, p.size() - 10);
-	unsigned int pos = path.find("/", 0);
+	wxString path = p.substr(10, p.size() - 10);
+	unsigned int pos = path.find(wxT("/"), 0);
 	int part = 0;
-	if (pos != (unsigned int) string::npos)
+	if (pos != (unsigned int) wxString::npos)
 	{
 		part = path.substr(0, pos).c_str()[0] - 64;
 		path = path.substr(pos + 1, path.size() - pos - 2);
@@ -644,7 +647,7 @@ void FileLoader::ListAkaiVolume(string p)
 	else
 	{
 		part = path.c_str()[0] - 64;
-		path = "/";
+		path = wxT("/");
 	}
 	if (akaiSelectPart(akaifd, part) > 0)
 	{
@@ -654,17 +657,18 @@ void FileLoader::ListAkaiVolume(string p)
 	    int i = 0;
 	    for (t_list *t = dir; t; t = t->next)
 	    {
-		string fp = path;
-		if (fp != "/")
-		fp += "/";
+		wxString fp = path;
+		if (fp != wxT("/"))
+		fp += wxT("/");
 		else
-		fp = "";
-		fp += elt(t, t_akaiDirent *)->name;
-		if (!akaiReadDir(akaifd, (char *)fp.c_str()))
+		fp = wxT("");
+		fp += wxString(elt(t, t_akaiDirent *)->name, *wxConvCurrent);
+        const char    *temp = (const char *)fp.mb_str(*wxConvCurrent);
+		if (!akaiReadDir(akaifd, (char *)temp))
 		{
-		  long item = files->InsertItem(i++, elt(t, t_akaiDirent *)->name);
+		  long item = files->InsertItem(i++, wxString(elt(t, t_akaiDirent *)->name, *wxConvCurrent));
 		  files->SetItem(item, 1, FormatSize(elt(t, t_akaiDirent *)->size));
-		  files->SetItem(item, 2, akaiGetType(elt(t, t_akaiDirent *)->type));
+		  files->SetItem(item, 2, wxString(akaiGetType(elt(t, t_akaiDirent *)->type), *wxConvCurrent));
 		  if ((elt(t, t_akaiDirent *)->type == 115) || (elt(t, t_akaiDirent *)->type == 243))
 			files->SetItemImage(item, 0, -1);
 	  	  else
@@ -678,20 +682,20 @@ void FileLoader::ListAkaiVolume(string p)
 
 // bool FileLoader::ExtMatch(char *fname, char *extlist)
 // {
-//   string exts = extlist;
+//   wstring exts = extlist;
 //   if (!strcmp(exts.c_str(), "*"))
 //     return (true);
-//   string fn = fname;
-//   unsigned int opos = string::npos;
+//   wstring fn = fname;
+//   unsigned int opos = wstring::npos;
 //   unsigned int pos = 0;
-//   while ((pos = fn.find(".", pos)) != (unsigned int) string::npos)
+//   while ((pos = fn.find(".", pos)) != (unsigned int) wstring::npos)
 //     opos = ++pos;
-//   if (opos == (unsigned int) string::npos)
+//   if (opos == (unsigned int) wstring::npos)
 //     return (false);
 //   fn = fn.substr(opos, fn.size() - opos);
 //   pos = opos = 0;
-//   string pat = "";
-//   while ((pos = exts.find(";", pos)) != (unsigned int) string::npos)
+//   wstring pat = "";
+//   while ((pos = exts.find(";", pos)) != (unsigned int) wstring::npos)
 //     {
 //       pat = exts.substr(opos, pos - opos);
 //       if ((fn.size() >= pat.size()) &&
@@ -720,44 +724,44 @@ void FileLoader::ListAkaiVolume(string p)
 bool			FileLoader::ExtMatch(wxString path)
 {
   wxFileName		filename(path);
-  wxString		ext = ";" + filename.GetExt() + ";";
+  wxString		ext = wxT(";") + filename.GetExt() + wxT(";");
  
-  if (filters == ";*;")
+  if (filters == wxT(";*;"))
     return (true);
-  if ((filters.Find(";;") == -1) && (ext == ";;"))
+  if ((filters.Find(wxT(";;")) == -1) && (ext == wxT(";;")))
     return (false);
   return (filters.Find(ext.MakeLower()) != -1);
 }
 
 //
-// Returns a string containing a human readable file size
+// Returns a wstring containing a human readable file size
 //
 
 wxString		FileLoader::FormatSize(off_t size)
 {
   int			            unit = 0;
-  char			        tmp[1024];
+  wxChar			        tmp[1024];
   
   for (unit = 0; size > 1024; unit++)
     size /= 1024;
-  wxSnprintf(tmp, 1024, "%i", size);
+  wxSnprintf(tmp, 1024, wxT("%i"), size);
   wxString s = tmp;
   switch (unit)
     {
     case 0:
-      s += " bytes";
+      s += wxT(" bytes");
       break;
     case 1:
-      s += " Kb";
+      s += wxT(" Kb");
       break;
     case 2:
-      s += " Mb";
+      s += wxT(" Mb");
       break;
     case 3:
-      s += " Gb";
+      s += wxT(" Gb");
       break;
     case 4:
-      s += " Tb";
+      s += wxT(" Tb");
       break;
     }
   return (s);
@@ -767,7 +771,7 @@ wxString		FileLoader::FormatSize(off_t size)
 // list the files in the selected directory
 //
 
-// void			FileLoader::ListFiles(string path)
+// void			FileLoader::ListFiles(wstring path)
 // {
 	
 // //   DIR		*dir;
@@ -792,7 +796,7 @@ wxString		FileLoader::FormatSize(off_t size)
 //       while (cont)
 // 	//while ((de = readdir(dir)))
 // 	{
-// 	  //string fp = path;
+// 	  //wstring fp = path;
 // 	  //fp += de->d_name;
 // 	  //stat(fp.c_str(), &st);
 // 	  if ((ExtMatch((char*)filename.c_str(), exts)))
@@ -806,7 +810,7 @@ wxString		FileLoader::FormatSize(off_t size)
 //     {
 //       wxStructStat	st;
 
-//       string fp = path + v[i];
+//       wstring fp = path + v[i];
       
 //       wxStat(fp.c_str(), &st);
 //       long item = files->InsertItem(i, v[i].c_str());
@@ -819,7 +823,7 @@ wxString		FileLoader::FormatSize(off_t size)
 //     }
 // }
 
-void			FileLoader::ListFiles(string path)
+void			FileLoader::ListFiles(wxString path)
 {
   wxDir			dir(path);
   wxStructStat		st;
@@ -832,7 +836,7 @@ void			FileLoader::ListFiles(string path)
   files->DeleteAllItems();
   if (dir.IsOpened())
     {
-      cont = dir.GetFirst(&name, "", wxDIR_FILES);
+      cont = dir.GetFirst(&name, wxT(""), wxDIR_FILES);
       while (cont)
 	{
 	  if (ExtMatch(name))
@@ -846,7 +850,7 @@ void			FileLoader::ListFiles(string path)
       wxStat(path + v[i], &st);
       long item = files->InsertItem(i, v[i]);
       files->SetItem(item, 1, FormatSize(st.st_size));
-      files->SetItem(item, 2, ctime(&st.st_mtime));
+      files->SetItem(item, 2, wxString(ctime(&st.st_mtime), *wxConvCurrent));
       files->SetItemImage(item, 0, -1);
     }
 }
@@ -857,7 +861,7 @@ void			FileLoader::GotoDir(wxString path, wxTreeItemId parent)
   wxTreeItemIdValue	cookie;
   wxString		dir;
   
-  path.StartsWith("/", &path);
+  path.StartsWith(wxT("/"), &path);
   dir = path.BeforeFirst('/');
   child = folder->GetFirstChild(parent, cookie);
   while (child.IsOk())
@@ -876,13 +880,13 @@ void			FileLoader::GotoDir(wxString path, wxTreeItemId parent)
 // {
 //   unsigned int pos = 0;
 //   int opos = 0;
-//   string pt = path;
-//   string dir = "";
+//   wstring pt = path;
+//   wstring dir = "";
 //   wxTreeItemId dir_tree = folder->GetRootItem();
   
 //   if (pt[0] == '/')
 //     pt.erase(0, 1);
-//   while ((pos = pt.find("/", pos)) != (unsigned int) string::npos)
+//   while ((pos = pt.find("/", pos)) != (unsigned int) wstring::npos)
 //     {
 //       if (!folder->ItemHasChildren(dir_tree))
 // 	{
@@ -974,14 +978,14 @@ void FileLoader::OnCollapseFolder(wxTreeEvent &e)
 
 void FileLoader::OnSelectFolder(wxTreeEvent &e)
 {
-  FileInfo->SetLabel(wxString(""));
+  FileInfo->SetLabel(wxString(wxT("")));
   StopPlaying();
   wxTreeItemId item = e.GetItem();
   TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
   if (!akai)
     {
       ListFiles(path->GetPath().c_str());
-      filename->SetValue("");
+      filename->SetValue(wxT(""));
     }
   else
     ListAkaiVolume(path->GetPath().c_str());
@@ -994,7 +998,7 @@ void FileLoader::OnSelectFolder(wxTreeEvent &e)
 
 void FileLoader::OnActivateFolder(wxTreeEvent &e)
 {
-  FileInfo->SetLabel(wxString(""));
+  FileInfo->SetLabel(wxString(wxT("")));
   wxTreeItemId item = e.GetItem();
   if (folder->ItemHasChildren(item))
     {
@@ -1021,7 +1025,7 @@ void FileLoader::PopupMenuFolder(wxTreeEvent &e)
 
 void FileLoader::OnSelectFile(wxListEvent &e)
 {
-  FileInfo->SetLabel(wxString(""));
+  FileInfo->SetLabel(wxString(wxT("")));
   if (!akai)
     {
       wxTreeItemId item = folder->GetSelection();
@@ -1038,13 +1042,13 @@ void FileLoader::OnSelectFile(wxListEvent &e)
 	    preview->Enable();
 	  else
 	    preview->Disable();
-      string FileName = fn.c_str();
+      wxString FileName = fn.c_str();
       FileStat      Stats;
       if (Stats.StatFile(FileName.c_str()))
-        FileInfo->SetLabel(wxString(Stats.GetFormat() + wxString(", ") + Stats.GetBitNess() + 
-                            Stats.GetLenght().Format("\t\t\t %H hours - %M minutes - %S seconds") +
-                            wxString("\n") + Stats.GetNbChannels().ToString() + wxString(" channel(s), ") + 
-                            Stats.GetSampleRate().ToString() + " Hz"));
+        FileInfo->SetLabel(wxString(Stats.GetFormat() + wxString(wxT(", ")) + Stats.GetBitNess() + 
+                            Stats.GetLenght().Format(wxT("\t\t\t %H hours - %M minutes - %S seconds")) +
+                            wxString(wxT("\n")) + Stats.GetNbChannels().ToString() + wxString(wxT(" channel(s), ")) + 
+                            Stats.GetSampleRate().ToString() + wxT(" Hz")));
     }
     }
   else
@@ -1057,7 +1061,7 @@ void FileLoader::OnSelectFile(wxListEvent &e)
       files->GetItem(it);
       if(!save)
 	{
-	  if (it.GetText().Contains("SAMPLE"))
+	  if (it.GetText().Contains(wxT("SAMPLE")))
 	    preview->Enable();
 	  else
 	    preview->Disable();
@@ -1091,7 +1095,7 @@ void FileLoader::OnActivateFile(wxListEvent &e)
 	  if (fn.size() == 0)
 	    {	
 	      wxMessageDialog *err = 
-		new wxMessageDialog(this, _("Please enter a name"), "wired",
+		new wxMessageDialog(this, _("Please enter a name"), wxT("wired"),
 				    wxOK | wxICON_ERROR);
 	      err->ShowModal();
 	      return;
@@ -1106,7 +1110,7 @@ void FileLoader::OnActivateFile(wxListEvent &e)
 	    {
 	      wxMessageDialog *err = 
 		new wxMessageDialog(this, _("File already exists, replace ?"), 
-				    "wired", wxYES_NO | wxICON_QUESTION);
+				    wxT("wired"), wxYES_NO | wxICON_QUESTION);
 	      if (err->ShowModal() == wxID_NO)
 		return;
 	    }	
@@ -1129,18 +1133,18 @@ void FileLoader::OnActivateFile(wxListEvent &e)
 void			FileLoader::OnChangeFilter(wxCommandEvent &e)
 {
   wxString		entry = type->GetValue();
-  int			start =  entry.find_last_of("(") + 1;
-  int			len = entry.find_last_of(")") - start;
+  int			start =  entry.find_last_of(wxT("(")) + 1;
+  int			len = entry.find_last_of(wxT(")")) - start;
   wxTreeItemId		item = folder->GetSelection();
   TreeItemData		*path = (TreeItemData *)folder->GetItemData(item);
 
   StopPlaying();
-  filename->SetValue("");
+  filename->SetValue(wxT(""));
  
-  filters = ";" + entry.substr(start, len);
-  filters.Replace("*.", "");
-  filters.Replace(" ", "");
-  filters += ";";
+  filters = wxT(";") + entry.substr(start, len);
+  filters.Replace(wxT("*."), wxT(""));
+  filters.Replace(wxT(" "), wxT(""));
+  filters += wxT(";");
 
   if (!save)
     {
@@ -1176,12 +1180,12 @@ void FileLoader::OnOpen(wxCommandEvent &e)
 	}
       else
 	{
-	  string fn = filename->GetValue().c_str();
+	  wxString fn = filename->GetValue().c_str();
 	  if (fn.size() == 0)
 	    {	
 	      wxMessageDialog *err = 
 		new wxMessageDialog(this, _("Please enter a name"), 
-				    "wired", wxOK | wxICON_ERROR);
+				    wxT("wired"), wxOK | wxICON_ERROR);
 	      err->ShowModal();
 	      return;
 	    }
@@ -1195,7 +1199,7 @@ void FileLoader::OnOpen(wxCommandEvent &e)
 	    {
 	      wxMessageDialog *err = 
 		new wxMessageDialog(this, _("File already exists, replace ?"), 
-				    "wired", wxYES_NO | wxICON_QUESTION);
+				    wxT("wired"), wxYES_NO | wxICON_QUESTION);
 	      if (err->ShowModal() == wxID_NO)
 		return;
 	    }	
@@ -1232,12 +1236,12 @@ void FileLoader::OnEnterFilename(wxCommandEvent &e)
 	}
       else
 	{
-	  string fn = filename->GetValue().c_str();
+	  wxString fn = filename->GetValue().c_str();
 	  if (fn.size() == 0)
 	    {	
 	      wxMessageDialog *err = 
 		new wxMessageDialog(this, _("Please enter a name"), 
-				    "wired", wxOK | wxICON_ERROR);
+				    wxT("wired"), wxOK | wxICON_ERROR);
 	      err->ShowModal();
 	      return;
 	    }
@@ -1251,7 +1255,7 @@ void FileLoader::OnEnterFilename(wxCommandEvent &e)
 	    {
 	      wxMessageDialog *err = 
 		new wxMessageDialog(this, _("File already exists, replace ?"), 
-				    "wired", wxYES_NO | wxICON_QUESTION);
+				    wxT("wired"), wxYES_NO | wxICON_QUESTION);
 	      if (err->ShowModal() == wxID_NO)
 		return;
 	    }	
@@ -1265,18 +1269,18 @@ void FileLoader::OnEnterFilename(wxCommandEvent &e)
       akaifd = -1; 
       files->DeleteAllItems();
       folder->DeleteAllItems();
-      ListAkaiCD(folder->AddRoot("/", 0, -1, new TreeItemData("/")));
+      ListAkaiCD(folder->AddRoot(wxT("/"), 0, -1, new TreeItemData(wxT("/"))));
     }
 }
 
-string FileLoader::GetSelectedFile()
+wxString FileLoader::GetSelectedFile()
 {
   if (!save)
     {
       long sel = files->GetFirstSelected();
       if (sel != -1)
 	{
-	  string fn = files->GetItemText(sel).c_str();
+	  wxString fn = files->GetItemText(sel).c_str();
 	  wxTreeItemId item = folder->GetSelection();
 	  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
 	  if (!akai)
@@ -1284,17 +1288,17 @@ string FileLoader::GetSelectedFile()
 	  else
 	    {
 	      fn = path->GetPath() + fn;
-	      fn = ":" + fn;
+	      fn = wxT(":") + fn;
 	      fn = filename->GetValue().c_str() + fn;
 	    }
 	  return (fn);
 	}
       else
-	return (NULL);
+	return (wxT(""));
     }
   else
     {
-      string fn = filename->GetValue().c_str();
+      wxString fn = filename->GetValue().c_str();
       if (fn.c_str()[0] != '/')
 	{
 	  wxTreeItemId item = folder->GetSelection();
@@ -1303,12 +1307,12 @@ string FileLoader::GetSelectedFile()
 	}
       return (fn);
     }
-  return(NULL);
+  return(wxT(""));
 }
 
 void FileLoader::StopPlaying()
 {
-  FileInfo->SetLabel(wxString(""));
+  FileInfo->SetLabel(wxString(wxT("")));
   playing = false;
   if (!save)
     preview->SetLabel(_("Preview"));
@@ -1367,7 +1371,7 @@ void FileLoader::OnDeleteFavorite(wxCommandEvent &e)
   if (favorites->GetCount() == 0)
     {
       favorites->SetWindowStyle(favorites->GetWindowStyle() & (~wxCB_READONLY));
-      favorites->SetValue("");
+      favorites->SetValue(wxT(""));
       favorites->SetWindowStyle(favorites->GetWindowStyle() | wxCB_READONLY);
     }
 }
@@ -1382,7 +1386,7 @@ void FileLoader::OnDeleteRecent(wxCommandEvent &e)
   if (mru->GetCount() == 0)
     {
       mru->SetWindowStyle(mru->GetWindowStyle() & (~wxCB_READONLY));
-      mru->SetValue("");
+      mru->SetValue(wxT(""));
       mru->SetWindowStyle(mru->GetWindowStyle() | wxCB_READONLY);
     }
 }
