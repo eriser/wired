@@ -39,8 +39,8 @@ public:
   virtual void				Undo ();
   virtual void				Accept (cActionVisitor& visitor)
   							{ visitor.Visit (*this); };
-  virtual std::string		getHistoryLabel()		// Returns History label string
-  							{return HISTORY_LABEL_IMPORT_WAVE_ACTION;};
+  virtual std::string		getHistoryLabel()		// Returns History label wstring
+  							{return (char *)HISTORY_LABEL_IMPORT_WAVE_ACTION;};
   void						AddWaveTrack();
   void						RemoveWaveTrack(bool selectFromIndex);
   
@@ -64,8 +64,8 @@ public:
   virtual void				Redo();
   virtual void				Undo();
   virtual void				Accept(cActionVisitor& visitor) { visitor.Visit (*this); };
-  virtual std::string		getHistoryLabel()		// Returns History label string
-  							{return HISTORY_LABEL_IMPORT_MIDI_ACTION;};
+  virtual std::string		getHistoryLabel()		// Returns History label wstring
+  							{return (char *)HISTORY_LABEL_IMPORT_MIDI_ACTION;};
   							
   cImportMidiAction		operator=(const cImportMidiAction& right);
 };
@@ -90,8 +90,8 @@ public:
   virtual void			Redo();
   virtual void			Undo();
   virtual void			Accept(cActionVisitor& visitor) { visitor.Visit (*this); };
-  virtual std::string		getHistoryLabel()		// Returns History label string
-   							{return HISTORY_LABEL_IMPORT_AKAI_ACTION;};
+  virtual std::string		getHistoryLabel()		// Returns History label wstring
+   							{return (char *)HISTORY_LABEL_IMPORT_AKAI_ACTION;};
    
   cImportAkaiAction		operator=(const cImportAkaiAction& right);
 };
@@ -115,8 +115,8 @@ public:
 	virtual void			Undo ();				// Does undo action
 	virtual void			Accept					// Don't known
 							(cActionVisitor& visitor) { visitor.Visit (*this); };
-	virtual std::string		getHistoryLabel()		// Returns History label string
-							{return HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION;};
+	virtual std::string		getHistoryLabel()		// Returns History label wstring
+							{return (char *)HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION;};
 	void					SaveDatas();			// Saves mDatas
 	void					LoadDatas();			// Loads mDatas
 	void					Dump();					// Debug - Draws member variables
@@ -145,7 +145,7 @@ public:
 	virtual void			Undo ();				// Does undo action
 	virtual void			Accept					// Don't known
 							(cActionVisitor& visitor) { visitor.Visit (*this); };
-	virtual std::string		getHistoryLabel();		// Returns History label string
+	virtual std::string		getHistoryLabel();		// Returns History label wstring
 	void					AddRackEffect ();		// Adds a rack effect
 	void					RemoveRackEffect ();	// Removes a rack effect
   	void					Dump();					// Debug - Draws member variables
@@ -171,8 +171,8 @@ public:
   virtual void				Undo ();
   virtual void				Accept (cActionVisitor& visitor)
   { visitor.Visit (*this); };
-  virtual std::string		getHistoryLabel()		// Returns History label string
-  							{return HISTORY_LABEL_CREATE_RACK_ACTION;};
+  virtual std::string		getHistoryLabel()		// Returns History label wstring
+  							{return (char *)HISTORY_LABEL_CREATE_RACK_ACTION;};
   					
   cCreateRackAction		operator=(const cCreateRackAction& right);
 };

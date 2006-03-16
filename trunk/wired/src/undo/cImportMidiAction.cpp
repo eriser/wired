@@ -27,7 +27,7 @@ void cImportWaveAction::Do ()
 
 void cImportWaveAction::AddWaveTrack()
 {
-	WaveFile *w = WaveCenter.AddWaveFile(_WavePath);
+	WaveFile *w = WaveCenter.AddWaveFile(wxString(_WavePath.c_str(), *wxConvCurrent));
 	
 	if (w) 
     {
@@ -81,7 +81,7 @@ cImportMidiAction::cImportMidiAction (string path, bool kind)
 
 void cImportMidiAction::Do ()
 {
-  MidiFile *m = new MidiFile(mMidiPath);
+  MidiFile *m = new MidiFile(wxString(mMidiPath.c_str(), *wxConvCurrent));
 
   if (m)
   {
@@ -298,9 +298,9 @@ std::string		cCreateEffectAction::getHistoryLabel()
 {
 	std::string			result;
 	
-	result = HISTORY_LABEL_CREATE_EFFECT_ACTION;
+	result = (char *)HISTORY_LABEL_CREATE_EFFECT_ACTION;
 	result += " ";
-	result += mPluginLoader->InitInfo.Name; 
+	result += mPluginLoader->InitInfo.Name.mb_str(*wxConvCurrent); 
 	return result;
 }
 
