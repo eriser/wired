@@ -7,7 +7,13 @@ using namespace	std;
 #include <list>
 #include <iostream>
 #include <string>
+
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
 #include <wx/thread.h>
+
 
 typedef struct s_SeqCreateEvent		SeqCreateEvent;
 typedef int				MidiType;
@@ -56,9 +62,9 @@ class Sequencer : public wxThread
   void					Stop();
   void					Record();
   void					StopRecord();
-  bool					ExportToWave(string &filename);
+  bool					ExportToWave(wxString &filename);
   void					StopExport();
-  void					PlayFile(string filename, bool isakai);
+  void					PlayFile(wxString filename, bool isakai);
   void					StopFile();
   void					AddTrack(Track *t);
   void					RemoveTrack();

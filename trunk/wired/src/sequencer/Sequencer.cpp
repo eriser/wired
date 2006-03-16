@@ -29,7 +29,7 @@ Sequencer::Sequencer()
 {
   try
     {
-      ClickWave = new WaveFile(WiredSettings->DataDir + string("wired_click.wav"));
+      ClickWave = new WaveFile(WiredSettings->DataDir + wxString(wxT("wired_click.wav"), *wxConvCurrent));
     }
   catch (...)
     {
@@ -866,7 +866,7 @@ void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l,
   t->AddPattern(p);
 }
 
-bool					Sequencer::ExportToWave(string &filename)
+bool					Sequencer::ExportToWave(wxString &filename)
 {
 	Seq->Stop();
 	if (SampleRateConverter)
@@ -948,7 +948,7 @@ void					Sequencer::WriteExport()
 	return;
 }
 
-void					Sequencer::PlayFile(string filename, bool isakai)
+void					Sequencer::PlayFile(wxString filename, bool isakai)
 {
   StopFile();
 
@@ -956,17 +956,17 @@ void					Sequencer::PlayFile(string filename, bool isakai)
     {
       if (isakai)
 	{
-	  string mDevice, mFilename, mName;
+	  wxString mDevice, mFilename, mName;
 	  int mPart;
 	  	  
-	  mDevice = filename.substr(0, filename.find(":", 0));
-	  filename = filename.substr(filename.find(":", 0) + 1, filename.size() - filename.find(":", 0));
+	  mDevice = filename.substr(0, filename.find(wxT(":"), 0));
+	  filename = filename.substr(filename.find(wxT(":"), 0) + 1, filename.size() - filename.find(wxT(":"), 0));
 	  mFilename = filename.substr(10, filename.size() - 10);
-	  int pos = mFilename.find("/", 0);
+	  int pos = mFilename.find(wxT("/"), 0);
 	  mPart = mFilename.substr(0, pos).c_str()[0] - 64;
 	  mFilename = mFilename.substr(pos, mFilename.size() - pos);
 	  int opos = 0;
-	  while ((pos = mFilename.find("/", opos)) != string::npos)
+	  while ((pos = mFilename.find(wxT("/"), opos)) != wxString::npos)
 	    opos = pos + 1;
 	  
 	  mName = mFilename.substr(opos, mFilename.size() - opos);
