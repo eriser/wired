@@ -13,6 +13,11 @@
 #include <libxml/xmlreader.h>
 #include <libxml/valid.h>
 //#include <libxml/tree.h>
+
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
 #include <wx/filename.h>
 
 #include <errno.h>
@@ -47,61 +52,61 @@
 //#endif
 
 #define INVALID_FD -1
-#define DTD_FILENAME "WiredSession.dtd"
-#define XML_EXTENSION ".xml"
-#define DTD_EXTENSION ".dtd"
-#define STR_TRUE "true"
-#define STR_FALSE "false"
-#define STR_AUDIO "Audio"
-#define STR_MIDI "MIDI"
+#define DTD_FILENAME wxT("WiredSession.dtd")
+#define XML_EXTENSION wxT(".xml")
+#define DTD_EXTENSION wxT(".dtd")
+#define STR_TRUE wxT("true")
+#define STR_FALSE wxT("false")
+#define STR_AUDIO wxT("Audio")
+#define STR_MIDI wxT("MIDI")
 
 
 // Defines under are nodes ID, referenced in WiredSession.dtd
 
-#define	STR_ROOT_NODE_NAME "Wired-Project"
+#define	STR_ROOT_NODE_NAME wxT("Wired-Project")
 
-#define STR_WORKING_DIR	"WorkingDir"
+#define STR_WORKING_DIR	wxT("WorkingDir")
 
 #define	NB_SEQUENCEUR_PARAM 7
-#define STR_SEQUENCEUR "Sequencer"
-#define 	STR_LOOP "Loop"
-#define 	STR_CLICK "Click"
-#define 	STR_BPM "BPM"
-#define 	STR_SIG_NUM "SigNumerator"
-#define 	STR_SIG_DEN "SigDenominator"
-#define 	STR_BEGIN_LOOP "BeginLoop"
-#define 	STR_END_LOOP "EndLoop"
+#define STR_SEQUENCEUR wxT("Sequencer")
+#define 	STR_LOOP wxT("Loop")
+#define 	STR_CLICK wxT("Click")
+#define 	STR_BPM wxT("BPM")
+#define 	STR_SIG_NUM wxT("SigNumerator")
+#define 	STR_SIG_DEN wxT("SigDenominator")
+#define 	STR_BEGIN_LOOP wxT("BeginLoop")
+#define 	STR_END_LOOP wxT("EndLoop")
 
 #define	NB_AUDIO_TRACK_PARAM 3
 #define	NB_MIDI_TRACK_PARAM 4
-#define STR_TRACK "Track"
-#define 	STR_TRACK_TYPE "TrackType"
-#define		STR_MUTED "Muted"
-#define 	STR_RECORDING "Recording"
+#define STR_TRACK wxT("Track")
+#define 	STR_TRACK_TYPE wxT("TrackType")
+#define		STR_MUTED wxT("Muted")
+#define 	STR_RECORDING wxT("Recording")
 
-#define	STR_PLUGIN "Plugin"
-#define		STR_PLUGIN_ID "PluginId"
-#define		STR_PLUGIN_DATA "PluginData"
-#define		STR_PLUGIN_DATA_PARAM_NAME "ParamName"
-#define		STR_PLUGIN_DATA_PARAM_VALUE "ParamValue"
+#define	STR_PLUGIN wxT("Plugin")
+#define		STR_PLUGIN_ID wxT("PluginId")
+#define		STR_PLUGIN_DATA wxT("PluginData")
+#define		STR_PLUGIN_DATA_PARAM_NAME wxT("ParamName")
+#define		STR_PLUGIN_DATA_PARAM_VALUE wxT("ParamValue")
 
-#define STR_PATTERN "Pattern"
+#define STR_PATTERN wxT("Pattern")
 
-#define STR_PATTERN_DATA "PatternData"
-#define 	STR_PATTERN_AUDIO_DATA "PatternAudioData"
-#define 	STR_PATTERN_MIDI_DATA "PatternMIDIData"
-#define		STR_PPQN "PPQN"
-#define 	STR_MIDI_MESSAGE "MIDIMessage"
+#define STR_PATTERN_DATA wxT("PatternData")
+#define 	STR_PATTERN_AUDIO_DATA wxT("PatternAudioData")
+#define 	STR_PATTERN_MIDI_DATA wxT("PatternMIDIData")
+#define		STR_PPQN wxT("PPQN")
+#define 	STR_MIDI_MESSAGE wxT("MIDIMessage")
 
-#define	STR_WIDTH "Width"
-#define	STR_HEIGHT "Height"
+#define	STR_WIDTH wxT("Width")
+#define	STR_HEIGHT wxT("Height")
 
-#define STR_NAME "Name"
-#define	STR_START_POS "StartPos"
-#define STR_CURRENT_POS "CurrentPos"
-#define STR_END_POS "EndPos"
-#define STR_DEVIDE_ID "DeviceId"
-#define STR_FILENAME "FileName"
+#define STR_NAME wxT("Name")
+#define	STR_START_POS wxT("StartPos")
+#define STR_CURRENT_POS wxT("CurrentPos")
+#define STR_END_POS wxT("EndPos")
+#define STR_DEVIDE_ID wxT("DeviceId")
+#define STR_FILENAME wxT("FileName")
 
 
 
@@ -116,7 +121,7 @@ typedef struct  s_PatternXml
 	double			Position;
 	double			EndPosition;
 	long			NameLen;
-	std::string		Name;
+	wxString		Name;
 	int				TrackNumber;
 } t_PatternXml;
 
@@ -124,7 +129,7 @@ typedef struct  s_AudioPatternXml
 {
 	long			StartWavePos;
 	long			EndWavePos;
-	std::string		FileName;
+	wxString		FileName;
 } t_AudioPatternXml;
 
 //TODO Uncomment this block when WiredSession class has been removed
@@ -142,14 +147,14 @@ typedef struct  s_MidiPatternXml
 	std::vector<MidiEvent *>	Events;
 } t_MidiPatternXml;
 
-typedef std::map<std::string, std::string>::iterator PluginParamsIter;
+typedef std::map<wxString, wxString>::iterator PluginParamsIter;
 
 extern int errno;
 
 typedef struct	s_PluginXml
 {
-	std::string		Id;
-	std::string		Name;
+	wxString		Id;
+	wxString		Name;
 	int				Width;
 	int				Height;
 	WiredPluginData	Data;
@@ -159,17 +164,17 @@ class WiredSessionXml : public WiredXml
 {
 public:
 	WiredSessionXml() {;}
-	WiredSessionXml(const std::string& FileName, const std::string& AudioDir = "") {_WorkingDir = AudioDir, _DocumentFileName = FileName;}
+	WiredSessionXml(const wxString& FileName, const wxString& AudioDir = wxString(wxT(""), *wxConvCurrent)) {_WorkingDir = AudioDir, _DocumentFileName = FileName;}
 	~WiredSessionXml();
 	WiredSessionXml(const WiredSessionXml& copy);
 	WiredSessionXml			operator=(const WiredSessionXml& right);
 
 	WiredSessionXml			Clone();
-	bool					Load(const std::string& FileName = "");
+	bool					Load(const wxString& FileName = wxString(wxT(""), *wxConvCurrent));
 	bool					Save();
 	bool					CreateFile();
-	void					Dumpfile(const std::string& FileName);
-	std::string&			GetAudioDir();
+	void					Dumpfile(const wxString& FileName);
+	wxString&      			GetAudioDir();
 private:
 	bool					SaveSeq(); // Saving Sequenceur infos to XML File
 	bool					SaveTrack(Track* TrackInfo); // Saving Track infos to XML File
@@ -191,7 +196,7 @@ private:
 	void					LoadPatternMIDI(Track *AddedTrack, t_PatternXml *InfoPattern);
 	bool					ParseWiredSession();
 
-	std::string				_WorkingDir;
+	wxString   				_WorkingDir;
 };
 
 #endif
