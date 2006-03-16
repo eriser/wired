@@ -178,14 +178,14 @@ std::list<t_menuInfo*>		cActionManager::getListActions(int *separatorIndex)
 	for (iter = mUndoList.begin(); iter != mUndoList.end(); iter++, (*separatorIndex)++)
 	{
 		t_menuInfo *menuInfo = new t_menuInfo;
-		menuInfo->label = UNDO_LABEL + (*iter)->getHistoryLabel();
+		menuInfo->label = (char *)UNDO_LABEL + (*iter)->getHistoryLabel();
 		menuInfo->id = (*iter)->m_Id;
 		result.push_back(menuInfo);
 	}
 	for (iter = mRedoList.begin(); iter != mRedoList.end(); iter++)
 	{
 		t_menuInfo *menuInfo = new t_menuInfo;
-		menuInfo->label = REDO_LABEL + (*iter)->getHistoryLabel();
+		menuInfo->label = (char *)REDO_LABEL + (*iter)->getHistoryLabel();
 		menuInfo->id = (*iter)->m_Id;
 		result.push_back(menuInfo);
 	}
