@@ -80,9 +80,9 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
 
   wxString s;
   if (IsInteger)
-    s.Printf("%d", (int)GetValue());
+    s.Printf(wxT("%d"), (int)GetValue());
   else
-    s.Printf("%.2f", GetValue());
+    s.Printf(wxT("%.2f"), GetValue());
   Label = new Hint(hintparent, -1, s,
 		   wxPoint(GetPosition().x, GetPosition().y + GetSize().y), 
 		   wxDefaultSize, *wxWHITE, *wxBLACK);
@@ -125,9 +125,9 @@ void		FaderCtrl::OnLeftDown(wxMouseEvent& event)
       Label->Show(true);
       wxString s;
       if (IsInteger)
-	s.Printf("%d", lrintf(GetValue()));
+	s.Printf(wxT("%d"), lrintf(GetValue()));
       else
-	s.Printf("%.2f", GetValue());
+	s.Printf(wxT("%.2f"), GetValue());
       Label->SetLabel(s);
     }
   OnMouseEvent(event);
@@ -166,9 +166,9 @@ void		FaderCtrl::OnMouseEvent(wxMouseEvent &event)
     {
       wxString s;
       if (IsInteger)
-	s.Printf("%d", lrintf(GetValue()));
+	s.Printf(wxT("%d"), lrintf(GetValue()));
       else
-	s.Printf("%.2f", GetValue());
+	s.Printf(wxT("%.2f"), GetValue());
       Label->SetLabel(s);
       Label->Show((event.LeftIsDown()));
     }
@@ -259,9 +259,9 @@ void		FaderCtrl::OnKeyDown(wxKeyEvent& event)
       Label->Show(true);
       wxString s;
       if (IsInteger)
-	s.Printf("%d", lrintf(GetValue()));
+	s.Printf(wxT("%d"), lrintf(GetValue()));
       else
-	s.Printf("%.2f", GetValue());
+	s.Printf(wxT("%.2f"), GetValue());
       Label->SetLabel(s);
     }
 }

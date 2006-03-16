@@ -28,7 +28,7 @@ int MidiDevice::GetDeviceIDFromName(string s)
   MidiDeviceList::iterator i;
 
   for (i = devices.begin(); i != devices.end(); i++)
-    if (s == (*i)->Name)
+    if (s == string((*i)->Name.mb_str(*wxConvCurrent)))
       return ((*i)->Id);
   return (0);
 }

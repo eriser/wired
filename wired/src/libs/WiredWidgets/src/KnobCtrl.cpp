@@ -61,7 +61,7 @@ KnobCtrl::KnobCtrl(wxWindow *parent, wxWindowID id,
   SetValue(init_val);
   
   wxString s;
-  s.Printf("%d", init_val);
+  s.Printf(wxT("%d"), init_val);
   Label = new Hint(hintparent, -1, s, 
 		   wxPoint( hintpos.x + pos.x + GetSize().x, 
 			    hintpos.y + pos.y + GetSize().y ),
@@ -134,7 +134,7 @@ void KnobCtrl::OnMouseEvent(wxMouseEvent &event)
     {
       Label->Show(true);
       wxString s;
-      s.Printf("%d", GetValue());
+      s.Printf(wxT("%d"), GetValue());
       Label->SetLabel(s);
     }
   else if (!event.LeftIsDown() && Label)
@@ -169,7 +169,7 @@ void KnobCtrl::OnKeyDown(wxKeyEvent& event)
     {
       Label->Show(true);
       wxString s;
-      s.Printf("%d", GetValue());
+      s.Printf(wxT("%d"), GetValue());
       Label->SetLabel(s);
     }
 }

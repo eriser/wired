@@ -48,7 +48,7 @@ void					WiredSampleRate::Init(t_samplerate_info *Info)
 		
 }
 
-int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
+int						WiredSampleRate::OpenFile(wxString *Path, wxWindow* parent)
 {
 	SNDFILE				*Result;
 	SF_INFO				Info;
@@ -56,14 +56,14 @@ int						WiredSampleRate::OpenFile(string *Path, wxWindow* parent)
 	bool				SameSampleRate, SameFormat;
 	
 	Info.format = 0;
-	if ((Result = sf_open(Path->c_str(), SFM_READ, &Info)) != NULL)
+	if ((Result = sf_open(Path->mb_str(*wxConvCurrent), SFM_READ, &Info)) != NULL)
 	{
 		SameFormat = IsSameFormat(Info.format, _ApplicationSettings.Format);
 		SameSampleRate = (int)Info.samplerate == (int)_ApplicationSettings.SampleRate ? true : false;
 		if (!SameFormat || !SameSampleRate)
 		{
 			wxString			strFormats(_("Would you like to convert your file from "));
-			char				buf[1024];
+			wxChar				buf[1024];
 			int					res;
             
 			if (!SameFormat)
@@ -108,7 +108,7 @@ int						WiredSampleRate::GetConverterQuality()
 	
 	for (int pos = 0; pos < NB_SAMPLERATE_QUALITY; pos ++)
 	{
-		Choices.Add(src_get_name(pos));
+		Choices.Add(wxString(src_get_name(pos), *wxConvCurrent));
 	}
 
 	wxSingleChoiceDialog	Dlg(NULL, Msg, Title, Choices, NULL);
@@ -147,22 +147,22 @@ float					*WiredSampleRate::ConvertSampleRate(SRC_STATE* Converter, float *Input
 	}
 }
 
-bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *SrcData)
+bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *SrcData)
 {
 	
 	SNDFILE				*Result;	
 	SF_INFO				Info;	
-	string				DestFileName;
+	wxString				DestFileName;
 	int					ConversionQuality;
 	
-	if (SrcFile.find("/") != SrcFile.npos)
+	if (SrcFile.find(wxT("/")) != SrcFile.npos)
 	{
-		DestFileName = _ApplicationSettings.WorkingDirectory + SrcFile.substr(SrcFile.find_last_of("/"));
+		DestFileName = _ApplicationSettings.WorkingDirectory + SrcFile.substr(SrcFile.find_last_of(wxT("/")));
 		Info.samplerate = _ApplicationSettings.SampleRate;
 		Info.channels = SrcInfo->channels;
 		Info.format = SrcInfo->format;
 		Info.format |= GetFileFormat(_ApplicationSettings.Format);
-		if ((Result = sf_open(DestFileName.c_str(), SFM_WRITE, &Info)))
+		if ((Result = sf_open(DestFileName.mb_str(*wxConvCurrent), SFM_WRITE, &Info)))
 		{
 			ConversionQuality = GetConverterQuality();
 			wxProgressDialog ProgressBar(_("Converting wave file"), _("Please wait..."), 
@@ -179,7 +179,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 				int			ConverterError;
 				SRC_STATE*	Converter = src_new(ConversionQuality, SrcInfo->channels, &ConverterError);
 				
-				ProgressBar.Update(NbLoop, "", &HasFailed);
+				ProgressBar.Update(NbLoop, wxT(""), &HasFailed);
 				Buffer = new float[_ApplicationSettings.SamplesPerBuffer * Info.channels];
 				while ((Readen = sf_readf_float(SrcData, Buffer, _ApplicationSettings.SamplesPerBuffer)) > 0)
 				{
@@ -229,7 +229,7 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, string& SrcFile, SNDFILE *Sr
 			cout << "[FILECONVERT] Error while loading file !" << endl;
 			return false;
 		}
-		chmod(DestFileName.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+		chmod(DestFileName.mb_str(*wxConvCurrent), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		SrcFile = DestFileName;
 		return true;
 	}
@@ -253,23 +253,23 @@ bool					WiredSampleRate::IsSameFormat(int SndFileFormat, PaSampleFormat PaForma
 	return true;
 }
 
-const char*				WiredSampleRate::GetFormatName(int SndFileFormat)
+const wxChar*				WiredSampleRate::GetFormatName(int SndFileFormat)
 {
 	int		pos;
 	
 	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0; pos++)
 		if (_FormatTypes[pos].SndFileFormat & SndFileFormat)
-			return _FormatTypes[pos].FormatName;
+			return (const wxChar *)_FormatTypes[pos].FormatName;
 	return STR_UNKNOWN_FORMAT;
 }
 
-const char*				WiredSampleRate::GetFormatName(PaSampleFormat PaFormat)
+const wxChar*				WiredSampleRate::GetFormatName(PaSampleFormat PaFormat)
 {	
 	int		pos;
 	
 	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0; pos++)
 		if (_FormatTypes[pos].PaFormat & PaFormat)
-			return _FormatTypes[pos].FormatName;
+			return (const wxChar *)_FormatTypes[pos].FormatName;
 	return STR_UNKNOWN_FORMAT;
 }
 
@@ -292,28 +292,28 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 								wxCENTRE | wxCAPTION | wxTHICK_FRAME | wxSTAY_ON_TOP);	
 	wxStaticText		DialogText(&Dialog, -1, wxString(_("Please select the options that\nyou want for the downmix.\n(Defaults are current project's configuration)")),
 									wxPoint(13, 10), wxSize(-1, -1), wxALIGN_CENTER);
-	wxButton			DialogButton(&Dialog, wxID_OK, "", wxPoint(135, 110));
-	wxComboBox			CBFormat(&Dialog, -1, "", ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
+	wxButton			DialogButton(&Dialog, wxID_OK, wxT(""), wxPoint(135, 110));
+	wxComboBox			CBFormat(&Dialog, -1, wxT(""), ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
 	int					pos;
 	
 	for (pos = 0; _FormatTypes[pos].SndFileFormat != 0;pos++)
-		CBFormat.Append(wxString(_FormatTypes[pos].FormatName));
+		CBFormat.Append(wxString(_FormatTypes[pos].FormatName, *wxConvCurrent));
 	ComboPos.x = 200;
 	ComboSize.x = 100;
-	wxComboBox			CBSampleRate(&Dialog, -1, "", ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
+	wxComboBox			CBSampleRate(&Dialog, -1, wxT(""), ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
 	for (pos = 0; _SampleRateTypes[pos].SampleRate != 0;pos++)
-		CBSampleRate.Append(wxString(_SampleRateTypes[pos].SampleRateName));
+		CBSampleRate.Append(wxString(_SampleRateTypes[pos].SampleRateName, *wxConvCurrent));
 	Dialog.SetReturnCode(wxID_OK);
 	if (Dialog.ShowModal() == wxID_OK)
 	{
 		for (pos = 0; _FormatTypes[pos].SndFileFormat != 0;pos++)
-			if (CBFormat.GetValue().compare(_FormatTypes[pos].FormatName) == 0)
+			if (CBFormat.GetValue().compare(wxString(_FormatTypes[pos].FormatName, *wxConvCurrent)) == 0)
 			{
 				DestInfo->format = _FormatTypes[pos].SndFileFormat;
 				break;
 			}
 		for (pos = 0; _SampleRateTypes[pos].SampleRate != 0;pos++)
-			if (CBSampleRate.GetValue().compare(_SampleRateTypes[pos].SampleRateName) == 0)
+			if (CBSampleRate.GetValue().compare(wxString(_SampleRateTypes[pos].SampleRateName, *wxConvCurrent)) == 0)
 			{
 				DestInfo->samplerate = _SampleRateTypes[pos].SampleRate;
 				break;
@@ -321,7 +321,7 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 	}
 }
 
-bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigned long NbSamples, bool interleaved)
+bool					WiredSampleRate::SaveFile(wxString& Path, unsigned int NbChannel, unsigned long NbSamples, bool interleaved)
 {
 	wxFile				File;
 	
@@ -330,7 +330,7 @@ bool					WiredSampleRate::SaveFile(string& Path, unsigned int NbChannel, unsigne
 	OpenedFileInfo.format |= SF_FORMAT_WAV;
 	if (sf_format_check(&OpenedFileInfo) == false)
 		cout << "[FILECONVERT] An error occured while trying to open a file, bad parameters)" << endl;
-	if ((OpenedFile = sf_open(Path.c_str(), SFM_WRITE, &OpenedFileInfo)) == NULL)
+	if ((OpenedFile = sf_open(Path.mb_str(*wxConvCurrent), SFM_WRITE, &OpenedFileInfo)) == NULL)
 	{
 		cout << "[FILECONVERT] An error occured while trying to open file (details :" << sf_strerror(OpenedFile) << ")" << endl;
 		return false;

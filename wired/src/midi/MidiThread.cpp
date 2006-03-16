@@ -102,7 +102,7 @@ MidiDeviceList				*MidiThread::ListDevices()
       pdi = Pm_GetDeviceInfo(i);
       if (pdi->input)
       	{
-	  d = new MidiDeviceInfo(pdi->name, i);
+	  d = new MidiDeviceInfo(wxString(pdi->name, *wxConvCurrent), i);
 	  DeviceList.push_back(d);
 	}
     }

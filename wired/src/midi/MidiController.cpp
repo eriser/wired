@@ -18,13 +18,13 @@ MidiController::MidiController(wxWindow *parent) :
   CancelBtn = new wxButton(this, ID_CANCEL, _("Cancel"), wxPoint(110, 170));
   
   ChannelText = new wxStaticText(this, -1, _("Channel:"), wxPoint(52, 26));
-  ChannelCtrl = new wxSpinCtrl(this, -1, "1", wxPoint(52, 44));
+  ChannelCtrl = new wxSpinCtrl(this, -1, wxT("1"), wxPoint(52, 44));
 
   ControllerText = new wxStaticText(this, -1, _("Control:"), wxPoint(52, 70));
-  ControllerCtrl = new wxSpinCtrl(this, -1, "0", wxPoint(52, 88));
+  ControllerCtrl = new wxSpinCtrl(this, -1, wxT("0"), wxPoint(52, 88));
   
   ValueText = new wxStaticText(this, -1, _("Value:"), wxPoint(52, 114));
-  ValueCtrl = new wxSpinCtrl(this, -1, "0", wxPoint(52, 130));
+  ValueCtrl = new wxSpinCtrl(this, -1, wxT("0"), wxPoint(52, 130));
 
   Type = 0;
 }
