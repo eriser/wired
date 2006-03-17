@@ -10,7 +10,7 @@
 #include <iostream>
 using namespace std;
 
-#define PLUGIN_NAME	"Test Instrument"
+#define PLUGIN_NAME	wxT("Test Instrument")
 
 static PlugInitInfo info;
 
@@ -52,9 +52,9 @@ TestPlugin::TestPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   NoteIsOn = false;
   Freq = 0.f;
 
-  bmp = new wxBitmap("plugins/test/instr_test.bmp", wxBITMAP_TYPE_BMP);  
+  bmp = new wxBitmap(wxT("plugins/test/instr_test.bmp"), wxBITMAP_TYPE_BMP);  
 
-  wxButton *b = new wxButton(this, 31, "YEAH", wxPoint(0,0), wxSize(40, 60));
+  wxButton *b = new wxButton(this, 31, wxT("YEAH"), wxPoint(0,0), wxSize(40, 60));
   b->Show();
   
   Connect(31, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)(wxEventFunction)
