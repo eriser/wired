@@ -10,10 +10,10 @@
 
 using namespace std;
 
-#define IMAGE_BT_ADD_UP           "plugins/akaisampler/add_up.png"
-#define IMAGE_BT_DEL_UP           "plugins/akaisampler/del_up.png"
-#define IMAGE_BT_ADD_DOWN      "plugins/akaisampler/add_down.png"
-#define IMAGE_BT_DEL_DOWN      "plugins/akaisampler/del_down.png"
+#define IMAGE_BT_ADD_UP           wxT("plugins/akaisampler/add_up.png")
+#define IMAGE_BT_DEL_UP          wxT("plugins/akaisampler/del_up.png")
+#define IMAGE_BT_ADD_DOWN      wxT("plugins/akaisampler/add_down.png")
+#define IMAGE_BT_DEL_DOWN      wxT("plugins/akaisampler/del_down.png")
 
 class ASSampleList : public ASPlugin
 {

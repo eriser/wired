@@ -60,8 +60,8 @@ ASPlugPanel::ASPlugPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
   Title = new wxStaticText(ToolbarPanel, -1, _("Plugin"), wxPoint(18, 0), 
 			   wxSize(-1, OPT_TOOLBAR_HEIGHT));
   Title->SetForegroundColour(*wxWHITE);
-  wxImage *detach_up = new wxImage(string(as->GetDataDir() + string(OPT_DETACH_TOOL_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *detach_down = new wxImage(string(as->GetDataDir() + string(OPT_DETACH_TOOL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *detach_up = new wxImage(wxString(as->GetDataDir() + wxString(OPT_DETACH_TOOL_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *detach_down = new wxImage(wxString(as->GetDataDir() + wxString(OPT_DETACH_TOOL_DOWN)), wxBITMAP_TYPE_PNG);
   DetachPlugBtn = new DownButton(this, ID_TOOL_DETACH_OPTIONPANEL, wxPoint(2, 2), wxSize(14, 12), 
 				 detach_up, detach_down, true);
   wxBoxSizer *right_sizer;

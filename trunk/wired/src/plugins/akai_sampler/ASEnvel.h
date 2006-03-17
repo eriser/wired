@@ -55,7 +55,7 @@ class ASEnvel : public ASPlugin
     void Process(float **, int, int, long);
     void Load(int, long);
     long Save(int);
-    static wxString GetFXName() { return "Envelope"; }
+    static wxString GetFXName() { return wxT("Envelope"); }
   private:
     void MovePt(wxPoint);
     wxBitmap *Grid;

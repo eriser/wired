@@ -24,11 +24,11 @@ PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, unsigned long Unique
 	ExternalPlug->SetInfo(&InitInfo);
 }
 
-PluginLoader::PluginLoader(string filename) : 
+PluginLoader::PluginLoader(wxString filename) : 
   FileName(filename)
 {
   External = false;
-  handle = dlopen(filename.c_str(), RTLD_LAZY);
+  handle = dlopen(filename.mb_str(*wxConvCurrent), RTLD_LAZY);
   if (!handle) 
     {
       cerr << "[PLUGLOADER] Error: Cannot open library: " << dlerror() << '\n';

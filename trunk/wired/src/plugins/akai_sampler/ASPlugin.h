@@ -14,7 +14,7 @@ class ASPlugin : public wxPanel
     virtual void OnDetach(wxWindow *);
     void SetSample(class ASamplerSample *ass) { this->ass = ass; }
     virtual void Process(float **buf, int nbchan, int pos, long len);
-    static wxString GetFXName() { return "ASPlugin"; }
+    static wxString GetFXName() { return wxT("ASPlugin"); }
     wxString GetType() { return type; }
     virtual long Save(int fd) { return 0; }
     virtual void Load(int fd, long len) { return ; }
