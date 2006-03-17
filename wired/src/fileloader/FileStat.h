@@ -27,7 +27,7 @@ public:
 	FileStat(const FileStat& copy){;}
 	~FileStat(){;}
 	
-	bool            StatFile(const wxChar *FileName);
+	bool            StatFile(const char *FileName);
     wxLongLong      GetSampleRate();
     wxLongLong      GetNbChannels();
     wxString        GetBitNess();

@@ -1042,9 +1042,8 @@ void FileLoader::OnSelectFile(wxListEvent &e)
 	    preview->Enable();
 	  else
 	    preview->Disable();
-      wxString FileName = fn.c_str();
       FileStat      Stats;
-      if (Stats.StatFile(FileName.c_str()))
+      if (Stats.StatFile(fn.mb_str(*wxConvCurrent)))
         FileInfo->SetLabel(wxString(Stats.GetFormat() + wxString(wxT(", ")) + Stats.GetBitNess() + 
                             Stats.GetLenght().Format(wxT("\t\t\t %H hours - %M minutes - %S seconds")) +
                             wxString(wxT("\n")) + Stats.GetNbChannels().ToString() + wxString(wxT(" channel(s), ")) + 
