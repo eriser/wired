@@ -28,21 +28,21 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Init();
 
   wxImage *tr_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_WW_BG)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_WW_BG), 
 		wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
   SetSize(-1, -1, 400, 100);
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_WW_BMP)).c_str(), 
+  bmp = new wxBitmap(GetDataDir() + wxString(IMG_WW_BMP), 
 		     wxBITMAP_TYPE_BMP);
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_WW_FADER_BG)).c_str(),
+  img_bg = new wxImage(GetDataDir() + wxString(IMG_WW_FADER_BG),
 		       wxBITMAP_TYPE_PNG);
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_WW_FADER_FG)).c_str(),
+  img_fg = new wxImage(GetDataDir() + wxString(IMG_WW_FADER_FG),
 		       wxBITMAP_TYPE_PNG);
   bypass_on = 
-    new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(),
+    new wxImage(GetDataDir() + wxString(IMG_BYPASS_ON),
 		wxBITMAP_TYPE_PNG);
   bypass_off = 
-    new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_BYPASS_OFF), 
 		wxBITMAP_TYPE_PNG);
   BypassBtn = 
     new DownButton(this, Wahwah_Bypass, wxPoint(21, 58), 
@@ -69,10 +69,10 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 			   wxPoint(320, 12), wxSize(22, 78), 
 			   this, GetPosition() + wxPoint(320, 35));
   
-  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
+  liquid_on = new wxImage(GetDataDir() + wxString(IMG_LIQUID_ON),
 			  wxBITMAP_TYPE_PNG);
   liquid_off = 
-    new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), 
 		wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
   SetBackgroundColour(wxColour(237, 237, 237));
@@ -265,23 +265,23 @@ void		EffectWahwah::Load(WiredPluginData& Datas)
 
    	WahwahMutex.Lock();		
    	// cout << "Good Load" << endl;
-	buffer = strdup(Datas.LoadValue(std::string(STR_RESOLUTION)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_RESOLUTION)));
 	if (buffer != NULL)
 		param.res = strtof(buffer, NULL);
 	free(buffer);
-	buffer = strdup(Datas.LoadValue(std::string(STR_FREQUENCY)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_FREQUENCY)));
 	if (buffer != NULL)
 		param.freq = strtof(buffer, NULL);
 	free(buffer);
-	buffer = strdup(Datas.LoadValue(std::string(STR_START_PHASE)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_START_PHASE)));
 	if (buffer != NULL)
 		param.startphase = strtof(buffer, NULL);
 	free(buffer);
-	buffer = strdup(Datas.LoadValue(std::string(STR_DEPTH)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_DEPTH)));
 	if (buffer != NULL)
 		param.depth = strtof(buffer, NULL);
 	free(buffer);
-	buffer = strdup(Datas.LoadValue(std::string(STR_FREQUENCY_OFS)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_FREQUENCY_OFS)));
 	if (buffer != NULL)
 		param.freqofs = strtof(buffer, NULL);
 	free(buffer);
@@ -306,19 +306,19 @@ void		EffectWahwah::Save(WiredPluginData& Datas)
 		std::ostringstream 	oss;
 
 		oss << params->freq;
-		Datas.SaveValue(std::string(STR_FREQUENCY), std::string(oss.str()));
+		Datas.SaveValue(wxString(STR_FREQUENCY), (char *)oss.str().c_str());
 		oss.seekp(ios_base::beg);
 		oss << params->startphase;
-		Datas.SaveValue(std::string(STR_START_PHASE), std::string(oss.str()));
+		Datas.SaveValue(wxString(STR_START_PHASE), (char *)oss.str().c_str());
 		oss.seekp(ios_base::beg);
 		oss << params->depth;
-		Datas.SaveValue(std::string(STR_DEPTH), std::string(oss.str()));
+		Datas.SaveValue(wxString(STR_DEPTH), (char *)oss.str().c_str());
 		oss.seekp(ios_base::beg);
 		oss << params->freqofs;
-		Datas.SaveValue(std::string(STR_FREQUENCY_OFS), std::string(oss.str()));
+		Datas.SaveValue(wxString(STR_FREQUENCY_OFS), (char *)oss.str().c_str());
 		oss.seekp(ios_base::beg);
 		oss << params->res;
-		Datas.SaveValue(std::string(STR_RESOLUTION), std::string(oss.str()));
+		Datas.SaveValue(wxString(STR_RESOLUTION), (char *)oss.str().c_str());
 		oss.seekp(ios_base::beg);		
 	}
 }
