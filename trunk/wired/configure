@@ -20354,148 +20354,8 @@ echo "$as_me: error: Couldn't find lib SoundTouch " >&2;}
 fi
 
 #AC_CHECK_LIB([ltdl], [lt_dlmutex_lock], [LTDL='yes'], AC_MSG_ERROR([Couldn't find lib libtool or ltdl ]))
-echo "$as_me:$LINENO: checking for FLAC__file_decoder_init in -lFLAC++" >&5
-echo $ECHO_N "checking for FLAC__file_decoder_init in -lFLAC++... $ECHO_C" >&6
-if test "${ac_cv_lib_FLACpp_FLAC__file_decoder_init+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lFLAC++  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char FLAC__file_decoder_init ();
-int
-main ()
-{
-FLAC__file_decoder_init ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_cxx_werror_flag"			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_lib_FLACpp_FLAC__file_decoder_init=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_lib_FLACpp_FLAC__file_decoder_init=no
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_FLACpp_FLAC__file_decoder_init" >&5
-echo "${ECHO_T}$ac_cv_lib_FLACpp_FLAC__file_decoder_init" >&6
-if test $ac_cv_lib_FLACpp_FLAC__file_decoder_init = yes; then
-  FLAC='yes'
-else
-  { { echo "$as_me:$LINENO: error: Couldn't find lib FLAC++ " >&5
-echo "$as_me: error: Couldn't find lib FLAC++ " >&2;}
-   { (exit 1); exit 1; }; }
-fi
-
-echo "$as_me:$LINENO: checking for vorbis_info_init in -lvorbis" >&5
-echo $ECHO_N "checking for vorbis_info_init in -lvorbis... $ECHO_C" >&6
-if test "${ac_cv_lib_vorbis_vorbis_info_init+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lvorbis  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any gcc2 internal prototype to avoid an error.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-/* We use char because int might match the return type of a gcc2
-   builtin and then its argument prototype would still apply.  */
-char vorbis_info_init ();
-int
-main ()
-{
-vorbis_info_init ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } &&
-	 { ac_try='test -z "$ac_cxx_werror_flag"			 || test ! -s conftest.err'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; } &&
-	 { ac_try='test -s conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-  ac_cv_lib_vorbis_vorbis_info_init=yes
-else
-  echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-ac_cv_lib_vorbis_vorbis_info_init=no
-fi
-rm -f conftest.err conftest.$ac_objext \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-echo "$as_me:$LINENO: result: $ac_cv_lib_vorbis_vorbis_info_init" >&5
-echo "${ECHO_T}$ac_cv_lib_vorbis_vorbis_info_init" >&6
-if test $ac_cv_lib_vorbis_vorbis_info_init = yes; then
-  VORBIS='yes'
-else
-  { { echo "$as_me:$LINENO: error: Couldn't find lib VorbisFile " >&5
-echo "$as_me: error: Couldn't find lib VorbisFile " >&2;}
-   { (exit 1); exit 1; }; }
-fi
-
+#AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find lib FLAC++ ]))
+#AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find lib VorbisFile ]))
 echo "$as_me:$LINENO: checking for xmlParseMemory in -lxml2" >&5
 echo $ECHO_N "checking for xmlParseMemory in -lxml2... $ECHO_C" >&6
 if test "${ac_cv_lib_xml2_xmlParseMemory+set}" = set; then
@@ -29458,7 +29318,7 @@ _ACEOF
 
 fi
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ac_config_files="$ac_config_files Makefile po/Makefile.in src/Makefile src/audio/Makefile src/editmidi/Makefile src/engine/Makefile src/fileloader/Makefile src/gui/Makefile src/midi/Makefile src/midi/portmidi/Makefile src/midi/portmidi/porttime/Makefile src/mixer/Makefile src/plugins/Makefile src/plugins/beatbox/Makefile src/plugins/compressor/Makefile src/plugins/crusher/Makefile src/plugins/delay/Makefile src/plugins/filter/Makefile src/plugins/loop_sampler/Makefile src/plugins/akai_sampler/Makefile src/plugins/reverb/Makefile src/plugins/synth/Makefile src/plugins/chorus/Makefile src/plugins/wahwah/Makefile src/plugins/test/Makefile src/redist/Makefile src/sequencer/Makefile src/undo/Makefile src/libs/Makefile src/libs/WiredWidgets/Makefile src/libs/WiredWidgets/src/Makefile src/libs/WiredAkai/Makefile src/libs/WiredAkai/src/Makefile src/data/Makefile src/data/ihm/Makefile src/data/ihm/mixer/Makefile src/data/ihm/opt/Makefile src/data/ihm/player/Makefile src/data/ihm/seqtrack/Makefile src/data/ihm/splash/Makefile src/data/ihm/toolbar/Makefile src/data/ihm/widgets/Makefile src/data/plugins/Makefile src/data/plugins/akaisampler/Makefile src/data/plugins/beatbox/Makefile src/data/plugins/compressor/Makefile src/data/plugins/crusher/Makefile src/data/plugins/delay/Makefile src/data/plugins/filter/Makefile src/data/plugins/loopsampler/Makefile src/data/plugins/reverb/Makefile src/data/plugins/wahwah/Makefile src/data/plugins/chorus/Makefile src/data/dssi/Makefile src/conf/Makefile src/xml/Makefile src/dssi/Makefile src/samplerate/Makefile src/codec/Makefile src/codec/wiredcodec/Makefile src/codec/wiredcodec/flac/Makefile src/codec/wiredcodec/mpeg/Makefile src/codec/wiredcodec/vorbis/Makefile src/wiredvideo/Makefile"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ac_config_files="$ac_config_files Makefile po/Makefile.in src/Makefile src/audio/Makefile src/editmidi/Makefile src/engine/Makefile src/fileloader/Makefile src/gui/Makefile src/midi/Makefile src/midi/portmidi/Makefile src/midi/portmidi/porttime/Makefile src/mixer/Makefile src/plugins/Makefile src/plugins/beatbox/Makefile src/plugins/compressor/Makefile src/plugins/crusher/Makefile src/plugins/delay/Makefile src/plugins/filter/Makefile src/plugins/loop_sampler/Makefile src/plugins/akai_sampler/Makefile src/plugins/reverb/Makefile src/plugins/synth/Makefile src/plugins/chorus/Makefile src/plugins/wahwah/Makefile src/plugins/test/Makefile src/redist/Makefile src/sequencer/Makefile src/undo/Makefile src/libs/Makefile src/libs/WiredWidgets/Makefile src/libs/WiredWidgets/src/Makefile src/libs/WiredAkai/Makefile src/libs/WiredAkai/src/Makefile src/data/Makefile src/data/ihm/Makefile src/data/ihm/mixer/Makefile src/data/ihm/opt/Makefile src/data/ihm/player/Makefile src/data/ihm/seqtrack/Makefile src/data/ihm/splash/Makefile src/data/ihm/toolbar/Makefile src/data/ihm/widgets/Makefile src/data/plugins/Makefile src/data/plugins/akaisampler/Makefile src/data/plugins/beatbox/Makefile src/data/plugins/compressor/Makefile src/data/plugins/crusher/Makefile src/data/plugins/delay/Makefile src/data/plugins/filter/Makefile src/data/plugins/loopsampler/Makefile src/data/plugins/reverb/Makefile src/data/plugins/wahwah/Makefile src/data/plugins/chorus/Makefile src/data/dssi/Makefile src/conf/Makefile src/xml/Makefile src/dssi/Makefile src/samplerate/Makefile src/codec/Makefile src/codec/wiredcodec/Makefile src/codec/wiredcodec/mpeg/Makefile src/wiredvideo/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -30084,9 +29944,7 @@ do
   "src/samplerate/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/samplerate/Makefile" ;;
   "src/codec/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/Makefile" ;;
   "src/codec/wiredcodec/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/Makefile" ;;
-  "src/codec/wiredcodec/flac/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/flac/Makefile" ;;
   "src/codec/wiredcodec/mpeg/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/mpeg/Makefile" ;;
-  "src/codec/wiredcodec/vorbis/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/codec/wiredcodec/vorbis/Makefile" ;;
   "src/wiredvideo/Makefile" ) CONFIG_FILES="$CONFIG_FILES src/wiredvideo/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "default-1" ) CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;
@@ -31154,11 +31012,11 @@ echo "$as_me:$LINENO: result:   Installation directories :
 
     Library directory : ........... ${prefix}/lib
     Program directory : ........... ${prefix}/bin
-    Data directory : .............. ${prefix}/lib/shared/wired
+    Data directory : .............. ${prefix}/shared/wired
 " >&5
 echo "${ECHO_T}  Installation directories :
 
     Library directory : ........... ${prefix}/lib
     Program directory : ........... ${prefix}/bin
-    Data directory : .............. ${prefix}/lib/shared/wired
+    Data directory : .............. ${prefix}/shared/wired
 " >&6
