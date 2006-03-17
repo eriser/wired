@@ -20,23 +20,23 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Init();
 
   wxImage *tr_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_DL_BG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(GetDataDir() + wxString(IMG_DL_BG), wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
 
-  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
-  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  liquid_on = new wxImage(GetDataDir() + wxString(IMG_LIQUID_ON), wxBITMAP_TYPE_PNG);
+  liquid_off = new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
-  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), wxBITMAP_TYPE_PNG);
-  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  bypass_on = new wxImage(GetDataDir() + wxString(IMG_BYPASS_ON), wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(GetDataDir() + wxString(IMG_BYPASS_OFF), wxBITMAP_TYPE_PNG);
   BypassBtn = new DownButton(this, Delay_Bypass, wxPoint(21, 58), 
 			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), bypass_off, bypass_on);
 
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(),
+  bmp = new wxBitmap(GetDataDir() + wxString(IMG_DL_BMP),
 		     wxBITMAP_TYPE_BMP); 
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(),
+  img_bg = new wxImage(GetDataDir() + wxString(IMG_DL_FADER_BG),
 		       wxBITMAP_TYPE_PNG);
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(), 
+  img_fg = new wxImage(GetDataDir() + wxString(IMG_DL_FADER_FG), 
 		       wxBITMAP_TYPE_PNG );
   TimeFader = new FaderCtrl(this, Delay_Time, img_bg, img_fg, 0, MAX_TIME, 
 			    &DelayTime, true, wxPoint(73, 11), 
@@ -256,51 +256,51 @@ void DelayPlugin::Load(WiredPluginData& Datas)
 	
 	DelayMutex.Lock();
 		
-	buffer = strdup(Datas.LoadValue(std::string(STR_DELAY_TIME)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_DELAY_TIME, *wxConvCurrent)));
 	if (buffer != NULL)
 		DelayTime = strtof(buffer, NULL);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_FEEDBACK)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_FEEDBACK, *wxConvCurrent)));
 	if (buffer != NULL)
 		Feedback = strtof(buffer, NULL);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_DRY_LEVEL)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_DRY_LEVEL, *wxConvCurrent)));
 	if (buffer != NULL)
 		DryLevel = strtof(buffer, NULL);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_WET_LEVEL)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_WET_LEVEL, *wxConvCurrent)));
 	if (buffer != NULL)
 		WetLevel = strtof(buffer, NULL);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_BYPASS1)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_BYPASS1, *wxConvCurrent)));
 	if (buffer != NULL)
 		MidiBypass[0] = atoi(buffer);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_BYPASS2)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_BYPASS2, *wxConvCurrent)));
 	if (buffer != NULL)
 		MidiBypass[1] = atoi(buffer);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_TIME1)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_TIME1, *wxConvCurrent)));
 	if (buffer != NULL)
 		MidiTime[0] = atoi(buffer);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_TIME2)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_TIME2, *wxConvCurrent)));
 	if (buffer != NULL)
 		MidiTime[1] = atoi(buffer);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_FEEDBACK1)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_FEEDBACK1, *wxConvCurrent)));
 	if (buffer != NULL)
 		MidiFeedback[0] = atoi(buffer);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_FEEDBACK2)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_FEEDBACK2, *wxConvCurrent)));
 	if (buffer != NULL)
 		MidiFeedback[1] = atoi(buffer);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_DRY_WET1)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_DRY_WET1, *wxConvCurrent)));
 	if (buffer != NULL)
 		MidiDryWet[0] = atoi(buffer);
 	free(buffer);	
-	buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_DRY_WET2)));
+	buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_DRY_WET2, *wxConvCurrent)));
 	if (buffer != NULL)
 		MidiDryWet[1] = atoi(buffer);
 	free(buffer);
@@ -313,40 +313,40 @@ void DelayPlugin::Save(WiredPluginData& Datas)
 	std::ostringstream 	oss;
 
 	oss << DelayTime;
-	Datas.SaveValue(std::string(STR_DELAY_TIME), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_DELAY_TIME, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << Feedback;
-	Datas.SaveValue(std::string(STR_FEEDBACK), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_FEEDBACK, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << DryLevel;
-	Datas.SaveValue(std::string(STR_DRY_LEVEL), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_DRY_LEVEL, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << WetLevel;
-	Datas.SaveValue(std::string(STR_WET_LEVEL), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_WET_LEVEL, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << MidiBypass[0];
-	Datas.SaveValue(std::string(STR_MIDI_BYPASS1), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_MIDI_BYPASS1, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << MidiBypass[1];
-	Datas.SaveValue(std::string(STR_MIDI_BYPASS2), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_MIDI_BYPASS2, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << MidiTime[0];
-	Datas.SaveValue(std::string(STR_MIDI_TIME1), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_MIDI_TIME1, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << MidiTime[1];
-	Datas.SaveValue(std::string(STR_MIDI_TIME2), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_MIDI_TIME2, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << MidiFeedback[0];
-	Datas.SaveValue(std::string(STR_MIDI_FEEDBACK1), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_MIDI_FEEDBACK1, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << MidiFeedback[1];
-	Datas.SaveValue(std::string(STR_MIDI_FEEDBACK2), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_MIDI_FEEDBACK2, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << MidiDryWet[0];
-	Datas.SaveValue(std::string(STR_MIDI_DRY_WET1), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_MIDI_DRY_WET1, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 	oss << MidiDryWet[1];
-	Datas.SaveValue(std::string(STR_MIDI_DRY_WET2), std::string(oss.str()));
+	Datas.SaveValue(wxString(STR_MIDI_DRY_WET2, *wxConvCurrent), (char *)oss.str().c_str());
 	oss.seekp(ios_base::beg);
 }
 

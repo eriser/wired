@@ -12,16 +12,16 @@
 #include "StaticBitmap.h"
 #include "DownButton.h"
 
-#define PLUGIN_NAME	"Delay"
+#define PLUGIN_NAME	wxT("Delay")
 
-#define IMG_DL_BG	"plugins/delay/delay_bg.png"
-#define IMG_DL_BMP	"plugins/delay/DelayPlug.bmp"
-#define IMG_DL_FADER_BG	"plugins/delay/fader_bg.png"
-#define IMG_DL_FADER_FG	"plugins/delay/fader_button.png"
-#define IMG_LIQUID_ON	"plugins/delay/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF	"plugins/delay/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON	"plugins/delay/bypass_button_down.png"
-#define IMG_BYPASS_OFF	"plugins/delay/bypass_button_up.png"
+#define IMG_DL_BG	wxT("plugins/delay/delay_bg.png")
+#define IMG_DL_BMP	wxT("plugins/delay/DelayPlug.bmp")
+#define IMG_DL_FADER_BG	wxT("plugins/delay/fader_bg.png")
+#define IMG_DL_FADER_FG	wxT("plugins/delay/fader_button.png")
+#define IMG_LIQUID_ON	wxT("plugins/delay/liquid-cristal_play.png")
+#define IMG_LIQUID_OFF	wxT("plugins/delay/liquid-cristal_stop.png")
+#define IMG_BYPASS_ON	wxT("plugins/delay/bypass_button_down.png")
+#define IMG_BYPASS_OFF	wxT("plugins/delay/bypass_button_up.png")
 
 #define STR_DELAY_TIME _("DelayTime")
 #define STR_FEEDBACK _("Feedback")
@@ -58,7 +58,7 @@ class DelayPlugin: public Plugin
   bool	 IsAudio();
   bool	 IsMidi();
 
-  std::string DefaultName() { return "Delay"; }
+  wxString DefaultName() { return wxT("Delay"); }
 
   void	 OnBypass(wxCommandEvent &e);  
   void	 OnDelayTime(wxScrollEvent &e);  
