@@ -63,8 +63,8 @@ AC_CHECK_LIB([pthread], [pthread_create], [PTHREAD='yes'], AC_MSG_ERROR([Couldn'
 AC_CHECK_LIB([sndfile], [sf_open], [LIBSNDFILE='yes'], AC_MSG_ERROR([Couldn't find libsndfile ]))
 AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch ]))
 #AC_CHECK_LIB([ltdl], [lt_dlmutex_lock], [LTDL='yes'], AC_MSG_ERROR([Couldn't find lib libtool or ltdl ]))
-AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find lib FLAC++ ]))
-AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find lib VorbisFile ]))
+#AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find lib FLAC++ ]))
+#AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find lib VorbisFile ]))
 AC_CHECK_LIB([xml2], [xmlParseMemory], [ XML2F='yes' ], AC_MSG_ERROR([Couldn't find libxml2 ]))
 AC_CHECK_LIB([samplerate], [src_new], [SRC='yes' ], AC_MSG_ERROR([Couldn't find libsamplerate]))
 
@@ -228,9 +228,7 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
 		src/samplerate/Makefile
 		src/codec/Makefile
 		src/codec/wiredcodec/Makefile
-		src/codec/wiredcodec/flac/Makefile
 		src/codec/wiredcodec/mpeg/Makefile
-		src/codec/wiredcodec/vorbis/Makefile
 		src/wiredvideo/Makefile])
 
 AC_OUTPUT
