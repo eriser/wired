@@ -22,8 +22,8 @@
 #define VIEW_FGCOLOR	*wxWHITE
 #define VIEW_BARCOLOR	*wxBLUE
 
-#define MAGN_UP		"plugins/beatbox/magn_up.png"
-#define MAGN_DOWN	"plugins/beatbox/magn_down.png"
+#define MAGN_UP		wxT("plugins/beatbox/magn_up.png")
+#define MAGN_DOWN	wxT("plugins/beatbox/magn_down.png")
 
 class WiredBeatBox;
 class BeatBoxChannel;
