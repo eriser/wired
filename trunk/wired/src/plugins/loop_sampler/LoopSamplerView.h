@@ -15,24 +15,24 @@ using namespace std;
 
 #include <list>
 
-#define IMG_LSV_HAND_UP		"plugins/loopsampler/hand_up.png"
-#define IMG_LSV_HAND_DOWN	"plugins/loopsampler/hand_down.png"
-#define IMG_LSV_PEN_UP		"plugins/loopsampler/pen_up.png"
-#define IMG_LSV_PEN_DOWN	"plugins/loopsampler/pen_down.png"
-#define IMG_LSV_INV_UP		"plugins/loopsampler/inverse_up.png"
-#define IMG_LSV_INV_DOWN	"plugins/loopsampler/inverse_down.png"
-#define IMG_LSV_CREATE_UP	"plugins/loopsampler/create_up.png"
-#define IMG_LSV_CREATE_DOWN	"plugins/loopsampler/create_down.png"
-#define IMG_LSV_FADER_BG	"plugins/loopsampler/fader_bg.png"
-#define IMG_LSV_FADER_FG	"plugins/loopsampler/fader_fg.png"
-#define IMG_LSV_KNOB_BG		"plugins/loopsampler/knob_bg.png"
-#define IMG_LSV_KNOB_FG		"plugins/loopsampler/knob_fg.png"
+#define IMG_LSV_HAND_UP		wxT("plugins/loopsampler/hand_up.png")
+#define IMG_LSV_HAND_DOWN	wxT("plugins/loopsampler/hand_down.png")
+#define IMG_LSV_PEN_UP		wxT("plugins/loopsampler/pen_up.png")
+#define IMG_LSV_PEN_DOWN	wxT("plugins/loopsampler/pen_down.png")
+#define IMG_LSV_INV_UP		wxT("plugins/loopsampler/inverse_up.png")
+#define IMG_LSV_INV_DOWN	wxT("plugins/loopsampler/inverse_down.png")
+#define IMG_LSV_CREATE_UP	wxT("plugins/loopsampler/create_up.png")
+#define IMG_LSV_CREATE_DOWN	wxT("plugins/loopsampler/create_down.png")
+#define IMG_LSV_FADER_BG	wxT("plugins/loopsampler/fader_bg.png")
+#define IMG_LSV_FADER_FG	wxT("plugins/loopsampler/fader_fg.png")
+#define IMG_LSV_KNOB_BG		wxT("plugins/loopsampler/knob_bg.png")
+#define IMG_LSV_KNOB_FG		wxT("plugins/loopsampler/knob_fg.png")
 
 class LoopSamplerView : public wxPanel
 {
  public:
   LoopSamplerView(wxMutex *mutex, wxWindow *parent, const wxPoint &pos, 
-		  const wxSize &size, string datadir, LoopPos *loopinfo);
+		  const wxSize &size, wxString datadir, LoopPos *loopinfo);
   ~LoopSamplerView();
 
   void SetWaveFile(WaveFile *w);
@@ -49,7 +49,7 @@ class LoopSamplerView : public wxPanel
   int Beats;
   int Bars;
 
-  string DataDir;
+  wxString DataDir;
   LoopPos *LoopInfo;
 
   wxPanel *Toolbar;

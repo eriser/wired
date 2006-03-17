@@ -12,10 +12,10 @@ BeatDialog::BeatDialog(wxWindow *parent) :
   Centre();
 
   OkBtn = new wxButton(this, ID_OK, _("OK"), wxPoint(20, 78));
-  CancelBtn = new wxButton(this, ID_CANCEL, "Cancel", wxPoint(110, 78));
+  CancelBtn = new wxButton(this, ID_CANCEL, _("Cancel"), wxPoint(110, 78));
   
   BeatText = new wxStaticText(this, -1, _("Number of beat per bar:"), wxPoint(30, 10));
-  BeatCtrl = new wxSpinCtrl(this, -1, "4", wxPoint(60, 40));
+  BeatCtrl = new wxSpinCtrl(this, -1, wxT("4"), wxPoint(60, 40));
 }
 
 BeatDialog::~BeatDialog()

@@ -52,7 +52,7 @@ void		RulerLoop::OnPaint(wxPaintEvent &event)
     {
       if (!(m % Beats))
 	{
-	  s.Printf("%d", (long) (m / Beats));
+	  s.Printf(wxT("%d"), (long) (m / Beats));
 	  dc.DrawText(s, (int) floor(x) + 3, -2);
 	}
       dc.DrawLine((int) floor(x), (m++ % Beats) ? RULER_HEIGHT - 4 : 0,

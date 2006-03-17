@@ -19,7 +19,7 @@ BEGIN_EVENT_TABLE(LoopSamplerView, wxPanel)
 END_EVENT_TABLE()
 
 LoopSamplerView::LoopSamplerView(wxMutex *mutex, wxWindow *parent, const wxPoint &pos, 
-				 const wxSize &size, string datadir, LoopPos *loopinfo)
+				 const wxSize &size, wxString datadir, LoopPos *loopinfo)
   : wxPanel(parent, -1, pos, size), Mutex(mutex), DataDir(datadir), LoopInfo(loopinfo)
 {
   SetBackgroundColour(wxColour(146, 155, 162));//CL_SEQVIEW_BACKGROUND);
@@ -31,19 +31,19 @@ LoopSamplerView::LoopSamplerView(wxMutex *mutex, wxWindow *parent, const wxPoint
   Beats = 4;
   Bars = 4;
 
-  hand_up = new wxImage(string(DataDir + string(IMG_LSV_HAND_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  hand_down = new wxImage(string(DataDir + string(IMG_LSV_HAND_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  pen_up = new wxImage(string(DataDir + string(IMG_LSV_PEN_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  pen_down = new wxImage(string(DataDir + string(IMG_LSV_PEN_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  inverse_up = new wxImage(string(DataDir + string(IMG_LSV_INV_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  inverse_down = new wxImage(string(DataDir + string(IMG_LSV_INV_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  create_up = new wxImage(string(DataDir + string(IMG_LSV_CREATE_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  create_down = new wxImage(string(DataDir + string(IMG_LSV_CREATE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  hand_up = new wxImage(DataDir + wxString(IMG_LSV_HAND_UP), wxBITMAP_TYPE_PNG);
+  hand_down = new wxImage(DataDir + wxString(IMG_LSV_HAND_DOWN), wxBITMAP_TYPE_PNG);
+  pen_up = new wxImage(DataDir + wxString(IMG_LSV_PEN_UP), wxBITMAP_TYPE_PNG);
+  pen_down = new wxImage(DataDir + wxString(IMG_LSV_PEN_DOWN), wxBITMAP_TYPE_PNG);
+  inverse_up = new wxImage(DataDir + wxString(IMG_LSV_INV_UP), wxBITMAP_TYPE_PNG);
+  inverse_down = new wxImage(DataDir + wxString(IMG_LSV_INV_DOWN), wxBITMAP_TYPE_PNG);
+  create_up = new wxImage(DataDir + wxString(IMG_LSV_CREATE_UP), wxBITMAP_TYPE_PNG);
+  create_down = new wxImage(DataDir + wxString(IMG_LSV_CREATE_DOWN), wxBITMAP_TYPE_PNG);
 
-  fader_bg = new wxImage(string(DataDir + string(IMG_LSV_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  fader_fg = new wxImage(string(DataDir + string(IMG_LSV_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
-  knob_bg = new wxImage(string(DataDir + string(IMG_LSV_KNOB_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  knob_fg = new wxImage(string(DataDir + string(IMG_LSV_KNOB_FG)).c_str(), wxBITMAP_TYPE_PNG);
+  fader_bg = new wxImage(DataDir + wxString(IMG_LSV_FADER_BG), wxBITMAP_TYPE_PNG);
+  fader_fg = new wxImage(DataDir + wxString(IMG_LSV_FADER_FG), wxBITMAP_TYPE_PNG);
+  knob_bg = new wxImage(DataDir + wxString(IMG_LSV_KNOB_BG), wxBITMAP_TYPE_PNG);
+  knob_fg = new wxImage(DataDir + wxString(IMG_LSV_KNOB_FG), wxBITMAP_TYPE_PNG);
 
   DragBtn = new DownButton(this, LoopSamplerView_Drag, 
 			   wxPoint(6, 8), wxSize(31, 29), hand_up, hand_down, false);
@@ -56,11 +56,11 @@ LoopSamplerView::LoopSamplerView(wxMutex *mutex, wxWindow *parent, const wxPoint
   
   wxStaticText *t;
 
-  NoteLabel = new wxStaticText(Toolbar, -1, "0", wxPoint(52, 2), wxSize(10, -1));
+  NoteLabel = new wxStaticText(Toolbar, -1, wxT("0"), wxPoint(52, 2), wxSize(10, -1));
   NoteLabel->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   NoteLabel->SetForegroundColour(*wxWHITE);
 
-  PitchLabel = new wxStaticText(Toolbar, -1, "0", wxPoint(92, 2), wxSize(10, -1));
+  PitchLabel = new wxStaticText(Toolbar, -1, wxT("0"), wxPoint(92, 2), wxSize(10, -1));
   PitchLabel->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   PitchLabel->SetForegroundColour(*wxWHITE);
 
@@ -71,11 +71,11 @@ LoopSamplerView::LoopSamplerView(wxMutex *mutex, wxWindow *parent, const wxPoint
   t->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   t->SetForegroundColour(*wxWHITE);
 
-  VolLabel = new wxStaticText(Toolbar, -1, "100", wxPoint(48, 64), wxSize(10, -1));
+  VolLabel = new wxStaticText(Toolbar, -1, wxT("100"), wxPoint(48, 64), wxSize(10, -1));
   VolLabel->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   VolLabel->SetForegroundColour(*wxWHITE);
 
-  AffectLabel = new wxStaticText(Toolbar, -1, "C0", wxPoint(90, 64), wxSize(10, -1));
+  AffectLabel = new wxStaticText(Toolbar, -1, wxT("C0"), wxPoint(90, 64), wxSize(10, -1));
   AffectLabel->SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   AffectLabel->SetForegroundColour(*wxWHITE);
 
@@ -224,19 +224,19 @@ void LoopSamplerView::OnSliceSelected(wxCommandEvent &event)
 	wxString s;
 
 	NoteKnob->SetValue((*i)->Note + 13);	
-	s.Printf("%d", (*i)->Note);
+	s.Printf(wxT("%d"), (*i)->Note);
 	NoteLabel->SetLabel(s);
 
 	PitchKnob->SetValue((int)((*i)->Pitch * 100));
-	s.Printf("%d", (int)((*i)->Pitch * 100) - 100);
+	s.Printf(wxT("%d"), (int)((*i)->Pitch * 100) - 100);
 	PitchLabel->SetLabel(s);
 	
 	VolKnob->SetValue((int)((*i)->Volume * 100));
-	s.Printf("%d", (int)((*i)->Volume * 100));
+	s.Printf(wxT("%d"), (int)((*i)->Volume * 100));
 	VolLabel->SetLabel(s);
 
 	AffectKnob->SetValue((*i)->AffectMidi);
-	s.Printf("%d", (*i)->AffectMidi);
+	s.Printf(wxT("%d"), (*i)->AffectMidi);
 	AffectLabel->SetLabel(s);
 	
 	break;
@@ -257,7 +257,7 @@ void LoopSamplerView::OnNote(wxScrollEvent &event)
 	 
 	 wxString s;
 	 
-	 s.Printf("%d", (*i)->Note);
+	 s.Printf(wxT("%d"), (*i)->Note);
 	 NoteLabel->SetLabel(s);
 	 break;
        } 
@@ -276,7 +276,7 @@ void LoopSamplerView::OnPitch(wxScrollEvent &event)
 	
 	wxString s;
 	
-	s.Printf("%d", PitchKnob->GetValue() - 100);
+	s.Printf(wxT("%d"), PitchKnob->GetValue() - 100);
 	PitchLabel->SetLabel(s);
 	break;
       } 
@@ -295,7 +295,7 @@ void LoopSamplerView::OnVolume(wxScrollEvent &event)
 	
 	wxString s;
 	
-	s.Printf("%d", VolKnob->GetValue());
+	s.Printf(wxT("%d"), VolKnob->GetValue());
 	VolLabel->SetLabel(s);
 	break;
       } 
@@ -314,7 +314,7 @@ void LoopSamplerView::OnAffectMidi(wxScrollEvent &event)
 
 	wxString s;
 	
-	s.Printf("%d", AffectKnob->GetValue());
+	s.Printf(wxT("%d"), AffectKnob->GetValue());
 	AffectLabel->SetLabel(s);
 	break;
       } 
