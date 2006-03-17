@@ -20,31 +20,31 @@
 #include "JCRev.h"
 #include "PRCRev.h"
 
-#define PLUGIN_NAME	"Reverb"
+#define PLUGIN_NAME	wxT("Reverb")
 
-#define IMG_RV_BG	"plugins/reverb/reverb_bg.png"
-#define IMG_RV_BMP	"plugins/reverb/ReverbPlug.bmp"
-#define IMG_RV_FADER_BG	"plugins/reverb/fader_bg.png"
-#define IMG_RV_FADER_FG	"plugins/reverb/fader_button.png"
-#define IMG_RV_KNOB_BG	"plugins/reverb/knob_bg.png"
-#define IMG_RV_KNOB_FG	"plugins/reverb/knob_fg.png"
-#define IMG_LIQUID_ON	"plugins/reverb/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF	"plugins/reverb/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON	"plugins/reverb/bypass_button_down.png"
-#define IMG_BYPASS_OFF	"plugins/reverb/bypass_button_up.png"
+#define IMG_RV_BG	wxT("plugins/reverb/reverb_bg.png")
+#define IMG_RV_BMP	wxT("plugins/reverb/ReverbPlug.bmp")
+#define IMG_RV_FADER_BG	wxT("plugins/reverb/fader_bg.png")
+#define IMG_RV_FADER_FG	wxT("plugins/reverb/fader_button.png")
+#define IMG_RV_KNOB_BG	wxT("plugins/reverb/knob_bg.png")
+#define IMG_RV_KNOB_FG	wxT("plugins/reverb/knob_fg.png")
+#define IMG_LIQUID_ON	wxT("plugins/reverb/liquid-cristal_play.png")
+#define IMG_LIQUID_OFF	wxT("plugins/reverb/liquid-cristal_stop.png")
+#define IMG_BYPASS_ON	wxT("plugins/reverb/bypass_button_down.png")
+#define IMG_BYPASS_OFF	wxT("plugins/reverb/bypass_button_up.png")
 #define EFFECT_MIX	100.f
 
-#define IMG_RV_PRC		"plugins/reverb/reverb_prc_dwn.png"
-#define IMG_RV_N		"plugins/reverb/reverb_n_dwn.png"
-#define IMG_RV_JC		"plugins/reverb/reverb_jc_dwn.png"
+#define IMG_RV_PRC		wxT("plugins/reverb/reverb_prc_dwn.png")
+#define IMG_RV_N		wxT("plugins/reverb/reverb_n_dwn.png")
+#define IMG_RV_JC		wxT("plugins/reverb/reverb_jc_dwn.png")
 
-#define IMG_RV_PRC_UP		"plugins/reverb/reverb_prc_up.png"
-#define IMG_RV_N_UP		"plugins/reverb/reverb_n_up.png"
-#define IMG_RV_JC_UP		"plugins/reverb/reverb_jc_up.png"
+#define IMG_RV_PRC_UP		wxT("plugins/reverb/reverb_prc_up.png")
+#define IMG_RV_N_UP		wxT("plugins/reverb/reverb_n_up.png")
+#define IMG_RV_JC_UP		wxT("plugins/reverb/reverb_jc_up.png")
 
-#define IMG_RV_KNOB_PRC		"plugins/reverb/reverb_knob_prc.png"
-#define IMG_RV_KNOB_N		"plugins/reverb/reverb_knob_n.png"
-#define IMG_RV_KNOB_JC		"plugins/reverb/reverb_knob_jc.png"
+#define IMG_RV_KNOB_PRC		wxT("plugins/reverb/reverb_knob_prc.png")
+#define IMG_RV_KNOB_N		wxT("plugins/reverb/reverb_knob_n.png")
+#define IMG_RV_KNOB_JC		wxT("plugins/reverb/reverb_knob_jc.png")
 
 
 #define STR_REVERB_SELECTED	_("ReverbSelected")
@@ -77,7 +77,7 @@ class		ReverbPlugin: public Plugin
   bool		IsAudio();
   bool		IsMidi();
 
-  std::string	DefaultName() { return "Reverb"; }
+  wxString	DefaultName() { return wxT("Reverb"); }
 
   void		OnSelect(wxCommandEvent &e);
   void		OnASelect(wxCommandEvent &e);
