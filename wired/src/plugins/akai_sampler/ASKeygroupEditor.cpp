@@ -35,8 +35,8 @@ wxWindow *ASKeygroupEditor::CreateView(wxPanel *p, wxPoint &pt, wxSize &sz)
   sb->SetBackgroundColour(CL_OPTION_TOOLBAR);
   sb->SetForegroundColour(wxColour(0xFF, 0xFF, 0xFF));
   sb->SetScrollbar(0, 10, (clav->GetSize().GetWidth() - sz.GetWidth()), 10, false);
-  lokey = new wxStaticText(this, -1, "", wxPoint(20, 10));
-  hikey = new wxStaticText(this, -1, "", wxPoint(160, 10));
+  lokey = new wxStaticText(this, -1, wxT(""), wxPoint(20, 10));
+  hikey = new wxStaticText(this, -1, wxT(""), wxPoint(160, 10));
   lokey->SetForegroundColour(wxColour(0xFF, 0xFF, 0xFF));
   hikey->SetForegroundColour(wxColour(0xFF, 0xFF, 0xFF));
   PaintSelection();
@@ -64,11 +64,11 @@ void ASKeygroupEditor::PaintSelection()
       return;
     wxString notes[12] = { _("C"), _("C#"), _("D"), _("D#"), _("E"), _("F"), _("F#"), _("G"), _("G#"), _("A"), _("A#"), _("B") };
     wxString s(_("Low key: "));
-    s += notes[askg->GetLowKey() % 12] + " ";
+    s += notes[askg->GetLowKey() % 12] + wxT(" ");
     s << (int)(askg->GetLowKey() / 12 - 2);
     lokey->SetLabel(s);
     s = _("High key: ");
-    s += notes[askg->GetHighKey() % 12] + " ";
+    s += notes[askg->GetHighKey() % 12] + wxT(" ");
     s << (int)(askg->GetHighKey() / 12 - 2);
     hikey->SetLabel(s);
     vector<ASKey *> v = clav->GetKeys();

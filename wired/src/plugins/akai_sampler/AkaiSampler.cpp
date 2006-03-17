@@ -2,6 +2,7 @@
 #include "midi.h"
 #include <stdio.h>
 #include <math.h>
+#include <wx/wx.h>
 #include <wx/progdlg.h>
 #include "ASPlugPanel.h"
 #include "Settings.h"
@@ -36,7 +37,7 @@ END_EVENT_TABLE()
 
   sampleid = 0;
   keygroupid = 0;
-  sp_bg = new wxImage(string(GetDataDir() + string(IMG_SP_BG)).c_str(), 
+  sp_bg = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_BG)), 
       wxBITMAP_TYPE_PNG);
   if (sp_bg)
   {
@@ -44,7 +45,7 @@ END_EVENT_TABLE()
     delete sp_bg;
   }
 
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_SP_BMP)).c_str(), wxBITMAP_TYPE_BMP);  
+  bmp = new wxBitmap(wxString(GetDataDir() + wxString(IMG_SP_BMP)), wxBITMAP_TYPE_BMP);  
 
   PlugPanel = new ASPlugPanel(this, wxPoint(149, 8), wxSize(642, 120),//GetSize().GetWidth() - 150, GetSize().GetHeight() - ASCLAVIER_HEIGHT - 5), 
             wxTHICK_FRAME , this);
@@ -58,20 +59,20 @@ END_EVENT_TABLE()
   PlugPanel->AddPlug(Samples);
   PlugPanel->ShowPlugin(Samples);
 
-  open_up = new wxImage(string(GetDataDir() + string(IMG_SP_OPEN_UP)).c_str(),
+  open_up = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_OPEN_UP)),
       wxBITMAP_TYPE_PNG);
-  open_down = new wxImage(string(GetDataDir() + string(IMG_SP_OPEN_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  save_up = new wxImage(string(GetDataDir() + string(IMG_SP_SAVE_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  save_down = new wxImage(string(GetDataDir() + string(IMG_SP_SAVE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  fader_bg = new wxImage(string(GetDataDir() + string(IMG_SP_FADER_BG)).c_str(),wxBITMAP_TYPE_PNG);
-  fader_fg = new wxImage(string(GetDataDir() + string(IMG_SP_FADER_FG)).c_str(),wxBITMAP_TYPE_PNG);
+  open_down = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_OPEN_DOWN)), wxBITMAP_TYPE_PNG);
+  save_up = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_SAVE_UP)), wxBITMAP_TYPE_PNG);
+  save_down = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_SAVE_DOWN)), wxBITMAP_TYPE_PNG);
+  fader_bg = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_FADER_BG)),wxBITMAP_TYPE_PNG);
+  fader_fg = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_FADER_FG)),wxBITMAP_TYPE_PNG);
 
-  wxImage *sample_up = new wxImage(string(GetDataDir() + string(IMG_SP_SAMPLE_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *sample_down = new wxImage(string(GetDataDir() + string(IMG_SP_SAMPLE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *kg_up = new wxImage(string(GetDataDir() + string(IMG_SP_KGROUP_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *kg_down = new wxImage(string(GetDataDir() + string(IMG_SP_KGROUP_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *effect_up = new wxImage(string(GetDataDir() + string(IMG_SP_EFFECT_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *effect_down = new wxImage(string(GetDataDir() + string(IMG_SP_EFFECT_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *sample_up = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_SAMPLE_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *sample_down = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_SAMPLE_DOWN)), wxBITMAP_TYPE_PNG);
+  wxImage *kg_up = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_KGROUP_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *kg_down = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_KGROUP_DOWN)), wxBITMAP_TYPE_PNG);
+  wxImage *effect_up = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_EFFECT_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *effect_down = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_EFFECT_DOWN)), wxBITMAP_TYPE_PNG);
 
   OpenBtn = new DownButton(this, Sampler_Open,
       wxPoint(63, 10), wxSize(27, 30), open_up, open_down, true);
@@ -88,16 +89,16 @@ END_EVENT_TABLE()
 
   wxString s;
 
-  s.Printf("%d", PolyphonyCount);
+  s.Printf(wxT("%d"), PolyphonyCount);
   PolyCountLabel = new wxStaticText(this, -1, s, wxPoint(76, 100), wxSize(-1, 12));
   PolyCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   PolyCountLabel->SetLabel(s);
 
   wxImage** imgs;
   imgs = new wxImage*[3];
-  imgs[0] = new wxImage(_T(string(GetDataDir() + string(IMG_SP_POLY_1)).c_str()));
-  imgs[1] = new wxImage(_T(string(GetDataDir() + string(IMG_SP_POLY_2)).c_str()));
-  imgs[2] = new wxImage(_T(string(GetDataDir() + string(IMG_SP_POLY_3)).c_str()));
+  imgs[0] = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_POLY_1)));
+  imgs[1] = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_POLY_2)));
+  imgs[2] = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_POLY_3)));
 
   PolyKnob = new CycleKnob(this, Sampler_Poly, 3, imgs, 10, 1, 256, 8,
       wxPoint(97, 97), wxDefaultSize);
@@ -107,11 +108,11 @@ END_EVENT_TABLE()
   delete imgs[2];
   delete imgs;
 
-  wxImage *img_led_off = new wxImage(string(GetDataDir() + string(IMG_SP_LED_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *img_led_off = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_LED_OFF)), wxBITMAP_TYPE_PNG);
   if (img_led_off)
     LedOff = new wxBitmap(img_led_off);
 
-  wxImage *img_led_on = new wxImage(string(GetDataDir() + string(IMG_SP_LED_ON)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *img_led_on = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_LED_ON)), wxBITMAP_TYPE_PNG);
   if (img_led_on)
     LedOn = new wxBitmap(img_led_on);
 
@@ -225,7 +226,7 @@ void AkaiSampler::Load(int fd, long size)
     str = (char *)malloc(len + 1);
     count += read(fd, str, len);
     str[len] = 0;
-    wxString smpname(_T(str));
+    wxString smpname(str, *wxConvCurrent);
     free(str);
     cerr << "[WiredSampler] Loaded sample " << smpname << endl;
     unsigned long id;
@@ -235,10 +236,10 @@ void AkaiSampler::Load(int fd, long size)
     str = (char *)malloc(len + 1);
     count += read(fd, str, len);
     str[len] = 0;
-    wxString s(_T(str));
+    wxString s(str, *wxConvCurrent);
     wxString s2;
     ASamplerSample *ass = NULL; 
-    if (s.StartsWith("[AKAI]", &s2))
+    if (s.StartsWith(wxT("[AKAI]"), &s2))
     {
       wxString dev(s2.SubString(0, s2.Find(':') - 1));
       s2 = s2.SubString(s2.Find(':') + 1, s2.Len());
@@ -250,7 +251,7 @@ void AkaiSampler::Load(int fd, long size)
       int opos = path.Find('/');
       wxString name = path.SubString(opos + 1, path.Len());
       path = path.SubString(0, opos - 1);
-      AkaiPrefix = "[AKAI]";
+      AkaiPrefix = wxT("[AKAI]");
       AkaiPrefix += dev.c_str();
       AkaiPrefix += ':';
       AkaiPrefix += ((char)part + 64);
@@ -284,14 +285,14 @@ void AkaiSampler::Load(int fd, long size)
       }
     }
     else
-      ass = new ASamplerSample(this, new WaveFile(string(str), true), id);
+      ass = new ASamplerSample(this, new WaveFile(wxString(str, *wxConvCurrent), true), id);
     if (ass)
     {
-      cerr << "[WiredSampler] Loaded wav " << wxString(_T(str)) << endl;
+      cerr << "[WiredSampler] Loaded wav " << wxString(str, *wxConvCurrent) << endl;
       Samples->List->AddEntry(smpname, (void *)ass);
     }
     else
-      cerr << "[WiredSampler] Wavefile " << wxString(_T(str)) << " can't be loaded skipping..." << endl;
+      cerr << "[WiredSampler] Wavefile " << wxString(str, *wxConvCurrent) << " can't be loaded skipping..." << endl;
     free(str);
     count += read(fd, &len, sizeof(len));
     if (ass)
@@ -320,13 +321,13 @@ void AkaiSampler::Load(int fd, long size)
       str = (char *)malloc(len + 1);
       count += read(fd, str, len);
       str[len] = 0;
-      wxString type(str);
+      wxString type(str, *wxConvCurrent);
       free(str);
       count += read(fd, &len, sizeof(len));
       str = (char *)malloc(len + 1);
       count += read(fd, str, len);
       str[len] = 0;
-      wxString name(str);
+      wxString name(str, *wxConvCurrent);
       free(str);
       cerr << "[WiredSampler] Creating effect type " << type << " name " << name << endl;
       ASPlugin *p = NULL;
@@ -403,14 +404,14 @@ long AkaiSampler::Save(int fd)
     cerr << "[WiredSampler] Saving sample " << (*i)->GetName() << endl;
     ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
     str = (char *)(*i)->GetName().c_str();
-    len = wxStrlen(str);
+    len = wxStrlen(wxString(str, *wxConvCurrent));
     count += write(fd, &len, sizeof(len));
     count += write(fd, str, len);
     len = ass->GetID();
     cerr << "[WiredSampler] Saving ID " << len << endl;
     count += write(fd, &len, sizeof(len));
     str = (char *)ass->GetSample()->Filename.c_str();
-    len = wxStrlen(str);
+    len = wxStrlen(wxString(str, *wxConvCurrent));
     cerr << "[WiredSampler] Saving wavefile " << ass->GetSample()->Filename << endl;
     count += write(fd, &len, sizeof(len));
     count += write(fd, str, len);
@@ -431,12 +432,12 @@ long AkaiSampler::Save(int fd)
     for (vector<ASPlugin *>::iterator j = effects.begin(); j != effects.end(); j++)
     {
       str = (char *)(*j)->GetType().c_str();
-      len = wxStrlen(str);
+      len = wxStrlen(wxString(str, *wxConvCurrent));
       cerr << "[WiredSampler] Saving plugin type " << str << endl;
       count += write(fd, &len, sizeof(len));
       count += write(fd, str, len);
       str = (char *)(*j)->Name.c_str();
-      len = wxStrlen(str);
+      len = wxStrlen(wxString(str, *wxConvCurrent));
       cerr << "[WiredSampler] Saving plugin name " << str << endl;
       count += write(fd, &len, sizeof(len));
       count += write(fd, str, len);
@@ -494,16 +495,16 @@ void AkaiSampler::LoadProgram()
     cout << "Num: " << group->num << endl;
     if (group->zone_sample[0])
     {
-      wxString name = group->zone_sample[0]->name;
+      wxString name = wxString(group->zone_sample[0]->name, *wxConvCurrent);
       if (group->zone_sample[1])
-        name << "/" << group->zone_sample[1]->name;
+        name << wxT("/") << wxString(group->zone_sample[1]->name, *wxConvCurrent);
       ASamplerSample *ass = new ASamplerSample(this, group->zone_sample[0], group->zone_sample[1], AkaiPrefix);
       Samples->List->AddEntry(name, (void *)ass);
       ASamplerKeygroup *askg = new ASamplerKeygroup(this, group->lowkey, group->highkey);
       Keygroups.push_back(askg);
       ass->SetKeygroup(askg);
       askg->SetSample(ass);
-      ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + _(" #0 for ") + group->zone_sample[0]->name);
+      ASPlugin *p = new ASLoop(this, ASLoop::GetFXName() + _(" #0 for ") + wxString(group->zone_sample[0]->name, *wxConvCurrent));
       p->SetSample(ass);
       ass->AddEffect(p);
       PlugPanel->AddPlug(p);
@@ -754,10 +755,10 @@ void AkaiSampler::Update()
 void AkaiSampler::OnOpenFile(wxCommandEvent &event)
 {
   //  FileLoader *dlg = new FileLoader(this, -1, "Load AKAI patch", true, false, NULL);
-  string s = OpenFileLoader(_("Load AKAI program"), 0x0, true);
+  wxString s = OpenFileLoader(_("Load AKAI program"), 0x0, true);
   if (!s.empty()) //dlg->ShowModal() == wxID_OK)
   {
-    string filename = s; //dlg->GetSelectedFile();
+    string filename = (const char *)s.mb_str(*wxConvCurrent); //dlg->GetSelectedFile();
     //dlg->Destroy();
 
     wxProgressDialog *Progress = new wxProgressDialog(_("Loading AKAI program"),
@@ -785,12 +786,12 @@ void AkaiSampler::OnOpenFile(wxCommandEvent &event)
         opos = pos + 1;
       mName = mFilename.substr(opos, mFilename.size() - opos);
       mFilename = mFilename.substr(1, opos - 2);
-      AkaiPrefix = "[AKAI]";
-      AkaiPrefix += mDevice.c_str();
+      AkaiPrefix = wxT("[AKAI]");
+      AkaiPrefix += wxString(mDevice.c_str(), *wxConvCurrent);
       AkaiPrefix += ':';
       AkaiPrefix += ((char)mPart + 64);
       AkaiPrefix += '/';
-      AkaiPrefix += mFilename.c_str();
+      AkaiPrefix += wxString(mFilename.c_str(), *wxConvCurrent);
       AkaiPrefix += '/';
       cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; path: " << mFilename << endl;
       cout << "AkaiPrefix: " << AkaiPrefix << endl;
@@ -833,7 +834,7 @@ void AkaiSampler::OnPolyphony(wxCommandEvent &event)
 
     PolyphonyCount = PolyKnob->GetValue();;
     Workshop.SetPolyphony(PolyphonyCount);
-    s.Printf("%d", PolyphonyCount);
+    s.Printf(wxT("%d"), PolyphonyCount);
     PolyCountLabel->SetLabel(s);
 
     Mutex.Unlock();
@@ -897,7 +898,7 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
           if ((*i)->GetType() == EFFECTSNAMES[0])
             count++;
         s << EFFECTSNAMES[0];
-        s << " #";
+        s << wxT(" #");
         s << count;
         s << _(" for ") ;
         s << e->GetName();
@@ -909,7 +910,7 @@ void AkaiSampler::OnAddEffect(wxCommandEvent &event)
           if ((*i)->GetType() == EFFECTSNAMES[1])
             count++;
         s << EFFECTSNAMES[1];
-        s << " #";
+        s << wxT(" #");
         s << count;
         s << _(" for ") ;
         s << e->GetName();

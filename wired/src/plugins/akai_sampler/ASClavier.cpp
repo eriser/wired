@@ -29,7 +29,7 @@ ASClavier::ASClavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
   // creation des touches blanches
   for (int i = NB_WHITEASKEY; i > 0; i--)
   {
-    wxString notestr = "";
+    wxString notestr = wxT("");
     notestr += gamme.GetChar(note);
     notestr = notestr << oct;
     keys.push_back(new ASKey(this, -1, wxPoint(posYW, 
@@ -78,9 +78,9 @@ ASClavier::ASClavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
   int arf = 0;
   for (int i = NB_WHITEASKEY; i > 1; i--)
   {
-    wxString notestr = "";
+    wxString notestr = wxT("");
     notestr += gamme.GetChar(note);
-    notestr += "#";
+    notestr += wxT("#");
     notestr = notestr << oct;
     note++;
     if (note == 7)

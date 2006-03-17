@@ -33,10 +33,10 @@ wxWindow *ASSampleList::CreateView(wxPanel *panel, wxPoint &pt, wxSize &sz)
   SetSize(sz);
   Move(pt);
   List = new ASList(this, -1, wxPoint(0, 0), sz);
-  wxImage *btadd_up = new wxImage(string(as->GetDataDir() + string(IMAGE_BT_ADD_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *btdel_up = new wxImage(string(as->GetDataDir() + string(IMAGE_BT_DEL_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *btadd_down = new wxImage(string(as->GetDataDir() + string(IMAGE_BT_ADD_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *btdel_down = new wxImage(string(as->GetDataDir() + string(IMAGE_BT_DEL_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *btadd_up = new wxImage(wxString(as->GetDataDir() + wxString(IMAGE_BT_ADD_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *btdel_up = new wxImage(wxString(as->GetDataDir() + wxString(IMAGE_BT_DEL_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *btadd_down = new wxImage(wxString(as->GetDataDir() + wxString(IMAGE_BT_ADD_DOWN)), wxBITMAP_TYPE_PNG);
+  wxImage *btdel_down = new wxImage(wxString(as->GetDataDir() + wxString(IMAGE_BT_DEL_DOWN)), wxBITMAP_TYPE_PNG);
   List->AddControl(new DownButton(List, ASSampleList_AddSample, wxPoint(0, 0), wxSize(12, 12), btadd_up, btadd_down, true));
   List->AddControl(new DownButton(List, ASSampleList_DelSample, wxPoint(0, 0), wxSize(12, 12), btdel_up, btdel_down, true));
   Show(true);
@@ -47,7 +47,7 @@ void  ASSampleList::OnAddSample(wxCommandEvent &e)
 {
   int fk = 24;
   vector<string> exts;
-  string s = as->OpenFileLoader(_("Load Sample"), 0x0, false);
+  wxString s = as->OpenFileLoader(_("Load Sample"), 0x0, false);
   if (!s.empty())
   {
     WaveFile *w = new WaveFile(s, true);

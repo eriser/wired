@@ -33,7 +33,7 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akai
     for (int i = 0; i < smpR->end; i++)
       data[smpL->size + i] = smpR->buffer[i];
     this->w = new WaveFile(data, smpL->end + smpR->end, 2, smpL->rate);
-    w->Filename = AkaiPrefix + smpL->name + "/" + smpR->name;
+    w->Filename = AkaiPrefix + wxString(smpL->name, *wxConvCurrent) + wxT("/") + wxString(smpR->name, *wxConvCurrent);
     free(data);
     this->Position = smpL->start;
     this->loopstart = smpL->loop_start - smpL->loop_len;
@@ -42,7 +42,7 @@ ASamplerSample::ASamplerSample(class AkaiSampler *as, t_akaiSample *smpL, t_akai
   else
   {
     this->w = new WaveFile(smpL->buffer, smpL->end, 2, smpL->rate);
-    w->Filename = AkaiPrefix + smpL->name;
+    w->Filename = AkaiPrefix + wxString(smpL->name, *wxConvCurrent);
     this->Position = smpL->start;
     this->loopstart = smpL->loop_start - smpL->loop_len;
     this->loopend = smpL->loop_start;

@@ -24,7 +24,7 @@ class ASLoop : public ASPlugin
     void OnScroll(wxScrollEvent &);
     void OnDragThumb(wxScrollEvent &);
     void OnStopDragThumb(wxScrollEvent &);
-    static wxString GetFXName() { return "Looping"; }
+    static wxString GetFXName() { return wxT("Looping"); }
   private:
     ASWaveView *wv;
     int ZoomX;

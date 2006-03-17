@@ -13,33 +13,33 @@
 #include "ASSampleList.h"
 #include "ASKeygroupList.h"
 
-#define IMG_SP_BMP	    "plugins/akaisampler/WiredSampler.bmp"
-#define IMG_SP_BG	    "plugins/akaisampler/sampler_bg.png"
-#define IMG_SP_OPEN_UP      "plugins/akaisampler/sampler_open_up.png"
-#define IMG_SP_OPEN_DOWN    "plugins/akaisampler/sampler_open_down.png"
-#define IMG_SP_SAVE_UP      "plugins/akaisampler/sampler_save_up.png"
-#define IMG_SP_SAVE_DOWN    "plugins/akaisampler/sampler_save_down.png"
+#define IMG_SP_BMP	    wxT("plugins/akaisampler/WiredSampler.bmp")
+#define IMG_SP_BG	    wxT("plugins/akaisampler/sampler_bg.png")
+#define IMG_SP_OPEN_UP      wxT("plugins/akaisampler/sampler_open_up.png")
+#define IMG_SP_OPEN_DOWN    wxT("plugins/akaisampler/sampler_open_down.png")
+#define IMG_SP_SAVE_UP      wxT("plugins/akaisampler/sampler_save_up.png")
+#define IMG_SP_SAVE_DOWN    wxT("plugins/akaisampler/sampler_save_down.png")
 
-#define IMG_SP_POLY_1       "plugins/akaisampler/sampler_polyknob_1.png"
-#define IMG_SP_POLY_2       "plugins/akaisampler/sampler_polyknob_2.png"
-#define IMG_SP_POLY_3       "plugins/akaisampler/sampler_polyknob_3.png"
+#define IMG_SP_POLY_1       wxT("plugins/akaisampler/sampler_polyknob_1.png")
+#define IMG_SP_POLY_2       wxT("plugins/akaisampler/sampler_polyknob_2.png")
+#define IMG_SP_POLY_3       wxT("plugins/akaisampler/sampler_polyknob_3.png")
 
-#define IMG_SP_LED_OFF      "plugins/akaisampler/sampler_midi_off.png"
-#define IMG_SP_LED_ON       "plugins/akaisampler/sampler_midi_on.png"
+#define IMG_SP_LED_OFF      wxT("plugins/akaisampler/sampler_midi_off.png")
+#define IMG_SP_LED_ON       wxT("plugins/akaisampler/sampler_midi_on.png")
 
-#define IMG_SP_FADER_BG     "plugins/akaisampler/sampler_fader_bg.png"
-#define IMG_SP_FADER_FG     "plugins/akaisampler/sampler_fader_button.png"
+#define IMG_SP_FADER_BG     wxT("plugins/akaisampler/sampler_fader_bg.png")
+#define IMG_SP_FADER_FG     wxT("plugins/akaisampler/sampler_fader_button.png")
 
-#define IMG_SP_SAMPLE_UP    "plugins/akaisampler/sampler_samples_up.png"
-#define IMG_SP_SAMPLE_DOWN  "plugins/akaisampler/sampler_samples_down.png"
-#define IMG_SP_KGROUP_UP    "plugins/akaisampler/sampler_keygr_up.png"
-#define IMG_SP_KGROUP_DOWN  "plugins/akaisampler/sampler_keygr_down.png"
-#define IMG_SP_EFFECT_UP    "plugins/akaisampler/sampler_effects_up.png"
-#define IMG_SP_EFFECT_DOWN  "plugins/akaisampler/sampler_effects_down.png"
+#define IMG_SP_SAMPLE_UP    wxT("plugins/akaisampler/sampler_samples_up.png")
+#define IMG_SP_SAMPLE_DOWN  wxT("plugins/akaisampler/sampler_samples_down.png")
+#define IMG_SP_KGROUP_UP    wxT("plugins/akaisampler/sampler_keygr_up.png")
+#define IMG_SP_KGROUP_DOWN  wxT("plugins/akaisampler/sampler_keygr_down.png")
+#define IMG_SP_EFFECT_UP    wxT("plugins/akaisampler/sampler_effects_up.png")
+#define IMG_SP_EFFECT_DOWN  wxT("plugins/akaisampler/sampler_effects_down.png")
 
 using namespace std;
 
-#define PLUGIN_NAME "WiredSampler"
+#define PLUGIN_NAME wxT("WiredSampler")
 
 class ASamplerNote
 {     
@@ -86,7 +86,7 @@ class AkaiSampler : public Plugin
     bool   IsInstrument(); 
     bool   IsAudio();
     bool   IsMidi();
-    std::string DefaultName() { return "WiredSampler"; }
+    wxString DefaultName() { return wxT("WiredSampler"); }
 
     wxBitmap *GetBitmap();
 
