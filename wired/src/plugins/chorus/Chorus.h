@@ -18,7 +18,7 @@
 #include <iostream>
 using namespace std;
 
-#define SINERAW		"plugins/chorus/sinewave.raw"
+#define SINERAW		wxT("plugins/chorus/sinewave.raw")
 
 class Chorus : public Effect
 {

@@ -10,17 +10,17 @@
 #include "DownButton.h"
 #include "midi.h"
 
-#define PLUGIN_NAME	"Crusher"
+#define PLUGIN_NAME	wxT("Crusher")
 
-#define IMG_CR_BG	"plugins/crusher/crusher_bg.png"
-#define IMG_CR_BMP	"plugins/crusher/CrusherPlug.bmp"
-#define IMG_CR_FADER_BG	"plugins/crusher/fader_bg.png"
-#define IMG_CR_FADER_FG	"plugins/crusher/fader_button.png"
+#define IMG_CR_BG	wxT("plugins/crusher/crusher_bg.png")
+#define IMG_CR_BMP	wxT("plugins/crusher/CrusherPlug.bmp")
+#define IMG_CR_FADER_BG	wxT("plugins/crusher/fader_bg.png")
+#define IMG_CR_FADER_FG	wxT("plugins/crusher/fader_button.png")
 
-#define IMG_LIQUID_ON	"plugins/reverb/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF	"plugins/reverb/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON	"plugins/reverb/bypass_button_down.png"
-#define IMG_BYPASS_OFF	"plugins/reverb/bypass_button_up.png"
+#define IMG_LIQUID_ON	wxT("plugins/reverb/liquid-cristal_play.png")
+#define IMG_LIQUID_OFF	wxT("plugins/reverb/liquid-cristal_stop.png")
+#define IMG_BYPASS_ON	wxT("plugins/reverb/bypass_button_down.png")
+#define IMG_BYPASS_OFF	wxT("plugins/reverb/bypass_button_up.png")
 
 static PlugInitInfo info;
 
@@ -37,7 +37,7 @@ class		CrusherPlugin: public Plugin
   void		Load(int fd, long size);
   long		Save(int fd);
 
-  std::string	DefaultName() { return "Crusher"; }
+  wxString	DefaultName() { return wxT("Crusher"); }
   
   bool		IsAudio();
   bool		IsMidi();
@@ -104,22 +104,22 @@ CrusherPlugin::CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Init();
 
   wxImage *tr_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_CR_BG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(GetDataDir() + wxString(IMG_CR_BG), wxBITMAP_TYPE_PNG);
   if (tr_bg)
     TpBmp = new wxBitmap(tr_bg);
   
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_CR_BMP)).c_str(), wxBITMAP_TYPE_BMP); 
+  bmp = new wxBitmap(GetDataDir() + wxString(IMG_CR_BMP), wxBITMAP_TYPE_BMP); 
 
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_CR_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_CR_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
+  img_bg = new wxImage(GetDataDir() + wxString(IMG_CR_FADER_BG), wxBITMAP_TYPE_PNG);
+  img_fg = new wxImage(GetDataDir() + wxString(IMG_CR_FADER_FG), wxBITMAP_TYPE_PNG);
 
-  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(), wxBITMAP_TYPE_PNG);
-  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  bypass_on = new wxImage(GetDataDir() + wxString(IMG_BYPASS_ON), wxBITMAP_TYPE_PNG);
+  bypass_off = new wxImage(GetDataDir() + wxString(IMG_BYPASS_OFF), wxBITMAP_TYPE_PNG);
   BypassBtn = new DownButton(this, Crusher_Bypass, wxPoint(21, 58), 
 			     wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()), bypass_off, bypass_on);  
   
-  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(), wxBITMAP_TYPE_PNG);
-  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), wxBITMAP_TYPE_PNG);
+  liquid_on = new wxImage(GetDataDir() + wxString(IMG_LIQUID_ON), wxBITMAP_TYPE_PNG);
+  liquid_off = new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
   BitsFader = new FaderCtrl(this, Crusher_Bits, img_bg, img_fg, 0, 76, &Bits,

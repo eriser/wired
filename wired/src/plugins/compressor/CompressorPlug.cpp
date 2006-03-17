@@ -16,14 +16,14 @@ CompressorPlugin::CompressorPlugin(PlugStartInfo &startinfo, PlugInitInfo *initi
   Init();
 
   wxImage *tr_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_CP_BG)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(GetDataDir() + wxString(IMG_CP_BG), wxBITMAP_TYPE_PNG);
   if (tr_bg)
     TpBmp = new wxBitmap(tr_bg);
   
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_CP_BMP)).c_str(), wxBITMAP_TYPE_BMP); 
+  bmp = new wxBitmap(GetDataDir() + wxString(IMG_CP_BMP), wxBITMAP_TYPE_BMP); 
 
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_CP_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG );
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_CP_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG );
+  img_bg = new wxImage(GetDataDir() + wxString(IMG_CP_FADER_BG), wxBITMAP_TYPE_PNG );
+  img_fg = new wxImage(GetDataDir() + wxString(IMG_CP_FADER_FG), wxBITMAP_TYPE_PNG );
   
   Target = 0;
   TargetFader = new 
