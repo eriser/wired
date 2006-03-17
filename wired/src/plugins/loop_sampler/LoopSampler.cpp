@@ -72,35 +72,35 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   /* Graphic control initialization */
 
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_LS_BMP)).c_str(), wxBITMAP_TYPE_BMP);  
+  bmp = new wxBitmap(GetDataDir() + wxString(IMG_LS_BMP), wxBITMAP_TYPE_BMP);  
   SetBackgroundColour(wxColour(200, 200, 200));
 
-  ls_bg = new wxImage(string(GetDataDir() + string(IMG_LS_BG)).c_str(), wxBITMAP_TYPE_PNG);
+  ls_bg = new wxImage(GetDataDir() + wxString(IMG_LS_BG), wxBITMAP_TYPE_PNG);
   if (ls_bg)
     BgBmp = new wxBitmap(ls_bg);
 
-  play_up = new wxImage(string(GetDataDir() + string(IMG_LS_PLAY_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  play_down = new wxImage(string(GetDataDir() + string(IMG_LS_PLAY_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  open_up = new wxImage(string(GetDataDir() + string(IMG_LS_OPEN_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  open_down = new wxImage(string(GetDataDir() + string(IMG_LS_OPEN_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  save_up = new wxImage(string(GetDataDir() + string(IMG_LS_SAVE_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  save_down = new wxImage(string(GetDataDir() + string(IMG_LS_SAVE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  seq_up =  new wxImage(string(GetDataDir() + string(IMG_LS_SEQ_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  seq_down =  new wxImage(string(GetDataDir() + string(IMG_LS_SEQ_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  opt_up =  new wxImage(string(GetDataDir() + string(IMG_LS_OPT_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  opt_down =  new wxImage(string(GetDataDir() + string(IMG_LS_OPT_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  up_up = new wxImage(string(GetDataDir() + string(IMG_LS_UPUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
-  up_down = new wxImage(string(GetDataDir() + string(IMG_LS_UPDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
-  down_up = new wxImage(string(GetDataDir() + string(IMG_LS_DOWNUP_IMG)).c_str(), wxBITMAP_TYPE_PNG);
-  down_down = new wxImage(string(GetDataDir() + string(IMG_LS_DOWNDO_IMG)).c_str(), wxBITMAP_TYPE_PNG);
-  btn_up = new wxImage(string(GetDataDir() + string(IMG_LS_BTN_ON_IMG)).c_str(), wxBITMAP_TYPE_PNG);
-  btn_down = new wxImage(string(GetDataDir() + string(IMG_LS_BTN_DOWN_IMG)).c_str(), wxBITMAP_TYPE_PNG);
-  fader_bg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  fader_fg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_FG)).c_str(), wxBITMAP_TYPE_PNG);
-  fader_vol_bg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_VOL_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  fader_vol_fg = new wxImage(string(GetDataDir() + string(IMG_LS_FADER_VOL_FG)).c_str(), wxBITMAP_TYPE_PNG);
-  knob_bg = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_BG)).c_str(), wxBITMAP_TYPE_PNG);
-  knob_fg = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_FG)).c_str(), wxBITMAP_TYPE_PNG);
+  play_up = new wxImage(GetDataDir() + wxString(IMG_LS_PLAY_UP), wxBITMAP_TYPE_PNG);
+  play_down = new wxImage(GetDataDir() + wxString(IMG_LS_PLAY_DOWN), wxBITMAP_TYPE_PNG);
+  open_up = new wxImage(GetDataDir() + wxString(IMG_LS_OPEN_UP), wxBITMAP_TYPE_PNG);
+  open_down = new wxImage(GetDataDir() + wxString(IMG_LS_OPEN_DOWN), wxBITMAP_TYPE_PNG);
+  save_up = new wxImage(GetDataDir() + wxString(IMG_LS_SAVE_UP), wxBITMAP_TYPE_PNG);
+  save_down = new wxImage(GetDataDir() + wxString(IMG_LS_SAVE_DOWN), wxBITMAP_TYPE_PNG);
+  seq_up =  new wxImage(GetDataDir() + wxString(IMG_LS_SEQ_UP), wxBITMAP_TYPE_PNG);
+  seq_down =  new wxImage(GetDataDir() + wxString(IMG_LS_SEQ_DOWN), wxBITMAP_TYPE_PNG);
+  opt_up =  new wxImage(GetDataDir() + wxString(IMG_LS_OPT_UP), wxBITMAP_TYPE_PNG);
+  opt_down =  new wxImage(GetDataDir() + wxString(IMG_LS_OPT_DOWN), wxBITMAP_TYPE_PNG);
+  up_up = new wxImage(GetDataDir() + wxString(IMG_LS_UPUP_IMG), wxBITMAP_TYPE_PNG);
+  up_down = new wxImage(GetDataDir() + wxString(IMG_LS_UPDO_IMG), wxBITMAP_TYPE_PNG);
+  down_up = new wxImage(GetDataDir() + wxString(IMG_LS_DOWNUP_IMG), wxBITMAP_TYPE_PNG);
+  down_down = new wxImage(GetDataDir() + wxString(IMG_LS_DOWNDO_IMG), wxBITMAP_TYPE_PNG);
+  btn_up = new wxImage(GetDataDir() + wxString(IMG_LS_BTN_ON_IMG), wxBITMAP_TYPE_PNG);
+  btn_down = new wxImage(GetDataDir() + wxString(IMG_LS_BTN_DOWN_IMG), wxBITMAP_TYPE_PNG);
+  fader_bg = new wxImage(GetDataDir() + wxString(IMG_LS_FADER_BG), wxBITMAP_TYPE_PNG);
+  fader_fg = new wxImage(GetDataDir() + wxString(IMG_LS_FADER_FG), wxBITMAP_TYPE_PNG);
+  fader_vol_bg = new wxImage(GetDataDir() + wxString(IMG_LS_FADER_VOL_BG), wxBITMAP_TYPE_PNG);
+  fader_vol_fg = new wxImage(GetDataDir() + wxString(IMG_LS_FADER_VOL_FG), wxBITMAP_TYPE_PNG);
+  knob_bg = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_BG), wxBITMAP_TYPE_PNG);
+  knob_fg = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_FG), wxBITMAP_TYPE_PNG);
   
   /* Toolbar Gauche */
     
@@ -120,7 +120,7 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   wxString s;
 
-  s.Printf("%d", BeatCount);
+  s.Printf(wxT("%d"), BeatCount);
 
   MesCountLabel = new wxStaticText(this, -1, s, wxPoint(288, 87), wxSize(-1, 12));
   MesCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
@@ -130,7 +130,7 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   MesDownBtn = new HoldButton(this, LoopSampler_MesDown, wxPoint(268, 96), wxSize(13, 9), 
 			      down_up, down_down);
 
-  s.Printf("%d", PolyphonyCount);
+  s.Printf(wxT("%d"), PolyphonyCount);
   PolyCountLabel = new wxStaticText(this, -1, s, wxPoint(288, 111), wxSize(-1, 12));
   PolyCountLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   PolyCountLabel->SetLabel(s);
@@ -140,8 +140,8 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   PolyDownBtn = new HoldButton(this, LoopSampler_PolyDown, wxPoint(268, 120), wxSize(13, 9), 
 			      down_up, down_down);
 
-  LedOff = new wxBitmap(wxImage(string(GetDataDir() + string(IMG_LS_LED_OFF_IMG)).c_str(), wxBITMAP_TYPE_PNG));
-  LedOn = new wxBitmap(wxImage(string(GetDataDir() + string(IMG_LS_LED_ON_IMG)).c_str(), wxBITMAP_TYPE_PNG));
+  LedOff = new wxBitmap(wxImage(GetDataDir() + wxString(IMG_LS_LED_OFF_IMG), wxBITMAP_TYPE_PNG));
+  LedOn = new wxBitmap(wxImage(GetDataDir() + wxString(IMG_LS_LED_ON_IMG), wxBITMAP_TYPE_PNG));
 
   MidiInBmp = new wxStaticBitmap(this, -1, *LedOff, wxPoint(368, 6));
 
@@ -166,15 +166,15 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   /* Global tuning */
 
   wxImage *imgs[9];
-  imgs[0] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_D)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[1] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_C)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[2] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_B)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[3] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_A)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[4] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_0)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[5] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_1)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[6] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_2)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[7] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_3)).c_str(), wxBITMAP_TYPE_PNG);
-  imgs[8] = new wxImage(string(GetDataDir() + string(IMG_LS_KNOB_4)).c_str(), wxBITMAP_TYPE_PNG);
+  imgs[0] = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_D), wxBITMAP_TYPE_PNG);
+  imgs[1] = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_C), wxBITMAP_TYPE_PNG);
+  imgs[2] = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_B), wxBITMAP_TYPE_PNG);
+  imgs[3] = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_A), wxBITMAP_TYPE_PNG);
+  imgs[4] = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_0), wxBITMAP_TYPE_PNG);
+  imgs[5] = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_1), wxBITMAP_TYPE_PNG);
+  imgs[6] = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_2), wxBITMAP_TYPE_PNG);
+  imgs[7] = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_3), wxBITMAP_TYPE_PNG);
+  imgs[8] = new wxImage(GetDataDir() + wxString(IMG_LS_KNOB_4), wxBITMAP_TYPE_PNG);
   
   OctaveKnob = new CycleKnob(this, LoopSampler_Octave, 9, imgs, 30, 0, 8, 4,
 			    wxPoint(228, 131), wxSize(60, 51));//new KnobCtrl(this, LoopSampler_Octave, knob_bg, knob_fg, 0, 8, 4, 1,
@@ -928,7 +928,7 @@ void LoopSampler::Load(int fd, long size)
 
   wxString str;
 
-  str.Printf("%d", BeatCount);
+  str.Printf(wxT("%d"), BeatCount);
   MesCountLabel->SetLabel(str);
   VolumeFader->SetValue((long)(Volume * 100.f));
   AttackFader->SetValue((long)(Attack * 100.f));
@@ -946,7 +946,7 @@ void LoopSampler::Load(int fd, long size)
   WaveFile *w;
   try
     {
-      w = new WaveFile(s, true);
+      w = new WaveFile(wxString(s, *wxConvCurrent), true);
 
       Mutex.Unlock();
 
@@ -1192,36 +1192,36 @@ wxBitmap *LoopSampler::GetBitmap()
 
 void LoopSampler::OnOpenFile(wxCommandEvent &event)
 {
-  vector<string> exts;  
+  vector<wxString> exts;  
 
-  exts.push_back("wav\tMicrosoft WAV format (*.wav)");
-  exts.push_back("wls\tLoop Sampler patch (*.wls)");
-  exts.push_back("aif\tApple/SGI AIFF format (*.aif)");
-  exts.push_back("au;snd\tSun/NeXT AU format (*.au; *.snd)");
-  exts.push_back("svx\tAmiga IFF / SVX8 / SV16 format (*.svx)");
-  exts.push_back("paf;fap\tEnsoniq PARIS format (*.paf; *.fap)");
-  exts.push_back("nist\tSphere NIST format (*.nist)");
-  exts.push_back("ircam;sf\tBerkeley/IRCAM/CARL format (*.ircam; *.sf)");
-  exts.push_back("voc\tCreative Labs VOC format (*.voc)");
-  exts.push_back("w64\tSonic Foundry's 64 bit RIFF/WAV format (*.w64)");
-  exts.push_back("raw\tRAW PCM data format (*.raw)");
-  exts.push_back("mat4;mat\tMatlab (tm) V4.2 / GNU Octave 2.0 format (*.mat4; *.mat)");
-  exts.push_back("mat5\tMatlab (tm) V5 / GNU Octave 2.1 format (*.mat5)");
-  exts.push_back("pvf\tPortable Voice Format (*.pvf)");
-  exts.push_back("xi\tFastracker 2 format (*.xi)");
+  exts.push_back(_("wav\tMicrosoft WAV format (*.wav)"));
+  exts.push_back(_("wls\tLoop Sampler patch (*.wls)"));
+  exts.push_back(_("aif\tApple/SGI AIFF format (*.aif)"));
+  exts.push_back(_("au;snd\tSun/NeXT AU format (*.au; *.snd)"));
+  exts.push_back(_("svx\tAmiga IFF / SVX8 / SV16 format (*.svx)"));
+  exts.push_back(_("paf;fap\tEnsoniq PARIS format (*.paf; *.fap)"));
+  exts.push_back(_("nist\tSphere NIST format (*.nist)"));
+  exts.push_back(_("ircam;sf\tBerkeley/IRCAM/CARL format (*.ircam; *.sf)"));
+  exts.push_back(_("voc\tCreative Labs VOC format (*.voc)"));
+  exts.push_back(_("w64\tSonic Foundry's 64 bit RIFF/WAV format (*.w64)"));
+  exts.push_back(_("raw\tRAW PCM data format (*.raw)"));
+  exts.push_back(_("mat4;mat\tMatlab (tm) V4.2 / GNU Octave 2.0 format (*.mat4; *.mat)"));
+  exts.push_back(_("mat5\tMatlab (tm) V5 / GNU Octave 2.1 format (*.mat5)"));
+  exts.push_back(_("pvf\tPortable Voice Format (*.pvf)"));
+  exts.push_back(_("xi\tFastracker 2 format (*.xi)"));
 
-  string s = OpenFileLoader(_("Loading sound file"), &exts);
+  wxString s = OpenFileLoader(_("Loading sound file"), &exts);
   if (!s.empty())
     {
-      string selfile = s;
+      wxString selfile = s;
 
       wxProgressDialog *Progress = new wxProgressDialog(_("Loading wave file"), _("Please wait..."), 
 							100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
                                                         | wxPD_REMAINING_TIME);
       Progress->Update(1);
       
-      wxFileName f(s.c_str());
-      if (f.GetExt().CompareTo("wls"))
+      wxFileName f(s);
+      if (f.GetExt().CompareTo(wxT("wls")))
 	{
 	  WaveFile *w;
 	  try
@@ -1244,7 +1244,7 @@ void LoopSampler::OnOpenFile(wxCommandEvent &event)
 	    {
 	      BeatCount = dlg->BeatCtrl->GetValue();
 	      wxString s;      
-	      s.Printf("%d", BeatCount);
+	      s.Printf(wxT("%d"), BeatCount);
 	      MesCountLabel->SetLabel(s);
 	      SetBarCoeff();
 	      if (View)
@@ -1259,7 +1259,7 @@ void LoopSampler::OnOpenFile(wxCommandEvent &event)
 	  int fd;
 
 	  cout << "[LOOPSAMPLER] Opening patch" << endl;
-	  if ((fd = open(s.c_str(), O_RDONLY)) > -1)
+	  if ((fd = open(s.mb_str(*wxConvCurrent), O_RDONLY)) > -1)
 	    {
 	      struct stat st;
 	      fstat(fd, &st);
@@ -1276,18 +1276,18 @@ void LoopSampler::OnOpenFile(wxCommandEvent &event)
 void LoopSampler::OnSaveFile(wxCommandEvent &event)
 {
   int fd;
-  vector<string> exts;
-  string s;
+  vector<wxString> exts;
+  wxString s;
 
-  exts.push_back("wls\tLoop Sampler patch (*.wls)");
+  exts.push_back(_("wls\tLoop Sampler patch (*.wls)"));
   s = SaveFileLoader(_("Save Loop Sampler patch"), &exts);
 
   if (!s.empty())
     {
-      wxFileName f(s.c_str());
+      wxFileName f(s);
       if (!f.HasExt())
-	s = s + ".wls";
-      if ((fd = open(s.c_str(), O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR)) > -1)
+	s = s + wxT(".wls");
+      if ((fd = open(s.mb_str(*wxConvCurrent), O_CREAT | O_TRUNC | O_WRONLY, S_IRUSR | S_IWUSR)) > -1)
 	{
 	  cout << "[LOOPSAMPLER] Patch saved: " << Save(fd) << " bytes" << endl;
 	  close(fd);
@@ -1348,7 +1348,7 @@ void LoopSampler::OnMesDown(wxCommandEvent &event)
 
       BeatCount--;
       wxString s;      
-      s.Printf("%d", BeatCount);
+      s.Printf(wxT("%d"), BeatCount);
       MesCountLabel->SetLabel(s);
       SetBarCoeff();
       if (View)
@@ -1368,7 +1368,7 @@ void LoopSampler::OnMesUp(wxCommandEvent &event)
 
       BeatCount++;
       wxString s;      
-      s.Printf("%d", BeatCount);
+      s.Printf(wxT("%d"), BeatCount);
       MesCountLabel->SetLabel(s);
       SetBarCoeff();
       if (View)
@@ -1390,7 +1390,7 @@ void LoopSampler::OnPolyUp(wxCommandEvent &event)
 
       PolyphonyCount++;
       Workshop.SetPolyphony(PolyphonyCount);
-      s.Printf("%d", PolyphonyCount);
+      s.Printf(wxT("%d"), PolyphonyCount);
       PolyCountLabel->SetLabel(s);      
 
       Mutex.Unlock();  
@@ -1407,7 +1407,7 @@ void LoopSampler::OnPolyDown(wxCommandEvent &event)
 
       PolyphonyCount--;
       Workshop.SetPolyphony(PolyphonyCount);
-      s.Printf("%d", PolyphonyCount);
+      s.Printf(wxT("%d"), PolyphonyCount);
       PolyCountLabel->SetLabel(s);      
 
       Mutex.Unlock();

@@ -50,9 +50,9 @@ void LoopBtn::OnPaint(wxPaintEvent &e)
   dc.SetFont(wxFont(7, wxDEFAULT, wxNORMAL, wxNORMAL));
   dc.SetTextForeground(*wxWHITE);
   if (MyLoop->LoopBegin)
-    dc.DrawText("S", 2, 0);
+    dc.DrawText(wxT("S"), 2, 0);
   else
-    dc.DrawText("E", 2, 0);
+    dc.DrawText(wxT("E"), 2, 0);
 }
 
 LoopCursor::LoopCursor(bool loop_begin, wxWindow *parent, wxWindowID id, const wxPoint &pos, 

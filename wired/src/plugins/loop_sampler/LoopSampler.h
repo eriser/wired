@@ -19,44 +19,44 @@ using namespace std;
 
 #include <list>
 
-#define PLUGIN_NAME "Loop Sampler"
+#define PLUGIN_NAME wxT("Loop Sampler")
 
-#define IMG_LS_BMP	"plugins/loopsampler/LoopSampler.bmp"
-#define IMG_LS_PLAY_UP  "plugins/loopsampler/loop_play_up.png"
-#define IMG_LS_PLAY_DOWN "plugins/loopsampler/loop_play_down.png"
-#define IMG_LS_OPEN_UP  "plugins/loopsampler/loop_open_up.png"
-#define IMG_LS_OPEN_DOWN "plugins/loopsampler/loop_open_down.png"
-#define IMG_LS_SAVE_UP  "plugins/loopsampler/loop_save_up.png"
-#define IMG_LS_SAVE_DOWN "plugins/loopsampler/loop_save_down.png"
-#define IMG_LS_SEQ_UP   "plugins/loopsampler/loop_toseq_up.png"
-#define IMG_LS_SEQ_DOWN "plugins/loopsampler/loop_toseq_down.png"
-#define IMG_LS_OPT_UP   "plugins/loopsampler/loop_opt_up.png"
-#define IMG_LS_OPT_DOWN "plugins/loopsampler/loop_opt_down.png"
-#define IMG_LS_UPUP_IMG "plugins/loopsampler/loop_up_button_up.png"
-#define IMG_LS_UPDO_IMG    "plugins/loopsampler/loop_up_button_down.png"
-#define IMG_LS_DOWNUP_IMG  "plugins/loopsampler/loop_down_button_up.png"
-#define IMG_LS_DOWNDO_IMG  "plugins/loopsampler/loop_down_button_down.png"
-#define IMG_LS_LED_OFF_IMG  "plugins/loopsampler/loop_midi_light_off.png"
-#define IMG_LS_LED_ON_IMG  "plugins/loopsampler/loop_midi_light_on.png"
-#define IMG_LS_BTN_ON_IMG  "plugins/loopsampler/loop_button_down.png"
-#define IMG_LS_BTN_DOWN_IMG  "plugins/loopsampler/loop_button_up.png"
-#define IMG_LS_BG	"plugins/loopsampler/loopsampler_bg.png"
-#define IMG_LS_FADER_BG  "plugins/loopsampler/loop_fader_bg.png"
-#define IMG_LS_FADER_FG  "plugins/loopsampler/loop_fader_button.png"
-#define IMG_LS_FADER_VOL_BG  "plugins/loopsampler/loop_fader_vol_bg.png"
-#define IMG_LS_FADER_VOL_FG  "plugins/loopsampler/loop_fader_vol_button.png"
-#define IMG_LS_KNOB_BG  "plugins/loopsampler/loop_knob_1.png"
-#define IMG_LS_KNOB_FG  "plugins/loopsampler/loop_knob_dot.png"
+#define IMG_LS_BMP	wxT("plugins/loopsampler/LoopSampler.bmp")
+#define IMG_LS_PLAY_UP  wxT("plugins/loopsampler/loop_play_up.png")
+#define IMG_LS_PLAY_DOWN wxT("plugins/loopsampler/loop_play_down.png")
+#define IMG_LS_OPEN_UP  wxT("plugins/loopsampler/loop_open_up.png")
+#define IMG_LS_OPEN_DOWN wxT("plugins/loopsampler/loop_open_down.png")
+#define IMG_LS_SAVE_UP  wxT("plugins/loopsampler/loop_save_up.png")
+#define IMG_LS_SAVE_DOWN wxT("plugins/loopsampler/loop_save_down.png")
+#define IMG_LS_SEQ_UP   wxT("plugins/loopsampler/loop_toseq_up.png")
+#define IMG_LS_SEQ_DOWN wxT("plugins/loopsampler/loop_toseq_down.png")
+#define IMG_LS_OPT_UP   wxT("plugins/loopsampler/loop_opt_up.png")
+#define IMG_LS_OPT_DOWN wxT("plugins/loopsampler/loop_opt_down.png")
+#define IMG_LS_UPUP_IMG wxT("plugins/loopsampler/loop_up_button_up.png")
+#define IMG_LS_UPDO_IMG    wxT("plugins/loopsampler/loop_up_button_down.png")
+#define IMG_LS_DOWNUP_IMG  wxT("plugins/loopsampler/loop_down_button_up.png")
+#define IMG_LS_DOWNDO_IMG  wxT("plugins/loopsampler/loop_down_button_down.png")
+#define IMG_LS_LED_OFF_IMG  wxT("plugins/loopsampler/loop_midi_light_off.png")
+#define IMG_LS_LED_ON_IMG  wxT("plugins/loopsampler/loop_midi_light_on.png")
+#define IMG_LS_BTN_ON_IMG  wxT("plugins/loopsampler/loop_button_down.png")
+#define IMG_LS_BTN_DOWN_IMG  wxT("plugins/loopsampler/loop_button_up.png")
+#define IMG_LS_BG	wxT("plugins/loopsampler/loopsampler_bg.png")
+#define IMG_LS_FADER_BG  wxT("plugins/loopsampler/loop_fader_bg.png")
+#define IMG_LS_FADER_FG  wxT("plugins/loopsampler/loop_fader_button.png")
+#define IMG_LS_FADER_VOL_BG  wxT("plugins/loopsampler/loop_fader_vol_bg.png")
+#define IMG_LS_FADER_VOL_FG  wxT("plugins/loopsampler/loop_fader_vol_button.png")
+#define IMG_LS_KNOB_BG  wxT("plugins/loopsampler/loop_knob_1.png")
+#define IMG_LS_KNOB_FG  wxT("plugins/loopsampler/loop_knob_dot.png")
 
-#define IMG_LS_KNOB_0   "plugins/loopsampler/loop_knob_octave_0.png"
-#define IMG_LS_KNOB_1   "plugins/loopsampler/loop_knob_octave_1.png"
-#define IMG_LS_KNOB_2   "plugins/loopsampler/loop_knob_octave_2.png"
-#define IMG_LS_KNOB_3   "plugins/loopsampler/loop_knob_octave_3.png"
-#define IMG_LS_KNOB_4   "plugins/loopsampler/loop_knob_octave_4.png"
-#define IMG_LS_KNOB_A   "plugins/loopsampler/loop_knob_octave_a.png"
-#define IMG_LS_KNOB_B   "plugins/loopsampler/loop_knob_octave_b.png"
-#define IMG_LS_KNOB_C   "plugins/loopsampler/loop_knob_octave_c.png"
-#define IMG_LS_KNOB_D   "plugins/loopsampler/loop_knob_octave_d.png"
+#define IMG_LS_KNOB_0   wxT("plugins/loopsampler/loop_knob_octave_0.png")
+#define IMG_LS_KNOB_1   wxT("plugins/loopsampler/loop_knob_octave_1.png")
+#define IMG_LS_KNOB_2   wxT("plugins/loopsampler/loop_knob_octave_2.png")
+#define IMG_LS_KNOB_3   wxT("plugins/loopsampler/loop_knob_octave_3.png")
+#define IMG_LS_KNOB_4   wxT("plugins/loopsampler/loop_knob_octave_4.png")
+#define IMG_LS_KNOB_A   wxT("plugins/loopsampler/loop_knob_octave_a.png")
+#define IMG_LS_KNOB_B   wxT("plugins/loopsampler/loop_knob_octave_b.png")
+#define IMG_LS_KNOB_C   wxT("plugins/loopsampler/loop_knob_octave_c.png")
+#define IMG_LS_KNOB_D   wxT("plugins/loopsampler/loop_knob_octave_d.png")
 
 class LoopNote
 {
@@ -100,7 +100,7 @@ class LoopSampler: public Plugin
   void   SetBPM(float bmp); //locks mutex
   void	 SetSignature(int num, int den); //locks mutex
 
-  std::string DefaultName() { return "LoopSampler"; }
+  wxString DefaultName() { return wxT("LoopSampler"); }
 
   void   Process(float **input, float **output, long sample_length); //locks mutex
   void   ProcessEvent(WiredEvent &event); //locks mutex
