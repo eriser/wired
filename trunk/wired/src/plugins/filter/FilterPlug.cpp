@@ -27,21 +27,21 @@ FilterPlugin::FilterPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Init();
 
   wxImage *tr_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_FL_BG)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_FL_BG), 
 		wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
   delete tr_bg;
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_FL_BMP)).c_str(), 
+  bmp = new wxBitmap(GetDataDir() + wxString(IMG_FL_BMP), 
 		     wxBITMAP_TYPE_BMP); 
-  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
+  liquid_on = new wxImage(GetDataDir() + wxString(IMG_LIQUID_ON),
 			  wxBITMAP_TYPE_PNG);
-  liquid_off = new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), 
+  liquid_off = new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), 
 			   wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
 
-  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(),
+  bypass_on = new wxImage(GetDataDir() + wxString(IMG_BYPASS_ON),
 			  wxBITMAP_TYPE_PNG);
-  bypass_off = new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
+  bypass_off = new wxImage(GetDataDir() + wxString(IMG_BYPASS_OFF), 
 			   wxBITMAP_TYPE_PNG);
   BypassBtn = new DownButton(this, Filter_Bypass, 
 			     wxPoint(21, 58), 
@@ -49,28 +49,28 @@ FilterPlugin::FilterPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 				    bypass_on->GetHeight()), bypass_off, 
 			     bypass_on);
 
-  hp_on = new wxImage(string(GetDataDir() + string(IMG_FL_HP)).c_str(), 
+  hp_on = new wxImage(GetDataDir() + wxString(IMG_FL_HP), 
 		      wxBITMAP_TYPE_PNG);
-  hp_off = new wxImage(string(GetDataDir() + string(IMG_FL_HP_UP)).c_str(), 
+  hp_off = new wxImage(GetDataDir() + wxString(IMG_FL_HP_UP), 
 		       wxBITMAP_TYPE_PNG);
-  lp_on = new wxImage(string(GetDataDir() + string(IMG_FL_LP)).c_str(), 
+  lp_on = new wxImage(GetDataDir() + wxString(IMG_FL_LP), 
 		      wxBITMAP_TYPE_PNG);
-  lp_off = new wxImage(string(GetDataDir() + string(IMG_FL_LP_UP)).c_str(), 
+  lp_off = new wxImage(GetDataDir() + wxString(IMG_FL_LP_UP), 
 		       wxBITMAP_TYPE_PNG);
-  bp_on = new wxImage(string(GetDataDir() + string(IMG_FL_BP)).c_str(),
+  bp_on = new wxImage(GetDataDir() + wxString(IMG_FL_BP),
 		      wxBITMAP_TYPE_PNG);
-  bp_off = new wxImage(string(GetDataDir() + string(IMG_FL_BP_UP)).c_str(),
+  bp_off = new wxImage(GetDataDir() + wxString(IMG_FL_BP_UP),
 		       wxBITMAP_TYPE_PNG);
-  notch_on = new wxImage(string(GetDataDir() + string(IMG_FL_NOTCH)).c_str(), 
+  notch_on = new wxImage(GetDataDir() + wxString(IMG_FL_NOTCH), 
 			 wxBITMAP_TYPE_PNG);
   notch_off = 
-    new wxImage(string(GetDataDir() + string(IMG_FL_NOTCH_UP)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_FL_NOTCH_UP), 
 		wxBITMAP_TYPE_PNG);
   notchbar_on = 
-    new wxImage(string(GetDataDir() + string(IMG_FL_NOTCHBAR)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_FL_NOTCHBAR), 
 		wxBITMAP_TYPE_PNG);
   notchbar_off = 
-    new wxImage(string(GetDataDir() + string(IMG_FL_NOTCHBAR_UP)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_FL_NOTCHBAR_UP), 
 		wxBITMAP_TYPE_PNG);
 
 
@@ -93,9 +93,9 @@ FilterPlugin::FilterPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 				   notch_off->GetHeight()),
 			    notch_off, notch_on);
   
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_FL_FADER_BG)).c_str(), 
+  img_bg = new wxImage(GetDataDir() + wxString(IMG_FL_FADER_BG), 
 		       wxBITMAP_TYPE_PNG);
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_FL_FADER_FG)).c_str(), 
+  img_fg = new wxImage(GetDataDir() + wxString(IMG_FL_FADER_FG), 
 		       wxBITMAP_TYPE_PNG);
   
   CutoffFader = new FaderCtrl(this, Filter_Cutoff, img_bg, img_fg, 1, 
@@ -110,13 +110,13 @@ FilterPlugin::FilterPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   imgs = new wxImage*[4];
   imgs[0] = 
-    new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_LP)).c_str()));
+    new wxImage(GetDataDir() + wxString(IMG_FL_KNOB_LP));
   imgs[1] = 
-    new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_BP)).c_str()));
+    new wxImage(GetDataDir() + wxString(IMG_FL_KNOB_BP));
   imgs[2] = 
-    new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_HP)).c_str()));
+    new wxImage(GetDataDir() + wxString(IMG_FL_KNOB_HP));
   imgs[3] = 
-    new wxImage(_T(string(GetDataDir() + string(IMG_FL_KNOB_NOTCH)).c_str()));
+    new wxImage(GetDataDir() + wxString(IMG_FL_KNOB_NOTCH));
   
   FilterSelect = new StaticPosKnob(this, Filter_Select, 4, imgs, 15, 0, 3, 0, 
 				   wxPoint(68, 7), wxDefaultSize);
@@ -257,43 +257,43 @@ void	 	FilterPlugin::Load(WiredPluginData& Datas)
   
   Mutex.Lock();
   
-  buffer = strdup(Datas.LoadValue(std::string(STR_FILTER)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_FILTER, *wxConvCurrent)));
   if (buffer != NULL)
     filter = atoi(buffer);
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_CUTOFF)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_CUTOFF, *wxConvCurrent)));
   if (buffer != NULL)
     Cutoff = strtof(buffer, NULL);
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_RESONANCE)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_RESONANCE, *wxConvCurrent)));
   if (buffer != NULL)
     Res = strtof(buffer, NULL);
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_BYPASS)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_BYPASS, *wxConvCurrent)));
   if (buffer != NULL)
     Bypass = atoi(buffer);
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_BYPASS1)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_BYPASS1, *wxConvCurrent)));
   if (buffer != NULL)
     MidiBypass[0] = atoi(buffer);
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_BYPASS2)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_BYPASS2, *wxConvCurrent)));
   if (buffer != NULL)
     MidiBypass[1] = atoi(buffer);
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_CUTOFF1)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_CUTOFF1, *wxConvCurrent)));
   if (buffer != NULL)
     MidiCutoff[0] = atoi(buffer);
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_CUTOFF2)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_CUTOFF2, *wxConvCurrent)));
   if (buffer != NULL)
 	  MidiCutoff[1] = atoi(buffer);
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_RESONANCE1)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_RESONANCE1, *wxConvCurrent)));
   if (buffer != NULL)
     MidiRes[0] = atoi(buffer);
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_MIDI_RESONANCE2)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_MIDI_RESONANCE2, *wxConvCurrent)));
   if (buffer != NULL)
     MidiRes[1] = atoi(buffer);
   free(buffer);
@@ -314,34 +314,34 @@ void	 FilterPlugin::Save(WiredPluginData& Datas)
   
   Mutex.Lock();
   oss << FilterSelect->GetValue();
-  Datas.SaveValue(std::string(STR_FILTER), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_FILTER), (char *)oss.str().c_str());
   oss.seekp(ios_base::beg);
   oss << Cutoff;
-  Datas.SaveValue(std::string(STR_CUTOFF), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_CUTOFF), (char *)oss.str().c_str());
   oss.seekp(ios_base::beg);
   oss << Res;
-  Datas.SaveValue(std::string(STR_RESONANCE), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_RESONANCE), (char *)oss.str().c_str());
   oss.seekp(ios_base::beg);
   oss << Bypass;
-  Datas.SaveValue(std::string(STR_BYPASS), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_BYPASS), (char *)oss.str().c_str());
   oss.seekp(ios_base::beg);
   oss << MidiBypass[0];
-  Datas.SaveValue(std::string(STR_MIDI_BYPASS1), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_MIDI_BYPASS1), (char *)oss.str().c_str());
   oss.seekp(ios_base::beg);
   oss << MidiBypass[1];
-  Datas.SaveValue(std::string(STR_MIDI_BYPASS2), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_MIDI_BYPASS2), (char *)oss.str().c_str());
   oss.seekp(ios_base::beg);
   oss << MidiCutoff[0];
-  Datas.SaveValue(std::string(STR_MIDI_CUTOFF1), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_MIDI_CUTOFF1), (char *)oss.str().c_str());
   oss.seekp(ios_base::beg);
   oss << MidiCutoff[1];
-  Datas.SaveValue(std::string(STR_MIDI_CUTOFF2), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_MIDI_CUTOFF2), (char *)oss.str().c_str());
   oss.seekp(ios_base::beg);
   oss << MidiRes[0];
-  Datas.SaveValue(std::string(STR_MIDI_RESONANCE1), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_MIDI_RESONANCE1), (char *)oss.str().c_str());
   oss.seekp(ios_base::beg);
   oss << MidiRes[1];
-  Datas.SaveValue(std::string(STR_MIDI_RESONANCE2), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_MIDI_RESONANCE2), (char *)oss.str().c_str());
   Mutex.Unlock();
 }
 
