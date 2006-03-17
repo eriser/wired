@@ -12,32 +12,32 @@
 #include "DownButton.h"
 #include "StaticPosKnob.h"
 
-#define PLUGIN_NAME		"Multi-Filter"
+#define PLUGIN_NAME		wxT("Multi-Filter")
 
-#define IMG_FL_BG		"plugins/filter/filter_bg.png"
-#define IMG_FL_BMP		"plugins/filter/FilterPlug.bmp"
-#define IMG_FL_FADER_BG		"plugins/filter/fader_bg.png"
-#define IMG_FL_FADER_FG		"plugins/filter/fader_button.png"
+#define IMG_FL_BG		wxT("plugins/filter/filter_bg.png")
+#define IMG_FL_BMP		wxT("plugins/filter/FilterPlug.bmp")
+#define IMG_FL_FADER_BG		wxT("plugins/filter/fader_bg.png")
+#define IMG_FL_FADER_FG		wxT("plugins/filter/fader_button.png")
 
-#define IMG_FL_HP		"plugins/filter/filter_hp_dwn.png"
-#define IMG_FL_BP		"plugins/filter/filter_bp_dwn.png"
-#define IMG_FL_LP		"plugins/filter/filter_lp_dwn.png"
-#define IMG_FL_NOTCH		"plugins/filter/filter_notch_dwn.png"
-#define IMG_FL_NOTCHBAR		"plugins/filter/filter_notchbar_dwn.png"
-#define IMG_FL_HP_UP		"plugins/filter/filter_hp_up.png"
-#define IMG_FL_BP_UP		"plugins/filter/filter_bp_up.png"
-#define IMG_FL_LP_UP		"plugins/filter/filter_lp_up.png"
-#define IMG_FL_NOTCH_UP		"plugins/filter/filter_notch_up.png"
-#define IMG_FL_NOTCHBAR_UP	"plugins/filter/filter_notchbar_up.png"
-#define IMG_FL_KNOB_HP		"plugins/filter/filter_knob_hp.png"
-#define IMG_FL_KNOB_BP		"plugins/filter/filter_knob_bp.png"
-#define IMG_FL_KNOB_LP		"plugins/filter/filter_knob_lp.png"
-#define IMG_FL_KNOB_NOTCH	"plugins/filter/filter_knob_notch.png"
+#define IMG_FL_HP		wxT("plugins/filter/filter_hp_dwn.png")
+#define IMG_FL_BP		wxT("plugins/filter/filter_bp_dwn.png")
+#define IMG_FL_LP		wxT("plugins/filter/filter_lp_dwn.png")
+#define IMG_FL_NOTCH		wxT("plugins/filter/filter_notch_dwn.png")
+#define IMG_FL_NOTCHBAR		wxT("plugins/filter/filter_notchbar_dwn.png")
+#define IMG_FL_HP_UP		wxT("plugins/filter/filter_hp_up.png")
+#define IMG_FL_BP_UP		wxT("plugins/filter/filter_bp_up.png")
+#define IMG_FL_LP_UP		wxT("plugins/filter/filter_lp_up.png")
+#define IMG_FL_NOTCH_UP		wxT("plugins/filter/filter_notch_up.png")
+#define IMG_FL_NOTCHBAR_UP	wxT("plugins/filter/filter_notchbar_up.png")
+#define IMG_FL_KNOB_HP		wxT("plugins/filter/filter_knob_hp.png")
+#define IMG_FL_KNOB_BP		wxT("plugins/filter/filter_knob_bp.png")
+#define IMG_FL_KNOB_LP		wxT("plugins/filter/filter_knob_lp.png")
+#define IMG_FL_KNOB_NOTCH	wxT("plugins/filter/filter_knob_notch.png")
 
-#define IMG_LIQUID_ON		"plugins/filter/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF		"plugins/filter/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON		"plugins/filter/bypass_button_down.png"
-#define IMG_BYPASS_OFF		"plugins/filter/bypass_button_up.png"
+#define IMG_LIQUID_ON		wxT("plugins/filter/liquid-cristal_play.png")
+#define IMG_LIQUID_OFF		wxT("plugins/filter/liquid-cristal_stop.png")
+#define IMG_BYPASS_ON		wxT("plugins/filter/bypass_button_down.png")
+#define IMG_BYPASS_OFF		wxT("plugins/filter/bypass_button_up.png")
 
 #define SIZE_CUTOFF		2205
 #define SIZE_RES		100
@@ -82,7 +82,7 @@ class FilterPlugin: public Plugin
   bool	 IsAudio();
   bool	 IsMidi();
 
-  std::string DefaultName() { return "Filter"; }
+  wxString DefaultName() { return wxT("Filter"); }
 
   void Update();
 
