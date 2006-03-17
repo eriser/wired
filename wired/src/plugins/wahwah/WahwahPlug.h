@@ -17,13 +17,13 @@
 #include	"DownButton.h"
 
 
-#define		PLUGIN_NAME	"Wahwah"
+#define		PLUGIN_NAME	wxT("Wahwah")
 
 /* Desssin */
-#define		IMG_WW_BG	"plugins/wahwah/wah-wah_bg.png"
-#define		IMG_WW_BMP	"plugins/wahwah/ReverbPlug.bmp"
-#define		IMG_WW_FADER_BG	"plugins/wahwah/fader_bg.png"
-#define		IMG_WW_FADER_FG	"plugins/wahwah/fader_button.png"
+#define		IMG_WW_BG	wxT("plugins/wahwah/wah-wah_bg.png")
+#define		IMG_WW_BMP	wxT("plugins/wahwah/ReverbPlug.bmp")
+#define		IMG_WW_FADER_BG	wxT("plugins/wahwah/fader_bg.png")
+#define		IMG_WW_FADER_FG	wxT("plugins/wahwah/fader_button.png")
 
 /* Initialisation */
 #define		DEFAULT_FREQ		1.5
@@ -68,10 +68,10 @@ typedef struct s_plugParams
 #define STR_FREQUENCY_OFS _("FrequencyOFS")
 #define STR_RESOLUTION _("Resolution")
 
-#define IMG_LIQUID_ON	"plugins/reverb/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF	"plugins/reverb/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON	"plugins/reverb/bypass_button_down.png"
-#define IMG_BYPASS_OFF	"plugins/reverb/bypass_button_up.png"
+#define IMG_LIQUID_ON	wxT("plugins/reverb/liquid-cristal_play.png")
+#define IMG_LIQUID_OFF	wxT("plugins/reverb/liquid-cristal_stop.png")
+#define IMG_BYPASS_ON	wxT("plugins/reverb/bypass_button_down.png")
+#define IMG_BYPASS_OFF	wxT("plugins/reverb/bypass_button_up.png")
 
  
 class Wahwah
@@ -117,7 +117,7 @@ class EffectWahwah : public Plugin
   bool	 IsAudio();
   bool	 IsMidi();
 
-  std::string DefaultName() { return "Wahwah"; }
+  wxString DefaultName() { return wxT("Wahwah"); }
 
   void	OnFrequency(wxScrollEvent &e);
   void	OnStartPhase(wxScrollEvent &e);
