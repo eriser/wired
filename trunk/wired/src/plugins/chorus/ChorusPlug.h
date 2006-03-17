@@ -4,7 +4,7 @@
 #ifndef _CHORUS_PLUGIN_
 #define  _CHORUS_PLUGIN_
 
-#define PLUGIN_NAME	"Chorus"
+#define PLUGIN_NAME	wxT("Chorus")
 
 //Names used t stre and retreive parameters
 #define STR_BASE_LENGHT _("BaseLength")
@@ -32,7 +32,7 @@ class		ChorusPlugin: public Plugin
   bool		IsAudio();
   bool		IsMidi();
 
-  std::string	DefaultName() { return "Chorus"; }
+  wxString	DefaultName() { return wxT("Chorus"); }
 
   void		OnChorusTime(wxScrollEvent &e);  
   void		OnFeedback(wxScrollEvent &e);  
@@ -106,15 +106,15 @@ BEGIN_EVENT_TABLE(ChorusPlugin, wxWindow)
      EVT_PAINT(ChorusPlugin::OnPaint)
 END_EVENT_TABLE()
 
-#define IMG_DL_BG	"plugins/chorus/chorus_bg.png"
-#define IMG_DL_BMP	"plugins/chorus/ChorusPlug.bmp"
-#define IMG_DL_FADER_BG "plugins/chorus/fader_bg.png"
-#define IMG_DL_FADER_FG	"plugins/chorus/fader_button.png"
-#define IMG_LIQUID_ON	"plugins/chorus/liquid-cristal_play.png"
-#define IMG_LIQUID_OFF	"plugins/chorus/liquid-cristal_stop.png"
-#define IMG_BYPASS_ON	"plugins/chorus/bypass_button_down.png"
-#define IMG_BYPASS_OFF	"plugins/chorus/bypass_button_up.png"
-#define SINERAW		"plugins/chorus/sinewave.raw"
+#define IMG_DL_BG	wxT("plugins/chorus/chorus_bg.png")
+#define IMG_DL_BMP	wxT("plugins/chorus/ChorusPlug.bmp")
+#define IMG_DL_FADER_BG wxT("plugins/chorus/fader_bg.png")
+#define IMG_DL_FADER_FG	wxT("plugins/chorus/fader_button.png")
+#define IMG_LIQUID_ON	wxT("plugins/chorus/liquid-cristal_play.png")
+#define IMG_LIQUID_OFF	wxT("plugins/chorus/liquid-cristal_stop.png")
+#define IMG_BYPASS_ON	wxT("plugins/chorus/bypass_button_down.png")
+#define IMG_BYPASS_OFF	wxT("plugins/chorus/bypass_button_up.png")
+#define SINERAW		wxT("plugins/chorus/sinewave.raw")
 
 #define IS_DENORMAL(f) (((*(unsigned int *)&f)&0x7f800000)==0)
 

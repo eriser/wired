@@ -31,19 +31,19 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Init();
 
   wxImage *tr_bg = 
-    new wxImage(string(GetDataDir() + string(IMG_DL_BG)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_DL_BG), 
 		wxBITMAP_TYPE_PNG);
   TpBmp = new wxBitmap(tr_bg);
-  bmp = new wxBitmap(string(GetDataDir() + string(IMG_DL_BMP)).c_str(), 
+  bmp = new wxBitmap(GetDataDir() + wxString(IMG_DL_BMP), 
 		     wxBITMAP_TYPE_BMP); 
-  img_bg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_BG)).c_str(),
+  img_bg = new wxImage(GetDataDir() + wxString(IMG_DL_FADER_BG),
 		       wxBITMAP_TYPE_PNG );
-  img_fg = new wxImage(string(GetDataDir() + string(IMG_DL_FADER_FG)).c_str(),
+  img_fg = new wxImage(GetDataDir() + wxString(IMG_DL_FADER_FG),
 		       wxBITMAP_TYPE_PNG );
-  bypass_on = new wxImage(string(GetDataDir() + string(IMG_BYPASS_ON)).c_str(),
+  bypass_on = new wxImage(GetDataDir() + wxString(IMG_BYPASS_ON),
 			  wxBITMAP_TYPE_PNG);
   bypass_off = 
-    new wxImage(string(GetDataDir() + string(IMG_BYPASS_OFF)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_BYPASS_OFF), 
 		wxBITMAP_TYPE_PNG);
   BypassBtn = 
     new DownButton(this, Chorus_Bypass, wxPoint(21, 58), 
@@ -52,10 +52,10 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   //bypass button's stuff
 
-  liquid_on = new wxImage(string(GetDataDir() + string(IMG_LIQUID_ON)).c_str(),
+  liquid_on = new wxImage(GetDataDir() + wxString(IMG_LIQUID_ON),
 			  wxBITMAP_TYPE_PNG);
   liquid_off = 
-    new wxImage(string(GetDataDir() + string(IMG_LIQUID_OFF)).c_str(), 
+    new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), 
 		wxBITMAP_TYPE_PNG);
   Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
   BaseLengthFader = new FaderCtrl(this, Chorus_Feedback, img_bg, img_fg, 0, 
@@ -98,12 +98,12 @@ void ChorusPlugin::Init()
   
   Stk::setSampleRate(44100.0);
 
-  chorus1 = new Chorus(BaseLength, GetDataDir());
+  chorus1 = new Chorus(BaseLength, (const char *)GetDataDir().mb_str(*wxConvCurrent));
   chorus1->setModDepth(ModDepth / 100.f);
   chorus1->setModFrequency(Frequency);
   chorus1->setEffectMix(EffectMix / 100.f);
 
-  chorus2 = new Chorus(BaseLength, GetDataDir());
+  chorus2 = new Chorus(BaseLength, (const char *)GetDataDir().mb_str(*wxConvCurrent));
   chorus2->setModDepth(ModDepth / 100.f);
   chorus2->setModFrequency(Frequency);
   chorus2->setEffectMix(EffectMix / 100.f);
@@ -191,7 +191,7 @@ void ChorusPlugin::Load(WiredPluginData& Datas)
 {
   char	*buffer;
   
-  buffer = strdup(Datas.LoadValue(std::string(STR_BASE_LENGHT)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_BASE_LENGHT, *wxConvCurrent)));
   if (buffer != NULL)
     {
       BaseLength = atof(buffer);
@@ -200,7 +200,7 @@ void ChorusPlugin::Load(WiredPluginData& Datas)
       chorus2->setBaseLength(BaseLength);
     }
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_MODE_DEPTH)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_MODE_DEPTH, *wxConvCurrent)));
   if (buffer != NULL)
     {
       ModDepth = atof(buffer);
@@ -209,7 +209,7 @@ void ChorusPlugin::Load(WiredPluginData& Datas)
       chorus2->setModDepth(ModDepth);
     }
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_FREQUENCY)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_FREQUENCY, *wxConvCurrent)));
   if (buffer != NULL)
     {
       Frequency = atof(buffer);
@@ -218,7 +218,7 @@ void ChorusPlugin::Load(WiredPluginData& Datas)
       chorus2->setModFrequency(Frequency);
     }
   free(buffer);
-  buffer = strdup(Datas.LoadValue(std::string(STR_EFFECT_MIX)));
+  buffer = strdup(Datas.LoadValue(wxString(STR_EFFECT_MIX, *wxConvCurrent)));
   if (buffer != NULL)
     {
       EffectMix = atof(buffer);
@@ -246,16 +246,16 @@ void ChorusPlugin::Save(WiredPluginData& Datas)
   std::ostringstream 	oss;
 
   oss << BaseLength;
-  Datas.SaveValue(std::string(STR_BASE_LENGHT), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_BASE_LENGHT, *wxConvCurrent), wxString(oss.str().c_str(), *wxConvCurrent));
   oss.seekp(ios_base::beg);
   oss << ModDepth;
-  Datas.SaveValue(std::string(STR_MODE_DEPTH), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_MODE_DEPTH, *wxConvCurrent), wxString(oss.str().c_str(), *wxConvCurrent));
   oss.seekp(ios_base::beg);
   oss << Frequency;
-  Datas.SaveValue(std::string(STR_FREQUENCY), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_FREQUENCY, *wxConvCurrent), wxString(oss.str().c_str(), *wxConvCurrent));
   oss.seekp(ios_base::beg);
   oss << EffectMix;
-  Datas.SaveValue(std::string(STR_EFFECT_MIX), std::string(oss.str()));
+  Datas.SaveValue(wxString(STR_EFFECT_MIX, *wxConvCurrent), wxString(oss.str().c_str(), *wxConvCurrent));
 }
 
 bool ChorusPlugin::IsAudio()

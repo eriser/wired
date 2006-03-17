@@ -550,7 +550,7 @@ bool WvOut :: setMatFile( const char *fileName )
   strcpy(hdr.heading,"MATLAB 5.0 MAT-file, Generated using the Synthesis ToolKit in C++ (STK). By Perry R. Cook and Gary P. Scavone, 1995-2004.");
 
   int i;
-  for (i=wxStrlen(hdr.heading);i<124;i++) hdr.heading[i] = ' ';
+  for (i=wxStrlen((const wxChar *)hdr.heading);i<124;i++) hdr.heading[i] = ' ';
 
   // Header Flag Fields
   hdr.hff[0] = (SINT16) 0x0100;   // Version field
@@ -579,7 +579,7 @@ bool WvOut :: setMatFile( const char *fileName )
   // If fileName is 4 characters or less, we have to use a compressed data element
   // format for the array name data element.  Otherwise, the array name must
   // be formatted in 8-byte increments (up to 31 characters + NULL).
-  SINT32 namelength = (SINT32) wxStrlen(fileName);
+  SINT32 namelength = (SINT32) wxStrlen((const wxChar *)fileName);
   if (strstr(fileName, ".mat")) namelength -= 4;
   if (namelength > 31) namelength = 31; // Truncate name to 31 characters.
   char arrayName[64];

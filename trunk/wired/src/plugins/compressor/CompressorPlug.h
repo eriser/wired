@@ -10,12 +10,12 @@
 #include "Plugin.h"
 #include "FaderCtrl.h"
 
-#define IMG_CP_BG	"plugins/compressor/compressor.png"
-#define IMG_CP_BMP	"plugins/compressor/CompressorPlug.bmp"
-#define IMG_CP_FADER_BG	"plugins/compressor/fader_bg.png"
-#define IMG_CP_FADER_FG	"plugins/compressor/fader_fg.png"
+#define IMG_CP_BG	wxT("plugins/compressor/compressor.png")
+#define IMG_CP_BMP	wxT("plugins/compressor/CompressorPlug.bmp")
+#define IMG_CP_FADER_BG	wxT("plugins/compressor/fader_bg.png")
+#define IMG_CP_FADER_FG	wxT("plugins/compressor/fader_fg.png")
 
-#define PLUGIN_NAME	"Compressor"
+#define PLUGIN_NAME	wxT("Compressor")
 
 class CompressorPlugin: public Plugin
 {
@@ -33,7 +33,7 @@ class CompressorPlugin: public Plugin
   bool	 IsAudio();
   bool	 IsMidi();
 
-  std::string DefaultName() { return "Compressor"; }
+  wxString DefaultName() { return wxT("Compressor"); }
 
   void OnButtonClick(wxCommandEvent &e); 
   void OnTarget(wxScrollEvent &e);  
