@@ -6,7 +6,7 @@ FileStat::FileStat()
     LoadMajorTypes();
 }
 
-bool        FileStat::StatFile(const wxChar *FileName)
+bool        FileStat::StatFile(const char *FileName)
 {
     SNDFILE *Info;
     Info = sf_open((const char *)FileName, SFM_READ, &_FileInfo);
