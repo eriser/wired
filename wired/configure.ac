@@ -267,5 +267,5 @@ AC_MSG_RESULT([  Installation directories :
 
     Library directory : ........... ${prefix}/lib
     Program directory : ........... ${prefix}/bin
-    Data directory : .............. ${prefix}/lib/shared/wired
+    Data directory : .............. ${prefix}/shared/wired
 ])
