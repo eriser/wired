@@ -73,7 +73,7 @@ x = static_cast<long>(ceil(static_cast<double>(cpt * res))) - ViewPtr->XScroll)
     {
       if (cpt < steps)
 	{
-	  s.Printf("%d", cpt+1);
+	  s.Printf(wxT("%d"), cpt+1);
 	  dc.DrawText(s, x+1, 0);
 	}
       dc.DrawLine(x, 0, x, RULER_HEIGHT);
@@ -923,18 +923,18 @@ BeatBoxView::BeatBoxView(wxWindow* parent, wxWindowID id, WiredBeatBox* bb,
   /* ToolBar */
   
   ToolBar->AddCheckTool(ID_Magnet, _("Magnet"), 
-			wxBitmap(_T(string(DRM31->GetDataDir()
-					   + string(MAGN_UP)).c_str()), 
+			wxBitmap(wxString(DRM31->GetDataDir()
+					   + wxString(MAGN_UP)), 
 				 wxBITMAP_TYPE_PNG), 
-			wxBitmap(_T(string(DRM31->GetDataDir() 
-					   + string(MAGN_DOWN)).c_str()), 
+			wxBitmap(wxString(DRM31->GetDataDir() 
+					   + wxString(MAGN_DOWN)), 
 				 wxBITMAP_TYPE_PNG), 
 			_("Activate magnetism"), _("Deactivate magnetism"), NULL);
   
   
   wxString choices[NB_COMBO_CHOICES];
   for (int i = 0; i < NB_COMBO_CHOICES; i++)
-      choices[i].Printf("1/%d", i+1);
+      choices[i].Printf(wxT("1/%d"), i+1);
   
   SubCombo = new wxComboBox(ToolBar, ID_SubCombo, _T("1/1"), 
 			    wxPoint(-1, -1), wxSize(64, -1), 
@@ -1150,11 +1150,11 @@ void BeatBoxView::UpdateToolBar(void)
       return;
     }
   wxString s;
-  s.Printf("%f", BeatView->SelectedNote->Position + 1.0);
+  s.Printf(wxT("%f"), BeatView->SelectedNote->Position + 1.0);
   s.Truncate(4);
   PosTextCtrl->SetValue(s);
   
-  s.Printf("%f", BeatView->SelectedNote->Params[BeatView->Param]);
+  s.Printf(wxT("%f"), BeatView->SelectedNote->Params[BeatView->Param]);
   /*
   if (BeatView->Param == 0)
     s.Printf("%f", BeatView->SelectedNote->Lev);

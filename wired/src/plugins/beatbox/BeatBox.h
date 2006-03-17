@@ -24,68 +24,68 @@
 
 using namespace std;
 
-#define PLUGIN_NAME		"DRUM-31"
+#define PLUGIN_NAME		wxT("DRUM-31")
 
-#define BEATBOX_BG		"plugins/beatbox/beatbox_bg.png"
-#define BEATBOX_MINI_BG		"plugins/beatbox/drm31.bmp"
-#define BEATBTN_UNCLICKED	"plugins/beatbox/beatbtn_unclicked.png"
-#define BEATBTN_MEDIUM		"plugins/beatbox/beatbtn_medium.png"
-#define BEATBTN_VLOW		"plugins/beatbox/beatbtn_vlow.png"
-#define BEATBTN_LOW		"plugins/beatbox/beatbtn_low.png"
-#define BEATBTN_HIGH		"plugins/beatbox/beatbtn_high.png"
-#define BEATBTN_VHIGH		"plugins/beatbox/beatbtn_vhigh.png"
+#define BEATBOX_BG		wxT("plugins/beatbox/beatbox_bg.png")
+#define BEATBOX_MINI_BG		wxT("plugins/beatbox/drm31.bmp")
+#define BEATBTN_UNCLICKED	wxT("plugins/beatbox/beatbtn_unclicked.png")
+#define BEATBTN_MEDIUM		wxT("plugins/beatbox/beatbtn_medium.png")
+#define BEATBTN_VLOW		wxT("plugins/beatbox/beatbtn_vlow.png")
+#define BEATBTN_LOW		wxT("plugins/beatbox/beatbtn_low.png")
+#define BEATBTN_HIGH		wxT("plugins/beatbox/beatbtn_high.png")
+#define BEATBTN_VHIGH		wxT("plugins/beatbox/beatbtn_vhigh.png")
 
-#define PLAY_UP			"plugins/beatbox/play_up.png"
-#define PLAY_DO			"plugins/beatbox/play_down.png"
-#define EDIT_UP			"plugins/beatbox/edit_up.png"
-#define EDIT_DO			"plugins/beatbox/edit_down.png"
+#define PLAY_UP			wxT("plugins/beatbox/play_up.png")
+#define PLAY_DO			wxT("plugins/beatbox/play_down.png")
+#define EDIT_UP			wxT("plugins/beatbox/edit_up.png")
+#define EDIT_DO			wxT("plugins/beatbox/edit_down.png")
 
-#define POSON			"plugins/beatbox/dot_pattern_on.png"
-#define POSOFF			"plugins/beatbox/dot_pattern_off.png"
+#define POSON			wxT("plugins/beatbox/dot_pattern_on.png")
+#define POSOFF			wxT("plugins/beatbox/dot_pattern_off.png")
 
-#define LOADPATCH_UP		"plugins/beatbox/load_up.png"
-#define LOADPATCH_DO		"plugins/beatbox/load_down.png"
-#define SAVEPATCH_UP		"plugins/beatbox/save_up.png"
-#define SAVEPATCH_DO		"plugins/beatbox/save_down.png"
+#define LOADPATCH_UP		wxT("plugins/beatbox/load_up.png")
+#define LOADPATCH_DO		wxT("plugins/beatbox/load_down.png")
+#define SAVEPATCH_UP		wxT("plugins/beatbox/save_up.png")
+#define SAVEPATCH_DO		wxT("plugins/beatbox/save_down.png")
 
-#define SHOWOPT_UP		"plugins/beatbox/optional_up.png"
-#define SHOWOPT_DOWN		"plugins/beatbox/optional_down.png"
+#define SHOWOPT_UP		wxT("plugins/beatbox/optional_up.png")
+#define SHOWOPT_DOWN		wxT("plugins/beatbox/optional_down.png")
 
-#define KNOB			"plugins/beatbox/knob_center_level.png"
-#define DOT			"plugins/beatbox/level_dot.png"
+#define KNOB			wxT("plugins/beatbox/knob_center_level.png")
+#define DOT			wxT("plugins/beatbox/level_dot.png")
 
-#define BANK1			"plugins/beatbox/bank_knob_1.png"
-#define BANK2			"plugins/beatbox/bank_knob_2.png"
-#define BANK3			"plugins/beatbox/bank_knob_3.png"
-#define BANK4			"plugins/beatbox/bank_knob_4.png"
-#define BANK5			"plugins/beatbox/bank_knob_5.png"
+#define BANK1			wxT("plugins/beatbox/bank_knob_1.png")
+#define BANK2			wxT("plugins/beatbox/bank_knob_2.png")
+#define BANK3			wxT("plugins/beatbox/bank_knob_3.png")
+#define BANK4			wxT("plugins/beatbox/bank_knob_4.png")
+#define BANK5			wxT("plugins/beatbox/bank_knob_5.png")
 
-#define STEPS_KNOB1		"plugins/beatbox/steps_knob_3.png"
-#define STEPS_KNOB2		"plugins/beatbox/steps_knob_2.png"
-#define STEPS_KNOB3		"plugins/beatbox/steps_knob_1.png"
+#define STEPS_KNOB1		wxT("plugins/beatbox/steps_knob_3.png")
+#define STEPS_KNOB2		wxT("plugins/beatbox/steps_knob_2.png")
+#define STEPS_KNOB3		wxT("plugins/beatbox/steps_knob_1.png")
 
 #define SELECTOR_UP		SHOWOPT_UP
 #define SELECTOR_DO		SHOWOPT_DOWN
 
-#define POS_UP			"plugins/beatbox/pos_up.png"
-#define POS_DO			"plugins/beatbox/pos_down.png"
+#define POS_UP			wxT("plugins/beatbox/pos_up.png")
+#define POS_DO			wxT("plugins/beatbox/pos_down.png")
 
-#define UP_1			"plugins/beatbox/1_up.png"
-#define DO_1			"plugins/beatbox/1_down.png"
-#define UP_2			"plugins/beatbox/2_up.png"
-#define DO_2			"plugins/beatbox/2_down.png"
-#define UP_3			"plugins/beatbox/3_up.png"
-#define DO_3			"plugins/beatbox/3_down.png"
-#define UP_4			"plugins/beatbox/4_up.png"
-#define DO_4			"plugins/beatbox/4_down.png"
-#define UP_5			"plugins/beatbox/5_up.png"
-#define DO_5			"plugins/beatbox/5_down.png"
-#define UP_6			"plugins/beatbox/6_up.png"
-#define DO_6			"plugins/beatbox/6_down.png"
-#define UP_7			"plugins/beatbox/7_up.png"
-#define DO_7			"plugins/beatbox/7_down.png"
-#define UP_8			"plugins/beatbox/8_up.png"
-#define DO_8			"plugins/beatbox/8_down.png"
+#define UP_1			wxT("plugins/beatbox/1_up.png")
+#define DO_1			wxT("plugins/beatbox/1_down.png")
+#define UP_2			wxT("plugins/beatbox/2_up.png")
+#define DO_2			wxT("plugins/beatbox/2_down.png")
+#define UP_3			wxT("plugins/beatbox/3_up.png")
+#define DO_3			wxT("plugins/beatbox/3_down.png")
+#define UP_4			wxT("plugins/beatbox/4_up.png")
+#define DO_4			wxT("plugins/beatbox/4_down.png")
+#define UP_5			wxT("plugins/beatbox/5_up.png")
+#define DO_5			wxT("plugins/beatbox/5_down.png")
+#define UP_6			wxT("plugins/beatbox/6_up.png")
+#define DO_6			wxT("plugins/beatbox/6_down.png")
+#define UP_7			wxT("plugins/beatbox/7_up.png")
+#define DO_7			wxT("plugins/beatbox/7_down.png")
+#define UP_8			wxT("plugins/beatbox/8_up.png")
+#define DO_8			wxT("plugins/beatbox/8_down.png")
 
 #define NUM_PATTERNS		8
 #define NUM_BANKS		5
@@ -146,8 +146,8 @@ class WiredBeatBox : public Plugin
   bool		IsAudio()	{ return false; }
   bool		IsMidi()	{ return true; }
   
-  string	GetHelpString() { return _("No help provided for this plugin"); }
-  string	DefaultName() { return "WiredBeatBox"; }
+  wxString	GetHelpString() { return _("No help provided for this plugin"); }
+  wxString	DefaultName() { return wxT("WiredBeatBox"); }
   
   void		OnPaint(wxPaintEvent& event);
   void		OnMasterChange(wxScrollEvent& event);

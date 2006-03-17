@@ -1,7 +1,6 @@
 #ifndef __BEATBOXCHANNEL_H__
 #define __BEATBOXCHANNEL_H__
 
-#include <string>
 #include <list>
 #include <wx/wx.h>
 
@@ -20,29 +19,29 @@
 #define ACT_PLAY	2
 #define ACT_SETWAVE	3
 
-#define CHANNEL_BG	"plugins/beatbox/channel_bg.png"
-#define SELECT_UP	"plugins/beatbox/selectchannel_up.png"
-#define SELECT_DO	"plugins/beatbox/selectchannel_down.png"
-#define CH_PLAY_UP	"plugins/beatbox/channel_play_up.png"
-#define CH_PLAY_DO	"plugins/beatbox/channel_play_down.png"
-#define CH_LOAD_UP	"plugins/beatbox/channel_load_up.png"
-#define CH_LOAD_DO	"plugins/beatbox/channel_load_down.png"
-#define REV_UP		"plugins/beatbox/channel_r_up.png"
-#define REV_DO		"plugins/beatbox/channel_r_down.png"
-#define MUTE_UP		"plugins/beatbox/channel_m_up.png"
-#define MUTE_DO		"plugins/beatbox/channel_m_down.png"
-#define CH_DOT		"plugins/beatbox/level_dot.png"
-#define CH_KNOB		"plugins/beatbox/channel_knob.png"
-#define CH_KNOB_CENTER	"plugins/beatbox/channel_knob-center.png"
-#define SOLO_UP		"plugins/beatbox/channel_s_up.png"
-#define SOLO_DO		"plugins/beatbox/channel_s_down.png"
-#define CH_KNOB_LEV_CENTER	"plugins/beatbox/channel_knob_level-center.png"
-#define CH_KNOB_PAN_CENTER	"plugins/beatbox/channel_knob_pan-center.png"
+#define CHANNEL_BG	wxT("plugins/beatbox/channel_bg.png")
+#define SELECT_UP	wxT("plugins/beatbox/selectchannel_up.png")
+#define SELECT_DO	wxT("plugins/beatbox/selectchannel_down.png")
+#define CH_PLAY_UP	wxT("plugins/beatbox/channel_play_up.png")
+#define CH_PLAY_DO	wxT("plugins/beatbox/channel_play_down.png")
+#define CH_LOAD_UP	wxT("plugins/beatbox/channel_load_up.png")
+#define CH_LOAD_DO	wxT("plugins/beatbox/channel_load_down.png")
+#define REV_UP		wxT("plugins/beatbox/channel_r_up.png")
+#define REV_DO		wxT("plugins/beatbox/channel_r_down.png")
+#define MUTE_UP		wxT("plugins/beatbox/channel_m_up.png")
+#define MUTE_DO		wxT("plugins/beatbox/channel_m_down.png")
+#define CH_DOT		wxT("plugins/beatbox/level_dot.png")
+#define CH_KNOB		wxT("plugins/beatbox/channel_knob.png")
+#define CH_KNOB_CENTER	wxT("plugins/beatbox/channel_knob-center.png")
+#define SOLO_UP		wxT("plugins/beatbox/channel_s_up.png")
+#define SOLO_DO		wxT("plugins/beatbox/channel_s_down.png")
+#define CH_KNOB_LEV_CENTER	wxT("plugins/beatbox/channel_knob_level-center.png")
+#define CH_KNOB_PAN_CENTER	wxT("plugins/beatbox/channel_knob_pan-center.png")
 #define CH_LEV_DOT	CH_DOT//"plugins/beatbox/channel_dot_lev.png"
 
-#define CH_POLY1	"plugins/beatbox/channel_knob_poly3.png"
-#define CH_POLY2	"plugins/beatbox/channel_knob_poly2.png"
-#define CH_POLY3	"plugins/beatbox/channel_knob_poly1.png"
+#define CH_POLY1	wxT("plugins/beatbox/channel_knob_poly3.png")
+#define CH_POLY2	wxT("plugins/beatbox/channel_knob_poly2.png")
+#define CH_POLY3	wxT("plugins/beatbox/channel_knob_poly1.png")
 
 class WiredBeatBox;
 
@@ -166,7 +165,7 @@ class BeatBoxChannel : public wxWindow
   void UpdateGui();
  protected:
   WiredBeatBox*	DRM31;
-  string        DataDir;
+  wxString        DataDir;
   wxStaticText* WaveLabel;
   wxBitmap*	BgBmp;
   wxMutex*	PatternMutex;

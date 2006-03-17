@@ -83,7 +83,7 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   /* Master Volume */
   wxImage* mini_bmp = 
-    new wxImage(_T(string(GetDataDir() + string(BEATBOX_MINI_BG)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(BEATBOX_MINI_BG)), 
 		wxBITMAP_TYPE_BMP);  
   if (mini_bmp)
     MiniBmp = new wxBitmap(mini_bmp);
@@ -92,9 +92,9 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   MVol = 
     new KnobCtrl(this, BB_OnMasterChange,
-		 new wxImage(_T(string(GetDataDir() + string(KNOB)).c_str()),
+		 new wxImage(wxString(GetDataDir() + wxString(KNOB)),
 			     wxBITMAP_TYPE_PNG),
-		 new wxImage(_T(string(GetDataDir() + string(DOT)).c_str()),
+		 new wxImage(wxString(GetDataDir() + wxString(DOT)),
 			     wxBITMAP_TYPE_PNG),
 		 0, 127, 100, 1,
 		 wxPoint(27,103), wxSize(29,30),
@@ -106,7 +106,7 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   /* Bitmaps */
   SetBackgroundColour(wxColour(200, 200, 200));
   wxImage* img_bg = 
-    new wxImage(_T(string(GetDataDir() + string(BEATBOX_BG)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(BEATBOX_BG)), 
 		wxBITMAP_TYPE_PNG);  
   if (img_bg)
     BgBmp = new wxBitmap(img_bg);
@@ -115,22 +115,22 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   Imgs = new wxImage*[MAX_BITMAPS];
   Imgs[ID_UNCLICKED] = 
-    new wxImage(_T(string(GetDataDir() + string(BEATBTN_UNCLICKED)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(BEATBTN_UNCLICKED)), 
 		wxBITMAP_TYPE_PNG);
   Imgs[ID_MEDIUM] = 
-    new wxImage(_T(string(GetDataDir() + string(BEATBTN_MEDIUM)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(BEATBTN_MEDIUM)), 
 		wxBITMAP_TYPE_PNG);
   Imgs[ID_VLOW] = 
-    new wxImage(_T(string(GetDataDir() + string(BEATBTN_VLOW)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(BEATBTN_VLOW)), 
 		wxBITMAP_TYPE_PNG);
   Imgs[ID_LOW] =
-    new wxImage(_T(string(GetDataDir() + string(BEATBTN_LOW)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(BEATBTN_LOW)), 
 		wxBITMAP_TYPE_PNG);
   Imgs[ID_HIGH] = 
-    new wxImage(_T(string(GetDataDir() + string(BEATBTN_HIGH)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(BEATBTN_HIGH)), 
 		wxBITMAP_TYPE_PNG);
   Imgs[ID_VHIGH] = 
-    new wxImage(_T(string(GetDataDir() + string(BEATBTN_VHIGH)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(BEATBTN_VHIGH)), 
 		wxBITMAP_TYPE_PNG);
   
   
@@ -149,12 +149,12 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
     Bitmaps[ID_VHIGH] = new wxBitmap( Imgs[ID_VHIGH] );
   
   wxImage* img_tmp = 
-    new wxImage(_T(string(GetDataDir() + string(POSON)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(POSON)), 
 		wxBITMAP_TYPE_PNG);
   if (img_tmp)
     PositionOn = new wxBitmap(img_tmp);
   img_tmp = 
-    new wxImage(_T(string(GetDataDir() + string(POSOFF)).c_str()), 
+    new wxImage(wxString(GetDataDir() + wxString(POSOFF)), 
 		wxBITMAP_TYPE_PNG);
   if (img_tmp)
     PositionOff = new wxBitmap(img_tmp);
@@ -164,8 +164,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   SetBackgroundColour(wxColour(200, 200, 200));
   
   /* Optional view button */
-  wxImage *opt_img_up = new wxImage(_T(string(GetDataDir() + string(SHOWOPT_UP)).c_str()), wxBITMAP_TYPE_PNG);
-  wxImage *opt_img_dn = new wxImage(_T(string(GetDataDir() + string(SHOWOPT_DOWN)).c_str()), wxBITMAP_TYPE_PNG);
+  wxImage *opt_img_up = new wxImage(wxString(GetDataDir() + wxString(SHOWOPT_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *opt_img_dn = new wxImage(wxString(GetDataDir() + wxString(SHOWOPT_DOWN)), wxBITMAP_TYPE_PNG);
   
   if (opt_img_up && opt_img_dn)
     OptViewBtn = new DownButton(this, BB_ShowOpt, wxPoint(769, 322), 
@@ -176,40 +176,40 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   Playing = false;
   AutoPlay = false;
   SeqPlaying = false;
-  wxImage* play_up = new wxImage(_T(string(GetDataDir() + string(PLAY_UP)).c_str()), wxBITMAP_TYPE_PNG);
-  wxImage* play_down = new wxImage(_T(string(GetDataDir() + string(PLAY_DO)).c_str()), wxBITMAP_TYPE_PNG);
+  wxImage* play_up = new wxImage(wxString(GetDataDir() + wxString(PLAY_UP)), wxBITMAP_TYPE_PNG);
+  wxImage* play_down = new wxImage(wxString(GetDataDir() + wxString(PLAY_DO)), wxBITMAP_TYPE_PNG);
   if (play_up && play_down)
     PlayButton = 
       new DownButton(this, BB_OnPlayClick, wxPoint(8,259), 
 		     wxSize(22,31), play_up, play_down, false);
   
   /* Edit Button */
-  wxImage* edit_up = new wxImage(_T(string(GetDataDir() + string(EDIT_UP)).c_str()), wxBITMAP_TYPE_PNG);
-  wxImage* edit_down = new wxImage(_T(string(GetDataDir() + string(EDIT_DO)).c_str()), wxBITMAP_TYPE_PNG);
+  wxImage* edit_up = new wxImage(wxString(GetDataDir() + wxString(EDIT_UP)), wxBITMAP_TYPE_PNG);
+  wxImage* edit_down = new wxImage(wxString(GetDataDir() + wxString(EDIT_DO)), wxBITMAP_TYPE_PNG);
   if (edit_up && edit_down)
     EditButton = 
       new DownButton(this, BB_OnEditClick, wxPoint(15,231), 
 		     wxSize(15,25), edit_up, edit_down, false);
   
   /* Load/Save Patchs/Patterns */
-  wxImage* tmp_img = new wxImage(_T(string(GetDataDir() + string(SAVEPATCH_UP)).c_str()));
+  wxImage* tmp_img = new wxImage(wxString(GetDataDir() + wxString(SAVEPATCH_UP)));
   wxImage* tmp_img2 = 
-    new wxImage(_T(string(GetDataDir() + string(SAVEPATCH_DO)).c_str()));
+    new wxImage(wxString(GetDataDir() + wxString(SAVEPATCH_DO)));
   
   DownButton* db;
   if (tmp_img && tmp_img2)
     db = new DownButton(this, BB_OnSavePatch, wxPoint(23, 168), wxSize(17,18),
 			tmp_img, tmp_img2, true);
   
-  tmp_img = new wxImage(_T(string(GetDataDir() + string(LOADPATCH_UP)).c_str()));
-  tmp_img2 = new wxImage(_T(string(GetDataDir() + string(LOADPATCH_DO)).c_str()));
+  tmp_img = new wxImage(wxString(GetDataDir() + wxString(LOADPATCH_UP)));
+  tmp_img2 = new wxImage(wxString(GetDataDir() + wxString(LOADPATCH_DO)));
   if (tmp_img && tmp_img2)
     db = 
       new DownButton(this, BB_OnLoadPatch, wxPoint(23, 149), wxSize(17,18), 
 		     tmp_img, tmp_img2, true);
   
   wxStaticText* PatchLabel =
-    new wxStaticText(this, -1, _T("p31kit"), wxPoint(24,190), wxSize(30, 10), 
+    new wxStaticText(this, -1, wxT("p31kit"), wxPoint(24,190), wxSize(30, 10), 
 		     wxALIGN_RIGHT);
   
   PatchLabel->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
@@ -218,7 +218,7 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   /* Signature params */
   
-  StepsLabel = new wxStaticText(this, -1, _T("16"), wxPoint(674, 360), 
+  StepsLabel = new wxStaticText(this, -1, wxT("16"), wxPoint(674, 360), 
 				wxSize(18,15), wxALIGN_RIGHT);
   StepsLabel->SetFont(wxFont(12, wxBOLD, wxBOLD, wxBOLD));
   StepsLabel->SetForegroundColour(*wxWHITE);
@@ -262,8 +262,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   SignatureButtons = new IdButton*[5];
   PositionButtons = new IdButton*[4];
   
-  wxImage* posup = new wxImage(_T(string(GetDataDir() + string(POS_UP)).c_str()));
-  wxImage* posdown = new wxImage(_T(string(GetDataDir() + string(POS_DO)).c_str()));
+  wxImage* posup = new wxImage(wxString(GetDataDir() + wxString(POS_UP)));
+  wxImage* posdown = new wxImage(wxString(GetDataDir() + wxString(POS_DO)));
   
   if (posup && posdown) {
     SignatureButtons[0] = 
@@ -308,8 +308,8 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   OnEdit = false;
 
   PatternSelectors = new IdButton*[8];
-  tmp_img = new wxImage(_T(string(GetDataDir() + string(UP_1)).c_str()));
-  tmp_img2 = new wxImage(_T(string(GetDataDir() + string(DO_1)).c_str()));
+  tmp_img = new wxImage(wxString(GetDataDir() + wxString(UP_1)));
+  tmp_img2 = new wxImage(wxString(GetDataDir() + wxString(DO_1)));
   if (tmp_img && tmp_img2)
     PatternSelectors[0] = 
       new IdButton( this, BB_OnPatternSelectors,
@@ -317,55 +317,55 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 		    tmp_img, tmp_img2, 0 );
   
 
-  tmp_img = new wxImage(_T(string(GetDataDir() + string(UP_2)).c_str()));
-  tmp_img2 = new wxImage(_T(string(GetDataDir() + string(DO_2)).c_str()));
+  tmp_img = new wxImage(wxString(GetDataDir() + wxString(UP_2)));
+  tmp_img2 = new wxImage(wxString(GetDataDir() + wxString(DO_2)));
   if (tmp_img && tmp_img2)
     PatternSelectors[1] = 
       new IdButton( this, BB_OnPatternSelectors,
 		    wxPoint(48, 230), wxSize(12,13),
 		    tmp_img, tmp_img2, 1 );
-  tmp_img = new wxImage(_T(string(GetDataDir() + string(UP_3)).c_str()));
-  tmp_img2 = new wxImage(_T(string(GetDataDir() + string(DO_3)).c_str()));
+  tmp_img = new wxImage(wxString(GetDataDir() + wxString(UP_3)));
+  tmp_img2 = new wxImage(wxString(GetDataDir() + wxString(DO_3)));
   if (tmp_img && tmp_img2)
     PatternSelectors[2] =
       new IdButton( this, BB_OnPatternSelectors,
 		    wxPoint(33, 245), wxSize(12,13),
 		    tmp_img, tmp_img2, 2 );
   
-  tmp_img = new wxImage(_T(string(GetDataDir() + string(UP_4)).c_str()));
-  tmp_img2 = new wxImage(_T(string(GetDataDir() + string(DO_4)).c_str()));
+  tmp_img = new wxImage(wxString(GetDataDir() + wxString(UP_4)));
+  tmp_img2 = new wxImage(wxString(GetDataDir() + wxString(DO_4)));
   if (tmp_img && tmp_img2)
     PatternSelectors[3] = 
       new IdButton( this, BB_OnPatternSelectors,
 		    wxPoint(48, 245), wxSize(12,13),
 		    tmp_img, tmp_img2, 3 );
   
-  tmp_img = new wxImage(_T(string(GetDataDir() + string(UP_5)).c_str()));
-  tmp_img2 = new wxImage(_T(string(GetDataDir() + string(DO_5)).c_str()));
+  tmp_img = new wxImage(wxString(GetDataDir() + wxString(UP_5)));
+  tmp_img2 = new wxImage(wxString(GetDataDir() + wxString(DO_5)));
   if (tmp_img && tmp_img2)
     PatternSelectors[4] = 
       new IdButton( this, BB_OnPatternSelectors,
 		    wxPoint(33, 260), wxSize(12,13),
 		    tmp_img, tmp_img2, 4 );
   
-  tmp_img = new wxImage(_T(string(GetDataDir() + string(UP_6)).c_str()));
-  tmp_img2 = new wxImage(_T(string(GetDataDir() + string(DO_6)).c_str()));
+  tmp_img = new wxImage(wxString(GetDataDir() + wxString(UP_6)));
+  tmp_img2 = new wxImage(wxString(GetDataDir() + wxString(DO_6)));
   if (tmp_img && tmp_img2)
     PatternSelectors[5] = 
       new IdButton( this, BB_OnPatternSelectors,
 		    wxPoint(48, 260), wxSize(12,13),
 		    tmp_img, tmp_img2, 5 );
   
-  tmp_img = new wxImage(_T(string(GetDataDir() + string(UP_7)).c_str()));
-  tmp_img2 = new wxImage(_T(string(GetDataDir() + string(DO_7)).c_str()));
+  tmp_img = new wxImage(wxString(GetDataDir() + wxString(UP_7)));
+  tmp_img2 = new wxImage(wxString(GetDataDir() + wxString(DO_7)));
   if (tmp_img && tmp_img2)
   PatternSelectors[6] = 
     new IdButton( this, BB_OnPatternSelectors,
 		  wxPoint(33, 275), wxSize(12,13),
 		  tmp_img, tmp_img2, 6 );
   
-  tmp_img = new wxImage(_T(string(GetDataDir() + string(UP_8)).c_str()));
-  tmp_img2 = new wxImage(_T(string(GetDataDir() + string(DO_8)).c_str()));
+  tmp_img = new wxImage(wxString(GetDataDir() + wxString(UP_8)));
+  tmp_img2 = new wxImage(wxString(GetDataDir() + wxString(DO_8)));
   if (tmp_img && tmp_img2)
     PatternSelectors[7] = 
       new IdButton( this, BB_OnPatternSelectors,
@@ -438,15 +438,15 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   wxImage** imgs;
   imgs = new wxImage*[5];
   imgs[0] = 
-    new wxImage(_T(string(GetDataDir() + string(BANK1)).c_str()));
+    new wxImage(wxString(GetDataDir() + wxString(BANK1)));
   imgs[1] = 
-    new wxImage(_T(string(GetDataDir() + string(BANK2)).c_str()));
+    new wxImage(wxString(GetDataDir() + wxString(BANK2)));
   imgs[2] = 
-    new wxImage(_T(string(GetDataDir() + string(BANK3)).c_str()));
+    new wxImage(wxString(GetDataDir() + wxString(BANK3)));
   imgs[3] = 
-    new wxImage(_T(string(GetDataDir() + string(BANK4)).c_str()));
+    new wxImage(wxString(GetDataDir() + wxString(BANK4)));
   imgs[4] =
-    new wxImage(_T(string(GetDataDir() + string(BANK5)).c_str()));
+    new wxImage(wxString(GetDataDir() + wxString(BANK5)));
   
   BankKnob = 
     new StaticPosKnob(this, BB_OnBankChange, 5, imgs, 50, 1, 5, 1, 
@@ -455,9 +455,9 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   wxImage** imgs_;
   imgs_ = new wxImage*[3];
-  imgs_[0] = new wxImage(_T(string(GetDataDir() + string(STEPS_KNOB1)).c_str()));
-  imgs_[1] = new wxImage(_T(string(GetDataDir() + string(STEPS_KNOB2)).c_str()));
-  imgs_[2] = new wxImage(_T(string(GetDataDir() + string(STEPS_KNOB3)).c_str()));
+  imgs_[0] = new wxImage(wxString(GetDataDir() + wxString(STEPS_KNOB1)));
+  imgs_[1] = new wxImage(wxString(GetDataDir() + wxString(STEPS_KNOB2)));
+  imgs_[2] = new wxImage(wxString(GetDataDir() + wxString(STEPS_KNOB3)));
   StepsKnob = new CycleKnob(this, BB_OnStepsChange, 3, imgs_, 10, 1, 64, 16,
 			    wxPoint(712, 351), wxDefaultSize);
   
@@ -1482,7 +1482,7 @@ inline void WiredBeatBox::UpdateSteps(unsigned int bank, unsigned int track)
 {
   StepsKnob->SetValue(Steps[bank][track]);
   wxString s;
-  s.Printf("%d", Steps[bank][track]);
+  s.Printf(wxT("%d"), Steps[bank][track]);
   StepsLabel->SetLabel(s);
   
   for (int i = 0; i < 5; i++)
@@ -1696,14 +1696,14 @@ void WiredBeatBox::ShowOpt(wxCommandEvent& WXUNUSED(e))
 
 void WiredBeatBox::OnSavePatch(wxCommandEvent& WXUNUSED(e))
 {
-  vector<string> exts;
+  vector<wxString> exts;
   exts.push_back(_("drm\tDRM-31 patch file (*.drm)"));
   //cout << "OnSavePatch(): begin" << endl;
   
-  string selfile = SaveFileLoader(_("Save Patch"), &exts);
+  wxString selfile = SaveFileLoader(_("Save Patch"), &exts);
   if (!selfile.empty())
     {
-      int fd = open(selfile.c_str(),  O_CREAT | O_TRUNC | O_WRONLY, 
+      int fd = open(selfile.mb_str(*wxConvCurrent),  O_CREAT | O_TRUNC | O_WRONLY, 
 		    S_IRUSR | S_IWUSR);
       if (fd < 0)
 	{
@@ -1733,13 +1733,13 @@ void WiredBeatBox::OnSavePatch(wxCommandEvent& WXUNUSED(e))
 
 void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
 {
-  vector<string> exts;
+  vector<wxString> exts;
   exts.push_back(_("drm\tDRM-31 patch file (*.drm)"));
   
-  string selfile = OpenFileLoader(_("Load Patch"), &exts);
+  wxString selfile = OpenFileLoader(_("Load Patch"), &exts);
   if (!selfile.empty())
     {
-      int fd = open(selfile.c_str(), O_RDONLY);
+      int fd = open(selfile.mb_str(*wxConvCurrent), O_RDONLY);
       if (fd < 0)
 	{
 	  cout << "OnLoadPatch: Couldnt open( " << selfile << " )" << endl;
@@ -2039,7 +2039,7 @@ void WiredBeatBox::Load(int fd, long size)
 	      wave[tmp_long] = '\0';
 	      try 
 		{
-		  w = new WaveFile(string(wave), true);
+		  w = new WaveFile(wxString(wave, *wxConvCurrent), true);
 		}
 	      catch (...)
 		{
@@ -2200,7 +2200,7 @@ void WiredBeatBox::OnStepsChange(wxCommandEvent& WXUNUSED(event))
     steps = 1;
   
   wxString s;
-  s.Printf("%d", steps);
+  s.Printf(wxT("%d"), steps);
   StepsLabel->SetLabel(s);
   
   /*
