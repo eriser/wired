@@ -1,19 +1,19 @@
 #ifndef ERROR_HH_
 # define ERROR_HH_
 
-#include <string>
+#include <wx/wx.h>
 
 namespace Error
 {
   class File
   {
   private:
-    std::string name;
-    std::string sup;
+    wxString name;
+    wxString sup;
   public:
-    File(std::string s1, std::string s2) : name(s1), sup(s2) { }
-    std::string getName() { return name; }
-    std::string getSup() { return sup; }
+    File(wxString s1, wxString s2) : name(s1), sup(s2) { }
+    wxString getName() { return name; }
+    wxString getSup() { return sup; }
   };
 
   class NoChannels {};
