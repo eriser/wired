@@ -11,7 +11,7 @@
 #define CL_WAVE_DRAW			wxColour( 88, 106, 226)
 #define CL_MIDI_DRAW			wxColour(140, 185, 214)
 #define CL_SEQ_BACKGROUND		wxColour(142, 142, 169)
-#define CL_SEQ_FOREGROUND		wxColour(242, 242, 255)
+#define CL_SEQ_FOREGROUND		wxColour(142, 142, 155)
 
 #define CL_PATTERN_NORM			CL_WAVE_DRAW
 #define CL_PATTERN_SEL			wxColour( 69,  42, 142)
