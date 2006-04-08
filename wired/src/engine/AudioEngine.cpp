@@ -14,6 +14,7 @@ AudioEngine::AudioEngine()
   IsOk = true;
   StreamIsOpened = false;
   StreamIsStarted = false;
+  Stream = NULL;
   UserData = new callback_t;
 
   PaError err = Pa_Initialize();
