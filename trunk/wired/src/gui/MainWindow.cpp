@@ -1299,7 +1299,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 	  cout << "[MAINWIN] Invalid Device Settings" << endl;
 	  Audio->IsOk = false;
 	  AlertDialog(_("audio engine"), 
-		      _("You may check for your audio settings if you want to use wired.."));
+		      _("You may check for your audio settings if you want to use Wired.."));
 	  if (AudioMutex.TryLock() == wxMUTEX_NO_ERROR)
 	    {
 	      AudioMutex.Lock();/* This will lock the sequencer		\
@@ -1337,8 +1337,9 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 
 void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
 {
-  wxMessageDialog			mdialog(this, msg, from, wxOK, wxDefaultPosition);
+  wxMessageDialog			mdialog(NULL, msg, from, wxICON_INFORMATION, wxDefaultPosition);
 
+  mdialog.ShowModal();
 }
 
 void					MainWindow::OnOpenVideo(wxCommandEvent &event)
