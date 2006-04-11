@@ -210,21 +210,24 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   	  if (LoadExt == true)
 	    LoadSoundExt(exts);
   	  else
-	    for (unsigned int i = 0; i < exts->size(); i++)
-	      {
-		unsigned int j;
-		wxString ext = (*exts)[i];
-		if ((j = ext.find(wxT("\t"), 0)) 
-		    != (unsigned int) wxString::npos)
-            {
-                const char *temp = wxString(strdup(wxString(ext.substr(0, j).c_str(), *wxConvCurrent).mb_str(*wxConvCurrent)), *wxConvCurrent).mb_str(*wxConvCurrent);
-		  type->Append(ext.substr(j + 1, ext.size() - j - 1),
-			       (void *)temp);
-            }
-		else
-		  type->Append(ext, strdup(ext.mb_str(*wxConvCurrent)));
-	      }
-  	}
+	    {
+	      for (unsigned int i = 0; i < exts->size(); i++)
+		{
+		  unsigned int j;
+		  wxString ext = (*exts)[i];
+		  if ((j = ext.find(wxT("\t"), 0)) 
+		      != (unsigned int) wxString::npos)
+		    {
+		      const char *temp = wxString(strdup(wxString(ext.substr(0, j).c_str(), *wxConvCurrent).mb_str(*wxConvCurrent)), *wxConvCurrent).mb_str(*wxConvCurrent);
+		      type->Append(ext.substr(j + 1, ext.size() - j - 1),
+				   (void *)temp);
+		    }
+		  else
+		    type->Append(ext, strdup(ext.mb_str(*wxConvCurrent)));
+		}
+	      type->Append(_("All files (*.*)"), strdup("*"));
+	    }
+	}
       LoadFolders();
       if (folder != NULL)
 	ListDirectories(folder->AddRoot(wxT("/"), 0, -1, new TreeItemData(wxT("/"))));
