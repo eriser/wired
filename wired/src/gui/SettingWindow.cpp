@@ -208,7 +208,7 @@ void SettingWindow::OnAudioClick(wxCommandEvent &event)
       int j, val;
       wxString s;
 
-      AudioLoaded = true;
+     
       OutputList->Clear();
       if ((val = OutputChoice->GetSelection()) > 0)
 	for (j = 1, i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++, j++)
@@ -220,7 +220,7 @@ void SettingWindow::OnAudioClick(wxCommandEvent &event)
 		    s.Printf(_("Output %d"), j);
 		    OutputList->Append(s);
 		  }
-		break;
+		//breakOnAudioClick;
 	      }
 	  }
       InputList->Clear();
@@ -287,6 +287,7 @@ void SettingWindow::OnMidiClick(wxCommandEvent &event)
 
 void SettingWindow::OnOkClick(wxCommandEvent &event)
 {
+  AudioLoaded = true;
   Save();
   EndModal(wxID_OK);
 }
@@ -302,6 +303,7 @@ void SettingWindow::OnApplyClick(wxCommandEvent &event)
     Audio->CloseStream();
   
   */
+  AudioLoaded = true;
   Save();
   
   /*
@@ -417,6 +419,8 @@ void SettingWindow::Save()
 //	AudioMutex.Lock();
 //	MidiMutex.Lock();
   long i;
+
+
   istringstream	iss((string)undoRedoMaxDepthTextCtrl->GetValue().mb_str(*wxConvCurrent));
 
   WiredSettings->QuickWaveRender = QuickWaveBox->IsChecked();
@@ -424,9 +428,11 @@ void SettingWindow::Save()
   WiredSettings->OutputDev = OutputChoice->GetSelection() - 1;
   WiredSettings->InputDev = InputChoice->GetSelection() - 1;
   iss >> WiredSettings->maxUndoRedoDepth;
-
+  
+   AudioLoaded = true;
   if (AudioLoaded)
     {
+      cout << "Audio loaded for saving" << endl;
       WiredSettings->OutputChannels.clear();
       for (i = 0; i < OutputList->GetCount(); i++)
 	if (OutputList->IsChecked(i))
@@ -442,9 +448,11 @@ void SettingWindow::Save()
       WiredSettings->SampleFormat = BitsChoice->GetSelection();
       
       WiredSettings->SamplesPerBuffer = Latencies[LatencySlider->GetValue()];
+      WiredSettings->Save();
     }
   if (MidiLoaded)
     {
+      cout << "Midi loaded for saving" << endl;
       WiredSettings->MidiIn.clear();
       for (i = 0; i < MidiInList->GetCount(); i++)
 	if (MidiInList->IsChecked(i))
@@ -452,6 +460,7 @@ void SettingWindow::Save()
       
       WiredSettings->Save();
     }    
+
 //	AudioMutex.Unlock();
 //	MidiMutex.Unlock();
 }
@@ -596,7 +605,7 @@ void SettingWindow::UpdateLatency()
 
 BEGIN_EVENT_TABLE(SettingWindow, wxDialog)
   // EVT_TOGGLEBUTTON(Setting_General, SettingWindow::OnGeneralClick)
-//   EVT_TOGGLEBUTTON(Setting_Audio, SettingWindow::OnAudioClick)
+  // EVT_TOGGLEBUTTON(Setting_Audio, SettingWindow::OnAudioClick)
 //   EVT_TOGGLEBUTTON(Setting_Midi, SettingWindow::OnMidiClick)
   EVT_BUTTON(wxID_OK, SettingWindow::OnOkClick)
   EVT_BUTTON(wxID_CANCEL,SettingWindow:: OnCancelClick)
