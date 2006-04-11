@@ -150,7 +150,8 @@ void Settings::Save()
   conf->Write(wxT("SampleFormat"), SampleFormat);
   conf->Write(wxT("SamplesPerBuffer"), SamplesPerBuffer);
   conf->Write(wxT("WorkingDirectory"), WorkingDir);
-
+  
+ 
   conf->DeleteGroup(wxT("/OutputChannels"));
   conf->DeleteGroup(wxT("/InputChannels"));
   conf->DeleteGroup(wxT("/MidiDevices"));
@@ -172,7 +173,7 @@ void Settings::Save()
     {
       s.Printf(wxT("%d"), l);
       conf->Write(s, (*i));
-    }
+      }
 }
 
 

@@ -144,7 +144,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
     {
       cout << "[MAINWIN] General AudioEngine Error" << endl;
       AudioMutex.Lock();/* This will lock the sequencer			\
-			   until audio parameters are properly set */
+ 			   until audio parameters are properly set */
       // FIXME add exit()s on every catch
     }
   catch (std::bad_alloc)
@@ -356,25 +356,30 @@ void					MainWindow::InitFileConverter()
 {
 	FileConverter = new FileConversion();
 	t_samplerate_info info;
-	
+	SettingWindow				s;
+	int i; 
 	if (Audio->UserData->Sets->WorkingDir.empty())
 	{
 		wxDirDialog dir(this, _("Choose the audio working directory"), wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
 		if (dir.ShowModal() == wxID_OK)
-			CurrentXmlSession->GetAudioDir() = (wchar_t *)dir.GetPath().c_str();
+		  CurrentXmlSession->GetAudioDir() = wxString(dir.GetPath());
+	
 		else
-			CurrentXmlSession->GetAudioDir() = (wchar_t *)wxFileName::GetCwd().c_str();
+		  CurrentXmlSession->GetAudioDir() = wxFileName::GetCwd().c_str();
+		  	     
 		Audio->UserData->Sets->WorkingDir = CurrentXmlSession->GetAudioDir().c_str();
 	}
 	else
 	{
 		CurrentXmlSession->GetAudioDir() = (wchar_t *)Audio->UserData->Sets->WorkingDir.c_str();
+	
 	}
 	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
 	info.SampleRate = (unsigned long) Audio->SampleRate;
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
 	if (FileConverter->Init(&info, wxString(CurrentXmlSession->GetAudioDir()), (unsigned long) 16889235, this) == false)
-		cout << "[MAINWIN] Create file converter thread failed !" << endl; 
+		cout << "[MAINWIN] Create file converter thread failed !" << endl;
+	WiredSettings->Save();
 }
 
 void					MainWindow::InitUndoRedoMenuItems()
