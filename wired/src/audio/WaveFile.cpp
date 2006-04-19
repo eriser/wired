@@ -11,6 +11,9 @@ using namespace std;
 
 WaveFile::WaveFile()
 {
+  LoadedInMem = false;
+  Data = NULL;
+  TempBuf = NULL;
   // Initialise le header de fichier
   memset (&sfinfo, 0, sizeof(sfinfo) );
 
