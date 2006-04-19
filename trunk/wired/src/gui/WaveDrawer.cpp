@@ -32,13 +32,6 @@ WaveDrawer::~WaveDrawer()
 {
   if (DrawData) delete [] DrawData;
   if (Bmp) delete Bmp;
-  if (Data)
-  {
-      while (NumberOfChannels--)
-      	if (Data[NumberOfChannels]) delete Data[NumberOfChannels];
-     	if (Data) delete Data;
-  }
-  if (Wave) delete Wave;
 }
 
 void					WaveDrawer::SetWave(float **data, unsigned long frame_length, long channel_count, wxSize s)

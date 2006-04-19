@@ -120,6 +120,9 @@ LoopSamplerView::~LoopSamplerView()
   delete fader_fg;
   delete knob_bg;
   delete knob_fg;  
+
+  if (Wave)
+    Wave->Destroy();
 }
 
 void LoopSamplerView::SetSlices(list<Slice *> *slices) 
