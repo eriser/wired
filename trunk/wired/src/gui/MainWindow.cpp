@@ -263,19 +263,20 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
     
   SetMenuBar(MenuBar);
 
-  split = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(800, 450)); 
+  split = new wxSplitterWindow(this);
+  split->SetMinimumPaneSize(1);
 
   /* Creation Panel */
   RackPanel = new Rack(split, -1, wxPoint(0, 0), wxSize(800, 250));
 
   //cout << "Known warning ...." << endl;      
-  SeqPanel = new SequencerGui(split, wxPoint(0, 254), wxSize(800, 200), this);
+  SeqPanel = new SequencerGui(split, wxPoint(0, 0), wxSize(800, 200), this);
   //cout << "done :-)" << endl;  
 
   //  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 150), wxSIMPLE_BORDER);
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
 
-  split->SplitHorizontally(RackPanel, SeqPanel);
+  split->SplitHorizontally(RackPanel, SeqPanel, 200);
   
   /* Placement Panel */
     
