@@ -9,42 +9,43 @@
 
 #define	HISTORY_LABEL_ADD_TRACK_ACTION	"AddTrackAction"
 
-class SequencerGui;
+class				SequencerGui;
 
-extern SequencerGui          *SeqPanel;
+extern SequencerGui		*SeqPanel;
 
-class cAddTrackAction : public cAction 
+class				cAddTrackAction : public cAction 
 {
  private:
-  bool mTrackKindFlag;
+  bool				mTrackKindFlag;
   
  public:
   cAddTrackAction (bool kind)
     { mTrackKindFlag = kind; };
   cAddTrackAction(const cAddTrackAction& copy)
-	{ *this = copy; };
+    { *this = copy; };
   ~cAddTrackAction ()
     {};
   
-  virtual void Do ()
+  virtual void			Do ()
     { SeqPanel->AddTrack(mTrackKindFlag); NotifyActionManager(); };
   
-  virtual void Redo ()
+  virtual void			Redo ()
     { SeqPanel->AddTrack(mTrackKindFlag); };
   
-  virtual void Undo ()
+  virtual void			Undo ()
     { 
     	SeqPanel->RemoveTrack();
     	//SeqPanel->DeleteSelectedTrack();
     };
   
-  virtual void Accept (cActionVisitor& visitor)
+  virtual void			Accept (cActionVisitor& visitor)
     { visitor.Visit (*this); };
-  virtual std::string		getHistoryLabel()				// Returns History label wstring
-  				{return HISTORY_LABEL_ADD_TRACK_ACTION;};
+  // Returns History label wstring
+  virtual std::string		getHistoryLabel()
+  {return HISTORY_LABEL_ADD_TRACK_ACTION;};
   				
-  cAddTrackAction			cAddTrackAction::operator=(const cAddTrackAction& right)
-							{if (this != &right) mTrackKindFlag = right.mTrackKindFlag;return *this;}
+  cAddTrackAction		operator=(const cAddTrackAction& right)
+    {if (this != &right) mTrackKindFlag = right.mTrackKindFlag;return *this;}
 };
 
 #endif
