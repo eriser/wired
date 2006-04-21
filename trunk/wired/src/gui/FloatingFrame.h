@@ -12,20 +12,24 @@
 
 using namespace		std;
 
+// A FloatingFrame is linked with a menuitem
+
 class			FloatingFrame : public wxFrame
 {
  public:
   FloatingFrame();
-  FloatingFrame(wxWindow *, wxWindowID, const wxString &, const wxPoint &,
-		const wxSize &size, wxWindow *, wxWindow *, wxMenuItem *);
+  FloatingFrame(wxWindow *parent, wxWindowID, const wxString &title,
+		const wxPoint &pos, const wxSize &size,
+		wxWindow *oldparent, wxMenuItem *menuitem,
+		int EventMenu);
   ~FloatingFrame();
   
   void			OnClose(wxCloseEvent &event);
   
  private:
-  wxWindow		*Child;
   wxWindow		*OldParent;
   wxMenuItem		*MenuItem;
+  int			EventMenu;
 
  protected:
   DECLARE_EVENT_TABLE();
