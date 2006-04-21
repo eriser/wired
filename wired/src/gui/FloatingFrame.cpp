@@ -3,30 +3,27 @@
 
 #include "FloatingFrame.h"
 
-FloatingFrame::FloatingFrame(wxWindow *parent, wxWindowID id, const wxString &title, const wxPoint &pos,
-			     const wxSize &size, wxWindow *frame_child, wxWindow *frame_old_parent, wxMenuItem *menu)
+FloatingFrame::FloatingFrame(wxWindow *parent, wxWindowID id, const wxString &title,
+			     const wxPoint &pos, const wxSize &size,
+			     wxWindow *frame_old_parent,
+			     wxMenuItem *menu, int event_no)
   : wxFrame(parent, id, title, pos, size)
 {
-  Child = frame_child;
   OldParent = frame_old_parent;
   MenuItem = menu;
+  EventMenu = event_no;
 }
-
-// FloatingFrame::FloatingFrame() : wxFrame()
-// {
-//   ;
-// }
 
 FloatingFrame::~FloatingFrame()
 {
-  ;
 }
 
 void		FloatingFrame::OnClose(wxCloseEvent &event)
 {
-  Child->Reparent(OldParent);
+  wxCommandEvent	newevent(wxEVT_COMMAND_MENU_SELECTED, EventMenu);
+
   MenuItem->Check(false);
-  delete this;
+  OldParent->GetEventHandler()->ProcessEvent(newevent);
 }
 
 BEGIN_EVENT_TABLE(FloatingFrame, wxFrame)

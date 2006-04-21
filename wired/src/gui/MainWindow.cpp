@@ -243,9 +243,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   WindowMenu->Append(MainWin_SwitchSeq, _("Switch &Sequencer/Optional view\tCtrl+TAB"));
   WindowMenu->AppendSeparator();
   ItemFloatingTrans = WindowMenu->AppendCheckItem(MainWin_FloatTransport, _("Floating Transport"));
+  WindowMenu->AppendSeparator();
   ItemFloatingSeq = WindowMenu->AppendCheckItem(MainWin_FloatSequencer,_("Floating Sequencer"));
   ItemFloatingRacks = WindowMenu->AppendCheckItem(MainWin_FloatRacks, _("Floating Racks"));
-  ItemFloatingOptView = WindowMenu->AppendCheckItem(MainWin_FloatView, _("Floating Optional View"));
+//   ItemFloatingOptView = WindowMenu->AppendCheckItem(MainWin_FloatView, _("Floating Optional View"));
   WindowMenu->AppendSeparator();
   WindowMenu->AppendCheckItem(MainWin_FullScreen, _("&Fullscreen"));
   WindowMenu->AppendSeparator();
@@ -1078,14 +1079,23 @@ void					MainWindow::OnFloatTransport(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatTransport))
     {
+      TransportPanel->Hide();
+      BottomSizer->Detach(TransportPanel);
+      BottomSizer->Layout();
+
       TransportFrame = new FloatingFrame(0x0, -1, _("Transport"), TransportPanel->GetPosition(), 
-					 TransportPanel->GetSize(), TransportPanel, this, ItemFloatingTrans);
+					 TransportPanel->GetSize(), TransportPanel->GetParent(),
+					 ItemFloatingTrans, MainWin_FloatTransport);
       TransportPanel->Reparent(TransportFrame);
+      TransportPanel->Show();
       TransportFrame->Show();
     }
   else
     {
       TransportPanel->Reparent(this);
+      BottomSizer->Insert(0, TransportPanel, 0, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
+      BottomSizer->Layout();
+
       delete TransportFrame;
       TransportFrame = 0x0;
     }
@@ -1095,16 +1105,40 @@ void					MainWindow::OnFloatSequencer(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatSequencer))
     {
+      if (SeqModeView)
+	split->Unsplit(SeqPanel);
+      else
+	BottomSizer->Detach(SeqPanel);
+
       SequencerFrame = new FloatingFrame(0x0, -1, _("Sequencer"), SeqPanel->GetPosition(), 
-					 SeqPanel->GetSize(), SeqPanel, this, ItemFloatingSeq);
+					 SeqPanel->GetSize(), SeqPanel->GetParent(),
+					 ItemFloatingSeq, MainWin_FloatSequencer);
       SeqPanel->Reparent(SequencerFrame);
-      //SeqPanel->Floating = true;
+      SeqPanel->Show();
       SequencerFrame->Show();
+
+      // disable the floating mode for Rack
+      ItemFloatingRacks->Enable(false);
     }
   else
     {
-      SeqPanel->Reparent(this);
-      //SeqPanel->Floating = false;
+      // enable the floating mode for Rack
+      ItemFloatingRacks->Enable(true);      
+
+      // if optview is already here
+      if (split->IsSplit())
+	{
+	  SeqPanel->Reparent(this);
+	  SeqPanel->SetSize(wxSize(470, 150));
+	  BottomSizer->Add(SeqPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2);
+	  BottomSizer->Layout();
+	  SeqPanel->Show();
+	}
+      else
+	{
+	  SeqPanel->Reparent(split);
+	  split->SplitHorizontally(split->GetWindow1(), SeqPanel);
+	}
       delete SequencerFrame;
       SequencerFrame = 0x0;
     }
@@ -1114,14 +1148,40 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
 {
   if (WindowMenu->IsChecked(MainWin_FloatRacks))
     {
-      RackFrame = new FloatingFrame(0x0, -1, _("Racks"), RackPanel->GetPosition(), 
-				    RackPanel->GetSize(), RackPanel, this, ItemFloatingRacks);
-      RackPanel->Reparent(RackFrame);
-      RackFrame->Show();
-    }
+      if (RackModeView)
+	split->Unsplit(RackPanel);
+      else
+	BottomSizer->Detach(RackPanel);
+
+       RackFrame = new FloatingFrame(0x0, -1, _("Racks"), RackPanel->GetPosition(), 
+				     RackPanel->GetSize(), RackPanel->GetParent(),
+				     ItemFloatingRacks, MainWin_FloatRacks);
+       RackPanel->Reparent(RackFrame);
+       RackPanel->Show();
+       RackFrame->Show();
+
+       // disable the floating mode for Sequencer
+      ItemFloatingSeq->Enable(false);
+   }
   else
     {
-      RackPanel->Reparent(this);
+      // enable the floating mode for Sequencer
+      ItemFloatingSeq->Enable(true);
+
+      // if optview is already here
+      if (split->IsSplit())
+	{
+	  RackPanel->Reparent(this);
+	  RackPanel->SetSize(wxSize(470, 150));
+	  BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2);
+	  BottomSizer->Layout();
+	  RackPanel->Show();
+	}
+      else
+	{
+	  RackPanel->Reparent(split);
+	  split->SplitHorizontally(RackPanel, split->GetWindow1());
+	}
       delete RackFrame;
       RackFrame = 0x0;
     }
@@ -1139,103 +1199,106 @@ void					MainWindow::OnSwitchSeqOptViewEvent(wxCommandEvent &event)
 
 void					MainWindow::SwitchRackOptView()
 {
+  // if optview is already switched with sequencer, reswitch
   if (!SeqModeView)
     SwitchSeqOptView();
 
-  RackModeView = !RackModeView;
+  // if optview is not on top (rackview)
   if (RackModeView)
     {
-      OptPanel->Show(false);
+      BottomSizer->Detach(OptPanel);
+      OptPanel->Reparent(split);
+
+      // if Rack is already on top
+      if (split->GetWindow1() == RackPanel)
+	{
+	  split->ReplaceWindow(RackPanel, OptPanel);
+	  RackPanel->Reparent(this);
+	  RackPanel->SetSize(wxSize(470, 150));
+	  BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2);  
+	  BottomSizer->Layout();
+	}
+      else if (split->GetWindow1() == SeqPanel) // if sequencer is alone
+	split->SplitHorizontally(OptPanel, SeqPanel);
+
+    }
+  else // if optview is on top (rackview)
+    {
+      // if Rack is already on bottom
+      if (BottomSizer->Detach(RackPanel))
+	{
+	  RackPanel->Reparent(split);
+	  split->ReplaceWindow(OptPanel, RackPanel);
+	}
+      else // else we leave sequencer alone
+	split->Unsplit(OptPanel);
+
+      OptPanel->Hide();
       OptPanel->SetSize(wxSize(470, 150));
       OptPanel->Reparent(this);
-      
-      RackPanel->Reparent(split);      
-      OptPanel->Show(true);
-      //split->SplitHorizontally(RackPanel, SeqPanel);
-      split->ReplaceWindow(OptPanel, RackPanel);
+      BottomSizer->Add(OptPanel, 1, wxEXPAND | wxALL, 2);
+      BottomSizer->Layout();
+      OptPanel->Show();
 
-      BottomSizer = new wxBoxSizer(wxHORIZONTAL);
-      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
-      BottomSizer->Add(OptPanel, 1, wxEXPAND | wxALL, 2); 
-  
-      TopSizer = new wxBoxSizer(wxVERTICAL);
-      
-      TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
-      TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
-      SetSizer(TopSizer);
     }
-  else
-    {
-      RackPanel->SetSize(wxSize(470, 150));
-      RackPanel->Reparent(this);
-      RackPanel->SetPosition(wxPoint(306, 452));
-      
-      OptPanel->Reparent(split);
-      split->ReplaceWindow(RackPanel, OptPanel);
-      //split->SplitHorizontally(OptPanel, SeqPanel);
-
-
-      BottomSizer = new wxBoxSizer(wxHORIZONTAL);
-      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
-      BottomSizer->Add(RackPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
-  
-      TopSizer = new wxBoxSizer(wxVERTICAL);
-      
-      TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
-      TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
-      SetSizer(TopSizer);
-
-      RackPanel->SetSize(wxSize(470, 150));
-    }
+  RackModeView = !RackModeView;
 }
 
 void					MainWindow::SwitchSeqOptView()
 {
+  // if optview is already switched with rack, reswitch
   if (!RackModeView)
     SwitchRackOptView();
 
-  SeqModeView = !SeqModeView;
+  // if optview is not on middle (seqview)
   if (SeqModeView)
     {
-      OptPanel->Show(false);
+      OptPanel->Hide();
+      BottomSizer->Detach(OptPanel);
+      OptPanel->Reparent(split);
+      // if sequencer is not in a floating frame
+      if (!SequencerFrame)
+	{
+	  SeqPanel->Hide();
+	  SeqPanel->Reparent(this);
+	  split->ReplaceWindow(SeqPanel, OptPanel);
+
+	  SeqPanel->SetSize(wxSize(470, 150));
+	  BottomSizer->Add(SeqPanel, 1, wxEXPAND | wxALL, 2);
+	  BottomSizer->Layout();
+	  SeqPanel->Show();
+	}
+      else
+	{
+	  // if rack is not in a floating frame
+	  if (!RackFrame)
+	    split->SplitHorizontally(RackPanel, OptPanel);
+	}
+      OptPanel->Show();
+    }
+  else // if optview is on middle (seqview)
+    {
+      // if sequencer is on bottom
+      if (!SequencerFrame)
+	{
+	  SeqPanel->Hide();
+	  BottomSizer->Detach(SeqPanel);
+	  SeqPanel->Reparent(split);
+	  split->ReplaceWindow(OptPanel, SeqPanel);
+	  SeqPanel->Show();
+	}
+      else
+	split->Unsplit(OptPanel);
+
+      OptPanel->Hide();
       OptPanel->SetSize(wxSize(470, 150));
       OptPanel->Reparent(this);
-      
-      SeqPanel->Reparent(split);      
-      OptPanel->Show(true);
-      //split->SplitHorizontally(SeqPanel, SeqPanel);
-      split->ReplaceWindow(OptPanel, SeqPanel);
 
-      BottomSizer = new wxBoxSizer(wxHORIZONTAL);
-      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
-      BottomSizer->Add(OptPanel, 1, wxEXPAND | wxALL, 2); 
-  
-      TopSizer = new wxBoxSizer(wxVERTICAL);
-      
-      TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
-      TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
-      SetSizer(TopSizer);
+      BottomSizer->Add(OptPanel, 1, wxEXPAND | wxALL, 2);
+      BottomSizer->Layout();
+      OptPanel->Show();
     }
-  else
-    {
-      SeqPanel->SetSize(wxSize(470, 150));
-      SeqPanel->Reparent(this);
-      SeqPanel->SetPosition(wxPoint(306, 452));
-      
-      OptPanel->Reparent(split);
-      split->ReplaceWindow(SeqPanel, OptPanel);
-      //split->SplitHorizontally(OptPanel, SeqPanel);
-
-      BottomSizer = new wxBoxSizer(wxHORIZONTAL);
-      BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL, 2); 
-      BottomSizer->Add(SeqPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
-  
-      TopSizer = new wxBoxSizer(wxVERTICAL);
-      
-      TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
-      TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
-      SetSizer(TopSizer);
-    }
+  SeqModeView = !SeqModeView;
 }
 
 void					MainWindow::OnSettings(wxCommandEvent &event)
