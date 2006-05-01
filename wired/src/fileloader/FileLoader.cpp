@@ -85,6 +85,7 @@ END_EVENT_TABLE()
 FileLoader::FileLoader(wxWindow *parent, wxWindowID id, wxString title, bool pakai, bool psave, vector<wxString> *exts, bool LoadExtraExts) :
 wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT))
 {
+  playing = false;
   Center();
   
   wxFileName f;
@@ -238,7 +239,7 @@ void FileLoader::LoadSoundExt(vector<wxString> *Exts, bool LoadExtraExts)
   wxString	itemdesc;
   wxString	*itemdata = NULL;
 
-  filters = wxT(";");
+  filters = wxT("");
   if (LoadExtraExts || !Exts)
     {
       wxTextFile	file(WiredSettings->ConfDir + EXT_FILE);
@@ -301,7 +302,7 @@ void FileLoader::LoadSoundExt(vector<wxString> *Exts, bool LoadExtraExts)
 //	      }
 //	  }
 
-  if (!filters.IsEmpty() && !filters.AfterFirst(';').AfterFirst(';').IsEmpty())
+  if (!filters.IsEmpty() && !filters.AfterFirst(';').IsEmpty())
     {
       wxString	allext;
 
@@ -309,10 +310,10 @@ void FileLoader::LoadSoundExt(vector<wxString> *Exts, bool LoadExtraExts)
       allext.Replace(wxT(";"), wxT(";*."));
       itemdesc = _("All supported soundfiles (*.") + allext + wxT(")");
       itemdata = new wxString(filters);
-      filters = wxT(";") + filters;
       type->Insert(itemdesc, 0, itemdata);
       type->SetSelection(0);
     }
+  filters = wxT(";") + filters;
   type->Append(_("All files (*.*)"), strdup("*"));
 }
 
