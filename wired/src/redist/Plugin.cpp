@@ -154,13 +154,13 @@ wxString Plugin::OpenFileLoader(wxString title,
 {
   struct
   {
-    wxString *t;
+    wxString t;
     std::vector<wxString> *e;
     bool ak;
     wxString result;
   } w_filel;
  
-  w_filel.t = &title;
+  w_filel.t = title;
   w_filel.e = exts;
   w_filel.ak = akai;
   StartInfo.HostCallback(this, wiredOpenFileLoader, (void *)&w_filel);
@@ -172,12 +172,12 @@ wxString Plugin::SaveFileLoader(wxString title,
 {
   struct
   {
-    wxString *t;
+    wxString t;
     std::vector<wxString> *e;
     wxString result;
   } w_filel;
  
-  w_filel.t = &title;
+  w_filel.t = title;
   w_filel.e = exts;
   StartInfo.HostCallback(this, wiredSaveFileLoader, (void *)&w_filel);
   return (w_filel.result);
