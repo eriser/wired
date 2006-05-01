@@ -1660,7 +1660,6 @@ void					MainWindow::OnFileLoaderStart(wxCommandEvent &event)
 {
   FileLoader				*f = (FileLoader *)event.GetEventObject();
 
-  wxFileName fn(f->GetSelectedFile().c_str());      
   Seq->PlayFile(f->GetSelectedFile(), f->IsAkai());
 }
 

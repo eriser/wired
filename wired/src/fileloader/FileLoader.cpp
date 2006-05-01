@@ -308,7 +308,7 @@ void FileLoader::LoadSoundExt(vector<wxString> *Exts, bool LoadExtraExts)
 
       allext = filters.Mid(0, filters.Len() - 1);
       allext.Replace(wxT(";"), wxT(";*."));
-      itemdesc = _("All supported soundfiles (*.") + allext + wxT(")");
+      itemdesc = _("All supported files (*.") + allext + wxT(")");
       itemdata = new wxString(filters);
       type->Insert(itemdesc, 0, itemdata);
       type->SetSelection(0);
@@ -1189,7 +1189,6 @@ wxString FileLoader::GetSelectedFile()
 
 void FileLoader::StopPlaying()
 {
-  FileInfo->SetLabel(wxString(wxT("")));
   playing = false;
   if (!save)
     preview->SetLabel(_("Preview"));

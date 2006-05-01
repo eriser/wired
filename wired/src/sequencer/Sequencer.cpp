@@ -66,9 +66,9 @@ void					*Sequencer::Entry()
   long					click_coeff, click_dec = 0;
   long					delta = Audio->SamplesPerBuffer;
   WiredEvent				midievent;
-  float					**buf;
-  float					**buf1;
-  float					**buf2;
+  float					**buf = NULL;
+  float					**buf1 = NULL;
+  float					**buf2 = NULL;
   
   
   AudioMutex.Lock(); /* Locked before in MainWindow		\
@@ -299,17 +299,19 @@ void					*Sequencer::Entry()
       /* Jouer fichier du FileLoader si besoin */
       if (PlayWave)
 	{
-      AllocBuffer(buf, 2);
+	  float	**fl_buf = NULL;
+
+	  AllocBuffer(fl_buf, 2);
 	  size = PlayWave->GetNumberOfFrames() - PlayWavePos;
 	  if (size > Audio->SamplesPerBuffer)
 	    size = Audio->SamplesPerBuffer;
 	  else
 	    {
-	      memset(buf[0], 0, Audio->SamplesPerBuffer * sizeof(float));
-	      memset(buf[1], 0, Audio->SamplesPerBuffer * sizeof(float));
+	      memset(fl_buf[0], 0, Audio->SamplesPerBuffer * sizeof(float));
+	      memset(fl_buf[1], 0, Audio->SamplesPerBuffer * sizeof(float));
 	    }	      
-	  PlayWave->Read(buf, PlayWavePos, size);
-	  ExtraBufs.push_back(new ChanBuf(buf, PlayWaveChannel));
+	  PlayWave->Read(fl_buf, PlayWavePos, size);
+	  ExtraBufs.push_back(new ChanBuf(fl_buf, PlayWaveChannel));
 	  PlayWavePos += size;
 	  if (PlayWavePos >= PlayWave->GetNumberOfFrames())
 	    {
