@@ -82,7 +82,7 @@ BEGIN_EVENT_TABLE(FileLoader, wxDialog)
   EVT_BUTTON(DELMRU_ID, FileLoader::OnDeleteRecent)
 END_EVENT_TABLE()
 
-FileLoader::FileLoader(wxWindow *parent, wxWindowID id, wxString title, bool pakai, bool psave, vector<wxString> *exts, bool LoadExt) :
+FileLoader::FileLoader(wxWindow *parent, wxWindowID id, wxString title, bool pakai, bool psave, vector<wxString> *exts, bool LoadExtraExts) :
 wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT))
 {
   Center();
@@ -202,32 +202,9 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 //     }
   if (!akai)
     {
-	wxLogNull logNo;
-      if (exts == NULL)
-	LoadSoundExt();	
-      else
-  	{	
-  	  if (LoadExt == true)
-	    LoadSoundExt(exts);
-  	  else
-	    {
-	      for (unsigned int i = 0; i < exts->size(); i++)
-		{
-		  unsigned int j;
-		  wxString ext = (*exts)[i];
-		  if ((j = ext.find(wxT("\t"), 0)) 
-		      != (unsigned int) wxString::npos)
-		    {
-		      const char *temp = wxString(strdup(wxString(ext.substr(0, j).c_str(), *wxConvCurrent).mb_str(*wxConvCurrent)), *wxConvCurrent).mb_str(*wxConvCurrent);
-		      type->Append(ext.substr(j + 1, ext.size() - j - 1),
-				   (void *)temp);
-		    }
-		  else
-		    type->Append(ext, strdup(ext.mb_str(*wxConvCurrent)));
-		}
-	      type->Append(_("All files (*.*)"), strdup("*"));
-	    }
-	}
+      wxLogNull logNo;
+
+      LoadSoundExt(exts, LoadExtraExts);
       LoadFolders();
       if (folder != NULL)
 	ListDirectories(folder->AddRoot(wxT("/"), 0, -1, new TreeItemData(wxT("/"))));
@@ -246,99 +223,6 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
     }
 }
 
-// void FileLoader::LoadSoundExt(vector<string> *Exts)
-// {
-//   type->Append(_T("will be replaced by allfiles at the end of the function"));
-//   wstring *allext = NULL;
-  
-//   wstring extfile = WiredSettings->ConfDir;
-//   extfile += EXT_FILE;
-  
-//   ifstream f(extfile.c_str());
-  
-//   wstring line;
-//   unsigned int i, j;
-
-//   while (getline(f, line, '\n'))
-//     {
-//       for (i = 0; line[i] == ' '; i++);
-//       if (line[i] != '#')
-// 	{
-// 	  if ((j = line.find("\t", 0)) != (unsigned int) wstring::npos)
-// 	    {
-// 	      type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
-// 			   strdup(line.substr(i, j).c_str()));
-// 	      if (allext != NULL)
-// 		{
-// 		  *allext += ";";
-// 		  *allext += line.substr(i, j);
-// 		}
-// 	      else
-// 		allext = new wstring(line.substr(i, j));
-// 	    }
-// 	}
-//     }
-//   f.close();
-//   if (Exts)
-//     {
-//       for (unsigned int i = 0; i < Exts->size(); i++)
-// 	{
-// 	  unsigned int j;
-// 	  wstring ext = (*Exts)[i];
-	  
-// 	  if ((j = ext.find("\t", 0)) != (unsigned int) wstring::npos)
-// 	    type->Append(_T(ext.substr(j + 1, ext.size() - j - 1).c_str()),
-// 			 strdup(ext.substr(0, j).c_str()));
-// 	  else
-// 	    type->Append(_T(ext.c_str()), strdup(ext.c_str()));
-// 	  if (allext != NULL)
-// 	    {
-// 	      *allext += ";";
-// 	      *allext += ext.substr(0, j);
-// 	    }
-// 	  else
-// 	    allext = new wstring(ext.substr(0, j));
-// 	}
-//     }
-  
-//	  list<string>	CodecsList = _CodecsMgr.GetExtension();
-//	  list<string>::iterator	iter;
-//	  for (iter = CodecsList.begin(); iter != CodecsList.end(); iter++)
-//	  {
-//	  	line = *iter;
-//		  if ((j = line.find("\t", 0)) != wstring::npos)
-//	      {
-//	        type->Append(_T(line.substr(j + 1, line.size() - j - 1).c_str()),
-//	                     strdup(line.substr(i, j).c_str()));
-//	        if (allext != NULL)
-//	        {
-//			  *allext += ";";
-//			  *allext += line.substr(i, j);
-//	        }
-//	        else
-//		  allext = new wstring(line.substr(i, j));
-//	      }
-//	  }
-
-//   if (allext != NULL)
-//     {
-//       wstring desc = _("All supported soundfiles (*.");
-//       for (int i = 0; (*allext)[i]; i++)
-// 	if ((*allext)[i] != ';')
-// 	  desc += (*allext)[i];
-// 	else
-// 	  desc += ";*.";
-//       desc += ")";
-//       type->SetString(0, _T(desc.c_str()));
-//       type->SetClientData(0, strdup(allext->c_str()));
-//       delete allext;
-//     }
-//   else
-//     type->Delete(0);
-//   type->Append(_T(_("All files (*.*)")), strdup("*"));
-//   type->SetSelection(0);
-// }
-
 //
 // Reads the ${PREFIX}/etc/wired_exts.conf file for loading supported
 // files extensions.
@@ -349,45 +233,43 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
 // for further details.
 //
 
-void FileLoader::LoadSoundExt(vector<wxString> *Exts)
+void FileLoader::LoadSoundExt(vector<wxString> *Exts, bool LoadExtraExts)
 {
-  type->Append(_T("will be replaced by allfiles at the end of the function"));
-  wxString	allext;
-  
-  wxTextFile	file(WiredSettings->ConfDir + EXT_FILE);
-  wxString	l;
   wxString	itemdesc;
   wxString	*itemdata = NULL;
 
-  filters = wxT("");
-  //allext = "";
-  file.Open();
-  for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
+  filters = wxT(";");
+  if (LoadExtraExts || !Exts)
     {
-      l.Trim(false);
-      l = l.BeforeFirst('#');
-      if (!l.IsEmpty())
+      wxTextFile	file(WiredSettings->ConfDir + EXT_FILE);
+      wxString		l;
+
+      if (file.Open())
 	{
-	  itemdesc = l.AfterLast('\t');
-	  itemdata = new wxString(l.BeforeFirst('\t'));
-	  type->Append(itemdesc, itemdata);
-	  filters += *itemdata + wxT(";");
-	  //	  allext += *itemdata + ";";
+	  for (l = file.GetFirstLine(); ; l = file.GetNextLine())
+	    {
+	      l.Trim(false);
+	      l = l.BeforeFirst('#');
+	      if (!l.IsEmpty())
+		{
+		  itemdesc = l.AfterLast('\t');
+		  itemdata = new wxString(l.BeforeFirst('\t'));
+		  type->Append(itemdesc, itemdata);
+		  filters += *itemdata + wxT(";");
+		}
+	      if (file.Eof())
+		break;
+	    }
+	  file.Close();
 	}
     }
-  itemdesc = l.AfterLast('\t');
-  itemdata = new wxString(l.BeforeFirst('\t'));
-  type->Append(itemdesc, itemdata);
-  filters += *itemdata + wxT(";");
-  file.Close();
-  
   if (Exts)
     {
       for (unsigned int i = 0; i < Exts->size(); i++)
 	{
 	  unsigned int j;
 	  wxString ext = (*Exts)[i];
-	  
+
 	  itemdesc = ext.AfterLast('\t');
 	  itemdata = new wxString(ext.BeforeFirst('\t'));
 
@@ -396,13 +278,10 @@ void FileLoader::LoadSoundExt(vector<wxString> *Exts)
 			 strdup(wxString(ext.substr(0, j).c_str(), *wxConvCurrent).mb_str(*wxConvCurrent)));
 	  else
 	    type->Append(ext, strdup(ext.mb_str(*wxConvCurrent)));
-// 	  if (allext != NULL)
 	  filters += *itemdata + wxT(";");
-// 	  else
-// 	    allext = new wxString(ext.substr(0, j));
 	}
     }
-  
+
 //	  list<string>	CodecsList = _CodecsMgr.GetExtension();
 //	  list<string>::iterator	iter;
 //	  for (iter = CodecsList.begin(); iter != CodecsList.end(); iter++)
@@ -422,22 +301,19 @@ void FileLoader::LoadSoundExt(vector<wxString> *Exts)
 //	      }
 //	  }
 
-  if (!filters.IsEmpty())
+  if (!filters.IsEmpty() && !filters.AfterFirst(';').AfterFirst(';').IsEmpty())
     {
-      //allext = filters;
+      wxString	allext;
+
       allext = filters.Mid(0, filters.Len() - 1);
       allext.Replace(wxT(";"), wxT(";*."));
       itemdesc = _("All supported soundfiles (*.") + allext + wxT(")");
       itemdata = new wxString(filters);
       filters = wxT(";") + filters;
-      type->SetString(0, itemdesc);
-      type->SetClientData(0, itemdata);
+      type->Insert(itemdesc, 0, itemdata);
+      type->SetSelection(0);
     }
-  else
-    type->Delete(0);
-  //cout << "filters in constructor : " << filters << endl;
   type->Append(_("All files (*.*)"), strdup("*"));
-  type->SetSelection(0);
 }
 
 void FileLoader::AddIcon(wxImageList *images, wxIcon icon)
@@ -729,10 +605,8 @@ bool			FileLoader::ExtMatch(wxString path)
   wxFileName		filename(path);
   wxString		ext = wxT(";") + filename.GetExt() + wxT(";");
  
-  if (filters == wxT(";*;"))
+  if (filters.Find(wxT(";*;")) != -1)
     return (true);
-  if ((filters.Find(wxT(";;")) == -1) && (ext == wxT(";;")))
-    return (false);
   return (filters.Find(ext.MakeLower()) != -1);
 }
 

@@ -50,7 +50,8 @@ DEFINE_EVENT_TYPE(wxEVT_FILELOADER_STOP)
 class FileLoader: public wxDialog
 {
  public:
-  FileLoader(wxWindow *parent, wxWindowID id, wxString, bool, bool, vector<wxString> *, bool = false);
+  FileLoader(wxWindow *parent, wxWindowID id, wxString, bool, bool,
+	     vector<wxString> *exts, bool LoadExtraExts = false);
   ~FileLoader();
   wxString GetSelectedFile();
   bool	 IsAkai() { return akai; }
@@ -91,7 +92,7 @@ class FileLoader: public wxDialog
   
   void AddIcon(wxImageList *, wxIcon);
   
-  void LoadSoundExt(vector<wxString> * = NULL);
+  void LoadSoundExt(vector<wxString> *exts, bool LoadExtraExts);
   void LoadFolders();
   void SaveFolders();
 
