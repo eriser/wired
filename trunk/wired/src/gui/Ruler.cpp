@@ -21,6 +21,7 @@ Ruler::Ruler(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &
   T1->Show(true);
   T2->Show(true);
   T3->Show(true);*/
+  XScroll = 0;
 }
 
 Ruler::~Ruler()
