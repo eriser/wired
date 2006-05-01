@@ -48,6 +48,11 @@ SequencerView::SequencerView(wxWindow *parent, const wxPoint &pos,
 			     const wxSize &size)
   : wxWindow(parent, -1, pos, size, wxSUNKEN_BORDER)
 {
+  XScroll = 0;
+  YScroll = 0;
+  TotalWidth = 0;
+  TotalHeight = 0;
+
   TheZone = new SelectionZone(this);
   HAxl = new AccelCenter(ACCEL_TYPE_DEFAULT);
   VAxl = new AccelCenter(ACCEL_TYPE_DEFAULT);
@@ -344,11 +349,15 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   long					r;
 
   //Floating = false;
+  CurrentXScrollPos = 0;
+  CurrentYScrollPos = 0;  
   Tool = ID_TOOL_MOVE_SEQUENCER;
   HoriZoomFactor = 1.0f;
   VertZoomFactor = 1.0f;
   CurrentPos = 0.0;
   DoCut = false;
+  VertNowPos = 0;
+  HorizNowPos = 0;
   SetBackgroundColour(CL_SEQ_BACKGROUND);
   SetForegroundColour(CL_SEQ_FOREGROUND);
   Toolbar = new wxToolBar(this, -1, wxPoint(-1, -1), wxSize(-1, TOOLS_HEIGHT), wxTB_FLAT);
@@ -410,8 +419,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   SeqView->SetBackgroundColour(CL_SEQVIEW_BACKGROUND);
   TrackView->SetScrollRate(10, 10);
   TrackView->SetBackgroundColour(wxColour(204, 199, 219));//*wxLIGHT_GREY);
-  VertNowPos = 0;
-  HorizNowPos = 0;
   Magnetism = MAGNETISM;
   CursorMagnetism = CURSOR_MAGNETISM ? CURSOR_DEFAULT_MAGNETISM : 0;
   PatternMagnetism = PATTERN_MAGNETISM ? PATTERN_DEFAULT_MAGNETISM : 0;
