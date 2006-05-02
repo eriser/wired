@@ -104,6 +104,7 @@ void				RackTrack::RemoveRack()
 	Racks.pop_back();
   	//Dump();
 	plugin->Hide();
+	SeqPanel->RemoveReferenceTo(plugin);
 	delete plugin;
 	Parent->ResizeTracks();
 	Parent->SetScrolling();
@@ -318,27 +319,12 @@ void				Rack::RemoveRackAndChannel(t_ListRackTrack::const_iterator iter)
 {
 	//wxMutexLocker lock(SeqMutex);
 	SeqMutex.Lock();
-	UpdateConnectedSeqTracksFromDeletedRacks(iter);
 	(*iter)->RemoveRack();
 	(*iter)->RemoveChannel();
 	RackTracks.remove(*iter);
 	ResizeTracks();
 	SetScrolling();
 	SeqMutex.Unlock();
-}
-
-void				Rack::UpdateConnectedSeqTracksFromDeletedRacks(t_ListRackTrack::const_iterator	iterRackTrack)
-{
-	vector<Track *>::const_iterator	iter;
-	
-	for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
-	{
-		if ((*iter)->TrackOpt->ConnectedRackTrack == (*iterRackTrack))
-		{
-			(*iter)->TrackOpt->ConnectedRackTrack = 0;
-			(*iter)->TrackOpt->Connected = 0;
-		}
-	}
 }
 
 bool				Rack::RemoveSelectedRackAndChannel()

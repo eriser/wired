@@ -193,8 +193,7 @@ void					SeqTrack::ConnectTo(Plugin *plug)
       // Initialisation du plugin
       plug->Init();
       //Label->SetLabel(plug->Name.c_str());
-      if (plug)
-	Image->SetImage(plug->GetBitmap());
+      Image->SetImage(plug->GetBitmap());
     }
   Image->Refresh();
 }
@@ -220,6 +219,8 @@ void					SeqTrack::OnConnectSelected(wxCommandEvent &event)
 	    return;
 	  }
       }
+  // it's not going to happened...
+  ConnectTo(0x0);
 }
 
 void					SeqTrack::OnPaint(wxPaintEvent &WXUNUSED(event))
