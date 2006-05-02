@@ -99,9 +99,7 @@ class				Rack: public wxScrolledWindow
 																				// Removes a rack and a channel from index
 																				// RemoveRack() ? Not RemoveAllRackTracks() ?
 	bool				RemoveTrack(const RackTrack* rackTrack);				// Should be used instead of RemoveTrack
-																				// Removes a rack and a channel from a rackTrack instance
-	void				UpdateConnectedSeqTracksFromDeletedRacks(				// Removes connection between rack and SeqTrack
-							t_ListRackTrack::const_iterator iterRackTrack);
+
 	void				Dump();													// Debug - Shows member variables
 
 	void				AddPlugToMenu();										// Adds subMenuItems (Instruments or effects in Add menuItem)
