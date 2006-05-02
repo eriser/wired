@@ -447,8 +447,6 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
     (*k)->Unload();
     SeqTimer->Stop();
-    delete SeqTimer;
-    SeqTimer = NULL;
     cout << "[MAINWIN] Stopping threads..."<< endl;
     wxThread *thread;
     
@@ -481,6 +479,8 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   
   //if (WiredVideoObject) delete WiredVideoObject;
   
+  delete SeqTimer;
+  SeqTimer = NULL;
   if(FileConverter)
     delete FileConverter;
 //  delete Mix;
