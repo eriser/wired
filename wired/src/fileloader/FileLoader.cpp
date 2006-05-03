@@ -334,27 +334,31 @@ void			FileLoader::LoadFolders()
   
   if (favorites != NULL)
     {
-      file.Create(favdir);
-      if (file.Open(favdir) && file.GetLineCount() > 0)
+      if (file.Open(favdir))
 	{
-	  for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
-	    if (favorites->FindString(l.c_str()) == -1)
-	      favorites->Append(l);
-	  if (favorites->FindString(l.c_str()) == -1)
-	    favorites->Append(l);
+	  if (file.GetLineCount() > 0)
+	    {
+	      for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
+		if (favorites->FindString(l) == -1)
+		  favorites->Append(l);
+	      if (favorites->FindString(l) == -1)
+		favorites->Append(l);
+	    }
 	  file.Close();
 	}
     }
   if (mru != NULL)
     {
-      file.Create(mrudir);
-      if (file.Open(mrudir) && file.GetLineCount() > 0)
+      if (file.Open(mrudir))
 	{
-	  for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
-	    if (mru->FindString(l.c_str()) == -1)
-	      mru->Append(l);
-	  if (mru->FindString(l.c_str()) == -1)
-	    mru->Append(l);
+	  if (file.GetLineCount() > 0)
+	    {
+	      for (l = file.GetFirstLine(); !file.Eof(); l = file.GetNextLine())
+		if (mru->FindString(l) == -1)
+		  mru->Append(l);
+	      if (mru->FindString(l) == -1)
+		mru->Append(l);
+	    }
 	  file.Close();
 	}
     }
@@ -367,19 +371,30 @@ void			FileLoader::LoadFolders()
 
 void FileLoader::SaveFolders()
 {
-	ofstream f(favdir.mb_str(*wxConvCurrent));
+  wxTextFile	file;
+
+  file.Create(favdir);
+  if (file.Open())
+    {
 	for (int i = 0; i < favorites->GetCount(); i++)
-		f << favorites->GetString(i) << "\n";
-	f.close();
-	ofstream f2(mrudir.mb_str(*wxConvCurrent));
+	  file.InsertLine(favorites->GetString(i), i);
+	file.Write();
+	file.Close();
+    }
+
+  file.Create(mrudir);
+  if (file.Open())
+    {
 	for (int i = 0; i < mru->GetCount(); i++)
-		f2 << mru->GetString(i) << "\n";
-	f2.close();
-	
-	wxTreeItemId item = folder->GetSelection();
-	TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
-	if (path)
-	  OldPath = path->GetPath();	    
+	  file.InsertLine(mru->GetString(i), i);
+	file.Write();
+	file.Close();
+    }
+
+  wxTreeItemId item = folder->GetSelection();
+  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
+  if (path)
+    OldPath = path->GetPath();	    
 }
 
 FileLoader::~FileLoader()
