@@ -329,8 +329,7 @@ LoopSampler::~LoopSampler()
   for (k = Slices.begin(); k != Slices.end(); k++)
     delete *k;
 
-  if (View)
-    View->Destroy();
+  //  DestroyView();
   if (Wave)
     delete Wave;
   list<LoopNote *>::iterator i;
