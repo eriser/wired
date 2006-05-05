@@ -366,8 +366,8 @@ void				OptionPanel::DeleteTools(void *DataPointer)
 	  && ((*i)->Type != ID_TOOL_HELP_OPTIONPANEL)) 
 	    if ((*i)->Data == DataPointer)
   	    {
-          ShowTool(MixerTool);
-          ToolsList.erase(i);
+	      ShowTool(MixerTool);
+	      ToolsList.erase(i);
 	      delete *i;
 	      break;
 	    }
@@ -376,21 +376,7 @@ void				OptionPanel::DeleteTools(void *DataPointer)
 
 void				OptionPanel::ClosePlug(Plugin *p)
 {
-  vector<WiredTool *>::iterator	i;
-  
-  for (i = ToolsList.begin(); i != ToolsList.end(); i++)
-    {
-      if ((*i)->Data == p)
-	{
-	  if (*i == CurrentTool)
-	    {
-	      ShowLastTool();
-  	    }     
-	  ToolsList.erase(i);
-	  delete *i;
-	  break;
-	}
-    }
+  DeleteTools(p);
 }
 
 BEGIN_EVENT_TABLE(WiredFrame, wxFrame)

@@ -105,7 +105,7 @@ void				RackTrack::RemoveRack()
   	//Dump();
 	plugin->Hide();
 	SeqPanel->RemoveReferenceTo(plugin);
-	delete plugin;
+       	delete plugin;
 	Parent->ResizeTracks();
 	Parent->SetScrolling();
 }
