@@ -10,7 +10,7 @@
 #include "../mixer/Mixer.h"
 #include "../engine/Settings.h"
 
-MixerGui				*MixerPanel;
+MixerGui				*MixerPanel = NULL;
 
 BEGIN_EVENT_TABLE(MixerGui, wxScrolledWindow)
 END_EVENT_TABLE()
