@@ -52,7 +52,7 @@ bool				MainApp::OnInit()
 #endif  
   SetUseBestVisual(true);
   SetVendorName(L"Wired Team");
-  Frame = new MainWindow(wxString(APP_TITLE, *wxConvCurrent), wxDefaultPosition,
+  Frame = new MainWindow(wxString(WIRED_TITLE, *wxConvCurrent), wxDefaultPosition,
 			 wxSize(APP_WIDTH, APP_HEIGHT));
   MainWin = Frame;
   Frame->Show(true);
