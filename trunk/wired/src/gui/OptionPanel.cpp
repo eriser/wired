@@ -278,10 +278,13 @@ void				OptionPanel::OnListToolClick(wxCommandEvent &event)
   menu = new wxMenu();
   for (k = OPT_TOOL_ID_START, i = ToolsList.begin(); i != ToolsList.end(); i++, k++)
     {
-      menu->Append(k, (*i)->Name.c_str());
-      Connect(k, wxEVT_COMMAND_MENU_SELECTED, 
-	      (wxObjectEventFunction)(wxEventFunction)
-	      (wxCommandEventFunction)&OptionPanel::OnSelectTool);
+      if (!(*i)->IsDetached)
+	{
+	  menu->Append(k, (*i)->Name.c_str());
+	  Connect(k, wxEVT_COMMAND_MENU_SELECTED, 
+		  (wxObjectEventFunction)(wxEventFunction)
+		  (wxCommandEventFunction)&OptionPanel::OnSelectTool);
+	}
     }
   wxPoint p(ListToolBtn->GetPosition());
   PopupMenu(menu, p.x, p.y);
