@@ -46,7 +46,7 @@ typedef struct
 typedef struct  s_PlugStartInfo
 {
   HostInterface HostCallback;
-  float		Version;
+  wxString	Version;
   wxWindow	*Rack;
   wxPoint	Pos;
   wxSize	Size;
@@ -304,7 +304,7 @@ class Plugin: public wxWindow
   /* Returns the host product name */
   wxString GetHostProductName();
   /* Returns the host product version */
-  float  GetHostProductVersion();
+  wxString GetHostProductVersion();
   /* Returns the host vendor name */
   wxString GetHostVendorName();
   /* Returns the path to the host data directory */

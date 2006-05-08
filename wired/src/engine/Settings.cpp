@@ -1,6 +1,7 @@
 // Copyright (C) 2004 by Wired Team
-// Under the GNU General Public License#include "HostCallback.h"
+// Under the GNU General Public License
 
+#include "version.h"
 #include "Settings.h"
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
@@ -68,11 +69,18 @@ Settings::Settings() :
       f.SetName(wxT("wired.conf"));
       if (!f.FileExists())
 	{
-	  wxMessageDialog msg(0x0, wxString("Welcome to version 0.2 of Wired.\nWired is currently a beta software, some of its features may not work completly yet.\nWe recommend to do not use the following features at this time :\n- Undo/Redo\n- Drag and drop of plugins\n- Codec management is known to be quite unstable at this time\n\nThe next step is to configure your soundcard settings in Wired Settings dialog.Select 32 bits float for sample format, 44100hz for sample rate (or whatever you prefer) and choose a latency which your soundcard is capable of. You can try different values (the lower the most realtime Wired will perform) and see which one is the best for your soundcard. Setting the latency too low will cause drops and glitch to appear in the sound output.\n\nYou will find in the Help menu, a \"Show integrated help\" item which will display an interactive help window on the bottom right corner of Wired. If you move your mouse over a control in Wired or in a plugin, it will show you the help associated with this item. \nIf you find any bugs in Wired, please make a bug report at :\nhttp://bloodshed.net/wired/bugs\n\nIf you need help or want to discuss about Wired, pleast visit :\nhttp://bloodshed.net/wired/forums", *wxConvCurrent), 
-                    wxT("Wired"), wxOK | wxICON_INFORMATION | wxCENTRE);
+	  wxString	welcome;
+
+	  welcome = wxT("Welcome to version WIRED_VERSION of WIRED_NAME.\nWIRED_NAME is currently a beta software, some of its features may not work completly yet.\nWe recommend to do not use the following features at this time :\n- Undo/Redo\n- Drag and drop of plugins\n- Codec management is known to be quite unstable at this time\n\nThe next step is to configure your soundcard settings in WIRED_NAME Settings dialog.Select 32 bits float for sample format, 44100hz for sample rate (or whatever you prefer) and choose a latency which your soundcard is capable of. You can try different values (the lower the most realtime WIRED_NAME will perform) and see which one is the best for your soundcard. Setting the latency too low will cause drops and glitch to appear in the sound output.\n\nYou will find in the Help menu, a \"Show integrated help\" item which will display an interactive help window on the bottom right corner of WIRED_NAME. If you move your mouse over a control in WIRED_NAME or in a plugin, it will show you the help associated with this item. \nIf you find any bugs in WIRED_NAME, please make a bug report at :\nWIRED_BUGS\n\nIf you need help or want to discuss about WIRED_NAME, pleast visit :\nWIRED_FORUMS");
+	  welcome.Replace(wxT("WIRED_VERSION"), WIRED_VERSION);
+	  welcome.Replace(wxT("WIRED_NAME"), WIRED_NAME);
+	  welcome.Replace(wxT("WIRED_BUGS"), WIRED_BUGS);
+	  welcome.Replace(wxT("WIRED_FORUMS"), WIRED_FORUMS);
+
+	  wxMessageDialog msg(0x0, welcome, WIRED_NAME, wxOK | wxICON_INFORMATION | wxCENTRE);
 	  msg.ShowModal();
 	}
-      conf = new wxConfig(wxT("Wired"), wxT("P31"), WIRED_CONF, WIRED_CONF, wxCONFIG_USE_LOCAL_FILE);  
+      conf = new wxConfig(WIRED_NAME, wxT("P31"), WIRED_CONF, WIRED_CONF, wxCONFIG_USE_LOCAL_FILE);  
       Load();
     }
   else

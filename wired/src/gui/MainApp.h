@@ -11,7 +11,8 @@
 #include "wx/thread.h"
 #include "wx/dynarray.h"
 
-#define APP_TITLE		wxT("Wired 0.2")
+#include "version.h"
+
 #define APP_WIDTH		(800)
 #define APP_HEIGHT		(600)
 

@@ -25,7 +25,8 @@ using namespace std;
 #include <wx/splitter.h>
 #include <wx/log.h>
 
-#define WIRED_VERSION			(0.2f)
+#include "version.h"
+
 #define PLUG_MENU_INDEX_START		(50000)
 #define INDEX_MENUITEM_UNDO		0
 #define INDEX_MENUITEM_REDO		1
