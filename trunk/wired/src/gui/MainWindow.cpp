@@ -450,32 +450,32 @@ void					MainWindow::OnClose(wxCloseEvent &event)
     cout << "[MAINWIN] Stopping threads..."<< endl;
     wxThread *thread;
     
-    wxGetApp().m_critsect.Enter();
+        wxGetApp().m_critsect.Enter();
     const wxArrayThread& threads = wxGetApp().m_threads;
     size_t count = threads.GetCount();
-    if (count)
-    {
-        while (threads.IsEmpty() == false)
-        {
-            thread = threads.Last();
-            wxGetApp().m_critsect.Leave();
-            thread->Delete();
-            wxGetApp().m_critsect.Enter();
-        }
-    }
-    wxGetApp().m_critsect.Leave();
+    //if (count)
+      //    {
+      //        while (threads.IsEmpty() == false)
+	  //        {
+	  //            thread = threads.Last();
+	    //            wxGetApp().m_critsect.Leave();
+	    //            thread->Delete();
+	    //            wxGetApp().m_critsect.Enter();
+	    //        }
+	//    }
     
-    if (count)
+    if (count > 0)
     {
         cout << "[MAINWIN] Waiting for Threads to really stop..."<< endl;
-        wxGetApp().m_semAllDone.WaitTimeout(2000);
+        wxGetApp().m_semAllDone.WaitTimeout(1000);
     }
+         wxGetApp().m_critsect.Leave();
     cout << "[MAINWIN] Done !"<< endl;
   cout << "[MAINWIN] Unloading external plugins..." << endl;
 //  delete Mix;
 //  Mix = NULL;
-//  if (LoadedExternalPlugins)
-//	  delete LoadedExternalPlugins;
+  if (LoadedExternalPlugins)
+	  delete LoadedExternalPlugins;
   
   //if (WiredVideoObject) delete WiredVideoObject;
   
