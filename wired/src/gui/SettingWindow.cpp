@@ -100,7 +100,7 @@ void				SettingWindow::AudioPanelView()
 
   int x1, x2;
   t->GetSize(&x1, 0x0);
-  BitsChoice = new wxChoice(AudioPanel, Setting_Bits, wxPoint(12 + x1, 2), wxSize(80, -1), 0, 0x0);  
+  BitsChoice = new wxChoice(AudioPanel, Setting_Bits, wxPoint(12 + x1, 2), wxSize(80, -1), 0, 0x0);    
   t = new wxStaticText(AudioPanel, -1, _("Sample rate:"), 
 				     wxPoint(22 + x1 + BitsChoice->GetSize().x, 10));
   t->GetSize(&x2, 0x0);
@@ -342,9 +342,11 @@ void SettingWindow::OnInputDevClick(wxCommandEvent &event)
 	      s.Printf(_("Input %d"), j);
 	      InputList->Append(s);
 	    }
-	  return;
+	  break;
 	}
     }  
+    LoadSampleFormat();
+    LoadSampleRates();
 }
 
 void SettingWindow::OnOutputDevClick(wxCommandEvent &event)
@@ -372,7 +374,8 @@ void SettingWindow::OnOutputDevClick(wxCommandEvent &event)
 	    }
 	}  
     }
-  LoadSampleFormat();
+    LoadSampleFormat();
+    LoadSampleRates();
 }
 
 void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
@@ -411,6 +414,9 @@ void SettingWindow::Load()
 	if (Latencies[i] == WiredSettings->SamplesPerBuffer)
 	  LatencySlider->SetValue(i);
     }
+    LoadSampleFormat();
+    LoadSampleRates();
+    
 }
 
 void SettingWindow::Save()
@@ -468,7 +474,7 @@ void SettingWindow::Save()
 void SettingWindow::LoadSampleFormat()
 {
   vector<DeviceFormat *>::iterator i;
-  unsigned int k = OutputChoice->GetSelection() - 1;
+  unsigned int k = (OutputChoice->GetSelection() - 1) > 0 ? OutputChoice->GetSelection() - 1 : 0;
   
   BitsChoice->Clear();
   if (k < Audio->DeviceList.size())
@@ -524,7 +530,8 @@ void SettingWindow::LoadSampleRates()
   vector<double>::iterator i;
   wxString s;
   unsigned int k = BitsChoice->GetSelection();
-  unsigned int j = OutputChoice->GetSelection() - 1;
+  unsigned int j = (OutputChoice->GetSelection() - 1) > 0 ? OutputChoice->GetSelection() - 1 : 0 ;
+
   
   RateChoice->Clear();	 
   if (j < Audio->DeviceList.size())
