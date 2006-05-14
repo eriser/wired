@@ -68,7 +68,7 @@ enum
     ID_TOOL_DRAW_SEQUENCER,
     ID_TOOL_DELETE_SEQUENCER,
     ID_TOOL_SPLIT_SEQUENCER,
-    ID_TOOL_PAINT_SEQUENCER
+    ID_TOOL_PAINT_SEQUENCER,
   };
 
 #define NB_COMBO_CHOICES		(9)
@@ -99,7 +99,7 @@ enum
     ID_CURSOR_END,
     ID_TRACK_VIEW,
     ID_SEQ_MOVE,
-    ID_SEQ_EDIT,
+    ID_SEQ_DRAW,
     ID_SEQ_DEL,
     ID_SEQ_SPLIT,
     ID_SEQ_MAGNET,
@@ -286,6 +286,7 @@ class				SequencerGui: public wxPanel
   void				OnEndLCursorMove(wxCommandEvent &event);
   void				OnEndCursorMove(wxCommandEvent &event);
   void				OnMoveClick(wxCommandEvent &event);
+  void				OnDrawClick(wxCommandEvent &event);
   void				OnEraseClick(wxCommandEvent &event);
   void				OnSplitClick(wxCommandEvent &event);
   void				OnMagnetismToggle(wxCommandEvent &event);

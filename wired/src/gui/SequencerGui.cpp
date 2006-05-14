@@ -32,7 +32,7 @@ SequencerGui				*SeqGui;
 
 const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1] =
 {
-  { wxT("Bar")	,	1	},
+  { _("Bar")	,	1	},
   { wxT("1/2")	,	2	},
   { wxT("1/4")	,	4	},
   { wxT("1/8")	,	8	},
@@ -361,19 +361,36 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   SetBackgroundColour(CL_SEQ_BACKGROUND);
   SetForegroundColour(CL_SEQ_FOREGROUND);
   Toolbar = new wxToolBar(this, -1, wxPoint(-1, -1), wxSize(-1, TOOLS_HEIGHT), wxTB_FLAT);
-  Toolbar->AddRadioTool(ID_SEQ_MOVE, _("Move"), wxBitmap(wxString(WiredSettings->DataDir + wxString(HAND_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(HAND_DOWN)), wxBITMAP_TYPE_PNG), _("Move Pattern"), _("Move Pattern"), NULL);
-  Toolbar->AddRadioTool(ID_SEQ_EDIT, _("Draw"), wxBitmap(wxString(WiredSettings->DataDir + wxString(DRAW_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(DRAW_DOWN)), wxBITMAP_TYPE_PNG), _("Draw Pattern"), _("Draw Pattern"), NULL);
-  Toolbar->AddRadioTool(ID_SEQ_DEL, _("Delete"), wxBitmap(wxString(WiredSettings->DataDir + wxString(ERASE_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(ERASE_DOWN)), wxBITMAP_TYPE_PNG), _("Delete Pattern"), _("Deletes notes"), NULL);
-  Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(wxString(WiredSettings->DataDir + wxString(SPLIT_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(SPLIT_DOWN)), wxBITMAP_TYPE_PNG), _("Split Pattern"), _("Split Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_MOVE, _("Move"), wxBitmap(WiredSettings->DataDir + HAND_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + HAND_DOWN, wxBITMAP_TYPE_PNG), _("Move Pattern"), _("Move Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_DRAW, _("Draw"), wxBitmap(WiredSettings->DataDir + DRAW_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + DRAW_DOWN, wxBITMAP_TYPE_PNG), _("Draw Pattern"), _("Draw Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_DEL, _("Delete"), wxBitmap(WiredSettings->DataDir + ERASE_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + ERASE_DOWN, wxBITMAP_TYPE_PNG), _("Delete Pattern"), _("Deletes notes"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(WiredSettings->DataDir + SPLIT_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + SPLIT_DOWN, wxBITMAP_TYPE_PNG), _("Split Pattern"), _("Split Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_COLOR, _("Color"), wxBitmap(WiredSettings->DataDir + COLOR_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + COLOR_DOWN, wxBITMAP_TYPE_PNG));
+  BrushColor = CL_DEFAULT_SEQ_BRUSH;
+
+  wxPoint	pColor;
+  wxSize	sColor;
+  int		posColor = Toolbar->GetToolPos(ID_SEQ_COLOR) + 1;
+  int		w = Toolbar->GetToolSize().GetWidth() + (COLORBOX_MARGINS * 2);
+  int		h = Toolbar->GetToolSize().GetHeight() + (COLORBOX_MARGINS * 2);
+
+  sColor.SetWidth((TOOLS_HEIGHT - 2 * COLORBOX_MARGINS) / 2);
+  sColor.SetHeight((TOOLS_HEIGHT - 2 * COLORBOX_MARGINS) / 2);
+  pColor.x = Toolbar->GetPosition().x + posColor * w - sColor.GetWidth() - 2;
+  pColor.y = Toolbar->GetPosition().y + h - sColor.GetHeight() - 2;
+  ColorBox = new ColoredBox(this, ID_SEQ_COLORBOX, pColor, sColor, CL_DEFAULT_SEQ_BRUSH, CL_DEFAULT_SEQ_PEN);
+  ColorBox->Show();
+
+  ColorDialogBox = new wxColourDialog(mainwindow, 0);
+  Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
   Toolbar->AddSeparator();
-  Toolbar->AddCheckTool(ID_SEQ_MAGNET, _("Magnet"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MAGN_UP)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MAGN_DOWN)), wxBITMAP_TYPE_PNG), wxT(""), wxT(""), NULL);
+  Toolbar->AddCheckTool(ID_SEQ_MAGNET, _("Magnet"), wxBitmap(WiredSettings->DataDir + MAGN_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + MAGN_DOWN, wxBITMAP_TYPE_PNG), wxT(""), wxT(""), NULL);
   for (c = 0; c < NB_COMBO_CHOICES; c++)
     combo_choices[c] = ComboChoices[c].s;
   MagnetQuant = new wxComboBox(Toolbar, ID_SEQ_COMBO_MAGNET, DEFAULT_MAGNETISM_COMBO_VALUE, 
 			       wxPoint(-1, -1), wxSize(72, -1), 9, combo_choices, wxCB_READONLY);
   Toolbar->AddControl(MagnetQuant);
   Toolbar->AddSeparator();
-  Toolbar->AddTool(ID_SEQ_COLOR, _("Color"), wxBitmap(wxString(WiredSettings->DataDir + wxString(COLOR_UP)).c_str(), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(COLOR_DOWN)).c_str(), wxBITMAP_TYPE_PNG));
   Toolbar->Realize();
   Toolbar->ToggleTool(ID_SEQ_MAGNET, MAGNETISM);
 //   SetToolBar(Toolbar);
@@ -389,12 +406,6 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   HoriZoomSlider = new wxSlider(this, ID_SEQ_HSLIDER, 100, 25, 400, wxPoint(-1, -1),
 				wxSize(-1, HorizScrollBar->GetSize().y));
   RulerPanel = new Ruler(this, ID_SEQ_RULER, wxPoint(-1, -1), wxSize(-1, RULER_HEIGHT));
-  ColorDialogBox = new wxColourDialog(mainwindow, 0);
-  BrushColor = CL_DEFAULT_SEQ_BRUSH;
-  ColorBox = new ColoredBox(this, ID_SEQ_COLORBOX, wxPoint(Toolbar->GetSize().x + COLORBOX_MARGINS, COLORBOX_MARGINS),
-			    wxSize(TOOLS_HEIGHT - 2 * COLORBOX_MARGINS, TOOLS_HEIGHT - 2 * COLORBOX_MARGINS),
-			    CL_DEFAULT_SEQ_BRUSH, CL_DEFAULT_SEQ_PEN);
-  Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
   /* Sizers */
   zer_5 = new wxBoxSizer(wxVERTICAL);
   zer_5->Add(RulerPanel, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
@@ -1107,6 +1118,12 @@ void					SequencerGui::OnMoveClick(wxCommandEvent &event)
   ChangeMouseCursor(wxCursor(wxCURSOR_HAND));
 }
 
+void					SequencerGui::OnDrawClick(wxCommandEvent &event)
+{
+  Tool = ID_TOOL_DRAW_SEQUENCER;
+  ChangeMouseCursor(wxNullCursor);
+}
+
 void					SequencerGui::OnEraseClick(wxCommandEvent &event)
 {
   Tool = ID_TOOL_DELETE_SEQUENCER;
@@ -1141,6 +1158,7 @@ void					SequencerGui::OnColorButtonClick(wxCommandEvent &event)
 {
   vector<Pattern *>::iterator		p;
 
+  Tool = ID_TOOL_PAINT_SEQUENCER;
   PenColor = ColorBox->GetColor();
   for (p = SelectedItems.begin(); p != SelectedItems.end(); p++)
     if ((*p)->IsSelected())
@@ -1199,6 +1217,7 @@ BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   EVT_SLIDER(ID_SEQ_HSLIDER, SequencerGui::OnHoriSliderUpdate)
   EVT_COMMAND_SCROLL(ID_SEQ_SCROLLING, SequencerGui::OnScroll)
   EVT_TOOL(ID_SEQ_MOVE, SequencerGui::OnMoveClick)
+  EVT_TOOL(ID_SEQ_DRAW, SequencerGui::OnDrawClick)
   EVT_TOOL(ID_SEQ_DEL, SequencerGui::OnEraseClick)
   EVT_TOOL(ID_SEQ_SPLIT, SequencerGui::OnSplitClick)
   EVT_TOOL(ID_SEQ_MAGNET, SequencerGui::OnMagnetismToggle)
