@@ -148,16 +148,11 @@ template<class C> long RingBuffer<C>::Write( C *data, long numBytes )
     C *data1, *data2;
     
     numWritten = GetWriteRegions( numBytes, &data1, &size1, &data2, &size2 );
+    memcpy( data1, data, size1 * sizeof (C) );
     if( size2 > 0 )
       {
-	
-	memcpy( data1, data, size1 * sizeof (C) );
         data = ((C *)data) + size1;
         memcpy( data2, data, size2 * sizeof (C));
-      }
-    else
-      {
-        memcpy( data1, data, size1 * sizeof (C) );
       }
     AdvanceWriteIndex(numWritten);
     return numWritten;
@@ -171,14 +166,12 @@ template<class C> long RingBuffer<C>::Read( C *data, long numBytes )
     C *data1, *data2;
     
     numRead = GetReadRegions( numBytes, &data1, &size1, &data2, &size2 );
+    memcpy( data, data1, size1 * sizeof (C));
     if( size2 > 0 )
       {
-        memcpy( data, data1, size1 * sizeof (C));
         data = ((C *)data) + size1;
         memcpy( data, data2, size2 * sizeof (C));
       }
-    else
-      memcpy( data, data1, size1 * sizeof (C));
     AdvanceReadIndex( numRead );
     return numRead;
 }
