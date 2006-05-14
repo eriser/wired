@@ -46,20 +46,20 @@
 #include "Threads.h"
 
 
-Rack					*RackPanel;
-SequencerGui				*SeqPanel;
-Sequencer				*Seq;
-WiredVideo			*WiredVideoObject;
-AudioEngine				*Audio;
-Mixer					*Mix;
-AudioCenter				WaveCenter;
-Transport				*TransportPanel;
-PlugStartInfo				StartInfo;
-vector<PluginLoader *>			LoadedPluginsList;
-WiredSession				*CurrentSession;
-WiredSessionXml				*CurrentXmlSession;
-WiredExternalPluginMgr		*LoadedExternalPlugins;
-FileConversion				*FileConverter;
+Rack			*RackPanel = NULL;
+SequencerGui		*SeqPanel = NULL;
+Sequencer		*Seq = NULL;
+WiredVideo		*WiredVideoObject = NULL;
+AudioEngine		*Audio = NULL;
+Mixer			*Mix = NULL;
+AudioCenter		WaveCenter;
+Transport		*TransportPanel = NULL;
+PlugStartInfo		StartInfo;
+vector<PluginLoader *>	LoadedPluginsList;
+WiredSession		*CurrentSession = NULL;
+WiredSessionXml		*CurrentXmlSession = NULL;
+WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
+FileConversion		*FileConverter = NULL;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
