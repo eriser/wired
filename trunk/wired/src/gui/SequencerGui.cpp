@@ -377,7 +377,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   sColor.SetWidth((TOOLS_HEIGHT - 2 * COLORBOX_MARGINS) / 2);
   sColor.SetHeight((TOOLS_HEIGHT - 2 * COLORBOX_MARGINS) / 2);
   pColor.x = Toolbar->GetPosition().x + posColor * w - sColor.GetWidth() - 2;
-  pColor.y = Toolbar->GetPosition().y + h - sColor.GetHeight() - 2;
+  pColor.y = Toolbar->GetPosition().y + h - sColor.GetHeight() - 4;
   ColorBox = new ColoredBox(this, ID_SEQ_COLORBOX, pColor, sColor, CL_DEFAULT_SEQ_BRUSH, CL_DEFAULT_SEQ_PEN);
   ColorBox->Show();
 
@@ -1159,6 +1159,7 @@ void					SequencerGui::OnColorButtonClick(wxCommandEvent &event)
   vector<Pattern *>::iterator		p;
 
   Tool = ID_TOOL_PAINT_SEQUENCER;
+  ChangeMouseCursor(wxNullCursor);
   PenColor = ColorBox->GetColor();
   for (p = SelectedItems.begin(); p != SelectedItems.end(); p++)
     if ((*p)->IsSelected())
