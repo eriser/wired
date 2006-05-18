@@ -112,7 +112,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
   float					f[NumberOfChannels];
 
   // printf(" [ START ] WaveDrawer::SetDrawing(size x %d y %d)\n", s.x, s.y);
-  //printf(" >>> HERE : StartWavePos %d, EndWavePos %d\n", StartWavePos, EndWavePos);
+  // printf(" >>> HERE : StartWavePos %d, EndWavePos %d\n", StartWavePos, EndWavePos);
   size_x = s.x;
   size_y = s.y;
   if (size_x < 2)
@@ -172,6 +172,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	}
     }
   else
+    {
     if (!UseSettings || !WiredSettings->QuickWaveRender)
       {
 	// Coefficient d'incr?mentation
@@ -195,7 +196,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
 		      }
 		    for (j = 0; (j < NumberOfChannels); j++)
 		      cur += fabsf(TempBuf[j][buf_pos]);
-		  }
+		  }  
 		DrawData[i] = (long)(((cur / (NumberOfChannels + inc) * coeff) + 0.5));
 	      }
 	    if (TempBuf[0])
@@ -207,7 +208,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	  }	  
 	else // Wave loade? en memoire
 	  {
-	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
+     	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
 		for (k = 0, cur = 0; (k < inc) && (pos < end); k++, pos++)
 		  for (j = 0; (j < NumberOfChannels); j++)
@@ -240,6 +241,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	      }
 	  }
       }
+    }
   RedrawBitmap(s);
   //printf(" [  END  ] WaveDrawer::SetDrawing()\n");
 }
@@ -254,14 +256,16 @@ void					WaveDrawer::RedrawBitmap(wxSize s)
   {
     delete Bmp;
   }
-  Bmp = new wxBitmap(5000, s.y);
+  Bmp = new wxBitmap(s.x, s.y);
   memDC.SelectObject(*Bmp);
   memDC.SetPen(PenColor);
   memDC.SetBrush((!Transparent) ? BrushColor : *wxTRANSPARENT_BRUSH);
   memDC.DrawRectangle(0, 0, s.x, s.y);
   if (s.x > 2)
     for (int i = 0; i < s.x; i++)
-      memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
+      {
+	memDC.DrawLine(i, coeff - DrawData[i], i, coeff + DrawData[i]);
+      }
 }
 
 void					WaveDrawer::SetSize(wxSize s)
