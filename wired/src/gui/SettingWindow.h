@@ -44,6 +44,8 @@ class					SettingWindow : public wxDialog
   void					LoadSampleRates();
   void					UpdateLatency();
   void					SetDefaultSampleFormat(void);
+  void                                  RefreshOutputDev();
+  void                                  RefreshInputDev();
 
   wxButton				*OkBtn;
   wxButton				*ApplyBtn;
