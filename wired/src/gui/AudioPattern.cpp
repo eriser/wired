@@ -53,6 +53,8 @@ AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
   cout << " ---  OK AUDIO PATTERN ---\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
        << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
 #endif
+
+ 
 }
 
 AudioPattern::~AudioPattern()
@@ -109,6 +111,7 @@ void					AudioPattern::Update()
   AudioPattern::SetSize(Pattern::GetSize());
   wxWindow::SetPosition(Pattern::GetMPosition() -
 			wxPoint((int) floor(SeqPanel->CurrentXScrollPos), (int) SeqPanel->CurrentYScrollPos));
+  SeqPanel->SetScrolling();
 #ifdef __DEBUG__
   printf(" [  END  ] AudioPattern::Update()\n");
 #endif

@@ -111,7 +111,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
   int					end;
   float					f[NumberOfChannels];
 
-  //printf(" [ START ] WaveDrawer::SetDrawing(size x %d y %d)\n", s.x, s.y);
+  // printf(" [ START ] WaveDrawer::SetDrawing(size x %d y %d)\n", s.x, s.y);
   //printf(" >>> HERE : StartWavePos %d, EndWavePos %d\n", StartWavePos, EndWavePos);
   size_x = s.x;
   size_y = s.y;
