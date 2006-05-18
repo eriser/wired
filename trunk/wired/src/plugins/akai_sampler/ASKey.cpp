@@ -7,6 +7,7 @@ BEGIN_EVENT_TABLE(ASKey, wxPanel)
 	EVT_PAINT(ASKey::OnPaint)
 	EVT_LEFT_DOWN(ASKey::OnLeftDown)
 	EVT_LEFT_UP(ASKey::OnLeftUp)
+  	EVT_LEFT_DCLICK(ASKey::OnLeftDown)
 END_EVENT_TABLE()
 
 #include <iostream>
@@ -76,4 +77,3 @@ void	ASKey::OnLeftUp(wxMouseEvent	&event)
 	evt.SetEventObject(this);
 	GetParent()->ProcessEvent(evt);
 }
-
