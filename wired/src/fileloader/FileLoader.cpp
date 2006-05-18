@@ -85,7 +85,7 @@ BEGIN_EVENT_TABLE(FileLoader, wxDialog)
 END_EVENT_TABLE()
 
 FileLoader::FileLoader(wxWindow *parent, wxWindowID id, wxString title, bool pakai, bool psave, vector<wxString> *exts, bool LoadExtraExts) :
-wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT))
+wxDialog(parent, id, title, wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT))
 {
   playing = false;
   Center();
@@ -153,14 +153,9 @@ wxDialog(parent, id, title.c_str(), wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT)
   	filename = new wxTextCtrl(this, FILENAME_ID, _T("/dev/cdrom"), 
 				  wxPoint(100, F_HEIGHT - 60), 
 				  wxSize(320, -1), wxTE_PROCESS_ENTER);
+	typtext = NULL;
+	type = NULL;
   }
-//   if (!akai)
-//   {
-//     typtext = new wxStaticText(this, -1, _T(_("Type")),
-//   		    wxPoint(10, F_HEIGHT - 30), wxSize(-1, -1), wxALIGN_LEFT);
-//     type = new wxComboBox(this, TYPE_ID, _T(" "), wxPoint(100, F_HEIGHT - 30), 
-//   		  wxSize(320, -1), 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);  
-//   }
   if (!save)
     {
       preview = new wxButton(this, PREVIEW_ID, _("Preview"), 
@@ -275,12 +270,7 @@ void FileLoader::LoadSoundExt(vector<wxString> *Exts, bool LoadExtraExts)
 
 	  itemdesc = ext.AfterLast('\t');
 	  itemdata = new wxString(ext.BeforeFirst('\t'));
-
-	  if ((j = ext.find(wxT("\t"), 0)) != (unsigned int) wxString::npos)
-	    type->Append((ext.substr(j + 1, ext.size() - j - 1)),
-			 strdup(wxString(ext.substr(0, j).c_str(), *wxConvCurrent).mb_str(*wxConvCurrent)));
-	  else
-	    type->Append(ext, strdup(ext.mb_str(*wxConvCurrent)));
+	  type->Append(itemdesc, itemdata);
 	  filters += *itemdata + wxT(";");
 	}
     }
@@ -316,7 +306,7 @@ void FileLoader::LoadSoundExt(vector<wxString> *Exts, bool LoadExtraExts)
       type->SetSelection(0);
     }
   filters = wxT(";") + filters;
-  type->Append(_("All files (*.*)"), strdup("*"));
+  type->Append(_("All files (*.*)"), new wxString(wxT("*")));
 }
 
 void FileLoader::AddIcon(wxImageList *images, wxIcon icon)
@@ -414,14 +404,25 @@ FileLoader::~FileLoader()
 //    delete filename;	
 //  if (fntext)
 //    delete fntext;
-//  if (typtext)
-//    delete typtext;
+ if (typtext)
+   typtext->Destroy();
 //  if (favtext)
 //    delete favtext;
 //  if (mrutext)
 //    delete mrutext;
-//  if (type)
-//    delete type;
+ if (type)
+   {
+     int	i;
+
+     for (i = 0; i < type->GetCount(); i++)
+       {
+	 wxString*	str;
+
+	 if ((str = (wxString*)type->GetClientData(i)))
+	   delete str;
+       }
+     type->Destroy();
+   }
 //  if (preview)
 //    delete preview;
 //  if (btopen)
@@ -1174,7 +1175,7 @@ wxString FileLoader::GetSelectedFile()
       long sel = files->GetFirstSelected();
       if (sel != -1)
 	{
-	  wxString fn = files->GetItemText(sel).c_str();
+	  wxString fn = files->GetItemText(sel);
 	  wxTreeItemId item = folder->GetSelection();
 	  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
 	  if (!akai)
@@ -1183,7 +1184,7 @@ wxString FileLoader::GetSelectedFile()
 	    {
 	      fn = path->GetPath() + fn;
 	      fn = wxT(":") + fn;
-	      fn = filename->GetValue().c_str() + fn;
+	      fn = filename->GetValue() + fn;
 	    }
 	  return (fn);
 	}
@@ -1192,8 +1193,8 @@ wxString FileLoader::GetSelectedFile()
     }
   else
     {
-      wxString fn = filename->GetValue().c_str();
-      if (fn.c_str()[0] != '/')
+      wxString fn = filename->GetValue();
+      if (fn[0] != '/')
 	{
 	  wxTreeItemId item = folder->GetSelection();
 	  TreeItemData *path = (TreeItemData *)folder->GetItemData(item);
@@ -1231,8 +1232,8 @@ void FileLoader::StartPlaying()
 void FileLoader::OnAddToFavorites(wxCommandEvent &e)
 {
   TreeItemData *path = (TreeItemData *)folder->GetItemData(pm_selitem);
-  if (favorites->FindString(path->GetPath().c_str()) == -1)
-    favorites->Append(path->GetPath().c_str());
+  if (favorites->FindString(path->GetPath()) == -1)
+    favorites->Append(path->GetPath());
   files->SetFocus();
 }
 
@@ -1241,7 +1242,6 @@ void FileLoader::OnSelectFavoriteDir(wxCommandEvent &e)
   files->SetFocus();
   long item = favorites->GetSelection();
   if (item != -1)
-    //GotoDir((char *)favorites->GetString(item).c_str());
     GotoDir(favorites->GetString(item), folder->GetRootItem());
 }
 
@@ -1250,7 +1250,6 @@ void FileLoader::OnSelectRecentDir(wxCommandEvent &e)
   files->SetFocus();
   long item = mru->GetSelection();
   if (item != -1)
-    //    GotoDir((char *)mru->GetString(item).c_str());
     GotoDir(favorites->GetString(item), folder->GetRootItem());
 }
 

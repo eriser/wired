@@ -648,9 +648,9 @@ inline void			Rack::OnDeleteClick()
     	for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
 			if (COMPARE_IDS((*k)->InitInfo.UniqueId, selectedPlugin->InitInfo->UniqueId))
 			{
-		    	cout << "[MAINWIN] Destroying plugin: " << selectedPlugin->Name << endl;
-		    	cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
-				return;
+			  cout << "[MAINWIN] Destroying plugin: " << selectedPlugin->Name.mb_str() << endl;
+			  cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
+			  return;
 			}
     }
 }

@@ -570,13 +570,13 @@ void BeatBoxChannel::OnLoadSound(wxCommandEvent& WXUNUSED(e))
 	}
       catch (...)
 	{
-	  cout << "[BEATBOX] Cannot open wave file !" << endl;
+	  cout << "[DRM31] Cannot open wave file !" << endl;
 	}
       delete Progress;
     }
   else
     {
-      cout << "[BEATBOX] Cannot open wave file !" << endl;
+      cout << "[DRM31] Cannot open wave file !" << endl;
     }
 }
 
