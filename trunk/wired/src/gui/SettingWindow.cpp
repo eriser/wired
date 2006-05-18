@@ -195,6 +195,7 @@ void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
     }
 }
 
+/* No longer called */
 void SettingWindow::OnAudioClick(wxCommandEvent &event)
 {
   AudioPanel->Show(true);
@@ -256,9 +257,9 @@ void SettingWindow::OnAudioClick(wxCommandEvent &event)
 	  LatencySlider->SetValue(i);
       UpdateLatency();
     }  
-
 }
 
+/* No longer called */
 void SettingWindow::OnMidiClick(wxCommandEvent &event)
 {
   AudioPanel->Show(false);
@@ -326,7 +327,12 @@ void SettingWindow::OnApplyClick(wxCommandEvent &event)
 
 void SettingWindow::OnInputDevClick(wxCommandEvent &event)
 {
-  vector<Device*>::iterator i;
+  RefreshInputDev();
+}
+
+void SettingWindow::RefreshInputDev()
+{
+   vector<Device*>::iterator i;
   int j, val;
   wxString s;
 
@@ -347,13 +353,21 @@ void SettingWindow::OnInputDevClick(wxCommandEvent &event)
     }  
     LoadSampleFormat();
     LoadSampleRates();
+
 }
 
 void SettingWindow::OnOutputDevClick(wxCommandEvent &event)
 {
+  RefreshOutputDev();
+}
+
+void SettingWindow::RefreshOutputDev()
+{
+
   vector<Device*>::iterator i;
   int j, val;
   wxString s;
+
 
   OutputList->Clear();
   if ((val = OutputChoice->GetSelection()) != 0)
@@ -376,6 +390,7 @@ void SettingWindow::OnOutputDevClick(wxCommandEvent &event)
     }
     LoadSampleFormat();
     LoadSampleRates();
+
 }
 
 void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
@@ -398,24 +413,40 @@ void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
 
 void SettingWindow::Load()
 {
-	ostringstream	oss;
-	
+  ostringstream	oss;
+  int i;
+
   QuickWaveBox->SetValue(WiredSettings->QuickWaveRender);
   dBWaveBox->SetValue(WiredSettings->dbWaveRender);
   oss << WiredSettings->maxUndoRedoDepth;
   undoRedoMaxDepthTextCtrl->SetValue(wxString(oss.str().c_str(), *wxConvCurrent));
   if (WiredSettings->OutputDev > -1)
-    OutputChoice->SetSelection(WiredSettings->OutputDev + 1);
+    {
+      OutputChoice->SetSelection(WiredSettings->OutputDev + 1);
+      RefreshOutputDev();
+      for(i = 0; i < OutputList->GetCount(); i++)
+	OutputList->Check(i, false);
+      for(i = 0; i < WiredSettings->OutputChannels.size(); i++)
+	OutputList->Check(WiredSettings->OutputChannels[i]);
+    }
   if (WiredSettings->InputDev > -1)
-    InputChoice->SetSelection(WiredSettings->InputDev + 1);
+    {
+      InputChoice->SetSelection(WiredSettings->InputDev + 1);
+      RefreshInputDev();
+      for(i = 0; i < InputList->GetCount(); i++)
+	InputList->Check(i, false);
+      for(i = 0; i < WiredSettings->InputChannels.size(); i++)
+	InputList->Check(WiredSettings->InputChannels[i]);
+    }
+      
   if (WiredSettings->SamplesPerBuffer > 0)
     {
       for (int i = 0; i < 9; i++)
 	if (Latencies[i] == WiredSettings->SamplesPerBuffer)
 	  LatencySlider->SetValue(i);
+      UpdateLatency();
     }
-    LoadSampleFormat();
-    LoadSampleRates();
+
     
 }
 
