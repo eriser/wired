@@ -1,5 +1,5 @@
-// Copyright (C) 2004 by Wired Team
-// Under the GNU General Public License#include "HostCallback.h"
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
 
 #ifndef __WIREDSESSION_H__
 #define __WIREDSESSION_H__

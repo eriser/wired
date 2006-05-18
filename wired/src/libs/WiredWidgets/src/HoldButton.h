@@ -1,10 +1,12 @@
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 /*
-** Copyright (C) 2004 by Wired Team
+** Copyright (C) 2004-2006 by Wired Team
 **  
 ** This program is free software; you can redistribute it and/or modify
-** it under the terms of the GNU Lesser General Public License as published by
-** the Free Software Foundation; either version 2.1 of the License, or
-** (at your option) any later version.
+** it under the terms of the GNU Lesser General Public License version 2.1
+** as published by the Free Software Foundation.
 ** 
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of

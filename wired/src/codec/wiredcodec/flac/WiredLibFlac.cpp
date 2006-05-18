@@ -1,3 +1,6 @@
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 #include	<unistd.h>
 #include	<sys/types.h>
 #include	<sys/stat.h>

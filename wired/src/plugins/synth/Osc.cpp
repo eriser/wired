@@ -1,3 +1,6 @@
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 #include "Osc.h"
 
 static const float pi2 = 2 * M_PI;

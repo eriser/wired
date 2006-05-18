@@ -1,3 +1,6 @@
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 #ifndef _ASLOOP_H_
 #define _ASLOOP_H_
 
