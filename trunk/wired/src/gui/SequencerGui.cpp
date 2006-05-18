@@ -39,9 +39,9 @@ const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1] =
   { wxT("1/16")	,	16	},
   { wxT("1/32")	,	32	},
   { wxT("1/64")	,	64	},
-  { wxT("1/128")	,	128	},
-  { wxT("1/256")	,	256	},
-  { wxT("")		,	4242	}
+  { wxT("1/128"),	128	},
+  { wxT("1/256"),	256	},
+  { wxT("")	,	4242	}
 };
 
 SequencerView::SequencerView(wxWindow *parent, const wxPoint &pos, 
@@ -1139,7 +1139,13 @@ void					SequencerGui::OnSplitClick(wxCommandEvent &event)
 void					SequencerGui::OnMagnetismToggle(wxCommandEvent &event)
 {
   Magnetism = Toolbar->GetToolState(ID_SEQ_MAGNET) ? CURSOR_MASK | PATTERN_MASK : 0;
-  /*  printf("Magnetisn = %s\n", Magnetism ? "[ OK ]" : "[ NO ]");*/
+  /*
+  if(Magnetism)
+    cout << "Magnetism [ OK ]" << endl;
+  else
+    cout << "Magnetism [ NO ]" << endl;
+  */
+
 }
 
 void					SequencerGui::OnMagnetismChange(wxCommandEvent &event)
@@ -1151,7 +1157,7 @@ void					SequencerGui::OnMagnetismChange(wxCommandEvent &event)
   for (c = 0; (c < NB_COMBO_CHOICES) && (s != ComboChoices[c].s); c++);
   CursorMagnetism = (long) floor(ComboChoices[c].value);
   PatternMagnetism = (long) floor(ComboChoices[c].value);
-  /*  cout << "Magnetism change " << MagnetQuant->GetValue() << " and " << ComboChoices[c].value << " " << endl;*/
+  /*cout << "Magnetism change " << MagnetQuant->GetValue() << " and " << ComboChoices[c].value << " " << endl;*/
 }
 
 void					SequencerGui::OnColorButtonClick(wxCommandEvent &event)
@@ -1223,7 +1229,7 @@ BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   EVT_TOOL(ID_SEQ_SPLIT, SequencerGui::OnSplitClick)
   EVT_TOOL(ID_SEQ_MAGNET, SequencerGui::OnMagnetismToggle)
   EVT_TOOL(ID_SEQ_COLOR, SequencerGui::OnColorButtonClick)
-  EVT_TEXT(ID_SEQ_COMBO_MAGNET, SequencerGui::OnMagnetismChange)
+  EVT_COMBOBOX(ID_SEQ_COMBO_MAGNET, SequencerGui::OnMagnetismChange)
   EVT_SIZE(SequencerGui::OnSize)
   EVT_MOUSEWHEEL(SequencerGui::OnWheelMove)
 END_EVENT_TABLE()
