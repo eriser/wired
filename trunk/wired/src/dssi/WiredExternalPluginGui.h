@@ -1,3 +1,6 @@
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 #ifndef __WIREDDSSI_H__
 #define __WIREDDSSI_H__
 

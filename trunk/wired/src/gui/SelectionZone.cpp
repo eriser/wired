@@ -1,7 +1,6 @@
-/*
-** Copyright (C) 2004, 2005 by WiReD Team
-** Under the GNU General Public License
-*/
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 
 #include <wx/gdicmn.h>
 #include "Colour.h"

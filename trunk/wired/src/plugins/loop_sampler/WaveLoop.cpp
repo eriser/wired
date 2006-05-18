@@ -1,4 +1,7 @@
-// Copyright (C) 2004 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License
 
 #include "WaveLoop.h"

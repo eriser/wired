@@ -1,3 +1,6 @@
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 #ifndef _WIREDEXTERNALPLUGINMGR_H_
 #define _WIREDEXTERNALPLUGINMGR_H_
 

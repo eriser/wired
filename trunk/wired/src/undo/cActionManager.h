@@ -1,3 +1,6 @@
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 
 #if !defined(ACTION_MANAGER_H)
 #define ACTION_MANAGER_H

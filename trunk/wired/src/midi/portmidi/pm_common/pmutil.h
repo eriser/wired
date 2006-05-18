@@ -1,3 +1,6 @@
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 /* pmutil.h -- some helpful utilities for building midi 
                applications that use PortMidi 
  */
