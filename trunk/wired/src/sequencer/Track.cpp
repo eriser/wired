@@ -95,6 +95,9 @@ AudioPattern					*Track::AddPattern(WaveFile *w, double pos)
   if (a->GetEndPosition() > Seq->EndPos)
     Seq->EndPos = a->GetEndPosition();
   SeqMutex.Unlock();
+  a->Update();
+  
+
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d, %f) -- OVER (AUDIO)\n", w, pos);
 #endif
