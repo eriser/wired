@@ -26,23 +26,21 @@ Mixer::Mixer() : VolumeLeft(1), VolumeRight(1), Volume(1),
 
 Mixer::~Mixer()
 {
-  for (list<Channel*>::iterator c = InChannels.begin(); 
-       c != InChannels.end(); c++)
+  list<Channel*>::iterator	c;
+
+  for (c = InChannels.begin(); c != InChannels.end(); c++)
     {
-    	if (*c)
-	      delete *c;
-      OutChannels.erase(c);
+      if (*c)
+	delete *c;
     }
-  for (list<Channel*>::iterator c = OutChannels.begin(); 
-       c != OutChannels.end(); c++)
+  for (c = OutChannels.begin(); c != OutChannels.end(); c++)
     {
-    	if (*c)
-		  delete *c;
-      InChannels.erase(c);
+      if (*c)
+	delete *c;
     }
   OutChannels.clear();
   InChannels.clear();
-  
+
   if (OutputLeft)
 	  delete[] OutputLeft;
   if (OutputRight)

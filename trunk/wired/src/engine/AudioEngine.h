@@ -76,15 +76,12 @@ class AudioEngine
   void			GetDeviceSettings(void);
   int			GetLibSndFileFormat();
 
-  void			GetDevices();
   void			SetDefaultSettings(void);
   callback_t		*UserData;
   bool			StreamIsOpened;
   bool			StreamIsStarted;
  private:
-  //  void			Init();
-  //  void			Terminate();
-  //  void			GetDevices();
+  void			GetDevices();
   void			SetInputDevice(void);
   void			SetOutputDevice(void);
   Device		*GetDeviceById(PaDeviceIndex id);

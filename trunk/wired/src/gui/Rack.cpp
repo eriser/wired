@@ -193,6 +193,7 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	fd_copy = -1;
 	is_cut = false;
 	InitContextMenu();
+	copy_plug = NULL;
 }
 
 Rack::~Rack()
@@ -214,10 +215,6 @@ t_ListRackTrack		RackTracks;
 			cout << "error supression\n" <<endl;
   }
 	if (copy_plug) delete copy_plug;
-	if (menu) delete menu;
-	if (submenu) delete submenu;
-	if (instr_menu) delete instr_menu;
-	if (effects_menu) delete effects_menu;
 	cout << "[Rack] End destructor" << endl;
 }
 

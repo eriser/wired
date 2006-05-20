@@ -37,48 +37,37 @@ bool Device::GetSupportedSettings(void)
   
   
   PaStreamParameters InParams, OutParams;
-    
+
+  memset(&InParams, 0, sizeof(InParams));
+  memset(&OutParams, 0, sizeof(OutParams));
   InParams.device = Id;
   InParams.channelCount = MaxInputChannels;
   InParams.suggestedLatency = InputLatencyRange[MIN];
+  InParams.hostApiSpecificStreamInfo = NULL;
   
   OutParams.device = Id;
   OutParams.channelCount = MaxOutputChannels;
-  
   OutParams.suggestedLatency = OutputLatencyRange[MIN];
-  
-  InParams.hostApiSpecificStreamInfo = NULL;
   OutParams.hostApiSpecificStreamInfo = NULL;
 
   PaError err;
   DeviceFormat *f;
   for (int sf = 0; sf < MAX_SAMPLE_FORMATS; sf++)
     {
-      f = new DeviceFormat();
-      OutParams.sampleFormat = standardSampleFormats[sf];
       InParams.sampleFormat = standardSampleFormats[sf];
+      OutParams.sampleFormat = standardSampleFormats[sf];
+
+      f = new DeviceFormat();
       f->SampleFormat = standardSampleFormats[sf];
-      // cout << "[DEVICE] Testing format index: " << sf << endl;
-      vector<double> SampleRates;
-      for( int i = 0; standardSampleRates[i] > 0; i++ )
+      for (int i = 0; standardSampleRates[i] > 0; i++)
 	{
 	  err = 
 	    Pa_IsFormatSupported( &InParams, &OutParams, 
 				  standardSampleRates[i] );
 	  if( err == paFormatIsSupported )
-	    {/*
-	      cout << "[DEVICE] New Sample Rate Supported: " 
-		   << standardSampleRates[i]
-		   << endl; */
-	      f->SampleRates.push_back(standardSampleRates[i]);
-	    }
+	    f->SampleRates.push_back(standardSampleRates[i]);
 	}
       SupportedFormats.push_back(f);
     }
   return true;
 }
-
-
-
-
-

@@ -37,7 +37,7 @@ class Channel
   void		AddBuffers(unsigned int);
   float		*PopBuffer(int i);
   void		RemoveFirstBuffer();
-  void		ClearAllBuffers();
+  void		ClearAllBuffers(bool renew = true);
   wxString	Label;
   bool		Visible;
   float		Lrms;
