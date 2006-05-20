@@ -41,7 +41,7 @@ static double standardSampleRates[] =
 class DeviceFormat
 {
  public:
-  DeviceFormat() {}
+  DeviceFormat() { SampleFormat = 0; }
   ~DeviceFormat() {}
   
   long SampleFormat;

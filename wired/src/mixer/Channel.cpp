@@ -29,23 +29,7 @@ Channel::Channel(bool stereo, bool visible)
 
 Channel::~Channel()
 {
-  if (!Stereo)
-    for (vector<float*>::iterator b = MonoBuffers.begin(); 
-	 b != MonoBuffers.end(); b++)
-      delete[] *b;
-  else
-    for (vector<float**>::iterator b = StereoBuffers.begin(); 
-	 b != StereoBuffers.end(); b++)
-      {
-      	if ((*b)[0])
-			delete[] (*b)[0];
-		if ((*b)[1])
-			delete[] (*b)[1];
-		if (*b)
-			delete[] (*b);
-      }
-  MonoBuffers.clear();
-  StereoBuffers.clear();
+  ClearAllBuffers(false);
 }
 
 Channel		Channel::operator=(const Channel& right)
@@ -239,8 +223,10 @@ void Channel::RemoveFirstBuffer()
     }
 }
 
-void Channel::ClearAllBuffers(void)
+void Channel::ClearAllBuffers(bool renew)
 {
+  vector<float*>::iterator	mon;
+  vector<float**>::iterator	ste;
   
   MixMutex.Lock();
   Rrms = 0.f;
@@ -248,22 +234,31 @@ void Channel::ClearAllBuffers(void)
   MixMutex.Unlock();
 
   if (!Stereo)
-    for (vector<float*>::iterator b = MonoBuffers.begin(); 
-	 b != MonoBuffers.end(); b++)
-	 if (*b)
-	    delete[] *b;
+    {
+      for (mon = MonoBuffers.begin(); mon != MonoBuffers.end(); mon++)
+	if (*mon)
+	  delete [] *mon;
+    }
   else
-    for (vector<float**>::iterator b = StereoBuffers.begin(); 
-	 b != StereoBuffers.end(); b++)
-      {
-      	if ((*b)[0])
-			delete[] (*b)[0];
-		if ((*b)[1])
-			delete[] (*b)[1];
-		if (*b)
-			delete[] (*b);
-      }
+    {
+      for (ste = StereoBuffers.begin(); ste != StereoBuffers.end(); ste++)
+	if (*ste)
+	  {
+	    if ((*ste)[0])
+	      delete [] (*ste)[0];
+	    if ((*ste)[1])
+	      delete [] (*ste)[1];
+	    delete [] (*ste);
+	  }
+    }
   MonoBuffers.clear();
   StereoBuffers.clear();
-  AddBuffers(NUM_BUFFERS);
+
+  if (renew)
+    {
+      if (!Stereo)
+	AddBuffers(PREBUF_NUM);
+      else
+	AddBuffers(NUM_BUFFERS);
+    }
 }

@@ -28,7 +28,7 @@ template<class C> inline RingBuffer<C>::RingBuffer( long num )
 template<class C> inline RingBuffer<C>::~RingBuffer() 
 {
   if (buffer)
-    delete buffer;
+    delete [] buffer;
 }
 
 /***************************************************************************
