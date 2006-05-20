@@ -117,11 +117,9 @@ void					*MidiThread::Entry()
   vector<MidiInDevice *>:: iterator	i;
 
   cout << "[MIDITHREAD] Thread started !" << endl;    
-  while (1)
+  while (!TestDestroy())
     {
       MidiDeviceMutex.Lock();
-      if (TestDestroy() == true)
-        break;
       for (i = MidiInDev.begin(); i != MidiInDev.end(); i++)
 	{
 	  if ((*i)->Poll())
@@ -131,11 +129,9 @@ void					*MidiThread::Entry()
 	    }
 	}
       MidiDeviceMutex.Unlock();
-      if (TestDestroy() == true)
-      	break;
       wxMilliSleep(1);
     }
-     cout << "[MIDITHREAD] Thread finished !" << endl;    
+  cout << "[MIDITHREAD] Thread finished !" << endl;    
   return (0x0);
 }
 
@@ -172,11 +168,11 @@ void					MidiThread::AnalyzeMidi(int id)
 
 void                    MidiThread::OnExit()
 {
-    wxCriticalSectionLocker locker(wxGetApp().m_critsect);
+  wxMutexLocker		locker(wxGetApp().m_mutex);
+  wxArrayThread& threads = wxGetApp().m_threads;
 
-    wxArrayThread& threads = wxGetApp().m_threads;
-    threads.Remove(this);
-    if (threads.IsEmpty())
-            wxGetApp().m_semAllDone.Post();
-     cout << "[MIDITHREAD] Thread terminated !" << endl;    
+  threads.Remove(this);
+  if (threads.IsEmpty())
+    wxGetApp().m_condAllDone->Signal();
+  cout << "[MIDITHREAD] Thread terminated !" << endl;    
 }

@@ -56,7 +56,6 @@ Sequencer::~Sequencer()
 
 void					*Sequencer::Entry()
 {
-  bool					ok = true;
   list<RackTrack *>::iterator		RacksTrack;
   list<Plugin *>::iterator		Plug;
   list<MidiEvent *>::iterator		MidiMsg;
@@ -94,11 +93,8 @@ void					*Sequencer::Entry()
   AllocBuffer(AllocBuf1);
   AllocBuffer(AllocBuf2);
   cout << "[SEQUENCER] Thread started !" << endl;
-  while (ok)
+  while (!TestDestroy())
     {
-
-	  if (TestDestroy() == true)
-	   	break;
       /* - Traitement des messages MIDI recus */
       MidiMutex.Lock();
       SeqMutex.Lock();
@@ -362,7 +358,6 @@ void					*Sequencer::Entry()
       ExtraBufs.clear();
     }
   cout << "[SEQ] Thread finished !" << endl;
-  //return (Wait());
   return NULL;
 }
 
@@ -1033,11 +1028,11 @@ void					Sequencer::StopFile()
 
 void                    Sequencer::OnExit()
 {
-    wxCriticalSectionLocker locker(wxGetApp().m_critsect);
+  wxMutexLocker		locker(wxGetApp().m_mutex);
+  wxArrayThread&	threads = wxGetApp().m_threads;
 
-    wxArrayThread& threads = wxGetApp().m_threads;
-    threads.Remove(this);
-    if (threads.IsEmpty())
-            wxGetApp().m_semAllDone.Post();
-    cout << "[SEQ] Thread terminated" << endl;
+  threads.Remove(this);
+  if (threads.IsEmpty())
+    wxGetApp().m_condAllDone->Signal();
+  cout << "[SEQ] Thread terminated" << endl;
 }

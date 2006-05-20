@@ -8,8 +8,8 @@
 #include <wx/snglinst.h>
 #include <wx/debugrpt.h>
 
-#include "wx/thread.h"
-#include "wx/dynarray.h"
+#include <wx/thread.h>
+#include <wx/dynarray.h>
 
 #include "version.h"
 
@@ -26,15 +26,15 @@ class MainApp : public wxApp
   virtual bool			OnInit();
   virtual int			OnExit();
   int				FilterEvent(wxEvent& event);
-  wxArrayThread 	m_threads;
-  wxCriticalSection m_critsect;
-  wxSemaphore 		m_semAllDone;
+  wxArrayThread			m_threads;
+  wxMutex			m_mutex;
+  wxCondition*			m_condAllDone;
 
  private:
-  MainWindow				*Frame;
+  MainWindow			*Frame;
   wxSingleInstanceChecker	*Checker;
-  void                      OnFatalException();
-  void						OnUnhandledException();
+  void			        OnFatalException();
+  void				OnUnhandledException();
 };
 
 DECLARE_APP(MainApp)
