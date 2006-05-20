@@ -26,6 +26,8 @@ bool				MainApp::OnInit()
   wxHandleFatalExceptions();
 	//std::set_new_handler(&AllocationErrorHandler);
   wxBitmap			bitmap;
+  wxSplashScreen*		splash;
+
 #if wxUSE_LIBPNG
   wxImage::AddHandler(new wxPNGHandler);
 #endif
@@ -34,11 +36,11 @@ bool				MainApp::OnInit()
 		return false;
   if (bitmap.LoadFile(wxString(INSTALL_PREFIX, *wxConvCurrent) + wxString(wxT("/share/wired/data/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
     {
-      wxSplashScreen*		splash = 
-	new wxSplashScreen(bitmap,
-			   wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
-			   6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
-			   wxSIMPLE_BORDER|wxSTAY_ON_TOP);
+      splash = new wxSplashScreen(bitmap,
+				  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
+				  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
+				  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
+      splash->Show();
     }
 #if 0
   const wxString		name = wxString::Format(L"wired-%s", wxGetUserId().c_str());
@@ -57,6 +59,7 @@ bool				MainApp::OnInit()
   MainWin = Frame;
   Frame->Show(true);
   SetTopWindow(Frame);
+  splash->Hide();
   return (true);
 }
 
