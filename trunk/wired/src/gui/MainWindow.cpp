@@ -3,7 +3,6 @@
 
 #include "MainWindow.h"
 
-//#include <dlfcn.h>
 #include <wx/splitter.h>
 #include <wx/progdlg.h>
 #include <wx/filename.h>
@@ -80,7 +79,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   try
     {
       Audio = new AudioEngine();
-      Audio->GetDevices();
       Audio->GetDeviceSettings(); 
       // FIXME we just overwrote detected settings
       // with saved ones, even if they're wrong/fucked/don't exist
@@ -172,7 +170,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   
   // Le Mixer doit etre declarer apres AudioEngine 
   Mix = new Mixer();
-  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 120), wxSIMPLE_BORDER);
   Seq = new Sequencer();
   MidiEngine = new MidiThread();
   MidiEngine->OpenDefaultDevices();
@@ -274,7 +271,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   SeqPanel = new SequencerGui(split, wxPoint(0, 0), wxSize(800, 200), this);
   //cout << "done :-)" << endl;  
 
-  //  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 150), wxSIMPLE_BORDER);
+  OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 120), wxSIMPLE_BORDER);
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
 
   split->SplitHorizontally(RackPanel, SeqPanel, 200);
@@ -410,10 +407,12 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   vector<PluginLoader *>::iterator	k;
   int					res;
 
-  wxMessageDialog *msg = new wxMessageDialog(this, _("Save current session ?"), wxT("Wired"), 
-		      wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
+  wxMessageDialog *msg = new wxMessageDialog(NULL, _("Save current session ?"), wxT("Wired"), 
+					     wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
   res = msg->ShowModal();
-  delete msg;
+  msg->Hide();
+  msg->Destroy();
+
   if (res == wxID_YES)
     {
       wxCommandEvent evt;
@@ -427,80 +426,85 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 	  return;
 	}
     }
+
+  this->Hide();
+  ::wxSafeYield();
+
 #if wxUSE_STATUSBAR
-    Disconnect(wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);    
+  Disconnect(wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);    
 #endif
   //WiredVideoObject->CloseFile();
   /* for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)  
-    for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
-      for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
-	if ((*k)->InitInfo.Id == (*j)->InitInfo->Id)
-	  {
-	    cout << "[MAINWIN] Destroying plugin: " << (*j)->Name << endl;
-	    RackPanel->RemoveChild((*j)->Gui);
-	    (*k)->Destroy(*j);
-	    break;
-	    }*/
+     for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
+     for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
+     if ((*k)->InitInfo.Id == (*j)->InitInfo->Id)
+     {
+     cout << "[MAINWIN] Destroying plugin: " << (*j)->Name << endl;
+     RackPanel->RemoveChild((*j)->Gui);
+     (*k)->Destroy(*j);
+     break;
+     }*/
 
-  WiredSettings->Save();
+  cout << "[MAINWIN] Stopping graphics things..."<< endl;
+  SeqTimer->Stop();
+  delete SeqTimer;
+  SeqTimer = NULL;
+
   cout << "[MAINWIN] Unloading shared libraries..."<< endl;
   for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
     (*k)->Unload();
-    SeqTimer->Stop();
-    cout << "[MAINWIN] Stopping threads..."<< endl;
-    wxThread *thread;
-    
-        wxGetApp().m_critsect.Enter();
-    const wxArrayThread& threads = wxGetApp().m_threads;
-    size_t count = threads.GetCount();
-    //if (count)
-      //    {
-      //        while (threads.IsEmpty() == false)
-	  //        {
-	  //            thread = threads.Last();
-	    //            wxGetApp().m_critsect.Leave();
-	    //            thread->Delete();
-	    //            wxGetApp().m_critsect.Enter();
-	    //        }
-	//    }
-    
-    if (count > 0)
+  cout << "[MAINWIN] Stopping threads..."<< endl;
+  wxThread *thread;
+
+  wxGetApp().m_mutex.Lock();
+  const wxArrayThread& threads = wxGetApp().m_threads;
+  size_t count = threads.GetCount();
+
+  for (int i = 0; i < count; i++)
+    threads.Item(i)->Delete();
+
+  if (count > 0)
     {
-        cout << "[MAINWIN] Waiting for Threads to really stop..."<< endl;
-        wxGetApp().m_semAllDone.WaitTimeout(1000);
+      cout << "[MAINWIN] Waiting for Threads to stop..." << endl;
+      if (wxGetApp().m_condAllDone->WaitTimeout(5000) == wxCOND_TIMEOUT)
+	cout << "[MAINWIN] Threads are stuck !"<< endl;
     }
-         wxGetApp().m_critsect.Leave();
-    cout << "[MAINWIN] Done !"<< endl;
-  cout << "[MAINWIN] Unloading external plugins..." << endl;
-//  delete Mix;
-//  Mix = NULL;
-  if (LoadedExternalPlugins)
-	  delete LoadedExternalPlugins;
-  
+  wxGetApp().m_mutex.Unlock();
+
+  cout << "[MAINWIN] Done !"<< endl;
+
   //if (WiredVideoObject) delete WiredVideoObject;
-  
-  delete SeqTimer;
-  SeqTimer = NULL;
-  if(FileConverter)
+
+  if (FileConverter)
     delete FileConverter;
-//  delete Mix;
-//  delete OptPanel;
+
+  cout << "[MAINWIN] Closing all audio devices and streams..." << endl;
+  // if we have to do something with already dead threads, it's here.
+  delete Mix;
+
+  if (Audio)
+    delete Audio;
+  Audio = NULL; // for handling event of Transport::OnIdle
+
+  cout << "[MAINWIN] Unloading logging manager..." << endl;
+  delete LogWin;
+
+  cout << "[MAINWIN] Unloading external plugins..." << endl;
+  if (LoadedExternalPlugins)
+    delete LoadedExternalPlugins;
+
   cout << "[MAINWIN] Unloading session manager..." << endl;
   delete CurrentSession;
   delete CurrentXmlSession;
-  cout << "[MAINWIN] Unloading logging manager..." << endl;
-  delete LogWin;  
-  cout << "[MAINWIN] Closing all audio devices and streams..." << endl;
-  if (Audio)
-      delete Audio;
-   delete TransportPanel;
-   cout << "[MAINWIN] Unloading user settings manager..." << endl;
+
+  cout << "[MAINWIN] Unloading user settings manager..." << endl;
   if (WiredSettings)
-      delete WiredSettings;
+    delete WiredSettings;
+
   cout << "[MAINWIN] Closing..." << endl;
-  wxGetApp().ExitMainLoop();
-  exit (0);
-  Destroy();
+  // all gui windows (and this one) are destroyed in MainApp::OnExit
+  // but exit prevent wired to segfault... :(
+  exit(1);
 }
 
 void					MainWindow::OnQuit(wxCommandEvent &WXUNUSED(event))
@@ -1761,9 +1765,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
 //  EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)
 //  EVT_MENU(MainWin_CloseVideo, MainWindow::OnCloseVideo)
 //  EVT_MENU(MainWin_SeekVideo, MainWindow::OnSeekVideo)
-  //EVT_IDLE(MainWindow::OnIdle)
   //EVT_TEXT_MAXLEN(101010, MainWindow::OnSetPosition)
   //EVT_PLAYPOSITION(313131, MainWindow::OnSetPosition)
-//  EVT_IDLE(MainWindow::OnIdle)
 END_EVENT_TABLE()
 

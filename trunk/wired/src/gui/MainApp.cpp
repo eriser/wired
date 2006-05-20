@@ -31,16 +31,21 @@ bool				MainApp::OnInit()
 #if wxUSE_LIBPNG
   wxImage::AddHandler(new wxPNGHandler);
 #endif
-	SetAppName(L"wired");
-	if (!wxApp::OnInit())
-		return false;
+  SetAppName(L"wired");
+  if (!wxApp::OnInit())
+    return false;
+
+  // init some conditions variables
+  m_condAllDone = new wxCondition(m_mutex);
+
+  // splash screen
   if (bitmap.LoadFile(wxString(INSTALL_PREFIX, *wxConvCurrent) + wxString(wxT("/share/wired/data/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
     {
       splash = new wxSplashScreen(bitmap,
 				  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
 				  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 				  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
-      splash->Show();
+      wxYield();
     }
 #if 0
   const wxString		name = wxString::Format(L"wired-%s", wxGetUserId().c_str());
@@ -60,6 +65,7 @@ bool				MainApp::OnInit()
   Frame->Show(true);
   SetTopWindow(Frame);
   splash->Hide();
+  splash->Destroy();
   return (true);
 }
 
@@ -88,8 +94,7 @@ int				MainApp::OnExit()
 #if 0
   delete Checker;
 #endif
-    Frame->Destroy();
-//    delete Frame;
+  Frame->Destroy();
   return (wxApp::OnExit());
 }
 
