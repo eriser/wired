@@ -5,10 +5,9 @@
 
 WiredDSSIPlugin::WiredDSSIPlugin()
 {
-	_Handle = NULL;
-	_DSSIDescriptorFunction = NULL;
-	_LADSPADescriptorFunction = NULL;
-	_FileName = wxT("");
+  _DSSIDescriptorFunction = NULL;
+  _LADSPADescriptorFunction = NULL;
+  _FileName = wxT("");
 }
 
 WiredDSSIPlugin::WiredDSSIPlugin(const WiredDSSIPlugin& copy)
@@ -18,14 +17,13 @@ WiredDSSIPlugin::WiredDSSIPlugin(const WiredDSSIPlugin& copy)
 
 WiredDSSIPlugin::~WiredDSSIPlugin()
 {
-	//UnLoad();
+  UnLoad();
 }
 
 WiredDSSIPlugin		WiredDSSIPlugin::operator=(const WiredDSSIPlugin& right)
 {
 	if (this != &right)
 	{
-		_Handle = right._Handle;
 		_FileName = right._FileName;
 		_DSSIDescriptorFunction = right._DSSIDescriptorFunction;
 		_DSSIDescriptors = right._DSSIDescriptors;
@@ -36,81 +34,80 @@ WiredDSSIPlugin		WiredDSSIPlugin::operator=(const WiredDSSIPlugin& right)
 	return *this;
 }
 
-bool				WiredDSSIPlugin::Load(const wxString& FileName, int& FirstIndex)
+bool			WiredDSSIPlugin::Load(const wxString& FileName, int& FirstIndex)
 {
-	bool			Found = false;
+  bool			Found = false;
 	
-	_Handle = dlopen(FileName.mb_str(*wxConvCurrent), RTLD_NOW);
-	if (_Handle != NULL)
+  if (_Handle.Load(FileName, wxDL_NOW))
+    {
+      _DSSIDescriptorFunction = (DSSI_Descriptor_Function) _Handle.GetSymbol(STR_DSSI_DESCRIPTOR_FUNCTION_NAME);
+      if (_DSSIDescriptorFunction == NULL)
 	{
-		_DSSIDescriptorFunction = (DSSI_Descriptor_Function) dlsym(_Handle, STR_DSSI_DESCRIPTOR_FUNCTION_NAME);
-		if (_DSSIDescriptorFunction == NULL)
-		{
-			_LADSPADescriptorFunction = (LADSPA_Descriptor_Function) dlsym(_Handle, STR_LADSPA_DESCRIPTOR_FUNCTION_NAME);
-			if (_LADSPADescriptorFunction == NULL)
-				UnLoad();
-			else
-				Found = true;
-		}
-		else
-			Found = true;
+	  _LADSPADescriptorFunction = (LADSPA_Descriptor_Function) _Handle.GetSymbol(STR_LADSPA_DESCRIPTOR_FUNCTION_NAME);
+	  if (_LADSPADescriptorFunction == NULL)
+	    UnLoad();
+	  else
+	    Found = true;
 	}
-	if (Found == true)
-	{
-		int		pos, PluginInfo;
-		unsigned long PortPos;
-		LADSPA_PortDescriptor Pod;
+      else
+	Found = true;
+    }
+  if (Found == true)
+    {
+      int		pos, PluginInfo;
+      unsigned long PortPos;
+      LADSPA_PortDescriptor Pod;
 		
-		_FileName = FileName;
-		if (_DSSIDescriptorFunction)
-		{
-			const DSSI_Descriptor		*CurrentDescriptor;
+      _FileName = FileName;
+      if (_DSSIDescriptorFunction)
+	{
+	  const DSSI_Descriptor		*CurrentDescriptor;
 			
-			for (pos = 0, PluginInfo = 0; (CurrentDescriptor = _DSSIDescriptorFunction(pos)); pos++, PluginInfo = 0)
-			{
-				cout << "Adding DSSI Plugin {" << CurrentDescriptor->LADSPA_Plugin->Name << "}" << endl;
-				_DSSIDescriptors[FirstIndex] = CurrentDescriptor;
-				PluginInfo |= TYPE_PLUGINS_DSSI;
+	  for (pos = 0, PluginInfo = 0; (CurrentDescriptor = _DSSIDescriptorFunction(pos)); pos++, PluginInfo = 0)
+	    {
+	      cout << "Adding DSSI Plugin {" << CurrentDescriptor->LADSPA_Plugin->Name << "}" << endl;
+	      _DSSIDescriptors[FirstIndex] = CurrentDescriptor;
+	      PluginInfo |= TYPE_PLUGINS_DSSI;
 				
-				for (PortPos = 0; PortPos < CurrentDescriptor->LADSPA_Plugin->PortCount; PortPos++)
-				{
-					Pod = CurrentDescriptor->LADSPA_Plugin->PortDescriptors[PortPos];
-					if (LADSPA_IS_PORT_AUDIO(Pod) && LADSPA_IS_PORT_INPUT(Pod))
-					{
-						PluginInfo |= TYPE_PLUGINS_EFFECT;
-						break;
-					}
-				}
-				if (!(PluginInfo & TYPE_PLUGINS_EFFECT))
-					PluginInfo |= TYPE_PLUGINS_INSTR;
-				_PluginsInfo[FirstIndex++] = PluginInfo;
-			}
-		}
-		else if (_LADSPADescriptorFunction)
+	      for (PortPos = 0; PortPos < CurrentDescriptor->LADSPA_Plugin->PortCount; PortPos++)
 		{
-			const LADSPA_Descriptor		*CurrentDescriptor;
-			
-			for (pos = 0, PluginInfo = 0; (CurrentDescriptor = _LADSPADescriptorFunction(pos)); pos++, PluginInfo = 0)
-			{				
-				cout << "Adding LADSPA Plugin {" << CurrentDescriptor->Name << "}" << endl;
-				_LADSPADescriptors[FirstIndex] = CurrentDescriptor;
-				PluginInfo |= TYPE_PLUGINS_LADSPA;
-				for (PortPos = 0; PortPos < CurrentDescriptor->PortCount; PortPos++)
-				{
-					Pod = CurrentDescriptor->PortDescriptors[PortPos];;
-					if (LADSPA_IS_PORT_AUDIO(Pod) && LADSPA_IS_PORT_INPUT(Pod))
-					{
-						PluginInfo |= TYPE_PLUGINS_EFFECT;
-						break;
-					}
-				}
-				if (!(PluginInfo & TYPE_PLUGINS_EFFECT))
-					PluginInfo |= TYPE_PLUGINS_INSTR;
-				_PluginsInfo[FirstIndex++] = PluginInfo;
-			}
+		  Pod = CurrentDescriptor->LADSPA_Plugin->PortDescriptors[PortPos];
+		  if (LADSPA_IS_PORT_AUDIO(Pod) && LADSPA_IS_PORT_INPUT(Pod))
+		    {
+		      PluginInfo |= TYPE_PLUGINS_EFFECT;
+		      break;
+		    }
 		}
+	      if (!(PluginInfo & TYPE_PLUGINS_EFFECT))
+		PluginInfo |= TYPE_PLUGINS_INSTR;
+	      _PluginsInfo[FirstIndex++] = PluginInfo;
+	    }
 	}
-	return Found;
+      else if (_LADSPADescriptorFunction)
+	{
+	  const LADSPA_Descriptor		*CurrentDescriptor;
+			
+	  for (pos = 0, PluginInfo = 0; (CurrentDescriptor = _LADSPADescriptorFunction(pos)); pos++, PluginInfo = 0)
+	    {				
+	      cout << "Adding LADSPA Plugin {" << CurrentDescriptor->Name << "}" << endl;
+	      _LADSPADescriptors[FirstIndex] = CurrentDescriptor;
+	      PluginInfo |= TYPE_PLUGINS_LADSPA;
+	      for (PortPos = 0; PortPos < CurrentDescriptor->PortCount; PortPos++)
+		{
+		  Pod = CurrentDescriptor->PortDescriptors[PortPos];;
+		  if (LADSPA_IS_PORT_AUDIO(Pod) && LADSPA_IS_PORT_INPUT(Pod))
+		    {
+		      PluginInfo |= TYPE_PLUGINS_EFFECT;
+		      break;
+		    }
+		}
+	      if (!(PluginInfo & TYPE_PLUGINS_EFFECT))
+		PluginInfo |= TYPE_PLUGINS_INSTR;
+	      _PluginsInfo[FirstIndex++] = PluginInfo;
+	    }
+	}
+    }
+  return Found;
 }
 
 map<int, wxString>	WiredDSSIPlugin::GetPluginsList()
@@ -157,11 +154,8 @@ map<int, unsigned long>		WiredDSSIPlugin::GetPluginsListUniqueId()
 
 void				WiredDSSIPlugin::UnLoad()
 {
-	if (_Handle != NULL)
-	{
-		dlclose(_Handle);
-		_Handle = NULL;
-	}
+  if (_Handle.IsLoaded())
+    _Handle.Unload();
 }
 
 int					WiredDSSIPlugin::GetPluginType(int PluginId)

@@ -53,32 +53,29 @@ WiredExternalPluginMgr		WiredExternalPluginMgr::operator=(const WiredExternalPlu
 
 void			WiredExternalPluginMgr::LoadPLugins(int Type)
 {
-	char			*Dirs = NULL;
-	wxLogNull		NoLog;
-	
-	if (Type & TYPE_PLUGINS_DSSI)
-	{
-		if ((Dirs = getenv(ENV_NAME_PLUGINS_DSSI)) != NULL)
-			LoadPluginsFromPath(Dirs, TYPE_PLUGINS_DSSI);
-		else
-			LoadPluginsFromPath(DEFAULT_DSSI_PATH, TYPE_PLUGINS_DSSI);
-	}
-	if (Type & TYPE_PLUGINS_LADSPA)
-	{
-		if ((Dirs = getenv(ENV_NAME_PLUGINS_LADSPA)) != NULL)
-			LoadPluginsFromPath(Dirs, TYPE_PLUGINS_LADSPA);
-		else
-			LoadPluginsFromPath(DEFAULT_LADSPA_PATH, TYPE_PLUGINS_LADSPA);
-	}
+  wxString		Dirs;
+  wxLogNull		NoLog;
+
+  if (Type & TYPE_PLUGINS_DSSI)
+    {
+      if (wxGetEnv(ENV_NAME_PLUGINS_DSSI, &Dirs))
+	LoadPluginsFromPath(Dirs, TYPE_PLUGINS_DSSI);
+      else
+	LoadPluginsFromPath(DEFAULT_DSSI_PATH, TYPE_PLUGINS_DSSI);
+    }
+  if (Type & TYPE_PLUGINS_LADSPA)
+    {
+      if (wxGetEnv(ENV_NAME_PLUGINS_LADSPA, &Dirs))
+	LoadPluginsFromPath(Dirs, TYPE_PLUGINS_LADSPA);
+      else
+	LoadPluginsFromPath(DEFAULT_LADSPA_PATH, TYPE_PLUGINS_LADSPA);
+    }
 }
 
-void			WiredExternalPluginMgr::LoadPluginsFromPath(const char *Dirs, int Type)
+void			WiredExternalPluginMgr::LoadPluginsFromPath(const wxString& Dirs, int Type)
 {
-	list <wxString>::iterator 	Iter;
-//	DIR 						*CurrentDir = NULL;
-//	struct dirent 				*CurrentFile = NULL;
-	wxString					DirsFromEnv = wxString(Dirs, *wxConvCurrent);
-	list<wxString>				Paths = SplitPath(DirsFromEnv);
+	list<wxString>::iterator 	Iter;
+	list<wxString>			Paths = SplitPath(Dirs);
 	
 	for (Iter = Paths.begin(); Iter != Paths.end(); Iter++)
 	{
@@ -119,7 +116,7 @@ void			WiredExternalPluginMgr::LoadPlugins(const wxString& FileName)
 		delete NewPlugin;
 }
 
-list<wxString>	WiredExternalPluginMgr::SplitPath(wxString& Path)
+list<wxString>	WiredExternalPluginMgr::SplitPath(const wxString& Path)
 {
 	istringstream f((const char *)Path.mb_str(*wxConvCurrent));
 	list<wxString> Result;
