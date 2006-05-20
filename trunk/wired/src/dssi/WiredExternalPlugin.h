@@ -8,11 +8,12 @@
 #include "../engine/AudioEngine.h"
 #include "WiredExternalPluginLADSPA.h"
 
+#include <wx/dynlib.h>
 #include <map>
 using namespace std;
 
-#define STR_DSSI_DESCRIPTOR_FUNCTION_NAME "dssi_descriptor"
-#define STR_LADSPA_DESCRIPTOR_FUNCTION_NAME "ladspa_descriptor"
+#define STR_DSSI_DESCRIPTOR_FUNCTION_NAME wxT("dssi_descriptor")
+#define STR_LADSPA_DESCRIPTOR_FUNCTION_NAME wxT("ladspa_descriptor")
 
 class	WiredDSSIPlugin
 {
@@ -32,7 +33,7 @@ public:
 
 private:
 	wxString								_FileName;
-	void								*_Handle;
+	wxDynamicLibrary							_Handle;
 	DSSI_Descriptor_Function			_DSSIDescriptorFunction;
 	map<int, const DSSI_Descriptor*>	_DSSIDescriptors;						//Key == PluginId; Value == PluginDescriptor
 	LADSPA_Descriptor_Function			_LADSPADescriptorFunction;
