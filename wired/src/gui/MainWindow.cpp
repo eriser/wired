@@ -1007,7 +1007,7 @@ void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
       }
   if (p)
     {
-      cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name << endl; 
+      cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name.mb_str() << endl; 
       cCreateRackAction* action = new cCreateRackAction(&StartInfo,  p);
       action->Do();
     }
