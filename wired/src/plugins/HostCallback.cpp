@@ -39,17 +39,17 @@ long					HostCallback(Plugin *plug, long param, void *value)
       }
     case wiredHostProductName :
       {
-	strcpy((char *)value, "Wired");
+	(wxString*)value = WIRED_NAME;
 	break;
       }
     case wiredHostProductVersion :
       {
-	*(float *)value = 0.2f;
+	(wxString *)value = WIRED_VERSION;
 	break;
       }
     case wiredHostVendorName :
       {
-	strcpy((char *)value, "P31");
+	(wxString*)value = _("P31");
 	break;
       }
     case wiredGetDataDir :
