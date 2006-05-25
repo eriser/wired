@@ -511,7 +511,7 @@ Track					*SequencerGui::AddTrack(bool is_audio)
     }
   Seq->AddTrack(n);
   UpdateTracks();
-  SetScrolling();
+  SeqPanel->SetScrolling();
   ReSizeCursors();
   SeqView->DrawTrackLines();
   return (n);
@@ -909,9 +909,13 @@ void					SequencerGui::PasteItems()
   vector<Pattern *>::iterator		j;
   
   for (j = CopyItems.begin(); j != CopyItems.end(); j++)
+    {
     ((Pattern *) *j)->CreateCopy(((Pattern *) *j)->GetEndPosition());
+
+    }
   if (DoCut)
     DeleteSelectedPatterns();
+  
 }
 
 void					SequencerGui::DeleteSelectedPatterns()

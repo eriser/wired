@@ -37,10 +37,10 @@ AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
   : Pattern(pos, pos + Seq->MeasurePerSample * w->GetNumberOfFrames(), trackindex),
     WaveDrawer(Pattern::GetSize())
 {
-#ifdef __DEBUG__
+  #ifdef __DEBUG__
   cout << " ### NEW AUDIO PATTERN ###\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
        << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
-#endif
+  #endif
   Init();
   Wave = w;
   wxSize s = GetSize();
@@ -49,10 +49,10 @@ AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
   FileName = w->Filename;
   InputChan = NULL;
   RecordWave = NULL;
-#ifdef __DEBUG__
+  #ifdef __DEBUG__
   cout << " ---  OK AUDIO PATTERN ---\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
        << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
-#endif
+  #endif
 
  
 }
@@ -289,20 +289,29 @@ void					AudioPattern::GetRecordBuffer()
 
 Pattern					*AudioPattern::CreateCopy(double pos)
 {
-  Pattern				*p;
+  AudioPattern				*p;
 
 #ifdef __DEBUG__
   printf(" [ START ] AudioPattern::CreateCopy(%f) on track %d\n", pos, TrackIndex);
 #endif
-  p = new AudioPattern(pos, Wave, TrackIndex);
-  Seq->Tracks[TrackIndex]->AddPattern(p);
+  p = new AudioPattern(pos, (pos + Length), TrackIndex);
+ 
+  SeqMutex.Lock();
+  p->StartWavePos = StartWavePos;
+  p->EndWavePos = EndWavePos;
+  p->SetDrawColour(WaveDrawer::PenColor);
+  p->SetWave(Wave);
+  p->Update();
+  SeqMutex.Unlock();
+  Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
+ 
   //p = new AudioPattern(pos, Wave, TrackIndex);
   //p = Seq->Tracks[TrackIndex]->AddPattern(Wave, pos);
   //printf("AudioPattern::CreateCopy(%d) new pat %d -- OVER\n", pos, p);
 #ifdef __DEBUG__
   printf(" [  END  ] AudioPattern::CreateCopy(%f) on track %d\n", pos, TrackIndex);
 #endif
-  return (p);
+  return ((Pattern *)p);
 }
 
 void					AudioPattern::OnClick(wxMouseEvent &e)
@@ -346,6 +355,7 @@ void					AudioPattern::Split(double pos)
       p->Update();
       EndWavePos = p->StartWavePos;
       Length = (EndPosition = pos) - Position;
+      
       SetDrawing();
       Update();
       SeqMutex.Unlock();
