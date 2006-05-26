@@ -79,93 +79,13 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   try
     {
       Audio = new AudioEngine();
-      Audio->GetDeviceSettings(); 
-      // FIXME we just overwrote detected settings
-      // with saved ones, even if they're wrong/fucked/don't exist
-      
-      Audio->OpenStream();
-    }
-  catch (Error::NoDevice)
-    {
-      cout << "[MAINWIN] No Device :\nplease check you have a soundcard and Alsa installed" << endl;
-      
-      AudioMutex.Lock();/* This will lock the sequencer			\
-			   until audio parameters are properly set */
-      
-      //exit(1);
-    }
-  catch (Error::InvalidDeviceSettings)
-    {
-      cout << "[MAINWIN] Invalid Device Settings" << endl;
-      Audio->IsOk = false;
-      AlertDialog(_("audio engine"), _("You may check for your audio settings if you want to use Wired.."));
-      
-      AudioMutex.Lock();/* This will lock the sequencer			\
-			   until audio parameters are properly set */
-            
-      //Audio->SetDefaultSettings();
-      //Audio->GetDevices();
-      //Audio->GetDeviceSettings();
-      /*
-	SettingWindow s;
-      if (s.ShowModal() == wxID_OK)
-	{
-	  Audio->GetDeviceSettings();
-	  //Mix->InitOutputBuffers();
-	  Audio->OpenStream();
-	  //Audio->OpenStream();
-	}
-      else
-	;
-      */
-    }
-  catch (Error::ChannelsNotSet)
-    {
-      cout << "[MAINWIN] Channels Not Set" << endl;
-      AudioMutex.Lock();/* This will lock the sequencer			\
-			   until audio parameters are properly set */
-    }
-  catch (Error::StreamNotOpen)
-    {
-      cout << "[MAINWIN] Stream Not Opened" << endl;
-      AudioMutex.Lock();/* This will lock the sequencer			\
-			   until audio parameters are properly set */
     }
   catch (Error::InitFailure &f)
     {
       cout << "[MAINWIN] Portaudio Failure :" << f.getMsg().c_str() << endl;
-      AudioMutex.Lock();/* This will lock the sequencer			\
-			   until audio parameters are properly set */
-      //exit(1);
-    }
-  catch (Error::AudioEngineError)
-    {
-      cout << "[MAINWIN] General AudioEngine Error" << endl;
-      AudioMutex.Lock();/* This will lock the sequencer			\
- 			   until audio parameters are properly set */
-      // FIXME add exit()s on every catch
-    }
-  catch (std::bad_alloc)
-    {
-      cout << "[MAINWIN] oom" << endl;
-      AudioMutex.Lock();/* This will lock the sequencer			\
-			   until audio parameters are properly set */
-      
-    }
-  catch (std::exception &e)
-    {
-      cout << "[MAINWIN] Stdlib failure during AudioEngine init, check your code" << endl;
-      AudioMutex.Lock();/* This will lock the sequencer			\
-			   until audio parameters are properly set */
-      
-    }
-  catch (...)
-    {
-      // FIXME fenetre de dialogue blabla
-      cout << "[MAINWIN] Unknown AudioEngine error" << endl;
-      AudioMutex.Lock();/* This will lock the sequencer			\
-			   until audio parameters are properly set */
-      // FIXME handle some kind of error recovery
+      // FIXME: find a cleaner solution
+      cout << "Critical error" << endl;
+      exit(1);
     }
   
   // Le Mixer doit etre declarer apres AudioEngine 
@@ -179,6 +99,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
     cout << "[MAINWIN] Run MidiEngine thread failed !" << endl;  
    else
    	wxGetApp().m_threads.Add(MidiEngine);
+
+  InitAudio();
+  InitFileConverter();
+
   /* Creation Menu */
 
   TransportFrame = 0x0;
@@ -310,7 +234,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   RackModeView = true;
   SeqModeView = true;
-  InitFileConverter();
 
   // Taille minimum de la fenetre
   SetSizeHints(400, 300);
@@ -336,6 +259,132 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 #if wxUSE_STATUSBAR
   Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
 #endif
+}
+
+void			MainWindow::InitAudio(bool restart)
+{
+  SettingWindow		s;
+  static bool		StillLocked = false;
+
+  if (!StillLocked)
+    {
+      AudioMutex.Lock();
+      StillLocked = true;
+    }
+  SeqMutex.Lock();
+  if (!Audio->CloseStream())
+    {
+      cout 
+	<< "[MAINWIN] Could not close audio stream, you may restart Wired" 
+	<< endl;
+      StillLocked = false;
+      AudioMutex.Unlock();
+      SeqMutex.Unlock();
+      return;
+    }
+  try 
+    { 
+      Audio->IsOk = false;
+
+      Audio->GetDeviceSettings();
+      if (restart == true)
+	Mix->InitOutputBuffers();
+      Audio->OpenStream();
+      if (Audio->StartStream())
+	Audio->IsOk = true;
+      else
+	cout << "[MAINWIN] AudioMutex still locked"<< endl;
+    }
+  // from GetDeviceSettings
+  catch (Error::NoDevice)
+    {
+      cout << "[MAINWIN] No Device :\nplease check you have a soundcard and Alsa installed" 
+	   << endl;
+    }
+  // from GetDeviceSettings
+  catch (Error::InvalidDeviceSettings)
+    {
+      cout << "[MAINWIN] Invalid Device Settings" << endl;
+    }
+  // from SetChannels
+  catch (Error::ChannelsNotSet)
+    {
+      cout << "[MAINWIN] Channels Not Set" << endl;
+    }
+  // from OpenStream
+  catch (Error::StreamNotOpen)
+    {
+      cout << "[MAINWIN] Stream Not Opened" << endl;
+    }
+  // from nowhere
+  catch (Error::AudioEngineError)
+    {
+      cout << "[MAINWIN] General AudioEngine Error" << endl;
+    }
+  catch (std::bad_alloc)
+    {
+      cout << "[MAINWIN] oom" << endl;
+    }
+  catch (std::exception &e)
+    {
+      cout << "[MAINWIN] Stdlib failure during AudioEngine init, check your code" << endl;
+    }
+  catch (...)
+    {
+      cout << "[MAINWIN] Unknown AudioEngine error" << endl;
+    }
+
+  if ( Audio->IsOk )
+    {
+      vector<Track *>::iterator	i;
+
+      // Refill tracks connections
+      if (s.AudioLoaded || s.MidiLoaded)
+	for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
+	  (*i)->TrackOpt->FillChoices();      
+      // Sends sample rate and buffer size modifications to plugins
+      if (s.AudioLoaded)
+	{
+	  list<RackTrack *>::iterator k;
+	  list<Plugin *>::iterator j;
+
+	  for (k = RackPanel->RackTracks.begin(); 
+	       k != RackPanel->RackTracks.end(); k++)
+	    for (j = (*k)->Racks.begin(); j != (*k)->Racks.end(); j++)
+	      {
+		(*j)->SetBufferSize(Audio->SamplesPerBuffer);
+		(*j)->SetSamplingRate(Audio->SampleRate);
+	      }
+	}
+
+      if (restart)
+	{
+	  FileConverter->SetFormat((PaSampleFormat)Audio->SampleFormat);
+	  FileConverter->SetBufferSize(Audio->SamplesPerBuffer);
+	  FileConverter->SetSampleRate((long unsigned int)Audio->SampleRate);
+	}
+
+      AudioMutex.Unlock();
+      StillLocked = false;
+    }
+  else
+    cout << "You may check for your audio settings if you want to use Wired.." << endl;
+
+  SeqMutex.Unlock();
+
+  // dialog can't be before mutex unlocking
+  if (!Audio->IsOk)
+      AlertDialog(_("audio engine"), 
+		  _("You may check for your audio settings if you want to use Wired.."));
+
+  if (s.MidiLoaded)
+    {
+      MidiDeviceMutex.Lock();
+      // Reopen midi devices
+      MidiEngine->OpenDefaultDevices(); 
+      MidiDeviceMutex.Unlock();
+    }
+
 }
 
 void                MainWindow::InitLocale()
@@ -668,14 +717,12 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       {
       	MidiMutex.Lock();
       	MidiDeviceMutex.Lock();
-      	AudioMutex.Lock();
       	SeqMutex.Unlock();
       	FileConverter->ConvertFromCodec(&selfile);
-		FileConverter->ConvertSamplerate(&selfile);
+	FileConverter->ConvertSamplerate(&selfile);
       	FileConverter->ImportWaveFile(&selfile);
       	MidiMutex.Unlock();  
       	MidiDeviceMutex.Unlock();
-      	AudioMutex.Unlock();
       }
     }
 }
@@ -1049,18 +1096,6 @@ void					MainWindow::OnDeleteRack(wxCommandEvent &event)
 	}
 }
 
-//#include <unistd.h>
-
-void					MainWindow::StartStream(wxCommandEvent &event)
-{
-  Audio->StartStream();
-}
-
-void					MainWindow::StopStream(wxCommandEvent &event)
-{
-  Audio->StopStream();
-}
-
 void					MainWindow::OnAddTrackAudio(wxCommandEvent &event)
 {
   //cAddTrackAction			*action = new cAddTrackAction(true);
@@ -1312,99 +1347,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 
   if (s.ShowModal() == wxID_OK)
     {
-      SeqMutex.Lock();
-      
-      if (!Audio->CloseStream())
-	{
-	  cout 
-	    << "[MAINWIN] Could not close audio stream, you may restart Wired" 
-	    << endl;
-	  /*
-	    if (AudioMutex.TryLock() == wxMUTEX_NO_ERROR)
-	    {
-	    AudioMutex.Lock();
-	    SeqMutex.Unlock();
-	    }
-	  */
-	  SeqMutex.Unlock();
-	  return;
-	}
-      try 
-	{ 
-	  Audio->GetDeviceSettings();
-	  Mix->InitOutputBuffers();
-	  
-	  // Refill tracks connections
-	  if (s.AudioLoaded || s.MidiLoaded)
-	    for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
-	      (*i)->TrackOpt->FillChoices();      
-	  Audio->IsOk = true;
-	  // Sends sample rate and buffer size modifications to plugins
-	  if (s.AudioLoaded)
-	    {
-	      list<RackTrack *>::iterator k;
-	      list<Plugin *>::iterator j;
-	      
-	      for (k = RackPanel->RackTracks.begin(); 
-		   k != RackPanel->RackTracks.end(); k++)
-		for (j = (*k)->Racks.begin(); j != (*k)->Racks.end(); j++)
-		  {
-		    (*j)->SetBufferSize(Audio->SamplesPerBuffer);
-		    (*j)->SetSamplingRate(Audio->SampleRate);
-		  }
-	    }
-	}
-      catch (Error::NoDevice)
-	{
-	  Audio->IsOk = false;
-	  cout << "[MAINWIN] No Device :\nplease check you have a soundcard and Alsa installed" 
-	       << endl;
-	  if (AudioMutex.TryLock() == wxMUTEX_NO_ERROR)
-	    {
-	      AudioMutex.Lock();/* This will lock the sequencer		\
-				   until audio parameters are		\
-				   properly set				*/
-	      SeqMutex.Unlock();
-	    }
-	}
-      catch (Error::InvalidDeviceSettings)
-	{
-	  cout << "[MAINWIN] Invalid Device Settings" << endl;
-	  Audio->IsOk = false;
-	  AlertDialog(_("audio engine"), 
-		      _("You may check for your audio settings if you want to use Wired.."));
-	  if (AudioMutex.TryLock() == wxMUTEX_NO_ERROR)
-	    {
-	      AudioMutex.Lock();/* This will lock the sequencer		\
-				   until audio parameters are		\
-				   properly set				*/
-	      SeqMutex.Unlock();
-	    }
-	}
-      if ( Audio->IsOk )
-	{
-      FileConverter->SetFormat((PaSampleFormat)Audio->SampleFormat);
-      FileConverter->SetBufferSize(Audio->SamplesPerBuffer);		
-      FileConverter->SetSampleRate((long unsigned int)Audio->SampleRate);		
-	  Audio->OpenStream();
-	  if (Audio->StartStream())
-	    AudioMutex.Unlock();/* This will unlock the sequencer	\
-				   as audio parameters are properly set	*/
-	  else
-	    cout << "[MAINWIN] AudioMutex still locked"<< endl;
-	}
-      SeqMutex.Unlock();
-      
-      if (s.MidiLoaded)
-	{
-	  MidiDeviceMutex.Lock();
-	  // Reopen midi devices
-	  MidiEngine->OpenDefaultDevices(); 
-	  MidiDeviceMutex.Unlock();
-	}
-    }
-  else
-    {
+      InitAudio(true);
     }
 }
 
