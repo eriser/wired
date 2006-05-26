@@ -25,9 +25,6 @@ class					SettingWindow : public wxDialog
 
   void					Load();
   void					Save();
-  //void					OnGeneralClick(wxCommandEvent &event);
-  void					OnAudioClick(wxCommandEvent &event);
-  void					OnMidiClick(wxCommandEvent &event);
   void					OnOkClick(wxCommandEvent &event);
   void					OnCancelClick(wxCommandEvent &event);
   void					OnApplyClick(wxCommandEvent &event);
@@ -38,9 +35,6 @@ class					SettingWindow : public wxDialog
   void					OnSampleRateClick(wxCommandEvent &event);
   void					OnLatencyChange(wxCommandEvent &event);
   void					OnSelPrefCategory(wxTreeEvent &event);
-
-  bool					MidiLoaded; // a cause d'un bug wx...
-  bool					AudioLoaded; // la meme mais pour l'audio...
 
  protected:
   void					LoadSampleFormat();

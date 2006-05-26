@@ -262,7 +262,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
 void			MainWindow::InitAudio(bool restart)
 {
-  SettingWindow		s;
   static bool		StillLocked = false;
 
   if (!StillLocked)
@@ -338,23 +337,19 @@ void			MainWindow::InitAudio(bool restart)
       vector<Track *>::iterator	i;
 
       // Refill tracks connections
-      if (s.AudioLoaded || s.MidiLoaded)
-	for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
-	  (*i)->TrackOpt->FillChoices();      
+      for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
+	(*i)->TrackOpt->FillChoices();      
       // Sends sample rate and buffer size modifications to plugins
-      if (s.AudioLoaded)
-	{
-	  list<RackTrack *>::iterator k;
-	  list<Plugin *>::iterator j;
+      list<RackTrack *>::iterator k;
+      list<Plugin *>::iterator j;
 
-	  for (k = RackPanel->RackTracks.begin(); 
-	       k != RackPanel->RackTracks.end(); k++)
-	    for (j = (*k)->Racks.begin(); j != (*k)->Racks.end(); j++)
-	      {
-		(*j)->SetBufferSize(Audio->SamplesPerBuffer);
-		(*j)->SetSamplingRate(Audio->SampleRate);
-	      }
-	}
+      for (k = RackPanel->RackTracks.begin(); 
+	   k != RackPanel->RackTracks.end(); k++)
+	for (j = (*k)->Racks.begin(); j != (*k)->Racks.end(); j++)
+	  {
+	    (*j)->SetBufferSize(Audio->SamplesPerBuffer);
+	    (*j)->SetSamplingRate(Audio->SampleRate);
+	  }
 
       if (restart)
 	{
@@ -376,14 +371,10 @@ void			MainWindow::InitAudio(bool restart)
       AlertDialog(_("audio engine"), 
 		  _("You may check for your audio settings if you want to use Wired.."));
 
-  if (s.MidiLoaded)
-    {
-      MidiDeviceMutex.Lock();
-      // Reopen midi devices
-      MidiEngine->OpenDefaultDevices(); 
-      MidiDeviceMutex.Unlock();
-    }
-
+  MidiDeviceMutex.Lock();
+  // Reopen midi devices
+  MidiEngine->OpenDefaultDevices(); 
+  MidiDeviceMutex.Unlock();
 }
 
 void                MainWindow::InitLocale()
@@ -403,7 +394,6 @@ void					MainWindow::InitFileConverter()
 {
 	FileConverter = new FileConversion();
 	t_samplerate_info info;
-	SettingWindow				s;
 	int i; 
 	if (Audio->UserData->Sets->WorkingDir.empty())
 	{
@@ -1341,10 +1331,10 @@ void					MainWindow::SwitchSeqOptView()
 
 void					MainWindow::OnSettings(wxCommandEvent &event)
 {
-  SettingWindow				s;
+  static SettingWindow*			s = new SettingWindow();
   vector<Track *>::iterator		i;
 
-  if (s.ShowModal() == wxID_OK)
+  if (s->ShowModal() == wxID_OK)
     {
       InitAudio(true);
     }
