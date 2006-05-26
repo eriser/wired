@@ -221,7 +221,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   OptPanel->Show();
   TransportPanel->Show();
 
-
   StartInfo.HostCallback = HostCallback;
   StartInfo.Version = WIRED_VERSION;
   StartInfo.Rack = RackPanel;    
@@ -456,7 +455,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   vector<PluginLoader *>::iterator	k;
   int					res;
 
-  wxMessageDialog *msg = new wxMessageDialog(NULL, _("Save current session ?"), wxT("Wired"), 
+  wxMessageDialog *msg = new wxMessageDialog(this, _("Save current session ?"), wxT("Wired"), 
 					     wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
   res = msg->ShowModal();
   msg->Hide();
@@ -1353,7 +1352,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 
 void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
 {
-  wxMessageDialog			mdialog(NULL, msg, from, wxICON_INFORMATION, wxDefaultPosition);
+  wxMessageDialog			mdialog(MainWin, msg, from, wxICON_INFORMATION, wxDefaultPosition);
 
   mdialog.ShowModal();
 }

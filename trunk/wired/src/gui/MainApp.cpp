@@ -45,6 +45,8 @@ bool				MainApp::OnInit()
 				  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
 				  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 				  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
+      // alert dialog can use it before frame loading
+      MainWin = (MainWindow*)splash;
       wxYield();
     }
 #if 0
@@ -63,8 +65,8 @@ bool				MainApp::OnInit()
 			 wxSize(APP_WIDTH, APP_HEIGHT));
   MainWin = Frame;
   Frame->Show(true);
-  SetTopWindow(Frame);
   splash->Hide();
+  SetTopWindow(Frame);
   splash->Destroy();
   return (true);
 }
