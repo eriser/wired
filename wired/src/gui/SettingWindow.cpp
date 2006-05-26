@@ -63,14 +63,18 @@ SettingWindow::SettingWindow()
   MidiPanel->Show(false);
   AudioInputPanel->Show(false);
   AudioOutputPanel->Show(false);
-  GeneralPanel->Show(true);
+  GeneralPanel->Hide();
   CurrentPanel = GeneralPanel;
 
   OkBtn = new wxButton(this, wxID_OK, _("OK"), BTN_OK_POS, BTN_SIZE);
   ApplyBtn = new wxButton(this, wxID_APPLY, _("Apply"), BTN_APPLY_POS, BTN_SIZE);
   CancelBtn = new wxButton(this, wxID_CANCEL, _("Cancel"), BTN_CANCEL_POS, BTN_SIZE);
-  
+}
+
+void				SettingWindow::Show()
+{
   Load();
+  wxDialog::Show();
 }
 
 //
@@ -500,7 +504,6 @@ void SettingWindow::SetDefaultSampleFormat(void)
 
 void SettingWindow::OnSampleFormatClick(wxCommandEvent &event)
 {
-  
   SetDefaultSampleFormat();	//forcing 32bits floats
   LoadSampleRates();
 }

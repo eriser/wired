@@ -59,6 +59,7 @@ WiredSession		*CurrentSession = NULL;
 WiredSessionXml		*CurrentXmlSession = NULL;
 WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
 FileConversion		*FileConverter = NULL;
+SettingWindow		*SettingWin = NULL;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
@@ -100,6 +101,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
    else
    	wxGetApp().m_threads.Add(MidiEngine);
 
+  SettingWin = new SettingWindow();
   InitAudio();
   InitFileConverter();
 
@@ -1331,13 +1333,10 @@ void					MainWindow::SwitchSeqOptView()
 
 void					MainWindow::OnSettings(wxCommandEvent &event)
 {
-  static SettingWindow*			s = new SettingWindow();
   vector<Track *>::iterator		i;
 
-  if (s->ShowModal() == wxID_OK)
-    {
-      InitAudio(true);
-    }
+  if (SettingWin->ShowModal() == wxID_OK)
+    InitAudio(true);
 }
 
 void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
