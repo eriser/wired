@@ -7,18 +7,12 @@
 #include <portaudio.h>
 #include "Device.h"
 
-//#include "MainWindow.h"
-
-
 #include <iostream>
 #include <string>
 #include <vector>
 #include <wx/thread.h>
 #include "RingBuffer.h"
 #include "Settings.h"
-
-#define DEFAULT_SAMPLE_RATE		44100.0
-#define DEFAULT_SAMPLES_PER_BUFFER	4096
 
 using namespace std;
 

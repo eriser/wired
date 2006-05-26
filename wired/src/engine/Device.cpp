@@ -21,6 +21,8 @@ bool Device::GetSupportedSettings(void)
 	   << endl;
       return (false);
     }
+
+  Name = wxString(info->name, *wxConvCurrent);
   /*cout << "[DEVICE] info Low In Latency: " << info->defaultLowInputLatency 
        << ", " << "High In Latency: " << info->defaultHighInputLatency 
        << endl;
@@ -41,14 +43,16 @@ bool Device::GetSupportedSettings(void)
   memset(&InParams, 0, sizeof(InParams));
   memset(&OutParams, 0, sizeof(OutParams));
   InParams.device = Id;
-  InParams.channelCount = MaxInputChannels;
+  InParams.channelCount = info->maxInputChannels;
   InParams.suggestedLatency = InputLatencyRange[MIN];
   InParams.hostApiSpecificStreamInfo = NULL;
+  MaxInputChannels = info->maxInputChannels;
   
   OutParams.device = Id;
-  OutParams.channelCount = MaxOutputChannels;
+  OutParams.channelCount = info->maxOutputChannels;
   OutParams.suggestedLatency = OutputLatencyRange[MIN];
   OutParams.hostApiSpecificStreamInfo = NULL;
+  MaxOutputChannels = info->maxOutputChannels;
 
   PaError err;
   DeviceFormat *f;
