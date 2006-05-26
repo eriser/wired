@@ -1,3 +1,4 @@
+
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
@@ -11,17 +12,19 @@ wxMutex		AudioMutex;
 
 AudioEngine::AudioEngine() 
 {
-  IsOk = true;
+  IsOk = false;
   StreamIsOpened = false;
   StreamIsStarted = false;
   Stream = NULL;
-  UserData = new callback_t;
 
+  _paInit = false;
   PaError err = Pa_Initialize();
   if ( err != paNoError ) 
     throw Error::InitFailure(wxString(Pa_GetErrorText (err), *wxConvCurrent));
+  _paInit = true;
 
   cout << "[AUDIO] Portaudio initialized" << endl; 
+  UserData = new callback_t;
   GetDevices();
   SetDefaultSettings();
   cout << "[AUDIO] AudioEngine initialized" << endl; 
@@ -29,16 +32,20 @@ AudioEngine::AudioEngine()
 
 AudioEngine::~AudioEngine()
 {
-  CloseStream();
-  
-  PaError err = Pa_Terminate();
-  if (err != paNoError)
-    cout << "[AUDIO] Error Terminate(): " << Pa_GetErrorText (err) << endl; 
-  else
-    cout << "[AUDIO] Portaudio unloaded" << endl;
-  ResetChannels();
-  if (UserData)
-    delete UserData;
+  PaError err;
+
+  if (_paInit)
+    {
+      CloseStream();
+      err = Pa_Terminate();
+      if (err != paNoError)
+	cout << "[AUDIO] Error Terminate(): " << Pa_GetErrorText (err) << endl; 
+      else
+	cout << "[AUDIO] Portaudio unloaded" << endl;
+      ResetChannels();
+      if (UserData)
+	delete UserData;
+    }
 }
 
 void AudioEngine::SetDefaultSettings(void)

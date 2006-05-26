@@ -45,6 +45,7 @@ class AudioEngine
   vector<Device*>	DeviceList;
   
   bool			IsOk;
+  bool			_paInit;
   
   Device		*SelectedOutputDevice;
   unsigned long		OutputSampleFormat;
@@ -101,9 +102,9 @@ static int	AudioCallback(const void *input,
 			      PaStreamCallbackFlags statusFlags, 
 			      void *userData)
 {
-	if (!userData)
-		return (0);
-	AudioMutex.Lock();
+  if (!userData)
+    return (0);
+
   callback_t *data = (callback_t*)userData;
   unsigned long bytes = frameCount, processed = 0;
   float **outputs = (float**)output;
@@ -153,10 +154,7 @@ static int	AudioCallback(const void *input,
     ;
   else if ( data->SampleFormat & paInt8 )
     ;
-  AudioMutex.Unlock();
   return (0);
 }
-
-extern wxMutex	AudioMutex;
 
 #endif  // __AUDIOENGINE_H__

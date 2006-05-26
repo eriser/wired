@@ -455,11 +455,7 @@ void SettingWindow::Load()
 
 void SettingWindow::Save()
 {
-	
-//	AudioMutex.Lock();
-//	MidiMutex.Lock();
   long i;
-
 
   istringstream	iss((string)undoRedoMaxDepthTextCtrl->GetValue().mb_str(*wxConvCurrent));
 
@@ -469,7 +465,7 @@ void SettingWindow::Save()
   WiredSettings->InputDev = InputChoice->GetSelection() - 1;
   iss >> WiredSettings->maxUndoRedoDepth;
   
-   AudioLoaded = true;
+  AudioLoaded = true;
   if (AudioLoaded)
     {
       cout << "Audio loaded for saving" << endl;
@@ -500,9 +496,6 @@ void SettingWindow::Save()
       
       WiredSettings->Save();
     }    
-
-//	AudioMutex.Unlock();
-//	MidiMutex.Unlock();
 }
 
 void SettingWindow::LoadSampleFormat()

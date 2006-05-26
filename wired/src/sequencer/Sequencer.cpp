@@ -71,35 +71,23 @@ void					*Sequencer::Entry()
   float					**buf = NULL;
   float					**buf1 = NULL;
   float					**buf2 = NULL;
-  
-  
-  AudioMutex.Lock(); /* Locked before in MainWindow		\
-			if Audio configuration fails		*/
-  AudioMutex.Unlock();
-  /*
-    bool off = true;
-    while ( off )
-    {
-    SeqMutex.Lock();
-    if ( Audio->IsOk )
-    off = false;
-    else
-    wxMilliSleep(10);
-    SeqMutex.Unlock();
-    }
-  */
-  if ( !Audio->StartStream() )
-    cout << "[SEQUENCER] StartStream returned false" << endl;
+
   AllocBuffer(AllocBuf1);
   AllocBuffer(AllocBuf2);
   cout << "[SEQUENCER] Thread started !" << endl;
+
   while (!TestDestroy())
     {
+      // for prevent playing without valid config
+      if (AudioMutex.TryLock() != wxMUTEX_NO_ERROR)
+	{
+	  Sleep(100); // in milliseconds
+	  continue;
+	}
+
       /* - Traitement des messages MIDI recus */
       MidiMutex.Lock();
       SeqMutex.Lock();
-      if (TestDestroy() == true)
-        break;
       for (MidiMsg = MidiEvents.begin(); MidiMsg != MidiEvents.end(); MidiMsg++)
 	{
 	  if (((*MidiMsg)->Msg[0] == M_START) || ((*MidiMsg)->Msg[0] == M_CONT))
@@ -292,8 +280,6 @@ void					*Sequencer::Entry()
 	    } 
 	}
 
-      SeqMutex.Unlock();
-
       delta = Audio->SamplesPerBuffer;
       /* Jouer fichier du FileLoader si besoin */
       if (PlayWave)
@@ -343,9 +329,11 @@ void					*Sequencer::Entry()
 	}
       else
 	Mix->MixOutput(true);
-      //SeqMutex.Unlock();
-      if (!Audio->StreamIsStarted)
-	wxMilliSleep(1);
+      SeqMutex.Unlock();
+      AudioMutex.Unlock();
+      // main thread need this for locking AudioMutex
+      Yield();
+
       /* Cleanage des channels et buffers extra */
       for (B = ExtraBufs.begin(); B != ExtraBufs.end(); B++)
 	{

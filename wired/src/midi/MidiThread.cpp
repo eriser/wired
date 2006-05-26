@@ -129,7 +129,7 @@ void					*MidiThread::Entry()
 	    }
 	}
       MidiDeviceMutex.Unlock();
-      wxMilliSleep(1);
+      Sleep(1);
     }
   cout << "[MIDITHREAD] Thread finished !" << endl;    
   return (0x0);

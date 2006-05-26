@@ -109,6 +109,9 @@ class					MainWindow: public wxFrame
   bool					SeqModeView;
   void					OnIdle(wxIdleEvent &event);
 
+  /* init func */
+  void					InitAudio(bool restart = false);
+
     /* Locale */
     wxLocale            *mLocale;
     void                    InitLocale();
