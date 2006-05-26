@@ -23,6 +23,7 @@ class					SettingWindow : public wxDialog
   void					AudioOutputPanelView();
   void					MidiPanelView();
 
+  void					Show();
   void					Load();
   void					Save();
   void					OnOkClick(wxCommandEvent &event);
