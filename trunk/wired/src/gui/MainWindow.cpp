@@ -492,15 +492,6 @@ void					MainWindow::OnClose(wxCloseEvent &event)
      (*k)->Destroy(*j);
      break;
      }*/
-
-  cout << "[MAINWIN] Stopping graphics things..."<< endl;
-  SeqTimer->Stop();
-  delete SeqTimer;
-  SeqTimer = NULL;
-
-  cout << "[MAINWIN] Unloading shared libraries..."<< endl;
-  for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
-    (*k)->Unload();
   cout << "[MAINWIN] Stopping threads..."<< endl;
   wxThread *thread;
 
@@ -520,6 +511,15 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   wxGetApp().m_mutex.Unlock();
 
   cout << "[MAINWIN] Done !"<< endl;
+
+  cout << "[MAINWIN] Stopping graphics things..."<< endl;
+  SeqTimer->Stop();
+  delete SeqTimer;
+  SeqTimer = NULL;
+
+  cout << "[MAINWIN] Unloading shared libraries..."<< endl;
+  for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
+    (*k)->Unload();
 
   //if (WiredVideoObject) delete WiredVideoObject;
 
