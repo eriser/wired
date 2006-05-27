@@ -10,9 +10,6 @@
 
 using namespace std;
 
-#define DEFAULT_SAMPLE_RATE		44100.0
-#define DEFAULT_SAMPLES_PER_BUFFER	2048
-
 #define WIRED_DIRECTORY wxT(".wired")
 #define WIRED_CONF	wxT(".wired/wired.conf")
 #define PLUG_CONF_FILE  wxT("wired_plugins.conf")

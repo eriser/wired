@@ -38,8 +38,16 @@ SettingWindow::SettingWindow()
   wxTreeItemId	root;
   wxTreeItemId	id;
 
+  MidiLoaded = false;
+  AudioLoaded = false;
   Center();
-
+  
+  // GeneralBtn = new wxToggleButton(this, Setting_General, _("General"), 
+// 				  wxPoint(8, 8), wxSize(80, 28));
+//   AudioBtn = new wxToggleButton(this, Setting_Audio, _("Audio"), 
+// 				wxPoint(92, 8), wxSize(80, 28));
+//   MidiBtn = new wxToggleButton(this, Setting_Midi, _("MIDI"), wxPoint(176, 8), wxSize(80, 28));
+  
   SettingsTree = new wxTreeCtrl(this, CATEGORY_ID, wxPoint(WIN_MARGIN, WIN_MARGIN), 
 				wxSize(206, 400), wxSUNKEN_BORDER | wxTR_NO_LINES |
 				wxTR_HAS_BUTTONS | wxTR_SINGLE | wxTR_HIDE_ROOT |
@@ -63,18 +71,14 @@ SettingWindow::SettingWindow()
   MidiPanel->Show(false);
   AudioInputPanel->Show(false);
   AudioOutputPanel->Show(false);
-  GeneralPanel->Hide();
+  GeneralPanel->Show(true);
   CurrentPanel = GeneralPanel;
 
   OkBtn = new wxButton(this, wxID_OK, _("OK"), BTN_OK_POS, BTN_SIZE);
   ApplyBtn = new wxButton(this, wxID_APPLY, _("Apply"), BTN_APPLY_POS, BTN_SIZE);
   CancelBtn = new wxButton(this, wxID_CANCEL, _("Cancel"), BTN_CANCEL_POS, BTN_SIZE);
-}
-
-void				SettingWindow::Show()
-{
+  
   Load();
-  wxDialog::Show();
 }
 
 //
@@ -194,8 +198,100 @@ void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
     }
 }
 
+/* No longer called */
+void SettingWindow::OnAudioClick(wxCommandEvent &event)
+{
+  AudioPanel->Show(true);
+  MidiPanel->Show(false);
+  GeneralPanel->Show(false);
+
+  if (!AudioLoaded)
+    {
+      vector<Device*>::iterator i;
+      vector<long>::iterator k;
+      int j, val;
+      wxString s;
+
+     
+      OutputList->Clear();
+      if ((val = OutputChoice->GetSelection()) > 0)
+	for (j = 1, i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++, j++)
+	  {
+	    if (j == val)
+	      {
+		for (j = 1; j <= (*i)->MaxOutputChannels; j++)
+		  {
+		    s.Printf(_("Output %d"), j);
+		    OutputList->Append(s);
+		  }
+		//breakOnAudioClick;
+	      }
+	  }
+      InputList->Clear();
+      if ((val = InputChoice->GetSelection()) > 0)
+	for (j = 1, i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++, j++)
+	  {
+	    if (j == val)
+	      {
+		for (j = 1; j <= (*i)->MaxInputChannels; j++)
+		  {
+		    s.Printf(_("Input %d"), j);
+		    InputList->Append(s);
+		  }
+		break;
+	    }
+	}
+      for (k = WiredSettings->OutputChannels.begin(); k != WiredSettings->OutputChannels.end(); k++)
+	if (*k < OutputList->GetCount())
+	  OutputList->Check(*k);
+      for (k = WiredSettings->InputChannels.begin(); k != WiredSettings->InputChannels.end(); k++)
+	if (*k < InputList->GetCount())
+	  InputList->Check(*k);
+
+      LoadSampleFormat();
+
+      if (WiredSettings->SampleRate < RateChoice->GetCount())
+	RateChoice->SetSelection(WiredSettings->SampleRate);
+      if (WiredSettings->SampleFormat < BitsChoice->GetCount())
+	WiredSettings->SampleFormat = BitsChoice->GetSelection();      
+      
+      for (int i = 0; i < 9; i++)
+	if (Latencies[i] == WiredSettings->SamplesPerBuffer)
+	  LatencySlider->SetValue(i);
+      UpdateLatency();
+    }  
+}
+
+/* No longer called */
+void SettingWindow::OnMidiClick(wxCommandEvent &event)
+{
+  AudioPanel->Show(false);
+  MidiPanel->Show(true);
+  GeneralPanel->Show(false);
+
+  if (!MidiLoaded)
+    {
+      vector<long>::iterator i;
+      MidiDeviceList::iterator j;
+      int k;
+      wxString s;
+
+      MidiLoaded = true;
+      MidiInList->Clear();
+      for (j = MidiEngine->DeviceList.begin(), k = 1; j != MidiEngine->DeviceList.end(); j++, k++)
+	{      
+	  s.Printf(_("In %d: %s"), k, (const char *)(*j)->Name.mb_str(*wxConvCurrent));
+	  MidiInList->Append(s);
+	}
+      for (i = WiredSettings->MidiIn.begin(); i != WiredSettings->MidiIn.end(); i++)
+	if (*i < MidiInList->GetCount())
+	  MidiInList->Check(*i);
+    }
+}
+
 void SettingWindow::OnOkClick(wxCommandEvent &event)
 {
+  AudioLoaded = true;
   Save();
   EndModal(wxID_OK);
 }
@@ -211,6 +307,7 @@ void SettingWindow::OnApplyClick(wxCommandEvent &event)
     Audio->CloseStream();
   
   */
+  AudioLoaded = true;
   Save();
   
   /*
@@ -274,6 +371,7 @@ void SettingWindow::RefreshOutputDev()
   int j, val;
   wxString s;
 
+
   OutputList->Clear();
   if ((val = OutputChoice->GetSelection()) != 0)
     {
@@ -281,7 +379,6 @@ void SettingWindow::RefreshOutputDev()
 	{
 	  if (j == val)
 	    {
-	      (*i)->GetSupportedSettings();
 	      for (j = 1; j <= (*i)->MaxOutputChannels; j++)
 		{
 		  s.Printf(_("Output %d"), j);
@@ -347,28 +444,13 @@ void SettingWindow::Load()
       
   if (WiredSettings->SamplesPerBuffer > 0)
     {
-      for (i = 0; i < 9; i++)
+      for (int i = 0; i < 9; i++)
 	if (Latencies[i] == WiredSettings->SamplesPerBuffer)
 	  LatencySlider->SetValue(i);
       UpdateLatency();
     }
 
-  // really useful ? need to be tested with real midi instruments
-  vector<long>::iterator it;
-  MidiDeviceList::iterator j;
-  int k;
-  wxString s;
-
-  MidiInList->Clear();
-  for (j = MidiEngine->DeviceList.begin(), k = 1; j != MidiEngine->DeviceList.end(); j++, k++)
-    {      
-      s.Printf(_("In %d: %s"), k, (const char *)(*j)->Name.mb_str(*wxConvCurrent));
-      MidiInList->Append(s);
-    }
-  for (it = WiredSettings->MidiIn.begin(); it != WiredSettings->MidiIn.end(); it++)
-    if (*it < MidiInList->GetCount())
-      MidiInList->Check(*it);
-
+    
 }
 
 void SettingWindow::Save()
@@ -383,28 +465,37 @@ void SettingWindow::Save()
   WiredSettings->InputDev = InputChoice->GetSelection() - 1;
   iss >> WiredSettings->maxUndoRedoDepth;
   
-  cout << "Audio loaded for saving" << endl;
-  WiredSettings->OutputChannels.clear();
-  for (i = 0; i < OutputList->GetCount(); i++)
-    if (OutputList->IsChecked(i))
-      WiredSettings->OutputChannels.push_back(i);
+  AudioLoaded = true;
+  if (AudioLoaded)
+    {
+      cout << "Audio loaded for saving" << endl;
+      WiredSettings->OutputChannels.clear();
+      for (i = 0; i < OutputList->GetCount(); i++)
+	if (OutputList->IsChecked(i))
+	  WiredSettings->OutputChannels.push_back(i);
       
-  WiredSettings->InputChannels.clear();
-  for (i = 0; i < InputList->GetCount(); i++)
-    if (InputList->IsChecked(i))
-      WiredSettings->InputChannels.push_back(i);
-  WiredSettings->SampleRate = RateChoice->GetSelection();
-  SetDefaultSampleFormat();		//forcing 32 bit floats
-  WiredSettings->SampleFormat = BitsChoice->GetSelection();
-  WiredSettings->SamplesPerBuffer = Latencies[LatencySlider->GetValue()];
-
-  cout << "Midi loaded for saving" << endl;
-  WiredSettings->MidiIn.clear();
-  for (i = 0; i < MidiInList->GetCount(); i++)
-    if (MidiInList->IsChecked(i))
-      WiredSettings->MidiIn.push_back(i);
+      WiredSettings->InputChannels.clear();
+      for (i = 0; i < InputList->GetCount(); i++)
+	if (InputList->IsChecked(i))
+	  WiredSettings->InputChannels.push_back(i);
+      WiredSettings->SampleRate = RateChoice->GetSelection();
       
-  WiredSettings->Save();
+      SetDefaultSampleFormat();		//forcing 32 bit floats
+      WiredSettings->SampleFormat = BitsChoice->GetSelection();
+      
+      WiredSettings->SamplesPerBuffer = Latencies[LatencySlider->GetValue()];
+      WiredSettings->Save();
+    }
+  if (MidiLoaded)
+    {
+      cout << "Midi loaded for saving" << endl;
+      WiredSettings->MidiIn.clear();
+      for (i = 0; i < MidiInList->GetCount(); i++)
+	if (MidiInList->IsChecked(i))
+	  WiredSettings->MidiIn.push_back(i);
+      
+      WiredSettings->Save();
+    }    
 }
 
 void SettingWindow::LoadSampleFormat()
@@ -504,6 +595,7 @@ void SettingWindow::SetDefaultSampleFormat(void)
 
 void SettingWindow::OnSampleFormatClick(wxCommandEvent &event)
 {
+  
   SetDefaultSampleFormat();	//forcing 32bits floats
   LoadSampleRates();
 }
@@ -546,6 +638,9 @@ void SettingWindow::UpdateLatency()
 }
 
 BEGIN_EVENT_TABLE(SettingWindow, wxDialog)
+  // EVT_TOGGLEBUTTON(Setting_General, SettingWindow::OnGeneralClick)
+  // EVT_TOGGLEBUTTON(Setting_Audio, SettingWindow::OnAudioClick)
+//   EVT_TOGGLEBUTTON(Setting_Midi, SettingWindow::OnMidiClick)
   EVT_BUTTON(wxID_OK, SettingWindow::OnOkClick)
   EVT_BUTTON(wxID_CANCEL,SettingWindow:: OnCancelClick)
   EVT_BUTTON(wxID_APPLY, SettingWindow::OnApplyClick)

@@ -51,11 +51,12 @@ class DeviceFormat
 class Device
 {
  public:
-  Device(int id)	
-    {					
-      Id = id; 
-      GetSupportedSettings();
-    }
+  Device(int id, wxString name, int maxin, int maxout)	
+				{					\
+				  Id = id; Name = name;			\
+				  MaxInputChannels = maxin;		\
+				  MaxOutputChannels = maxout;		\
+				}
   ~Device();
   
   int		Id;

@@ -4,8 +4,8 @@ OutputDev=1
 InputDev=0
 SampleRate=0
 SampleFormat=0
-SamplesPerBuffer=2048
-WorkingDirectory=/
+SamplesPerBuffer=4096
+WorkingDirectory=/home/n3o/wired
 [OutputChannels]
 0=0
 1=1
