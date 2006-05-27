@@ -59,7 +59,6 @@ WiredSession		*CurrentSession = NULL;
 WiredSessionXml		*CurrentXmlSession = NULL;
 WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
 FileConversion		*FileConverter = NULL;
-SettingWindow		*SettingWin = NULL;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
@@ -101,7 +100,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
    else
    	wxGetApp().m_threads.Add(MidiEngine);
 
-  SettingWin = new SettingWindow();
   InitAudio();
   InitFileConverter();
 
@@ -264,6 +262,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
 void			MainWindow::InitAudio(bool restart)
 {
+  SettingWindow		s;
   static bool		StillLocked = false;
 
   if (!StillLocked)
@@ -339,19 +338,23 @@ void			MainWindow::InitAudio(bool restart)
       vector<Track *>::iterator	i;
 
       // Refill tracks connections
-      for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
-	(*i)->TrackOpt->FillChoices();      
+      if (s.AudioLoaded || s.MidiLoaded)
+	for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
+	  (*i)->TrackOpt->FillChoices();      
       // Sends sample rate and buffer size modifications to plugins
-      list<RackTrack *>::iterator k;
-      list<Plugin *>::iterator j;
+      if (s.AudioLoaded)
+	{
+	  list<RackTrack *>::iterator k;
+	  list<Plugin *>::iterator j;
 
-      for (k = RackPanel->RackTracks.begin(); 
-	   k != RackPanel->RackTracks.end(); k++)
-	for (j = (*k)->Racks.begin(); j != (*k)->Racks.end(); j++)
-	  {
-	    (*j)->SetBufferSize(Audio->SamplesPerBuffer);
-	    (*j)->SetSamplingRate(Audio->SampleRate);
-	  }
+	  for (k = RackPanel->RackTracks.begin(); 
+	       k != RackPanel->RackTracks.end(); k++)
+	    for (j = (*k)->Racks.begin(); j != (*k)->Racks.end(); j++)
+	      {
+		(*j)->SetBufferSize(Audio->SamplesPerBuffer);
+		(*j)->SetSamplingRate(Audio->SampleRate);
+	      }
+	}
 
       if (restart)
 	{
@@ -373,10 +376,14 @@ void			MainWindow::InitAudio(bool restart)
       AlertDialog(_("audio engine"), 
 		  _("You may check for your audio settings if you want to use Wired.."));
 
-  MidiDeviceMutex.Lock();
-  // Reopen midi devices
-  MidiEngine->OpenDefaultDevices(); 
-  MidiDeviceMutex.Unlock();
+  if (s.MidiLoaded)
+    {
+      MidiDeviceMutex.Lock();
+      // Reopen midi devices
+      MidiEngine->OpenDefaultDevices(); 
+      MidiDeviceMutex.Unlock();
+    }
+
 }
 
 void                MainWindow::InitLocale()
@@ -396,6 +403,7 @@ void					MainWindow::InitFileConverter()
 {
 	FileConverter = new FileConversion();
 	t_samplerate_info info;
+	SettingWindow				s;
 	int i; 
 	if (Audio->UserData->Sets->WorkingDir.empty())
 	{
@@ -1333,10 +1341,13 @@ void					MainWindow::SwitchSeqOptView()
 
 void					MainWindow::OnSettings(wxCommandEvent &event)
 {
+  SettingWindow				s;
   vector<Track *>::iterator		i;
 
-  if (SettingWin->ShowModal() == wxID_OK)
-    InitAudio(true);
+  if (s.ShowModal() == wxID_OK)
+    {
+      InitAudio(true);
+    }
 }
 
 void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)

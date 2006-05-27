@@ -337,14 +337,17 @@ void AudioEngine::GetDevices()
 	       << endl;
 	  throw Error::NoDevice();
 	}
-      dev = new Device(i);
+      dev = new Device(i, wxString(info->name, *wxConvCurrent),
+		       info->maxInputChannels,
+		       info->maxOutputChannels);
       DeviceList.push_back(dev);
       cout << "[AUDIO] New device found #" << dev->Id 
 	   << " : " << dev->Name.mb_str() << endl
-	   << "[AUDIO] Max Input Channels: " << info->maxInputChannels 
+	   << "[AUDIO] Max Input Channels: " << dev->MaxInputChannels 
 	   << endl
-	   << "[AUDIO] Max Output Channels: " << info->maxOutputChannels
+	   << "[AUDIO] Max Output Channels: " << dev->MaxOutputChannels
 	   << endl;
+      dev->GetSupportedSettings();
     }
 }
 
