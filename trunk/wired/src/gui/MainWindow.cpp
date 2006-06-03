@@ -199,7 +199,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
 
   split->SplitHorizontally(RackPanel, SeqPanel, 200);
-  
+
   /* Placement Panel */
     
   BottomSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -1344,6 +1344,8 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
   SettingWindow				s;
   vector<Track *>::iterator		i;
 
+  if (IsFullScreen())
+    OnFullScreen(event);
   if (s.ShowModal() == wxID_OK && (s.AudioLoaded || s.MidiLoaded))
     {
       InitAudio(true);
