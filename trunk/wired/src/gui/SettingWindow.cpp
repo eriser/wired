@@ -291,13 +291,13 @@ void SettingWindow::OnMidiClick(wxCommandEvent &event)
 
 void SettingWindow::OnOkClick(wxCommandEvent &event)
 {
-  AudioLoaded = true;
   Save();
   EndModal(wxID_OK);
 }
 
 void SettingWindow::OnCancelClick(wxCommandEvent &event)
 {
+  AudioLoaded = false;
   EndModal(wxID_CANCEL);
 }
 
@@ -307,7 +307,6 @@ void SettingWindow::OnApplyClick(wxCommandEvent &event)
     Audio->CloseStream();
   
   */
-  AudioLoaded = true;
   Save();
   
   /*
@@ -330,6 +329,7 @@ void SettingWindow::OnApplyClick(wxCommandEvent &event)
 
 void SettingWindow::OnInputDevClick(wxCommandEvent &event)
 {
+  MidiLoaded = true;
   RefreshInputDev();
 }
 
@@ -361,6 +361,7 @@ void SettingWindow::RefreshInputDev()
 
 void SettingWindow::OnOutputDevClick(wxCommandEvent &event)
 {
+  AudioLoaded = true;
   RefreshOutputDev();
 }
 
@@ -370,7 +371,6 @@ void SettingWindow::RefreshOutputDev()
   vector<Device*>::iterator i;
   int j, val;
   wxString s;
-
 
   OutputList->Clear();
   if ((val = OutputChoice->GetSelection()) != 0)
@@ -400,6 +400,7 @@ void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
 {
   int i, j;
 
+  AudioLoaded = true;
   j = 0;
   for (i = 0; i < OutputList->GetCount() - 1; i++)
     if (OutputList->IsChecked(i))
@@ -465,7 +466,6 @@ void SettingWindow::Save()
   WiredSettings->InputDev = InputChoice->GetSelection() - 1;
   iss >> WiredSettings->maxUndoRedoDepth;
   
-  AudioLoaded = true;
   if (AudioLoaded)
     {
       cout << "Audio loaded for saving" << endl;
@@ -595,18 +595,20 @@ void SettingWindow::SetDefaultSampleFormat(void)
 
 void SettingWindow::OnSampleFormatClick(wxCommandEvent &event)
 {
-  
+  AudioLoaded = true;
   SetDefaultSampleFormat();	//forcing 32bits floats
   LoadSampleRates();
 }
 
 void SettingWindow::OnSampleRateClick(wxCommandEvent &event)
 {
+  AudioLoaded = true;
   UpdateLatency();
 }
 
 void SettingWindow::OnLatencyChange(wxCommandEvent &event)
 {
+  AudioLoaded = true;
   UpdateLatency();
 }
 

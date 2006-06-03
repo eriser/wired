@@ -1344,7 +1344,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
   SettingWindow				s;
   vector<Track *>::iterator		i;
 
-  if (s.ShowModal() == wxID_OK)
+  if (s.ShowModal() == wxID_OK && (s.AudioLoaded || s.MidiLoaded))
     {
       InitAudio(true);
     }
