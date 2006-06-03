@@ -1,9 +1,6 @@
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
-
 #include "Colour.h"
 #include "Settings.h"
 #include "HelpCtrl.h"
@@ -14,6 +11,7 @@ HelpPanel			*HelpWin;
 HelpPanel::HelpPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size)
   : wxPanel(parent, -1, pos, size)
 {
+  wxLogNull noLog; // prevent indesired popup
   SetBackgroundColour(CL_SEQVIEW_BACKGROUND);
   /*  Text = new wxTextCtrl(this, -1, "This is Wired Help panel.", wxPoint(2, 2),
 			wxSize(GetSize().x + 4, GetSize().y), 

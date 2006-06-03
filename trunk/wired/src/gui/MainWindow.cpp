@@ -224,7 +224,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   StartInfo.HostCallback = HostCallback;
   StartInfo.Version = WIRED_VERSION;
   StartInfo.Rack = RackPanel;    
-  
+
   LoadPlugins();
 
   RackPanel->AddPlugToMenu();
@@ -1662,11 +1662,30 @@ wxLogNull NoLog;
 #endif
 }
 
+void		MainWindow::OnKey(wxKeyEvent& event)
+{
+  if (event.GetKeyCode() == WXK_SPACE)
+    OnSpaceKey();
+  else if (event.GetKeyCode() == WXK_TAB)
+    {
+      if (event.ShiftDown())
+	SwitchSeqOptView();
+      else
+	SwitchRackOptView();
+    }
+  else
+    event.Skip();
+}
+
 BEGIN_DECLARE_EVENT_TYPES()
     DECLARE_EVENT_TYPE(wxSetCursorPos, 313131)
 END_DECLARE_EVENT_TYPES()
 
 BEGIN_EVENT_TABLE(MainWindow, wxFrame)
+// key binding
+  EVT_KEY_UP(MainWindow::OnKey) // DOWN is bugged
+
+// menu 
   EVT_MENU(MainWin_Quit, MainWindow::OnQuit)
   EVT_MENU(MainWin_New, MainWindow::OnNew)
   EVT_MENU(MainWin_Save, MainWindow::OnSave)
@@ -1699,9 +1718,13 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_About, MainWindow::OnAbout)
   EVT_MENU(MainWin_IntHelp, MainWindow::OnIntegratedHelp)
   EVT_MENU(MainWin_ShowLog, MainWindow::OnShowDebug)
+
+// event
   EVT_CLOSE(MainWindow::OnClose) 
   EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
   EVT_TIMER(MainWin_KillTimer, MainWindow::OnKillTimer)
+
+// button
   EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
   EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
 //  EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)

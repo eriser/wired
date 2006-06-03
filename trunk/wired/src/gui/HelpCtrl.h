@@ -10,7 +10,6 @@
 #include <wx/wx.h>
 #include "wx/image.h"
 #include "wx/html/htmlwin.h"
-#include "wx/fs_zip.h"
 
 #define HTMLTOP L"<html><body bgcolor=\"#889399\" leftmargin=\"0\" topmargin=\"0\" marginwidth=\"0\" marginheight=\"0\"><table cellpadding=\"0\" cellspacing=\"0\" ><TR><TD><img src=\"logo.png\" align=\"left\"><font size=\"-2\">" 
 
