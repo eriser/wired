@@ -98,6 +98,7 @@ class					MainWindow: public wxFrame
   void					OnCloseVideo(wxCommandEvent &event);
   void					OnSeekVideo(wxCommandEvent &event);
 
+  void					OnKey(wxKeyEvent& event);
   void					OnSpaceKey();
   void					SwitchRackOptView();
   void					SwitchSeqOptView();  

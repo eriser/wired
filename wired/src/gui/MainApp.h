@@ -25,7 +25,6 @@ class MainApp : public wxApp
  public:
   virtual bool			OnInit();
   virtual int			OnExit();
-  int				FilterEvent(wxEvent& event);
   wxArrayThread			m_threads;
   wxMutex			m_mutex;
   wxCondition*			m_condAllDone;

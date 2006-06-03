@@ -61,7 +61,7 @@ bool				MainApp::OnInit()
 #endif  
   SetUseBestVisual(true);
   SetVendorName(L"Wired Team");
-  Frame = new MainWindow(wxString(WIRED_TITLE, *wxConvCurrent), wxDefaultPosition,
+  Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition,
 			 wxSize(APP_WIDTH, APP_HEIGHT));
   MainWin = Frame;
   Frame->Show(true);
@@ -98,25 +98,4 @@ int				MainApp::OnExit()
 #endif
   Frame->Destroy();
   return (wxApp::OnExit());
-}
-
-int				MainApp::FilterEvent(wxEvent& event)
-{
-  if ((event.GetEventType() == wxEVT_KEY_DOWN))
-    {
-      if (((wxKeyEvent &)event).GetKeyCode() == WXK_SPACE)
-	{
-	  Frame->OnSpaceKey();
-	  return (true);
-	}
-      else if (((wxKeyEvent &)event).GetKeyCode() == WXK_TAB)
-	{ 
-	  if (((wxKeyEvent &)event).ShiftDown()) 
-	    Frame->SwitchSeqOptView();
-	  else
-	    Frame->SwitchRackOptView();
-	  return (true);
-	}
-    }
-  return (-1);
 }
