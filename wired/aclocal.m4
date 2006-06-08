@@ -11,28 +11,6 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
-# codeset.m4 serial AM1 (gettext-0.10.40)
-dnl Copyright (C) 2000-2002 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Bruno Haible.
-
-AC_DEFUN([AM_LANGINFO_CODESET],
-[
-  AC_CACHE_CHECK([for nl_langinfo and CODESET], am_cv_langinfo_codeset,
-    [AC_TRY_LINK([#include <langinfo.h>],
-      [char* cs = nl_langinfo(CODESET);],
-      am_cv_langinfo_codeset=yes,
-      am_cv_langinfo_codeset=no)
-    ])
-  if test $am_cv_langinfo_codeset = yes; then
-    AC_DEFINE(HAVE_LANGINFO_CODESET, 1,
-      [Define if you have <langinfo.h> and nl_langinfo(CODESET).])
-  fi
-])
-
 # gettext.m4 serial 37 (gettext-0.14.4)
 dnl Copyright (C) 1995-2005 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
@@ -583,68 +561,6 @@ AC_DEFUN([gt_CHECK_DECL],
 dnl Usage: AM_GNU_GETTEXT_VERSION([gettext-version])
 AC_DEFUN([AM_GNU_GETTEXT_VERSION], [])
 
-# glibc2.m4 serial 1
-dnl Copyright (C) 2000-2002, 2004 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-# Test for the GNU C Library, version 2.0 or newer.
-# From Bruno Haible.
-
-AC_DEFUN([gt_GLIBC2],
-  [
-    AC_CACHE_CHECK(whether we are using the GNU C Library 2 or newer,
-      ac_cv_gnu_library_2,
-      [AC_EGREP_CPP([Lucky GNU user],
-	[
-#include <features.h>
-#ifdef __GNU_LIBRARY__
- #if (__GLIBC__ >= 2)
-  Lucky GNU user
- #endif
-#endif
-	],
-	ac_cv_gnu_library_2=yes,
-	ac_cv_gnu_library_2=no)
-      ]
-    )
-    AC_SUBST(GLIBC2)
-    GLIBC2="$ac_cv_gnu_library_2"
-  ]
-)
-
-# glibc21.m4 serial 3
-dnl Copyright (C) 2000-2002, 2004 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-# Test for the GNU C Library, version 2.1 or newer.
-# From Bruno Haible.
-
-AC_DEFUN([gl_GLIBC21],
-  [
-    AC_CACHE_CHECK(whether we are using the GNU C Library 2.1 or newer,
-      ac_cv_gnu_library_2_1,
-      [AC_EGREP_CPP([Lucky GNU user],
-	[
-#include <features.h>
-#ifdef __GNU_LIBRARY__
- #if (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 1) || (__GLIBC__ > 2)
-  Lucky GNU user
- #endif
-#endif
-	],
-	ac_cv_gnu_library_2_1=yes,
-	ac_cv_gnu_library_2_1=no)
-      ]
-    )
-    AC_SUBST(GLIBC21)
-    GLIBC21="$ac_cv_gnu_library_2_1"
-  ]
-)
-
 # iconv.m4 serial AM4 (gettext-0.11.3)
 dnl Copyright (C) 2000-2002 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
@@ -744,223 +660,6 @@ size_t iconv();
          }[$]am_cv_proto_iconv)
     AC_DEFINE_UNQUOTED(ICONV_CONST, $am_cv_proto_iconv_arg1,
       [Define as const if the declaration of iconv() needs const.])
-  fi
-])
-
-# intdiv0.m4 serial 1 (gettext-0.11.3)
-dnl Copyright (C) 2002 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Bruno Haible.
-
-AC_DEFUN([gt_INTDIV0],
-[
-  AC_REQUIRE([AC_PROG_CC])dnl
-  AC_REQUIRE([AC_CANONICAL_HOST])dnl
-
-  AC_CACHE_CHECK([whether integer division by zero raises SIGFPE],
-    gt_cv_int_divbyzero_sigfpe,
-    [
-      AC_TRY_RUN([
-#include <stdlib.h>
-#include <signal.h>
-
-static void
-#ifdef __cplusplus
-sigfpe_handler (int sig)
-#else
-sigfpe_handler (sig) int sig;
-#endif
-{
-  /* Exit with code 0 if SIGFPE, with code 1 if any other signal.  */
-  exit (sig != SIGFPE);
-}
-
-int x = 1;
-int y = 0;
-int z;
-int nan;
-
-int main ()
-{
-  signal (SIGFPE, sigfpe_handler);
-/* IRIX and AIX (when "xlc -qcheck" is used) yield signal SIGTRAP.  */
-#if (defined (__sgi) || defined (_AIX)) && defined (SIGTRAP)
-  signal (SIGTRAP, sigfpe_handler);
-#endif
-/* Linux/SPARC yields signal SIGILL.  */
-#if defined (__sparc__) && defined (__linux__)
-  signal (SIGILL, sigfpe_handler);
-#endif
-
-  z = x / y;
-  nan = y / y;
-  exit (1);
-}
-], gt_cv_int_divbyzero_sigfpe=yes, gt_cv_int_divbyzero_sigfpe=no,
-        [
-          # Guess based on the CPU.
-          case "$host_cpu" in
-            alpha* | i[34567]86 | m68k | s390*)
-              gt_cv_int_divbyzero_sigfpe="guessing yes";;
-            *)
-              gt_cv_int_divbyzero_sigfpe="guessing no";;
-          esac
-        ])
-    ])
-  case "$gt_cv_int_divbyzero_sigfpe" in
-    *yes) value=1;;
-    *) value=0;;
-  esac
-  AC_DEFINE_UNQUOTED(INTDIV0_RAISES_SIGFPE, $value,
-    [Define if integer division by zero raises signal SIGFPE.])
-])
-
-# intmax.m4 serial 2 (gettext-0.14.2)
-dnl Copyright (C) 2002-2005 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Bruno Haible.
-dnl Test whether the system has the 'intmax_t' type, but don't attempt to
-dnl find a replacement if it is lacking.
-
-AC_DEFUN([gt_TYPE_INTMAX_T],
-[
-  AC_REQUIRE([gl_AC_HEADER_INTTYPES_H])
-  AC_REQUIRE([gl_AC_HEADER_STDINT_H])
-  AC_CACHE_CHECK(for intmax_t, gt_cv_c_intmax_t,
-    [AC_TRY_COMPILE([
-#include <stddef.h>
-#include <stdlib.h>
-#if HAVE_STDINT_H_WITH_UINTMAX
-#include <stdint.h>
-#endif
-#if HAVE_INTTYPES_H_WITH_UINTMAX
-#include <inttypes.h>
-#endif
-], [intmax_t x = -1;], gt_cv_c_intmax_t=yes, gt_cv_c_intmax_t=no)])
-  if test $gt_cv_c_intmax_t = yes; then
-    AC_DEFINE(HAVE_INTMAX_T, 1,
-      [Define if you have the 'intmax_t' type in <stdint.h> or <inttypes.h>.])
-  fi
-])
-
-# inttypes-pri.m4 serial 1 (gettext-0.11.4)
-dnl Copyright (C) 1997-2002 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Bruno Haible.
-
-# Define PRI_MACROS_BROKEN if <inttypes.h> exists and defines the PRI*
-# macros to non-string values.  This is the case on AIX 4.3.3.
-
-AC_DEFUN([gt_INTTYPES_PRI],
-[
-  AC_REQUIRE([gt_HEADER_INTTYPES_H])
-  if test $gt_cv_header_inttypes_h = yes; then
-    AC_CACHE_CHECK([whether the inttypes.h PRIxNN macros are broken],
-      gt_cv_inttypes_pri_broken,
-      [
-        AC_TRY_COMPILE([#include <inttypes.h>
-#ifdef PRId32
-char *p = PRId32;
-#endif
-], [], gt_cv_inttypes_pri_broken=no, gt_cv_inttypes_pri_broken=yes)
-      ])
-  fi
-  if test "$gt_cv_inttypes_pri_broken" = yes; then
-    AC_DEFINE_UNQUOTED(PRI_MACROS_BROKEN, 1,
-      [Define if <inttypes.h> exists and defines unusable PRI* macros.])
-  fi
-])
-
-# inttypes.m4 serial 1 (gettext-0.11.4)
-dnl Copyright (C) 1997-2002 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Paul Eggert.
-
-# Define HAVE_INTTYPES_H if <inttypes.h> exists and doesn't clash with
-# <sys/types.h>.
-
-AC_DEFUN([gt_HEADER_INTTYPES_H],
-[
-  AC_CACHE_CHECK([for inttypes.h], gt_cv_header_inttypes_h,
-  [
-    AC_TRY_COMPILE(
-      [#include <sys/types.h>
-#include <inttypes.h>],
-      [], gt_cv_header_inttypes_h=yes, gt_cv_header_inttypes_h=no)
-  ])
-  if test $gt_cv_header_inttypes_h = yes; then
-    AC_DEFINE_UNQUOTED(HAVE_INTTYPES_H, 1,
-      [Define if <inttypes.h> exists and doesn't clash with <sys/types.h>.])
-  fi
-])
-
-# inttypes_h.m4 serial 6
-dnl Copyright (C) 1997-2004 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Paul Eggert.
-
-# Define HAVE_INTTYPES_H_WITH_UINTMAX if <inttypes.h> exists,
-# doesn't clash with <sys/types.h>, and declares uintmax_t.
-
-AC_DEFUN([gl_AC_HEADER_INTTYPES_H],
-[
-  AC_CACHE_CHECK([for inttypes.h], gl_cv_header_inttypes_h,
-  [AC_TRY_COMPILE(
-    [#include <sys/types.h>
-#include <inttypes.h>],
-    [uintmax_t i = (uintmax_t) -1;],
-    gl_cv_header_inttypes_h=yes,
-    gl_cv_header_inttypes_h=no)])
-  if test $gl_cv_header_inttypes_h = yes; then
-    AC_DEFINE_UNQUOTED(HAVE_INTTYPES_H_WITH_UINTMAX, 1,
-      [Define if <inttypes.h> exists, doesn't clash with <sys/types.h>,
-       and declares uintmax_t. ])
-  fi
-])
-
-# lcmessage.m4 serial 4 (gettext-0.14.2)
-dnl Copyright (C) 1995-2002, 2004-2005 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-dnl
-dnl This file can can be used in projects which are not available under
-dnl the GNU General Public License or the GNU Library General Public
-dnl License but which still want to provide support for the GNU gettext
-dnl functionality.
-dnl Please note that the actual code of the GNU gettext library is covered
-dnl by the GNU Library General Public License, and the rest of the GNU
-dnl gettext package package is covered by the GNU General Public License.
-dnl They are *not* in the public domain.
-
-dnl Authors:
-dnl   Ulrich Drepper <drepper@cygnus.com>, 1995.
-
-# Check whether LC_MESSAGES is available in <locale.h>.
-
-AC_DEFUN([gt_LC_MESSAGES],
-[
-  AC_CACHE_CHECK([for LC_MESSAGES], gt_cv_val_LC_MESSAGES,
-    [AC_TRY_LINK([#include <locale.h>], [return LC_MESSAGES],
-       gt_cv_val_LC_MESSAGES=yes, gt_cv_val_LC_MESSAGES=no)])
-  if test $gt_cv_val_LC_MESSAGES = yes; then
-    AC_DEFINE(HAVE_LC_MESSAGES, 1,
-      [Define if your <locale.h> file defines LC_MESSAGES.])
   fi
 ])
 
@@ -1785,7 +1484,7 @@ AC_DEFUN([AC_LIB_WITH_FINAL_PREFIX],
 
 # libtool.m4 - Configure libtool for the host system. -*-Autoconf-*-
 
-# serial 48 Debian 1.5.22-2 AC_PROG_LIBTOOL
+# serial 48 AC_PROG_LIBTOOL
 
 
 # AC_PROVIDE_IFELSE(MACRO-NAME, IF-PROVIDED, IF-NOT-PROVIDED)
@@ -1991,11 +1690,54 @@ AC_ARG_WITH([pic],
     [pic_mode=default])
 test -z "$pic_mode" && pic_mode=default
 
+# Check if we have a version mismatch between libtool.m4 and ltmain.sh.
+#
+# Note:  This should be in AC_LIBTOOL_SETUP, _after_ $ltmain have been defined.
+#        We also should do it _before_ AC_LIBTOOL_LANG_C_CONFIG that actually
+#        calls AC_LIBTOOL_CONFIG and creates libtool.
+#
+_LT_VERSION_CHECK
+
 # Use C for the default configuration in the libtool script
 tagname=
 AC_LIBTOOL_LANG_C_CONFIG
 _LT_AC_TAGCONFIG
 ])# AC_LIBTOOL_SETUP
+
+
+# _LT_VERSION_CHECK
+# -----------------
+AC_DEFUN([_LT_VERSION_CHECK],
+[AC_MSG_CHECKING([for correct ltmain.sh version])
+if test "x$ltmain" = "x" ; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([
+
+*** @<:@Gentoo@:>@ sanity check failed! ***
+*** \$ltmain is not defined, please check the patch for consistency! ***
+])
+fi
+gentoo_lt_version="1.5.22"
+gentoo_ltmain_version=`sed -n '/^[[ 	]]*VERSION=/{s/^[[ 	]]*VERSION=//;p;q;}' "$ltmain"`
+if test "x$gentoo_lt_version" != "x$gentoo_ltmain_version" ; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([
+
+*** @<:@Gentoo@:>@ sanity check failed! ***
+*** libtool.m4 and ltmain.sh have a version mismatch! ***
+*** (libtool.m4 = $gentoo_lt_version, ltmain.sh = $gentoo_ltmain_version) ***
+
+Please run:
+
+  libtoolize --copy --force
+
+if appropriate, please contact the maintainer of this
+package (or your distribution) for help.
+])
+else
+  AC_MSG_RESULT(yes)
+fi
+])# _LT_VERSION_CHECK
 
 
 # _LT_AC_SYS_COMPILER
@@ -3128,6 +2870,30 @@ cygwin* | mingw* | pw32*)
     esac
     ;;
 
+  linux*)
+    if $LD --help 2>&1 | egrep ': supported targets:.* elf' > /dev/null; then
+      archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
+      supports_anon_versioning=no
+      case `$LD -v 2>/dev/null` in
+        *\ [01].* | *\ 2.[[0-9]].* | *\ 2.10.*) ;; # catch versions < 2.11
+        *\ 2.11.93.0.2\ *) supports_anon_versioning=yes ;; # RH7.3 ...
+        *\ 2.11.92.0.12\ *) supports_anon_versioning=yes ;; # Mandrake 8.2 ...
+        *\ 2.11.*) ;; # other 2.11 versions
+        *) supports_anon_versioning=yes ;;
+      esac
+      if test $supports_anon_versioning = yes; then
+        archive_expsym_cmds='$echo "{ global:" > $output_objdir/$libname.ver~
+cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~
+$echo "local: *; };" >> $output_objdir/$libname.ver~
+        $CC -shared $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
+      else
+        $archive_expsym_cmds="$archive_cmds"
+      fi
+    else
+      ld_shlibs=no
+    fi
+    ;;
+
   *)
     library_names_spec='${libname}`echo ${release} | $SED -e 's/[[.]]/-/g'`${versuffix}${shared_ext} $libname.lib'
     ;;
@@ -3192,7 +2958,14 @@ freebsd* | dragonfly*)
     *) objformat=elf ;;
     esac
   fi
-  version_type=freebsd-$objformat
+  # Handle Gentoo/FreeBSD as it was Linux
+  case $host_vendor in
+    gentoo)
+      version_type=linux ;;
+    *)
+      version_type=freebsd-$objformat ;;
+  esac
+
   case $version_type in
     freebsd-elf*)
       library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext} $libname${shared_ext}'
@@ -3202,6 +2975,12 @@ freebsd* | dragonfly*)
     freebsd-*)
       library_names_spec='${libname}${release}${shared_ext}$versuffix $libname${shared_ext}$versuffix'
       need_version=yes
+      ;;
+    linux)
+      library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
+      soname_spec='${libname}${release}${shared_ext}$major'
+      need_lib_prefix=no
+      need_version=no
       ;;
   esac
   shlibpath_var=LD_LIBRARY_PATH
@@ -3363,18 +3142,6 @@ linux*)
   # people can always --disable-shared, the test was removed, and we
   # assume the GNU/Linux dynamic linker is in use.
   dynamic_linker='GNU/Linux ld.so'
-  ;;
-
-netbsdelf*-gnu)
-  version_type=linux
-  need_lib_prefix=no
-  need_version=no
-  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
-  soname_spec='${libname}${release}${shared_ext}$major'
-  shlibpath_var=LD_LIBRARY_PATH
-  shlibpath_overrides_runpath=no
-  hardcode_into_libs=yes
-  dynamic_linker='NetBSD ld.elf_so'
   ;;
 
 knetbsd*-gnu)
@@ -4152,7 +3919,7 @@ linux*)
   lt_cv_deplibs_check_method=pass_all
   ;;
 
-netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+netbsd*)
   if echo __ELF__ | $CC -E - | grep __ELF__ > /dev/null; then
     lt_cv_deplibs_check_method='match_pattern /lib[[^/]]+(\.so\.[[0-9]]+\.[[0-9]]+|_pic\.a)$'
   else
@@ -5161,7 +4928,7 @@ case $host_os in
 	;;
     esac
     ;;
-  netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+  netbsd*)
     if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
       _LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable  -o $lib $predep_objects $libobjs $deplibs $postdep_objects $linker_flags'
       wlarc=
@@ -6785,7 +6552,7 @@ AC_MSG_CHECKING([for $compiler option to produce PIC])
 	    ;;
 	esac
 	;;
-      netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+      netbsd*)
 	;;
       osf3* | osf4* | osf5*)
 	case $cc_basename in
@@ -7137,12 +6904,6 @@ ifelse([$1],[CXX],[
   cygwin* | mingw*)
     _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[[BCDGRS]] /s/.* \([[^ ]]*\)/\1 DATA/;/^.* __nm__/s/^.* __nm__\([[^ ]]*\) [[^ ]]*/\1 DATA/;/^I /d;/^[[AITW]] /s/.* //'\'' | sort | uniq > $export_symbols'
   ;;
-  kfreebsd*-gnu)
-    _LT_AC_TAGVAR(link_all_deplibs, $1)=no
-  ;;
-  linux*)
-    _LT_AC_TAGVAR(link_all_deplibs, $1)=no
-  ;;
   *)
     _LT_AC_TAGVAR(export_symbols_cmds, $1)='$NM $libobjs $convenience | $global_symbol_pipe | $SED '\''s/.* //'\'' | sort | uniq > $export_symbols'
   ;;
@@ -7339,13 +7100,12 @@ EOF
   $echo "local: *; };" >> $output_objdir/$libname.ver~
 	  $CC -shared'"$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
 	fi
-	_LT_AC_TAGVAR(link_all_deplibs, $1)=no
       else
 	_LT_AC_TAGVAR(ld_shlibs, $1)=no
       fi
       ;;
 
-    netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+    netbsd*)
       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
 	wlarc=
@@ -7675,20 +7435,11 @@ _LT_EOF
       ;;
 
     # FreeBSD 3 and greater uses gcc -shared to do shared libraries.
-    freebsd* | dragonfly*)
+    freebsd* | kfreebsd*-gnu | dragonfly*)
       _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
       _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
       _LT_AC_TAGVAR(hardcode_direct, $1)=yes
       _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no
-      ;;
-      
-    # GNU/kFreeBSD uses gcc -shared to do shared libraries.
-    kfreebsd*-gnu)
-      _LT_AC_TAGVAR(archive_cmds, $1)='$CC -shared -o $lib $libobjs $deplibs $compiler_flags'
-      _LT_AC_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
-      _LT_AC_TAGVAR(hardcode_direct, $1)=yes
-      _LT_AC_TAGVAR(hardcode_shlibpath_var, $1)=no
-      _LT_AC_TAGVAR(link_all_deplibs, $1)=no
       ;;
 
     hpux9*)
@@ -7786,7 +7537,7 @@ _LT_EOF
       _LT_AC_TAGVAR(link_all_deplibs, $1)=yes
       ;;
 
-    netbsd* | netbsdelf*-gnu | knetbsd*-gnu)
+    netbsd*)
       if echo __ELF__ | $CC -E - | grep __ELF__ >/dev/null; then
 	_LT_AC_TAGVAR(archive_cmds, $1)='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
       else
@@ -8186,59 +7937,6 @@ done
 ])
 SED=$lt_cv_path_SED
 AC_MSG_RESULT([$SED])
-])
-
-# longdouble.m4 serial 1 (gettext-0.12)
-dnl Copyright (C) 2002-2003 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Bruno Haible.
-dnl Test whether the compiler supports the 'long double' type.
-dnl Prerequisite: AC_PROG_CC
-
-AC_DEFUN([gt_TYPE_LONGDOUBLE],
-[
-  AC_CACHE_CHECK([for long double], gt_cv_c_long_double,
-    [if test "$GCC" = yes; then
-       gt_cv_c_long_double=yes
-     else
-       AC_TRY_COMPILE([
-         /* The Stardent Vistra knows sizeof(long double), but does not support it.  */
-         long double foo = 0.0;
-         /* On Ultrix 4.3 cc, long double is 4 and double is 8.  */
-         int array [2*(sizeof(long double) >= sizeof(double)) - 1];
-         ], ,
-         gt_cv_c_long_double=yes, gt_cv_c_long_double=no)
-     fi])
-  if test $gt_cv_c_long_double = yes; then
-    AC_DEFINE(HAVE_LONG_DOUBLE, 1, [Define if you have the 'long double' type.])
-  fi
-])
-
-# longlong.m4 serial 5
-dnl Copyright (C) 1999-2004 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Paul Eggert.
-
-# Define HAVE_LONG_LONG if 'long long' works.
-
-AC_DEFUN([gl_AC_TYPE_LONG_LONG],
-[
-  AC_CACHE_CHECK([for long long], ac_cv_type_long_long,
-  [AC_TRY_LINK([long long ll = 1LL; int i = 63;],
-    [long long llmax = (long long) -1;
-     return ll << i | ll >> i | llmax / ll | llmax % ll;],
-    ac_cv_type_long_long=yes,
-    ac_cv_type_long_long=no)])
-  if test $ac_cv_type_long_long = yes; then
-    AC_DEFINE(HAVE_LONG_LONG, 1,
-      [Define if you have the 'long long' type.])
-  fi
 ])
 
 # nls.m4 serial 2 (gettext-0.14.3)
@@ -8880,51 +8578,6 @@ EOF
   mv "$ac_file.tmp" "$ac_file"
 ])
 
-# printf-posix.m4 serial 2 (gettext-0.13.1)
-dnl Copyright (C) 2003 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Bruno Haible.
-dnl Test whether the printf() function supports POSIX/XSI format strings with
-dnl positions.
-
-AC_DEFUN([gt_PRINTF_POSIX],
-[
-  AC_REQUIRE([AC_PROG_CC])
-  AC_CACHE_CHECK([whether printf() supports POSIX/XSI format strings],
-    gt_cv_func_printf_posix,
-    [
-      AC_TRY_RUN([
-#include <stdio.h>
-#include <string.h>
-/* The string "%2$d %1$d", with dollar characters protected from the shell's
-   dollar expansion (possibly an autoconf bug).  */
-static char format[] = { '%', '2', '$', 'd', ' ', '%', '1', '$', 'd', '\0' };
-static char buf[100];
-int main ()
-{
-  sprintf (buf, format, 33, 55);
-  return (strcmp (buf, "55 33") != 0);
-}], gt_cv_func_printf_posix=yes, gt_cv_func_printf_posix=no,
-      [
-        AC_EGREP_CPP(notposix, [
-#if defined __NetBSD__ || defined _MSC_VER || defined __MINGW32__ || defined __CYGWIN__
-  notposix
-#endif
-        ], gt_cv_func_printf_posix="guessing no",
-           gt_cv_func_printf_posix="guessing yes")
-      ])
-    ])
-  case $gt_cv_func_printf_posix in
-    *yes)
-      AC_DEFINE(HAVE_POSIX_PRINTF, 1,
-        [Define if your printf() function supports format strings with positions.])
-      ;;
-  esac
-])
-
 # progtest.m4 serial 4 (gettext-0.14.2)
 dnl Copyright (C) 1996-2003, 2005 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
@@ -9018,220 +8671,350 @@ fi
 AC_SUBST($1)dnl
 ])
 
-# signed.m4 serial 1 (gettext-0.10.40)
-dnl Copyright (C) 2001-2002 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
+dnl ---------------------------------------------------------------------------
+dnl Macros for wxWidgets detection. Typically used in configure.in as:
+dnl
+dnl     AC_ARG_ENABLE(...)
+dnl     AC_ARG_WITH(...)
+dnl        ...
+dnl     AM_OPTIONS_WXCONFIG
+dnl        ...
+dnl        ...
+dnl     AM_PATH_WXCONFIG(2.6.0, wxWin=1)
+dnl     if test "$wxWin" != 1; then
+dnl        AC_MSG_ERROR([
+dnl                wxWidgets must be installed on your system
+dnl                but wx-config script couldn't be found.
+dnl
+dnl                Please check that wx-config is in path, the directory
+dnl                where wxWidgets libraries are installed (returned by
+dnl                'wx-config --libs' command) is in LD_LIBRARY_PATH or
+dnl                equivalent variable and wxWidgets version is 2.3.4 or above.
+dnl        ])
+dnl     fi
+dnl     CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+dnl     CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
+dnl     CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
+dnl
+dnl     LIBS="$LIBS $WX_LIBS"
+dnl ---------------------------------------------------------------------------
 
-dnl From Bruno Haible.
+dnl ---------------------------------------------------------------------------
+dnl AM_OPTIONS_WXCONFIG
+dnl
+dnl adds support for --wx-prefix, --wx-exec-prefix, --with-wxdir and
+dnl --wx-config command line options
+dnl ---------------------------------------------------------------------------
 
-AC_DEFUN([bh_C_SIGNED],
+AC_DEFUN([AM_OPTIONS_WXCONFIG],
 [
-  AC_CACHE_CHECK([for signed], bh_cv_c_signed,
-   [AC_TRY_COMPILE(, [signed char x;], bh_cv_c_signed=yes, bh_cv_c_signed=no)])
-  if test $bh_cv_c_signed = no; then
-    AC_DEFINE(signed, ,
-              [Define to empty if the C compiler doesn't support this keyword.])
-  fi
+    AC_ARG_WITH(wxdir,
+                [  --with-wxdir=PATH       Use uninstalled version of wxWidgets in PATH],
+                [ wx_config_name="$withval/wx-config"
+                  wx_config_args="--inplace"])
+    AC_ARG_WITH(wx-config,
+                [  --with-wx-config=CONFIG wx-config script to use (optional)],
+                wx_config_name="$withval" )
+    AC_ARG_WITH(wx-prefix,
+                [  --with-wx-prefix=PREFIX Prefix where wxWidgets is installed (optional)],
+                wx_config_prefix="$withval", wx_config_prefix="")
+    AC_ARG_WITH(wx-exec-prefix,
+                [  --with-wx-exec-prefix=PREFIX
+                          Exec prefix where wxWidgets is installed (optional)],
+                wx_config_exec_prefix="$withval", wx_config_exec_prefix="")
 ])
 
-# size_max.m4 serial 2
-dnl Copyright (C) 2003 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Bruno Haible.
-
-AC_DEFUN([gl_SIZE_MAX],
+dnl Helper macro for checking if wx version is at least $1.$2.$3, set's
+dnl wx_ver_ok=yes if it is:
+AC_DEFUN([_WX_PRIVATE_CHECK_VERSION],
 [
-  AC_CHECK_HEADERS(stdint.h)
-  dnl First test whether the system already has SIZE_MAX.
-  AC_MSG_CHECKING([for SIZE_MAX])
-  result=
-  AC_EGREP_CPP([Found it], [
-#include <limits.h>
-#if HAVE_STDINT_H
-#include <stdint.h>
-#endif
-#ifdef SIZE_MAX
-Found it
-#endif
-], result=yes)
-  if test -z "$result"; then
-    dnl Define it ourselves. Here we assume that the type 'size_t' is not wider
-    dnl than the type 'unsigned long'.
-    dnl The _AC_COMPUTE_INT macro works up to LONG_MAX, since it uses 'expr',
-    dnl which is guaranteed to work from LONG_MIN to LONG_MAX.
-    _AC_COMPUTE_INT([~(size_t)0 / 10], res_hi,
-      [#include <stddef.h>], result=?)
-    _AC_COMPUTE_INT([~(size_t)0 % 10], res_lo,
-      [#include <stddef.h>], result=?)
-    _AC_COMPUTE_INT([sizeof (size_t) <= sizeof (unsigned int)], fits_in_uint,
-      [#include <stddef.h>], result=?)
-    if test "$fits_in_uint" = 1; then
-      dnl Even though SIZE_MAX fits in an unsigned int, it must be of type
-      dnl 'unsigned long' if the type 'size_t' is the same as 'unsigned long'.
-      AC_TRY_COMPILE([#include <stddef.h>
-        extern size_t foo;
-        extern unsigned long foo;
-        ], [], fits_in_uint=0)
-    fi
-    if test -z "$result"; then
-      if test "$fits_in_uint" = 1; then
-        result="$res_hi$res_lo"U
+    wx_ver_ok=""
+    if test "x$WX_VERSION" != x ; then
+      if test $wx_config_major_version -gt $1; then
+        wx_ver_ok=yes
       else
-        result="$res_hi$res_lo"UL
+        if test $wx_config_major_version -eq $1; then
+           if test $wx_config_minor_version -gt $2; then
+              wx_ver_ok=yes
+           else
+              if test $wx_config_minor_version -eq $2; then
+                 if test $wx_config_micro_version -ge $3; then
+                    wx_ver_ok=yes
+                 fi
+              fi
+           fi
+        fi
       fi
-    else
-      dnl Shouldn't happen, but who knows...
-      result='~(size_t)0'
     fi
-  fi
-  AC_MSG_RESULT([$result])
-  if test "$result" != yes; then
-    AC_DEFINE_UNQUOTED([SIZE_MAX], [$result],
-      [Define as the maximum value of type 'size_t', if the system doesn't define it.])
-  fi
 ])
 
-# stdint_h.m4 serial 5
-dnl Copyright (C) 1997-2004 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
+dnl ---------------------------------------------------------------------------
+dnl AM_PATH_WXCONFIG(VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND
+dnl                  [, WX-LIBS [, ADDITIONAL-WX-CONFIG-FLAGS]]]])
+dnl
+dnl Test for wxWidgets, and define WX_C*FLAGS, WX_LIBS and WX_LIBS_STATIC
+dnl (the latter is for static linking against wxWidgets). Set WX_CONFIG_NAME
+dnl environment variable to override the default name of the wx-config script
+dnl to use. Set WX_CONFIG_PATH to specify the full path to wx-config - in this
+dnl case the macro won't even waste time on tests for its existence.
+dnl
+dnl Optional WX-LIBS argument contains comma- or space-separated list of
+dnl wxWidgets libraries to link against (it may include contrib libraries). If
+dnl it is not specified then WX_LIBS and WX_LIBS_STATIC will contain flags to
+dnl link with all of the core wxWidgets libraries.
+dnl
+dnl Optional ADDITIONAL-WX-CONFIG-FLAGS argument is appended to wx-config
+dnl invocation command in present. It can be used to fine-tune lookup of
+dnl best wxWidgets build available.
+dnl
+dnl Example use:
+dnl   AM_PATH_WXCONFIG([2.6.0], [wxWin=1], [wxWin=0], [html,core,net]
+dnl                    [--unicode --debug])
+dnl ---------------------------------------------------------------------------
 
-dnl From Paul Eggert.
-
-# Define HAVE_STDINT_H_WITH_UINTMAX if <stdint.h> exists,
-# doesn't clash with <sys/types.h>, and declares uintmax_t.
-
-AC_DEFUN([gl_AC_HEADER_STDINT_H],
+dnl
+dnl Get the cflags and libraries from the wx-config script
+dnl
+AC_DEFUN([AM_PATH_WXCONFIG],
 [
-  AC_CACHE_CHECK([for stdint.h], gl_cv_header_stdint_h,
-  [AC_TRY_COMPILE(
-    [#include <sys/types.h>
-#include <stdint.h>],
-    [uintmax_t i = (uintmax_t) -1;],
-    gl_cv_header_stdint_h=yes,
-    gl_cv_header_stdint_h=no)])
-  if test $gl_cv_header_stdint_h = yes; then
-    AC_DEFINE_UNQUOTED(HAVE_STDINT_H_WITH_UINTMAX, 1,
-      [Define if <stdint.h> exists, doesn't clash with <sys/types.h>,
-       and declares uintmax_t. ])
+  dnl do we have wx-config name: it can be wx-config or wxd-config or ...
+  if test x${WX_CONFIG_NAME+set} != xset ; then
+     WX_CONFIG_NAME=wx-config
   fi
-])
 
-# uintmax_t.m4 serial 9
-dnl Copyright (C) 1997-2004 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
+  if test "x$wx_config_name" != x ; then
+     WX_CONFIG_NAME="$wx_config_name"
+  fi
 
-dnl From Paul Eggert.
+  dnl deal with optional prefixes
+  if test x$wx_config_exec_prefix != x ; then
+     wx_config_args="$wx_config_args --exec-prefix=$wx_config_exec_prefix"
+     WX_LOOKUP_PATH="$wx_config_exec_prefix/bin"
+  fi
+  if test x$wx_config_prefix != x ; then
+     wx_config_args="$wx_config_args --prefix=$wx_config_prefix"
+     WX_LOOKUP_PATH="$WX_LOOKUP_PATH:$wx_config_prefix/bin"
+  fi
+  if test "$cross_compiling" = "yes"; then
+     wx_config_args="$wx_config_args --host=$host_alias"
+  fi
 
-AC_PREREQ(2.13)
-
-# Define uintmax_t to 'unsigned long' or 'unsigned long long'
-# if it is not already defined in <stdint.h> or <inttypes.h>.
-
-AC_DEFUN([gl_AC_TYPE_UINTMAX_T],
-[
-  AC_REQUIRE([gl_AC_HEADER_INTTYPES_H])
-  AC_REQUIRE([gl_AC_HEADER_STDINT_H])
-  if test $gl_cv_header_inttypes_h = no && test $gl_cv_header_stdint_h = no; then
-    AC_REQUIRE([gl_AC_TYPE_UNSIGNED_LONG_LONG])
-    test $ac_cv_type_unsigned_long_long = yes \
-      && ac_type='unsigned long long' \
-      || ac_type='unsigned long'
-    AC_DEFINE_UNQUOTED(uintmax_t, $ac_type,
-      [Define to unsigned long or unsigned long long
-       if <stdint.h> and <inttypes.h> don't define.])
+  dnl don't search the PATH if WX_CONFIG_NAME is absolute filename
+  if test -x "$WX_CONFIG_NAME" ; then
+     AC_MSG_CHECKING(for wx-config)
+     WX_CONFIG_PATH="$WX_CONFIG_NAME"
+     AC_MSG_RESULT($WX_CONFIG_PATH)
   else
-    AC_DEFINE(HAVE_UINTMAX_T, 1,
-      [Define if you have the 'uintmax_t' type in <stdint.h> or <inttypes.h>.])
+     AC_PATH_PROG(WX_CONFIG_PATH, $WX_CONFIG_NAME, no, "$WX_LOOKUP_PATH:$PATH")
   fi
+
+  if test "$WX_CONFIG_PATH" != "no" ; then
+    WX_VERSION=""
+
+    min_wx_version=ifelse([$1], ,2.2.1,$1)
+    if test -z "$5" ; then
+      AC_MSG_CHECKING([for wxWidgets version >= $min_wx_version])
+    else
+      AC_MSG_CHECKING([for wxWidgets version >= $min_wx_version ($5)])
+    fi
+
+    WX_CONFIG_WITH_ARGS="$WX_CONFIG_PATH $wx_config_args $5 $4"
+
+    WX_VERSION=`$WX_CONFIG_WITH_ARGS --version 2>/dev/null`
+    wx_config_major_version=`echo $WX_VERSION | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
+    wx_config_minor_version=`echo $WX_VERSION | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
+    wx_config_micro_version=`echo $WX_VERSION | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+
+    wx_requested_major_version=`echo $min_wx_version | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
+    wx_requested_minor_version=`echo $min_wx_version | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
+    wx_requested_micro_version=`echo $min_wx_version | \
+           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+
+    _WX_PRIVATE_CHECK_VERSION([$wx_requested_major_version],
+                              [$wx_requested_minor_version],
+                              [$wx_requested_micro_version])
+
+    if test -n "$wx_ver_ok"; then
+
+      AC_MSG_RESULT(yes (version $WX_VERSION))
+      WX_LIBS=`$WX_CONFIG_WITH_ARGS --libs`
+
+      dnl is this even still appropriate?  --static is a real option now
+      dnl and WX_CONFIG_WITH_ARGS is likely to contain it if that is
+      dnl what the user actually wants, making this redundant at best.
+      dnl For now keep it in case anyone actually used it in the past.
+      AC_MSG_CHECKING([for wxWidgets static library])
+      WX_LIBS_STATIC=`$WX_CONFIG_WITH_ARGS --static --libs 2>/dev/null`
+      if test "x$WX_LIBS_STATIC" = "x"; then
+        AC_MSG_RESULT(no)
+      else
+        AC_MSG_RESULT(yes)
+      fi
+
+      dnl starting with version 2.2.6 wx-config has --cppflags argument
+      wx_has_cppflags=""
+      if test $wx_config_major_version -gt 2; then
+        wx_has_cppflags=yes
+      else
+        if test $wx_config_major_version -eq 2; then
+           if test $wx_config_minor_version -gt 2; then
+              wx_has_cppflags=yes
+           else
+              if test $wx_config_minor_version -eq 2; then
+                 if test $wx_config_micro_version -ge 6; then
+                    wx_has_cppflags=yes
+                 fi
+              fi
+           fi
+        fi
+      fi
+
+      if test "x$wx_has_cppflags" = x ; then
+         dnl no choice but to define all flags like CFLAGS
+         WX_CFLAGS=`$WX_CONFIG_WITH_ARGS --cflags`
+         WX_CPPFLAGS=$WX_CFLAGS
+         WX_CXXFLAGS=$WX_CFLAGS
+
+         WX_CFLAGS_ONLY=$WX_CFLAGS
+         WX_CXXFLAGS_ONLY=$WX_CFLAGS
+      else
+         dnl we have CPPFLAGS included in CFLAGS included in CXXFLAGS
+         WX_CPPFLAGS=`$WX_CONFIG_WITH_ARGS --cppflags`
+         WX_CXXFLAGS=`$WX_CONFIG_WITH_ARGS --cxxflags`
+         WX_CFLAGS=`$WX_CONFIG_WITH_ARGS --cflags`
+
+         WX_CFLAGS_ONLY=`echo $WX_CFLAGS | sed "s@^$WX_CPPFLAGS *@@"`
+         WX_CXXFLAGS_ONLY=`echo $WX_CXXFLAGS | sed "s@^$WX_CFLAGS *@@"`
+      fi
+
+      ifelse([$2], , :, [$2])
+
+    else
+
+       if test "x$WX_VERSION" = x; then
+          dnl no wx-config at all
+          AC_MSG_RESULT(no)
+       else
+          AC_MSG_RESULT(no (version $WX_VERSION is not new enough))
+       fi
+
+       WX_CFLAGS=""
+       WX_CPPFLAGS=""
+       WX_CXXFLAGS=""
+       WX_LIBS=""
+       WX_LIBS_STATIC=""
+       ifelse([$3], , :, [$3])
+
+    fi
+  else
+
+    WX_CFLAGS=""
+    WX_CPPFLAGS=""
+    WX_CXXFLAGS=""
+    WX_LIBS=""
+    WX_LIBS_STATIC=""
+    ifelse([$3], , :, [$3])
+
+  fi
+
+  AC_SUBST(WX_CPPFLAGS)
+  AC_SUBST(WX_CFLAGS)
+  AC_SUBST(WX_CXXFLAGS)
+  AC_SUBST(WX_CFLAGS_ONLY)
+  AC_SUBST(WX_CXXFLAGS_ONLY)
+  AC_SUBST(WX_LIBS)
+  AC_SUBST(WX_LIBS_STATIC)
+  AC_SUBST(WX_VERSION)
 ])
 
-# ulonglong.m4 serial 4
-dnl Copyright (C) 1999-2004 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
+dnl ---------------------------------------------------------------------------
+dnl Get information on the wxrc program for making C++, Python and xrs
+dnl resource files.
+dnl
+dnl     AC_ARG_ENABLE(...)
+dnl     AC_ARG_WITH(...)
+dnl        ...
+dnl     AM_OPTIONS_WXCONFIG
+dnl     AM_OPTIONS_WXRC
+dnl        ...
+dnl     AM_PATH_WXCONFIG(2.6.0, wxWin=1)
+dnl     if test "$wxWin" != 1; then
+dnl        AC_MSG_ERROR([
+dnl                wxWidgets must be installed on your system
+dnl                but wx-config script couldn't be found.
+dnl
+dnl                Please check that wx-config is in path, the directory
+dnl                where wxWidgets libraries are installed (returned by
+dnl                'wx-config --libs' command) is in LD_LIBRARY_PATH or
+dnl                equivalent variable and wxWidgets version is 2.6.0 or above.
+dnl        ])
+dnl     fi
+dnl
+dnl     AM_PATH_WXRC([HAVE_WXRC=1], [HAVE_WXRC=0])
+dnl     if test "x$HAVE_WXRC" != x1; then
+dnl         AC_MSG_ERROR([
+dnl                The wxrc program was not installed or not found.
+dnl     
+dnl                Please check the wxWidgets installation.
+dnl         ])
+dnl     fi
+dnl
+dnl     CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+dnl     CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
+dnl     CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
+dnl
+dnl     LDFLAGS="$LDFLAGS $WX_LIBS"
+dnl ---------------------------------------------------------------------------
 
-dnl From Paul Eggert.
 
-# Define HAVE_UNSIGNED_LONG_LONG if 'unsigned long long' works.
 
-AC_DEFUN([gl_AC_TYPE_UNSIGNED_LONG_LONG],
+dnl ---------------------------------------------------------------------------
+dnl AM_PATH_WXRC([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl
+dnl Test for wxWidgets' wxrc program for creating either C++, Python or XRS
+dnl resources.  The variable WXRC will be set and substituted in the configure
+dnl script and Makefiles.
+dnl
+dnl Example use:
+dnl   AM_PATH_WXRC([wxrc=1], [wxrc=0])
+dnl ---------------------------------------------------------------------------
+
+dnl
+dnl wxrc program from the wx-config script
+dnl
+AC_DEFUN([AM_PATH_WXRC],
 [
-  AC_CACHE_CHECK([for unsigned long long], ac_cv_type_unsigned_long_long,
-  [AC_TRY_LINK([unsigned long long ull = 1ULL; int i = 63;],
-    [unsigned long long ullmax = (unsigned long long) -1;
-     return ull << i | ull >> i | ullmax / ull | ullmax % ull;],
-    ac_cv_type_unsigned_long_long=yes,
-    ac_cv_type_unsigned_long_long=no)])
-  if test $ac_cv_type_unsigned_long_long = yes; then
-    AC_DEFINE(HAVE_UNSIGNED_LONG_LONG, 1,
-      [Define if you have the 'unsigned long long' type.])
+  AC_ARG_VAR([WXRC], [Path to wxWidget's wxrc resource compiler])
+    
+  if test "x$WX_CONFIG_NAME" = x; then
+    AC_MSG_ERROR([The wxrc tests must run after wxWidgets test.])
+  else
+    
+    AC_MSG_CHECKING([for wxrc])
+    
+    if test "x$WXRC" = x ; then
+      dnl wx-config --utility is a new addition to wxWidgets:
+      _WX_PRIVATE_CHECK_VERSION(2,5,3)
+      if test -n "$wx_ver_ok"; then
+        WXRC=`$WX_CONFIG_WITH_ARGS --utility=wxrc`
+      fi
+    fi
+
+    if test "x$WXRC" = x ; then
+      AC_MSG_RESULT([not found])
+      ifelse([$2], , :, [$2])
+    else
+      AC_MSG_RESULT([$WXRC])
+      ifelse([$1], , :, [$1])
+    fi
+    
+    AC_SUBST(WXRC)
   fi
-])
-
-# wchar_t.m4 serial 1 (gettext-0.12)
-dnl Copyright (C) 2002-2003 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Bruno Haible.
-dnl Test whether <stddef.h> has the 'wchar_t' type.
-dnl Prerequisite: AC_PROG_CC
-
-AC_DEFUN([gt_TYPE_WCHAR_T],
-[
-  AC_CACHE_CHECK([for wchar_t], gt_cv_c_wchar_t,
-    [AC_TRY_COMPILE([#include <stddef.h>
-       wchar_t foo = (wchar_t)'\0';], ,
-       gt_cv_c_wchar_t=yes, gt_cv_c_wchar_t=no)])
-  if test $gt_cv_c_wchar_t = yes; then
-    AC_DEFINE(HAVE_WCHAR_T, 1, [Define if you have the 'wchar_t' type.])
-  fi
-])
-
-# wint_t.m4 serial 1 (gettext-0.12)
-dnl Copyright (C) 2003 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Bruno Haible.
-dnl Test whether <wchar.h> has the 'wint_t' type.
-dnl Prerequisite: AC_PROG_CC
-
-AC_DEFUN([gt_TYPE_WINT_T],
-[
-  AC_CACHE_CHECK([for wint_t], gt_cv_c_wint_t,
-    [AC_TRY_COMPILE([#include <wchar.h>
-       wint_t foo = (wchar_t)'\0';], ,
-       gt_cv_c_wint_t=yes, gt_cv_c_wint_t=no)])
-  if test $gt_cv_c_wint_t = yes; then
-    AC_DEFINE(HAVE_WINT_T, 1, [Define if you have the 'wint_t' type.])
-  fi
-])
-
-# xsize.m4 serial 3
-dnl Copyright (C) 2003-2004 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-AC_DEFUN([gl_XSIZE],
-[
-  dnl Prerequisites of lib/xsize.h.
-  AC_REQUIRE([gl_SIZE_MAX])
-  AC_REQUIRE([AC_C_INLINE])
-  AC_CHECK_HEADERS(stdint.h)
 ])
 
 # Copyright (C) 2002, 2003, 2005  Free Software Foundation, Inc.
