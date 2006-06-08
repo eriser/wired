@@ -71,7 +71,7 @@ AC_CHECK_LIB([samplerate], [src_new], [SRC='yes' ], AC_MSG_ERROR([Couldn't find 
 
 #Checking for wxWidgets
 AM_OPTIONS_WXCONFIG
-reqwx=2.6.3
+reqwx=2.6.2
 AM_PATH_WXCONFIG($reqwx, wxWin=1)
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
