@@ -8,8 +8,6 @@
 #include	"MainWindow.h"
 #include	"EngineError.h"
 
-wxMutex		AudioMutex;
-
 AudioEngine::AudioEngine() 
 {
   IsOk = false;

@@ -59,6 +59,10 @@ WiredSession		*CurrentSession = NULL;
 WiredSessionXml		*CurrentXmlSession = NULL;
 WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
 FileConversion		*FileConverter = NULL;
+SettingWindow		*SettingsWin = NULL;
+
+wxMutex			AudioMutex;
+wxCondition		*SeqStopped = NULL;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
@@ -88,20 +92,12 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
       exit(1);
     }
   
-  // Le Mixer doit etre declarer apres AudioEngine 
+  // Mixer must be declared after AudioEngine 
   Mix = new Mixer();
   Seq = new Sequencer();
   MidiEngine = new MidiThread();
   MidiEngine->OpenDefaultDevices();
-  if (MidiEngine->Create() != wxTHREAD_NO_ERROR)
-    cout << "[MAINWIN] Create MidiEngine thread failed !" << endl;
-  if (MidiEngine->Run() != wxTHREAD_NO_ERROR)
-    cout << "[MAINWIN] Run MidiEngine thread failed !" << endl;  
-   else
-   	wxGetApp().m_threads.Add(MidiEngine);
-
-  InitAudio();
-  InitFileConverter();
+  SettingsWin = new SettingWindow();
 
   /* Creation Menu */
 
@@ -237,49 +233,84 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   // Taille minimum de la fenetre
   SetSizeHints(400, 300);
 
+  Connect(MainWin_ImportWave, wxEVT_COMMAND_MENU_SELECTED, 
+	  (wxObjectEventFunction)(wxEventFunction) 
+	  (wxCommandEventFunction)&MainWindow::OnImportWave);
+
+#if wxUSE_STATUSBAR
+  Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
+#endif
+}
+
+// basicaly launch actions which are non-graphical related
+int			MainWindow::Init()
+{
+  // start midi thread
+  if (MidiEngine->Create() != wxTHREAD_NO_ERROR)
+    cout << "[MAINWIN] Create MidiEngine thread failed !" << endl;
+  if (MidiEngine->Run() != wxTHREAD_NO_ERROR)
+    cout << "[MAINWIN] Run MidiEngine thread failed !" << endl;  
+   else
+   	wxGetApp().m_threads.Add(MidiEngine);
+
+  // creation of condition needed for InitAudio and Seq communication
+  SeqStopped = new wxCondition(AudioMutex);
+  if (!SeqStopped->IsOk())
+    {
+      cout << "[MAINWIN] Condition creation failed.. critical error" << endl;
+      exit(1);
+    }
+
+  // init audio
+  if (InitAudio() < 0)
+    AlertDialog(_("audio engine"), 
+		_("You may check for your audio settings if you want to use Wired.."));
+  InitFileConverter();
+
+  // start sequencer thread (after InitAudio is a good option)
   if (Seq->Create() != wxTHREAD_NO_ERROR)
     cout << "[MAINWIN] Create sequencer thread failed !" << endl;
   Seq->SetPriority(WXTHREAD_MAX_PRIORITY);
   if (Seq->Run() != wxTHREAD_NO_ERROR)
     cout << "[MAINWIN] Run sequencer thread failed !" << endl; 
   else
-  	wxGetApp().m_threads.Add(Seq);
-
-  Connect(MainWin_ImportWave, wxEVT_COMMAND_MENU_SELECTED, 
-	  (wxObjectEventFunction)(wxEventFunction) 
-	  (wxCommandEventFunction)&MainWindow::OnImportWave);
-
+    wxGetApp().m_threads.Add(Seq);
 
   InitUndoRedoMenuItems();
   //  InitVideoMenuItems();
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
-#if wxUSE_STATUSBAR
-  Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
-#endif
+  
+  return (0);
 }
 
-void			MainWindow::InitAudio(bool restart)
+int			MainWindow::InitAudio(bool restart)
 {
-  SettingWindow		s;
-  static bool		StillLocked = false;
-
-  if (!StillLocked)
+  AudioMutex.Lock();
+  if (Audio->IsOk)
     {
+      Audio->IsOk = false;
+      AudioMutex.Unlock();
+      // wait sequencer thread until he finish his cycle
+      if (SeqStopped->WaitTimeout(3000) == wxCOND_TIMEOUT)
+	{
+	  cout << "[MAINWIN] Sequencer thread stuck ?" << endl;
+	  return (-1);
+	}
       AudioMutex.Lock();
-      StillLocked = true;
     }
+
+  // change settings
   SeqMutex.Lock();
   if (!Audio->CloseStream())
     {
       cout 
 	<< "[MAINWIN] Could not close audio stream, you may restart Wired" 
 	<< endl;
-      StillLocked = false;
-      AudioMutex.Unlock();
       SeqMutex.Unlock();
-      return;
+      AudioMutex.Unlock();
+      return (-1);
     }
   try 
     { 
@@ -338,11 +369,11 @@ void			MainWindow::InitAudio(bool restart)
       vector<Track *>::iterator	i;
 
       // Refill tracks connections
-      if (s.AudioLoaded || s.MidiLoaded)
+      if (SettingsWin->AudioLoaded || SettingsWin->MidiLoaded)
 	for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
 	  (*i)->TrackOpt->FillChoices();      
       // Sends sample rate and buffer size modifications to plugins
-      if (s.AudioLoaded)
+      if (SettingsWin->AudioLoaded)
 	{
 	  list<RackTrack *>::iterator k;
 	  list<Plugin *>::iterator j;
@@ -363,27 +394,31 @@ void			MainWindow::InitAudio(bool restart)
 	  FileConverter->SetSampleRate((long unsigned int)Audio->SampleRate);
 	}
 
-      AudioMutex.Unlock();
-      StillLocked = false;
     }
   else
     cout << "You may check for your audio settings if you want to use Wired.." << endl;
 
   SeqMutex.Unlock();
 
-  // dialog can't be before mutex unlocking
+  // dialog can't be  before mutex unlocking (outside this function is better)
   if (!Audio->IsOk)
-      AlertDialog(_("audio engine"), 
-		  _("You may check for your audio settings if you want to use Wired.."));
+    {
+      AudioMutex.Unlock();
+      return (-1);
+    }
+  AudioMutex.Unlock();
 
-  if (s.MidiLoaded)
+  if (SettingsWin->MidiLoaded)
     {
       MidiDeviceMutex.Lock();
       // Reopen midi devices
       MidiEngine->OpenDefaultDevices(); 
       MidiDeviceMutex.Unlock();
     }
-
+  // reinit SettingsWin var
+  SettingsWin->AudioLoaded = false;
+  SettingsWin->MidiLoaded = false;
+  return (0);
 }
 
 void                MainWindow::InitLocale()
@@ -403,8 +438,8 @@ void					MainWindow::InitFileConverter()
 {
 	FileConverter = new FileConversion();
 	t_samplerate_info info;
-	SettingWindow				s;
 	int i; 
+
 	if (Audio->UserData->Sets->WorkingDir.empty())
 	{
 		wxDirDialog dir(this, _("Choose the audio working directory"), wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
@@ -1341,15 +1376,17 @@ void					MainWindow::SwitchSeqOptView()
 
 void					MainWindow::OnSettings(wxCommandEvent &event)
 {
-  SettingWindow				s;
   vector<Track *>::iterator		i;
 
   if (IsFullScreen())
     OnFullScreen(event);
-  if (s.ShowModal() == wxID_OK && (s.AudioLoaded || s.MidiLoaded))
+  if (SettingsWin->ShowModal() == wxID_OK &&
+      (SettingsWin->AudioLoaded || SettingsWin->MidiLoaded))
     {
-      InitAudio(true);
-    }
+      if (InitAudio(true) < 0)
+	AlertDialog(_("audio engine"), 
+		    _("You may check for your audio settings if you want to use Wired.."));
+   }
 }
 
 void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)

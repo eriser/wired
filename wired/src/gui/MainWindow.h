@@ -104,6 +104,9 @@ class					MainWindow: public wxFrame
   void					SwitchSeqOptView();  
   void					AddUpdatePlugin(Plugin *p);
 
+  /* init func */
+  int					Init();
+
  private:
   int					PluginMenuIndexCount;			
   bool					RackModeView;
@@ -111,7 +114,7 @@ class					MainWindow: public wxFrame
   void					OnIdle(wxIdleEvent &event);
 
   /* init func */
-  void					InitAudio(bool restart = false);
+  int					InitAudio(bool restart = false);
 
     /* Locale */
     wxLocale            *mLocale;
@@ -236,6 +239,8 @@ extern MainWindow		*MainWin;
 extern vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo		StartInfo;
 extern WiredSession		*CurrentSession;
+extern wxMutex		AudioMutex;
+extern wxCondition*	SeqStopped;
 
 #endif
 
