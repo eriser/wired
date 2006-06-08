@@ -14,10 +14,12 @@ SUBDIRS =				\
 	data				\
 	conf				\
 	xml				\
-	dssi				\
 	samplerate			\
-	codec		\
-	wiredvideo
+	codec				\
+	wiredvideo			\
+	dssi				
+#	portaudio
+
 
 DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so libs/WiredAkai/src/.libs/libWiredAkai.so -Lfileloader -lfileloader
 
@@ -44,7 +46,7 @@ wired_LDADD =				\
 	redist/libredist.a		\
 	undo/libundo.a			\
 	xml/libwiredxml.a		\
-	dssi/libwireddssi.a		\
 	samplerate/libwiredsamplerate.a	\
-	codec/libwiredCodec.a	\
-	wiredvideo/libwiredvideo.a
+	codec/libwiredCodec.a		\
+	wiredvideo/libwiredvideo.a	\
+	dssi/libwireddssi.a

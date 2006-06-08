@@ -31,6 +31,7 @@ WXWIDGET_VERSION=`wx-config --version`
 SAMPLERATE_VERSION=`pkg-config samplerate --modversion`
 SNDFILE_VERSION=`pkg-config sndfile --modversion`
 
+
 # for autoheader .. investigate this further :)
 AC_CONFIG_HEADER(src/include/config.h)
 
@@ -60,13 +61,45 @@ AC_CHECK_LIB([asound], [snd_asoundlib_version], [ASOUND='yes'], AC_MSG_ERROR([Co
 #AC_CHECK_LIB([m], [main])
 #AC_CHECK_LIB([portaudio], [Pa_Sleep], [PORTAUDIO='yes'], AC_MSG_ERROR([Couldn't find portaudio]))
 AC_CHECK_LIB([pthread], [pthread_create], [PTHREAD='yes'], AC_MSG_ERROR([Couldn't find libpthread]))
-AC_CHECK_LIB([sndfile], [sf_open], [LIBSNDFILE='yes'], AC_MSG_ERROR([Couldn't find libsndfile ]))
-AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch ]))
+AC_CHECK_LIB([sndfile], [sf_open], [LIBSNDFILE='yes'], AC_MSG_ERROR([Couldn't find libsndfile]))
+AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch]))
 #AC_CHECK_LIB([ltdl], [lt_dlmutex_lock], [LTDL='yes'], AC_MSG_ERROR([Couldn't find lib libtool or ltdl ]))
 #AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find lib FLAC++ ]))
 #AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find lib VorbisFile ]))
-AC_CHECK_LIB([xml2], [xmlParseMemory], [ XML2F='yes' ], AC_MSG_ERROR([Couldn't find libxml2 ]))
+AC_CHECK_LIB([xml2], [xmlParseMemory], [ XML2F='yes' ], AC_MSG_ERROR([Couldn't find libxml2]))
 AC_CHECK_LIB([samplerate], [src_new], [SRC='yes' ], AC_MSG_ERROR([Couldn't find libsamplerate]))
+
+#Checking for wxWidgets
+AM_OPTIONS_WXCONFIG
+reqwx=2.6.3
+AM_PATH_WXCONFIG($reqwx, wxWin=1)
+if test "$wxWin" != 1; then
+	AC_MSG_ERROR([
+		wxWidgets must be installed on your system.
+ 
+		Please check that wx-config is in path, the directory
+		where wxWidgets libraries are installed (returned by
+		'wx-config --libs' or 'wx-config --static --libs' command)
+		is in LD_LIBRARY_PATH or equivalent variable and
+		wxWidgets version is $reqwx or above.
+		])
+else
+	AC_PATH_PROG(WX_CONFIG, wx-config, no)
+
+	if !${WX_CONFIG} --unicode; then
+	   	AC_MSG_ERROR([
+		wxWidgets must be installed with unicode support.
+ 
+		Please try wx-config --unicode=yes.
+		])
+	fi
+	
+fi
+
+CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
+CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
+LIBS="$LIBS $WX_LIBS"
 
 # Checks for header files.
 AC_HEADER_DIRENT
@@ -94,18 +127,26 @@ AC_HEADER_TIME
 AC_C_VOLATILE
 
 # checks for options
-AC_ARG_ENABLE(dssi, 
-	[  --enable-dssi Enable or disable DSSI plugins support (default disabled)])
+#AC_ARG_ENABLE(dssi, 
+#	[  --enable-dssi Enable or disable DSSI plugins support (default enabled)],
+#	[enable_dssi="$enableval"],
+#	[enable_dssi="yes"])
 
 AC_ARG_ENABLE(debug, 
-	[  --enable-debug Enable or disable debug symbol generation (default disabled)])
-	
+	[  --enable-debug Enable or disable debug symbol generation (default disabled)],
+	[enable_debug="$enableval"],
+	[enable_debug="no"])
 
+#, disable_optimize=yes, disable_optimize=no)
 AC_ARG_ENABLE(optimize, 
-	[  --disable-optimize Enable or disable compilation optimizations (default enabled)],disable_optimize=yes, disable_optimize=no)
+	[  --enable-optimize Enable or disable compilation optimizations (default enabled)],
+	[enable_optimize="$enableval"],
+	[enable_optimize="yes"])
 
-AC_ARG_ENABLE(purify, 
-	[  --enable-purify Enable building process with purify (default disabled)])
+#AC_ARG_ENABLE(purify, 
+#	[  --enable-purify Enable building process with purify (default disabled)],
+#	[enable_purify="$enableval"],
+#	[enable_purify="no"])
 
 # Checks for library functions.
 AC_FUNC_CLOSEDIR_VOID
@@ -124,44 +165,59 @@ else
 fi
 
 
-if test x$enable_dssi = xyes;
+# Checking Options
+# ALL_SRC="${ALL_SRC} 
+#AC_MSG_CHECKING([for enable-dssi])
+#if test x"$enable_dssi" = xyes;
+#then
+# CFGDSSI=Yes
+# OPTION_DSSI="DSSI_ENABLED"
+#AC_CONFIG_FILES([src/data/dssi/Makefile src/dssi/Makefile])
+#else
+# CFGDSSI=No
+# OPTION_DSSI="DSSI_DISABLED"
+#fi
+#AC_MSG_RESULT([$CFGDSSI])
+
+AC_MSG_CHECKING([for enable-optimize])
+if test x"$enable_optimize" = xyes;
 then
- CFGDSSI=Yes
- OPTION_DSSI="DSSI_ENABLED"
- ALL_SRC="${ALL_SRC} src/dssi/Makefile"
+ CFGOPTIMIZE=Yes
+ CXXFLAGS="-Os"
 else
- CFGDSSI=No
- OPTION_DSSI="DSSI_DISABLED"
-fi
-
-if test x$enable_purify = xyes;
-then
- CXX='g++' 
- CC='gcc'
-fi
-
- CXXFLAGS="-O3"
-
-if test "$disable_optimize" = "yes";
-then
  CFGOPTIMIZE=No
  CXXFLAGS=""
-else
- CFGOPTIMIZE=Yes
 fi
+AC_MSG_RESULT([$CFGDEBUG])
 
-if test x$enable_debug = xyes;
+
+AC_MSG_CHECKING([for enable-debug])
+if test x"$enable_debug" = xyes;
 then
  CFGDEBUG=Yes
  CXXFLAGS="${CXXFLAGS} -g"
 else
  CFGDEBUG=No
 fi
+AC_MSG_RESULT([$CFGDEBUG])
+
+
+#AC_MSG_CHECKING([for enable-purify])
+#if test x"$enable_purify" = xyes;
+#then
+# CFGPURIFY=Yes
+# CXX='g++'
+# CC='gcc'
+#else
+# CFGPURIFY=No
+#fi
+#CXXFLAGS="-O3"
+#AC_MSG_RESULT([$CFGPURIFY])
+
 
 #Some locale things
-
-ALL_LINGUAS="fr" 
-AM_GNU_GETTEXT 
+ALL_LINGUAS="fr"
+AM_GNU_GETTEXT([external])
 
 if test "x${prefix}" = "xNONE"; then 
  AC_DEFINE(PACKAGE_LOCALE_DIR, "/usr/local/share/wired/locale") 
@@ -195,10 +251,11 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
 		src/plugins/test/Makefile
 		src/redist/Makefile
 		src/sequencer/Makefile
+		src/dssi/Makefile
 		src/undo/Makefile
 		src/libs/Makefile
-        src/libs/WiredWidgets/Makefile
-        src/libs/WiredWidgets/src/Makefile
+	        src/libs/WiredWidgets/Makefile
+	        src/libs/WiredWidgets/src/Makefile
 		src/libs/WiredAkai/Makefile
 		src/libs/WiredAkai/src/Makefile
 		src/data/Makefile
@@ -221,10 +278,9 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
 		src/data/plugins/reverb/Makefile
 		src/data/plugins/wahwah/Makefile
 		src/data/plugins/chorus/Makefile
-		src/data/dssi/Makefile		
+		src/data/dssi/Makefile
 		src/conf/Makefile
 		src/xml/Makefile
-		src/dssi/Makefile
 		src/samplerate/Makefile
 		src/codec/Makefile
 		src/codec/wiredcodec/Makefile
@@ -232,6 +288,7 @@ AC_CONFIG_FILES([Makefile po/Makefile.in
 		src/wiredvideo/Makefile])
 
 AC_OUTPUT
+
 
 AC_MSG_RESULT([
 -=-=-=-=-=-=-=-=-=-= Configuration Complete =-=-=-=-=-=-=-=-=-=-=-
@@ -242,6 +299,9 @@ AC_MSG_RESULT([
 AC_MSG_RESULT([    Enable debugging : ............ ${CFGDEBUG}])
 AC_MSG_RESULT([    Enable optimizations : ........ ${CFGOPTIMIZE}
 ])
+
+#AC_MSG_RESULT([    Enable dssi : ................. ${CFGDSSI}])
+#AC_MSG_RESULT([    Enable purify : ............... ${CFGPURIFY}])
 
 if test x$ac_cv_c_compiler_gnu = xyes ; then
 	echo -e "  Tools :\n"
@@ -258,7 +318,7 @@ AC_MSG_RESULT([
     libsndfile : .................. ${SNDFILE_VERSION}
  ])
 #    Portaudio : .................... ${ac_cv_fftw3}])
-#  Soundtouch : .................... ${ac_cv_fftw3}])
+#    Soundtouch : .................. ${ac_cv_fftw3}])
 
 
 AC_MSG_RESULT([  Installation directories :
