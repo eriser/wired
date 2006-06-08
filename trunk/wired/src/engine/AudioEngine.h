@@ -92,8 +92,6 @@ class AudioEngine
 
 extern AudioEngine	*Audio;
 
-extern wxMutex		AudioMutex;
-
 // AudioCallback
 static int	AudioCallback(const void *input,
 			      void *output,

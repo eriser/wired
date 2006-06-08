@@ -79,11 +79,19 @@ void					*Sequencer::Entry()
   while (!TestDestroy())
     {
       // for prevent playing without valid config
-      if (AudioMutex.TryLock() != wxMUTEX_NO_ERROR)
+      AudioMutex.Lock();
+      if (!Audio->IsOk)
 	{
-	  Sleep(100); // in milliseconds
+	  AudioMutex.Unlock();
+	  // main thread need Yield for locking do something
+	  Yield();
+	  SeqStopped->Signal();
+
+	  Sleep(500); // in milliseconds
 	  continue;
 	}
+      else
+	AudioMutex.Unlock();
 
       /* - Traitement des messages MIDI recus */
       MidiMutex.Lock();
@@ -330,9 +338,6 @@ void					*Sequencer::Entry()
       else
 	Mix->MixOutput(true);
       SeqMutex.Unlock();
-      AudioMutex.Unlock();
-      // main thread need this for locking AudioMutex
-      Yield();
 
       /* Cleanage des channels et buffers extra */
       for (B = ExtraBufs.begin(); B != ExtraBufs.end(); B++)

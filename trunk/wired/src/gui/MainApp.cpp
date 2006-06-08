@@ -35,6 +35,9 @@ bool				MainApp::OnInit()
   if (!wxApp::OnInit())
     return false;
 
+  // used in error dialog
+  MainWin = (MainWindow*)NULL;
+
   // init some conditions variables
   m_condAllDone = new wxCondition(m_mutex);
 
@@ -46,7 +49,6 @@ bool				MainApp::OnInit()
 				  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 				  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
       // alert dialog can use it before frame loading
-      MainWin = (MainWindow*)splash;
       wxYield();
     }
 #if 0
@@ -61,13 +63,14 @@ bool				MainApp::OnInit()
 #endif  
   SetUseBestVisual(true);
   SetVendorName(L"Wired Team");
-  Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition,
-			 wxSize(APP_WIDTH, APP_HEIGHT));
-  MainWin = Frame;
+  Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxSize(APP_WIDTH, APP_HEIGHT));
   Frame->Show(true);
-  splash->Hide();
   SetTopWindow(Frame);
-  splash->Destroy();
+  splash->Hide();
+
+  // now error dialog are based on mainframe 
+  MainWin = Frame;
+  Frame->Init();
   return (true);
 }
 
