@@ -301,7 +301,7 @@ void				Mixer::MixOutput(bool soundcard)
   // additional stuff
   float				lvol;
   float				rvol;
-  
+
   MixMutex.Lock(); // used by MixerGui for MasterChannelGui
   if (MuteL == true)
     lvol = 0.f;
@@ -351,7 +351,7 @@ void				Mixer::MixOutput(bool soundcard)
 	  tmp = ((i % 2) ?  OutputRight : OutputLeft);
 	  /* Blocking write */
 	  //cout << "[MIXER] blocking write BEGIN" << endl;
-	  for (long spb = Audio->SamplesPerBuffer; spb > 0 && (*chan); wxMicroSleep(100)) //nanosleep(&t, 0x0))
+	  for (long spb = Audio->SamplesPerBuffer; spb > 0 && (*chan); )
 	    {
 	      bytes_written = (*chan)->Write(tmp, spb); 
 	      spb -= bytes_written;
