@@ -91,7 +91,7 @@ void              MainApp::OnFatalException()
 
 void				MainApp::OnUnhandledException()
 {
-
+  cout << "UnhandledException" << endl;
 }
 
 int				MainApp::OnExit()

@@ -82,16 +82,15 @@ void					*Sequencer::Entry()
       AudioMutex.Lock();
       if (!Audio->IsOk)
 	{
-	  AudioMutex.Unlock();
-	  // main thread need Yield for locking do something
+	  // main thread need Yield for doing something
 	  Yield();
 	  SeqStopped->Signal();
+	  AudioMutex.Unlock();
 
 	  Sleep(500); // in milliseconds
 	  continue;
 	}
-      else
-	AudioMutex.Unlock();
+      AudioMutex.Unlock();
 
       /* - Traitement des messages MIDI recus */
       MidiMutex.Lock();

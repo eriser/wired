@@ -4,6 +4,7 @@
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License
 
+#include "MainWindow.h"
 #include "SettingWindow.h"
 #include "AudioEngine.h"
 #include "Settings.h"
@@ -291,40 +292,23 @@ void SettingWindow::OnMidiClick(wxCommandEvent &event)
 
 void SettingWindow::OnOkClick(wxCommandEvent &event)
 {
-  Save();
   EndModal(wxID_OK);
 }
 
 void SettingWindow::OnCancelClick(wxCommandEvent &event)
 {
   AudioLoaded = false;
+  MidiLoaded = false;
   EndModal(wxID_CANCEL);
 }
 
 void SettingWindow::OnApplyClick(wxCommandEvent &event)
 {
-  /*
-    Audio->CloseStream();
-  
-  */
-  Save();
-  
-  /*
-  cout << "[CONF]" << endl;
-  cout << "[CONF]" << endl;
-  cout << "[CONF] OutputDev " << WiredSettings->OutputDev << endl;
-  cout << "[CONF] InputDev " << WiredSettings->InputDev << endl;
-  cout << "[CONF] OutputLatency " << WiredSettings->OutputLatency << endl;
-  cout << "[CONF] InputLatency " << WiredSettings->InputLatency << endl;
-  cout << "[CONF] SampleFormat " << WiredSettings->SampleFormat << endl;
-  cout << "[CONF] SampleRate " << WiredSettings->SampleRate << endl;
-  cout << "[CONF] SamplesPerBuffer " << WiredSettings->SamplesPerBuffer << endl;
-  cout << "[CONF]" << endl;
-  cout << "[CONF]" << endl;
-  
-  Audio->GetDeviceSettings();
-  Audio->OpenStream();
-  */
+  if (MainWin->InitAudio(true) < 0)
+    MainWin->AlertDialog(_("audio engine"), 
+			 _("You may check for your audio settings if you want to use Wired.."));
+  AudioLoaded = false;
+  MidiLoaded = false;
 }
 
 void SettingWindow::OnInputDevClick(wxCommandEvent &event)
