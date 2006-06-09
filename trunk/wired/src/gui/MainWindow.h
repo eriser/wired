@@ -106,15 +106,14 @@ class					MainWindow: public wxFrame
 
   /* init func */
   int					Init();
+  /* can be called from SettingWindow */
+  int					InitAudio(bool restart = false);
 
  private:
   int					PluginMenuIndexCount;			
   bool					RackModeView;
   bool					SeqModeView;
   void					OnIdle(wxIdleEvent &event);
-
-  /* init func */
-  int					InitAudio(bool restart = false);
 
     /* Locale */
     wxLocale            *mLocale;

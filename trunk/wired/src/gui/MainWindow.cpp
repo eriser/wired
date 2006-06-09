@@ -287,29 +287,27 @@ int			MainWindow::Init()
 
 int			MainWindow::InitAudio(bool restart)
 {
-  AudioMutex.Lock();
+  wxMutexLocker audioLock(AudioMutex);
   if (Audio->IsOk)
     {
       Audio->IsOk = false;
-      AudioMutex.Unlock();
       // wait sequencer thread until he finish his cycle
       if (SeqStopped->WaitTimeout(3000) == wxCOND_TIMEOUT)
 	{
 	  cout << "[MAINWIN] Sequencer thread stuck ?" << endl;
 	  return (-1);
 	}
-      AudioMutex.Lock();
     }
-
+  wxMutexLocker	seqLock(SeqMutex);
+  // save settings
+  if (restart)
+    SettingsWin->Save();
   // change settings
-  SeqMutex.Lock();
   if (!Audio->CloseStream())
     {
       cout 
 	<< "[MAINWIN] Could not close audio stream, you may restart Wired" 
 	<< endl;
-      SeqMutex.Unlock();
-      AudioMutex.Unlock();
       return (-1);
     }
   try 
@@ -357,7 +355,8 @@ int			MainWindow::InitAudio(bool restart)
     }
   catch (std::exception &e)
     {
-      cout << "[MAINWIN] Stdlib failure during AudioEngine init, check your code" << endl;
+      cout << "[MAINWIN] Stdlib failure (" << e.what() << 
+	")during AudioEngine init, check your code" << endl;
     }
   catch (...)
     {
@@ -398,22 +397,16 @@ int			MainWindow::InitAudio(bool restart)
   else
     cout << "You may check for your audio settings if you want to use Wired.." << endl;
 
-  SeqMutex.Unlock();
-
   // dialog can't be  before mutex unlocking (outside this function is better)
   if (!Audio->IsOk)
-    {
-      AudioMutex.Unlock();
-      return (-1);
-    }
-  AudioMutex.Unlock();
+    return (-1);
 
   if (SettingsWin->MidiLoaded)
     {
-      MidiDeviceMutex.Lock();
+      wxMutexLocker lock(MidiDeviceMutex);
+
       // Reopen midi devices
       MidiEngine->OpenDefaultDevices(); 
-      MidiDeviceMutex.Unlock();
     }
   // reinit SettingsWin var
   SettingsWin->AudioLoaded = false;
