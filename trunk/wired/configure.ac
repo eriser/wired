@@ -217,7 +217,7 @@ AC_MSG_RESULT([$CFGDEBUG])
 
 #Some locale things
 ALL_LINGUAS="fr"
-AM_GNU_GETTEXT
+AM_GNU_GETTEXT([external])
 
 
 if test "x${prefix}" = "xNONE"; then 
@@ -226,7 +226,7 @@ else
  AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale") 
 fi 
 
-AC_CONFIG_FILES([Makefile po/Makefile.in intl/Makefile
+AC_CONFIG_FILES([Makefile po/Makefile.in
 		src/Makefile
 		src/audio/Makefile
 		src/editmidi/Makefile

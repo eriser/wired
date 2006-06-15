@@ -39,7 +39,10 @@ Please read them below :
 
 
 --- To compile Wired:
-
+       	- type "libtoolize --force"
+	- type "aclocal"
+	- type "autoconf"
+	- type "automake -acf"
 	- type "./configure"
 	- type "make"
 	- login as root and type "make install"
