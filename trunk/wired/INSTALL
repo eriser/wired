@@ -39,8 +39,8 @@ Please read them below :
 
 
 --- To compile Wired:
-       	- type "libtoolize --force"
 	- type "aclocal"
+       	- type "libtoolize --force"
 	- type "autoconf"
 	- type "automake -acf"
 	- type "./configure"
