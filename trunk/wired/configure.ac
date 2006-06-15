@@ -5,7 +5,7 @@ AC_PREREQ(2.59)
 AC_INIT([Wired], [0.2.2], [wired@bloodshed.net])
 
 # Auxiliary files.
-#AC_CONFIG_AUX_DIR([config])
+AC_CONFIG_AUX_DIR([config])
 #AC_CONFIG_FILES([config/Makefile])
 
 # Needed for plugins
@@ -86,7 +86,7 @@ if test "$wxWin" != 1; then
 else
 	AC_PATH_PROG(WX_CONFIG, wx-config, no)
 
-	if !${WX_CONFIG} --unicode; then
+	if [![ ${WX_CONFIG} --unicode ]]; then
 	   	AC_MSG_ERROR([
 		wxWidgets must be installed with unicode support.
  
@@ -217,7 +217,8 @@ AC_MSG_RESULT([$CFGDEBUG])
 
 #Some locale things
 ALL_LINGUAS="fr"
-AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT
+
 
 if test "x${prefix}" = "xNONE"; then 
  AC_DEFINE(PACKAGE_LOCALE_DIR, "/usr/local/share/wired/locale") 
@@ -225,7 +226,7 @@ else
  AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale") 
 fi 
 
-AC_CONFIG_FILES([Makefile po/Makefile.in
+AC_CONFIG_FILES([Makefile po/Makefile.in intl/Makefile
 		src/Makefile
 		src/audio/Makefile
 		src/editmidi/Makefile
