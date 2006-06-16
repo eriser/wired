@@ -230,7 +230,7 @@ bool				Mixer::InitOutputBuffers(void)
   return true;
 }
 
-void				Mixer::MixOutput(bool soundcard)
+void				Mixer::MixOutput(bool soundcard, wxThread* caller)
 {
   struct timespec		t;
   float				Lrms = 0.f;
@@ -356,6 +356,11 @@ void				Mixer::MixOutput(bool soundcard)
 	      bytes_written = (*chan)->Write(tmp, spb); 
 	      spb -= bytes_written;
 	      tmp += bytes_written;
+	      // worker thread must NOT call wxMilliSleep 
+	      if (caller)
+		caller->Sleep(1);
+	      else
+		wxMilliSleep(1);
 	    }
 	  //cout << "[MIXER] blocking write END" << endl;
 	}
