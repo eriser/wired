@@ -37,12 +37,14 @@ class Mixer
   bool			RemoveChannel(Channel*);
   bool			InitOutputBuffers(void);
   
-  void			MixOutput(bool soundcard); /* mixes the first buffer 
-						      of each output channels
-						      blocks until it writes the
-						      result in each output 
-						      ringbuffers 
-						   */
+ /* mixes the first buffer 
+    of each output channels
+    blocks until it writes the
+    result in each output 
+    ringbuffers 
+ */
+  void			MixOutput(bool soundcard, wxThread* caller = NULL);
+
   void			FlushInput(long num); 
   void			MixInput(void);
   

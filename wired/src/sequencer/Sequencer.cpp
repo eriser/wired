@@ -330,12 +330,12 @@ void					*Sequencer::Entry()
 	    StopExport();
 	  else
 	    {
-	      Mix->MixOutput(false);
+	      Mix->MixOutput(false, this);
 	      WriteExport();
 	    }
 	}
       else
-	Mix->MixOutput(true);
+	Mix->MixOutput(true, this);
       SeqMutex.Unlock();
 
       /* Cleanage des channels et buffers extra */
