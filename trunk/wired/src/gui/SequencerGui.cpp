@@ -907,11 +907,27 @@ void					SequencerGui::CopySelectedItems()
 void					SequencerGui::PasteItems()
 {
   vector<Pattern *>::iterator		j;
+  Pattern				*pattern;
   
   for (j = CopyItems.begin(); j != CopyItems.end(); j++)
     {
-    ((Pattern *) *j)->CreateCopy(((Pattern *) *j)->GetEndPosition());
-
+      pattern = ((Pattern *) *j)->CreateCopy(((Pattern *) *j)->GetEndPosition());
+      /* If the end of pattern is above the end of the Sequencer, we raise the size of the Sequencer */
+      if ((((Pattern *) *j)->GetXPos(((Pattern *) *j)->GetEndPosition()) + (((Pattern *) *j)->GetSize()).GetWidth()) > SeqView->GetTotalWidth())
+	{
+	  SeqView->SetTotalWidth((long) (pattern->GetXPos(((Pattern *) *j)->GetEndPosition()) + (((Pattern *) *j)->GetSize()).GetWidth()));
+	  Seq->EndPos = pattern->GetEndPosition();
+	  AdjustHScrolling();
+	}
+      /* TODO : correct this */
+      /* We move end's cursor if the end of the pattern is above it */
+      if (EndCursor->GetPos() < pattern->GetEndPosition())
+	{	  	  
+	  EndCursor->SetPos(pattern->GetEndPosition());
+	  RedrawCursors();
+	  AdjustHScrolling();
+	  SeqView->Refresh();
+	}
     }
   if (DoCut)
     DeleteSelectedPatterns();
