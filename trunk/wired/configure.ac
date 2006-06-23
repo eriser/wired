@@ -104,7 +104,7 @@ LIBS="$LIBS $WX_LIBS"
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h netinet/in.h stdlib.h string.h unistd.h math.h sys/types.h sys/stat.h dlfcn.h stdint.h stdio.h dirent.h alsa/seq_event.h cmath wx/wx.h sndfile.h portaudio.h byteswap.h list.h alsa/asoundlib.h errno.h soundtouch/SoundTouch.h assert.h samplerate.h io.h direct.h])
+AC_CHECK_HEADERS([fcntl.h netinet/in.h stdlib.h string.h unistd.h math.h sys/types.h sys/stat.h dlfcn.h stdint.h stdio.h dirent.h alsa/seq_event.h cmath wx/wx.h sndfile.h portaudio.h byteswap.h list.h alsa/asoundlib.h errno.h soundtouch/SoundTouch.h assert.h samplerate.h io.h direct.h libintl.h])
 
 #Checks for libsamplerate
 PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.15,
@@ -217,8 +217,8 @@ AC_MSG_RESULT([$CFGDEBUG])
 
 #Some locale things
 ALL_LINGUAS="fr"
-AM_GNU_GETTEXT([external])
-
+AM_GNU_GETTEXT([use-libtool])
+AM_GNU_GETTEXT_VERSION([0.14.4])
 
 if test "x${prefix}" = "xNONE"; then 
  AC_DEFINE(PACKAGE_LOCALE_DIR, "/usr/local/share/wired/locale") 
@@ -226,7 +226,7 @@ else
  AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale") 
 fi 
 
-AC_CONFIG_FILES([Makefile po/Makefile.in
+AC_CONFIG_FILES([Makefile po/Makefile.in intl/Makefile
 		src/Makefile
 		src/audio/Makefile
 		src/editmidi/Makefile
