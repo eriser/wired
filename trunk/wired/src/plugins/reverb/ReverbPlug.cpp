@@ -279,7 +279,6 @@ void ReverbPlugin::OnBypassController(wxMouseEvent &event)
     {
       ReverbMutex.Lock();
       
-      CheckExistingControllerData(midi_data);      
       MidiBypass[0] = midi_data[0];
       MidiBypass[1] = midi_data[1];
       

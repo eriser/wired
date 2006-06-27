@@ -140,8 +140,6 @@ class		ReverbPlugin: public Plugin
 
   wxMutex	ReverbMutex;
 
-  void CheckExistingControllerData(int MidiData[3]);
-  
   DECLARE_EVENT_TABLE()  
 };
 
