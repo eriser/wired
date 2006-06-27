@@ -7,6 +7,8 @@
 #include "Plugin.h"
 #include "../dssi/WiredExternalPluginMgr.h"
 #include <wx/wx.h>
+#include <wx/dynlib.h>
+
 using namespace std;
 
 #define COMPARE_IDS(x, y) ((x[0] == y[0]) && (x[1] == y[1]) && (x[2] == y[2]) && (x[3] == y[3]))
@@ -22,16 +24,16 @@ class				PluginLoader
   PluginLoader(WiredExternalPluginMgr *PlugMgr, unsigned long UniqueId);
   ~PluginLoader();
 
-  void				Unload();
   Plugin			*CreateRack(PlugStartInfo &info);
   void				Destroy(Plugin *p);
+  bool				IsLoaded();
 
   wxString			FileName;
   int				Id;
   PlugInitInfo			InitInfo;
 
  private:
-  void				*handle;
+  wxDynamicLibrary		handle;
   init_t			init;
   create_t			create;
   destroy_t			destroy;

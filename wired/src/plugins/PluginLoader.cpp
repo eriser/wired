@@ -4,6 +4,7 @@
 #include <iostream>
 #include <dlfcn.h>
 #include "PluginLoader.h"
+#include "config.h"
 
 PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, int MenuItemId, PlugStartInfo &info)
 {
@@ -25,47 +26,54 @@ PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, unsigned long Unique
 }
 
 PluginLoader::PluginLoader(wxString filename) : 
-  FileName(filename)
+  FileName(filename), handle(wxT(INSTALL_PREFIX) + wxString(wxT("/lib/")) + filename)
 {
   External = false;
-  handle = dlopen(filename.mb_str(*wxConvCurrent), RTLD_LAZY);
-  if (!handle) 
-    {
-      cerr << "[PLUGLOADER] Error: Cannot open library: " << dlerror() << '\n';
-      exit(1);
-    }
-  cout << "[PLUGLOADER] Loading symbol init...\n";
 
-  init = (init_t) dlsym(handle, PLUG_INIT);
-  if (!init) 
+  // if failed, try loading filename without PREFIX base
+  // (wx load /usr/lib, /usr/local/lib/, ...)
+  if (!handle.IsLoaded())
+    handle.Load(filename);
+
+  if (handle.IsLoaded())
     {
-      cerr << "[PLUGLOADER] Error: Cannot load symbol 'init': " << dlerror() << '\n';
-      dlclose(handle);
-      exit(1);
+      cout << "[PLUGLOADER] Loading symbol init..." << endl;
+
+      init = (init_t) handle.GetSymbol(PLUG_INIT);
+      if (!init) 
+	{
+	  cerr << "[PLUGLOADER] Error: Cannot load symbol : " << PLUG_INIT << endl;
+	  handle.Unload();
+	  return ;
+	}
+      destroy = (destroy_t) handle.GetSymbol(PLUG_DESTROY);
+      if (!destroy) 
+	{
+	  cerr << "[PLUGLOADER] Error: Cannot load symbol : " << PLUG_DESTROY << endl;
+	  handle.Unload();
+	  return ;
+	}  
+      create = (create_t) handle.GetSymbol(PLUG_CREATE);
+      if (!create) 
+	{
+	  cerr << "[PLUGLOADER] Error: Cannot load symbol : " << PLUG_CREATE << endl;
+	  handle.Unload();
+	  return ;
+	}  
+      InitInfo = init();
     }
-  destroy = (destroy_t) dlsym(handle, PLUG_DESTROY);
-  if (!destroy) 
-    {
-      cerr << "[PLUGLOADER] Error: Cannot load symbol 'destroy': " << dlerror() << '\n';
-      dlclose(handle);
-      exit(1);
-    }  
-  create = (create_t) dlsym(handle, PLUG_CREATE);
-  if (!create) 
-    {
-      cerr << "[PLUGLOADER] Error: Cannot load symbol 'create': " << dlerror() << '\n';
-      dlclose(handle);
-      exit(1);
-    }  
-  InitInfo = init();
+  else
+    cerr << "[PLUGLOADER] Error: Cannot open library : " << filename.mb_str() << endl;
 }
 
 PluginLoader::~PluginLoader()
 {
-	if (External == false)
-		dlclose(handle);
-	else
-		;
+
+}
+
+bool	PluginLoader::IsLoaded()
+{
+  return (handle.IsLoaded());
 }
 
 Plugin *PluginLoader::CreateRack(PlugStartInfo &info)
@@ -86,10 +94,4 @@ void PluginLoader::Destroy(Plugin *todel)
 		PluginMgr->DestroyPlugin(ExternalPlug);
 		ExternalPlug = NULL;
 	}
-}
-
-void PluginLoader::Unload()
-{
-	if (External == false)
-		dlclose(handle);
 }
