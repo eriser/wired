@@ -17,9 +17,9 @@ class Plugin;
 
 typedef long (*HostInterface)(Plugin *plug, long param, void *value);
 
-#define PLUG_INIT	"init"
-#define PLUG_DESTROY	"destroy"
-#define PLUG_CREATE	"create"
+#define PLUG_INIT	wxT("init")
+#define PLUG_DESTROY	wxT("destroy")
+#define PLUG_CREATE	wxT("create")
  
 #define PLUG_IS_INSTR	0x0
 #define PLUG_IS_EFFECT	0x1
