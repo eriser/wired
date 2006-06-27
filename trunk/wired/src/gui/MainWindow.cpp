@@ -547,7 +547,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 
   cout << "[MAINWIN] Unloading shared libraries..."<< endl;
   for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
-    (*k)->Unload();
+    delete *k;
 
   //if (WiredVideoObject) delete WiredVideoObject;
 
@@ -932,33 +932,36 @@ void					MainWindow::LoadPlugins()
       return;
     }
   PluginMenuIndexCount = PLUG_MENU_INDEX_START;
-  for (str = PluginsConfFile.GetFirstLine(); 42;
+  for (str = PluginsConfFile.GetFirstLine(); !PluginsConfFile.Eof();
        str = PluginsConfFile.GetNextLine())
     {
       if ((str.length() > 0) && (str.at(0) != '#'))
 	{
 	  p = new PluginLoader(str);
-	  LoadedPluginsList.push_back(p);
-	  
-	  p->Id = PluginMenuIndexCount++;
-	  if (p->InitInfo.Type == PLUG_IS_INSTR)
+	  if (p->IsLoaded())
 	    {
-	      CreateInstrMenu->Append(p->Id, (p->InitInfo.Name).c_str());
-	      Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED, 
-		      (wxObjectEventFunction)(wxEventFunction) 
-		      (wxCommandEventFunction)&MainWindow::OnCreateRackClick);
+	      LoadedPluginsList.push_back(p);
+
+	      p->Id = PluginMenuIndexCount++;
+	      if (p->InitInfo.Type == PLUG_IS_INSTR)
+		{
+		  CreateInstrMenu->Append(p->Id, (p->InitInfo.Name).c_str());
+		  Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED,
+			  (wxObjectEventFunction)(wxEventFunction)
+			  (wxCommandEventFunction)&MainWindow::OnCreateRackClick);
+		}
+	      else
+		{
+		  CreateEffectMenu->Append(p->Id, (p->InitInfo.Name).c_str());
+		  Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED,
+			  (wxObjectEventFunction)(wxEventFunction)
+			  (wxCommandEventFunction)&MainWindow::OnCreateEffectClick);
+		}
+	      cout << "[MAINWIN] Plugin " << p->InitInfo.Name.mb_str() << " is working" << endl;
 	    }
 	  else
-	    {
-	      CreateEffectMenu->Append(p->Id, (p->InitInfo.Name).c_str());
-	      Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED, 
-		      (wxObjectEventFunction)(wxEventFunction) 
-		      (wxCommandEventFunction)&MainWindow::OnCreateEffectClick);
-	    }
-	  cout << "[MAINWIN] Plugin " << p->InitInfo.Name << " is working" << endl;
+	    delete p;
 	}
-      if (PluginsConfFile.Eof())
-	break;
     }
 }
 
