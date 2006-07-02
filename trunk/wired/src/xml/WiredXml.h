@@ -62,9 +62,8 @@ protected:
 	bool				StartCDATA();
 	bool				WriteCDATA(const wxChar* CData, bool Ended = true);
 	bool				EndCDATA();
-	bool				WriteBin(const wxChar* Data, int start, int len);	
+	bool				WriteBin(void* Data, int start, int len);	
 	bool				WriteString(const wxString& Content);
-	bool				WriteString(const wxChar* Content);
 	bool				StartComment();
 	bool				WriteComment(const wxString& Comment, bool Ended = true);
 	bool				EndComment();
@@ -73,18 +72,18 @@ protected:
 	bool				CloseDocumentReader();
 	
 	bool				Read();
-	wxChar				*GetNodeName();
+	wxString			GetNodeName();
 	bool				HasValue();
-	wxChar				*GetNodeValue();
-	wxChar				*GetAttribute(const wxChar *Name);
-	int					GetNodeType();
+	wxString			GetNodeValue();
+	wxString			GetAttribute(wxString Name);
+	int				GetNodeType();
 
 	wxString			_DocumentFileName;
 	wxString			_DtdFileName;
 	wxString			_DocumentWriterName;
-	xmlTextReaderPtr	_DocumentFile;
+	xmlTextReaderPtr		_DocumentFile;
 	xmlDtdPtr			_DtdFile;
-	xmlTextWriterPtr	_DocumentWriter;
+	xmlTextWriterPtr		_DocumentWriter;
 //private:
 };
 
