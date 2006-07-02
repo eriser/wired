@@ -640,7 +640,7 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
     {
       wxString selfile = dlg.GetSelectedFile();    
 
-      cout << "[MAINWIN] User opens " << selfile << endl;
+      cout << "[MAINWIN] User opens " << selfile.mb_str() << endl;
       if (!NewSession())
 	{
 	  //dlg->Destroy();
@@ -694,10 +694,10 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
     {
       wxString selfile = dlg.GetSelectedFile();    
 
-      wxFileName f(selfile.c_str());
+      wxFileName f(selfile);
       if (!f.HasExt())
 	selfile = selfile + XML_EXTENSION;
-      cout << "[MAINWIN] User saves to " << selfile << endl;
+      cout << "[MAINWIN] User saves to " << selfile.mb_str() << endl;
 
       wxString audiodir;
       
@@ -732,13 +732,13 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       else	     
       {
 	    wxDirDialog dir(this, _("Choose the Audio file directory"), wxFileName::GetCwd());
-		if (dir.ShowModal() == wxID_OK)
-		{
-			CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str(); 
-			res = wxID_OK;
-		}
+	    if (dir.ShowModal() == wxID_OK)
+	      {
+		CurrentXmlSession->GetAudioDir() = dir.GetPath();
+		res = wxID_OK;
+	      }
 	    else
-			res = wxID_CANCEL;
+	      res = wxID_CANCEL;
       }
       if (res != wxID_CANCEL)
       {
@@ -871,14 +871,15 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
   
   if (dlg.ShowModal() == wxID_OK)
     {
-      wxString            selfile = dlg.GetSelectedFile();    
-      wxFileName   f(selfile.c_str());
+      wxString          selfile = dlg.GetSelectedFile();    
+      wxFileName	f(selfile);
+
       if (f.GetExt().IsEmpty())
 	{
 	  f.SetExt(wxT("wav"));
 	  selfile = f.GetFullPath();
 	}      
-      cout << "[MAINWIN] User exports " << selfile << endl;
+      cout << "[MAINWIN] User exports " << selfile.mb_str() << endl;
       if (Seq->ExportToWave(selfile) == false)
       {
       	cout << "[MAINWIN] Export canceled by user " << endl;
