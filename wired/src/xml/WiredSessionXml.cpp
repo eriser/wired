@@ -98,36 +98,36 @@ bool			WiredSessionXml::SaveSeq()
 	int			Res = 0;
 	wxChar		Buffer[20];
 	
-	Res += this->StartElement(wxString(STR_SEQUENCEUR));
-	Res += this->WriteAttribute(wxString(STR_LOOP), 
-		Seq->Loop == true ? wxString(STR_TRUE) : wxString(STR_FALSE), false);
-	Res += this->WriteAttribute(wxString(STR_CLICK), 
-		Seq->Click == true ? wxString(STR_TRUE) : wxString(STR_FALSE));
-	Res += this->StartElement(wxString(STR_BPM));
+	Res += this->StartElement(STR_SEQUENCEUR);
+	Res += this->WriteAttribute(STR_LOOP, 
+		Seq->Loop == true ? STR_TRUE : STR_FALSE, false);
+	Res += this->WriteAttribute(STR_CLICK, 
+		Seq->Click == true ? STR_TRUE : STR_FALSE);
+	Res += this->StartElement(STR_BPM);
 	wxSnprintf(Buffer, 20, wxT("%.2f"), Seq->BPM);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_SIG_NUM));
+	Res += this->StartElement(STR_SIG_NUM);
 	wxSnprintf(Buffer, 20, wxT("%d"), Seq->SigNumerator);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_SIG_DEN));
+	Res += this->StartElement(STR_SIG_DEN);
 	wxSnprintf(Buffer, 20, wxT("%d"), Seq->SigDenominator);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_CURRENT_POS));
+	Res += this->StartElement(STR_CURRENT_POS);
 	wxSnprintf(Buffer, 20, wxT("%g"), Seq->CurrentPos);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_END_POS));
+	Res += this->StartElement(STR_END_POS);
 	wxSnprintf(Buffer, 20, wxT("%g"), Seq->EndPos);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_BEGIN_LOOP));
+	Res += this->StartElement(STR_BEGIN_LOOP);
 	wxSnprintf(Buffer, 20, wxT("%g"), Seq->BeginLoopPos);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_END_LOOP));
+	Res += this->StartElement(STR_END_LOOP);
 	wxSnprintf(Buffer, 20, wxT("%g"), Seq->EndLoopPos);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
@@ -143,18 +143,18 @@ bool			WiredSessionXml::SaveTrack(Track* TrackInfo)
 	wxChar		Buffer[20];
 	PatternIter	Piter;
 
-	Res += this->StartElement(wxString(STR_TRACK));
-	Res += this->WriteAttribute(wxString(STR_TRACK_TYPE), 
-		(TrackInfo->IsAudioTrack() == true ? wxString(STR_AUDIO) : wxString(STR_MIDI)), false);
-	Res += this->WriteAttribute(wxString(STR_MUTED),
-		TrackInfo->TrackOpt->Mute == true ? wxString(STR_TRUE) : wxString(STR_FALSE), false);
-	Res += this->WriteAttribute(wxString(STR_RECORDING),
-		 TrackInfo->TrackOpt->Record == true ? wxString(STR_TRUE) : wxString(STR_FALSE));
-	Res += this->StartElement(wxString(STR_DEVIDE_ID));
+	Res += this->StartElement(STR_TRACK);
+	Res += this->WriteAttribute(STR_TRACK_TYPE, 
+		(TrackInfo->IsAudioTrack() == true ? STR_AUDIO : STR_MIDI), false);
+	Res += this->WriteAttribute(STR_MUTED,
+		TrackInfo->TrackOpt->Mute == true ? STR_TRUE : STR_FALSE, false);
+	Res += this->WriteAttribute(STR_RECORDING,
+		 TrackInfo->TrackOpt->Record == true ? STR_TRUE : STR_FALSE);
+	Res += this->StartElement(STR_DEVIDE_ID);
 	wxSnprintf(Buffer, 20, wxT("%dl"), TrackInfo->TrackOpt->DeviceId);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_NAME));
+	Res += this->StartElement(STR_NAME);
 	Res += this->WriteString((wxString)TrackInfo->TrackOpt->Text->GetValue());
 	Res += this->EndElement();
 	if (TrackInfo->TrackPattern != NULL)
@@ -225,32 +225,32 @@ bool			WiredSessionXml::SavePlugin(Plugin* PluginInfo)
 	wxChar				Buffer[20];
 		
 	PluginInfo->Save(Params);
-	Res += this->StartElement(wxString(STR_PLUGIN));
-	Res += this->StartElement(wxString(STR_PLUGIN_ID));
+	Res += this->StartElement(STR_PLUGIN);
+	Res += this->StartElement(STR_PLUGIN_ID);
 	wxSnprintf(Buffer, 20, wxT("%ld"), PluginInfo->InitInfo->UniqueExternalId);
 	Res += this->WriteString(PluginInfo->InitInfo->UniqueExternalId == 0 ? 
 							wxString(PluginInfo->InitInfo->UniqueId, *wxConvCurrent).substr(0, 4) :
 							wxString(Buffer));
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_NAME));
+	Res += this->StartElement(STR_NAME);
 	Res += this->WriteString(PluginInfo->Name);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_WIDTH));
+	Res += this->StartElement(STR_WIDTH);
 	wxSnprintf(Buffer, 20, wxT("%d"), PluginInfo->InitInfo->UnitsX);
-	Res += this->WriteString(wxString(Buffer));
+	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_HEIGHT));
+	Res += this->StartElement(STR_HEIGHT);
 	wxSnprintf(Buffer, 20, wxT("%d"), PluginInfo->InitInfo->UnitsY);
-	Res += this->WriteString(wxString(Buffer));
+	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	if (Params.GetParamsStack() != NULL)
 		for (IterParam = Params.GetParamsStack()->begin(); IterParam != Params.GetParamsStack()->end(); IterParam++)
 		{
-			Res += this->StartElement(wxString(STR_PLUGIN_DATA));
-			Res += this->StartElement(wxString(STR_PLUGIN_DATA_PARAM_NAME));
+			Res += this->StartElement(STR_PLUGIN_DATA);
+			Res += this->StartElement(STR_PLUGIN_DATA_PARAM_NAME);
 			Res += this->WriteString(IterParam->first);
 			Res += this->EndElement();
-			Res += this->StartElement(wxString(STR_PLUGIN_DATA_PARAM_VALUE));
+			Res += this->StartElement(STR_PLUGIN_DATA_PARAM_VALUE);
 			Res += this->WriteString(IterParam->second);
 			Res += this->EndElement();
 			Res += this->EndElement();
@@ -265,16 +265,16 @@ bool			WiredSessionXml::SavePattern(Pattern* PatternInfo, bool AudioTrack)
 	int			Res = 0;
 	wxChar		Buffer[20];
 
-	Res += this->StartElement(wxString(STR_PATTERN));
-	Res += this->StartElement(wxString(STR_START_POS));
+	Res += this->StartElement(STR_PATTERN);
+	Res += this->StartElement(STR_START_POS);
 	wxSnprintf(Buffer, 20, wxT("%g"), PatternInfo->GetPosition());
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();	
 	wxSnprintf(Buffer, 20, wxT("%g"), PatternInfo->GetEndPosition());
-	Res += this->StartElement(wxString(STR_END_POS));
+	Res += this->StartElement(STR_END_POS);
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_NAME));
+	Res += this->StartElement(STR_NAME);
 	Res += this->WriteString((wxString)PatternInfo->GetName());
 	Res += this->EndElement();
 	if (AudioTrack == true)
@@ -290,17 +290,17 @@ bool			WiredSessionXml::SavePatternAudioData(AudioPattern* PatternInfo)
 	int			Res = 0;
 	wxChar		Buffer[20];
 
-	Res += this->StartElement(wxString(STR_PATTERN_DATA));
-	Res += this->StartElement(wxString(STR_PATTERN_AUDIO_DATA));
-	Res += this->StartElement(wxString(STR_START_POS));
+	Res += this->StartElement(STR_PATTERN_DATA);
+	Res += this->StartElement(STR_PATTERN_AUDIO_DATA);
+	Res += this->StartElement(STR_START_POS);
 	wxSnprintf(Buffer, 20, wxT("%ld"), PatternInfo->GetStartWavePos());
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_END_POS));
+	Res += this->StartElement(STR_END_POS);
 	wxSnprintf(Buffer, 20, wxT("%ld"), PatternInfo->GetEndWavePos());
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
-	Res += this->StartElement(wxString(STR_FILENAME));
+	Res += this->StartElement(STR_FILENAME);
 	Res += this->WriteString(PatternInfo->FileName);
 	Res += this->EndElement();
 	Res += this->EndElement();
@@ -314,23 +314,23 @@ bool			WiredSessionXml::SavePatternMIDIData(MidiPattern* PatternInfo)
 	wxChar			Buffer[20];
 	MidiEventIter	MidiIter;
 
-	Res += this->StartElement(wxString(STR_PATTERN_DATA));
-	Res += this->StartElement(wxString(STR_PATTERN_MIDI_DATA));
-	Res += this->StartElement(wxString(STR_PPQN));
+	Res += this->StartElement(STR_PATTERN_DATA);
+	Res += this->StartElement(STR_PATTERN_MIDI_DATA);
+	Res += this->StartElement(STR_PPQN);
 	wxSnprintf(Buffer, 20, wxT("%hd"), PatternInfo->GetPPQN());
 	Res += this->WriteString(Buffer);
 	Res += this->EndElement();
 	for (MidiIter = PatternInfo->Events.begin(); MidiIter != PatternInfo->Events.end(); MidiIter++)
 	{
-		Res += this->StartElement(wxString(STR_START_POS));
+		Res += this->StartElement(STR_START_POS);
 		wxSnprintf(Buffer, 20, wxT("%g"), (*MidiIter)->Position);
 		Res += this->WriteString(Buffer);
 		Res += this->EndElement();
-		Res += this->StartElement(wxString(STR_END_POS));
+		Res += this->StartElement(STR_END_POS);
 		wxSnprintf(Buffer, 20, wxT("%g"), (*MidiIter)->EndPosition);
 		Res += this->WriteString(Buffer);
 		Res += this->EndElement();
-		Res += this->StartElement(wxString(STR_MIDI_MESSAGE));
+		Res += this->StartElement(STR_MIDI_MESSAGE);
 		wxSnprintf(Buffer, 20, wxT("%d %d %d"), (*MidiIter)->Msg[0], (*MidiIter)->Msg[1], (*MidiIter)->Msg[2]);
 		Res += this->WriteBin(Buffer, 0, (3 * sizeof(int)));
 		Res += this->EndElement();
@@ -366,20 +366,20 @@ bool			WiredSessionXml::ParseWiredSession()
 	{
 		wxString 	Name = GetNodeName();
 		
-		if (Name.compare(STR_ROOT_NODE_NAME) == 0)
+		if (Name.Cmp(STR_ROOT_NODE_NAME) == 0)
 		{
 			HasFoundProject = true;
 			IsInProject = IsInProject ? false : true;
 			if (IsInProject == false)
 				break;
 		}
-		if (Name.compare(STR_WORKING_DIR) == 0 && IsInProject)
+		if (Name.Cmp(STR_WORKING_DIR) == 0 && IsInProject)
 			LoadWorkingDir();
-		else if (Name.compare(STR_SEQUENCEUR) == 0 && IsInProject)
+		else if (Name.Cmp(STR_SEQUENCEUR) == 0 && IsInProject)
 			LoadSeq();
-		else if (Name.compare(STR_TRACK) == 0 && IsInProject)
+		else if (Name.Cmp(STR_TRACK) == 0 && IsInProject)
 			LoadTrack(TrackNumber++);
-		else if (Name.compare(STR_PLUGIN) == 0 && IsInProject)
+		else if (Name.Cmp(STR_PLUGIN) == 0 && IsInProject)
 			LoadPlugin(NULL);
 	}
 	return HasFoundProject;
@@ -389,16 +389,16 @@ bool			WiredSessionXml::ParseWiredSession()
 void			WiredSessionXml::LoadWorkingDir()
 {
 	Read();
-	wxChar	*Value = GetNodeValue();
+	wxString	Value = GetNodeValue();
 
-	if (Value != NULL)
+	if (!Value.IsEmpty())
 	{
-		wxFileName 		session_dir(_DocumentFileName.c_str());
+		wxFileName 		session_dir(_DocumentFileName);
 		wxFileName 		f(Value);
 
 		f.MakeAbsolute(session_dir.GetPath());
 		_WorkingDir = f.GetFullPath();
-		cout << "[WIREDSESSION] Audio dir: " << _WorkingDir.c_str() << endl;
+		cout << "[WIREDSESSION] Audio dir: " << _WorkingDir.mb_str() << endl;
 	}	
 	Read();	
 }
@@ -406,94 +406,99 @@ void			WiredSessionXml::LoadWorkingDir()
 
 void			WiredSessionXml::LoadSeq()
 {
-	wxString	Buffer;
-	char		*Value;
-	
-	Buffer = GetAttribute(STR_LOOP);
-	if (Buffer.mb_str(*wxConvCurrent)  != NULL)
+  wxString	Buffer;
+  wxString	Value;
+  long		number;
+  double	floatnb;
+
+  Buffer = GetAttribute(STR_LOOP);
+  if (!Buffer.IsEmpty())
+    {
+      if (Buffer.Cmp(STR_TRUE) == 0)
 	{
-		if (Buffer.compare(STR_TRUE) == 0)
-		{
-			Seq->Loop = true;
-			TransportPanel->SetLoop(true);
-		}
-		else
-		{
-			Seq->Loop = false;
-			TransportPanel->SetLoop(false);
-		}
+	  Seq->Loop = true;
+	  TransportPanel->SetLoop(true);
 	}
-	else
-	{		
-		Seq->Loop = false;
-		TransportPanel->SetLoop(false);
-	}
-	Buffer = GetAttribute(STR_CLICK);
-	if (Buffer.c_str() != NULL)
+      else
 	{
-		if (Buffer.compare(STR_TRUE) == 0)
-		{
-			Seq->Click = true;
-			TransportPanel->SetClick(true);
-		}
-		else
-		{
-			Seq->Click = false;
-		    TransportPanel->SetClick(false);
-		}
+	  Seq->Loop = false;
+	  TransportPanel->SetLoop(false);
 	}
-	else
+    }
+  else
+    {		
+      Seq->Loop = false;
+      TransportPanel->SetLoop(false);
+    }
+  Buffer = GetAttribute(STR_CLICK);
+  if (!Buffer.IsEmpty())
+    {
+      if (Buffer.Cmp(STR_TRUE) == 0)
 	{
-		Seq->Click = false;
-		TransportPanel->SetClick(false);
+	  Seq->Click = true;
+	  TransportPanel->SetClick(true);
 	}
-	while (Read() == true)
+      else
 	{
-		Buffer = GetNodeName();
-		if (Buffer.compare(STR_SEQUENCEUR) == 0)
-			break;
-		Read();
-		Value = (char *)GetNodeValue();
-		if (Buffer.compare(STR_BPM) == 0)
-		{
-			Seq->SetBPM(atof(Value));
-			TransportPanel->SetBpm(atof(Value));
-		}
-		else if (Buffer.compare(STR_SIG_NUM) == 0)
-		{
-			Seq->SetSigNumerator(atoi(Value));
-			TransportPanel->SetSigNumerator(atoi(Value));
-		}
-		else if (Buffer.compare(STR_SIG_DEN) == 0)
-		{
-			Seq->SetSigDenominator(atoi(Value));
-			TransportPanel->SetSigDenominator(atoi(Value));
-		}
-		else if (Buffer.compare(STR_BEGIN_LOOP) == 0)
-			Seq->BeginLoopPos = atof(Value);
-		else if (Buffer.compare(STR_END_LOOP) == 0)
-			Seq->EndLoopPos = atof(Value);
-		else if(Buffer.compare(STR_CURRENT_POS) == 0)
-			Seq->CurrentPos = atof(Value);
-		else if (Buffer.compare(STR_END_POS) == 0)
-			Seq->EndPos = atof(Value);
-		else
-			continue;
-		Read();
+	  Seq->Click = false;
+	  TransportPanel->SetClick(false);
 	}
+    }
+  else
+    {
+      Seq->Click = false;
+      TransportPanel->SetClick(false);
+    }
+  while (Read() == true)
+    {
+      Buffer = GetNodeName();
+      if (Buffer.Cmp(STR_SEQUENCEUR) == 0)
+	break;
+      Read();
+      Value = GetNodeValue();
+      if (Buffer.Cmp(STR_BPM) == 0)
+	{
+	  Value.ToDouble(&floatnb);
+	  Seq->SetBPM(floatnb);
+	  TransportPanel->SetBpm(floatnb);
+	}
+      else if (Buffer.Cmp(STR_SIG_NUM) == 0)
+	{
+	  Value.ToLong(&number);
+	  Seq->SetSigNumerator(number);
+	  TransportPanel->SetSigNumerator(number);
+	}
+      else if (Buffer.Cmp(STR_SIG_DEN) == 0)
+	{
+	  Value.ToLong(&number);
+	  Seq->SetSigDenominator(number);
+	  TransportPanel->SetSigDenominator(number);
+	}
+      else if (Buffer.Cmp(STR_BEGIN_LOOP) == 0)
+	Value.ToDouble(&Seq->BeginLoopPos);
+      else if (Buffer.Cmp(STR_END_LOOP) == 0)
+	Value.ToDouble(&Seq->EndLoopPos);
+      else if(Buffer.Cmp(STR_CURRENT_POS) == 0)
+	Value.ToDouble(&Seq->CurrentPos);
+      else if (Buffer.Cmp(STR_END_POS) == 0)
+	Value.ToDouble(&Seq->EndPos);
+      else
+	continue;
+      Read();
+    }
 }
 
 
 void			WiredSessionXml::LoadTrack(int Number)
 {
 	wxString	Buffer;
-	char 		*Value;
+	wxString	Value;
 	Track		*NewTrack;
 	
 	Buffer = GetAttribute(STR_TRACK_TYPE);	
-	if (Buffer.c_str() != NULL)
+	if (!Buffer.IsEmpty())
 	{
-		if (Buffer.compare(STR_AUDIO) == 0)
+		if (Buffer.Cmp(STR_AUDIO) == 0)
 			NewTrack = SeqPanel->AddTrack(true);
 		else
 			NewTrack = SeqPanel->AddTrack(false);
@@ -501,9 +506,9 @@ void			WiredSessionXml::LoadTrack(int Number)
 	else
 		NewTrack = SeqPanel->AddTrack();
 	Buffer = GetAttribute(STR_MUTED);
-	if (Buffer.c_str() != NULL)
+	if (!Buffer.IsEmpty())
 	{
-		if (Buffer.compare(STR_TRUE) == 0)
+		if (Buffer.Cmp(STR_TRUE) == 0)
 			NewTrack->TrackOpt->SetMute(true);
 		else
 			NewTrack->TrackOpt->SetMute(false);
@@ -511,9 +516,9 @@ void			WiredSessionXml::LoadTrack(int Number)
 	else
 		NewTrack->TrackOpt->SetMute(false);
 	Buffer = GetAttribute(STR_RECORDING);	
-	if (Buffer.c_str() != NULL)
+	if (!Buffer.IsEmpty())
 	{
-		if (Buffer.compare(STR_TRUE) == 0)
+		if (Buffer.Cmp(STR_TRUE) == 0)
 			NewTrack->TrackOpt->SetRecording(true);
 		else
 			NewTrack->TrackOpt->SetRecording(false);
@@ -523,28 +528,33 @@ void			WiredSessionXml::LoadTrack(int Number)
 	while (Read() == true)
 	{
 		Buffer = GetNodeName();
-		if (Buffer.compare(STR_TRACK) == 0)
+		if (Buffer.Cmp(STR_TRACK) == 0)
 			break;
-		if (Buffer.compare(STR_DEVIDE_ID) == 0)
+		if (Buffer.Cmp(STR_DEVIDE_ID) == 0)
+		{
+		  long	tmp;
+
+		  Read();
+		  Value = GetNodeValue();
+		  if (!Value.IsEmpty())
+		    {
+		      Value.ToLong(&tmp);
+		      NewTrack->TrackOpt->SetDeviceId(tmp);
+		    }
+		}
+		else if (Buffer.Cmp(STR_NAME) == 0)
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				NewTrack->TrackOpt->SetDeviceId(atol(Value));
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+				NewTrack->TrackOpt->SetName(Value);
 		}
-		else if (Buffer.compare(STR_NAME) == 0)
-		{
-			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				NewTrack->TrackOpt->SetName(wxString(Value, *wxConvCurrent));
-		}
-		else if (Buffer.compare(STR_PATTERN) == 0)
+		else if (Buffer.Cmp(STR_PATTERN) == 0)
 		{
 			LoadPattern(NewTrack, Number);
 			continue;
 		}
-		else if (Buffer.compare(STR_PLUGIN) == 0)
+		else if (Buffer.Cmp(STR_PLUGIN) == 0)
 		{
 			LoadPlugin(NewTrack);
 			continue;
@@ -559,43 +569,43 @@ void			WiredSessionXml::LoadTrack(int Number)
 void			WiredSessionXml::LoadPlugin(Track* TrackInfo)
 {
 	wxString		Buffer;
-	char 			*Value;
+	wxString		Value;
 	t_PluginXml		Plugin;
 	
 	while (Read() == true)
 	{
 		Buffer = GetNodeName();
-		if (Buffer.compare(STR_PLUGIN) == 0)
+		if (Buffer.Cmp(STR_PLUGIN) == 0)
 			break;
-		if (Buffer.compare(STR_PLUGIN_ID) == 0)
+		if (Buffer.Cmp(STR_PLUGIN_ID) == 0)
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				Plugin.Id = wxString(Value, *wxConvCurrent);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+				Plugin.Id = Value;
 		}
-		else if (Buffer.compare(STR_NAME) == 0)
+		else if (Buffer.Cmp(STR_NAME) == 0)
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				Plugin.Name = wxString(Value, *wxConvCurrent);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+				Plugin.Name = Value;
 		}
-		else if (Buffer.compare(STR_WIDTH) == 0)
+		else if (Buffer.Cmp(STR_WIDTH) == 0)
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				Plugin.Width = atoi(Value);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+			  Value.ToLong((long*)&Plugin.Width);
 		}
-		else if (Buffer.compare(STR_HEIGHT) == 0)
+		else if (Buffer.Cmp(STR_HEIGHT) == 0)
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				Plugin.Height = atoi(Value);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+			  Value.ToLong((long*)&Plugin.Height);
 		}
-		else if (Buffer.compare(STR_PLUGIN_DATA) == 0)
+		else if (Buffer.Cmp(STR_PLUGIN_DATA) == 0)
 		{
 			LoadPluginData(&Plugin);
 			continue;
@@ -649,27 +659,27 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 void			WiredSessionXml::LoadPluginData(t_PluginXml *Params)
 {
 	wxString		Buffer;
-	wxChar 			*Value;
+	wxString		Value;
 	wxString		ParamValue;
 	wxString		ParamName;
 	
 	while (Read() == true)
 	{
 		Buffer = GetNodeName();
-		if (Buffer.compare(STR_PLUGIN_DATA) == 0)
+		if (Buffer.Cmp(STR_PLUGIN_DATA) == 0)
 			break;
-		if (Buffer.compare(STR_PLUGIN_DATA_PARAM_NAME) == 0)
+		if (Buffer.Cmp(STR_PLUGIN_DATA_PARAM_NAME) == 0)
 		{
 			Read();
 			Value = GetNodeValue();
-			if (Value != NULL)
+			if (!Value.IsEmpty())
 				ParamName = Value;
 		}
-		else if (Buffer.compare(STR_PLUGIN_DATA_PARAM_VALUE) == 0)
+		else if (Buffer.Cmp(STR_PLUGIN_DATA_PARAM_VALUE) == 0)
 		{
 			Read();
 			Value = GetNodeValue();
-			if (Value != NULL)
+			if (!Value.IsEmpty())
 				ParamValue = Value;
 		}
 		else
@@ -684,37 +694,37 @@ void			WiredSessionXml::LoadPluginData(t_PluginXml *Params)
 void			WiredSessionXml::LoadPattern(Track *AddedTrack, int TrackNumber)
 {
 	wxString		Buffer;
-	char 			*Value;
+	wxString		Value;
 	t_PatternXml	PatternInfo;
 	
 	PatternInfo.TrackNumber = TrackNumber;
 	while (Read() == true)
 	{
 		Buffer = GetNodeName();
-		if (Buffer.compare(STR_PATTERN) == 0)
+		if (Buffer.Cmp(STR_PATTERN) == 0)
 			break;
-		if (Buffer.compare(STR_START_POS) == 0)
+		if (Buffer.Cmp(STR_START_POS) == 0)
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				PatternInfo.Position = atof(Value);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+			  Value.ToDouble(&PatternInfo.Position);
 		}
-		else if (Buffer.compare(STR_END_POS) == 0)
+		else if (Buffer.Cmp(STR_END_POS) == 0)
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				PatternInfo.EndPosition = atof(Value);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+			  Value.ToDouble(&PatternInfo.EndPosition);
 		}
-		else if (Buffer.compare(STR_NAME) == 0)
+		else if (Buffer.Cmp(STR_NAME) == 0)
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				PatternInfo.Name = wxString(Value, *wxConvCurrent);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+			  PatternInfo.Name = Value;
 		}
-		else if (Buffer.compare(STR_PATTERN_DATA) == 0)
+		else if (Buffer.Cmp(STR_PATTERN_DATA) == 0)
 		{
 			if (AddedTrack->IsAudioTrack() == true)
 				LoadPatternAudio(AddedTrack, &PatternInfo);
@@ -732,42 +742,42 @@ void			WiredSessionXml::LoadPattern(Track *AddedTrack, int TrackNumber)
 void			WiredSessionXml::LoadPatternAudio(Track *AddedTrack, t_PatternXml *InfoPattern)
 {
 	wxString			Buffer;
-	char 				*Value;
-	t_AudioPatternXml	APatternInfo;
-	AudioPattern		*Result;
+	wxString			Value;
+	t_AudioPatternXml		APatternInfo;
+	AudioPattern			*Result;
 	WaveFile			*AudioFile;
 	bool				IsInData = false;
 
 	while (Read() == true)
 	{
 		Buffer = GetNodeName();
-		if (Buffer.compare(STR_PATTERN_DATA) == 0)
+		if (Buffer.Cmp(STR_PATTERN_DATA) == 0)
 			break;
-		if (Buffer.compare(STR_PATTERN_AUDIO_DATA) == 0)
+		if (Buffer.Cmp(STR_PATTERN_AUDIO_DATA) == 0)
 		{
 			IsInData = IsInData ? false : true;
 			continue;
 		}
-		else if (Buffer.compare(STR_START_POS) == 0 && IsInData) 
+		else if (Buffer.Cmp(STR_START_POS) == 0 && IsInData) 
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				APatternInfo.StartWavePos = atol(Value);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+			  Value.ToLong(&APatternInfo.StartWavePos);
 		}
-		else if (Buffer.compare(STR_END_POS) == 0 && IsInData)
+		else if (Buffer.Cmp(STR_END_POS) == 0 && IsInData)
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				APatternInfo.EndWavePos = atol(Value);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+			  Value.ToLong(&APatternInfo.EndWavePos);
 		}
-		else if (Buffer.compare(STR_FILENAME) == 0 && IsInData && Value != NULL)
+		else if (Buffer.Cmp(STR_FILENAME) == 0 && IsInData && !Value.IsEmpty())
 		{
 			Read();
-			Value = (char *)GetNodeValue();
-			if (Value != NULL)
-				APatternInfo.FileName = wxString(Value, *wxConvCurrent);
+			Value = GetNodeValue();
+			if (!Value.IsEmpty())
+			  APatternInfo.FileName = Value;
 		}
 		else
 			continue;
@@ -793,24 +803,21 @@ void			WiredSessionXml::LoadPatternAudio(Track *AddedTrack, t_PatternXml *InfoPa
 		cout << "[WIREDSESSION] Invalid FileName" << endl;
 }
 
-
-
 void			WiredSessionXml::LoadPatternMIDI(Track *AddedTrack, t_PatternXml *InfoPattern)
 {
-	wxString	Buffer;
-	char 		*Value;
+  wxString	Buffer;
+  wxString	Value;
 
-	while (42)
-	{
-		Read();
-		Buffer = GetNodeName();
-		if (Buffer.compare(STR_PATTERN) == 0)
-			break;
-		Read();
-		Value = (char *)GetNodeValue();
-	}
+  while (42)
+    {
+      Read();
+      Buffer = GetNodeName();
+      if (Buffer.Cmp(STR_PATTERN) == 0)
+	break;
+      Read();
+      Value = GetNodeValue();
+    }
 }
-
 
 void			WiredSessionXml::Dumpfile(const wxString& FileName)
 {
@@ -818,19 +825,19 @@ void			WiredSessionXml::Dumpfile(const wxString& FileName)
 		_DocumentFileName = FileName;
 	if (OpenDocument(_DocumentFileName) == true)
 	{
-		if (OpenDtd(wxString(DTD_FILENAME)) == true)
+		if (OpenDtd(DTD_FILENAME) == true)
 		{
 			if (ValidDocument() == true)
 			{
 				while (Read() == true)
 				{
-					std::cout << "Node Name == {" << GetNodeName() << "}" << std::endl;
+				  std::cout << "Node Name == {" << GetNodeName().mb_str() << "}" << std::endl;
 					if (HasValue() == true)
-						std::cout << "Node Value == {" << GetNodeValue() << "}" << std::endl;
+					  std::cout << "Node Value == {" << GetNodeValue().mb_str() << "}" << std::endl;
 				}
 			}
 			else
-				std::cout << "[WIREDSESSION] File {" << _DocumentFileName.c_str() 
+				std::cout << "[WIREDSESSION] File {" << _DocumentFileName.mb_str() 
 					<< "} does not comply with DTD {" << DTD_FILENAME << "}" 
 					<< std::endl;
 		}
