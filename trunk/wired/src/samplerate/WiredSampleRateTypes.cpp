@@ -10,7 +10,7 @@ struct s_format_types	_FormatTypes[] =
 	{SF_FORMAT_PCM_16, paInt16, _("16 bits")},
 	{SF_FORMAT_PCM_24, paInt24, _("24 bits")},
 	{SF_FORMAT_PCM_32, paFloat32, _("Floating 32 bits")},
-	{0, 0}	
+	{0, 0, NULL}
 };
 
 struct s_samplerate_types	_SampleRateTypes[]=
