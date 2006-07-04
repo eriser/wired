@@ -927,9 +927,9 @@ void					MainWindow::LoadPlugins()
   wxString				str;
   PluginLoader				*p;
   
-  if (!PluginsConfFile.Open(WiredSettings->PlugConfFile.c_str()))
+  if (!PluginsConfFile.Open(WiredSettings->PlugConfFile))
     {
-      cerr << "Could not load " << PLUG_CONF_FILE << endl;
+      cerr << "Could not load " << WiredSettings->PlugConfFile.mb_str() << endl;
       return;
     }
   PluginMenuIndexCount = PLUG_MENU_INDEX_START;
@@ -946,14 +946,14 @@ void					MainWindow::LoadPlugins()
 	      p->Id = PluginMenuIndexCount++;
 	      if (p->InitInfo.Type == PLUG_IS_INSTR)
 		{
-		  CreateInstrMenu->Append(p->Id, (p->InitInfo.Name).c_str());
+		  CreateInstrMenu->Append(p->Id, p->InitInfo.Name);
 		  Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED,
 			  (wxObjectEventFunction)(wxEventFunction)
 			  (wxCommandEventFunction)&MainWindow::OnCreateRackClick);
 		}
 	      else
 		{
-		  CreateEffectMenu->Append(p->Id, (p->InitInfo.Name).c_str());
+		  CreateEffectMenu->Append(p->Id, p->InitInfo.Name);
 		  Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED,
 			  (wxObjectEventFunction)(wxEventFunction)
 			  (wxCommandEventFunction)&MainWindow::OnCreateEffectClick);
@@ -1066,7 +1066,7 @@ void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
 		PluginLoader 	*NewPlugin = new PluginLoader(LoadedExternalPlugins, event.GetId(), StartInfo);
 		
 		LoadedPluginsList.push_back(NewPlugin);
-		cout << "[MAINWIN] Creating rack for plugin: " << NewPlugin->InitInfo.Name << endl;
+		cout << "[MAINWIN] Creating rack for plugin: " << NewPlugin->InitInfo.Name.mb_str() << endl;
 		cActionManager::Global().AddEffectAction(&StartInfo, NewPlugin, true);
 	}
 }
@@ -1105,7 +1105,7 @@ void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
 	    }
 	if (p)
     {
-    	cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name << endl;     
+      cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name.mb_str() << endl;     
 	    cActionManager::Global().AddEffectAction(&StartInfo, p, true);
 	  CreateUndoRedoMenus(EditMenu);
 	}

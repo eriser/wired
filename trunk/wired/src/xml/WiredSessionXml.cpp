@@ -582,7 +582,11 @@ void			WiredSessionXml::LoadPlugin(Track* TrackInfo)
 			Read();
 			Value = GetNodeValue();
 			if (!Value.IsEmpty())
-				Plugin.Id = Value;
+			  {
+			    // Id is always a char* of 4
+			    for (int i = 0; i < 4; i++)
+			      Plugin.Id[i] = Value.GetChar(i);
+			  }
 		}
 		else if (Buffer.Cmp(STR_NAME) == 0)
 		{
@@ -626,16 +630,16 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 	PluginLoader 							*p = 0x0;
 	unsigned long							Id;
 
-	PluginInfo->Id.ToLong((long*)&Id);
+	Id = atol(PluginInfo->Id);
 	NewRack = RackPanel->AddTrack();
 	if (Id == 0)
 	{
 		for (it = LoadedPluginsList.begin(); it != LoadedPluginsList.end(); it++)
-			if (COMPARE_IDS((*it)->InitInfo.UniqueId, PluginInfo->Id.mb_str()))
-			{
-				p = *it;
-				break;
-			}
+		  if (COMPARE_IDS((*it)->InitInfo.UniqueId, PluginInfo->Id))
+		    {
+		      p = *it;
+		      break;
+		    }
 	}
 	else
 	{
@@ -647,7 +651,7 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 	    NewPlugin = NewRack->AddRack(StartInfo, p);
 	  }
     else
-		cout << "[WIREDSESSION] Plugin with Id  " << PluginInfo->Id.mb_str() << " is not loaded" << endl;     
+		cout << "[WIREDSESSION] Plugin with Id  " << PluginInfo->Id << " is not loaded" << endl;     
     if (NewPlugin)
 		NewPlugin->Name = PluginInfo->Name;
 	if (TrackInfo != NULL)
