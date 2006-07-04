@@ -1,14 +1,19 @@
--- About --
+==ABOUT==
 
 Wired is an audio creation free software for Linux. 
 Its intuitive GUI is user-friendly for amateurs whereas its abilities covers
-the needs of semi-professionnals. It handles many input and output formats, the
-midi standard, multichannel and automation.
+the needs of semi-professionnals. It brings musicians a complete studio 
+environment to compose, record, edit and mix music without the need of expensive 
+hardware.
 
--- Install --
+==INSTALLATION==
 
 Please read "INSTALL" for installation purpose
 
--- Website --
+==WEBSITE==
 
 http://wired.sourceforge.net
+
+==CONTACT==
+
+wired@bloodshed.net

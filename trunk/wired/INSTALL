@@ -1,64 +1,103 @@
-* Wired installation notes*
+This document contains installation notes and installation problems resolutions. 
+If, after having read it carefully, you still cannot install Wired, please 
+consider reporting in the user forum : http://wired.sf.net/
 
-You need to follow some important notes before being able to compile Wired.
-Please read them below :
-
---- Wired requires several libraries you need to install before compiling it:
+==DEPENDENCIES==
+Before trying to compile Wired, you should make sure you have the following 
+packages installed on your system. They are Wired's direct dependancies and they 
+may need other dependancies not listed here. We cannot encourage you enough to 
+use your distribution's package system as it, most of the time, handles 
+those dependancies problems.
 
   - ALSA support in your kernel and alsalib installed 
+      http://www.alsa-project.org
 	* Kernels 2.6.x have integrated ALSA support
 	* You can download alsalib and latest card drivers at :
-	http://www.alsa-project.org
 
-  - GTK 2 : http://www.gtk.org
+  - libxml2
+    http://xmlsoft.org/
 
-  - wxGTK 2.6.x : www.wxwidgets.org
+  - GTK 2 
+      http://www.gtk.org
+
+  - wxGTK 2.6.x 
+      http://www.wxwidgets.org
 	* When compiling wxWidgets, be sure you are using GTK2 support by 
 	passing to configure script: --enable-gtk2
 
-  - Latest CVS snapshot of PortAudio v19 
-	* You should be able to download it from:
-	http://portaudio.com/archives/pa_snapshot_v19.tar.gz
-	* We recommend to compile with ALSA support (--with-alsa) and without 
-	JACK since jack support hasn't been really tested.
-
-  - SoundTouch: http://sky.prohosting.com/oparviai/soundtouch/
-	* /!\ VERY IMPORTANT /!\
-	You need to modify a SoundTouch header before compiling and installing,
-	in order to use float samples instead of integers:
-	  - open the file SoundTouch/include/STTypes.h
+  - SoundTouch: 
+      http://sky.prohosting.com/oparviai/soundtouch/
+	* You have to make sure SoundTouch uses float samples instead of integer 
+	samples.
+	To do so, follow these steps :
+	  - go to the SoundTouch sources directory
+	  - open the file include/STTypes.h
 	  - find line "#define INTEGER_SAMPLES" and COMMENT it
 	  - find line "#define FLOAT_SAMPLES" and UNCOMMENT it
 	  - now you can compile and install SoundTouch
 
-  - libsndfile : http://www.mega-nerd.com/libsndfile/
+  - libsndfile 
+      http://www.mega-nerd.com/libsndfile/
 
-  - libsamplerate (at least 0.1) : http://www.mega-nerd.com/SRC/download.html
+  - libsamplerate
+      http://www.mega-nerd.com/SRC/
 
-  - dssi-0.9 : http://dssi.sourceforge.net/download.html
+  - dssi 
+      http://dssi.sourceforge.net/
+        * This is only useful if you want to have dssi plugins integrated.
+	However, it is highly reccomended as these are great plugins.
 
 
---- To compile Wired:
-       	- type "./autogen.sh"
-	- type "./configure"
-	- type "make"
-	- login as root and type "make install"
-	
---- To run wired:
-	- type "wired" in a console
+==COMPILATION==
+The easy way is as follow.
 
---- Most known compilation problems
-  	
-	- Error in AudioEngine, such as : 
-	./engine/AudioEngine.h:87: error: `PaDeviceIndex' was not declared in this scope 
-	* You have an old PortAudio v18 version installed. 
-	Wired requires latest v19
+$ ./autogen.sh
+$ ./configure
+$ make
+$ su
+Password:
+$ make install
 
-	- Error in LoopSampler, such as :
-	error: no matching function for call to `SoundTouch::receiveSamples(float*, long int)' 
-	* You didn't made the modifications needed to SoundTouch header, please read
-	section above about required libraries.
+If everything has went well, you should be able to type wired in a console to 
+start enjoying Wired.
+If this doesn't work, there are a few known compilation problems.
 
-	- Error in a wxWidgets statement :
-	- Please check the Wired discussion and help forums if you run into troubles:
-	   http://sourceforge.net/forum/?group_id=120022
+
+==KNOWN COMPILATION ERRORS==
+
+1- Global considerations
+
+The configure script is there, among things, to check for your configuration to 
+be ready to receive Wired. However, you should check for its output. It should 
+print a summary of the informations it found when it is done. Make sure each 
+dependency is followed by a version number and that each option is followed by 
+the correct setting. 
+
+2- Error in LoopSampler
+
+If you have an error looking like
+   "error: no matching function for call to `SoundTouch::receiveSamples(float*, 
+   long int)'",
+Make sure you made the modifications needed to SoundTouch header. Please read 
+carefully the DEPENDENCIES section
+
+3- Cannot find shared library at launch
+
+If you have an error looking like "wired: error while loading shared libraries: 
+libWiredWidgets.so.0: cannot open shared object file: No such file or directory",
+the problem comes from the fact that wired was installed in your /usr/local/ 
+directory and your system tries to find the libraries in /usr.
+There are two ways two solve this problems, install Wired in /usr or tell you 
+system to look for libraries in /usr/local/.
+
+Solution 1 :
+pass --prefix=/usr to the configure script
+
+Solution2 :
+$ export LD_LIBRARY_PATH=/usr/local/lib
+$ wired
+
+You can also add the export command to your .bashrc so you won't have to type it 
+each time.
+
+However solution one should prefer as long as it is possible.
