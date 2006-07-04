@@ -17,8 +17,9 @@
 #include "RingBuffer.h"
 #include "Settings.h"
 
+#define DEFAULT_SAMPLE_RATE_INT		44100
 #define DEFAULT_SAMPLE_RATE		44100.0
-#define DEFAULT_SAMPLES_PER_BUFFER	4096
+#define DEFAULT_SAMPLES_PER_BUFFER	2048
 
 using namespace std;
 

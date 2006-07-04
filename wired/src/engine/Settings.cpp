@@ -10,13 +10,16 @@
 #include <wx/msgdlg.h>
 #include <iostream>
 
+#include "AudioEngine.h"
+
 #include "config.h"
 
 Settings *WiredSettings;
 
 Settings::Settings() :
   QuickWaveRender(false), dbWaveRender(false), OutputDev(-1), InputDev(-1), OutputLatency(-1),
-  InputLatency(-1), SampleRate(44100), SamplesPerBuffer(2048), SampleFormat(-1), maxUndoRedoDepth(20), WorkingDir(wxT(""))
+  InputLatency(-1), SampleRate(DEFAULT_SAMPLE_RATE_INT), SamplesPerBuffer(DEFAULT_SAMPLES_PER_BUFFER),
+  SampleFormat(-1), maxUndoRedoDepth(20), WorkingDir(wxT(""))
 {
   wxFileName f;
 
@@ -110,9 +113,9 @@ void Settings::Load()
   conf->Read(wxT("dbWaveRender"), &dbWaveRender, false);
   conf->Read(wxT("OutputDev"), &OutputDev, false);
   conf->Read(wxT("InputDev"), &InputDev, false);
-  conf->Read(wxT("SampleRate"), &SampleRate, 0);
+  conf->Read(wxT("SampleRate"), &SampleRate, DEFAULT_SAMPLE_RATE_INT);
   conf->Read(wxT("SampleFormat"), &SampleFormat, 0);
-  conf->Read(wxT("SamplesPerBuffer"), &SamplesPerBuffer, 4096);
+  conf->Read(wxT("SamplesPerBuffer"), &SamplesPerBuffer, DEFAULT_SAMPLES_PER_BUFFER);
   wxString		temp1(wxT(""));
   wxString		temp2(wxT("WorkingDirectory"));
   conf->Read(temp2, &WorkingDir, temp1);
