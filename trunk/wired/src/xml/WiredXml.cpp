@@ -78,7 +78,7 @@ bool					WiredXml::OpenDtd(const wxString& FileName)
 	if ((fd = open(_DtdFileName.mb_str(*wxConvCurrent), FLAGS_OPEN_RDONLY)) != INVALID_FD)
 	{
 		close(fd);
-		_DtdFile = xmlParseDTD(NULL, (const xmlChar*) _DtdFileName.mb_str(*wxConvCurrent).data());
+		_DtdFile = xmlParseDTD(NULL, ((const xmlChar*)(const char *)_DtdFileName.mb_str()));
 		if (_DtdFile != NULL)
 			return true;
 	}
@@ -209,16 +209,16 @@ bool					WiredXml::StartComment()
 
 bool					WiredXml::WriteComment(const wxString& Comment, bool Ended)
 {
-	if (_DocumentWriter != NULL)
+  if (_DocumentWriter != NULL)
+    {
+      if (xmlTextWriterWriteComment(_DocumentWriter, ((xmlChar*)(const char *) Comment.mb_str())) >= 0)
 	{
-		if (xmlTextWriterWriteComment(_DocumentWriter, (xmlChar*) Comment.mb_str(*wxConvCurrent).data()) >= 0)
-		{
-			if (Ended == true)
-				return EndComment();
-			return true;
-		}		
-	}
-	return false;
+	  if (Ended == true)
+	    return EndComment();
+	  return true;
+	}		
+    }
+  return false;
 }
 
 bool					WiredXml::EndComment()
@@ -231,7 +231,7 @@ bool					WiredXml::EndComment()
 bool					WiredXml::StartAttribute(const wxString& Name)
 {
   if (_DocumentWriter != NULL)
-    return (xmlTextWriterStartAttribute(_DocumentWriter, (xmlChar *) Name.mb_str(*wxConvCurrent).data()) >= 0);
+    return (xmlTextWriterStartAttribute(_DocumentWriter, ((xmlChar *)(const char *) Name.mb_str())) >= 0);
   return false;
 }
 		
@@ -240,8 +240,8 @@ bool					WiredXml::WriteAttribute(const wxString& Name, const wxString& Content,
   if (_DocumentWriter != NULL)
     {
       if (xmlTextWriterWriteAttribute(_DocumentWriter,
-				      (xmlChar*)Name.mb_str(*wxConvCurrent).data(),
-				      (xmlChar*)Content.mb_str(*wxConvCurrent).data()) >= 0)
+				      ((xmlChar*)(const char *)Name.mb_str()),
+				      ((xmlChar*)(const char *)Content.mb_str())) >= 0)
 	{
 	  if (Ended == true)
 	    return EndAttribute();
