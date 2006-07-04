@@ -156,7 +156,9 @@ extern int errno;
 
 typedef struct	s_PluginXml
 {
-	wxString		Id;
+  // is only a 4 char id, sometimes its a unsigned long (with atol)
+  // don't care about unicode
+	char		Id[4];
 	wxString		Name;
 	int				Width;
 	int				Height;
