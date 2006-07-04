@@ -1,3 +1,54 @@
-Visit http://sourceforge.net/tracker/?group_id=120022&atid=685647
+This document is based on the user experience of Wired as reported in the user 
+forum. Wired is really relying on its users' feedback to evolve. Don't hesitate 
+to come and visit us at http://wired.sf.net/
 
-Help us !
+
+==INTRODUCTION==
+If you find any bug or if you have any difficulties using Wired, please follow 
+the foolowing steps.
+1- Go to the "KNOWN BUGS" section of this document and check if yours is present.
+   Instructions will be given there
+2- Visit the user forum (http://bloodshed.net/wired/userforum) and search for a 
+   post concerning your problem, it may already be discussed.
+3- If nobody has already talked about it, please start a new thread in the 
+   appropriate forum, you'll be answered soon.
+
+
+==COMMON USAGE PROBLEMS==
+1- "You may check for your audio settings..."
+
+First, you should check you audio settings... ;-)
+To do so, in the menu 'Edit', choose 'Settings...'. Then go to the Audio section.
+In the Output subsection, choose a sound card, make sure two outputs are checked.
+Then go back to the main audio section and select a samplerate and a latency. 
+The '4096 Samples/buffer' is known to be unstable on some configurations. 
+Please, try to avoid it.
+
+If it still doesn't work, or if you can't find any soundcard in the list, it may 
+be because you are using ALSA and another software is already using your 
+soundcard. Close every audio applications and try to relaunch wired.
+
+You can try to use fuser to check if a command is using your audio devices.
+$ fuser -v /dev/dsp
+should make it in most cases, but you can replace /dev/dsp with the appropriate 
+device, depending on your configuration. 
+
+
+
+==KNOWN BUGS==
+1- Session loading
+
+When you try to load a session, Wired freezes.
+
+This happens on some configurations, we are trying to understand why. As it does 
+not occurs all the time, we have not been able to correct it efficiently. Please 
+read this thread on the forum :
+Instructions are given in the first post.
+
+2- Multi track play
+
+Wired can only play one track/instrument correctly, the others are scrambled.
+
+Like the previous one, this bug hasn't been localized yet. We need your feedback 
+to do so. Please read this thread on the forum : 
+Instructions are given in the first post.
