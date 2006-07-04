@@ -44,7 +44,7 @@ bool			WiredSessionXml::Load(const wxString& FileName)
 			if (ValidDocument() == true)
 				return ParseWiredSession();
 			else
-				std::cout << "[WIREDSESSION] File {" << _DocumentFileName.c_str() 
+				std::cout << "[WIREDSESSION] File {" << _DocumentFileName.mb_str() 
 					<< "} does not comply with DTD {" << DTD_FILENAME << "}" 
 					<< std::endl;
 		}
@@ -57,7 +57,7 @@ bool			WiredSessionXml::Load(const wxString& FileName)
 	else
 	{
 		std::cout << "[WIREDSESSION] Unable to load file {" 
-			<< _DocumentFileName.c_str() << "}" << std::endl;
+			<< _DocumentFileName.mb_str() << "}" << std::endl;
 	}
 	return false;
 }
@@ -68,16 +68,16 @@ bool			WiredSessionXml::Save()
 	{
 		if (_DocumentWriter != NULL)
 		{
-			wxFileName 	session_dir(_DocumentWriterName.c_str());
-			wxFileName 	f(_WorkingDir.c_str());
+			wxFileName 	session_dir(_DocumentWriterName);
+			wxFileName 	f(_WorkingDir);
 			TrackIter	Ts;
 
 			f.MakeRelativeTo(session_dir.GetPath());
-			StartElement(wxString(STR_ROOT_NODE_NAME));
-			StartElement(wxString(STR_WORKING_DIR));
-			WriteString((wxString)f.GetFullPath());
+			StartElement(STR_ROOT_NODE_NAME);
+			StartElement(STR_WORKING_DIR);
+			WriteString(f.GetFullPath());
 			EndElement();
-			SaveSeq();			
+			SaveSeq();
 			for (Ts = Seq->Tracks.begin(); Ts != Seq->Tracks.end(); Ts++)
 			{
 				SaveTrack(*Ts);
@@ -88,7 +88,7 @@ bool			WiredSessionXml::Save()
 		}
 		return true;
 	}
-	std::cout << "[WIREDSESSION] Writing XML failed for file: " << _DocumentFileName.c_str() << std::endl;
+	std::cout << "[WIREDSESSION] Writing XML failed for file: " << _DocumentFileName.mb_str() << std::endl;
 	return false;
 }
 
@@ -624,13 +624,14 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 	Plugin 									*NewPlugin;
 	std::vector<PluginLoader *>::iterator 	it;
 	PluginLoader 							*p = 0x0;
-	unsigned long							Id = atol(PluginInfo->Id.mb_str(*wxConvCurrent));
-	
+	unsigned long							Id;
+
+	PluginInfo->Id.ToLong((long*)&Id);
 	NewRack = RackPanel->AddTrack();
 	if (Id == 0)
 	{
 		for (it = LoadedPluginsList.begin(); it != LoadedPluginsList.end(); it++)
-			if (COMPARE_IDS((*it)->InitInfo.UniqueId, PluginInfo->Id.c_str()))
+			if (COMPARE_IDS((*it)->InitInfo.UniqueId, PluginInfo->Id.mb_str()))
 			{
 				p = *it;
 				break;
@@ -641,12 +642,12 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 		p = new PluginLoader(LoadedExternalPlugins, Id);
 	}
 	if (p)
-	{
-	 	cout << "[WIREDSESSION] Creating rack for plugin: " << p->InitInfo.Name << endl;
-		NewPlugin = NewRack->AddRack(StartInfo, p);
-	}
+	  {
+	    cout << "[WIREDSESSION] Creating rack for plugin: " << p->InitInfo.Name.mb_str() << endl;
+	    NewPlugin = NewRack->AddRack(StartInfo, p);
+	  }
     else
-		cout << "[WIREDSESSION] Plugin with Id  " << PluginInfo->Id.c_str() << " is not loaded" << endl;     
+		cout << "[WIREDSESSION] Plugin with Id  " << PluginInfo->Id.mb_str() << " is not loaded" << endl;     
     if (NewPlugin)
 		NewPlugin->Name = PluginInfo->Name;
 	if (TrackInfo != NULL)
@@ -850,7 +851,7 @@ void			WiredSessionXml::Dumpfile(const wxString& FileName)
 	else
 	{
 		std::cout << "[WIREDSESSION] Unable to load file {" 
-			<< _DocumentFileName.c_str() << "}" << std::endl;
+			<< _DocumentFileName.mb_str() << "}" << std::endl;
 	}
 }
 
