@@ -13,6 +13,8 @@
 #include "../midi/MidiDevice.h"
 #include <sstream>
 
+#include "../samplerate/WiredSampleRate.h"
+
 #define	CATEGORY_ID	45001
 
 
@@ -484,9 +486,11 @@ void SettingWindow::Save()
 
 void SettingWindow::LoadSampleFormat()
 {
-  vector<DeviceFormat *>::iterator i;
-  unsigned int k = (OutputChoice->GetSelection() - 1) > 0 ? OutputChoice->GetSelection() - 1 : 0;
-  
+  int					n;
+  vector<DeviceFormat *>::iterator	i;
+  unsigned int k = (OutputChoice->GetSelection() != wxNOT_FOUND) ?
+    (OutputChoice->GetSelection() - 1) : 0;
+
   BitsChoice->Clear();
   if (k < Audio->DeviceList.size())
     {
@@ -495,41 +499,20 @@ void SettingWindow::LoadSampleFormat()
 	   i++)
 	if ((*i)->SampleRates.size() > 0)
 	  {
-	    switch ((*i)->SampleFormat)
-	      {
-	      case paInt8 : 
+	    // we check all known format
+	    for (n = 0; _FormatTypes[n].PaFormat; n++)
+	      if ((*i)->SampleFormat == _FormatTypes[n].PaFormat)
 		{
-		  BitsChoice->Append(wxString(_("8 bits[currently unsupported]")));
-		  break;
+		  // we support only paFloat32
+		  if ((*i)->SampleFormat == paFloat32)
+		    {
+		      BitsChoice->SetSelection(
+			       BitsChoice->Append(_FormatTypes[n].FormatName));
+		    }
+		  else
+		    BitsChoice->Append(wxString(_FormatTypes[n].FormatName) + _("[currently unsupported]"));
 		}
-	      case paUInt8 : 
-		{
-		  BitsChoice->Append(wxString(_("8 bits (unsigned)[currently unsupported]")));
-		  break;
-		}
-	      case paInt16 : 
-		{
-		  BitsChoice->SetSelection(
-		    BitsChoice->Append(wxString(_("16 bits[currently unsupported]"))));
-		  break;
-		}
-	      case paInt24 : 
-		{
-		  BitsChoice->Append(wxString(_("24 bits[currently unsupported]")));
-		  break;
-		}
-	      case paInt32 : 
-		{
-		  BitsChoice->Append(wxString(_("32 bits[currently unsupported]")));
-		  break;
-		}
-	      case paFloat32 : 
-		{
-		  BitsChoice->Append(wxString(_("32 bits (float)")));
-		  break;
-		}
-	      }
-	  }     
+	  }
     }
   if (WiredSettings->SampleFormat < BitsChoice->GetCount())
     BitsChoice->SetSelection(WiredSettings->SampleFormat);
