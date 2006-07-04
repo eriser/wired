@@ -35,15 +35,10 @@ Settings::Settings() :
       ConfDir = PlugConfFile;
       PlugConfFile += PLUG_CONF_FILE;
       f.Assign(PlugConfFile);
-      if (!f.FileExists()) // if not found try in current directory
+      if (!f.FileExists()) // if not found let hope it belongs the current directory
 	{
 	  PlugConfFile = PLUG_CONF_FILE;
-	  ConfDir = wxT("");
-	  f.Assign(PlugConfFile);
-	  if (!f.FileExists()) // plugin conf file not found
-	    {
-	      PlugConfFile = wxT("");
-	    }
+	  ConfDir = wxT("./");
 	}
     }
 
@@ -56,15 +51,8 @@ Settings::Settings() :
       DataDir = wxT("/usr");
       DataDir += WIRED_DATADIR;
       f.Assign(DataDir);
-      if (!f.DirExists()) // if not found try in current directory
-	{
-	  DataDir = WIRED_DATADIR;
-	  f.Assign(DataDir.c_str());
-	  if (!f.DirExists()) // plugin conf file not found
-	    {
-	      DataDir = wxT("");
-	    }
-	}
+      if (!f.DirExists()) // if not found let hope it belongs the current directory
+	DataDir = WIRED_DATADIR;
     }
 
   f.AssignHomeDir();
@@ -91,7 +79,7 @@ Settings::Settings() :
     }
   else
     {
-      cout << "[SETTINGS] Could not open config file, access was denied to " << f.GetFullPath().c_str() 
+      cout << "[SETTINGS] Could not open config file, access was denied to " << f.GetFullPath().mb_str() 
 	   << endl;
       throw; // FIXME add a decent object to throw
     }
