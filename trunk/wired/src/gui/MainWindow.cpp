@@ -418,13 +418,13 @@ void                MainWindow::InitLocale()
 {
     mLocale = new wxLocale();
     if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
-    {
-        //mLocale->AddCatalogLookupPathPrefix(wstring(PACKAGE_LOCALE_DIR));
+      {
+        mLocale->AddCatalogLookupPathPrefix(wxString(INSTALL_PREFIX) + wxT("share/locale/"));
         mLocale->AddCatalog(wxT("wired"));
         mLocale->AddCatalog(wxT("wxstd"));
-    }
+      }
     else
-        cout << "[MAINWIN] Could not initialize locale, falling down on default" << endl;
+      cout << "[MAINWIN] Could not initialize locale, falling down on default" << endl;
 }
 
 void					MainWindow::InitFileConverter()
