@@ -60,7 +60,6 @@ WiredSessionXml		*CurrentXmlSession = NULL;
 WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
 FileConversion		*FileConverter = NULL;
 SettingWindow		*SettingsWin = NULL;
-Settings		*WiredSettings = NULL;
 
 wxMutex			AudioMutex;
 wxCondition		*SeqStopped = NULL;
