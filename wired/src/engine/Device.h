@@ -51,15 +51,17 @@ class DeviceFormat
 class Device
 {
  public:
-  Device(int id, wxString name, int maxin, int maxout)	
+  Device(int id, wxString name, int maxin, int maxout, int host)	
 				{					\
 				  Id = id; Name = name;			\
 				  MaxInputChannels = maxin;		\
 				  MaxOutputChannels = maxout;		\
-				}
+				  AudioSystem = host;			\
+				};
   ~Device();
   
   int		Id;
+  int		AudioSystem;
   wxString	Name;
   int		MaxInputChannels;
   int		MaxOutputChannels;

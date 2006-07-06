@@ -25,10 +25,13 @@ class Settings
   bool QuickWaveRender;
   bool dbWaveRender;
   unsigned int	maxUndoRedoDepth;
-  
+
+  long OutputSystem;
+  long InputSystem;
+
   long OutputDev;
   long InputDev;
-  
+
   double OutputLatency;
   double InputLatency;
   
@@ -52,6 +55,8 @@ class Settings
   wxConfig *conf;
 
  private:
+  void	SaveChannels(wxString Group, vector<long>& list);
+  void	ReadChannels(wxString Group, vector<long>& list);
 };
 
 extern Settings *WiredSettings;
