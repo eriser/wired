@@ -21,9 +21,11 @@ AudioEngine::AudioEngine()
 
   cout << "[AUDIO] Portaudio initialized" << endl; 
   UserData = new callback_t;
+
   GetAudioSystems();
   GetDevices();
   SetDefaultSettings();
+
   cout << "[AUDIO] AudioEngine initialized" << endl; 
 }
 
@@ -47,37 +49,12 @@ AudioEngine::~AudioEngine()
 
 void AudioEngine::SetDefaultSettings(void)
 {
-  WiredSettings->OutputDev = 1;//Pa_GetDefaultOutputDevice();
-  WiredSettings->InputDev = 1;//Pa_GetDefaultOutputDevice();
-  SelectedOutputDevice = GetDeviceById(Pa_GetDefaultOutputDevice());
-  SelectedInputDevice = SelectedOutputDevice;
-  
-  WiredSettings->OutputChannels.push_back(0);
-  WiredSettings->OutputChannels.push_back(1);
-  //WiredSettings->InputChannels = 0;
+  SelectedOutputDevice = NULL;
+  SelectedInputDevice = NULL;
   
   SamplesPerBuffer = DEFAULT_SAMPLES_PER_BUFFER;
   SampleRate = DEFAULT_SAMPLE_RATE;
   UserData->SampleFormat = DEFAULT_SAMPLE_FORMAT;
-  
-  /*int i = 0;
-  for (vector<DeviceFormat*>::iterator df = 
-	 SelectedOutputDevice->SupportedFormats.begin();
-       df != SelectedOutputDevice->SupportedFormats.end();
-       df++)
-    {
-      
-      cout << "id " << i++ << " " << (*df)->SampleRates.size() << endl;
-      for (vector<double>::iterator it = (*df)->SampleRates.begin(); 
-	   it != (*df)->SampleRates.end();
-	   it++ )
-	{
-	  cout << *it << "\t"<< endl;
-	}
-      
-    }
-  */
-  
 }
 
 
@@ -395,7 +372,7 @@ void AudioEngine::OpenStream()
   if (WiredSettings->InputChannels.size())
     {
       InputParameters.device = SelectedInputDevice->Id;
-      InputParameters.channelCount = SelectedOutputDevice->MaxInputChannels;// UserData->InputChannels;//
+      InputParameters.channelCount = SelectedInputDevice->MaxInputChannels;
       InputParameters.sampleFormat = UserData->SampleFormat | paNonInterleaved;
       InputParameters.suggestedLatency  = Latency;
       InputParameters.hostApiSpecificStreamInfo = NULL;

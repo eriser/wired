@@ -41,13 +41,7 @@ SettingWindow::SettingWindow()
   MidiLoaded = false;
   AudioLoaded = false;
   Center();
-  
-  // GeneralBtn = new wxToggleButton(this, Setting_General, _("General"), 
-// 				  wxPoint(8, 8), wxSize(80, 28));
-//   AudioBtn = new wxToggleButton(this, Setting_Audio, _("Audio"), 
-// 				wxPoint(92, 8), wxSize(80, 28));
-//   MidiBtn = new wxToggleButton(this, Setting_Midi, _("MIDI"), wxPoint(176, 8), wxSize(80, 28));
-  
+
   SettingsTree = new wxTreeCtrl(this, CATEGORY_ID, wxPoint(WIN_MARGIN, WIN_MARGIN), 
 				wxSize(206, 400), wxSUNKEN_BORDER | wxTR_NO_LINES |
 				wxTR_HAS_BUTTONS | wxTR_SINGLE | wxTR_HIDE_ROOT |
@@ -89,6 +83,7 @@ SettingWindow::SettingWindow()
 
 SettingWindow::~SettingWindow()
 {
+  // created in AudioPanelView
   delete [] Latencies;
 }
 
@@ -349,29 +344,21 @@ void SettingWindow::RefreshChannels(wxCheckListBox* list, int system_selected,
   // device is "None"
   if (!dev)
     return;
-
-  if (input)
-    {
-      for (i = 1; i <= dev->MaxInputChannels; i++)
-	{
-	  str.Clear();
-	  str << _("Input ") << i;
-	  list->Append(str);
-	}
-    }
-  else
-    {
-      for (i = 1; i <= dev->MaxOutputChannels; i++)
-	{
-	  str.Clear();
-	  str << _("Output ") << i;
-	  list->Append(str);
-	  // on check les premieres sorties l/r
-	  if (i < 3)
-	    OutputChannelList->Check(i - 1);
-	}
-    }
   
+  for (i = 1; (input) ? (i <= dev->MaxInputChannels) : 
+	 (i <= dev->MaxOutputChannels); i++)
+    {
+      str.Clear();
+      if (input)
+	str << _("Input ");
+      else
+	str << _("Output ");
+      str << i;
+      list->Append(str);
+      if (i < 3)
+	list->Check(i - 1);
+    }
+
   LoadSampleFormat();
   LoadSampleRates();
 

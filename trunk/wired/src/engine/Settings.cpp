@@ -11,13 +11,11 @@
 
 #include "config.h"
 
-Settings *WiredSettings;
-
 Settings::Settings() :
-  QuickWaveRender(false), dbWaveRender(false), OutputSystem(-1), InputSystem(-1),
-  OutputDev(-1), InputDev(-1), OutputLatency(-1), InputLatency(-1),
+  QuickWaveRender(false), dbWaveRender(false), OutputSystem(0), InputSystem(0),
+  OutputDev(0), InputDev(0), OutputLatency(-1), InputLatency(-1),
   SampleRate(DEFAULT_SAMPLE_RATE_INT), SamplesPerBuffer(DEFAULT_SAMPLES_PER_BUFFER),
-  SampleFormat(-1), maxUndoRedoDepth(20), WorkingDir(wxT(""))
+  SampleFormat(DEFAULT_SAMPLE_FORMAT), maxUndoRedoDepth(20), WorkingDir(wxT(""))
 {
   wxFileName f;
 
@@ -43,7 +41,7 @@ Settings::Settings() :
   DataDir = wxT(INSTALL_PREFIX);
   DataDir += WIRED_DATADIR;
   
-  f.Assign(DataDir.c_str());
+  f.Assign(DataDir);
   if (!f.DirExists()) // if not found try /usr
     {
       DataDir = wxT("/usr");
@@ -72,7 +70,8 @@ Settings::Settings() :
 	  wxMessageDialog msg(0x0, welcome, WIRED_NAME, wxOK | wxICON_INFORMATION | wxCENTRE);
 	  msg.ShowModal();
 	}
-      conf = new wxConfig(WIRED_NAME, wxT("P31"), WIRED_CONF, WIRED_CONF, wxCONFIG_USE_LOCAL_FILE);  
+      conf = new wxConfig(WIRED_NAME, wxT("P31"), WIRED_CONF, WIRED_CONF,
+			  wxCONFIG_USE_LOCAL_FILE);  
       Load();
     }
   else
@@ -91,19 +90,17 @@ Settings::~Settings()
 
 void Settings::ReadChannels(wxString Group, vector<long>& list)
 {
-  vector<long>::iterator	i;
   wxString			s;
   long				l;
   long				val;
 
   conf->SetPath(Group);
-  for (l = 0, i = list.begin(); i != list.end(); i++, l++)
+  for (l = 0; ; l++)
     {
       s.Printf(wxT("%d"), l);
-      if (conf->Read(s, &val, -1))
-	MidiIn.push_back(val);
-      else
-	break;
+      if (!conf->Read(s, &val, -1))
+	return;
+      list.push_back(val);
     }
 }
 
