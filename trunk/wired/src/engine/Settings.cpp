@@ -11,6 +11,10 @@
 
 #include "config.h"
 
+// we can't move this global var until plugins doesn't use it anymore
+// TODO : write missing API functions to handle this
+Settings		*WiredSettings = NULL;
+
 Settings::Settings() :
   QuickWaveRender(false), dbWaveRender(false), OutputSystem(0), InputSystem(0),
   OutputDev(0), InputDev(0), OutputLatency(-1), InputLatency(-1),

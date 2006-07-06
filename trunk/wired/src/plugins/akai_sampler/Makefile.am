@@ -35,6 +35,7 @@ libWiredSampler_la_SOURCES =					\
 			../../redist/Plugin.cpp		\
 			../../gui/WaveView.cpp		\
 			../../gui/WaveDrawer.cpp	\
+			../../engine/Settings.cpp	\
 			../../audio/WaveFile.cpp
 
 libWiredSampler_la_LIBADD = $(DEPS_LIBS)
