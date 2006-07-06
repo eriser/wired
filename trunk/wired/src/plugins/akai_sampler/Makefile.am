@@ -33,7 +33,6 @@ libWiredSampler_la_SOURCES =					\
 			ASLoop.h			\
 			../../redist/Polyphony.cpp	\
 			../../redist/Plugin.cpp		\
-			../../engine/Settings.cpp	\
 			../../gui/WaveView.cpp		\
 			../../gui/WaveDrawer.cpp	\
 			../../audio/WaveFile.cpp

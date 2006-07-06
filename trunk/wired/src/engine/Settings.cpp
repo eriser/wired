@@ -19,29 +19,26 @@ Settings::Settings() :
 {
   wxFileName f;
 
-  ConfDir = wxT(INSTALL_PREFIX);
-  ConfDir += wxT("/etc/");
-  PlugConfFile = ConfDir;
-  PlugConfFile += PLUG_CONF_FILE;
+  ConfDir = wxString(wxT(INSTALL_PREFIX)) + wxString(wxT("/etc/"));
+  PlugConfFile = ConfDir + PLUG_CONF_FILE;
 
   f.Assign(PlugConfFile);
   if (!f.FileExists()) // if not found try /etc 
     {
-      PlugConfFile = wxT("/etc/");
-      ConfDir = PlugConfFile;
-      PlugConfFile += PLUG_CONF_FILE;
+      ConfDir = wxT("/etc/");
+      PlugConfFile = ConfDir + wxString(PLUG_CONF_FILE);
       f.Assign(PlugConfFile);
       if (!f.FileExists()) // if not found let hope it belongs the current directory
 	{
-	  PlugConfFile = PLUG_CONF_FILE;
 	  ConfDir = wxT("./");
+	  PlugConfFile = ConfDir + wxString(PLUG_CONF_FILE);
 	}
     }
 
   DataDir = wxT(INSTALL_PREFIX);
   DataDir += WIRED_DATADIR;
   
-  f.Assign(DataDir);
+  f.Assign(DataDir.c_str());
   if (!f.DirExists()) // if not found try /usr
     {
       DataDir = wxT("/usr");
@@ -56,7 +53,7 @@ Settings::Settings() :
   
   if (f.Mkdir(0755, wxPATH_MKDIR_FULL))
     {
-      f.SetName(wxT("wired.conf"));
+      f.SetName(WIRED_CONF);
       if (!f.FileExists())
 	{
 	  wxString	welcome;
@@ -70,7 +67,10 @@ Settings::Settings() :
 	  wxMessageDialog msg(0x0, welcome, WIRED_NAME, wxOK | wxICON_INFORMATION | wxCENTRE);
 	  msg.ShowModal();
 	}
-      conf = new wxConfig(WIRED_NAME, wxT("P31"), WIRED_CONF, WIRED_CONF,
+
+      conf = new wxConfig(WIRED_NAME, wxT("P31"),
+			  wxString(WIRED_DIRECTORY) + wxString(WIRED_CONF),
+			  wxString(WIRED_DIRECTORY) + wxString(WIRED_CONF),
 			  wxCONFIG_USE_LOCAL_FILE);  
       Load();
     }
