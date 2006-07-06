@@ -413,15 +413,21 @@ int			MainWindow::InitAudio(bool restart)
 
 void                MainWindow::InitLocale()
 {
-    mLocale = new wxLocale();
-    if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
-      {
-        mLocale->AddCatalogLookupPathPrefix(wxString(wxT(INSTALL_PREFIX)) + wxString(wxT("share/locale/")));
-        mLocale->AddCatalog(wxT("wired"));
-        mLocale->AddCatalog(wxT("wxstd"));
-      }
-    else
-      cout << "[MAINWIN] Could not initialize locale, falling down on default" << endl;
+  // disable extra output of wx
+  wxLog		log(wxLogNull);
+  wxString	prefix = wxString(wxT(INSTALL_PREFIX)) + wxString(wxT("share/locale/"));
+  
+  mLocale = new wxLocale();
+  mLocale->AddCatalogLookupPathPrefix(prefix);
+  if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
+    {
+      // add wx basic translation (File, Window, About, ..)
+      mLocale->AddCatalog(wxT("wxstd"));
+      // add our translations
+      mLocale->AddCatalog(wxT("wired"));
+    }
+  else
+    cout << "[MAINWIN] Could not initialize locale, falling down on default" << endl;
 }
 
 void					MainWindow::InitFileConverter()
