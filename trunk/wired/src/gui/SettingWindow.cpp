@@ -1,9 +1,6 @@
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
-
 #include "MainWindow.h"
 #include "SettingWindow.h"
 #include "AudioEngine.h"
@@ -55,6 +52,12 @@ SettingWindow::SettingWindow()
 				wxSize(206, 400), wxSUNKEN_BORDER | wxTR_NO_LINES |
 				wxTR_HAS_BUTTONS | wxTR_SINGLE | wxTR_HIDE_ROOT |
 				wxTR_FULL_ROW_HIGHLIGHT);
+
+  // flags assigned to all sizer in all right panel
+  BoxFlags.Left();
+  BoxFlags.Expand();
+  BoxFlags.Border(wxALL, 8);
+
   //SettingsTree->SetIndent(20);
   GeneralPanelView();
   AudioPanelView();
@@ -82,6 +85,11 @@ SettingWindow::SettingWindow()
   CancelBtn = new wxButton(this, wxID_CANCEL, _("Cancel"), BTN_CANCEL_POS, BTN_SIZE);
   
   Load();
+}
+
+SettingWindow::~SettingWindow()
+{
+  delete [] Latencies;
 }
 
 //
@@ -130,17 +138,33 @@ void				SettingWindow::AudioInputPanelView()
 {
   vector<Device*>::iterator	i;
 
+  // right panel
   AudioInputPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
-  new wxStaticText(AudioInputPanel, -1, _("Select Input sound card:"),
-		   wxPoint(8, 8));
-  InputChoice = new wxChoice(AudioInputPanel, Setting_InputDev, wxPoint(8, 30), wxSize(368, -1), 0, 0x0);
-  InputChoice->Append(wxString(_("None"), *wxConvCurrent));
-  InputChoice->SetSelection(0);
-  for (i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++)
-    InputChoice->Append(wxString((*i)->Name.mb_str(*wxConvCurrent), *wxConvCurrent));
-  new wxStaticText(AudioInputPanel, -1, _("Select Input channels to use with this sound card:"), 
-		   wxPoint(8, 70));
-  InputList = new wxCheckListBox(AudioInputPanel, Setting_InputChan, wxPoint(8, 94), wxSize(368, 68), 0);
+
+  // list of audio system
+  InputSystemChoice = new wxChoice(AudioInputPanel, Setting_InputSystem);
+  RefreshSystems(InputSystemChoice);
+
+  // list of devices
+  InputDeviceChoice = new wxChoice(AudioInputPanel, Setting_InputDev);
+  RefreshDevices(InputDeviceChoice, 0, Audio->GetDefaultInputDevice()); // based on system selection
+
+  // list of channels
+  InputChannelList = new wxCheckListBox(AudioInputPanel, Setting_InputChan);
+  RefreshChannels(InputChannelList, 0, 0, true);
+
+  // sizer
+  InputBox = new wxBoxSizer(wxVERTICAL);
+  InputBox->Add(new wxStaticText(AudioInputPanel, -1, _("Avalaible sound system:")), BoxFlags);
+  InputBox->Add(InputSystemChoice, BoxFlags);
+  InputBox->Add(new wxStaticText(AudioInputPanel, -1, _("Select Input sound card:")), BoxFlags);
+  InputBox->Add(InputDeviceChoice, BoxFlags);
+  InputBox->Add(new wxStaticText(AudioInputPanel, -1, _("Select Input channels to use with this sound card:")),
+		BoxFlags);
+  InputBox->Add(InputChannelList, BoxFlags);
+
+  AudioInputPanel->SetSizer(InputBox);
+  InputBox->SetSizeHints(AudioInputPanel);
 }
 
 //
@@ -149,19 +173,36 @@ void				SettingWindow::AudioInputPanelView()
 
 void				SettingWindow::AudioOutputPanelView()
 {
-  vector<Device*>::iterator	i;
+  vector<Device*>::iterator		i;
+  vector<AudioSystem*>::iterator	n;
 
+  // right panel
   AudioOutputPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
-  new wxStaticText(AudioOutputPanel, -1, _("Select Output sound card:"), 
-		   wxPoint(8, 8));
-  OutputChoice = new wxChoice(AudioOutputPanel, Setting_OutputDev, wxPoint(8, 30), wxSize(368, -1), 0, 0x0);
-  OutputChoice->Append(wxString(_("None"), *wxConvCurrent));
-  OutputChoice->SetSelection(0);
-  for (i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++)
-    OutputChoice->Append(wxString((*i)->Name.mb_str(*wxConvCurrent), *wxConvCurrent));
-  new wxStaticText(AudioOutputPanel, -1, _("Select left and right Output channels for this sound card:"), 
-		   wxPoint(8, 70));
-  OutputList = new wxCheckListBox(AudioOutputPanel, Setting_OutputChan, wxPoint(8, 94), wxSize(368, 68), 0);
+
+  // list of audio systems
+  OutputSystemChoice = new wxChoice(AudioOutputPanel, Setting_OutputSystem);
+  RefreshSystems(OutputSystemChoice);
+
+  // list of devices
+  OutputDeviceChoice = new wxChoice(AudioOutputPanel, Setting_OutputDev);
+  RefreshDevices(OutputDeviceChoice, 0, Audio->GetDefaultOutputDevice());
+
+  // list of channels
+  OutputChannelList = new wxCheckListBox(AudioOutputPanel, Setting_OutputChan);
+  RefreshChannels(OutputChannelList, 0, 0, false);
+
+  // sizer
+  OutputBox = new wxBoxSizer(wxVERTICAL);
+  OutputBox->Add(new wxStaticText(AudioOutputPanel, -1, _("Avalaible sound system:")), BoxFlags);
+  OutputBox->Add(OutputSystemChoice, BoxFlags);
+  OutputBox->Add(new wxStaticText(AudioOutputPanel, -1, _("Select Output sound card:")), BoxFlags);
+  OutputBox->Add(OutputDeviceChoice, BoxFlags);
+  OutputBox->Add(new wxStaticText(AudioOutputPanel, -1, _("Select left and right Output channels for this sound card:")),
+		 BoxFlags);
+  OutputBox->Add(OutputChannelList, BoxFlags);
+
+  AudioOutputPanel->SetSizer(OutputBox);
+  OutputBox->SetSizeHints(AudioOutputPanel);
 }
 
 // Creates the panel for midi settings
@@ -172,16 +213,6 @@ void				SettingWindow::MidiPanelView()
   new wxStaticText(MidiPanel, -1, _("Select MIDI In devices to use:"), 
 		   wxPoint(8, 8));
   MidiInList = new wxCheckListBox(MidiPanel, Setting_MidiIn, wxPoint(8, 30), wxSize(368, 200), 0);
-
-  // wxListCtrl *list = new wxListCtrl(MidiPanel, -1, wxPoint(10, 300), wxSize(368, 50), wxSUNKEN_BORDER);
-//   list->InsertColumn(0, _("Item"), wxLIST_FORMAT_LEFT, 200);
-//   list->InsertColumn(1, _("Value"), wxLIST_FORMAT_LEFT, 80);
-
-}
-
-SettingWindow::~SettingWindow()
-{
-  delete [] Latencies;
 }
 
 //
@@ -201,95 +232,27 @@ void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
     }
 }
 
-/* No longer called */
-void SettingWindow::OnAudioClick(wxCommandEvent &event)
+//
+// We click on midi checkbox
+//
+
+void SettingWindow::OnMidiInClick(wxCommandEvent &event)
 {
-  AudioPanel->Show(true);
-  MidiPanel->Show(false);
-  GeneralPanel->Show(false);
+  vector<long>::iterator	i;
+  MidiDeviceList::iterator	j;
+  int				k;
+  wxString			s;
 
-  if (!AudioLoaded)
-    {
-      vector<Device*>::iterator i;
-      vector<long>::iterator k;
-      int j, val;
-      wxString s;
-
-     
-      OutputList->Clear();
-      if ((val = OutputChoice->GetSelection()) > 0)
-	for (j = 1, i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++, j++)
-	  {
-	    if (j == val)
-	      {
-		for (j = 1; j <= (*i)->MaxOutputChannels; j++)
-		  {
-		    s.Printf(_("Output %d"), j);
-		    OutputList->Append(s);
-		  }
-		//breakOnAudioClick;
-	      }
-	  }
-      InputList->Clear();
-      if ((val = InputChoice->GetSelection()) > 0)
-	for (j = 1, i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++, j++)
-	  {
-	    if (j == val)
-	      {
-		for (j = 1; j <= (*i)->MaxInputChannels; j++)
-		  {
-		    s.Printf(_("Input %d"), j);
-		    InputList->Append(s);
-		  }
-		break;
-	    }
-	}
-      for (k = WiredSettings->OutputChannels.begin(); k != WiredSettings->OutputChannels.end(); k++)
-	if (*k < OutputList->GetCount())
-	  OutputList->Check(*k);
-      for (k = WiredSettings->InputChannels.begin(); k != WiredSettings->InputChannels.end(); k++)
-	if (*k < InputList->GetCount())
-	  InputList->Check(*k);
-
-      LoadSampleFormat();
-
-      if (WiredSettings->SampleRate < RateChoice->GetCount())
-	RateChoice->SetSelection(WiredSettings->SampleRate);
-      if (WiredSettings->SampleFormat < BitsChoice->GetCount())
-	WiredSettings->SampleFormat = BitsChoice->GetSelection();      
-      
-      for (int i = 0; i < 9; i++)
-	if (Latencies[i] == WiredSettings->SamplesPerBuffer)
-	  LatencySlider->SetValue(i);
-      UpdateLatency();
-    }  
-}
-
-/* No longer called */
-void SettingWindow::OnMidiClick(wxCommandEvent &event)
-{
-  AudioPanel->Show(false);
-  MidiPanel->Show(true);
-  GeneralPanel->Show(false);
-
-  if (!MidiLoaded)
-    {
-      vector<long>::iterator i;
-      MidiDeviceList::iterator j;
-      int k;
-      wxString s;
-
-      MidiLoaded = true;
-      MidiInList->Clear();
-      for (j = MidiEngine->DeviceList.begin(), k = 1; j != MidiEngine->DeviceList.end(); j++, k++)
-	{      
-	  s.Printf(_("In %d: %s"), k, (const char *)(*j)->Name.mb_str(*wxConvCurrent));
-	  MidiInList->Append(s);
-	}
-      for (i = WiredSettings->MidiIn.begin(); i != WiredSettings->MidiIn.end(); i++)
-	if (*i < MidiInList->GetCount())
-	  MidiInList->Check(*i);
+  MidiLoaded = true;
+  MidiInList->Clear();
+  for (j = MidiEngine->DeviceList.begin(), k = 1; j != MidiEngine->DeviceList.end(); j++, k++)
+    {      
+      s.Printf(_("In %d: %s"), k, (const char *)(*j)->Name.mb_str(*wxConvCurrent));
+      MidiInList->Append(s);
     }
+  for (i = WiredSettings->MidiIn.begin(); i != WiredSettings->MidiIn.end(); i++)
+    if (*i < MidiInList->GetCount())
+      MidiInList->Check(*i);
 }
 
 void SettingWindow::OnOkClick(wxCommandEvent &event)
@@ -313,72 +276,104 @@ void SettingWindow::OnApplyClick(wxCommandEvent &event)
   MidiLoaded = false;
 }
 
-void SettingWindow::OnInputDevClick(wxCommandEvent &event)
+void SettingWindow::OnInputSystemClick(wxCommandEvent &event)
 {
-  MidiLoaded = true;
-  RefreshInputDev();
+  AudioLoaded = true;
+  RefreshDevices(InputDeviceChoice, InputSystemChoice->GetSelection(), Audio->GetDefaultInputDevice());
+  OnInputDevClick(event);
 }
 
-void SettingWindow::RefreshInputDev()
+void SettingWindow::OnOutputSystemClick(wxCommandEvent &event)
 {
-   vector<Device*>::iterator i;
-  int j, val;
-  wxString s;
+  AudioLoaded = true;
+  RefreshDevices(OutputDeviceChoice, OutputSystemChoice->GetSelection(), Audio->GetDefaultOutputDevice());
+  OnOutputDevClick(event);
+}
 
-  InputList->Clear();
-  if ((val = InputChoice->GetSelection()) == 0)
-    return;
-  for (j = 1, i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++, j++)
-    {
-      if (j == val)
-	{
-	  for (j = 1; j <= (*i)->MaxInputChannels; j++)
-	    {
-	      s.Printf(_("Input %d"), j);
-	      InputList->Append(s);
-	    }
-	  break;
-	}
-    }  
-    LoadSampleFormat();
-    LoadSampleRates();
-
+void SettingWindow::OnInputDevClick(wxCommandEvent &event)
+{
+  AudioLoaded = true;
+  RefreshChannels(InputChannelList, InputSystemChoice->GetSelection(),
+		  InputDeviceChoice->GetSelection(), true);
 }
 
 void SettingWindow::OnOutputDevClick(wxCommandEvent &event)
 {
   AudioLoaded = true;
-  RefreshOutputDev();
+  RefreshChannels(OutputChannelList, OutputSystemChoice->GetSelection(),
+		  OutputDeviceChoice->GetSelection(), false);
 }
 
-void SettingWindow::RefreshOutputDev()
+void SettingWindow::RefreshSystems(wxChoice* choice)
 {
+  vector<AudioSystem*>::iterator	sys;
 
-  vector<Device*>::iterator i;
-  int j, val;
-  wxString s;
+  choice->Clear();
+  choice->Append(_("None"));
 
-  OutputList->Clear();
-  if ((val = OutputChoice->GetSelection()) != 0)
+  for (sys = Audio->SystemList.begin(); sys != Audio->SystemList.end(); sys++)
+    choice->Append((*sys)->GetName());
+  choice->SetSelection(Audio->GetDefaultAudioSystem());
+}
+
+void SettingWindow::RefreshDevices(wxChoice* choice, int system_selected, int selected)
+{
+  vector<Device*>::iterator	dev;
+
+  choice->Clear();
+  choice->Append(_("None"));
+  choice->SetSelection(0);
+
+  // system is "None"
+  if (!system_selected)
+    return;
+
+  for (dev = Audio->DeviceList.begin(); dev != Audio->DeviceList.end(); dev++)
     {
-      for (j = 1, i = Audio->DeviceList.begin(); i != Audio->DeviceList.end(); i++, j++)
-	{
-	  if (j == val)
-	    {
-	      for (j = 1; j <= (*i)->MaxOutputChannels; j++)
-		{
-		  s.Printf(_("Output %d"), j);
-		  OutputList->Append(s);
-		  // on check les premieres sorties l/r
-		  if (j < 3)
-		    OutputList->Check(j - 1);
-		}
-	      break;
-	    }
-	}  
+      if ((*dev)->AudioSystem == system_selected - 1)
+	choice->Append((*dev)->Name);
     }
-    LoadSampleFormat();
-    LoadSampleRates();
+  choice->SetSelection(selected);
+}
+
+void SettingWindow::RefreshChannels(wxCheckListBox* list, int system_selected,
+				    int device_selected, bool input)
+{
+  Device*	dev;
+  wxString	str;
+  int		i;
+
+  list->Clear();
+
+  dev = Audio->GetDevice(device_selected, system_selected);
+  // device is "None"
+  if (!dev)
+    return;
+
+  if (input)
+    {
+      for (i = 1; i <= dev->MaxInputChannels; i++)
+	{
+	  str.Clear();
+	  str << _("Input ") << i;
+	  list->Append(str);
+	}
+    }
+  else
+    {
+      for (i = 1; i <= dev->MaxOutputChannels; i++)
+	{
+	  str.Clear();
+	  str << _("Output ") << i;
+	  list->Append(str);
+	  // on check les premieres sorties l/r
+	  if (i < 3)
+	    OutputChannelList->Check(i - 1);
+	}
+    }
+  
+  LoadSampleFormat();
+  LoadSampleRates();
 
 }
 
@@ -388,13 +383,13 @@ void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
 
   AudioLoaded = true;
   j = 0;
-  for (i = 0; i < OutputList->GetCount() - 1; i++)
-    if (OutputList->IsChecked(i))
+  for (i = 0; i < OutputChannelList->GetCount() - 1; i++)
+    if (OutputChannelList->IsChecked(i))
       j++;
   // pas plus de 2 channel de sortie
   if (j > 2)
     {
-      OutputList->Check(event.GetInt(), false);
+      OutputChannelList->Check(event.GetInt(), false);
       wxMessageDialog msg(this, _("No more than 2 output channels can be selected"), wxT("Wired"), 
 			  wxOK | wxICON_EXCLAMATION);
       msg.ShowModal();
@@ -410,34 +405,60 @@ void SettingWindow::Load()
   dBWaveBox->SetValue(WiredSettings->dbWaveRender);
   oss << WiredSettings->maxUndoRedoDepth;
   undoRedoMaxDepthTextCtrl->SetValue(wxString(oss.str().c_str(), *wxConvCurrent));
+  if (WiredSettings->OutputSystem > -1)
+    {
+      OutputSystemChoice->SetSelection(WiredSettings->OutputSystem);
+      RefreshDevices(OutputDeviceChoice, OutputSystemChoice->GetSelection(),
+		     Audio->GetDefaultOutputDevice());
+    }
   if (WiredSettings->OutputDev > -1)
     {
-      OutputChoice->SetSelection(WiredSettings->OutputDev + 1);
-      RefreshOutputDev();
-      for(i = 0; i < OutputList->GetCount(); i++)
-	OutputList->Check(i, false);
-      for(i = 0; i < WiredSettings->OutputChannels.size(); i++)
-	OutputList->Check(WiredSettings->OutputChannels[i]);
+      OutputDeviceChoice->SetSelection(WiredSettings->OutputDev);
+      RefreshChannels(OutputChannelList, OutputSystemChoice->GetSelection(),
+		      OutputDeviceChoice->GetSelection(), false);
+      LoadChannels(OutputChannelList, WiredSettings->OutputChannels);
+    }
+  if (WiredSettings->InputSystem > -1)
+    {
+      InputSystemChoice->SetSelection(WiredSettings->InputSystem);
+      RefreshDevices(InputDeviceChoice, InputSystemChoice->GetSelection(),
+		     Audio->GetDefaultInputDevice());
     }
   if (WiredSettings->InputDev > -1)
     {
-      InputChoice->SetSelection(WiredSettings->InputDev + 1);
-      RefreshInputDev();
-      for(i = 0; i < InputList->GetCount(); i++)
-	InputList->Check(i, false);
-      for(i = 0; i < WiredSettings->InputChannels.size(); i++)
-	InputList->Check(WiredSettings->InputChannels[i]);
+      InputDeviceChoice->SetSelection(WiredSettings->InputDev);
+      RefreshChannels(InputChannelList, InputSystemChoice->GetSelection(),
+		      InputDeviceChoice->GetSelection(), true);
+      LoadChannels(InputChannelList, WiredSettings->InputChannels);
     }
-      
+
   if (WiredSettings->SamplesPerBuffer > 0)
     {
       for (int i = 0; i < 9; i++)
 	if (Latencies[i] == WiredSettings->SamplesPerBuffer)
 	  LatencySlider->SetValue(i);
       UpdateLatency();
-    }
+    }    
+}
 
-    
+void SettingWindow::LoadChannels(wxCheckListBox* to, vector<long>& from)
+{
+  int	i;
+
+  for (i = 0; i < to->GetCount(); i++)
+    to->Check(i, false);
+  for (i = 0; i < from.size(); i++)
+    to->Check(from[i]);
+}
+
+void SettingWindow::SaveChannels(wxCheckListBox* from, vector<long>& to)
+{
+  int	i;
+
+  to.clear();
+  for (i = 0; i < from->GetCount(); i++)
+    if (from->IsChecked(i))
+      to.push_back(i);
 }
 
 void SettingWindow::Save()
@@ -448,99 +469,90 @@ void SettingWindow::Save()
 
   WiredSettings->QuickWaveRender = QuickWaveBox->IsChecked();
   WiredSettings->dbWaveRender = dBWaveBox->IsChecked();
-  WiredSettings->OutputDev = OutputChoice->GetSelection() - 1;
-  WiredSettings->InputDev = InputChoice->GetSelection() - 1;
+
+  WiredSettings->OutputSystem = OutputSystemChoice->GetSelection();
+  WiredSettings->InputSystem = InputSystemChoice->GetSelection();
+  WiredSettings->OutputDev = OutputDeviceChoice->GetSelection();
+  WiredSettings->InputDev = InputDeviceChoice->GetSelection();
+
   iss >> WiredSettings->maxUndoRedoDepth;
-  
+
+  // if we changed audio settings
   if (AudioLoaded)
     {
-      cout << "Audio loaded for saving" << endl;
-      WiredSettings->OutputChannels.clear();
-      for (i = 0; i < OutputList->GetCount(); i++)
-	if (OutputList->IsChecked(i))
-	  WiredSettings->OutputChannels.push_back(i);
+      cout << "[SETTINGS] Save Audio settings" << endl;
+
+      // save output channels
+      SaveChannels(OutputChannelList, WiredSettings->OutputChannels);
       
-      WiredSettings->InputChannels.clear();
-      for (i = 0; i < InputList->GetCount(); i++)
-	if (InputList->IsChecked(i))
-	  WiredSettings->InputChannels.push_back(i);
+      // save input channels
+      SaveChannels(InputChannelList, WiredSettings->InputChannels);
+
       WiredSettings->SampleRate = RateChoice->GetSelection();
-      
       SetDefaultSampleFormat();		//forcing 32 bit floats
       WiredSettings->SampleFormat = BitsChoice->GetSelection();
-      
       WiredSettings->SamplesPerBuffer = Latencies[LatencySlider->GetValue()];
-      WiredSettings->Save();
     }
+
+  // if we changed midi settings
   if (MidiLoaded)
     {
-      cout << "Midi loaded for saving" << endl;
-      WiredSettings->MidiIn.clear();
-      for (i = 0; i < MidiInList->GetCount(); i++)
-	if (MidiInList->IsChecked(i))
-	  WiredSettings->MidiIn.push_back(i);
-      
-      WiredSettings->Save();
+      cout << "[SETTINGS] Save Midi settings" << endl;
+      SaveChannels(MidiInList, WiredSettings->MidiIn);
     }    
+  if (AudioLoaded || MidiLoaded)
+    WiredSettings->Save();
 }
 
 void SettingWindow::LoadSampleFormat()
 {
   int					n;
   vector<DeviceFormat *>::iterator	i;
-  unsigned int k = (OutputChoice->GetSelection() != wxNOT_FOUND) ?
-    (OutputChoice->GetSelection() - 1) : 0;
+  Device *dev = Audio->GetDevice(OutputDeviceChoice->GetSelection(),
+				 OutputSystemChoice->GetSelection());
 
   BitsChoice->Clear();
-  if (k < Audio->DeviceList.size())
-    {
-      Device *dev = Audio->DeviceList.at(k);
-      for (i = dev->SupportedFormats.begin(); i != dev->SupportedFormats.end(); 
-	   i++)
-	if ((*i)->SampleRates.size() > 0)
-	  {
-	    // we check all known format
-	    for (n = 0; _FormatTypes[n].PaFormat; n++)
-	      if ((*i)->SampleFormat == _FormatTypes[n].PaFormat)
-		{
-		  // we support only paFloat32
-		  if ((*i)->SampleFormat == paFloat32)
-		    {
-		      BitsChoice->SetSelection(
-			       BitsChoice->Append(_FormatTypes[n].FormatName));
-		    }
-		  else
-		    BitsChoice->Append(wxString(_FormatTypes[n].FormatName) + _("[currently unsupported]"));
-		}
-	  }
-    }
+
+  if (dev)
+    for (i = dev->SupportedFormats.begin(); i != dev->SupportedFormats.end(); i++)
+      if ((*i)->SampleRates.size() > 0)
+	{
+	  // we check all known format
+	  for (n = 0; _FormatTypes[n].PaFormat; n++)
+	    if ((*i)->SampleFormat == _FormatTypes[n].PaFormat)
+	      {
+		// we support only our default
+		if ((*i)->SampleFormat == DEFAULT_SAMPLE_FORMAT)
+		  {
+		    BitsChoice->SetSelection(BitsChoice->Append(_FormatTypes[n].FormatName));
+		  }
+		else
+		  BitsChoice->Append(wxString(_FormatTypes[n].FormatName) +
+				     _("[currently unsupported]"));
+	      }
+	}
   if (WiredSettings->SampleFormat < BitsChoice->GetCount())
     BitsChoice->SetSelection(WiredSettings->SampleFormat);
-  LoadSampleRates();
 }
 
 void SettingWindow::LoadSampleRates()
 {
-  vector<double>::iterator i;
-  wxString s;
-  unsigned int k = BitsChoice->GetSelection();
-  unsigned int j = (OutputChoice->GetSelection() - 1) > 0 ? OutputChoice->GetSelection() - 1 : 0 ;
+  vector<double>::iterator	i;
+  wxString			s;
+  unsigned int			k = BitsChoice->GetSelection();
+  Device *dev = Audio->GetDevice(OutputDeviceChoice->GetSelection(),
+				 OutputSystemChoice->GetSelection());
 
-  
   RateChoice->Clear();	 
-  if (j < Audio->DeviceList.size())
+  if (dev && k < dev->SupportedFormats.size())
     {
-      Device *dev = Audio->DeviceList.at(j);
-      if (k < dev->SupportedFormats.size())
+      DeviceFormat *f = dev->SupportedFormats.at(k);
+      for (i = f->SampleRates.begin(); i != f->SampleRates.end(); i++)
 	{
-	  DeviceFormat *f = dev->SupportedFormats.at(k);
-	  for (i = f->SampleRates.begin(); i != f->SampleRates.end(); i++)
-	    {
-	      s.Printf(wxT("%.0f Hz"), *i);
-	      k = RateChoice->Append(s);
-	      if (*i == 44100.f)
-		RateChoice->SetSelection(k);
-	    }
+	  s.Printf(wxT("%.0f Hz"), *i);
+	  k = RateChoice->Append(s);
+	  if (*i == DEFAULT_SAMPLE_RATE)
+	    RateChoice->SetSelection(k);
 	}
     }
   if (WiredSettings->SampleRate < RateChoice->GetCount())
@@ -549,21 +561,20 @@ void SettingWindow::LoadSampleRates()
 
 void SettingWindow::SetDefaultSampleFormat(void)
 {
-  unsigned int j = OutputChoice->GetSelection() - 1;
-  
-  if (j < Audio->DeviceList.size())
-    {
-      Device *dev = Audio->DeviceList.at(j);
-      for (long k = 0; k < dev->SupportedFormats.size(); k++)
-	if (dev->SupportedFormats[k]->SampleFormat == paFloat32)
-	  BitsChoice->SetSelection(k);
-    }
+  Device *dev = Audio->GetDevice(OutputDeviceChoice->GetSelection(),
+				 OutputSystemChoice->GetSelection());
+
+  if (dev)
+    for (long k = 0; k < dev->SupportedFormats.size(); k++)
+      if (dev->SupportedFormats[k]->SampleFormat == DEFAULT_SAMPLE_FORMAT)
+	BitsChoice->SetSelection(k);
 }
 
 void SettingWindow::OnSampleFormatClick(wxCommandEvent &event)
 {
   AudioLoaded = true;
   SetDefaultSampleFormat();	//forcing 32bits floats
+  LoadSampleFormat();
   LoadSampleRates();
 }
 
@@ -581,22 +592,18 @@ void SettingWindow::OnLatencyChange(wxCommandEvent &event)
 
 void SettingWindow::UpdateLatency()
 {
-  wxString s;
+  wxString	s; 
+  unsigned int	k = BitsChoice->GetSelection();
+  unsigned int	l = RateChoice->GetSelection();
+  double	res = 0;
+  Device	*dev = Audio->GetDevice(OutputDeviceChoice->GetSelection(),
+					OutputSystemChoice->GetSelection());
 
-  unsigned int j = OutputChoice->GetSelection() - 1;
-  unsigned int k = BitsChoice->GetSelection();
-  unsigned int l = RateChoice->GetSelection();
-  double res = 0;
-  
-  if (j < Audio->DeviceList.size())
+  if (dev && k < dev->SupportedFormats.size())
     {
-      Device *dev = Audio->DeviceList.at(j);
-      if (k < dev->SupportedFormats.size())
-	{
-	  DeviceFormat *f = dev->SupportedFormats[k];
-	  if (l < f->SampleRates.size())
-	    res = f->SampleRates[l];
-	}
+      DeviceFormat *f = dev->SupportedFormats[k];
+      if (l < f->SampleRates.size())
+	res = f->SampleRates[l];
     }
   
   s.Printf(_("Latency: %d samples per buffer, %.2f msec"), 
@@ -613,11 +620,14 @@ BEGIN_EVENT_TABLE(SettingWindow, wxDialog)
   EVT_BUTTON(wxID_OK, SettingWindow::OnOkClick)
   EVT_BUTTON(wxID_CANCEL,SettingWindow:: OnCancelClick)
   EVT_BUTTON(wxID_APPLY, SettingWindow::OnApplyClick)
+  EVT_CHOICE(Setting_OutputSystem, SettingWindow::OnOutputSystemClick)
+  EVT_CHOICE(Setting_InputSystem, SettingWindow::OnInputSystemClick)
   EVT_CHOICE(Setting_OutputDev, SettingWindow::OnOutputDevClick)
   EVT_CHOICE(Setting_InputDev, SettingWindow::OnInputDevClick)
   EVT_CHOICE(Setting_Bits, SettingWindow::OnSampleFormatClick)
   EVT_CHOICE(Setting_Rate, SettingWindow::OnSampleRateClick)
   EVT_CHECKLISTBOX(Setting_OutputChan, SettingWindow::OnOutputChanClick)
+  EVT_CHECKLISTBOX(Setting_MidiIn, SettingWindow::OnMidiInClick)
   EVT_SLIDER(Setting_Latency, SettingWindow::OnLatencyChange)
   EVT_TREE_SEL_CHANGED(CATEGORY_ID, SettingWindow::OnSelPrefCategory)
 END_EVENT_TABLE()

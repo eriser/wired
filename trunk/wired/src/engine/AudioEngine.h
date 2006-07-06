@@ -20,6 +20,7 @@
 #define DEFAULT_SAMPLE_RATE_INT		44100
 #define DEFAULT_SAMPLE_RATE		44100.0
 #define DEFAULT_SAMPLES_PER_BUFFER	2048
+#define DEFAULT_SAMPLE_FORMAT		paFloat32
 
 using namespace std;
 
@@ -37,6 +38,24 @@ typedef struct
   vector<RingBuffer<float>*>	InFIFOVector;
 }		callback_t;
 
+class AudioSystem
+{
+ private:
+  int		_id;
+  wxString	_name;
+
+ public:
+  AudioSystem(int id, wxString name)
+    {
+      _id = id;
+      _name = name;
+    }
+  ~AudioSystem();
+
+  wxString	GetName() { return (_name); };
+  int		GetId() { return (_id); };
+};
+
 class AudioEngine
 {
  public:
@@ -44,15 +63,18 @@ class AudioEngine
   ~AudioEngine();
   
   vector<Device*>	DeviceList;
+  vector<AudioSystem*>	SystemList;
   
   bool			IsOk;
   bool			_paInit;
   
+  AudioSystem		*SelectedOutputSystem;
   Device		*SelectedOutputDevice;
   unsigned long		OutputSampleFormat;
   double		OutputLatency;
   int			OutputChannels;
   
+  AudioSystem		*SelectedInputSystem;
   Device		*SelectedInputDevice;
   unsigned long		InputSampleFormat;
   double		InputLatency;
@@ -78,15 +100,23 @@ class AudioEngine
   void			GetDeviceSettings(void);
   int			GetLibSndFileFormat();
 
+  int			GetDefaultAudioSystem();
+  int			GetDefaultInputDevice();
+  int			GetDefaultOutputDevice();
+  Device*		GetDevice(int dev_id, int system_id);
+
   void			SetDefaultSettings(void);
   callback_t		*UserData;
   bool			StreamIsOpened;
   bool			StreamIsStarted;
  private:
+  void			GetAudioSystems();
   void			GetDevices();
   void			SetInputDevice(void);
   void			SetOutputDevice(void);
-  Device		*GetDeviceById(PaDeviceIndex id);
+  Device*		GetDeviceById(PaDeviceIndex id);
+  int			GetDeviceIdByTrueId(Device* dev);
+
   void			AlertDialog(const wxString& from, const wxString& msg);
   PaStream		*Stream;
 };

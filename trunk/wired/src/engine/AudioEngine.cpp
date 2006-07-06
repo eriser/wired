@@ -1,8 +1,6 @@
-
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include	<unistd.h>
 #include	<sndfile.h>
 #include	"AudioEngine.h"
 #include	"MainWindow.h"
@@ -23,6 +21,7 @@ AudioEngine::AudioEngine()
 
   cout << "[AUDIO] Portaudio initialized" << endl; 
   UserData = new callback_t;
+  GetAudioSystems();
   GetDevices();
   SetDefaultSettings();
   cout << "[AUDIO] AudioEngine initialized" << endl; 
@@ -59,7 +58,7 @@ void AudioEngine::SetDefaultSettings(void)
   
   SamplesPerBuffer = DEFAULT_SAMPLES_PER_BUFFER;
   SampleRate = DEFAULT_SAMPLE_RATE;
-  UserData->SampleFormat = paFloat32;
+  UserData->SampleFormat = DEFAULT_SAMPLE_FORMAT;
   
   /*int i = 0;
   for (vector<DeviceFormat*>::iterator df = 
@@ -84,9 +83,10 @@ void AudioEngine::SetDefaultSettings(void)
 
 void AudioEngine::SetOutputDevice(void)
 {
-  if ((SelectedOutputDevice = GetDeviceById(WiredSettings->OutputDev))
+  if ((SelectedOutputDevice = GetDevice(WiredSettings->OutputDev,
+					WiredSettings->OutputSystem))
       == 0x0)
-    if ( (SelectedOutputDevice = GetDeviceById(Pa_GetDefaultOutputDevice())) 
+    if ( (SelectedOutputDevice = GetDeviceById(Pa_GetDefaultOutputDevice()))
 	 == 0x0)
       {
 	throw Error::InvalidDeviceSettings();
@@ -171,7 +171,8 @@ void AudioEngine::SetInputDevice(void)
 {
   if (WiredSettings->InputChannels.size() > 0)
     {
-      if (( SelectedInputDevice = GetDeviceById(WiredSettings->InputDev))
+      if (( SelectedInputDevice = GetDevice(WiredSettings->InputDev,
+					    WiredSettings->InputSystem))
 	  == 0x0)
 	if ( (SelectedInputDevice = 
 	      GetDeviceById(Pa_GetDefaultInputDevice())) 
@@ -316,6 +317,25 @@ void AudioEngine::GetDeviceSettings()
 }
 #endif
 
+void AudioEngine::GetAudioSystems()
+{
+  PaHostApiIndex	Num = Pa_GetHostApiCount();
+  int			i;
+
+  for (i = 0; i < Num; i++)
+    {
+      const PaHostApiInfo	*Infos = Pa_GetHostApiInfo(i);
+
+      if (Infos)
+	{
+	  cout << "[AUDIO] Host API Number " << i << " is " << Infos->name 
+	       << ", devices count : " << Infos->deviceCount << endl;
+
+	  SystemList.push_back(new AudioSystem(i, wxString(Infos->name, *wxConvCurrent)));
+	}
+    }
+}
+
 void AudioEngine::GetDevices()
 {
   int			n = Pa_GetDeviceCount();
@@ -337,9 +357,9 @@ void AudioEngine::GetDevices()
 	}
       dev = new Device(i, wxString(info->name, *wxConvCurrent),
 		       info->maxInputChannels,
-		       info->maxOutputChannels);
+		       info->maxOutputChannels, info->hostApi);
       DeviceList.push_back(dev);
-      cout << "[AUDIO] New device found #" << dev->Id 
+      cout << "[AUDIO] New device found #" << dev->Id << " for host " << dev->AudioSystem
 	   << " : " << dev->Name.mb_str() << endl
 	   << "[AUDIO] Max Input Channels: " << dev->MaxInputChannels 
 	   << endl
@@ -423,13 +443,6 @@ void AudioEngine::OpenStream()
     cout <<"[AUDIO] Output Device is " << SelectedOutputDevice->Name.mb_str() << endl;
   if (!WiredSettings->InputChannels.empty())
     cout << "[AUDIO] Input Device is " << SelectedInputDevice->Name.mb_str() << endl;
-
-  PaHostApiIndex Num = Pa_GetHostApiCount();
-  while (Num--)  
-  {
-  	const PaHostApiInfo	*Infos = Pa_GetHostApiInfo(Num);
-	  cout << "[AUDIO] Host API Number " << Num << " is " << Infos->name << ", devices count : " << Infos->deviceCount << endl;
-  }
   StreamIsOpened = true;
 }
 
@@ -751,4 +764,62 @@ int AudioEngine::GetLibSndFileFormat()
       break;
     }
   return (type);
+}
+
+Device*			AudioEngine::GetDevice(int dev_id, int system_id)
+{
+  vector<Device*>::iterator		it;
+  int					n;
+
+  // index 0 is a null system/device, but not in DeviceList nor AudioSystem attribute
+  dev_id--;
+  system_id--;
+
+  n = 0;
+  for (it = DeviceList.begin(); it != DeviceList.end(); it++)
+    {
+      if (system_id  == (*it)->AudioSystem)
+	{
+	  if (n == dev_id)
+	    return ((*it));
+	  n++;
+	}
+    }
+  return (NULL);
+}
+
+int			AudioEngine::GetDeviceIdByTrueId(Device* dev)
+{
+  vector<Device*>::iterator	it;
+  int				n;
+
+  if (!dev)
+    return (0);
+
+  n = 1;
+  for (it = DeviceList.begin(); it != DeviceList.end(); it++)
+    {
+      if (dev->AudioSystem == (*it)->AudioSystem)
+	{
+	  if (dev->Id == (*it)->Id)
+	    return (n);
+	  n++;
+	}
+    }
+  return (0);
+}
+
+int			AudioEngine::GetDefaultInputDevice()
+{
+  return (GetDeviceIdByTrueId(GetDeviceById(Pa_GetDefaultInputDevice())));
+}
+
+int			AudioEngine::GetDefaultOutputDevice()
+{
+  return (GetDeviceIdByTrueId(GetDeviceById(Pa_GetDefaultOutputDevice())));
+}
+
+int			AudioEngine::GetDefaultAudioSystem()
+{
+  return (Pa_GetDefaultHostApi() + 1);
 }

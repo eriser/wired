@@ -26,29 +26,38 @@ class					SettingWindow : public wxDialog
   void					Load();
   void					Save();
   //void					OnGeneralClick(wxCommandEvent &event);
-  void					OnAudioClick(wxCommandEvent &event);
-  void					OnMidiClick(wxCommandEvent &event);
   void					OnOkClick(wxCommandEvent &event);
   void					OnCancelClick(wxCommandEvent &event);
   void					OnApplyClick(wxCommandEvent &event);
   void					OnInputDevClick(wxCommandEvent &event);
   void					OnOutputDevClick(wxCommandEvent &event);
+  void					OnInputSystemClick(wxCommandEvent &event);
+  void					OnOutputSystemClick(wxCommandEvent &event);
   void					OnOutputChanClick(wxCommandEvent &event);
   void					OnSampleFormatClick(wxCommandEvent &event);
   void					OnSampleRateClick(wxCommandEvent &event);
   void					OnLatencyChange(wxCommandEvent &event);
   void					OnSelPrefCategory(wxTreeEvent &event);
+  void					OnMidiInClick(wxCommandEvent &event);
 
-  bool					MidiLoaded; // a cause d'un bug wx...
-  bool					AudioLoaded; // la meme mais pour l'audio...
+  bool					MidiLoaded; // true if midi settings has changed
+  bool					AudioLoaded; // true if audio settings has changed
 
  protected:
   void					LoadSampleFormat();
   void					LoadSampleRates();
   void					UpdateLatency();
   void					SetDefaultSampleFormat(void);
-  void                                  RefreshOutputDev();
-  void                                  RefreshInputDev();
+
+  // refresh list of audio systems avalaible
+  void					RefreshSystems(wxChoice* choice);
+
+  // refresh list of devices avalaible for selected audio system
+  void					RefreshDevices(wxChoice* choice, int system_selected, int select);
+
+  // refresh list of channels avalaible for selected device 
+  void					RefreshChannels(wxCheckListBox* list, int system_selected,
+							int device_selected, bool input);
 
   wxButton				*OkBtn;
   wxButton				*ApplyBtn;
@@ -57,10 +66,12 @@ class					SettingWindow : public wxDialog
   wxCheckBox				*dBWaveBox;
   wxPanel				*AudioInputPanel;
   wxPanel				*AudioOutputPanel;
-  wxChoice				*OutputChoice;
-  wxChoice				*InputChoice;
-  wxCheckListBox			*OutputList;
-  wxCheckListBox			*InputList;
+  wxChoice				*OutputDeviceChoice;
+  wxChoice				*OutputSystemChoice;
+  wxChoice				*InputDeviceChoice;
+  wxChoice				*InputSystemChoice;
+  wxCheckListBox			*OutputChannelList;
+  wxCheckListBox			*InputChannelList;
   wxChoice				*RateChoice;
   wxChoice				*BitsChoice;
   wxStaticText				*Latency;
@@ -75,7 +86,14 @@ class					SettingWindow : public wxDialog
   wxPanel				*AudioPanel;
   wxPanel				*GeneralPanel;
   wxCheckListBox			*MidiInList;
- 
+
+  wxBoxSizer				*OutputBox;
+  wxBoxSizer				*InputBox;
+  wxSizerFlags				BoxFlags;
+
+ private:
+  void					SaveChannels(wxCheckListBox* from, vector<long>& to);
+  void					LoadChannels(wxCheckListBox* to, vector<long>& from);
 
 
   DECLARE_EVENT_TABLE()
@@ -96,7 +114,9 @@ enum
   Setting_MidiIn,
   Setting_Bits,
   Setting_Rate,
-  Setting_Latency
+  Setting_Latency,
+  Setting_OutputSystem,
+  Setting_InputSystem
 };
 
 #endif/*__SETTINGWINDOW_H__*/

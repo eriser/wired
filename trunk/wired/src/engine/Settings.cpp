@@ -1,9 +1,6 @@
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
-
 #include "version.h"
 #include "Settings.h"
 #include <wx/filename.h>
@@ -17,8 +14,9 @@
 Settings *WiredSettings;
 
 Settings::Settings() :
-  QuickWaveRender(false), dbWaveRender(false), OutputDev(-1), InputDev(-1), OutputLatency(-1),
-  InputLatency(-1), SampleRate(DEFAULT_SAMPLE_RATE_INT), SamplesPerBuffer(DEFAULT_SAMPLES_PER_BUFFER),
+  QuickWaveRender(false), dbWaveRender(false), OutputSystem(-1), InputSystem(-1),
+  OutputDev(-1), InputDev(-1), OutputLatency(-1), InputLatency(-1),
+  SampleRate(DEFAULT_SAMPLE_RATE_INT), SamplesPerBuffer(DEFAULT_SAMPLES_PER_BUFFER),
   SampleFormat(-1), maxUndoRedoDepth(20), WorkingDir(wxT(""))
 {
   wxFileName f;
@@ -79,8 +77,8 @@ Settings::Settings() :
     }
   else
     {
-      cout << "[SETTINGS] Could not open config file, access was denied to " << f.GetFullPath().mb_str() 
-	   << endl;
+      cout << "[SETTINGS] Could not open config file, access was denied to " <<
+	f.GetFullPath().mb_str() << endl;
       throw; // FIXME add a decent object to throw
     }
 }
@@ -91,91 +89,86 @@ Settings::~Settings()
 		delete conf;  
 }
 
-void Settings::Load()
+void Settings::ReadChannels(wxString Group, vector<long>& list)
 {
-  int l, val;
-  wxString s;
+  vector<long>::iterator	i;
+  wxString			s;
+  long				l;
+  long				val;
 
-  conf->SetPath(wxT("/"));
-  conf->Read(wxT("QuickWaveRender"), &QuickWaveRender, false);
-  conf->Read(wxT("dbWaveRender"), &dbWaveRender, false);
-  conf->Read(wxT("OutputDev"), &OutputDev, false);
-  conf->Read(wxT("InputDev"), &InputDev, false);
-  conf->Read(wxT("SampleRate"), &SampleRate, DEFAULT_SAMPLE_RATE_INT);
-  conf->Read(wxT("SampleFormat"), &SampleFormat, 0);
-  conf->Read(wxT("SamplesPerBuffer"), &SamplesPerBuffer, DEFAULT_SAMPLES_PER_BUFFER);
-  wxString		temp1(wxT(""));
-  wxString		temp2(wxT("WorkingDirectory"));
-  conf->Read(temp2, &WorkingDir, temp1);
-
-  conf->SetPath(wxT("/OutputChannels"));
-  for (l = 0; ; l++)
-    {
-      s.Printf(wxT("%d"), l);
-      if (conf->Read(s, &val, -1))
-	OutputChannels.push_back(val);
-      else
-	break;
-    }  
-  conf->SetPath(wxT("/InputChannels"));
-  for (l = 0; ; l++)
-    {
-      s.Printf(wxT("%d"), l);
-      if (conf->Read(s, &val, -1))
-	InputChannels.push_back(val);
-      else
-	break;
-    }  
-  conf->SetPath(wxT("/MidiDevices"));
-  for (l = 0; ; l++)
+  conf->SetPath(Group);
+  for (l = 0, i = list.begin(); i != list.end(); i++, l++)
     {
       s.Printf(wxT("%d"), l);
       if (conf->Read(s, &val, -1))
 	MidiIn.push_back(val);
       else
 	break;
-    }  
+    }
+}
+
+void Settings::SaveChannels(wxString Group, vector<long>& list)
+{
+  vector<long>::iterator	i;
+  wxString			s;
+  long				l;
+
+  conf->DeleteGroup(Group);
+  conf->SetPath(Group);
+  for (l = 0, i = list.begin(); i != list.end(); i++, l++)
+    {
+      s.Printf(wxT("%d"), l);
+      conf->Write(s, (*i));
+    }
+}
+
+void Settings::Load()
+{
+  conf->SetPath(wxT("/"));
+  conf->Read(wxT("QuickWaveRender"), &QuickWaveRender, false);
+  conf->Read(wxT("dbWaveRender"), &dbWaveRender, false);
+
+  conf->Read(wxT("OutputSystem"), &OutputSystem, 0);
+  conf->Read(wxT("InputSystem"), &InputSystem, 0);
+
+  conf->Read(wxT("OutputDev"), &OutputDev, 0);
+  conf->Read(wxT("InputDev"), &InputDev, 0);
+
+  conf->Read(wxT("SampleRate"), &SampleRate, DEFAULT_SAMPLE_RATE_INT);
+  conf->Read(wxT("SampleFormat"), &SampleFormat, 0);
+  conf->Read(wxT("SamplesPerBuffer"), &SamplesPerBuffer, DEFAULT_SAMPLES_PER_BUFFER);
+  conf->Read(wxT("WorkingDirectory"), &WorkingDir, wxT(""));
+
+  ReadChannels(wxT("/OutputChannels"), OutputChannels);
+  ReadChannels(wxT("/InputChannels"), InputChannels);
+  ReadChannels(wxT("/MidiDevices"), MidiIn);
 }
 
 void Settings::Save()
 {  
-  vector<long>::iterator i;
-  int l;
-  wxString s;
-
   conf->SetPath(wxT("/"));
   conf->Write(wxT("QuickWaveRender"), QuickWaveRender);
   conf->Write(wxT("dbWaveRender"), dbWaveRender);
+
+  conf->Write(wxT("OutputSystem"), OutputSystem);
+  conf->Write(wxT("InputSystem"), InputSystem);
+
   conf->Write(wxT("OutputDev"), OutputDev);
   conf->Write(wxT("InputDev"), InputDev);
+
   conf->Write(wxT("SampleRate"), SampleRate);
   conf->Write(wxT("SampleFormat"), SampleFormat);
   conf->Write(wxT("SamplesPerBuffer"), SamplesPerBuffer);
   conf->Write(wxT("WorkingDirectory"), WorkingDir);
-  
  
-  conf->DeleteGroup(wxT("/OutputChannels"));
-  conf->DeleteGroup(wxT("/InputChannels"));
-  conf->DeleteGroup(wxT("/MidiDevices"));
+  // save output channels
+  SaveChannels(wxT("/OutputChannels"), OutputChannels);
 
-  conf->SetPath(wxT("/OutputChannels"));
-  for (l = 0, i = OutputChannels.begin(); i != OutputChannels.end(); i++, l++)
-    {
-      s.Printf(wxT("%d"), l);
-      conf->Write(s, (*i));
-    }
-  conf->SetPath(wxT("/InputChannels"));
-  for (l = 0, i = InputChannels.begin(); i != InputChannels.end(); i++, l++)
-    {
-      s.Printf(wxT("%d"), l);
-      conf->Write(s, (*i));
-    }
-  conf->SetPath(wxT("/MidiDevices"));
-  for (l = 0, i = MidiIn.begin(); i != MidiIn.end(); i++, l++)
-    {
-      s.Printf(wxT("%d"), l);
-      conf->Write(s, (*i));
-      }
+  // save input channels
+  SaveChannels(wxT("/InputChannels"), InputChannels);
+
+  // save midi settings 
+  SaveChannels(wxT("/MidiDevices"), MidiIn);
+
+  conf->Flush();
 }
-
-
