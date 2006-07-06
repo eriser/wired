@@ -33,7 +33,12 @@ PluginLoader::PluginLoader(wxString filename) :
   // if failed, try loading filename without PREFIX base
   // (wx load /usr/lib, /usr/local/lib/, ...)
   if (!handle.IsLoaded())
-    handle.Load(filename);
+    {
+      cout << "[PLUGLOADER] Warning : " <<
+	wxString(wxT(INSTALL_PREFIX) + wxString(wxT("/lib/")) + filename).mb_str()
+	   << " can't be loaded" << endl;
+      handle.Load(filename);
+    }
 
   if (handle.IsLoaded())
     {

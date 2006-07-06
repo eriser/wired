@@ -10,10 +10,10 @@
 
 using namespace std;
 
-#define WIRED_DIRECTORY wxT(".wired")
-#define WIRED_CONF	wxT(".wired/wired.conf")
-#define PLUG_CONF_FILE  wxT("wired_plugins.conf")
 #define WIRED_DATADIR   wxT("/share/wired/data/")
+#define WIRED_DIRECTORY wxT(".wired/")
+#define WIRED_CONF	wxT("wired.conf")
+#define PLUG_CONF_FILE  wxT("wired_plugins.conf")
 
 class Settings
 {
