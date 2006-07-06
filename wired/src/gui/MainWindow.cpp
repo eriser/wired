@@ -60,6 +60,7 @@ WiredSessionXml		*CurrentXmlSession = NULL;
 WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
 FileConversion		*FileConverter = NULL;
 SettingWindow		*SettingsWin = NULL;
+Settings		*WiredSettings = NULL;
 
 wxMutex			AudioMutex;
 wxCondition		*SeqStopped = NULL;
@@ -74,7 +75,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 #if wxUSE_STATUSBAR
     CreateStatusBar(2);
 #endif
-  WiredSettings = new Settings(); // FIXME catch what we can here
+  WiredSettings = new Settings();
   CurrentSession = new WiredSession(wxString(wxT(""), *wxConvCurrent));
   CurrentXmlSession = new WiredSessionXml(wxString(wxT(""), *wxConvCurrent));
   LoadedExternalPlugins = new WiredExternalPluginMgr();
@@ -186,11 +187,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   /* Creation Panel */
   RackPanel = new Rack(split, -1, wxPoint(0, 0), wxSize(800, 250));
-
-  //cout << "Known warning ...." << endl;      
   SeqPanel = new SequencerGui(split, wxPoint(0, 0), wxSize(800, 200), this);
-  //cout << "done :-)" << endl;  
-
   OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 120), wxSIMPLE_BORDER);
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
 
@@ -454,7 +451,6 @@ void					MainWindow::InitFileConverter()
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
 	if (FileConverter->Init(&info, wxString(CurrentXmlSession->GetAudioDir()), (unsigned long) 16889235, this) == false)
 		cout << "[MAINWIN] Create file converter thread failed !" << endl;
-	WiredSettings->Save();
 }
 
 void					MainWindow::InitUndoRedoMenuItems()
@@ -1560,14 +1556,6 @@ void					MainWindow::OnAbout(wxCommandEvent &event)
     }
   //wxYield();
 }
-
-/*void MainWindow::OnKey(wxKeyEvent &event)
-  {
-  if (event.GetKeyCode() == WXK_SPACE)
-  cout << "oouaaaaaa" << endl;
-  else
-  event.Skip();
-  }*/
 
 void					MainWindow::OnSpaceKey()
 {
