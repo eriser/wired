@@ -42,7 +42,7 @@ Settings::Settings() :
   DataDir = wxT(INSTALL_PREFIX);
   DataDir += WIRED_DATADIR;
   
-  f.Assign(DataDir.c_str());
+  f.Assign(DataDir);
   if (!f.DirExists()) // if not found try /usr
     {
       DataDir = wxT("/usr");
@@ -52,12 +52,14 @@ Settings::Settings() :
 	DataDir = WIRED_DATADIR;
     }
 
-  f.AssignHomeDir();
-  f.AppendDir(WIRED_DIRECTORY);
-  
+  f.AssignDir(f.GetHomeDir() + wxString(wxT("/")) + wxString(WIRED_DIRECTORY));
+
   if (f.Mkdir(0755, wxPATH_MKDIR_FULL))
     {
       f.SetName(WIRED_CONF);
+
+      cout << "test path : " << f.GetPath().mb_str() << endl;
+      cout << "test file : " << f.GetName().mb_str() << endl;
       if (!f.FileExists())
 	{
 	  wxString	welcome;
