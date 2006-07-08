@@ -24,7 +24,7 @@ wxPanel(parent, id, pos, size)
 	note = pnote;
         selected = false;
 	code = note_code;
-	cout << "str: " << pnote.c_str() << "; code: " << code << endl;
+	cout << "str: " << pnote.mb_str() << "; code: " << code << endl;
 }
 
 void	Key::OnPaint(wxPaintEvent &event)
