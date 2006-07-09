@@ -1,11 +1,13 @@
 QuickWaveRender=0
 dbWaveRender=0
+OutputSystem=2
+InputSystem=0
 OutputDev=1
 InputDev=0
 SampleRate=0
 SampleFormat=0
-SamplesPerBuffer=4096
-WorkingDirectory=/home/n3o/wired
+SamplesPerBuffer=2048
+WorkingDirectory=/
 [OutputChannels]
 0=0
 1=1
