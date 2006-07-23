@@ -7,6 +7,8 @@
 #include <string>
 using namespace std;
 
+#include <wx/file.h>
+
 #define WIRED_FILE_EXT	".wrd"
 #define WIRED_MAGIC	"WIRE"
 /*
@@ -120,7 +122,7 @@ class WiredSession
   wxString	FileName;
   wxString	AudioDir;
  protected:
-  int		fd;
+  wxFile		confFile;
 };
 
 #endif
