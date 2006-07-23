@@ -48,15 +48,10 @@ WiredXml				WiredXml::Clone()
 
 bool					WiredXml::OpenDocument(const wxString& FileName)
 {
-	int					fd = INVALID_FD;
-		
 	if (FileName.size() > 0)
 		_DocumentFileName = FileName;
-	fd = open(_DocumentFileName.mb_str(*wxConvCurrent), FLAGS_OPEN_RDONLY);
-	if (fd != INVALID_FD)
-	{
-		close(fd);
-		
+	if (wxFile::Exists(_DocumentFileName.c_str()))
+	{	
 		//TODO Don't bypass document validation
 		//_DocumentFile = xmlReaderForFile(_DocumentFileName.c_str(), NULL, 
 		//								XML_PARSE_DTDATTR | XML_PARSE_NOENT | XML_PARSE_DTDVALID);
@@ -71,14 +66,11 @@ bool					WiredXml::OpenDtd(const wxString& FileName)
 {
 	//TODO Add the Dtd to the project ressource
 	return true;
-	int					fd;
-
 	if (FileName.size() > 0)
 		_DtdFileName = FileName;
-	if ((fd = open(_DtdFileName.mb_str(*wxConvCurrent), FLAGS_OPEN_RDONLY)) != INVALID_FD)
+	if (wxFile::Exists(_DtdFileName.c_str()))
 	{
-		close(fd);
-		_DtdFile = xmlParseDTD(NULL, ((const xmlChar*)(const char *)_DtdFileName.mb_str()));
+        _DtdFile = xmlParseDTD(NULL, ((const xmlChar*)(const char *)_DtdFileName.mb_str()));
 		if (_DtdFile != NULL)
 			return true;
 	}

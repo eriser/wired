@@ -343,12 +343,8 @@ bool			WiredSessionXml::SavePatternMIDIData(MidiPattern* PatternInfo)
 
 bool			WiredSessionXml::CreateFile()
 {
-	int			fd = INVALID_FD;
-
-	fd = open(_DocumentFileName.mb_str(*wxConvCurrent), FLAGS_OPEN_CW);	
-	if (fd != INVALID_FD)
+	if (wxFile::Exists(_DocumentFileName.c_str()))
 	{
-		close(fd);
 		return CreateDocument(_DocumentFileName);
 	}
 	std::cout << "[WIREDSESSION] Could not open file : " << strerror(errno) << std::endl;
