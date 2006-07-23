@@ -22,6 +22,7 @@
    #include <wx/wx.h>
 #endif
 #include <wx/filename.h>
+#include <wx/file.h>
 
 //#ifdefined	WIN32
 //#include <io.h>
