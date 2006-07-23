@@ -73,7 +73,7 @@ bool WiredLibFlac::CanConvert(const char* path, int Decode)
   
   if (Decode & ENCODE)
     return false;
-  if ((fd = open(path, O_RDONLY)) == -1)
+  if (wxFile::Exists(path) == false)
     return false;
   buf = new char((FLAC_FCC_LENGHT + 1) * sizeof(char));
   buf[FLAC_FCC_LENGHT] = 0;

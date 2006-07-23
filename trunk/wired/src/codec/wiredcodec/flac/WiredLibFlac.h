@@ -6,6 +6,13 @@
 
 #include	"../WiredApiCodec.h"
 
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
+
+#include <wx/file.h>
+
 #include	<iostream>
 #include	<dlfcn.h>
 
