@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netinet/in.h>
-
+#include <wx/file.h>
 
 /*************************************************************************************/
 /*** Classe Event                                                                  ***/
@@ -194,26 +194,27 @@ MidiFile::MidiFile(wxString filename)
   Type = 0;
 
   cout << "[MidiFile] Loading " << filename.c_str() << "..." << endl;
-  int fd = open(filename.mb_str(*wxConvCurrent), O_RDONLY);
-  if (fd != -1)
+  wxFile MIDIFile;
+  MIDIFile.Open(filename.c_str());
+  if (MIDIFile.IsOpened())
   {
     t_chunk ch;
     ch.Size = 0;
     unsigned long len = 0;
     do
     {
-      lseek(fd, ch.Size, SEEK_CUR);
-      len = read(fd, &ch, sizeof(ch));
+      MIDIFile.Seek(ch.Size, wxFromCurrent);
+      len = MIDIFile.Read(&ch, sizeof(ch));
       ch.Size = htonl(ch.Size);
     } while ((len == sizeof(ch)) && (!IS_MIDI_HEADER(ch.ID)));
     if (IS_MIDI_HEADER(ch.ID))
     {
-      if ((read(fd, &Type, 2) != 2) ||
-          (read(fd, &NbTracks, 2) != 2) ||
-          (read(fd, &Division, 2) != 2))
+      if ((MIDIFile.Read(&Type, 2) != 2) ||
+          (MIDIFile.Read(&NbTracks, 2) != 2) ||
+          (MIDIFile.Read(&Division, 2) != 2))
       {
         perror("[MidiFile] read");
-        close(fd);
+        MIDIFile.Close();
         return; 
       }
       Type = htons(Type);
@@ -234,14 +235,14 @@ MidiFile::MidiFile(wxString filename)
         ch.Size = 0;
         do
         {
-          lseek(fd, ch.Size, SEEK_CUR);
-          len = read(fd, &ch, sizeof(ch));
+          MIDIFile.Seek(ch.Size, wxFromCurrent);
+          len = MIDIFile.Read(&ch, sizeof(ch));
           ch.Size = htonl(ch.Size);
         } while ((len == sizeof(ch)) && (!IS_MIDI_TRK(ch.ID)));
         if (IS_MIDI_TRK(ch.ID))
         {
           unsigned char *track = (unsigned char *)malloc(ch.Size);
-          len = read(fd, track, ch.Size);
+          len = MIDIFile.Read(track, ch.Size);
           if (len == ch.Size)
             Tracks.push_back(new MidiTrack(ch.Size, track, Division));
           free(track);
@@ -252,7 +253,7 @@ MidiFile::MidiFile(wxString filename)
     }
    else
       cout << "[MidiFile] " << filename.c_str() << " is not a valid midi file." << endl;
-    close(fd);
+    MIDIFile.Close();
   }
   else
     perror("[MidiFile] open");
