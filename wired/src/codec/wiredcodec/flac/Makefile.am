@@ -1,6 +1,6 @@
-LDFLAGS = -lFLAC++
+LDFLAGS = -lFLAC++ $(shell wx-config --libs)
 
-CPPFLAGS =  
+CPPFLAGS =  $(shell wx-config --cflags)
 
 lib_LTLIBRARIES = libWiredFlac.la
 
