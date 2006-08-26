@@ -37,7 +37,7 @@ SynthPlugin::SynthPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   png_tmp = new wxImage("data/synth.png", wxBITMAP_TYPE_PNG);
   BgBmp = new wxBitmap(png_tmp);
-  
+
   fader_bg = new wxImage("data/Fader_bg.png",wxBITMAP_TYPE_PNG);
   fader_fg = new wxImage("data/fader_fg.png",wxBITMAP_TYPE_PNG);
   knob_bg = new wxImage("data/knob_bg.png",wxBITMAP_TYPE_PNG);
@@ -66,7 +66,7 @@ SynthPlugin::SynthPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 			      wxPoint(335, 40), wxSize(32, 32));
   Adsr1Release = new KnobCtrl(this, Synth_Adsr1_Release, knob_bg, knob_fg, 0, 127, 63, 1,
 			      wxPoint(380, 40), wxSize(32, 32));
-  
+
   Adsr2Attack = new KnobCtrl(this, Synth_Adsr2_Attack, knob_bg, knob_fg, 0, 127, 63, 1,
 			     wxPoint(249, 139), wxSize(32, 32));
   Adsr2Decay = new KnobCtrl(this, Synth_Adsr2_Decay, knob_bg, knob_fg, 0, 127, 63, 1,
@@ -75,7 +75,7 @@ SynthPlugin::SynthPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 			      wxPoint(335, 139), wxSize(32, 32));
   Adsr2Release = new KnobCtrl(this, Synth_Adsr2_Release, knob_bg, knob_fg, 0, 127, 63, 1,
 			      wxPoint(380, 139), wxSize(32, 32));
-  
+
   Lfo1Rate = new KnobCtrl(this, Synth_Lfo1_Rate, knob_bg, knob_fg, 0, 127, 63, 1,
 			  wxPoint(23, 358), wxSize(32, 32));
   Lfo1Amount = new KnobCtrl(this, Synth_Lfo1_Amount, knob_bg, knob_fg, 0, 127, 63, 1,
@@ -89,7 +89,7 @@ SynthPlugin::SynthPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 			    wxPoint(293, 358), wxSize(32, 32));
   Lfo2Delay = new KnobCtrl(this, Synth_Lfo2_Delay, knob_bg, knob_fg, 0, 127, 63, 1,
 			   wxPoint(336, 358), wxSize(32, 32));
-  
+
   // FIXME make a list of oscillators and generate them dynamically & graphically
   Osc1 = new SineOscillator();
   Osc2 = new NoisePseudoOscillator();
@@ -104,12 +104,12 @@ void SynthPlugin::OnPaint(wxPaintEvent &event)
 {
   wxMemoryDC memDC;
   wxPaintDC dc(this);
-  
-  memDC.SelectObject(*BgBmp);    
-  wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
+
+  memDC.SelectObject(*BgBmp);
+  wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
   while (upd)
-    {    
-      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), wxCOPY, FALSE);      
+    {
+      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), wxCOPY, FALSE);
       upd++;
     }
   Plugin::OnPaintEvent(event);
@@ -120,16 +120,16 @@ void SynthPlugin::Process(float **input, float **output, long sample_length)
   if (NoteIsOn)
     {
       Mutex.Lock();
-      bzero(output[0], sample_length * sizeof(float));
-      bzero(output[1], sample_length * sizeof(float));
+      memset(output[0], 0, sample_length * sizeof(float));
+      memset(output[1], 0, sample_length * sizeof(float));
       Osc1->Accumulate(output, sample_length);
       Osc2->Accumulate(output, sample_length);
       Mutex.Unlock();
     }
 }
 
-void	 SynthPlugin::SetSamplingRate(double rate) 
-{ 
+void	 SynthPlugin::SetSamplingRate(double rate)
+{
   SampleRate = rate;
   Osc1->SetSampleRate(rate);
   Osc2->SetSampleRate(rate);
@@ -143,7 +143,7 @@ void SynthPlugin::ProcessEvent(WiredEvent &event)
       // FIXME Ew ..
       Freq = 440.f * static_cast<float>(pow(2, static_cast<float>(event.MidiData[1] - 69)/12.0f));
       // make that ^ a function ffs
-      if (!event.MidiData[2]) 
+      if (!event.MidiData[2])
 	NoteIsOn = false; // FIXME handle polyphony and set this when seq->stop too
       else
 	NoteIsOn = true;
@@ -152,7 +152,7 @@ void SynthPlugin::ProcessEvent(WiredEvent &event)
       Osc1->SetFreq(Freq);
       Osc2->SetFreq(Freq);
     }
-  cout << "[SYNTH] Got midi in : " << event.MidiData[0] << " " 
+  cout << "[SYNTH] Got midi in : " << event.MidiData[0] << " "
        << event.MidiData[1] << " " << event.MidiData[2] << endl;
 }
 
@@ -195,7 +195,7 @@ void SynthPlugin::OnButtonClick(wxCommandEvent &e)
 void SynthPlugin::OnOsc1Phase(wxScrollEvent &event)
 {
   int phase;
-  
+
   Mutex.Lock();
   phase = Osc1Phase->GetValue();
   Mutex.Unlock();
@@ -206,7 +206,7 @@ void SynthPlugin::OnOsc1Phase(wxScrollEvent &event)
 void SynthPlugin::OnOsc1Transpose(wxScrollEvent &event)
 {
   int transpose;
-  
+
   Mutex.Lock();
   transpose = Osc1Transpose->GetValue();
   Mutex.Unlock();
@@ -217,7 +217,7 @@ void SynthPlugin::OnOsc1Transpose(wxScrollEvent &event)
 void SynthPlugin::OnOsc1Fine(wxScrollEvent &event)
 {
   int fine;
-  
+
   Mutex.Lock();
   fine = Osc1Fine->GetValue();
   Mutex.Unlock();
@@ -228,7 +228,7 @@ void SynthPlugin::OnOsc1Fine(wxScrollEvent &event)
 void SynthPlugin::OnOsc2Phase(wxScrollEvent &event)
 {
   int phase;
-  
+
   Mutex.Lock();
   phase = Osc2Phase->GetValue();
   Mutex.Unlock();
@@ -239,7 +239,7 @@ void SynthPlugin::OnOsc2Phase(wxScrollEvent &event)
 void SynthPlugin::OnOsc2Transpose(wxScrollEvent &event)
 {
   int transpose;
-  
+
   Mutex.Lock();
   transpose = Osc2Transpose->GetValue();
   Mutex.Unlock();
@@ -250,7 +250,7 @@ void SynthPlugin::OnOsc2Transpose(wxScrollEvent &event)
 void SynthPlugin::OnOsc2Fine(wxScrollEvent &event)
 {
   int fine;
-  
+
   Mutex.Lock();
   fine = Osc2Fine->GetValue();
   Mutex.Unlock();
@@ -418,10 +418,10 @@ extern "C"
 {
 
   PlugInitInfo init()
-  {  
+  {
     WIRED_MAKE_STR(info.UniqueId, "SY31");
     info.Name = PLUGIN_NAME;
-    info.Type = PLUG_IS_INSTR;  
+    info.Type = PLUG_IS_INSTR;
     info.UnitsX = 3;
     info.UnitsY = 5;
     return (info);
