@@ -74,7 +74,7 @@ void				*FileConversion::Entry()
 {
 	cout << "[FILECONVERT] Thread started !" << endl;
 	bool HasChangedPath;
-	
+
 	while(_ShouldRun)
 	{
 		FileConversionMutex.Lock();
@@ -95,13 +95,13 @@ void				*FileConversion::Entry()
 				case AConvertSampleRate :
 					cout << "[FILECONVERT] Thread working ! Samplerate" << endl;
 					HasChangedPath = false;
-					ConvertSamplerate(Action->SrcFileName, HasChangedPath);					
+					ConvertSamplerate(Action->SrcFileName, HasChangedPath);
 					cout << "[FILECONVERT] Thread working ! Samplerate ended" << endl;
 					break;
-				case AImportFile :				
+				case AImportFile :
 					cout << "[FILECONVERT] Thread working ! import file" << endl;
 					SeqMutex.Lock();
-					ImportWavePattern(Action->SrcFileName);					
+					ImportWavePattern(Action->SrcFileName);
 					SeqMutex.Unlock();
 					cout << "[FILECONVERT] Thread working ! import file ended" << endl;
 					break;
@@ -145,12 +145,12 @@ int						FileConversion::GetSndFFormat(PcmType Type)
 			return SF_FORMAT_PCM_24;
 		case Float32:
 			return SF_FORMAT_FLOAT;
-		default: 
+		default:
 			return SF_FORMAT_PCM_16;
 	}
 }
 
-SNDFILE			*FileConversion::OpenDecodeFile(t_Pcm	&Data, const wxString &DestFileName, 
+SNDFILE			*FileConversion::OpenDecodeFile(t_Pcm	&Data, const wxString &DestFileName,
 																						SF_INFO &Info, unsigned long *TotalReaden, int *sf_write_result)
 {
   SNDFILE					*Result = NULL;
@@ -158,7 +158,7 @@ SNDFILE			*FileConversion::OpenDecodeFile(t_Pcm	&Data, const wxString &DestFileN
  	Info.samplerate = Data.SampleRate;
 	Info.channels = Data.Channels;
 	Info.format = 0;
-	Info.format |= SF_FORMAT_WAV;	
+	Info.format |= SF_FORMAT_WAV;
 	Info.format |= GetSndFFormat(Data.PType);
 	if ((Result = sf_open(DestFileName.mb_str(*wxConvCurrent), SFM_WRITE, &Info)) == NULL)
 	{
@@ -174,7 +174,7 @@ bool				FileConversion::Decode(wxString *FileName)
 {
     return false; // temp....
     bool        Res= true;
-    
+
 	if (_ShouldRun == false)
 		return false;
 	if (_CodecConverter.CanConvert(wxString(FileName->c_str()), DECODE) == true)
@@ -188,7 +188,7 @@ bool				FileConversion::Decode(wxString *FileName)
 		unsigned long			Readen = 0;
 		unsigned long 		TotalReaden = 0;
 		int								sf_write_result = 0;
-		wxProgressDialog	ProgressDialog(_("Conversion"), _("Decoding file, please wait."), 
+		wxProgressDialog	ProgressDialog(_("Conversion"), _("Decoding file, please wait."),
 																		PROGRESS_DIALOG_UNIT, NULL, wxPD_SMOOTH | wxPD_ELAPSED_TIME |
 																		wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_APP_MODAL);
 
@@ -196,7 +196,7 @@ bool				FileConversion::Decode(wxString *FileName)
 		RelativeFileName.SetExt(wxString(wxT("wav"), *wxConvCurrent));
 		DestFileName = _WorkingDir + wxString(wxT("/"), *wxConvCurrent) + RelativeFileName.GetFullName();
 		Data.pcm = new float[_BufferSize];
-		bzero(Data.pcm, _BufferSize);
+		memset(Data.pcm, 0, _BufferSize);
 		while ((Readen = _CodecConverter.Decode(FileNameLocal, &Data, _BufferSize)) > 0)
 		{
 			TotalReaden += Readen;
@@ -207,9 +207,9 @@ bool				FileConversion::Decode(wxString *FileName)
 				sf_write_result = sf_write_float(Result, (float *)Data.pcm,Readen);
 			else
 				sf_write_result = sf_writef_int(Result, (int *)Data.pcm, Readen);
-			bzero(Data.pcm, _BufferSize);
+			memset(Data.pcm, 0, _BufferSize);
 		}
-		
+
 		_CodecConverter.EndDecode();
 		delete[] (float *)Data.pcm;
 		if (!TotalReaden || !sf_write_result)
@@ -221,7 +221,7 @@ bool				FileConversion::Decode(wxString *FileName)
 		else
 			*FileName = DestFileName;
 		ProgressDialog.Update(PROGRESS_DIALOG_UNIT);
-		sf_close(Result);  
+		sf_close(Result);
 	}
     return Res;
 }
@@ -242,7 +242,7 @@ void				FileConversion::ConvertToCodec(wxString *FileName)
 bool				FileConversion::ConvertSamplerate(wxString *FileName)
 {
 	bool HasChangedPath;
-	return ConvertSamplerate(FileName, HasChangedPath);	
+	return ConvertSamplerate(FileName, HasChangedPath);
 //	EnqueueAction(AConvertSampleRate, FileName, NULL);
 //	FileConversionMutex.Unlock();
 }
@@ -277,7 +277,7 @@ void				FileConversion::ImportWaveFile(wxString *FileName)
 void				FileConversion::EnqueueAction(FileConversionTypeAction ActionType, wxString *SrcFile, wxString *DstFile)
 {
 	FileConversionAction	*NewAction = new FileConversionAction;
-	
+
 	NewAction->TypeAction = ActionType;
 	NewAction->SrcFileName = SrcFile == NULL ? NULL : new wxString(SrcFile->c_str());
 	NewAction->DstFileName = DstFile == NULL ? NULL : new wxString(DstFile->c_str());
@@ -287,8 +287,8 @@ void				FileConversion::EnqueueAction(FileConversionTypeAction ActionType, wxStr
 
 void				FileConversion::ImportWavePattern(wxString *FileName)
 {
-//	wxProgressDialog *Progress = new wxProgressDialog("Loading wave file", "Please wait...", 100, 
-//														NULL, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
+//	wxProgressDialog *Progress = new wxProgressDialog("Loading wave file", "Please wait...", 100,
+//														NULL, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 //														| wxPD_REMAINING_TIME);
 //	Progress->Update(1);
     std::string temp(FileName->mb_str(*wxConvCurrent));
@@ -302,13 +302,13 @@ void				FileConversion::ImportWavePattern(wxString *FileName)
 void				FileConversion::CopyToWorkingDir(wxString *FileName)
 {
 
-	wxMessageDialog msg(_Parent, _("Do you want to copy this file to your project directory ?"), wxT("Wired"), 
+	wxMessageDialog msg(_Parent, _("Do you want to copy this file to your project directory ?"), wxT("Wired"),
 						wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
 	int res = msg.ShowModal();
 	if (res == wxID_OK)
 	{
 		wxFileName fn(FileName->c_str());
-	  
+
 		fn.SetPath(_WorkingDir);
 		cout << "[FILECONVERT] Will copy File {" << FileName->c_str() << "} TO {" << fn.GetFullPath().c_str() << "}" << endl;
 		if (!wxCopyFile(FileName->c_str(), fn.GetFullPath().c_str()))
