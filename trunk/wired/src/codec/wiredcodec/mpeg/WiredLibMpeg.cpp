@@ -125,7 +125,7 @@ bool	WiredLibMpeg::CanConvert(const char* path, int Decode)
 void	WiredLibMpeg::mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen, unsigned int NbChannels)
 {
 	int cpt;
-	
+
 	for (cpt = 0; cpt < totalLen; cpt++)
 	{
 		dst[cpt] = leftChan[cpt / NbChannels];
@@ -143,7 +143,7 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 {
 	int				stream = 0;
 	static long			filePosInSample = 0;
-	
+
 	if (file == NULL)
 	{
 	  cout << path<< endl;
@@ -166,9 +166,9 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 	{
 		float* leftChan = new float[length / pcm->Channels];
 		float* rightChan = new float[length / pcm->Channels];
-		bzero(leftChan, length / pcm->Channels);
-		bzero(rightChan, length / pcm->Channels);
-		
+		memset(leftChan, 0, length / pcm->Channels);
+		mesmet(rightChan, 0, length / pcm->Channels);
+
 		if (filePosInSample < 0)
 		{
 			cout << "[WIREDLIBMPEG] Can't tell position" << endl;
