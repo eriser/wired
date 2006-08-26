@@ -76,7 +76,7 @@ AM_PATH_WXCONFIG($reqwx, wxWin=1)
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
 		wxWidgets must be installed on your system.
- 
+
 		Please check that wx-config is in path, the directory
 		where wxWidgets libraries are installed (returned by
 		'wx-config --libs' or 'wx-config --static --libs' command)
@@ -89,11 +89,11 @@ else
 	if [![ ${WX_CONFIG} --unicode ]]; then
 	   	AC_MSG_ERROR([
 		wxWidgets must be installed with unicode support.
- 
+
 		Please try wx-config --unicode=yes.
 		])
 	fi
-	
+
 fi
 
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
@@ -127,23 +127,23 @@ AC_HEADER_TIME
 AC_C_VOLATILE
 
 # checks for options
-#AC_ARG_ENABLE(dssi, 
+#AC_ARG_ENABLE(dssi,
 #	[  --enable-dssi Enable or disable DSSI plugins support (default enabled)],
 #	[enable_dssi="$enableval"],
 #	[enable_dssi="yes"])
 
-AC_ARG_ENABLE(debug, 
+AC_ARG_ENABLE(debug,
 	[  --enable-debug Enable or disable debug symbol generation (default disabled)],
 	[enable_debug="$enableval"],
 	[enable_debug="no"])
 
 #, disable_optimize=yes, disable_optimize=no)
-AC_ARG_ENABLE(optimize, 
+AC_ARG_ENABLE(optimize,
 	[  --enable-optimize Enable or disable compilation optimizations (default enabled)],
 	[enable_optimize="$enableval"],
 	[enable_optimize="yes"])
 
-#AC_ARG_ENABLE(purify, 
+#AC_ARG_ENABLE(purify,
 #	[  --enable-purify Enable building process with purify (default disabled)],
 #	[enable_purify="$enableval"],
 #	[enable_purify="no"])
@@ -154,7 +154,7 @@ AC_FUNC_LSTAT
 AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
 AC_FUNC_MALLOC
 AC_FUNC_SELECT_ARGTYPES
-AC_CHECK_FUNCS([floor ftime getcwd memmove memset pow select sqrt strdup bzero open])
+AC_CHECK_FUNCS([floor ftime getcwd memmove memset pow select sqrt strdup memset open])
 
 AC_PREFIX_DEFAULT(/usr/local)
 if [[ $prefix = "NONE" ]] ; then
@@ -166,7 +166,7 @@ fi
 
 
 # Checking Options
-# ALL_SRC="${ALL_SRC} 
+# ALL_SRC="${ALL_SRC}
 #AC_MSG_CHECKING([for enable-dssi])
 #if test x"$enable_dssi" = xyes;
 #then
@@ -220,11 +220,11 @@ ALL_LINGUAS="fr"
 AM_GNU_GETTEXT([use-libtool])
 AM_GNU_GETTEXT_VERSION([0.14.4])
 
-if test "x${prefix}" = "xNONE"; then 
- AC_DEFINE(PACKAGE_LOCALE_DIR, "/usr/local/share/wired/locale") 
-else 
- AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale") 
-fi 
+if test "x${prefix}" = "xNONE"; then
+ AC_DEFINE(PACKAGE_LOCALE_DIR, "/usr/local/share/wired/locale")
+else
+ AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale")
+fi
 
 AC_CONFIG_FILES([Makefile po/Makefile.in intl/Makefile
 		src/Makefile
@@ -260,7 +260,7 @@ AC_CONFIG_FILES([Makefile po/Makefile.in intl/Makefile
 		src/libs/WiredAkai/Makefile
 		src/libs/WiredAkai/src/Makefile
 		src/data/Makefile
-		src/data/ihm/Makefile	
+		src/data/ihm/Makefile
 		src/data/ihm/mixer/Makefile
 		src/data/ihm/opt/Makefile
 		src/data/ihm/player/Makefile
