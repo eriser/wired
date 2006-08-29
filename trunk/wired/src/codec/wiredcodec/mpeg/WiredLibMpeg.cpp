@@ -167,7 +167,7 @@ int WiredLibMpeg::decode(const char *path, t_Pcm *pcm, unsigned long length)
 		float* leftChan = new float[length / pcm->Channels];
 		float* rightChan = new float[length / pcm->Channels];
 		memset(leftChan, 0, length / pcm->Channels);
-		mesmet(rightChan, 0, length / pcm->Channels);
+		memset(rightChan, 0, length / pcm->Channels);
 
 		if (filePosInSample < 0)
 		{
