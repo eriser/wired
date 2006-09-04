@@ -163,6 +163,8 @@ class					MainWindow: public wxFrame
   wxMenuItem				*ItemFloatingRacks;
   wxMenuItem				*ItemFloatingOptView;
 
+  wxMenuItem				*ItemFullscreenToggle;
+
   /* Sizers */
   wxBoxSizer				*BottomSizer;
   wxBoxSizer				*TopSizer;
