@@ -125,11 +125,11 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->Append(MainWin_SaveAs, _("Save &as...\tF12"));
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_ImportWave, _("&Import Wave file..."));
-  FileMenu->Append(MainWin_ImportMIDI, _("&Import MIDI file..."));
-  FileMenu->Append(MainWin_ImportAKAI, _("&Import AKAI sample..."));
+  FileMenu->Append(MainWin_ImportMIDI, _("Import &MIDI file..."));
+  FileMenu->Append(MainWin_ImportAKAI, _("Import A&KAI sample..."));
   FileMenu->AppendSeparator();
-  FileMenu->Append(MainWin_ExportWave, _("&Export Wave file..."));
-  FileMenu->Append(MainWin_ExportMIDI, _("&Export MIDI file..."));
+  FileMenu->Append(MainWin_ExportWave, _("E&xport Wave file..."));
+  FileMenu->Append(MainWin_ExportMIDI, _("Ex&port MIDI file..."));
 
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_Quit, _("&Quit\tCtrl-Q"));
@@ -165,7 +165,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   ItemFloatingRacks = WindowMenu->AppendCheckItem(MainWin_FloatRacks, _("Floating Racks"));
 //   ItemFloatingOptView = WindowMenu->AppendCheckItem(MainWin_FloatView, _("Floating Optional View"));
   WindowMenu->AppendSeparator();
-  WindowMenu->AppendCheckItem(MainWin_FullScreen, _("&Fullscreen"));
+  ItemFullscreenToggle = WindowMenu->AppendCheckItem(MainWin_FullScreen,
+						     _("&Fullscreen"));
   WindowMenu->AppendSeparator();
   WindowMenu->AppendCheckItem(MainWin_ShowLog, _("&Log window"));
   
@@ -1376,8 +1377,13 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 {
   vector<Track *>::iterator		i;
 
+  // settings window can't be on top of fullscreen application
   if (IsFullScreen())
-    OnFullScreen(event);
+    {
+      // simulate same action 
+      ItemFullscreenToggle->Check(false);
+      OnFullScreen(event);
+    }
   if (SettingsWin->ShowModal() == wxID_OK &&
       (SettingsWin->AudioLoaded || SettingsWin->MidiLoaded))
     {
