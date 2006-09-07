@@ -91,6 +91,14 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
       cout << "Critical error" << endl;
       exit(1);
     }
+  // from GetDevices
+  catch (Error::NoDevice)
+    {
+      cout << "[MAINWIN] No Device :\nplease check you have a soundcard and Alsa installed" 
+	   << endl;
+      AlertDialog(_("Critical error"), _("You have no soundcard, Wired stop now!"));
+      exit(1);
+    }
   
   // Mixer must be declared after AudioEngine 
   Mix = new Mixer();
@@ -319,12 +327,6 @@ int			MainWindow::InitAudio(bool restart)
 	Audio->IsOk = true;
       else
 	cout << "[MAINWIN] AudioMutex still locked"<< endl;
-    }
-  // from GetDeviceSettings
-  catch (Error::NoDevice)
-    {
-      cout << "[MAINWIN] No Device :\nplease check you have a soundcard and Alsa installed" 
-	   << endl;
     }
   // from GetDeviceSettings
   catch (Error::InvalidDeviceSettings)

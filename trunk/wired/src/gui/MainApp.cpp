@@ -92,6 +92,7 @@ void              MainApp::OnFatalException()
 void				MainApp::OnUnhandledException()
 {
   cout << "UnhandledException" << endl;
+  Frame->AlertDialog(_("Critical error"), _("An unhandled exception occurs, Wired stop now!"));
 }
 
 int				MainApp::OnExit()
