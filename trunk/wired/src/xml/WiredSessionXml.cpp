@@ -3,6 +3,8 @@
 
 #include "WiredSessionXml.h"
 
+
+
 extern std::vector<PluginLoader *>	LoadedPluginsList;
 extern WiredExternalPluginMgr		*LoadedExternalPlugins;
 extern PlugStartInfo				StartInfo;
@@ -343,12 +345,8 @@ bool			WiredSessionXml::SavePatternMIDIData(MidiPattern* PatternInfo)
 
 bool			WiredSessionXml::CreateFile()
 {
-	if (wxFile::Exists(_DocumentFileName.c_str()))
-	{
-		return CreateDocument(_DocumentFileName);
-	}
-	std::cout << "[WIREDSESSION] Could not open file : " << strerror(errno) << std::endl;
-	return false;
+ 
+  return CreateDocument(_DocumentFileName);
 }
 
 
@@ -547,6 +545,7 @@ void			WiredSessionXml::LoadTrack(int Number)
 		}
 		else if (Buffer.Cmp(STR_PATTERN) == 0)
 		{
+		  cout << "Patern" << endl;
 			LoadPattern(NewTrack, Number);
 			continue;
 		}
