@@ -94,9 +94,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   // from GetDevices
   catch (Error::NoDevice)
     {
-      cout << "[MAINWIN] No Device :\nplease check you have a soundcard and Alsa installed" 
+      cout << "[MAINWIN] No Device :\nPlease check you have a soundcard and Alsa installed" 
 	   << endl;
-      AlertDialog(_("Critical error"), _("You have no soundcard, Wired stop now!"));
+      AlertDialog(_("Critical error"), _("You have no soundcard, Wired will exit."));
       exit(1);
     }
   
