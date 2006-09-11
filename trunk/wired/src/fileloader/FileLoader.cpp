@@ -1211,7 +1211,8 @@ void FileLoader::StopPlaying()
   if (!save)
     preview->SetLabel(_("Preview"));
   files->SetFocus();
-  //  wxCommandEvent event(wxEVT_FILELOADER_STOP, GetId());
+
+  // file loader doesn't stop directly the file, but send an event at MainWindow
   wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, FileLoader_Stop);  
   event.SetEventObject(this);
   wxPostEvent(GetParent(), event);
@@ -1224,6 +1225,7 @@ void FileLoader::StartPlaying()
     preview->SetLabel(_("Stop"));
   files->SetFocus();
 
+  // file loader doesn't play directly the file, but send an event at MainWindow
   wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, FileLoader_Start);  
   event.SetEventObject(this);
   wxPostEvent(GetParent(), event);
