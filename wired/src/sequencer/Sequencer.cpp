@@ -130,6 +130,7 @@ void					*Sequencer::Entry()
 		  delete *MidiMsg;
 	}
       SeqMutex.Unlock();
+      Yield();
       MidiEvents.clear();
       MidiMutex.Unlock();
       SeqMutex.Lock();
