@@ -40,8 +40,10 @@ PluginLoader::PluginLoader(wxString filename) :
       handle.Load(filename);
     }
 
+  // check if the library is correctly loaded
   if (handle.IsLoaded())
     {
+      // check all mandatory symbols
       cout << "[PLUGLOADER] Loading symbol init..." << endl;
 
       init = (init_t) handle.GetSymbol(PLUG_INIT);
@@ -65,7 +67,18 @@ PluginLoader::PluginLoader(wxString filename) :
 	  handle.Unload();
 	  return ;
 	}  
+
+      // get unique info from plugin (id, name, version, size, ..)
       InitInfo = init();
+
+      // check version of API
+      if (InitInfo.Version != WIRED_CURRENT_VERSION_API)
+	{
+	  cerr << "[PLUGLOADER] Error: Cannot load plugin " << filename.mb_str() 
+	       << ", it has deprecated version of API " << endl;
+	  handle.Unload();
+	  return ;
+	}
     }
   else
     cerr << "[PLUGLOADER] Error: Cannot open library : " << filename.mb_str() << endl;

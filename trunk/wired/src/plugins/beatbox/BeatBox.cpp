@@ -59,8 +59,8 @@ END_EVENT_TABLE()
 WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo) 
   : Plugin(startinfo, initinfo)
 {
-  cout << "[DRM31] Host is " << GetHostProductName()
-       << " version " << GetHostProductVersion() << endl;
+  cout << "[DRM31] Host is " << GetHostProductName().mb_str()
+       << " version " << GetHostProductVersion().mb_str() << endl;
   
   OnLoading = false;
   
@@ -2527,9 +2527,11 @@ extern "C"
   {  
     WIRED_MAKE_STR(info.UniqueId, "WBBE");
     info.Name = PLUGIN_NAME;
-    info.Type = PLUG_IS_INSTR;  
+    info.Type = ePlugTypeInstrument;  
     info.UnitsX = 4;
     info.UnitsY = 4;
+    info.Version = 1;
+
     return (info);
   }
 

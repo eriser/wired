@@ -1729,9 +1729,11 @@ extern "C"
   {  
     WIRED_MAKE_STR(info.UniqueId, "PLLS");
     info.Name = PLUGIN_NAME;
-    info.Type = PLUG_IS_INSTR;  
+    info.Type = ePlugTypeInstrument;  
     info.UnitsX = 2;
     info.UnitsY = 2;
+    info.Version = 0;
+
     return (info);
   }
 
@@ -1747,11 +1749,3 @@ extern "C"
   }
 
 }
-
-
-
-
-
-
-
-

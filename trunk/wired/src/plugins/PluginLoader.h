@@ -16,6 +16,7 @@ using namespace std;
 //((*it)->InitInfo.Id[0] == plugin.Id[0]) && ((*it)->InitInfo.Id[1] == plugin.Id[1]) &&
 //	    ((*it)->InitInfo.Id[2] == plugin.Id[2]) && ((*it)->InitInfo.Id[3] == plugin.Id[3])
 
+
 class				PluginLoader
 {
  public:

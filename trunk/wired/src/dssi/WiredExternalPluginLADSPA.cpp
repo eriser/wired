@@ -61,9 +61,9 @@ void					WiredLADSPAInstance::SetInfo(PlugInitInfo *Info)
 {	
 	Info->Name = Name;
 	if (_InputAudioPluginsPorts.size() > 0)
-		Info->Type = PLUG_IS_EFFECT;
+		Info->Type = ePlugTypeEffect;
 	else
-		Info->Type = PLUG_IS_INSTR;
+		Info->Type = ePlugTypeInstrument;
 	Info->UnitsX = _InputDataPluginsPorts.size() / 5 + ((_InputDataPluginsPorts.size() % 5) / 4) + 1;
 	Info->UnitsY = 1;
 	Info->UniqueExternalId = _Descriptor->UniqueID;

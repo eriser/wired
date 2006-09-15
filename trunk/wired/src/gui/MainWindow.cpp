@@ -948,20 +948,22 @@ void					MainWindow::LoadPlugins()
 	      LoadedPluginsList.push_back(p);
 
 	      p->Id = PluginMenuIndexCount++;
-	      if (p->InitInfo.Type == PLUG_IS_INSTR)
+	      if (p->InitInfo.Type == ePlugTypeInstrument)
 		{
 		  CreateInstrMenu->Append(p->Id, p->InitInfo.Name);
 		  Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED,
 			  (wxObjectEventFunction)(wxEventFunction)
 			  (wxCommandEventFunction)&MainWindow::OnCreateRackClick);
 		}
-	      else
+	      else if (p->InitInfo.Type == ePlugTypeEffect)
 		{
 		  CreateEffectMenu->Append(p->Id, p->InitInfo.Name);
 		  Connect(p->Id, wxEVT_COMMAND_MENU_SELECTED,
 			  (wxObjectEventFunction)(wxEventFunction)
 			  (wxCommandEventFunction)&MainWindow::OnCreateEffectClick);
 		}
+	      else
+		cout << "[MAINWIN] Plugin type unknown" << endl;
 	      cout << "[MAINWIN] Plugin " << p->InitInfo.Name.mb_str() << " is working" << endl;
 	    }
 	  else
