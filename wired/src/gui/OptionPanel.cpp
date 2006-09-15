@@ -132,7 +132,9 @@ OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
   HelpTool = new WiredTool(_("Wired Help"), ID_TOOL_HELP_OPTIONPANEL, HelpWin);
   ToolsList.push_back(MixerTool);
   ToolsList.push_back(HelpTool);
-  ShowTool(MixerTool);
+
+  // default tool is HelpTool
+  ShowTool(HelpTool);
 }
 
 OptionPanel::~OptionPanel()
