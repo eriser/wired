@@ -421,9 +421,11 @@ extern "C"
   {
     WIRED_MAKE_STR(info.UniqueId, "SY31");
     info.Name = PLUGIN_NAME;
-    info.Type = PLUG_IS_INSTR;
+    info.Type = ePlugTypeInstrument;
     info.UnitsX = 3;
     info.UnitsY = 5;
+    info.Version = 1;
+
     return (info);
   }
 
@@ -438,11 +440,3 @@ extern "C"
   }
 
 }
-
-
-
-
-
-
-
-

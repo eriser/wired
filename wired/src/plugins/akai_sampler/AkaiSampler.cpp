@@ -1001,9 +1001,10 @@ extern "C"
   {
     WIRED_MAKE_STR(info.UniqueId, "PLWS");
     info.Name = PLUGIN_NAME;
-    info.Type = PLUG_IS_INSTR;
+    info.Type = ePlugTypeInstrument;
     info.UnitsX = 4;
     info.UnitsY = 2;
+    info.Version = 1;
 
     return (info);
   }
@@ -1019,4 +1020,3 @@ extern "C"
     delete p;
   }
 }
-

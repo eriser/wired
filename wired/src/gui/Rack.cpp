@@ -542,12 +542,12 @@ void				Rack::AddPlugToMenu()
 	
 	for(i = LoadedPluginsList.begin(); i != LoadedPluginsList.end() ; i++)
     {
-    	if ((*i)->InitInfo.Type == PLUG_IS_INSTR)
+    	if ((*i)->InitInfo.Type == ePlugTypeInstrument)
 		{
 			Id++;
 			instr_menu->Append((*i)->Id, ((*i)->InitInfo.Name).c_str());
 		}
-    	else
+    	else if ((*i)->InitInfo.Type == ePlugTypeEffect)
 		{
 			Id++;
 			effects_menu->Append((*i)->Id, ((*i)->InitInfo.Name).c_str());

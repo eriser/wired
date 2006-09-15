@@ -196,9 +196,11 @@ extern "C"
   {  
     WIRED_MAKE_STR(info.UniqueId, "PLIN");
     info.Name = PLUGIN_NAME;
-    info.Type = PLUG_IS_INSTR;  
+    info.Type = ePlugTypeInstrument;
     info.UnitsX = 2;
     info.UnitsY = 1;
+    info.Version = 1;
+
     return (info);
   }
 
@@ -214,11 +216,3 @@ extern "C"
   }
 
 }
-
-
-
-
-
-
-
-

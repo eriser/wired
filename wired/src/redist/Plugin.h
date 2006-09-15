@@ -4,6 +4,14 @@
 #ifndef __PLUGIN_H__
 #define __PLUGIN_H__
 
+////
+// Current version of API
+//
+// this number increment only when methods or function of API are modified
+//
+#define WIRED_CURRENT_VERSION_API (1)
+
+
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
    #include <wx/wx.h>
@@ -13,39 +21,54 @@
 #include <vector>
 #include <map>
 
+// methods are mainly in this class
 class Plugin;
 
-typedef long (*HostInterface)(Plugin *plug, long param, void *value);
-
+// called to check name, version,.. of plugin
 #define PLUG_INIT	wxT("init")
-#define PLUG_DESTROY	wxT("destroy")
+
+// called to create one instance
 #define PLUG_CREATE	wxT("create")
- 
-#define PLUG_IS_INSTR	0x0
-#define PLUG_IS_EFFECT	0x1
+
+// called to destroy one instance
+#define PLUG_DESTROY	wxT("destroy")
+
+// determine type of plugin
+enum ePlugType {
+  ePlugTypeUnknown = 0,
+  ePlugTypeInstrument,
+  ePlugTypeEffect
+};
 
 #define WIRED_MAKE_STR(x, y) { x[0] = y[0];  x[1] = y[1];  x[2] = y[2];  x[3] = y[3]; }
 
-/* This is the struct you need to return to the host when it calls the 'init' function
-   of your plugin */
+/* You need to return this struct to the host when it calls the 'init' function */
 typedef struct  
 {
   // ID of your plugin. Must be *unique* AND ALPHA (not numeric)
   char	 UniqueId[4];	
-    // ID of an external plugin. Must not be filled if you want to comply with Wired Old API
-  unsigned long	 UniqueExternalId;
+
+  // ID of an external plugin. Must not be filled if you want to comply with Wired Old API
+  unsigned long	UniqueExternalId;
+
   // Your plugin name
-  wxString Name;	
-  // Type of plugin (PLUG_IS_INSTR for an instrument or PLUG_IS_EFFECT for an effect)
-  int	 Type;		
+  wxString	Name;
+
+  // Type of plugin (ePlugTypeInstrument for an instrument or ePlugTypeEffect, ..)
+  int		Type;
+
   // Number of units for the width of your plugin (1 unit is 200 pixels)
-  int	 UnitsX;	
+  int		UnitsX;
+
   // Number of units for the height of your plugin (1 unit is 100 pixels)
-  int	 UnitsY;
+  int		UnitsY;
+
+  // version of API used
+  int		Version;
 }	        PlugInitInfo;
 
-/* This is the struct the host will pass you for creating a new instance of your 
-   plugin */
+/* Host give to you this struct to create a new instance of your plugin */
+typedef long (*HostInterface)(Plugin *plug, long param, void *value);
 typedef struct  s_PlugStartInfo
 {
   HostInterface HostCallback;

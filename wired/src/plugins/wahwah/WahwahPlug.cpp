@@ -335,9 +335,11 @@ extern "C"
   {  
     WIRED_MAKE_STR(info.UniqueId, "Wah");
     info.Name = PLUGIN_NAME;
-    info.Type = PLUG_IS_EFFECT;  
+    info.Type = ePlugTypeEffect;
     info.UnitsX = 2;
     info.UnitsY = 1;
+    info.Version = 1;
+
     return (info);
   }
 
