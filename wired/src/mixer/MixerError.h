@@ -4,7 +4,7 @@
 #ifndef __MIXER_ERROR_H__
 #define __MIXER_ERROR_H__
 
-#include <string>
+#include <wx/string.h>
 
 namespace MixerError
 {
@@ -12,10 +12,10 @@ namespace MixerError
   class InputBuffersFull : public MixerError {};
   class Failure : public MixerError
     {
-      std::string msg;
+      wxString msg;
     public:
-      Failure(std::string s) : msg(s) { };
-      std::string getMsg() { return msg; }
+      Failure(wxString s) : msg(s) { };
+      wxString getMsg() { return msg; }
     };
 };
 
