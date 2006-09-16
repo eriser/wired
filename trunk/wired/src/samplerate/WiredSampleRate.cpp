@@ -51,7 +51,7 @@ void					WiredSampleRate::Init(t_samplerate_info *Info)
 
 }
 
-int						WiredSampleRate::OpenFile(wxString *Path, wxWindow* parent)
+int						WiredSampleRate::OpenFile(wxString& Path, wxWindow* parent)
 {
 	SNDFILE				*Result;
 	SF_INFO				Info;
@@ -59,7 +59,7 @@ int						WiredSampleRate::OpenFile(wxString *Path, wxWindow* parent)
 	bool				SameSampleRate, SameFormat;
 
 	Info.format = 0;
-	if ((Result = sf_open(Path->mb_str(*wxConvCurrent), SFM_READ, &Info)) != NULL)
+	if ((Result = sf_open(Path.mb_str(*wxConvCurrent), SFM_READ, &Info)) != NULL)
 	{
 		SameFormat = IsSameFormat(Info.format, _ApplicationSettings.Format);
 		SameSampleRate = (int)Info.samplerate == (int)_ApplicationSettings.SampleRate ? true : false;
@@ -89,7 +89,7 @@ int						WiredSampleRate::OpenFile(wxString *Path, wxWindow* parent)
 			res = msg.ShowModal();
         	if (res == wxID_YES)
         	{
-        		if (Convert(&Info, *Path, Result))
+        		if (Convert(&Info, Path, Result))
 	        		Res = wxID_YES;
 	        	else
 	        		Res = wxID_NO;
@@ -229,10 +229,9 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *
 		}
 		else
 		{
-			cout << "[FILECONVERT] Error while loading file !" << endl;
+		  cout << "[FILECONVERT] Error while loading file " << DestFileName.mb_str() << endl;
 			return false;
 		}
-		chmod(DestFileName.mb_str(*wxConvCurrent), S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 		SrcFile = DestFileName;
 		return true;
 	}

@@ -4,9 +4,7 @@
 #if !defined(IMPORT_WAVE_ACTION_H)
 #define IMPORT_WAVE_ACTION_H
 
-using namespace				std;
 
-#include <string>
 #include "cAction.h"
 #include "cActionManager.h"
 #include "Visitor.h"
@@ -27,13 +25,14 @@ using namespace				std;
 class					cImportWaveAction : public cAction 
 {
 private:
+  // audio or midi (true for audio)
    bool					_TrackKindFlag;
-   string				_WavePath;
+   wxString				_WavePath;
    long					_trackIndex;
    bool					_ShouldAdd;
  
 public:
-  cImportWaveAction (const std::string& path, bool kind, bool shouldAdd);
+  cImportWaveAction (const wxString& path, bool kind, bool shouldAdd);
   cImportWaveAction (const cImportWaveAction& copy){*this = copy;};
   ~cImportWaveAction () {};
   
@@ -42,8 +41,8 @@ public:
   virtual void				Undo ();
   virtual void				Accept (cActionVisitor& visitor)
   							{ visitor.Visit (*this); };
-  virtual std::string		getHistoryLabel()		// Returns History label wstring
-  							{return (char *)HISTORY_LABEL_IMPORT_WAVE_ACTION;};
+  virtual const wxString		getHistoryLabel()		// Returns History label wstring
+  							{return HISTORY_LABEL_IMPORT_WAVE_ACTION;};
   void					AddWaveTrack();
   void					RemoveWaveTrack(bool selectFromIndex);
   void					AddWaveToEditor();
@@ -58,18 +57,18 @@ class					cImportMidiAction : public cAction
 {
 private:
    bool					mTrackKindFlag;
-   string				mMidiPath;
+   wxString				mMidiPath;
 
 public:
-  cImportMidiAction (std::string path, bool kind);
+  cImportMidiAction (wxString& path, bool kind);
   cImportMidiAction (const cImportMidiAction& copy){*this = copy;};
   ~cImportMidiAction () {};
   virtual void				Do();
   virtual void				Redo();
   virtual void				Undo();
   virtual void				Accept(cActionVisitor& visitor) { visitor.Visit (*this); };
-  virtual std::string		getHistoryLabel()		// Returns History label wstring
-  							{return (char *)HISTORY_LABEL_IMPORT_MIDI_ACTION;};
+  virtual const wxString		getHistoryLabel()		// Returns History label wstring
+  							{return HISTORY_LABEL_IMPORT_MIDI_ACTION;};
   							
   cImportMidiAction		operator=(const cImportMidiAction& right);
 };
@@ -81,21 +80,21 @@ class					cImportAkaiAction : public cAction
 {
 private:
   bool					mTrackKindFlag;
-  string				mDevice;
+  wxString				mDevice;
   int					mPart;
-  string				mPath;
-  string				mName;
+  wxString				mPath;
+  wxString				mName;
    
 public:
-  cImportAkaiAction (std::string path, bool kind);
+  cImportAkaiAction (wxString& path, bool kind);
   cImportAkaiAction (const cImportAkaiAction& copy){*this = copy;};
   ~cImportAkaiAction () {};
   virtual void			Do();
   virtual void			Redo();
   virtual void			Undo();
   virtual void			Accept(cActionVisitor& visitor) { visitor.Visit (*this); };
-  virtual std::string		getHistoryLabel()		// Returns History label wstring
-   							{return (char *)HISTORY_LABEL_IMPORT_AKAI_ACTION;};
+  virtual const wxString		getHistoryLabel()		// Returns History label wstring
+   							{return HISTORY_LABEL_IMPORT_AKAI_ACTION;};
    
   cImportAkaiAction		operator=(const cImportAkaiAction& right);
 };
@@ -119,8 +118,8 @@ public:
 	virtual void			Undo ();				// Does undo action
 	virtual void			Accept					// Don't known
 							(cActionVisitor& visitor) { visitor.Visit (*this); };
-	virtual std::string		getHistoryLabel()		// Returns History label wstring
-							{return (char *)HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION;};
+	virtual const wxString		getHistoryLabel()		// Returns History label wstring
+							{return HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION;};
 	void					SaveDatas();			// Saves mDatas
 	void					LoadDatas();			// Loads mDatas
 	void					Dump();					// Debug - Draws member variables
@@ -149,7 +148,7 @@ public:
 	virtual void			Undo ();				// Does undo action
 	virtual void			Accept					// Don't known
 							(cActionVisitor& visitor) { visitor.Visit (*this); };
-	virtual std::string		getHistoryLabel();		// Returns History label wstring
+	virtual const wxString		getHistoryLabel();		// Returns History label wstring
 	void					AddRackEffect ();		// Adds a rack effect
 	void					RemoveRackEffect ();	// Removes a rack effect
   	void					Dump();					// Debug - Draws member variables
@@ -175,8 +174,8 @@ public:
   virtual void				Undo ();
   virtual void				Accept (cActionVisitor& visitor)
   { visitor.Visit (*this); };
-  virtual std::string		getHistoryLabel()		// Returns History label wstring
-  							{return (char *)HISTORY_LABEL_CREATE_RACK_ACTION;};
+  virtual const wxString		getHistoryLabel()		// Returns History label wstring
+  							{return HISTORY_LABEL_CREATE_RACK_ACTION;};
   					
   cCreateRackAction		operator=(const cCreateRackAction& right);
 };

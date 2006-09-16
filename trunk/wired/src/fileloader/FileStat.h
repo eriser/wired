@@ -30,7 +30,7 @@ public:
 	FileStat(const FileStat& copy){;}
 	~FileStat(){;}
 	
-	bool            StatFile(const char *FileName);
+    bool            StatFile(wxString& FileName);
     wxLongLong      GetSampleRate();
     wxLongLong      GetNbChannels();
     wxString        GetBitNess();

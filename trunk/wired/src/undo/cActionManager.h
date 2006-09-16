@@ -5,6 +5,7 @@
 #if !defined(ACTION_MANAGER_H)
 #define ACTION_MANAGER_H
 
+#include						<list>
 #include 						<deque>
 #include 						"cImportMidiAction.h"
 #include 						<wx/menu.h>
@@ -29,7 +30,7 @@ class									PluginLoader;
 // Structure MenuInfo
 typedef struct	s_menuInfo
 {
-	string		label;
+	wxString		label;
 	int			id;
 }				t_menuInfo;
 
@@ -62,8 +63,7 @@ private:
 	void		AddAction(tStackKind stack, cAction* action);		// Ajoute une action d'une liste d'elements
 	void		RemoveTopAction(tStackKind stack);					// Supprime une action d'une liste d'elements
 	void		RegisterActionManager (cAction* action);			// Ajoute une action dans la liste d'action a annuler ou a refaire
-	void		DumptActionList(const tActionList& actionList, 
-								const std::string& listName);		// Debug - Dump un tActionList
+	void		DumptActionList(const tActionList& actionList, const wxString& listName);		// Debug - Dump un tActionList
 	cActionManager		operator=(const cActionManager& right);		// Operateur =
 
 public:
@@ -79,7 +79,7 @@ public:
 								PluginLoader* plugLoader, 
 								bool shouldAdd);
 	void		AddChangeParamsEffectAction(Plugin* plugin, bool shouldSave);	// Adds a cChangeParamsEffectAction in cActionManager
-	void		AddImportWaveAction(const string& path, bool kind, 
+	void		AddImportWaveAction(const wxString& path, bool kind, 
 									bool selectFromIndex);				// Adds a cImportWaveAction in cActionManager
 	void		AddEditWaveAction(const string& path, bool kind, bool selectFromIndex);
 	std::list<t_menuInfo*>		getListActions(int* separatorIndex);	// Retourne la liste des actions Undo

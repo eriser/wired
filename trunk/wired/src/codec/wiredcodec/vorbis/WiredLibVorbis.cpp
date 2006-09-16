@@ -92,14 +92,14 @@ int WiredLibVorbis::encode(float** pcm)
   return 1;
 }
 
-bool	WiredLibVorbis::CanConvert(const char* path, int Decode)
+bool	WiredLibVorbis::CanConvert(const wxString& path, int Decode)
 {
   int		fd;
   char		*buf;
   
   if (Decode & ENCODE)
     return false;
-  if ((fd = open(path, O_RDONLY)) == -1)
+  if ((fd = open((char*)(const char*)path.mb_str(*wxConvCurrent), O_RDONLY)) == -1)
     return false;
   buf = new char((VORBIS_FCC_LENGHT + 1) * sizeof(char));
   buf[VORBIS_FCC_LENGHT] = 0;

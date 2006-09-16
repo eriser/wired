@@ -49,7 +49,7 @@ void WiredLibFlac::init(list<s_LibInfo> &Info)
   int			temp;
 
   LibInfo.CodecMask = EXIST;
-  LibInfo.Extension = "flac\tFree Lossless Audio Codec (*.flac)";
+  LibInfo.Extension = _("flac\tFree Lossless Audio Codec (*.flac)");
   LibInfo.Note = 5;
   handle = dlopen(SO_NAME, RTLD_LAZY);
   if (!handle)
@@ -66,7 +66,7 @@ void WiredLibFlac::init(list<s_LibInfo> &Info)
   Info.push_back(LibInfo);
 }
 
-bool WiredLibFlac::CanConvert(const char* path, int Decode)
+bool WiredLibFlac::CanConvert(const wxString& path, int Decode)
 {
   int		fd;
   char		*buf;

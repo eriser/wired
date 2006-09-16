@@ -36,7 +36,7 @@ void	cActionManager::AddEffectAction(PlugStartInfo* startInfo, PluginLoader* plu
 	action->Do();
 }
 
-void	cActionManager::AddImportWaveAction(const string& path, bool kind, bool selectFromIndex)
+void	cActionManager::AddImportWaveAction(const wxString& path, bool kind, bool selectFromIndex)
 {
 	cImportWaveAction* action = new cImportWaveAction(path, kind, selectFromIndex);
 	action->Do();
@@ -187,14 +187,14 @@ std::list<t_menuInfo*>		cActionManager::getListActions(int *separatorIndex)
 	for (iter = mUndoList.begin(); iter != mUndoList.end(); iter++, (*separatorIndex)++)
 	{
 		t_menuInfo *menuInfo = new t_menuInfo;
-		menuInfo->label = (char *)UNDO_LABEL + (*iter)->getHistoryLabel();
+		menuInfo->label = UNDO_LABEL + (*iter)->getHistoryLabel();
 		menuInfo->id = (*iter)->m_Id;
 		result.push_back(menuInfo);
 	}
 	for (iter = mRedoList.begin(); iter != mRedoList.end(); iter++)
 	{
 		t_menuInfo *menuInfo = new t_menuInfo;
-		menuInfo->label = (char *)REDO_LABEL + (*iter)->getHistoryLabel();
+		menuInfo->label = REDO_LABEL + (*iter)->getHistoryLabel();
 		menuInfo->id = (*iter)->m_Id;
 		result.push_back(menuInfo);
 	}
@@ -215,11 +215,11 @@ cActionManager			cActionManager::operator=(const cActionManager& right)
 	return *this;
 }
 
-void	cActionManager::DumptActionList(const tActionList& actionList, const std::string& listName)
+void	cActionManager::DumptActionList(const tActionList& actionList, const wxString& listName)
 {
 	tActionList::const_iterator	iter;
 	
-	std::cout << "  Dumping tActionList " << listName << std::endl;
+	std::cout << "  Dumping tActionList " << listName.mb_str() << std::endl;
 	for (iter = actionList.begin(); iter != actionList.end(); iter++)
 		(*iter)->Dump();
 	std::cout << "    size() : " << actionList.size() << std::endl;
@@ -229,9 +229,9 @@ void	cActionManager::DumptActionList(const tActionList& actionList, const std::s
 void	cActionManager::Dump()
 {
 	std::cout << "Dumping cActionManager : " << spSingleton << std::endl;
-	DumptActionList(mUndoList, "mUndoList");
+	DumptActionList(mUndoList, wxT("mUndoList"));
 	std::cout << "  int mUndoCount : " << mUndoCount << std::endl;
-	DumptActionList(mRedoList, "mRedoList");
+	DumptActionList(mRedoList, wxT("mRedoList"));
 	std::cout << "  int mRedoCount : " << mRedoCount << std::endl;
 	std::cout << "End Dumping cActionManager" << std::endl;
 }

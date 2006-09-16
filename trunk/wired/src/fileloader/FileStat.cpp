@@ -9,10 +9,10 @@ FileStat::FileStat()
     LoadMajorTypes();
 }
 
-bool        FileStat::StatFile(const char *FileName)
+bool        FileStat::StatFile(wxString& FileName)
 {
     SNDFILE *Info;
-    Info = sf_open((const char *)FileName, SFM_READ, &_FileInfo);
+    Info = sf_open((const char *)FileName.mb_str(*wxConvCurrent), SFM_READ, &_FileInfo);
     if (Info == NULL)
         return false;
     sf_close(Info);

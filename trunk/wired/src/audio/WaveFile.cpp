@@ -68,14 +68,14 @@ WaveFile::WaveFile()
   switch (open_mode)
   {
     case read : 
-      sffile = sf_open (Filename.mb_str(*wxConvCurrent), SFM_READ, &sfinfo);
+      sffile = sf_open (Filename.mb_str(), SFM_READ, &sfinfo);
       break;
     case write : 
-      sffile = sf_open (Filename.mb_str(*wxConvCurrent), SFM_WRITE, &sfinfo);
+      sffile = sf_open (Filename.mb_str(), SFM_WRITE, &sfinfo);
       break;
     case rwrite :
-      sffile = sf_open (Filename.mb_str(*wxConvCurrent), SFM_RDWR, &sfinfo);
-      cout << "[WAVEFILE] Temporary file created" << endl;
+      sffile = sf_open (Filename.mb_str(), SFM_RDWR, &sfinfo);
+      cout << "[WAVEFILE] Temporary file created " << Filename.mb_str() << endl;
       break;
     case tmp :
       //cout << "Trying to creat a new temporary file " << endl;
@@ -90,15 +90,15 @@ WaveFile::WaveFile()
   if (sffile == NULL )
   {
     Error = true;
-    cout << "[WAVEFILE] Error opening file for << " << open_mode << "  : " << filename
+    cout << "[WAVEFILE] Error opening file for << " << open_mode << "  : " << filename.mb_str()
       << "; with error : " << sf_strerror(0) << endl;
 
     // We retry with read only
     if (open_mode == rwrite)
     {
       cout << "[WAVEFILE] Could not open file for writing, trying read-only..." << endl;
-      sffile = sf_open (Filename.mb_str(*wxConvCurrent), SFM_READ, &sfinfo);
-      m_open_mode =0;
+      sffile = sf_open (Filename.mb_str(), SFM_READ, &sfinfo);
+      m_open_mode = read;
       if (sffile == NULL)
         throw Error::File(filename, wxString(sf_strerror(0), *wxConvCurrent));
     }
@@ -107,7 +107,7 @@ WaveFile::WaveFile()
   }    
   /*  sf_close(sffile);
 
-      if (!(sffile = sf_open(filename.c_str(), SFM_RDWR, &sfinfo)))
+      if (!(sffile = sf_open(filename.mb_str(), SFM_RDWR, &sfinfo)))
       {
       Error = true;
       cout << "Error opening file for read/write: " << sf_strerror(0) << endl;

@@ -286,6 +286,8 @@ AC_CONFIG_FILES([Makefile po/Makefile.in intl/Makefile
 		src/codec/Makefile
 		src/codec/wiredcodec/Makefile
 		src/codec/wiredcodec/mpeg/Makefile
+		src/codec/wiredcodec/flac/Makefile
+		src/codec/wiredcodec/vorbis/Makefile
 		src/wiredvideo/Makefile])
 
 AC_OUTPUT

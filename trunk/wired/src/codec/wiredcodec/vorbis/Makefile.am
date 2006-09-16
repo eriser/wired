@@ -1,6 +1,6 @@
-LDFLAGS = 
+LDFLAGS =  $(shell wx-config --libs)
 
-CPPFLAGS =  #-fmessage-length=0 -funroll-all-loops -fomit-frame-pointer -falign-loops=2 -falign-jumps=2 -falign-functions=2
+CPPFLAGS =  $(shell wx-config --cflags)
 
 lib_LTLIBRARIES = libWiredVorbis.la
 
