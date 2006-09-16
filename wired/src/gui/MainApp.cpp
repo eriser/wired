@@ -48,6 +48,7 @@ bool				MainApp::OnInit()
 				  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
 				  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 				  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
+      splash->Update();
       // alert dialog can use it before frame loading
       wxYield();
     }
