@@ -71,12 +71,9 @@ AudioPattern::~AudioPattern()
 
 void					AudioPattern::Init()
 {
-  wxString				s;
-
   Pattern::PenColor = CL_PATTERN_NORM;
   Pattern::BrushColor = CL_WAVEDRAWER_BRUSH;
-  s.Printf(wxT("T%d A%d"), TrackIndex + 1, audio_pattern_count++);
-  Name = s.c_str();
+  Name = wxString::Format(wxT("T%d A%d"), TrackIndex + 1, audio_pattern_count++);
   LastBlock = -1;  
   RecordWave = 0;
   Connect(GetId(), wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
@@ -210,10 +207,13 @@ bool					AudioPattern::PrepareRecord(int type)
   int					i = 1;
 
   cout << "Preparing record for pattern " << this 
-       << " with audio dir : " << CurrentXmlSession->GetAudioDir().c_str() << endl;
+       << " with audio dir : " << CurrentXmlSession->GetAudioDir().mb_str() << endl;
   while (!done)
     {
-      s.Printf(wxT("%s/wired_audio%d.wav"), CurrentXmlSession->GetAudioDir().c_str(), i);
+      s = CurrentXmlSession->GetAudioDir() + wxT("/wired_audio");
+      s += wxString::Format(wxT("%d"), i);
+      s += wxT(".wav");
+
       wxFileName f(s);
       if (!f.FileExists())
 	done = true;
@@ -224,7 +224,10 @@ bool					AudioPattern::PrepareRecord(int type)
     {
       try
 	{
-	  RecordWave = new WriteWaveFile(s.c_str(), (int)Audio->SampleRate, 1, type);
+	  long				sample_rate;
+
+	  wxString::Format(wxT("%f"), Audio->SampleRate).ToLong(&sample_rate);
+	  RecordWave = new WriteWaveFile(s, sample_rate, 1, type);
 	  FileName = s;
 	  InputChan = Mix->OpenInput(Seq->Tracks[TrackIndex]->TrackOpt->DeviceId);
 	  Mix->FlushInput(Seq->Tracks[TrackIndex]->TrackOpt->DeviceId);
@@ -244,19 +247,26 @@ bool					AudioPattern::PrepareRecord(int type)
 
 void					AudioPattern::StopRecord()
 {
-  wxString				s = RecordWave->Filename;
+  wxString				rec_name;
+  WriteWaveFile				*rec_w;
   WaveFile				*w;
-  WriteWaveFile				*recw;
 
   SeqMutex.Lock();
   Mix->RemoveChannel(InputChan);
   InputChan = 0x0;
-  recw = RecordWave;
-  RecordWave = 0x0;
+
+  // save data before erasing reference
+  rec_name = RecordWave->Filename;
+  rec_w = RecordWave;
+
+  RecordWave = NULL;
   SeqMutex.Unlock();
-  delete recw;
-  // Affichage du wave
-  w = WaveCenter.AddWaveFile(s);  
+
+  // be sure to delete it after setting his reference to NULL
+  delete rec_w;
+
+  // display wave
+  w = WaveCenter.AddWaveFile(rec_name);
   if (w)
     {
       SetFullWave(w);
