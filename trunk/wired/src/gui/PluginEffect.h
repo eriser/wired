@@ -6,7 +6,6 @@
 
 #include "WaveFile.h"
 #include <wx/wx.h>
-#include <string> 
 #include <wx/textdlg.h>
 
 

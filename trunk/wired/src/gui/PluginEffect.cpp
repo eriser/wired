@@ -33,7 +33,6 @@ void					PluginEffect::Process(WaveFile &input, WaveFile &output, float effect, 
 void					PluginEffect::Gain(WaveFile &input, WaveFile &output, 
 							   float gain, int channel)
 {
-  wxString				text;
   int					nb_read;
   
   float * rw_buffer = new float [channel * WAVE_TEMP_SIZE];

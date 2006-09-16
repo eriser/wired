@@ -7,7 +7,6 @@
 using namespace std;
 
 #include <iostream>
-#include <string>
 #include <vector>
 //#include <stdlib.h>
 
@@ -34,7 +33,7 @@ using namespace std;
 
 #include	"Plugin.h"
 #include	"../wiredvideo/WiredVideo.h"
-#include "FloatingFrame.h"
+#include        "FloatingFrame.h"
 
 typedef	struct s_PlugStartInfo		PlugStartInfo;
 class					PluginLoader;
@@ -193,9 +192,9 @@ class					MainWindow: public wxFrame
   /* List of plugins that need to be updated for their gui */
   list<Plugin *>			UpdatePlugins;
     
-  wxLogWindow           *LogWin;  
-  wxLogStderr             *LogTarget;
-  FILE                          *LogFile;
+  wxLogWindow                           *LogWin;
+  wxLogStderr                           *LogTarget;
+  FILE                                  *LogFile;
 
   DECLARE_EVENT_TABLE()
 };
@@ -256,8 +255,8 @@ extern MainWindow		*MainWin;
 extern vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo		StartInfo;
 extern WiredSession		*CurrentSession;
-extern wxMutex		AudioMutex;
-extern wxCondition*	SeqStopped;
+extern wxMutex		        AudioMutex;
+extern wxCondition*	        SeqStopped;
 
 #endif
 
