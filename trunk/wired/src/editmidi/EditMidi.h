@@ -6,7 +6,6 @@
 
 #include <wx/wx.h>
 #include <wx/splitter.h>
-#include <string>
 #include <wx/toolbar.h>
 
 enum
@@ -29,8 +28,6 @@ enum
 #define	SBS				(20)
 #define	SBPASH				(10)
 #define	SBPASV				(10)
-
-using					std::string;
 
 class					MidiPattern;
 

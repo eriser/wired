@@ -11,9 +11,6 @@
 #endif
 #include "WiredExternalPluginGui.h"
 #include "ladspa.h"
-#include <string>
-#include <iostream>
-#include <sstream>
 
 static PlugInitInfo info;
 

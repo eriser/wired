@@ -4,7 +4,6 @@
 #ifndef ENGINE_ERROR_H_
 # define ENGINE_ERROR_H_
 
-#include <string>
 
 namespace Error
 {
