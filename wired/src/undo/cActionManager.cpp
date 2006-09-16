@@ -42,7 +42,7 @@ void	cActionManager::AddImportWaveAction(const wxString& path, bool kind, bool s
 	action->Do();
 }
 
-void	cActionManager::AddEditWaveAction(const string& path, bool kind, bool selectFromIndex)
+void	cActionManager::AddEditWaveAction(const wxString& path, bool kind, bool selectFromIndex)
 {
 	cImportWaveAction* action = new cImportWaveAction(path, kind, selectFromIndex);
 	action->AddWaveToEditor();

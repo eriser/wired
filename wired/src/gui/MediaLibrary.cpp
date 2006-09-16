@@ -209,10 +209,9 @@ void				MediaLibrary::OnEdit(wxCommandEvent &WXUNUSED(event))
   MidiDeviceMutex.Lock();
   AudioMutex.Lock();
   SeqMutex.Unlock();
-  FileConverter->ConvertFromCodec(&selfile);
-  FileConverter->ConvertSamplerate(&selfile);
-  std::string temp(selfile.mb_str(*wxConvCurrent));
-  cActionManager::Global().AddEditWaveAction(temp, true, true);
+  FileConverter->ConvertFromCodec(selfile);
+  FileConverter->ConvertSamplerate(selfile);
+  cActionManager::Global().AddEditWaveAction(selfile, true, true);
   MidiMutex.Unlock();
   MidiDeviceMutex.Unlock();
   AudioMutex.Unlock();
@@ -229,9 +228,7 @@ void				MediaLibrary::OnInsert(wxCommandEvent &WXUNUSED(event))
   MidiDeviceMutex.Lock();
   AudioMutex.Lock();
   SeqMutex.Unlock();
-  FileConverter->ConvertFromCodec(&selfile);
-  FileConverter->ConvertSamplerate(&selfile);
-  FileConverter->ImportWaveFile(&selfile);
+  FileConverter->ImportFile(selfile);
   MidiMutex.Unlock();  
   MidiDeviceMutex.Unlock();
   AudioMutex.Unlock();
