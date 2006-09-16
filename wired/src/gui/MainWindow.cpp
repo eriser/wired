@@ -74,7 +74,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   InitLocale();
   
 #if wxUSE_STATUSBAR
-    CreateStatusBar(2);
+  CreateStatusBar(2);
 #endif
   WiredSettings = new Settings();
   CurrentSession = new WiredSession(wxString(wxT(""), *wxConvCurrent));
@@ -88,7 +88,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
     }
   catch (Error::InitFailure &f)
     {
-      cout << "[MAINWIN] Portaudio Failure :" << f.getMsg().c_str() << endl;
+      cout << "[MAINWIN] Portaudio Failure :" << f.getMsg().mb_str() << endl;
       // FIXME: find a cleaner solution
       cout << "Critical error" << endl;
       exit(1);
@@ -112,7 +112,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   /* Creation Menu */
 
   FileConverter = NULL;
-
+  
   TransportFrame = 0x0;
   OptFrame = 0x0;
   SequencerFrame = 0x0;
@@ -272,9 +272,9 @@ int			MainWindow::Init()
     cout << "[MAINWIN] Create MidiEngine thread failed !" << endl;
   if (MidiEngine->Run() != wxTHREAD_NO_ERROR)
     cout << "[MAINWIN] Run MidiEngine thread failed !" << endl;  
-   else
-   	wxGetApp().m_threads.Add(MidiEngine);
-
+  else
+    wxGetApp().m_threads.Add(MidiEngine);
+  
   // creation of condition needed for InitAudio and Seq communication
   SeqStopped = new wxCondition(AudioMutex);
   if (!SeqStopped->IsOk())
@@ -378,7 +378,7 @@ int			MainWindow::InitAudio(bool restart)
     {
       cout << "[MAINWIN] Unknown AudioEngine error" << endl;
     }
-
+  
   if ( Audio->IsOk )
     {
       vector<Track *>::iterator	i;
@@ -392,7 +392,7 @@ int			MainWindow::InitAudio(bool restart)
 	{
 	  list<RackTrack *>::iterator k;
 	  list<Plugin *>::iterator j;
-
+	  
 	  for (k = RackPanel->RackTracks.begin(); 
 	       k != RackPanel->RackTracks.end(); k++)
 	    for (j = (*k)->Racks.begin(); j != (*k)->Racks.end(); j++)
@@ -408,15 +408,15 @@ int			MainWindow::InitAudio(bool restart)
 	  FileConverter->SetBufferSize(Audio->SamplesPerBuffer);
 	  FileConverter->SetSampleRate((long unsigned int)Audio->SampleRate);
 	}
-
+      
     }
   else
     cout << "You may check for your audio settings if you want to use Wired.." << endl;
-
+  
   // dialog can't be  before mutex unlocking (outside this function is better)
   if (!Audio->IsOk)
     return (-1);
-
+  
   if (SettingsWin->MidiLoaded)
     {
       wxMutexLocker lock(MidiDeviceMutex);
@@ -455,20 +455,20 @@ void					MainWindow::InitFileConverter()
 	t_samplerate_info info;
 	int i; 
 	if (Audio->UserData->Sets->WorkingDir.empty())
-	{
-		wxDirDialog dir(this, _("Choose the audio working directory"), wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
-		if (dir.ShowModal() == wxID_OK)
-		  CurrentXmlSession->GetAudioDir() = dir.GetPath();
-		else
-		  CurrentXmlSession->GetAudioDir() = wxFileName::GetCwd();
-		  	     
-		Audio->UserData->Sets->WorkingDir = CurrentXmlSession->GetAudioDir();
-	}
+	  {
+	    wxDirDialog dir(this, _("Choose the audio working directory"), wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
+	    if (dir.ShowModal() == wxID_OK)
+	      CurrentXmlSession->GetAudioDir() = dir.GetPath();
+	    else
+	      CurrentXmlSession->GetAudioDir() = wxFileName::GetCwd();
+	    
+	    Audio->UserData->Sets->WorkingDir = CurrentXmlSession->GetAudioDir();
+	  }
 	else
-	{
-		CurrentXmlSession->GetAudioDir() = Audio->UserData->Sets->WorkingDir;
-	
-	}
+	  {
+	    CurrentXmlSession->GetAudioDir() = Audio->UserData->Sets->WorkingDir;
+	    
+	  }
 	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
 	info.SampleRate = (unsigned long) Audio->SampleRate;
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
@@ -480,21 +480,21 @@ void					MainWindow::InitFileConverter()
 
 void					MainWindow::InitUndoRedoMenuItems()
 {
-	EditMenu->Insert(INDEX_MENUITEM_UNDO, MainWin_Undo, _("U&ndo"), UndoMenu);
-	EditMenu->Insert(INDEX_MENUITEM_REDO, MainWin_Redo, _("&Redo"), RedoMenu);
-	EditMenu->Enable(MainWin_Undo, false);
-	EditMenu->Enable(MainWin_Redo, false);
+  EditMenu->Insert(INDEX_MENUITEM_UNDO, MainWin_Undo, _("U&ndo"), UndoMenu);
+  EditMenu->Insert(INDEX_MENUITEM_REDO, MainWin_Redo, _("&Redo"), RedoMenu);
+  EditMenu->Enable(MainWin_Undo, false);
+  EditMenu->Enable(MainWin_Redo, false);
 }
 
 void					MainWindow::InitVideoMenuItems()
 {
-	VideoMenu->Append(MainWin_OpenVideo, _("&Open video"));
-	VideoMenu->Append(MainWin_CloseVideo, _("&Close video"));
-	VideoMenu->AppendCheckItem(MainWin_SeekVideo, _("&Seek with video playing"));
-	cout << "new wiredvideo"<< endl; 
-	WiredVideoObject = new WiredVideo();
-	VideoMenu->Enable(MainWin_OpenVideo, true);
-	VideoMenu->Enable(MainWin_CloseVideo, false);
+  VideoMenu->Append(MainWin_OpenVideo, _("&Open video"));
+  VideoMenu->Append(MainWin_CloseVideo, _("&Close video"));
+  VideoMenu->AppendCheckItem(MainWin_SeekVideo, _("&Seek with video playing"));
+  cout << "new wiredvideo"<< endl; 
+  WiredVideoObject = new WiredVideo();
+  VideoMenu->Enable(MainWin_OpenVideo, true);
+  VideoMenu->Enable(MainWin_CloseVideo, false);
 }
 
 void					MainWindow::OnClose(wxCloseEvent &event)
@@ -503,13 +503,13 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   vector<Plugin *>::iterator		j;
   vector<PluginLoader *>::iterator	k;
   int					res;
-
+  
   wxMessageDialog *msg = new wxMessageDialog(this, _("Save current session ?"), wxT("Wired"), 
 					     wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE);
   res = msg->ShowModal();
   msg->Hide();
   msg->Destroy();
-
+  
   if (res == wxID_YES)
     {
       wxCommandEvent evt;
@@ -523,7 +523,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 	  return;
 	}
     }
-
+  
   this->Hide();
   ::wxSafeYield();
 
@@ -543,14 +543,14 @@ void					MainWindow::OnClose(wxCloseEvent &event)
      }*/
   cout << "[MAINWIN] Stopping threads..."<< endl;
   wxThread *thread;
-
+  
   wxGetApp().m_mutex.Lock();
   const wxArrayThread& threads = wxGetApp().m_threads;
   size_t count = threads.GetCount();
-
+  
   for (int i = 0; i < count; i++)
     threads.Item(i)->Delete();
-
+  
   if (count > 0)
     {
       cout << "[MAINWIN] Waiting for Threads to stop..." << endl;
@@ -558,14 +558,14 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 	cout << "[MAINWIN] Threads are stuck !"<< endl;
     }
   wxGetApp().m_mutex.Unlock();
-
+  
   cout << "[MAINWIN] Done !"<< endl;
-
+  
   cout << "[MAINWIN] Stopping graphics things..."<< endl;
   SeqTimer->Stop();
   delete SeqTimer;
   SeqTimer = NULL;
-
+  
   cout << "[MAINWIN] Unloading shared libraries..."<< endl;
   for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
     delete *k;
@@ -622,10 +622,10 @@ bool					MainWindow::NewSession()
   
   res = msg.ShowModal();
   if (res == wxID_YES)
-  {
-  	wxCommandEvent evt;
-  	OnSave(evt);    //CurrentXmlSession->Save();
-  }
+    {
+      wxCommandEvent evt;
+      OnSave(evt);    //CurrentXmlSession->Save();
+    }
   else if (res == wxID_CANCEL)
     return (false);
   delete CurrentXmlSession;
@@ -658,49 +658,49 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
   if (dlg.ShowModal() == wxID_OK)
     {
       wxString selfile = dlg.GetSelectedFile();    
-
+      
       cout << "[MAINWIN] User opens " << selfile.mb_str() << endl;
       if (!NewSession())
 	{
 	  //dlg->Destroy();
 	  return;
 	}
-		if (selfile.size() > 4)
-		{
-			transform(selfile.begin(), selfile.end(), selfile.begin(), (int(*)(int))tolower);
-			if (!selfile.substr(selfile.find_last_of('.')).compare(XML_EXTENSION))
-			{
-				if (CurrentXmlSession)				
-					delete CurrentXmlSession;
-	    	  CurrentXmlSession = new WiredSessionXml(selfile);
-	    	  CurrentXmlSession->Load(selfile);
-	    	  cout << "[MAINWIN] New session loaded" << endl;
-			}
-			else
-			{
-				cout << "[MAINWIN] Warning! Opening old format" << endl;
-		      CurrentSession = new WiredSession(selfile);
-		      CurrentSession->Load();
-			}
-		}
-		else
-			cout << "[MAINWIN] Invalid Filename" << endl;
-		
+      if (selfile.size() > 4)
+	{
+	  transform(selfile.begin(), selfile.end(), selfile.begin(), (int(*)(int))tolower);
+	  if (!selfile.substr(selfile.find_last_of('.')).compare(XML_EXTENSION))
+	    {
+	      if (CurrentXmlSession)				
+		delete CurrentXmlSession;
+	      CurrentXmlSession = new WiredSessionXml(selfile);
+	      CurrentXmlSession->Load(selfile);
+	      cout << "[MAINWIN] New session loaded" << endl;
+	    }
+	  else
+	    {
+	      cout << "[MAINWIN] Warning! Opening old format" << endl;
+	      CurrentSession = new WiredSession(selfile);
+	      CurrentSession->Load();
+	    }
+	}
+      else
+	cout << "[MAINWIN] Invalid Filename" << endl;
+      
     }
 }
 
 void					MainWindow::OnSave(wxCommandEvent &event)
 {
-	if (CurrentXmlSession)
-	{
-		wxString			DocumentName(CurrentXmlSession->GetDocumentName());
-  		if (!DocumentName.empty())
-    		CurrentXmlSession->Save();
-       	else
-       		OnSaveAs(event);
-	}
-	else
-    	OnSaveAs(event);
+  if (CurrentXmlSession)
+    {
+      wxString			DocumentName(CurrentXmlSession->GetDocumentName());
+      if (!DocumentName.empty())
+	CurrentXmlSession->Save();
+      else
+	OnSaveAs(event);
+    }
+  else
+    OnSaveAs(event);
 }
 
 void					MainWindow::OnSaveAs(wxCommandEvent &event)
@@ -712,7 +712,7 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
   if (dlg.ShowModal() == wxID_OK)
     {
       wxString selfile = dlg.GetSelectedFile();    
-
+      
       wxFileName f(selfile);
       if (!f.HasExt())
 	selfile = selfile + XML_EXTENSION;
@@ -722,14 +722,14 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
       
       if (CurrentXmlSession)
 	{
-	audiodir = wxString(CurrentXmlSession->GetAudioDir());
-	if (audiodir.size() == 0)
-	{
-		char	buffer[2048];
-		
-		getcwd(buffer, 2048);
-		audiodir = wxString(buffer, *wxConvCurrent);
-	}  	
+	  audiodir = wxString(CurrentXmlSession->GetAudioDir());
+	  if (audiodir.size() == 0)
+	    {
+	      char	buffer[2048];
+	      
+	      getcwd(buffer, 2048);
+	      audiodir = wxString(buffer, *wxConvCurrent);
+	    }  	
 	  delete CurrentXmlSession;
 	}
       CurrentXmlSession = new WiredSessionXml(selfile, audiodir);
@@ -741,36 +741,36 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
 {
   FileLoader				dlg(this, MainWin_FileLoader, _("Loading sound file"), false, false, FileConverter->GetCodecsExtensions(), true);
   int						res;
-
+  
   if (dlg.ShowModal() == wxID_OK)
     {
       wxString 	selfile = dlg.GetSelectedFile();
-            
+      
       if (CurrentXmlSession->GetAudioDir().empty() == false)
-	      res = wxID_OK;
+	res = wxID_OK;
       else	     
-      {
-	    wxDirDialog dir(this, _("Choose the Audio file directory"), wxFileName::GetCwd());
-	    if (dir.ShowModal() == wxID_OK)
-	      {
-		CurrentXmlSession->GetAudioDir() = dir.GetPath();
-		res = wxID_OK;
-	      }
-	    else
-	      res = wxID_CANCEL;
-      }
+	{
+	  wxDirDialog dir(this, _("Choose the Audio file directory"), wxFileName::GetCwd());
+	  if (dir.ShowModal() == wxID_OK)
+	    {
+	      CurrentXmlSession->GetAudioDir() = dir.GetPath();
+	      res = wxID_OK;
+	    }
+	  else
+	    res = wxID_CANCEL;
+	}
       if (res != wxID_CANCEL)
-      {
-      	MidiMutex.Lock();
-      	MidiDeviceMutex.Lock();
-      	SeqMutex.Unlock();
-
-	// convert and import file 
-      	FileConverter->ImportFile(selfile);
-
-      	MidiMutex.Unlock();  
-      	MidiDeviceMutex.Unlock();
-      }
+	{
+	  MidiMutex.Lock();
+	  MidiDeviceMutex.Lock();
+	  SeqMutex.Unlock();
+	  
+	  // convert and import file 
+	  FileConverter->ImportFile(selfile);
+	  
+	  MidiMutex.Unlock();  
+	  MidiDeviceMutex.Unlock();
+	}
     }
 }
 
@@ -783,11 +783,11 @@ void					MainWindow::OnImportMIDI(wxCommandEvent &event)
   if (dlg.ShowModal() == wxID_OK)
     {
       wxString selfile = dlg.GetSelectedFile();
-
+      
       cout << "[MAINWIN] Users imports MIDI file : " << selfile.mb_str() << endl;
       wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100, 
-							this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
-							| wxPD_REMAINING_TIME);
+				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
+				| wxPD_REMAINING_TIME);
       Progress.Update(1);
       cImportMidiAction* action = new cImportMidiAction(selfile, false);
       action->Do();
@@ -825,10 +825,10 @@ void					MainWindow::OnImportAKAI(wxCommandEvent &event)
   if (dlg.ShowModal() == wxID_OK)
     {
       wxString selfile = dlg.GetSelectedFile();
-
+      
       wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100, 
-							this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
-							| wxPD_REMAINING_TIME);
+				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
+				| wxPD_REMAINING_TIME);
       Progress.Update(1);
       cImportAkaiAction* action = new cImportAkaiAction(selfile, true);
       action->Do();
@@ -877,7 +877,7 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
 {
   //  TransportPanel->OnStop(event);
   double total = Seq->EndLoopPos - Seq->BeginLoopPos; 
-
+  
   if (total <= 0)
     {
       wxMessageDialog msg(this, _("Please correctly place the Left and Right markers"), wxT("Wired"), 
@@ -891,7 +891,7 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
     {
       wxString          selfile = dlg.GetSelectedFile();    
       wxFileName	f(selfile);
-
+      
       if (f.GetExt().IsEmpty())
 	{
 	  f.SetExt(wxT("wav"));
@@ -905,15 +905,15 @@ void					MainWindow::OnExportWave(wxCommandEvent &event)
       }
 
       wxProgressDialog Progress(_("Exporting mix"), _("Please wait..."), 
-						       (int)Seq->EndLoopPos * 1000, this, 
-						       wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_AUTO_HIDE | 
-                               wxPD_APP_MODAL | wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME);
+				(int)Seq->EndLoopPos * 1000, this, 
+				wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_AUTO_HIDE | 
+				wxPD_APP_MODAL | wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME);
       bool done = false;
 
       while (!done)
 	{
 	  if (Progress.Update((int) Seq->CurrentPos * 1000) == false)
-        break;
+	    break;
 	  wxMilliSleep(50);
 	  if (Seq->CurrentPos >= Seq->EndLoopPos)
 	    done = true;
@@ -927,13 +927,12 @@ void					MainWindow::OnExportMIDI(wxCommandEvent &event)
   
   exts.insert(exts.begin(), _("mid\tMidi file (*.mid)"));
   FileLoader				dlg(this, MainWin_FileLoader, 
-		       _("Export MIDI file"), false, true, &exts);
-		       
+					    _("Export MIDI file"), false, true, &exts);
+  
   if (dlg.ShowModal() == wxID_OK)
     {
       wxString selfile = dlg.GetSelectedFile();
-      cout << "[MAINWIN] Users exports MIDI file : " << selfile.mb_str() << endl;
-      
+      cout << "[MAINWIN] Users exports MIDI file : " << selfile.mb_str() << endl; 
     }
   else
     cout << "[MAINWIN] User cancels open dialog" << endl;
@@ -960,7 +959,7 @@ void					MainWindow::LoadPlugins()
 	  if (p->IsLoaded())
 	    {
 	      LoadedPluginsList.push_back(p);
-
+	      
 	      p->Id = PluginMenuIndexCount++;
 	      if (p->InitInfo.Type == ePlugTypeInstrument)
 		{
@@ -990,7 +989,7 @@ void					MainWindow::LoadExternalPlugins()
 { 
 //  map<int, wstring>				PluginsList;
   list<wxString>					PluginsList;
-//  map<int, wstring>::iterator	IterPluginsList;
+  //  map<int, wstring>::iterator	IterPluginsList;
   list<wxString>::iterator		IterPluginsList;
   int							PluginInfo;
   int							PluginId;
@@ -1005,90 +1004,90 @@ void					MainWindow::LoadExternalPlugins()
   PluginsList = LoadedExternalPlugins->GetSortedPluginsList(Sep);
   
   for (IterPluginsList = PluginsList.begin(); IterPluginsList != PluginsList.end(); IterPluginsList++)
-  {
-  	if ((*IterPluginsList).find_last_of(Sep.c_str()) > 0)
+    {
+      if ((*IterPluginsList).find_last_of(Sep.c_str()) > 0)
   	{
-  		PluginName = (*IterPluginsList).substr(0, (*IterPluginsList).find_last_of(Sep));
-  		PluginId = atoi(wxString((*IterPluginsList).substr((*IterPluginsList).find_last_of(Sep) + 1).c_str(), *wxConvCurrent).mb_str(*wxConvCurrent));
+	  PluginName = (*IterPluginsList).substr(0, (*IterPluginsList).find_last_of(Sep));
+	  PluginId = atoi(wxString((*IterPluginsList).substr((*IterPluginsList).find_last_of(Sep) + 1).c_str(), *wxConvCurrent).mb_str(*wxConvCurrent));
   	}
-//  	PluginInfo = LoadedExternalPlugins->GetPluginType(IterPluginsList->first);
-  	PluginInfo = LoadedExternalPlugins->GetPluginType(PluginId);
-
-//  	LoadedExternalPlugins->SetMenuItemId(IterPluginsList->first, 
-//  		AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, IterPluginsList->second));
-  	LoadedExternalPlugins->SetMenuItemId(PluginId, 
-  		AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, PluginName));
-  }
+      //  	PluginInfo = LoadedExternalPlugins->GetPluginType(IterPluginsList->first);
+      PluginInfo = LoadedExternalPlugins->GetPluginType(PluginId);
+      
+      //  	LoadedExternalPlugins->SetMenuItemId(IterPluginsList->first, 
+      //  		AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, IterPluginsList->second));
+      LoadedExternalPlugins->SetMenuItemId(PluginId, 
+					   AddPluginMenuItem(PluginInfo, PluginInfo & TYPE_PLUGINS_EFFECT, PluginName));
+    }
 }
 
 int						MainWindow::AddPluginMenuItem(int Type, bool IsEffect, const wxString& MenuName)
 {
-	int					Id = PluginMenuIndexCount++;
-	wxMenuItem			*NewItem;
-	
-	if (IsEffect == true)
+  int					Id = PluginMenuIndexCount++;
+  wxMenuItem			*NewItem;
+  
+  if (IsEffect == true)
+    {
+      if (Type & TYPE_PLUGINS_DSSI)
 	{
-		if (Type & TYPE_PLUGINS_DSSI)
-		{
-			if (!CreateDSSIEffectMenu)
-			{
-				CreateDSSIEffectMenu = new wxMenu();
-				CreateEffectMenu->Append(Id, wxT("DSSI"), CreateDSSIEffectMenu);
-				Id = PluginMenuIndexCount++;
-			}
-			NewItem = CreateDSSIEffectMenu->Append(Id, MenuName.c_str());
-		}
-		else if (Type & TYPE_PLUGINS_LADSPA)
-		{
-			if (!CreateLADSPAEffectMenu)
-			{
-				CreateLADSPAEffectMenu = new wxMenu();
-				CreateEffectMenu->Append(Id, wxT("LADSPA"), CreateLADSPAEffectMenu);
-				Id = PluginMenuIndexCount++;
-			}
-			NewItem = CreateLADSPAEffectMenu->Append(Id, MenuName.c_str());
-		}
+	  if (!CreateDSSIEffectMenu)
+	    {
+	      CreateDSSIEffectMenu = new wxMenu();
+	      CreateEffectMenu->Append(Id, wxT("DSSI"), CreateDSSIEffectMenu);
+	      Id = PluginMenuIndexCount++;
+	    }
+	  NewItem = CreateDSSIEffectMenu->Append(Id, MenuName.c_str());
 	}
-	else
+      else if (Type & TYPE_PLUGINS_LADSPA)
 	{
-		if (Type & TYPE_PLUGINS_DSSI)
-		{
-			if (!CreateDSSIInstrMenu)
-			{
-				CreateDSSIInstrMenu = new wxMenu();
-				CreateInstrMenu->Append(Id, wxT("DSSI"), CreateDSSIInstrMenu);
-				Id = PluginMenuIndexCount++;
-			}
-			NewItem = CreateDSSIInstrMenu->Append(Id, MenuName.c_str());
-		}
-		else if (Type & TYPE_PLUGINS_LADSPA)
-		{
-			if (!CreateLADSPAInstrMenu)
-			{
-				CreateLADSPAInstrMenu = new wxMenu();
-				CreateInstrMenu->Append(Id, wxT("LADSPA"), CreateLADSPAInstrMenu);
-				Id = PluginMenuIndexCount++;
-			}
-			NewItem = CreateLADSPAInstrMenu->Append(Id, MenuName.c_str());
-		}
+	  if (!CreateLADSPAEffectMenu)
+	    {
+	      CreateLADSPAEffectMenu = new wxMenu();
+	      CreateEffectMenu->Append(Id, wxT("LADSPA"), CreateLADSPAEffectMenu);
+	      Id = PluginMenuIndexCount++;
+	    }
+	  NewItem = CreateLADSPAEffectMenu->Append(Id, MenuName.c_str());
 	}
-	if (NewItem)
-		Connect(Id, wxEVT_COMMAND_MENU_SELECTED, 
-		      (wxObjectEventFunction)(wxEventFunction) 
-		      (wxCommandEventFunction)&MainWindow::OnCreateExternalPlugin);
-	return Id;
+    }
+  else
+    {
+      if (Type & TYPE_PLUGINS_DSSI)
+	{
+	  if (!CreateDSSIInstrMenu)
+	    {
+	      CreateDSSIInstrMenu = new wxMenu();
+	      CreateInstrMenu->Append(Id, wxT("DSSI"), CreateDSSIInstrMenu);
+	      Id = PluginMenuIndexCount++;
+	    }
+	  NewItem = CreateDSSIInstrMenu->Append(Id, MenuName.c_str());
+	}
+      else if (Type & TYPE_PLUGINS_LADSPA)
+	{
+	  if (!CreateLADSPAInstrMenu)
+	    {
+	      CreateLADSPAInstrMenu = new wxMenu();
+	      CreateInstrMenu->Append(Id, wxT("LADSPA"), CreateLADSPAInstrMenu);
+	      Id = PluginMenuIndexCount++;
+	    }
+	  NewItem = CreateLADSPAInstrMenu->Append(Id, MenuName.c_str());
+	}
+    }
+  if (NewItem)
+    Connect(Id, wxEVT_COMMAND_MENU_SELECTED, 
+	    (wxObjectEventFunction)(wxEventFunction) 
+	    (wxCommandEventFunction)&MainWindow::OnCreateExternalPlugin);
+  return Id;
 }
 
 void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
 {
-	if (LoadedExternalPlugins)
-	{
-		PluginLoader 	*NewPlugin = new PluginLoader(LoadedExternalPlugins, event.GetId(), StartInfo);
-		
-		LoadedPluginsList.push_back(NewPlugin);
-		cout << "[MAINWIN] Creating rack for plugin: " << NewPlugin->InitInfo.Name.mb_str() << endl;
-		cActionManager::Global().AddEffectAction(&StartInfo, NewPlugin, true);
-	}
+  if (LoadedExternalPlugins)
+    {
+      PluginLoader 	*NewPlugin = new PluginLoader(LoadedExternalPlugins, event.GetId(), StartInfo);
+      
+      LoadedPluginsList.push_back(NewPlugin);
+      cout << "[MAINWIN] Creating rack for plugin: " << NewPlugin->InitInfo.Name.mb_str() << endl;
+      cActionManager::Global().AddEffectAction(&StartInfo, NewPlugin, true);
+    }
 }
 
 void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
@@ -1100,8 +1099,8 @@ void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
   for (i = LoadedPluginsList.begin(); i != LoadedPluginsList.end(); i++)
     if ((*i)->Id == id)
       {
-	  p = *i;
-	  break;
+	p = *i;
+	break;
       }
   if (p)
     {
@@ -1113,38 +1112,38 @@ void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
 
 void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
 {
-	int					id = event.GetId();
-	vector<PluginLoader *>::iterator	i;
-	PluginLoader				*p = 0x0;
-
-	for (i = LoadedPluginsList.begin(); i != LoadedPluginsList.end(); i++)
-		if ((*i)->Id == id)
-	    {
-			p = *i;
-			break;
-	    }
-	if (p)
+  int					id = event.GetId();
+  vector<PluginLoader *>::iterator	i;
+  PluginLoader				*p = 0x0;
+  
+  for (i = LoadedPluginsList.begin(); i != LoadedPluginsList.end(); i++)
+    if ((*i)->Id == id)
+      {
+	p = *i;
+	break;
+      }
+  if (p)
     {
       cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name.mb_str() << endl;     
-	    cActionManager::Global().AddEffectAction(&StartInfo, p, true);
-	  CreateUndoRedoMenus(EditMenu);
-	}
+      cActionManager::Global().AddEffectAction(&StartInfo, p, true);
+      CreateUndoRedoMenus(EditMenu);
+    }
 }
 
 void					MainWindow::OnDeleteRack(wxCommandEvent &event)
 {
-	vector<PluginLoader *>::iterator	k;
-	
-	if (RackPanel->selectedPlugin)
-	{
-		for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
-			if (COMPARE_IDS((*k)->InitInfo.UniqueId, RackPanel->selectedPlugin->InitInfo->UniqueId))
-		  	{
-				cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
-				CreateUndoRedoMenus(EditMenu);
-				return;
-		  	}
-	}
+  vector<PluginLoader *>::iterator	k;
+  
+  if (RackPanel->selectedPlugin)
+    {
+      for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
+	if (COMPARE_IDS((*k)->InitInfo.UniqueId, RackPanel->selectedPlugin->InitInfo->UniqueId))
+	  {
+	    cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
+	    CreateUndoRedoMenus(EditMenu);
+	    return;
+	  }
+    }
 }
 
 void					MainWindow::OnAddTrackAudio(wxCommandEvent &event)
@@ -1172,7 +1171,7 @@ void					MainWindow::OnFloatTransport(wxCommandEvent &event)
       TransportPanel->Hide();
       BottomSizer->Detach(TransportPanel);
       BottomSizer->Layout();
-
+      
       TransportFrame = new FloatingFrame(0x0, -1, _("Transport"), TransportPanel->GetPosition(), 
 					 TransportPanel->GetSize(), TransportPanel->GetParent(),
 					 ItemFloatingTrans, MainWin_FloatTransport);
@@ -1185,7 +1184,7 @@ void					MainWindow::OnFloatTransport(wxCommandEvent &event)
       TransportPanel->Reparent(this);
       BottomSizer->Insert(0, TransportPanel, 0, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
       BottomSizer->Layout();
-
+      
       delete TransportFrame;
       TransportFrame = 0x0;
     }
@@ -1199,14 +1198,14 @@ void					MainWindow::OnFloatSequencer(wxCommandEvent &event)
 	split->Unsplit(SeqPanel);
       else
 	BottomSizer->Detach(SeqPanel);
-
+      
       SequencerFrame = new FloatingFrame(0x0, -1, _("Sequencer"), SeqPanel->GetPosition(), 
 					 SeqPanel->GetSize(), SeqPanel->GetParent(),
 					 ItemFloatingSeq, MainWin_FloatSequencer);
       SeqPanel->Reparent(SequencerFrame);
       SeqPanel->Show();
       SequencerFrame->Show();
-
+      
       // disable the floating mode for Rack
       ItemFloatingRacks->Enable(false);
     }
@@ -1214,7 +1213,7 @@ void					MainWindow::OnFloatSequencer(wxCommandEvent &event)
     {
       // enable the floating mode for Rack
       ItemFloatingRacks->Enable(true);      
-
+      
       // if optview is already here
       if (split->IsSplit())
 	{
@@ -1242,22 +1241,22 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
 	split->Unsplit(RackPanel);
       else
 	BottomSizer->Detach(RackPanel);
-
-       RackFrame = new FloatingFrame(0x0, -1, _("Racks"), RackPanel->GetPosition(), 
-				     RackPanel->GetSize(), RackPanel->GetParent(),
-				     ItemFloatingRacks, MainWin_FloatRacks);
-       RackPanel->Reparent(RackFrame);
-       RackPanel->Show();
-       RackFrame->Show();
-
-       // disable the floating mode for Sequencer
+      
+      RackFrame = new FloatingFrame(0x0, -1, _("Racks"), RackPanel->GetPosition(), 
+				    RackPanel->GetSize(), RackPanel->GetParent(),
+				    ItemFloatingRacks, MainWin_FloatRacks);
+      RackPanel->Reparent(RackFrame);
+      RackPanel->Show();
+      RackFrame->Show();
+      
+      // disable the floating mode for Sequencer
       ItemFloatingSeq->Enable(false);
-   }
+    }
   else
     {
       // enable the floating mode for Sequencer
       ItemFloatingSeq->Enable(true);
-
+      
       // if optview is already here
       if (split->IsSplit())
 	{
@@ -1288,7 +1287,7 @@ void					MainWindow::OnFloatMediaLibrary(wxCommandEvent &event)
   if (MediaLibraryMenu->IsChecked(MainWin_FloatMediaLibrary))
     {
       splitVert->Unsplit(MediaLibraryPanel);
-
+      
       cout << "[MEDIALIBRARY] Float" << endl;
       MediaLibraryFrame = new FloatingFrame(0x0, -1, _("MediaLibrary"), MediaLibraryPanel->GetPosition(), 
 					    MediaLibraryPanel->GetSize(), MediaLibraryPanel->GetParent(),
@@ -1333,7 +1332,7 @@ void					MainWindow::SwitchRackOptView()
     {
       BottomSizer->Detach(OptPanel);
       OptPanel->Reparent(split);
-
+      
       // if Rack is already on top
       if (split->GetWindow1() == RackPanel)
 	{
@@ -1374,7 +1373,7 @@ void					MainWindow::SwitchSeqOptView()
   // if optview is already switched with rack, reswitch
   if (!RackModeView)
     SwitchRackOptView();
-
+  
   // if optview is not on middle (seqview)
   if (SeqModeView)
     {
@@ -1387,7 +1386,7 @@ void					MainWindow::SwitchSeqOptView()
 	  SeqPanel->Hide();
 	  SeqPanel->Reparent(this);
 	  split->ReplaceWindow(SeqPanel, OptPanel);
-
+	  
 	  SeqPanel->SetSize(wxSize(470, 150));
 	  BottomSizer->Add(SeqPanel, 1, wxEXPAND | wxALL, 2);
 	  BottomSizer->Layout();
@@ -1428,29 +1427,27 @@ void					MainWindow::SwitchSeqOptView()
 
 void					MainWindow::MediaLibraryShow(wxCommandEvent &event)
 {
-
-	cout << "[MAINWIN] Launching MediaLibrary" << endl;
-
-	if (MediaLibraryPanel->IsVisible() == true)
-	  {
-	    return ;
-	  }
-	splitVert->SetSashPosition(200);
-	MediaLibraryPanel->Show();
-	MediaLibraryPanel->SetVisible();
+  
+  cout << "[MAINWIN] Launching MediaLibrary" << endl;
+  
+  if (MediaLibraryPanel->IsVisible() == false)
+    {
+      splitVert->SetSashPosition(200);
+      MediaLibraryPanel->Show();
+      MediaLibraryPanel->SetVisible();
+    }
 }
 
 void					MainWindow::MediaLibraryHide(wxCommandEvent &event)
 {
-	cout << "[MAINWIN] Hiding MediaLibrary" << endl;
-
-	if (MediaLibraryPanel->IsVisible() == false || MediaLibraryPanel->IsFloating() == true)
-	  {
-	    return ;
-	  }
-	splitVert->SetSashPosition(1);
-	//MediaLibraryPanel->Hide();
-	MediaLibraryPanel->SetInvisible();
+  cout << "[MAINWIN] Hiding MediaLibrary" << endl;
+  
+  if (!(MediaLibraryPanel->IsVisible() == false || MediaLibraryPanel->IsFloating() == true))
+    {
+      splitVert->SetSashPosition(1);
+      //MediaLibraryPanel->Hide();
+      MediaLibraryPanel->SetInvisible();
+    }
 }
 
 void					MainWindow::OnSettings(wxCommandEvent &event)
@@ -1470,7 +1467,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
       if (InitAudio(true) < 0)
 	AlertDialog(_("audio engine"), 
 		    _("You may check for your audio settings if you want to use Wired.."));
-   }
+    }
 }
 
 void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
@@ -1482,19 +1479,19 @@ void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
 
 void					MainWindow::OnOpenVideo(wxCommandEvent &event)
 {
-	WiredVideoObject->OpenFile();
-		if (WiredVideoObject->asFile)
-	{
-	    VideoMenu->Enable(MainWin_OpenVideo, false);
-	    VideoMenu->Enable(MainWin_CloseVideo, true);
-	    	  }
+  WiredVideoObject->OpenFile();
+  if (WiredVideoObject->asFile)
+    {
+      VideoMenu->Enable(MainWin_OpenVideo, false);
+      VideoMenu->Enable(MainWin_CloseVideo, true);
+    }
 }
 
 void					MainWindow::OnCloseVideo(wxCommandEvent &event)
 {
-	WiredVideoObject->CloseFile();
-	VideoMenu->Enable(MainWin_OpenVideo, true);
-	VideoMenu->Enable(MainWin_CloseVideo, false);
+  WiredVideoObject->CloseFile();
+  VideoMenu->Enable(MainWin_OpenVideo, true);
+  VideoMenu->Enable(MainWin_CloseVideo, false);
 }
 
 void					MainWindow::OnSeekVideo(wxCommandEvent &event)
@@ -1504,9 +1501,9 @@ void					MainWindow::OnSeekVideo(wxCommandEvent &event)
 
 void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
 {
-	SeqPanel->DeleteSelectedTrack();
-	/* Needs path in AudioPattern */
-	//cActionManager::Global().AddImportWaveAction(selfile, true, false);
+  SeqPanel->DeleteSelectedTrack();
+  /* Needs path in AudioPattern */
+  //cActionManager::Global().AddImportWaveAction(selfile, true, false);
 }
 
 void					MainWindow::OnChangeAudioDir(wxCommandEvent &event)
@@ -1514,7 +1511,7 @@ void					MainWindow::OnChangeAudioDir(wxCommandEvent &event)
   assert(CurrentXmlSession);
   
   wxDirDialog dir(this, _("Choose the Audio file directory"), 
-  			CurrentXmlSession->GetAudioDir().empty() == true ? 
+		  CurrentXmlSession->GetAudioDir().empty() == true ? 
 		  wxFileName::GetCwd() : CurrentXmlSession->GetAudioDir());
   if (dir.ShowModal() == wxID_OK)
     CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str();    
@@ -1522,85 +1519,85 @@ void					MainWindow::OnChangeAudioDir(wxCommandEvent &event)
 
 void					MainWindow::OnUndo(wxCommandEvent &event)
 {
-	wxMenuItemList					listItems;
-	wxMenuItemList::const_iterator	iter;
-	
-	listItems = UndoMenu->GetMenuItems();
-	for (iter = listItems.begin(); iter != listItems.end(); iter++)
-	{
-		cActionManager::Global().Undo();
-		cout << "Undo" << endl;
-		if ((*iter)->GetId() == event.GetId())
-			break;
-	}
-	CreateUndoRedoMenus(EditMenu);
+  wxMenuItemList					listItems;
+  wxMenuItemList::const_iterator	iter;
+  
+  listItems = UndoMenu->GetMenuItems();
+  for (iter = listItems.begin(); iter != listItems.end(); iter++)
+    {
+      cActionManager::Global().Undo();
+      cout << "Undo" << endl;
+      if ((*iter)->GetId() == event.GetId())
+	break;
+    }
+  CreateUndoRedoMenus(EditMenu);
 }
 
 void					MainWindow::OnRedo(wxCommandEvent &event)
 {
-	wxMenuItemList					listItems;
-	wxMenuItemList::const_iterator	iter;
-	
-	listItems = RedoMenu->GetMenuItems();
-	for (iter = listItems.begin(); iter != listItems.end(); iter++)
-	{
-		cActionManager::Global().Redo();
-		if ((*iter)->GetId() == event.GetId())
-			break;
-	}
-	CreateUndoRedoMenus(EditMenu);
+  wxMenuItemList					listItems;
+  wxMenuItemList::const_iterator	iter;
+  
+  listItems = RedoMenu->GetMenuItems();
+  for (iter = listItems.begin(); iter != listItems.end(); iter++)
+    {
+      cActionManager::Global().Redo();
+      if ((*iter)->GetId() == event.GetId())
+	break;
+    }
+  CreateUndoRedoMenus(EditMenu);
 }
 
 void					MainWindow::removeAllMenuItems(wxMenu *menu)
 {
-	wxMenuItemList						menuItemList;
-	wxMenuItemList::const_iterator		itermenuItems;
+  wxMenuItemList						menuItemList;
+  wxMenuItemList::const_iterator		itermenuItems;
 	
-	menuItemList = menu->GetMenuItems();
-	for (itermenuItems = menuItemList.begin(); itermenuItems != menuItemList.end(); itermenuItems++)
-		menu->Delete(*itermenuItems);
+  menuItemList = menu->GetMenuItems();
+  for (itermenuItems = menuItemList.begin(); itermenuItems != menuItemList.end(); itermenuItems++)
+    menu->Delete(*itermenuItems);
 }
 
 void					MainWindow::CreateUndoRedoMenus(wxMenu *callingMenu)
 {
-	std::list<t_menuInfo*>					historyList;
-	std::list<t_menuInfo*>::const_iterator	iter;
-	wxMenu									*undoMenu;
-	wxMenu									*redoMenu;
-	int										separatorIndex;
-	int										count;
-
-	undoMenu = callingMenu->FindItemByPosition(INDEX_MENUITEM_UNDO)->GetSubMenu();
-	redoMenu = callingMenu->FindItemByPosition(INDEX_MENUITEM_REDO)->GetSubMenu();
-	removeAllMenuItems(undoMenu);
-	removeAllMenuItems(redoMenu);
-	historyList = cActionManager::Global().getListActions(&separatorIndex);
-	for (count = 0, iter = historyList.begin(); iter != historyList.end(); iter++, separatorIndex--, count++)
+  std::list<t_menuInfo*>					historyList;
+  std::list<t_menuInfo*>::const_iterator	iter;
+  wxMenu									*undoMenu;
+  wxMenu									*redoMenu;
+  int										separatorIndex;
+  int										count;
+  
+  undoMenu = callingMenu->FindItemByPosition(INDEX_MENUITEM_UNDO)->GetSubMenu();
+  redoMenu = callingMenu->FindItemByPosition(INDEX_MENUITEM_REDO)->GetSubMenu();
+  removeAllMenuItems(undoMenu);
+  removeAllMenuItems(redoMenu);
+  historyList = cActionManager::Global().getListActions(&separatorIndex);
+  for (count = 0, iter = historyList.begin(); iter != historyList.end(); iter++, separatorIndex--, count++)
+    {
+      wxMenuItem	*insertedMenuItem;
+      wxString		tmpString;
+      
+      if (separatorIndex > 0)
 	{
-		wxMenuItem	*insertedMenuItem;
-		wxString		tmpString;
-		
-		if (separatorIndex > 0)
-		{
-			tmpString = wxString((*iter)->label.c_str(), *wxConvCurrent);
-			if (count == 0)
-				tmpString += wxT("\tCtrl+Z");
-			insertedMenuItem = undoMenu->Append((*iter)->id, tmpString);
-			Connect((*iter)->id, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
-		      (wxCommandEventFunction)&MainWindow::OnUndo);
-		}
-		else
-		{
-			tmpString = wxString((*iter)->label.c_str(), *wxConvCurrent);
-			if (separatorIndex == 0)
-				tmpString += wxT("\tCtrl+Shift+Z");
-			insertedMenuItem = redoMenu->Append((*iter)->id, tmpString);
-			Connect((*iter)->id, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
-		      (wxCommandEventFunction)&MainWindow::OnRedo);
-		}
+	  tmpString = wxString((*iter)->label);
+	  if (count == 0)
+	    tmpString += wxT("\tCtrl+Z");
+	  insertedMenuItem = undoMenu->Append((*iter)->id, tmpString);
+	  Connect((*iter)->id, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
+		  (wxCommandEventFunction)&MainWindow::OnUndo);
 	}
-	callingMenu->Enable(MainWin_Undo, undoMenu->GetMenuItemCount() > 0);
-	callingMenu->Enable(MainWin_Redo, redoMenu->GetMenuItemCount() > 0);
+      else
+	{
+	  tmpString = wxString((*iter)->label);
+	  if (separatorIndex == 0)
+	    tmpString += wxT("\tCtrl+Shift+Z");
+	  insertedMenuItem = redoMenu->Append((*iter)->id, tmpString);
+	  Connect((*iter)->id, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)(wxEventFunction) 
+		  (wxCommandEventFunction)&MainWindow::OnRedo);
+	}
+    }
+  callingMenu->Enable(MainWin_Undo, undoMenu->GetMenuItemCount() > 0);
+  callingMenu->Enable(MainWin_Redo, redoMenu->GetMenuItemCount() > 0);
 }
 
 void					MainWindow::OnCut(wxCommandEvent &event)
@@ -1637,7 +1634,7 @@ void					MainWindow::OnAbout(wxCommandEvent &event)
 {
   wxBitmap splashbtm;
   if (splashbtm.LoadFile(wxString(WiredSettings->DataDir +
-				wxString(wxT("ihm/splash/splash.png"))), 
+				  wxString(wxT("ihm/splash/splash.png"))), 
 			 wxBITMAP_TYPE_PNG))
     {
       wxSplashScreen* splash = new wxSplashScreen(splashbtm,
@@ -1651,7 +1648,7 @@ void					MainWindow::OnAbout(wxCommandEvent &event)
 void					MainWindow::OnSpaceKey()
 {
   wxCommandEvent			e(-1, -1);
-
+  
   if (Seq->Playing)
     {
       TransportPanel->OnStop(e);
@@ -1665,52 +1662,52 @@ void					MainWindow::OnSpaceKey()
 
 void					MainWindow::OnTimer(wxTimerEvent &event)
 {
-  wxCommandEvent			f;
-  CursorEvent				e;
-  list<Pattern *>::iterator		i;
-  list<MidiPattern *>::iterator		j;
-  list<Plugin *>::iterator		k;
-  list<Track *>::iterator		t;
+  wxCommandEvent			commandEvt;
+  CursorEvent				cursorEvt;
+  list<Pattern *>::iterator		patternIt;
+  list<MidiPattern *>::iterator		midiPatternIt;
+  list<Plugin *>::iterator		pluginIt;
+  list<Track *>::iterator		trackIt;
 
   SeqMutex.Lock();
 
-  MixerPanel->OnMasterChange(f);
+  MixerPanel->OnMasterChange(commandEvt);
   if (Seq->Playing)
     {
-      SeqPanel->OnSetPosition(e);
+      SeqPanel->OnSetPosition(cursorEvt);
 
       if (Seq->Recording)
 	{
-	  for (i = Seq->PatternsToResize.begin(); i != Seq->PatternsToResize.end(); i++)
+	  for (patternIt = Seq->PatternsToResize.begin(); patternIt != Seq->PatternsToResize.end(); patternIt++)
 	    {
-	      f.SetEventObject((wxObject *)*i);
-	      SeqPanel->OnResizePattern(f);
+	      commandEvt.SetEventObject((wxObject *)*patternIt);
+	      SeqPanel->OnResizePattern(commandEvt);
 	    }	  
 	  Seq->PatternsToResize.clear();
-	  for (j = Seq->PatternsToRefresh.begin(); j != Seq->PatternsToRefresh.end(); j++)
+	  for (midiPatternIt = Seq->PatternsToRefresh.begin(); midiPatternIt != Seq->PatternsToRefresh.end(); midiPatternIt++)
 	    {
-	      f.SetEventObject((wxObject *)*j);
-	      SeqPanel->OnDrawMidi(f);
+	      commandEvt.SetEventObject((wxObject *)*midiPatternIt);
+	      SeqPanel->OnDrawMidi(commandEvt);
 	    }	 
 	  Seq->PatternsToRefresh.clear();
 	}
     }
 
-  for (k = UpdatePlugins.begin(); k != UpdatePlugins.end(); k++)
-    (*k)->Update();
+  for (pluginIt = UpdatePlugins.begin(); pluginIt != UpdatePlugins.end(); pluginIt++)
+    (*pluginIt)->Update();
   UpdatePlugins.clear();
 
-  for (t = Seq->TracksToRefresh.begin(); t != Seq->TracksToRefresh.end(); t++)
-    (*t)->TrackOpt->SetVuValue();
+  for (trackIt = Seq->TracksToRefresh.begin(); trackIt != Seq->TracksToRefresh.end(); trackIt++)
+    (*trackIt)->TrackOpt->SetVuValue();
   Seq->TracksToRefresh.clear();
-
+  
   SeqMutex.Unlock();
 }
 
 void					MainWindow::AddUpdatePlugin(Plugin *p)
 {
   list<Plugin *>::iterator		i;
-
+  
   for (i = UpdatePlugins.begin(); i != UpdatePlugins.end(); i++)
     if (*i == p)
       return;
@@ -1720,7 +1717,7 @@ void					MainWindow::AddUpdatePlugin(Plugin *p)
 void					MainWindow::OnFileLoaderStart(wxCommandEvent &event)
 {
   FileLoader				*f = (FileLoader *)event.GetEventObject();
-
+  
   Seq->PlayFile(f->GetSelectedFile(), f->IsAkai());
 }
 
@@ -1737,43 +1734,43 @@ void					MainWindow::OnIntegratedHelp(wxCommandEvent &event)
 void                  MainWindow::OnShowDebug(wxCommandEvent &event)
 {
    if(WindowMenu->IsChecked(MainWin_ShowLog))
-   {
-        LogWin->Show(true);
-   }
+     {
+       LogWin->Show(true);
+     }
    else
-   {
-        LogWin->Show(false);    
-   }
+     {
+       LogWin->Show(false);    
+     }
 }
 
 void					MainWindow::OnKillTimer(wxTimerEvent &WXUNUSED(event))
 {
-	cout << "[MAINWIN] Killing Threads" << endl;
-	exit (0);
+  cout << "[MAINWIN] Killing Threads" << endl;
+  exit (0);
 }
 
 void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
 {
 #if wxUSE_STATUSBAR
-wxLogNull NoLog;
-	if (SeqTimer)
-	{
-		wxString			LeftSpace(_("Left space on drive : ")), LeftMemory(_("Free memory : "));
-		wxLongLong		Total, Free;
-		
-		wxLongLong Size = wxGetFreeMemory();
-        if (Size > 0)        
-            LeftMemory += Size.ToString();
-        else
-            LeftMemory += _("Unknown");
-		if (CurrentXmlSession)
-			wxGetDiskSpace(CurrentXmlSession->GetAudioDir(), &Total, &Free);
-		else
-			wxGetDiskSpace(wxFileName::GetCwd(), &Total, &Free);
-		LeftSpace += FileLoader::FormatSize((off_t) Free.GetValue()) + wxT("/") + FileLoader::FormatSize((off_t)Total.GetValue());
-		SetStatusText(LeftSpace, 0);
-		SetStatusText(LeftMemory, 1);
-	}
+  wxLogNull NoLog;
+  if (SeqTimer)
+    {
+      wxString			LeftSpace(_("Left space on drive : ")), LeftMemory(_("Free memory : "));
+      wxLongLong		Total, Free;
+      
+      wxLongLong Size = wxGetFreeMemory();
+      if (Size > 0)        
+	LeftMemory += Size.ToString();
+      else
+	LeftMemory += _("Unknown");
+      if (CurrentXmlSession)
+	wxGetDiskSpace(CurrentXmlSession->GetAudioDir(), &Total, &Free);
+      else
+	wxGetDiskSpace(wxFileName::GetCwd(), &Total, &Free);
+      LeftSpace += FileLoader::FormatSize((off_t) Free.GetValue()) + wxT("/") + FileLoader::FormatSize((off_t)Total.GetValue());
+      SetStatusText(LeftSpace, 0);
+      SetStatusText(LeftMemory, 1);
+    }
 #endif
 }
 
