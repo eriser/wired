@@ -4,9 +4,7 @@
 #ifndef __WIREDXML_H__
 #define __WIREDXML_H__
 
-#include <string>
 #include <stdlib.h>
-#include <iostream>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>

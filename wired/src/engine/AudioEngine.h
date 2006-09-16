@@ -11,7 +11,6 @@
 
 
 #include <iostream>
-#include <string>
 #include <vector>
 #include <wx/thread.h>
 #include "RingBuffer.h"

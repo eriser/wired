@@ -4,7 +4,6 @@
 #ifndef FILESTAT_H_
 #define FILESTAT_H_
 
-#include <string>
 #include <map>
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP

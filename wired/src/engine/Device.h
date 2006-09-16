@@ -5,7 +5,6 @@
 #define __DEVICE_H__
 
 #include <iostream>
-#include <string>
 #include <vector>
 #include <portaudio.h>
 #include <wx/wx.h>

@@ -4,7 +4,6 @@
 #ifndef __WIREDSESSION_H__
 #define __WIREDSESSION_H__
 
-#include <string>
 using namespace std;
 
 #include <wx/file.h>

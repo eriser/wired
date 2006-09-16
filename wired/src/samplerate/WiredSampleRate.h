@@ -14,8 +14,6 @@
 #include <sndfile.h>
 #include <samplerate.h>
 #include <portaudio.h>
-#include <string>
-#include <string.h>
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
 #include <wx/choicdlg.h>
