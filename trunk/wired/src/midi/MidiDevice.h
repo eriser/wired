@@ -5,7 +5,6 @@
 #define __MIDIDEVICE_H__
 
 #include <vector>
-#include <string>
 #include <iostream>
 #include <portmidi.h>
 
@@ -36,7 +35,7 @@ class MidiDevice
   virtual int				OpenDevice(int _id) = 0;
   virtual void				CloseDevice();
   virtual MidiDeviceList		*ListDevices(void) = 0;
-  int					GetDeviceIDFromName(string s);
+  int					GetDeviceIDFromName(wxString s);
 
   int					id;
  
