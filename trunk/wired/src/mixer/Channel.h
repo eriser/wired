@@ -5,7 +5,6 @@
 #define __CHANNEL_H__
 
 #include <vector>
-#include <string>
 #include <iostream>
 #include "AudioEngine.h"
 
