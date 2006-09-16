@@ -1732,7 +1732,7 @@ extern "C"
     info.Type = ePlugTypeInstrument;  
     info.UnitsX = 2;
     info.UnitsY = 2;
-    info.Version = 0;
+    info.Version = 1;
 
     return (info);
   }
