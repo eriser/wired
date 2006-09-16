@@ -9,9 +9,7 @@
    #include <wx/wx.h>
 #endif
 
-#include <string>
 #include <vector>
-#include <iostream>
 
 using namespace std;
 using std::vector;
