@@ -44,8 +44,9 @@ public:
   							{ visitor.Visit (*this); };
   virtual std::string		getHistoryLabel()		// Returns History label wstring
   							{return (char *)HISTORY_LABEL_IMPORT_WAVE_ACTION;};
-  void						AddWaveTrack();
-  void						RemoveWaveTrack(bool selectFromIndex);
+  void					AddWaveTrack();
+  void					RemoveWaveTrack(bool selectFromIndex);
+  void					AddWaveToEditor();
   
   cImportWaveAction		operator=(const cImportWaveAction& right);
 };

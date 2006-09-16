@@ -48,6 +48,8 @@ class					SettingWindow : public wxDialog
   void					LoadSampleRates();
   void					UpdateLatency();
   void					SetDefaultSampleFormat(void);
+  void                                  RefreshOutputDev();
+  void                                  RefreshInputDev();
 
   // refresh list of audio systems avalaible
   void					RefreshSystems(wxChoice* choice);

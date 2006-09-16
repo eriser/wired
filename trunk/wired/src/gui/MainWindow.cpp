@@ -43,7 +43,8 @@
 #include "FileConversion.h"
 #include "config.h"
 #include "Threads.h"
-
+#include "MediaLibrary.h"
+#include "MLTree.h"
 
 Rack			*RackPanel = NULL;
 SequencerGui		*SeqPanel = NULL;
@@ -58,6 +59,7 @@ vector<PluginLoader *>	LoadedPluginsList;
 WiredSession		*CurrentSession = NULL;
 WiredSessionXml		*CurrentXmlSession = NULL;
 WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
+MediaLibrary		*MediaLibraryPanel = NULL;
 FileConversion		*FileConverter = NULL;
 SettingWindow		*SettingsWin = NULL;
 
@@ -109,6 +111,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   /* Creation Menu */
 
+  FileConverter = NULL;
+
   TransportFrame = 0x0;
   OptFrame = 0x0;
   SequencerFrame = 0x0;
@@ -126,6 +130,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   CreateEffectMenu = new wxMenu;
   HelpMenu = new wxMenu;
   WindowMenu = new wxMenu;
+  MediaLibraryMenu = new wxMenu;
   
   FileMenu->Append(MainWin_New, _("&New\tCtrl-N"));
   FileMenu->Append(MainWin_Open, _("&Open...\tCtrl-O"));
@@ -164,6 +169,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   HelpMenu->Append(MainWin_IntHelp, _("&Show Integrated Help"));
   HelpMenu->Append(MainWin_About, _("&About..."));
   
+  MediaLibraryMenu->Append(MainWin_MediaLibraryShow, _("&Show\tCtrl-M"));
+  MediaLibraryMenu->Append(MainWin_MediaLibraryHide, _("&Hide\tCtrl-M"));
+  ItemFloatingMediaLibrary = MediaLibraryMenu->AppendCheckItem(MainWin_FloatMediaLibrary, _("Floating"));
+  
   WindowMenu->Append(MainWin_SwitchRack, _("Switch &Rack/Optional view\tTAB"));
   WindowMenu->Append(MainWin_SwitchSeq, _("Switch &Sequencer/Optional view\tCtrl+TAB"));
   WindowMenu->AppendSeparator();
@@ -185,13 +194,16 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar->Append(CreateInstrMenu, _("&Instruments"));
   MenuBar->Append(CreateEffectMenu, _("Effec&ts"));
   MenuBar->Append(VideoMenu, _("&Video"));
+  MenuBar->Append(MediaLibraryMenu, _("&MediaLibrary"));
   MenuBar->Append(WindowMenu, _("&Window"));
   MenuBar->Append(HelpMenu, _("&Help"));
     
   SetMenuBar(MenuBar);
 
-  split = new wxSplitterWindow(this);
+  splitVert = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(0, 454));
+  split = new wxSplitterWindow(splitVert);  
   split->SetMinimumPaneSize(1);
+  splitVert->SetMinimumPaneSize(1);
 
   /* Creation Panel */
   RackPanel = new Rack(split, -1, wxPoint(0, 0), wxSize(800, 250));
@@ -199,24 +211,29 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 120), wxSIMPLE_BORDER);
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
 
-  split->SplitHorizontally(RackPanel, SeqPanel, 200);
+  MediaLibraryPanel = new MediaLibrary(splitVert, wxPoint(0, 0), wxSize(0, 400), wxSIMPLE_BORDER);
+  MediaLibraryPanel->SetSizeHints(2, 0);
 
+  splitVert->SplitVertically(MediaLibraryPanel, split);
+  split->SplitHorizontally(RackPanel, SeqPanel, 200);
+  
   /* Placement Panel */
-    
   BottomSizer = new wxBoxSizer(wxHORIZONTAL);
   BottomSizer->Add(TransportPanel, 0, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
   BottomSizer->Add(OptPanel, 1, wxEXPAND | wxALL | wxFIXED_MINSIZE, 2); 
   
   TopSizer = new wxBoxSizer(wxVERTICAL);
-    
-  TopSizer->Add(split, 1, wxEXPAND | wxALL, 2);
+  TopSizer->Add(splitVert, 1, wxEXPAND | wxALL, 2);
   TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
   SetSizer(TopSizer);
-  
+
+  splitVert->SetSashPosition(200);
   RackPanel->SetBackgroundColour(*wxBLACK);
   SeqPanel->SetBackgroundColour(*wxWHITE);
   OptPanel->SetBackgroundColour(*wxLIGHT_GREY);
+  MediaLibraryPanel->SetBackgroundColour(*wxWHITE);
   
+  MediaLibraryPanel->Show();
   RackPanel->Show();
   SeqPanel->Show();
   OptPanel->Show();
@@ -437,7 +454,6 @@ void					MainWindow::InitFileConverter()
 	FileConverter = new FileConversion();
 	t_samplerate_info info;
 	int i; 
-
 	if (Audio->UserData->Sets->WorkingDir.empty())
 	{
 		wxDirDialog dir(this, _("Choose the audio working directory"), wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
@@ -458,7 +474,8 @@ void					MainWindow::InitFileConverter()
 	info.SampleRate = (unsigned long) Audio->SampleRate;
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
 	if (FileConverter->Init(&info, wxString(CurrentXmlSession->GetAudioDir()), (unsigned long) 16889235, this) == false)
-		cout << "[MAINWIN] Create file converter thread failed !" << endl;
+	  cout << "[MAINWIN] Create file converter thread failed !" << endl;
+	MediaLibraryPanel->SetFileConverter(FileConverter);
 }
 
 void					MainWindow::InitUndoRedoMenuItems()
@@ -552,8 +569,6 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   cout << "[MAINWIN] Unloading shared libraries..."<< endl;
   for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
     delete *k;
-
-  //if (WiredVideoObject) delete WiredVideoObject;
 
   if (FileConverter)
     delete FileConverter;
@@ -1263,6 +1278,41 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
     }
 }
 
+void					MainWindow::OnFloatMediaLibrary(wxCommandEvent &event)
+{
+  if (MediaLibraryPanel->IsVisible() == false)
+    {
+      splitVert->SetSashPosition(200);
+      MediaLibraryPanel->Show();
+      MediaLibraryPanel->SetVisible();
+    }
+  if (MediaLibraryMenu->IsChecked(MainWin_FloatMediaLibrary))
+    {
+      splitVert->Unsplit(MediaLibraryPanel);
+
+      cout << "[MEDIALIBRARY] Float" << endl;
+      MediaLibraryFrame = new FloatingFrame(0x0, -1, _("MediaLibrary"), MediaLibraryPanel->GetPosition(), 
+					    MediaLibraryPanel->GetSize(), MediaLibraryPanel->GetParent(),
+					    ItemFloatingMediaLibrary, MainWin_FloatMediaLibrary);
+      MediaLibraryPanel->Reparent(MediaLibraryFrame);
+      MediaLibraryPanel->SetVisible();
+      MediaLibraryPanel->SetFloating();
+      MediaLibraryPanel->Show();
+      MediaLibraryFrame->Show();
+    }
+  else
+    {
+      cout << "[MEDIALIBRARY] UnFloat" << endl;
+      MediaLibraryPanel->Reparent(splitVert);
+      splitVert->SplitVertically(MediaLibraryPanel, split);
+      delete MediaLibraryFrame;
+      MediaLibraryFrame = 0x0;
+      MediaLibraryPanel->SetVisible();
+      MediaLibraryPanel->SetDocked();
+      splitVert->SetSashPosition(200);
+    }
+}
+
 void					MainWindow::OnSwitchRackOptViewEvent(wxCommandEvent &event)
 {
   SwitchRackOptView();
@@ -1375,6 +1425,33 @@ void					MainWindow::SwitchSeqOptView()
       OptPanel->Show();
     }
   SeqModeView = !SeqModeView;
+}
+
+void					MainWindow::MediaLibraryShow(wxCommandEvent &event)
+{
+
+	cout << "[MAINWIN] Launching MediaLibrary" << endl;
+
+	if (MediaLibraryPanel->IsVisible() == true)
+	  {
+	    return ;
+	  }
+	splitVert->SetSashPosition(200);
+	MediaLibraryPanel->Show();
+	MediaLibraryPanel->SetVisible();
+}
+
+void					MainWindow::MediaLibraryHide(wxCommandEvent &event)
+{
+	cout << "[MAINWIN] Hiding MediaLibrary" << endl;
+
+	if (MediaLibraryPanel->IsVisible() == false || MediaLibraryPanel->IsFloating() == true)
+	  {
+	    return ;
+	  }
+	splitVert->SetSashPosition(1);
+	//MediaLibraryPanel->Hide();
+	MediaLibraryPanel->SetInvisible();
 }
 
 void					MainWindow::OnSettings(wxCommandEvent &event)
@@ -1743,6 +1820,7 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_FloatTransport, MainWindow::OnFloatTransport) 
   EVT_MENU(MainWin_FloatSequencer, MainWindow::OnFloatSequencer) 
   EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack) 
+  EVT_MENU(MainWin_FloatMediaLibrary, MainWindow::OnFloatMediaLibrary) 
   EVT_MENU(MainWin_Undo, MainWindow::OnUndo) 
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
   //EVT_MENU(MainWin_History, MainWindow::OnHistory)

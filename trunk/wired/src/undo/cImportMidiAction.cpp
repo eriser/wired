@@ -9,6 +9,7 @@
 #include "../engine/AudioCenter.h"
 #include "../midi/MidiFile.h"
 #include "../gui/Rack.h"
+#include "AudioPattern.h"
 
 /********************   class cImportWaveAction   ********************/
 
@@ -22,55 +23,70 @@ cImportWaveAction::cImportWaveAction (const string& path, bool kind, bool should
 
 void cImportWaveAction::Do ()
 {
-	if (_ShouldAdd == true)
-		AddWaveTrack();	
-	else
-		RemoveWaveTrack(false);
+  if (_ShouldAdd == true)
+    AddWaveTrack();	
+  else
+    RemoveWaveTrack(false);
 }
 
 void cImportWaveAction::AddWaveTrack()
 {
-	WaveFile *w = WaveCenter.AddWaveFile(wxString(_WavePath.c_str(), *wxConvCurrent));
-	
-	if (w) 
+  WaveFile *w = WaveCenter.AddWaveFile(wxString(_WavePath.c_str(), *wxConvCurrent));
+  
+  if (w) 
     {
-    	Track *t = SeqPanel->AddTrack(_TrackKindFlag);
-		t->AddPattern(w);
-		_trackIndex = t->Index;
-		NotifyActionManager();
+      Track *t = SeqPanel->AddTrack(_TrackKindFlag);
+      t->AddPattern(w);
+      _trackIndex = t->Index;
+      NotifyActionManager();
+    }
+}
+
+void cImportWaveAction::AddWaveToEditor()
+{
+  WaveFile *w = WaveCenter.AddWaveFile(wxString(_WavePath.c_str(), *wxConvCurrent));
+  
+  if (w) 
+    {
+      Track *t = SeqPanel->AddTrack(_TrackKindFlag);
+      AudioPattern  *pattern = t->AddPattern(w);
+      pattern->OnDirectEdit();
+
+      _trackIndex = t->Index;
+      NotifyActionManager();
     }
 }
 
 void cImportWaveAction::RemoveWaveTrack(bool selectFromIndex)
 {
-	if (selectFromIndex == true)
-		SeqPanel->SelectTrack(_trackIndex);
-	SeqPanel->DeleteSelectedTrack();
+  if (selectFromIndex == true)
+    SeqPanel->SelectTrack(_trackIndex);
+  SeqPanel->DeleteSelectedTrack();
 }
 
 void cImportWaveAction::Redo ()
 { 
-	Do();
+  Do();
 }
 
 void cImportWaveAction::Undo ()
 {
-	if (_ShouldAdd == true)
-		RemoveWaveTrack(true);	
-	else
-		AddWaveTrack();
+  if (_ShouldAdd == true)
+    RemoveWaveTrack(true);	
+  else
+    AddWaveTrack();
 }
 
 cImportWaveAction			cImportWaveAction::operator=(const cImportWaveAction& right)
 {
-	if (this != &right)
-	{
-		_TrackKindFlag = right._TrackKindFlag;
-		_WavePath = right._WavePath;
-		_trackIndex = right._trackIndex;
-		_ShouldAdd = right._ShouldAdd;
-	}
-	return *this;
+  if (this != &right)
+    {
+      _TrackKindFlag = right._TrackKindFlag;
+      _WavePath = right._WavePath;
+      _trackIndex = right._trackIndex;
+      _ShouldAdd = right._ShouldAdd;
+    }
+  return *this;
 }
 
 
