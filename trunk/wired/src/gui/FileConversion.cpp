@@ -167,6 +167,7 @@ SNDFILE			*FileConversion::OpenDecodeFile(t_Pcm	&Data, const wxString &DestFileN
 	return Result;
 }
 
+// return false if decode has started and failed
 bool				FileConversion::Decode(wxString &FileName)
 {
     bool        Res= true;
@@ -259,6 +260,21 @@ bool				FileConversion::ConvertSamplerate(wxString &FileName, bool &HasChangedPa
 		return true;
 	}
 	return true;
+}
+
+bool				FileConversion::ImportFile(wxString &FileName)
+{
+  // convert file from current codec to raw data (wav)
+  if (ConvertFromCodec(FileName))
+    {
+      // if conversion is not canceled, then we import wave file
+      if (ConvertSamplerate(FileName) == true)
+	{
+	  ImportWaveFile(FileName);
+	  return (true);
+	}
+    }
+  return (false);
 }
 
 void				FileConversion::ImportWaveFile(wxString &FileName)

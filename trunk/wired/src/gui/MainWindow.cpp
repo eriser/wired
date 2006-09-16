@@ -765,13 +765,8 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       	MidiDeviceMutex.Lock();
       	SeqMutex.Unlock();
 
-	// convert file from current codec to raw data (wav)
-      	if (FileConverter->ConvertFromCodec(selfile))
-	  {
-	    // if conversion is not canceled, then we import wave file
-	    if (FileConverter->ConvertSamplerate(selfile) == true)
-	      FileConverter->ImportWaveFile(selfile);
-	  }
+	// convert and import file 
+      	FileConverter->ImportFile(selfile);
 
       	MidiMutex.Unlock();  
       	MidiDeviceMutex.Unlock();

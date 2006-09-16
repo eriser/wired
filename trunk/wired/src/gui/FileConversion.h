@@ -45,7 +45,13 @@ public:
 	bool				ConvertFromCodec(wxString& FileName);
 	void				ConvertToCodec(wxString& FileName);
 	bool				ConvertSamplerate(wxString& FileName);
+
+	// import a wav file
 	void				ImportWaveFile(wxString& FileName);
+
+	// import a file with probably some codec, return false if canceled
+	bool				ImportFile(wxString& FileName);
+
 	void				Stop();
 	void				SetBufferSize(unsigned long Size){_BufferSize = Size; _SampleRateConverter.SetBufferSize(Size);}
 	void				SetSampleRate(unsigned long SampleRate){_SampleRateConverter.SetSampleRate(SampleRate);}
