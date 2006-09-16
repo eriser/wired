@@ -111,13 +111,13 @@ int		WiredLibMpeg::encode(float** pcm)
 	return 1;
 }
 
-bool	WiredLibMpeg::CanConvert(const char* path, int Decode)
+bool	WiredLibMpeg::CanConvert(const wxString& path, int Decode)
 {
 	if (Decode & ENCODE)
 		return false;
 	if (!mpeg3_check_sig_func)
 		return false;
-	if (mpeg3_check_sig_func((char*)path) != 1)
+	if (mpeg3_check_sig_func((char*)(const char*)path.mb_str(*wxConvCurrent)) != 1)
 		return false;
 	return true;
 }

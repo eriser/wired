@@ -6,8 +6,8 @@
 
 #include <stdlib.h>
 #include <list>
-#include <string>
 #include <wx/wx.h>
+#include <wx/string.h>
 
 #define	EXIST	0x1
 #define	DECODE	0x2
@@ -56,7 +56,7 @@ class   WiredApiCodec
   virtual int		decode(const char *path, t_Pcm *pcm, 
   							unsigned long lenght) = 0;			/* Decode function */
   virtual int		EndDecode() = 0;							/* Closes file */
-  virtual bool		CanConvert(const char* path, int Decode) = 0;			/* True if codec can decode file */
+  virtual bool		CanConvert(const wxString& path, int Decode) = 0;			/* True if codec can decode file */
   void			SetuniqueId(unsigned long Id)				/* Sets unique Id */
   					{_UniqueId = Id;}
   unsigned long		GetUniqueId()								/* Returns unique Id */

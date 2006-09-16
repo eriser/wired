@@ -13,7 +13,7 @@
 
 /********************   class cImportWaveAction   ********************/
 
-cImportWaveAction::cImportWaveAction (const string& path, bool kind, bool shouldAdd)
+cImportWaveAction::cImportWaveAction (const wxString& path, bool kind, bool shouldAdd)
 {
 	_TrackKindFlag = kind;
 	_WavePath = path;
@@ -31,8 +31,8 @@ void cImportWaveAction::Do ()
 
 void cImportWaveAction::AddWaveTrack()
 {
-  WaveFile *w = WaveCenter.AddWaveFile(wxString(_WavePath.c_str(), *wxConvCurrent));
-  
+  WaveFile *w = WaveCenter.AddWaveFile(_WavePath);
+	
   if (w) 
     {
       Track *t = SeqPanel->AddTrack(_TrackKindFlag);
@@ -92,7 +92,7 @@ cImportWaveAction			cImportWaveAction::operator=(const cImportWaveAction& right)
 
 /********************   class cImportMidiAction   ********************/
 
-cImportMidiAction::cImportMidiAction (string path, bool kind)
+cImportMidiAction::cImportMidiAction (wxString& path, bool kind)
 {
   mTrackKindFlag = kind;
   mMidiPath = path;
@@ -100,7 +100,7 @@ cImportMidiAction::cImportMidiAction (string path, bool kind)
 
 void cImportMidiAction::Do ()
 {
-  MidiFile *m = new MidiFile(wxString(mMidiPath.c_str(), *wxConvCurrent));
+  MidiFile *m = new MidiFile(mMidiPath);
 
   if (m)
   {
@@ -138,27 +138,30 @@ cImportMidiAction			cImportMidiAction::operator=(const cImportMidiAction& right)
 
 /********************   class cImportAkaiAction   ********************/
 
-cImportAkaiAction::cImportAkaiAction (string path, bool kind)
+cImportAkaiAction::cImportAkaiAction (wxString& path, bool kind)
 {
   mTrackKindFlag = kind;
-  mDevice = path.substr(0, path.find(":", 0));
-  path = path.substr(path.find(":", 0) + 1, path.size() - path.find(":", 0));
+  mDevice = path.substr(0, path.find(wxT(":"), 0));
+  path = path.substr(path.find(wxT(":"), 0) + 1, path.size() - path.find(wxT(":"), 0));
   mPath = path.substr(10, path.size() - 10);
-  int pos = mPath.find("/", 0);
+  int pos = mPath.find(wxT("/"), 0);
   mPart = mPath.substr(0, pos).c_str()[0] - 64;
   mPath = mPath.substr(pos, mPath.size() - pos);
   int opos = 0;
-  while ((pos = mPath.find("/", opos)) != string::npos)
+  while ((pos = mPath.find(wxT("/"), opos)) != wxString::npos)
 	opos = pos + 1;
 
   mName = mPath.substr(opos, mPath.size() - opos);
   mPath = mPath.substr(1, opos - 2);
-  cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; path: " << mPath << endl;
+  cout << "device: " << mDevice.mb_str() << "; part: " << mPart 
+       << "; name: " << mName.mb_str() << "; path: " << mPath.mb_str() << endl;
 }
 
 void cImportAkaiAction::Do ()
 {
-  t_akaiSample *sample = akaiGetSampleByName((char *)mDevice.c_str(), mPart, (char *)mPath.c_str(), (char *)mName.c_str());
+  t_akaiSample *sample = akaiGetSampleByName((char*)((const char*)mDevice.mb_str(*wxConvCurrent)),
+					     mPart, (char*)((const char*)mPath.mb_str(*wxConvCurrent)),
+					     (char*)((const char*)mName.mb_str(*wxConvCurrent)));
   if (sample != NULL)
   {
     try
@@ -313,13 +316,13 @@ void cCreateEffectAction::AddRackEffect ()
     }
 }
 
-std::string		cCreateEffectAction::getHistoryLabel()		
+const wxString		cCreateEffectAction::getHistoryLabel()		
 {
-	std::string			result;
+	wxString			result;
 	
-	result = (char *)HISTORY_LABEL_CREATE_EFFECT_ACTION;
-	result += " ";
-	result += mPluginLoader->InitInfo.Name.mb_str(*wxConvCurrent); 
+	result = HISTORY_LABEL_CREATE_EFFECT_ACTION;
+	result += wxT(" ");
+	result += mPluginLoader->InitInfo.Name; 
 	return result;
 }
 

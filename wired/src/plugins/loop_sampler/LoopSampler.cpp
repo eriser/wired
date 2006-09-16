@@ -1,9 +1,6 @@
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
-
 #include "LoopSampler.h"
 #include "midi.h"
 #include "BeatDialog.h"

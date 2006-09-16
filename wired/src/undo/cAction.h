@@ -5,11 +5,9 @@
 #if !defined(ACTION_H)
 #define ACTION_H
 
+#include <wx/string.h>
 
-#include <string>
-#include <list>
-
-#define	HISTORY_LABEL_PARENT_INSTANCE_ACTION	"ParentInstanceAction"
+#define	HISTORY_LABEL_PARENT_INSTANCE_ACTION	wxT("ParentInstanceAction")
 
 // ----------------------------------------------------------------------------
 // Forward declaration
@@ -55,7 +53,7 @@ public:
 	virtual void	Redo() { Do(); };			// Refait l'action
 	virtual void	Accept						// Methode callbak
 					(cActionVisitor& visitor);
-	virtual std::string	getHistoryLabel()		// Retourne la chaine affichee dans la menu Historique Undo / Redo
+	virtual const wxString	getHistoryLabel()		// Retourne la chaine affichee dans la menu Historique Undo / Redo
 			{return HISTORY_LABEL_PARENT_INSTANCE_ACTION;};
 	void			Dump(bool alone = true);	// Debug - Dump les donnees membres
 	

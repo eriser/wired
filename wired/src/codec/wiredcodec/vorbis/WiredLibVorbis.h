@@ -13,7 +13,7 @@
 #include	<math.h>
 #include	"vorbisfile.h"
 
-#define		VORBIS_EXTENTION	"ogg\tVorbis Ogg (*.ogg)"
+#define		VORBIS_EXTENTION	_("ogg\tVorbis Ogg (*.ogg)")
 #define		SO_NAME			"libvorbisfile.so"
 #define		VORBIS_FCC_LENGHT	3
 #define		VORBIS_FCC_LABEL	"Ogg"
@@ -45,7 +45,7 @@ class   WiredLibVorbis: public WiredApiCodec
   // int				decode(const char *path, t_Pcm *pcm);
   int				decode(const char *path, t_Pcm *pcm, unsigned long length);				/* Decode methodes */
   /* Checks format */
-  bool				CanConvert(const char* path, int Decode);
+  bool				CanConvert(const wxString& path, int Decode);
 
   int				EndDecode();
 

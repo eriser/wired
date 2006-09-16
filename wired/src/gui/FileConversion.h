@@ -6,7 +6,6 @@
 
 #include <wx/thread.h>
 #include <iostream>
-#include <string>
 #include <list>
 #include <vector>
 #include <deque>
@@ -28,8 +27,8 @@ typedef enum {
 typedef struct s_FileConversionAction
 {
 	FileConversionTypeAction	TypeAction;
-	wxString						*SrcFileName;
-	wxString						*DstFileName;
+	wxString			SrcFileName;
+	wxString			DstFileName;
 } FileConversionAction;
 
 class	FileConversion //: public wxThread
@@ -41,23 +40,23 @@ public:
 	FileConversion operator=(const FileConversion& right);
 	
 	virtual void		*Entry();
-	bool				Init(t_samplerate_info *RateInit, wxString WorkingDir, unsigned long BufferSize, wxWindow *Parent);
+	bool				Init(t_samplerate_info *RateInit, wxString &WorkingDir, unsigned long BufferSize, wxWindow *Parent);
 	vector<wxString>		*GetCodecsExtensions();
-	bool				ConvertFromCodec(wxString *FileName);
-	void				ConvertToCodec(wxString *FileName);
-	bool				ConvertSamplerate(wxString *FileName);
-	void				ImportWaveFile(wxString *FileName);
+	bool				ConvertFromCodec(wxString& FileName);
+	void				ConvertToCodec(wxString& FileName);
+	bool				ConvertSamplerate(wxString& FileName);
+	void				ImportWaveFile(wxString& FileName);
 	void				Stop();
 	void				SetBufferSize(unsigned long Size){_BufferSize = Size; _SampleRateConverter.SetBufferSize(Size);}
 	void				SetSampleRate(unsigned long SampleRate){_SampleRateConverter.SetSampleRate(SampleRate);}
 	void				SetFormat(PaSampleFormat Format){_SampleRateConverter.SetFormat(Format);}
 private:
-	void				CopyToWorkingDir(wxString *FileName);
-	void				ImportWavePattern(wxString *FileName);
-	bool				ConvertSamplerate(wxString *FileName, bool &HasChangedPath);
+	void				CopyToWorkingDir(wxString& FileName);
+	void				ImportWavePattern(wxString& FileName);
+	bool				ConvertSamplerate(wxString& FileName, bool &HasChangedPath);
 	int				GetSndFFormat(PcmType Type);
-	bool				Decode(wxString *FileName);
-	void				EnqueueAction(FileConversionTypeAction ActionType, wxString *SrcFile, wxString *DstFile);
+	bool				Decode(wxString& FileName);
+	void				EnqueueAction(FileConversionTypeAction ActionType, wxString &SrcFile, wxString &DstFile);
 	bool 				_ShouldRun;
 	WiredSampleRate		_SampleRateConverter;
 	WiredCodec			_CodecConverter;

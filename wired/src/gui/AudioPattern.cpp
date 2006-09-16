@@ -43,12 +43,15 @@ AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
   #endif
   Init();
   Wave = w;
+  SetWave(w);
+  InputChan = NULL;
+  RecordWave = NULL;
+
+  // put wav form in the optional panel in "wavedrawer form"
   wxSize s = GetSize();
   SetSize(s);
   WaveDrawer::SetWave(w, s);
-  FileName = w->Filename;
-  InputChan = NULL;
-  RecordWave = NULL;
+
   #ifdef __DEBUG__
   cout << " ---  OK AUDIO PATTERN ---\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
        << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;

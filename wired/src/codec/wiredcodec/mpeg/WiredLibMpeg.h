@@ -56,7 +56,7 @@ class   WiredLibMpeg: public WiredApiCodec
   int				encode(float** pcm);						/* Encode methodes */
   int				decode(const char *path, t_Pcm *pcm, 
   							unsigned long length);				/* Decode methodes */
-  bool				CanConvert(const char* path, int Decode);				/* Checks format */
+  bool				CanConvert(const wxString& path, int Decode);				/* Checks format */
   int				EndDecode();
 
   WiredLibMpeg		operator=(const WiredLibMpeg& right);

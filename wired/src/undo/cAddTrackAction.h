@@ -10,7 +10,7 @@
 #include "Visitor.h"
 #include "SequencerGui.h"
 
-#define	HISTORY_LABEL_ADD_TRACK_ACTION	"AddTrackAction"
+#define	HISTORY_LABEL_ADD_TRACK_ACTION	_("AddTrackAction")
 
 class				SequencerGui;
 
@@ -43,8 +43,8 @@ class				cAddTrackAction : public cAction
   
   virtual void			Accept (cActionVisitor& visitor)
     { visitor.Visit (*this); };
-  // Returns History label wstring
-  virtual std::string		getHistoryLabel()
+  // Returns History label wxString
+  virtual const wxString	getHistoryLabel()
   {return HISTORY_LABEL_ADD_TRACK_ACTION;};
   				
   cAddTrackAction		operator=(const cAddTrackAction& right)

@@ -458,22 +458,22 @@ void					MainWindow::InitFileConverter()
 	{
 		wxDirDialog dir(this, _("Choose the audio working directory"), wxFileName::GetCwd(), wxDD_NEW_DIR_BUTTON | wxCAPTION | wxSUNKEN_BORDER);
 		if (dir.ShowModal() == wxID_OK)
-		  CurrentXmlSession->GetAudioDir() = wxString(dir.GetPath());
-	
+		  CurrentXmlSession->GetAudioDir() = dir.GetPath();
 		else
-		  CurrentXmlSession->GetAudioDir() = wxFileName::GetCwd().c_str();
+		  CurrentXmlSession->GetAudioDir() = wxFileName::GetCwd();
 		  	     
-		Audio->UserData->Sets->WorkingDir = CurrentXmlSession->GetAudioDir().c_str();
+		Audio->UserData->Sets->WorkingDir = CurrentXmlSession->GetAudioDir();
 	}
 	else
 	{
-		CurrentXmlSession->GetAudioDir() = (wchar_t *)Audio->UserData->Sets->WorkingDir.c_str();
+		CurrentXmlSession->GetAudioDir() = Audio->UserData->Sets->WorkingDir;
 	
 	}
 	info.WorkingDirectory = CurrentXmlSession->GetAudioDir();
 	info.SampleRate = (unsigned long) Audio->SampleRate;
 	info.SamplesPerBuffer = (unsigned long) Audio->SamplesPerBuffer;
-	if (FileConverter->Init(&info, wxString(CurrentXmlSession->GetAudioDir()), (unsigned long) 16889235, this) == false)
+	// init FileConverter with 4Mo of cache
+	if (FileConverter->Init(&info, CurrentXmlSession->GetAudioDir(), (unsigned long)1024 * 1024 * 4, this) == false)
 	  cout << "[MAINWIN] Create file converter thread failed !" << endl;
 	MediaLibraryPanel->SetFileConverter(FileConverter);
 }
@@ -764,9 +764,15 @@ void					MainWindow::OnImportWave(wxCommandEvent &event)
       	MidiMutex.Lock();
       	MidiDeviceMutex.Lock();
       	SeqMutex.Unlock();
-      	FileConverter->ConvertFromCodec(&selfile);
-	FileConverter->ConvertSamplerate(&selfile);
-      	FileConverter->ImportWaveFile(&selfile);
+
+	// convert file from current codec to raw data (wav)
+      	if (FileConverter->ConvertFromCodec(selfile))
+	  {
+	    // if conversion is not canceled, then we import wave file
+	    if (FileConverter->ConvertSamplerate(selfile) == true)
+	      FileConverter->ImportWaveFile(selfile);
+	  }
+
       	MidiMutex.Unlock();  
       	MidiDeviceMutex.Unlock();
       }
@@ -783,13 +789,12 @@ void					MainWindow::OnImportMIDI(wxCommandEvent &event)
     {
       wxString selfile = dlg.GetSelectedFile();
 
-      cout << "[MAINWIN] Users imports MIDI file : " << selfile << endl;
+      cout << "[MAINWIN] Users imports MIDI file : " << selfile.mb_str() << endl;
       wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100, 
 							this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
 							| wxPD_REMAINING_TIME);
       Progress.Update(1);
-      wxString temp(selfile);
-      cImportMidiAction* action = new cImportMidiAction((const char *)temp.mb_str(*wxConvCurrent), false);
+      cImportMidiAction* action = new cImportMidiAction(selfile, false);
       action->Do();
       Progress.Update(99);	
       //delete Progress;
@@ -830,8 +835,7 @@ void					MainWindow::OnImportAKAI(wxCommandEvent &event)
 							this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT 
 							| wxPD_REMAINING_TIME);
       Progress.Update(1);
-      wxString temp(selfile);
-      cImportAkaiAction* action = new cImportAkaiAction((const char *)temp.mb_str(*wxConvCurrent), true);
+      cImportAkaiAction* action = new cImportAkaiAction(selfile, true);
       action->Do();
       Progress.Update(99);	
       //delete Progress;
@@ -933,7 +937,7 @@ void					MainWindow::OnExportMIDI(wxCommandEvent &event)
   if (dlg.ShowModal() == wxID_OK)
     {
       wxString selfile = dlg.GetSelectedFile();
-      cout << "[MAINWIN] Users exports MIDI file : " << selfile << endl;
+      cout << "[MAINWIN] Users exports MIDI file : " << selfile.mb_str() << endl;
       
     }
   else

@@ -86,7 +86,7 @@ class   WiredLibFlac: public WiredApiCodec
   int				EndDecode();
   
   /* Checks format */
-  bool				CanConvert(const char* path, int Decode);
+  bool				CanConvert(const wxString& path, int Decode);
 
   /* Operators */
   WiredLibFlac		operator=(const WiredLibFlac& right);

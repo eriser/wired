@@ -93,18 +93,32 @@ AudioPattern					*Track::AddPattern(WaveFile *w, double pos)
 #endif
   a = new AudioPattern(pos, w, Index);
   a->SetDrawColour(PatternColours[ColourIndex]);
+
   SeqMutex.Lock();
   TrackPattern->Patterns.push_back(a);
   if (a->GetEndPosition() > Seq->EndPos)
     Seq->EndPos = a->GetEndPosition();
   SeqMutex.Unlock();
-  a->Update();
-  
 
+  a->Update();
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d, %f) -- OVER (AUDIO)\n", w, pos);
 #endif
   return (a);
+}
+
+void						Track::AddPattern(Pattern *p)
+{
+#ifdef __DEBUG__
+  printf("Track::AddPattern(%d) -- START (PATTERN)\n", p);
+#endif
+  p->SetDrawColour(PatternColours[ColourIndex]);
+  SeqMutex.Lock();
+  TrackPattern->Patterns.push_back(p);
+  SeqMutex.Unlock();
+#ifdef __DEBUG__
+  printf("Track::AddPattern(%d) -- OVER (PATTERN)\n", p);
+#endif
 }
 
 MidiPattern					*Track::AddPattern(MidiTrack *t)
@@ -126,20 +140,6 @@ MidiPattern					*Track::AddPattern(MidiTrack *t)
   printf("Track::AddPattern(%d) -- OVER (MIDI)\n", t);
 #endif
   return (a);
-}
-
-void						Track::AddPattern(Pattern *p)
-{
-#ifdef __DEBUG__
-  printf("Track::AddPattern(%d) -- START (PATTERN)\n", p);
-#endif
-  p->SetDrawColour(PatternColours[ColourIndex]);
-  SeqMutex.Lock();
-  TrackPattern->Patterns.push_back(p);
-  SeqMutex.Unlock();
-#ifdef __DEBUG__
-  printf("Track::AddPattern(%d) -- OVER (PATTERN)\n", p);
-#endif
 }
 
 void						Track::UpdateIndex(long trackindex)

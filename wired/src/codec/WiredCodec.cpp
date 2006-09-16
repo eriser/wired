@@ -84,12 +84,12 @@ bool WiredCodec::CanConvert(const wxString &filename, int Decode)
   bool					result = false;
   int					Note = 0;
 
-  std::cout << "Can decode file == {" << filename.c_str() << "}" << std::endl;
+  std::cout << "Can decode file == {" << filename.mb_str() << "}" << std::endl;
   WiredCodecMutex.Lock();
   for (iterTWLib = _WLib.begin(); iterTWLib != _WLib.end(); iterTWLib++)
     for (iterTLibInfo = (*iterTWLib).Info.begin();  iterTLibInfo != (*iterTWLib).Info.end(); iterTLibInfo++)
       if ((*iterTLibInfo).CodecMask & Decode)
-	if ((*iterTWLib).Codec->CanConvert((char*)filename.c_str(), Decode) == true)
+	if ((*iterTWLib).Codec->CanConvert(filename, Decode) == true)
 	  if ((*iterTLibInfo).Note > Note)
 	    {
 	      codecToUse[filename] = (*iterTWLib).Codec->GetUniqueId();
