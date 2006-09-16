@@ -8,9 +8,7 @@
 
 #include <iostream>
 
-#include <string>
 #include <map>
-#include <string.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>

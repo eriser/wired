@@ -10,14 +10,12 @@
 #include <wx/treectrl.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <string>
 #include <vector>
 #include <list>
 #include "TreeItemData.h"
 #include "akai.h"
 #include "Settings.h"
 
-using std::string;
 using std::vector;
 
 #define EXT_FILE	wxT("wired_exts.conf")

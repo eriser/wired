@@ -13,9 +13,6 @@
 
 #include <list>
 #include <map>
-#include <string>
-#include <sstream>
-#include <iostream>
 using namespace std;
 
 #define	TYPE_PLUGINS_DSSI 1
