@@ -16,8 +16,6 @@ Channel::Channel(bool stereo)
     AddBuffers(PREBUF_NUM);
   else
     AddBuffers(NUM_BUFFERS);
-
-  cout << "create class with lmute " << MuteLeft << " and " << MuteRight << endl;
 }
 
 Channel::Channel(bool stereo, bool visible)
@@ -27,7 +25,6 @@ Channel::Channel(bool stereo, bool visible)
 {
   CurBuf = 0;
   AddBuffers(NUM_BUFFERS);
-  cout << "create class2 with lmute " << MuteLeft << " and " << MuteRight << endl;
 }
 
 Channel::~Channel()
