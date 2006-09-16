@@ -4,7 +4,6 @@
 #ifndef __WRITEWAVEFILE_H__
 #define __WRITEWAVEFILE_H__
 
-#include <string>
 #include <iostream>
 #include <wx/wx.h>
 

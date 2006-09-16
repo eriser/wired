@@ -118,16 +118,28 @@ void			WiredExternalPluginMgr::LoadPlugins(const wxString& FileName)
 
 list<wxString>	WiredExternalPluginMgr::SplitPath(const wxString& Path)
 {
-	istringstream f((const char *)Path.mb_str(*wxConvCurrent));
-	list<wxString> Result;
-	std::string		Buffer;
+  int idx;
+  list<wxString> Result;
+  wxString		BufferB, BufferE;
 
-	if (Path.find(ENV_PATH_SEPARATOR) == Path.npos)
-		Result.insert(Result.end(), Path);
-	else
-		while (getline(f, Buffer, ENV_PATH_SEPARATOR))
-			Result.insert(Result.end(), wxString(Buffer.c_str(), *wxConvCurrent));
-	return Result;
+  if (Path.Find(ENV_PATH_SEPARATOR) == -1)
+    Result.insert(Result.end(), Path);
+  else
+    {
+      BufferE = Path;
+      idx = BufferE.Find(ENV_PATH_SEPARATOR);
+      
+      while(idx != -1)
+	{
+	  BufferB = BufferE.Mid(0, idx);
+	  BufferE = BufferE.Mid(idx + 1);
+	  Result.insert(Result.end(), BufferB);
+	  idx = BufferE.find(ENV_PATH_SEPARATOR);
+	}
+      Result.insert(Result.end(), BufferE);
+    }
+  
+  return Result;
 }
 
 map<int, wxString>	WiredExternalPluginMgr::GetPluginsList()

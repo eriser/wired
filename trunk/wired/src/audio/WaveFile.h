@@ -4,7 +4,6 @@
 #ifndef __WAVEFILE_H__
 #define __WAVEFILE_H__
 
-#include <string>
 #include <iostream>
 
 using namespace std;
