@@ -9,7 +9,6 @@ using namespace	std;
 #include <vector>
 #include <list>
 #include <iostream>
-#include <string>
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -41,12 +40,12 @@ class ChanBuf
 
   void					DeleteBuffer() 
     { 
-   	if (Buffer[0])
-      delete[] Buffer[0];
+      if (Buffer[0])
+	delete[] Buffer[0];
       if (Buffer[1])
 	delete[] Buffer[1];
-	if (Buffer)
-      delete[] Buffer;
+      if (Buffer)
+	delete[] Buffer;
     }
 
   float					**Buffer;

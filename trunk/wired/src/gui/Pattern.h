@@ -7,7 +7,6 @@
 #ifndef __PATTERN_H__
 #define __PATTERN_H__
 
-#include <string>
 #include <vector>
 #include <wx/string.h>
 #include <wx/wx.h>
@@ -62,7 +61,7 @@ class					Pattern : public wxWindow
   virtual ~Pattern();
 
   void								Modify(double newpos = -1, double newendpos = -1, 
-					       							long newtrackindex = -1, double newlength = -1);
+								       long newtrackindex = -1, double newlength = -1);
   void								UpdateMeasure();
   virtual void				Update();
   virtual void				SetSelected(bool sel);
