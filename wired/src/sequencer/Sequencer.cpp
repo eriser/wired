@@ -259,17 +259,17 @@ void					*Sequencer::Entry()
 	  memset(buf2[1], 0, Audio->SamplesPerBuffer * sizeof(float));
 	  for (Plug = (*RacksTrack)->Racks.begin(); Plug != (*RacksTrack)->Racks.end(); Plug++)
 	    {
-            if ((*Plug))
-            {
-    	      //  printf("[SEQ] PROCESS 1: %f\n",  Audio->GetTime());
-    	      (*Plug)->Process(buf1, buf2, delta);
-    	      //printf("[SEQ] PROCESS 2: %f\n",  Audio->GetTime());	    
-    	      buf = buf1;
-    	      buf1 = buf2;	      
-    	      buf2 = buf;
-    	      memset(buf2[0], 0, Audio->SamplesPerBuffer * sizeof(float));
-    	      memset(buf2[1], 0, Audio->SamplesPerBuffer * sizeof(float));
-            }
+	      if ((*Plug))
+		{
+		  //  printf("[SEQ] PROCESS 1: %f\n",  Audio->GetTime());
+		  (*Plug)->Process(buf1, buf2, delta);
+		  //printf("[SEQ] PROCESS 2: %f\n",  Audio->GetTime());	    
+		  buf = buf1;
+		  buf1 = buf2;	      
+		  buf2 = buf;
+		  memset(buf2[0], 0, Audio->SamplesPerBuffer * sizeof(float));
+		  memset(buf2[1], 0, Audio->SamplesPerBuffer * sizeof(float));
+		}
 	    }
 	  /*
 	    for (int cpt = 0; cpt < Audio->SamplesPerBuffer; cpt++)
@@ -342,11 +342,11 @@ void					*Sequencer::Entry()
       /* Cleanage des channels et buffers extra */
       for (B = ExtraBufs.begin(); B != ExtraBufs.end(); B++)
 	{
-		if(*B)
-		{
-		  (*B)->DeleteBuffer();
-		  delete *B;
-		}
+	  if(*B)
+	    {
+	      (*B)->DeleteBuffer();
+	      delete *B;
+	    }
 	}
       ExtraBufs.clear();
     }
@@ -442,7 +442,7 @@ void					Sequencer::RemoveTrack()
   Track* track = Tracks.back();
   Tracks.pop_back();
   if (track)
-	  delete track;
+    delete track;
   SeqMutex.Unlock();
 }
 
@@ -779,11 +779,11 @@ void					Sequencer::DeletePattern(Pattern *p)
 	    SeqMutex.Lock();
 	    t->Patterns.erase(k);
 	    SeqMutex.Unlock();
-		if (p)
-		{
-			//RemoveWaveFile(p->Wave);
-		    delete (p);
-		}
+	    if (p)
+	      {
+		//RemoveWaveFile(p->Wave);
+		delete (p);
+	      }
 	    break;
 	  }
     }
@@ -792,19 +792,19 @@ void					Sequencer::DeletePattern(Pattern *p)
 void					Sequencer::DeleteBuffer(float** &Buffer, unsigned int NbChannels)
 {
   if (NbChannels == 0)
-  	return;
+    return;
   try
-  {
-	  for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
-	  {
-		  if (Buffer)
-			  if (Buffer[CurrentChannel])
-			  	delete[] Buffer[CurrentChannel];
-	  }
+    {
+      for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
+	{
 	  if (Buffer)
-	  	delete [] Buffer;
-	  Buffer = NULL;
-  }
+	    if (Buffer[CurrentChannel])
+	      delete[] Buffer[CurrentChannel];
+	}
+      if (Buffer)
+	delete [] Buffer;
+      Buffer = NULL;
+    }
   catch (...)
   {
 	//TO FIX : It's always a bad idea not to manage exceptions....
@@ -814,12 +814,12 @@ void					Sequencer::DeleteBuffer(float** &Buffer, unsigned int NbChannels)
 void					Sequencer::AllocBuffer(float** &Buffer, unsigned int NbChannels)
 {
   if (NbChannels == 0)
-  	return;
+    return;
   DeleteBuffer(Buffer, NbChannels);
   Buffer = new float *[NbChannels];
   for (unsigned int CurrentChannel = 0; CurrentChannel < NbChannels; CurrentChannel++)
   {
-	  Buffer[CurrentChannel] = new float [Audio->SamplesPerBuffer];
+    Buffer[CurrentChannel] = new float [Audio->SamplesPerBuffer];
   }
 }
 
@@ -861,31 +861,31 @@ void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l,
 
 bool					Sequencer::ExportToWave(wxString &filename)
 {
-	Seq->Stop();
-	if (SampleRateConverter)
-		delete SampleRateConverter;
-	SampleRateConverter = new WiredSampleRate;
-	t_samplerate_info	Info;
+  Seq->Stop();
+  if (SampleRateConverter)
+    delete SampleRateConverter;
+  SampleRateConverter = new WiredSampleRate;
+  t_samplerate_info	Info;
   
-	Info.SampleRate = (int) Audio->SampleRate;
-	Info.Format = Audio->UserData->SampleFormat;
-	Info.SamplesPerBuffer = Audio->SamplesPerBuffer;
-	SampleRateConverter->Init(&Info);
-	if (SampleRateConverter->SaveFile(filename, 2, Audio->SamplesPerBuffer, true))
-	{
-	  SeqMutex.Lock();
-	  AllocBuffer(ExportBuf);
+  Info.SampleRate = (int) Audio->SampleRate;
+  Info.Format = Audio->UserData->SampleFormat;
+  Info.SamplesPerBuffer = Audio->SamplesPerBuffer;
+  SampleRateConverter->Init(&Info);
+  if (SampleRateConverter->SaveFile(filename, 2, Audio->SamplesPerBuffer, true))
+    {
+      SeqMutex.Lock();
+      AllocBuffer(ExportBuf);
       SetCurrentPos(BeginLoopPos);
       Exporting = true;
       Loop = false;
       SeqMutex.Unlock();
       Play();      
       return true;
-	}
-	else
+    }
+  else
     {
-        wxMutexGuiLeave();
-		return false;
+      wxMutexGuiLeave();
+      return false;
     }
 
 //  try
@@ -925,20 +925,20 @@ void					Sequencer::StopExport()
 
 void					Sequencer::WriteExport()
 {
-	if (SampleRateConverter)
-	{
+  if (SampleRateConverter)
+    {
 //		bcopy(Mix->OutputLeft, ExportBuf[0], Audio->SamplesPerBuffer);
 //		bcopy(Mix->OutputRight, ExportBuf[1], Audio->SamplesPerBuffer);
-		long				j;
-
-		for (j = 0; j < Audio->SamplesPerBuffer; j++)
-	    {
-	      ExportBuf[0][j] = Mix->OutputLeft[j];
-	      ExportBuf[1][j] = Mix->OutputRight[j];
-	    }
-		SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, ExportBuf, 2);
+      long				j;
+		
+      for (j = 0; j < Audio->SamplesPerBuffer; j++)
+	{
+	  ExportBuf[0][j] = Mix->OutputLeft[j];
+	  ExportBuf[1][j] = Mix->OutputRight[j];
 	}
-	return;
+      SampleRateConverter->WriteToFile((unsigned long) Audio->SamplesPerBuffer, ExportBuf, 2);
+    }
+  return;
 }
 
 void					Sequencer::PlayFile(wxString filename, bool isakai)
@@ -951,7 +951,7 @@ void					Sequencer::PlayFile(wxString filename, bool isakai)
 	{
 	  wxString mDevice, mFilename, mName;
 	  int mPart;
-	  	  
+	  
 	  mDevice = filename.substr(0, filename.find(wxT(":"), 0));
 	  filename = filename.substr(filename.find(wxT(":"), 0) + 1, filename.size() - filename.find(wxT(":"), 0));
 	  mFilename = filename.substr(10, filename.size() - 10);
@@ -965,27 +965,27 @@ void					Sequencer::PlayFile(wxString filename, bool isakai)
 	  mName = mFilename.substr(opos, mFilename.size() - opos);
 	  mFilename = mFilename.substr(1, opos - 2);
 	  cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; filename: " << mFilename << endl;
-	  t_akaiSample *sample = akaiGetSampleByName((char *)mDevice.c_str(), mPart, 
-						     (char *)mFilename.c_str(), 
-						     (char *)mName.c_str());	  	
+	  t_akaiSample *sample = akaiGetSampleByName((char *)mDevice.mb_str(), mPart, 
+						     (char *)mFilename.mb_str(), 
+						     (char *)mName.mb_str());	  	
     //akaiImage *img = new akaiImage(mDevice);
     //akaiSample *smp = img->getSample(mPart + "/" + mName + "/" + mFilename);
-    WaveFile *w = NULL;
+	  WaveFile *w = NULL;
     //if (smp)
-    if (sample)
-    {
+	  if (sample)
+	    {
 	    //w = new WaveFile(smp->getSample(), smp->getSize(), 2, smp->getRate());
-	    w = new WaveFile(sample->buffer, sample->size, 2, sample->rate);
+	      w = new WaveFile(sample->buffer, sample->size, 2, sample->rate);
       //delete smp;
-      free(sample);
-    }
+	      free(sample);
+	    }
     //delete img;
 
 	  SeqMutex.Lock();
-
+	  
 	  PlayWavePos = 0;
 	  PlayWave = w;
-
+    
 	  SeqMutex.Unlock();	  	  
 	}
       else
@@ -1014,8 +1014,8 @@ void					Sequencer::StopFile()
       SeqMutex.Lock();
       PlayWave = 0x0;
       SeqMutex.Unlock();
-		if (w)
-	      delete w;
+      if (w)
+	delete w;
     }
 }
 
