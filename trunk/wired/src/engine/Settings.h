@@ -24,7 +24,7 @@ class Settings
   // Options
   bool QuickWaveRender;
   bool dbWaveRender;
-  unsigned int	maxUndoRedoDepth;
+  unsigned long	maxUndoRedoDepth;
 
   long OutputSystem;
   long InputSystem;

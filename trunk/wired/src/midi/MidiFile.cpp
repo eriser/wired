@@ -193,9 +193,9 @@ MidiFile::MidiFile(wxString filename)
   Division = 0;
   Type = 0;
 
-  cout << "[MidiFile] Loading " << filename.c_str() << "..." << endl;
+  cout << "[MidiFile] Loading " << filename.mb_str() << "..." << endl;
   wxFile MIDIFile;
-  MIDIFile.Open(filename.c_str());
+  MIDIFile.Open(filename);
   if (MIDIFile.IsOpened())
   {
     t_chunk ch;
@@ -252,7 +252,7 @@ MidiFile::MidiFile(wxString filename)
       }
     }
    else
-      cout << "[MidiFile] " << filename.c_str() << " is not a valid midi file." << endl;
+      cout << "[MidiFile] " << filename.mb_str() << " is not a valid midi file." << endl;
     MIDIFile.Close();
   }
   else

@@ -8,7 +8,6 @@
 #include "Colour.h"
 #include "../midi/MidiThread.h"
 #include "../midi/MidiDevice.h"
-#include <sstream>
 
 #include "../samplerate/WiredSampleRate.h"
 
@@ -385,13 +384,14 @@ void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
 
 void SettingWindow::Load()
 {
-  ostringstream	oss;
+  wxString strMaxUndoRedoDepth;
   int i;
 
   QuickWaveBox->SetValue(WiredSettings->QuickWaveRender);
   dBWaveBox->SetValue(WiredSettings->dbWaveRender);
-  oss << WiredSettings->maxUndoRedoDepth;
-  undoRedoMaxDepthTextCtrl->SetValue(wxString(oss.str().c_str(), *wxConvCurrent));
+  strMaxUndoRedoDepth << WiredSettings->maxUndoRedoDepth;
+  undoRedoMaxDepthTextCtrl->SetValue(strMaxUndoRedoDepth);
+  
   if (WiredSettings->OutputSystem > -1)
     {
       OutputSystemChoice->SetSelection(WiredSettings->OutputSystem);
@@ -452,8 +452,6 @@ void SettingWindow::Save()
 {
   long i;
 
-  istringstream	iss((string)undoRedoMaxDepthTextCtrl->GetValue().mb_str(*wxConvCurrent));
-
   WiredSettings->QuickWaveRender = QuickWaveBox->IsChecked();
   WiredSettings->dbWaveRender = dBWaveBox->IsChecked();
 
@@ -462,7 +460,7 @@ void SettingWindow::Save()
   WiredSettings->OutputDev = OutputDeviceChoice->GetSelection();
   WiredSettings->InputDev = InputDeviceChoice->GetSelection();
 
-  iss >> WiredSettings->maxUndoRedoDepth;
+  undoRedoMaxDepthTextCtrl->GetValue().ToULong(&WiredSettings->maxUndoRedoDepth);
 
   // if we changed audio settings
   if (AudioLoaded)
