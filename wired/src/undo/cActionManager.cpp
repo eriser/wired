@@ -42,6 +42,12 @@ void	cActionManager::AddImportWaveAction(const string& path, bool kind, bool sel
 	action->Do();
 }
 
+void	cActionManager::AddEditWaveAction(const string& path, bool kind, bool selectFromIndex)
+{
+	cImportWaveAction* action = new cImportWaveAction(path, kind, selectFromIndex);
+	action->AddWaveToEditor();
+}
+
 void	cActionManager::AddChangeParamsEffectAction(Plugin* plugin, bool shouldSave)
 {
 	cChangeParamsEffectAction* action = new cChangeParamsEffectAction(plugin, shouldSave);

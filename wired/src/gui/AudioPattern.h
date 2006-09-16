@@ -30,9 +30,10 @@ class					AudioPattern: public Pattern, public WaveDrawer
   void					SetWave(WaveFile *w);
   void					SetDrawColour(wxColour c);
   void					Split(double pos);
+  void					OnDirectEdit();
   Pattern				*CreateCopy(double pos);
   
-	AudioPattern		operator=(const AudioPattern& right);
+  AudioPattern				operator=(const AudioPattern& right);
 
   Channel				*InputChan;
   long					LastBlock;

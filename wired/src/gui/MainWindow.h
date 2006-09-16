@@ -26,6 +26,7 @@ using namespace std;
 #include <wx/log.h>
 
 #include "version.h"
+#include "FileConversion.h"
 
 #define PLUG_MENU_INDEX_START		(50000)
 #define INDEX_MENUITEM_UNDO		0
@@ -43,7 +44,6 @@ class					WiredSessionXml;
 class					MainWindow: public wxFrame
 {
  public:
-  
   MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size);
   void					OnClose(wxCloseEvent &event);
   void					OnQuit(wxCommandEvent &event);
@@ -67,6 +67,7 @@ class					MainWindow: public wxFrame
   void					OnFloatTransport(wxCommandEvent &event);
   void					OnFloatSequencer(wxCommandEvent &event);
   void					OnFloatRack(wxCommandEvent &event);
+  void					OnFloatMediaLibrary(wxCommandEvent &event);
 
   void					OnSwitchRackOptViewEvent(wxCommandEvent &event);
   void					OnSwitchSeqOptViewEvent(wxCommandEvent &event);
@@ -92,7 +93,10 @@ class					MainWindow: public wxFrame
   void					OnDelete(wxCommandEvent &event);
   void					OnSelectAll(wxCommandEvent &event);
 
-  void                    OnShowDebug(wxCommandEvent &event);
+  void					MediaLibraryShow(wxCommandEvent &event);
+  void					MediaLibraryHide(wxCommandEvent &event);
+
+  void			                OnShowDebug(wxCommandEvent &event);
 
   void					OnOpenVideo(wxCommandEvent &event);
   void					OnCloseVideo(wxCommandEvent &event);
@@ -109,6 +113,9 @@ class					MainWindow: public wxFrame
   /* can be called from SettingWindow */
   int					InitAudio(bool restart = false);
 
+ protected:
+  friend class				MediaLibrary;
+
  private:
   int					PluginMenuIndexCount;			
   bool					RackModeView;
@@ -116,8 +123,8 @@ class					MainWindow: public wxFrame
   void					OnIdle(wxIdleEvent &event);
 
     /* Locale */
-    wxLocale            *mLocale;
-    void                    InitLocale();
+  wxLocale				*mLocale;
+  void					InitLocale();
 
   /* DSSI & LADSPA Plugins Menus */
   void					LoadExternalPlugins();
@@ -139,6 +146,7 @@ class					MainWindow: public wxFrame
   
   /* Visible controls */
   wxSplitterWindow			*split;
+  wxSplitterWindow			*splitVert;
   wxMenuBar				*MenuBar;
   wxMenu				*FileMenu;
   wxMenu				*EditMenu;
@@ -157,23 +165,28 @@ class					MainWindow: public wxFrame
   wxMenu				*CreateLADSPAEffectMenu;     
   wxMenu				*HelpMenu;
   wxMenu				*WindowMenu;
+  wxMenu				*MediaLibraryMenu;
   
   wxMenuItem				*ItemFloatingTrans;
   wxMenuItem				*ItemFloatingSeq;
   wxMenuItem				*ItemFloatingRacks;
   wxMenuItem				*ItemFloatingOptView;
+  wxMenuItem				*ItemFloatingMediaLibrary;
 
   wxMenuItem				*ItemFullscreenToggle;
 
   /* Sizers */
   wxBoxSizer				*BottomSizer;
   wxBoxSizer				*TopSizer;
+  wxBoxSizer				*TopLeftSizer;
+  wxBoxSizer				*TopRightSizer;
 
   /* Frame pour detacher les objets */
   FloatingFrame				*TransportFrame;
   wxFrame				*OptFrame;
   wxFrame				*SequencerFrame;
   wxFrame				*RackFrame;
+  wxFrame				*MediaLibraryFrame;
 
   wxTimer				*SeqTimer;
 
@@ -218,6 +231,7 @@ enum
   MainWin_FloatSequencer,
   MainWin_FloatRacks,
   MainWin_FloatView,
+  MainWin_FloatMediaLibrary,
   MainWin_Undo,
   MainWin_Redo,
   MainWin_History, 
@@ -232,6 +246,8 @@ enum
   MainWin_SwitchSeq, 
   MainWin_OpenVideo, 
   MainWin_CloseVideo,
+  MainWin_MediaLibraryShow,
+  MainWin_MediaLibraryHide,
   MainWin_SeekVideo,
   MainWin_ShowLog
 };

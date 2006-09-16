@@ -55,6 +55,8 @@ AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
   #endif
 
  
+
+ 
 }
 
 AudioPattern::~AudioPattern()
@@ -379,6 +381,12 @@ void					AudioPattern::OnDoubleClick(wxMouseEvent &e)
   if (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER)
     OptPanel->ShowWave(this);
   /*printf("audio (%d) me (%d)\n", audio, me);*/
+}
+
+void					AudioPattern::OnDirectEdit()
+{
+  //  if (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER)
+  OptPanel->ShowWave(this);
 }
 
 void					AudioPattern::OnRightClick(wxMouseEvent &e)
