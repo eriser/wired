@@ -20,9 +20,6 @@ class Channel
   ~Channel();
   
   bool		Stereo;
-  bool		Mute;
-  bool		MuteLeft;
-  bool		MuteRight;
   float		Volume;
   float		VolumeLeft;
   float		VolumeRight;
@@ -49,7 +46,14 @@ class Channel
   
   bool		Filled;
   
+  inline void	SetMuteLeft(bool muted)
+    { cout << "set Lmute to " << (int)muted << endl; MuteLeft = muted; };
+  inline void	SetMuteRight(bool muted)
+    { cout << "set Rmute to " << (int)muted << endl; MuteRight = muted; };
+
  private:
+  bool		MuteLeft;
+  bool		MuteRight;
 };
 
 #endif //__CHANNEL_H__

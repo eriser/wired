@@ -6,9 +6,9 @@
 #include "Mixer.h"
 
 Channel::Channel(bool stereo)
-  : VolumeLeft(1.f), VolumeRight(1.f), /*Label(""),*/Visible(false),
-    MuteLeft(false), MuteRight(false), Stereo(stereo), 
-    Filled(false), Lrms(0.f), Rrms(0.f)
+  : VolumeLeft(1.f), VolumeRight(1.f), Visible(true),
+    MuteLeft(true), MuteRight(true), Stereo(stereo), 
+    Filled(true), Lrms(0.f), Rrms(0.f)
 {
   CurBuf = 0;
   
@@ -16,15 +16,18 @@ Channel::Channel(bool stereo)
     AddBuffers(PREBUF_NUM);
   else
     AddBuffers(NUM_BUFFERS);
+
+  cout << "create class with lmute " << MuteLeft << " and " << MuteRight << endl;
 }
 
 Channel::Channel(bool stereo, bool visible)
-  : Volume(1.f), VolumeLeft(1.f), VolumeRight(1.f),// Label(label), 
-    Visible(visible),
-    Mute(false), Stereo(stereo), Filled(false), Lrms(0.f), Rrms(0.f)
+  : Volume(1.f), VolumeLeft(1.f), VolumeRight(1.f),
+    Visible(visible), MuteLeft(false), MuteRight(false),
+    Stereo(stereo), Filled(false), Lrms(0.f), Rrms(0.f)
 {
   CurBuf = 0;
   AddBuffers(NUM_BUFFERS);
+  cout << "create class2 with lmute " << MuteLeft << " and " << MuteRight << endl;
 }
 
 Channel::~Channel()
@@ -45,7 +48,6 @@ Channel		Channel::operator=(const Channel& right)
 		CurBuf = right.CurBuf;	  
 		Filled = right.Filled;
 		Stereo = right.Stereo;
-		Mute = right.Mute;
 		MuteLeft = right.MuteLeft;
 		MuteRight = right.MuteRight;
 		Volume = right.Volume;
@@ -87,11 +89,9 @@ void Channel::AddBuffers(unsigned int num)
 
 void Channel::PushBuffer(float *buffer)
 {
-  float rms = 0.f, vol;
+  float rms = 0.f;
   
   MixMutex.Lock();
-  //vol = VolumeLeft;
-  //rvol = VolumeRight;
   MixMutex.Unlock();
   
   if (!MonoBuffers.empty())
@@ -125,30 +125,34 @@ void Channel::PushBuffer(float **buffer)
 {
   float lrms = 0.f, rrms = 0.f, lvol, rvol;
   bool ml, mr;
+  bool	static_var = true;
   
   MixMutex.Lock();		//used in ChannelGui::OnFader....()
   ml = MuteLeft;
   mr = MuteRight;
-  lvol = VolumeLeft;
-  rvol = VolumeRight;
+  lvol = VolumeLeft / 100.f;
+  rvol = VolumeRight / 100.f;
   MixMutex.Unlock();
   
   if (ml == true)
     lvol = 0.f;
   if (mr == true)
     rvol = 0.f;
+
   if (!StereoBuffers.empty())
     {
       if (Visible)
 	{
 	  for (unsigned long i = 0; i < Audio->SamplesPerBuffer; i++)
 	    {
-	      (StereoBuffers[0])[0][i] = buffer[0][i] * (lvol / 100.f);
-	      (StereoBuffers[0])[1][i] = buffer[1][i] * (rvol / 100.f);
+	      static_var = false;
+	      (StereoBuffers[0])[0][i] = buffer[0][i] * lvol;
+	      (StereoBuffers[0])[1][i] = buffer[1][i] * rvol;
 	      
 	      lrms += fabsf( (StereoBuffers[0])[0][i] );
 	      rrms += fabsf( (StereoBuffers[0])[1][i] );
 	    }
+
 	  lrms /= Audio->SamplesPerBuffer;
 	  rrms /= Audio->SamplesPerBuffer;
 	  

@@ -205,6 +205,7 @@ void					*Sequencer::Entry()
 		      if ((*T)->Wave->GetEndPosition() < CurrentPos)
 			ResizePattern((*T)->Wave);
 		    }
+		  // play only if it's NOT mute
 		  if (!(*T)->TrackOpt->Mute)
 		    {
 		      /* R?cup?ration des buffers Audio */
@@ -242,6 +243,7 @@ void					*Sequencer::Entry()
 
 	  SetCurrentPos();
 	}
+
       //SeqMutex.Unlock();
       //SeqMutex.Lock();
       /* - Appel des fonctions Process de chaque Plugin de chaque piste de racks */
@@ -304,7 +306,7 @@ void					*Sequencer::Entry()
 	      memset(fl_buf[1], 0, Audio->SamplesPerBuffer * sizeof(float));
 	    }	      
 	  PlayWave->Read(fl_buf, PlayWavePos, size);
-	  ExtraBufs.push_back(new ChanBuf(fl_buf, PlayWaveChannel));
+      	  ExtraBufs.push_back(new ChanBuf(fl_buf, PlayWaveChannel));
 	  PlayWavePos += size;
 	  if (PlayWavePos >= PlayWave->GetNumberOfFrames())
 	    {
