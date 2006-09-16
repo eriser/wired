@@ -157,7 +157,7 @@ Channel				*Mixer::AddStereoOutputChannel(bool visible)
   
   try
     {
-      chan = new Channel(true, true);
+      chan = new Channel(true, visible);
       OutChannels.push_back(chan);
       /* MixerPanel->AddChannel(chan); */
       
@@ -171,8 +171,9 @@ Channel				*Mixer::AddStereoOutputChannel(bool visible)
 
 bool				Mixer::RemoveChannel(Channel *chan)
 {
-  for (list<Channel*>::iterator c = InChannels.begin(); 
-       c != InChannels.end(); c++)
+  list<Channel*>::iterator	c;
+
+  for (c = InChannels.begin(); c != InChannels.end(); c++)
     if ((*c) == chan)
       {
 	if(*c)
@@ -180,8 +181,7 @@ bool				Mixer::RemoveChannel(Channel *chan)
 	InChannels.erase(c);
 	return true;
       }
-  for (list<Channel*>::iterator c = OutChannels.begin(); 
-       c != OutChannels.end(); c++)
+  for (c = OutChannels.begin(); c != OutChannels.end(); c++)
     if ((*c) == chan)
       {
 	//if ((*c)->Visible)

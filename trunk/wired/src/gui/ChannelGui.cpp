@@ -193,8 +193,8 @@ void				ChannelGui::OnMuteLeft(wxCommandEvent& WXUNUSED(e))
   if (Lock)
     {
       MixMutex.Lock();
-      Chan->MuteLeft = m;
-      Chan->MuteRight = m;
+      Chan->SetMuteLeft(m);
+      Chan->SetMuteRight(m);
       MixMutex.Unlock();
       if (m)
 	MuteRightButton->SetOn();
@@ -204,7 +204,7 @@ void				ChannelGui::OnMuteLeft(wxCommandEvent& WXUNUSED(e))
   else
     {
       MixMutex.Lock();
-      Chan->MuteLeft = m;
+      Chan->SetMuteLeft(m);
       MixMutex.Unlock();
     }
 }
@@ -216,8 +216,8 @@ void				ChannelGui::OnMuteRight(wxCommandEvent& WXUNUSED(e))
   if (Lock)
     {
       MixMutex.Lock();
-      Chan->MuteLeft = m;
-      Chan->MuteRight = m;
+      Chan->SetMuteLeft(m);
+      Chan->SetMuteRight(m);
       MixMutex.Unlock();
       if (m)
 	MuteLeftButton->SetOn();
@@ -227,7 +227,7 @@ void				ChannelGui::OnMuteRight(wxCommandEvent& WXUNUSED(e))
   else
     {
       MixMutex.Lock();
-      Chan->MuteRight = m;
+      Chan->SetMuteRight(m);
       MixMutex.Unlock();
     }
 }
