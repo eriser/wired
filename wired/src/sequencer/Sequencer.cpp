@@ -965,9 +965,9 @@ void					Sequencer::PlayFile(wxString filename, bool isakai)
 	  mName = mFilename.substr(opos, mFilename.size() - opos);
 	  mFilename = mFilename.substr(1, opos - 2);
 	  cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; filename: " << mFilename << endl;
-	  t_akaiSample *sample = akaiGetSampleByName((char *)mDevice.mb_str(), mPart, 
-						     (char *)mFilename.mb_str(), 
-						     (char *)mName.mb_str());	  	
+	  t_akaiSample *sample = akaiGetSampleByName((char*)((const char*)mDevice.mb_str(*wxConvCurrent)),  mPart,
+						     (char*)((const char*)mFilename.mb_str(*wxConvCurrent)),
+						     (char*)((const char*)mName.mb_str(*wxConvCurrent)));
     //akaiImage *img = new akaiImage(mDevice);
     //akaiSample *smp = img->getSample(mPart + "/" + mName + "/" + mFilename);
 	  WaveFile *w = NULL;
