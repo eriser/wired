@@ -4,7 +4,6 @@
 #ifndef __MIDITHREAD__H_
 #define __MIDITHREAD__H_
 
-#include <string>
 #include <vector>
 #include <wx/thread.h>
 

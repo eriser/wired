@@ -26,12 +26,12 @@ void MidiDevice::DeleteDevices()
   devices.clear();
 }
 
-int MidiDevice::GetDeviceIDFromName(string s)
+int MidiDevice::GetDeviceIDFromName(wxString s)
 {
   MidiDeviceList::iterator i;
 
   for (i = devices.begin(); i != devices.end(); i++)
-    if (s == string((*i)->Name.mb_str(*wxConvCurrent)))
+    if (s == wxString((*i)->Name))
       return ((*i)->Id);
   return (0);
 }
