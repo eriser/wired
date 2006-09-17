@@ -979,6 +979,7 @@ void					Sequencer::PlayFile(wxString filename, bool isakai)
 	    //w = new WaveFile(smp->getSample(), smp->getSize(), 2, smp->getRate());
 	      w = new WaveFile(sample->buffer, sample->size, 2, sample->rate);
       //delete smp;
+	      free(sample->name);
 	      free(sample);
 	    }
     //delete img;
