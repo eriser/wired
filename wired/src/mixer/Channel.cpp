@@ -5,26 +5,28 @@
 #include "Channel.h"
 #include "Mixer.h"
 
-Channel::Channel(bool stereo)
-  : VolumeLeft(1.f), VolumeRight(1.f), Visible(true),
-    MuteLeft(true), MuteRight(true), Stereo(stereo), 
-    Filled(true), Lrms(0.f), Rrms(0.f)
+Channel::Channel(bool stereo, bool visible)
 {
+  Stereo = stereo;
+  VolumeLeft = 100.f;
+  VolumeRight = 100.f;
+
+  InputNum = 0;
+
+  Visible = visible;
+  Lrms = 0.f;
+  Rrms = 0.f;
+
   CurBuf = 0;
-  
-  if (!Stereo)
+  Filled = false;
+
+  MuteLeft = false;
+  MuteRight = false;
+
+  if (!stereo)
     AddBuffers(PREBUF_NUM);
   else
     AddBuffers(NUM_BUFFERS);
-}
-
-Channel::Channel(bool stereo, bool visible)
-  : Volume(1.f), VolumeLeft(1.f), VolumeRight(1.f),
-    Visible(visible), MuteLeft(false), MuteRight(false),
-    Stereo(stereo), Filled(false), Lrms(0.f), Rrms(0.f)
-{
-  CurBuf = 0;
-  AddBuffers(NUM_BUFFERS);
 }
 
 Channel::~Channel()
@@ -47,7 +49,6 @@ Channel		Channel::operator=(const Channel& right)
 		Stereo = right.Stereo;
 		MuteLeft = right.MuteLeft;
 		MuteRight = right.MuteRight;
-		Volume = right.Volume;
 		VolumeLeft = right.VolumeLeft;
 		VolumeRight = right.VolumeRight;	 
 		InputNum = right.InputNum;
