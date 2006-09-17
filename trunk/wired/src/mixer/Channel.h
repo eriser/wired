@@ -13,14 +13,12 @@
 class Channel
 {
  public:
-  Channel(bool stereo);
-  Channel(bool stereo, bool visible);
+  Channel(bool stereo, bool visible = true);
   Channel(const Channel& copy){*this = copy;}
   Channel	operator=(const Channel& right);
   ~Channel();
   
   bool		Stereo;
-  float		Volume;
   float		VolumeLeft;
   float		VolumeRight;
  
@@ -47,9 +45,9 @@ class Channel
   bool		Filled;
   
   inline void	SetMuteLeft(bool muted)
-    { cout << "set Lmute to " << (int)muted << endl; MuteLeft = muted; };
+    { MuteLeft = muted; };
   inline void	SetMuteRight(bool muted)
-    { cout << "set Rmute to " << (int)muted << endl; MuteRight = muted; };
+    { MuteRight = muted; };
 
  private:
   bool		MuteLeft;
