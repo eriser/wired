@@ -497,25 +497,20 @@ void SettingWindow::LoadSampleFormat()
 				 OutputSystemChoice->GetSelection());
 
   BitsChoice->Clear();
-
+  
   if (dev)
     for (i = dev->SupportedFormats.begin(); i != dev->SupportedFormats.end(); i++)
       if ((*i)->SampleRates.size() > 0)
-	{
-	  // we check all known format
-	  for (n = 0; _FormatTypes[n].PaFormat; n++)
-	    if ((*i)->SampleFormat == _FormatTypes[n].PaFormat)
-	      {
-		// we support only our default
-		if ((*i)->SampleFormat == DEFAULT_SAMPLE_FORMAT)
-		  {
-		    BitsChoice->SetSelection(BitsChoice->Append(_FormatTypes[n].FormatName));
-		  }
-		else
-		  BitsChoice->Append(wxString(_FormatTypes[n].FormatName) +
-				     _("[currently unsupported]"));
-	      }
-	}
+	// we check all known format
+	for (n = 0; _FormatTypes[n].PaFormat; n++)
+	  if ((*i)->SampleFormat == _FormatTypes[n].PaFormat)
+	    // we support only our default
+	    if ((*i)->SampleFormat == DEFAULT_SAMPLE_FORMAT)
+	      BitsChoice->SetSelection(BitsChoice->Append(_FormatTypes[n].FormatName));
+	    else
+	      BitsChoice->Append(wxString(_FormatTypes[n].FormatName) +
+				 _("[currently unsupported]"));
+  
   if (WiredSettings->SampleFormat < BitsChoice->GetCount())
     BitsChoice->SetSelection(WiredSettings->SampleFormat);
 }
@@ -528,7 +523,7 @@ void SettingWindow::LoadSampleRates()
   Device *dev = Audio->GetDevice(OutputDeviceChoice->GetSelection(),
 				 OutputSystemChoice->GetSelection());
 
-  RateChoice->Clear();	 
+  RateChoice->Clear();
   if (dev && k < dev->SupportedFormats.size())
     {
       DeviceFormat *f = dev->SupportedFormats.at(k);
