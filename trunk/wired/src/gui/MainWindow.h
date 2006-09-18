@@ -171,6 +171,8 @@ class					MainWindow: public wxFrame
   wxMenuItem				*ItemFloatingRacks;
   wxMenuItem				*ItemFloatingOptView;
   wxMenuItem				*ItemFloatingMediaLibrary;
+  wxMenuItem				*ItemShowMediaLibrary;
+  wxMenuItem				*ItemHideMediaLibrary;
 
   wxMenuItem				*ItemFullscreenToggle;
 
@@ -245,6 +247,7 @@ enum
   MainWin_SwitchSeq, 
   MainWin_OpenVideo, 
   MainWin_CloseVideo,
+  MainWin_MediaLibraryBeta,
   MainWin_MediaLibraryShow,
   MainWin_MediaLibraryHide,
   MainWin_SeekVideo,

@@ -96,9 +96,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   // from GetDevices
   catch (Error::NoDevice)
     {
-      cout << "[MAINWIN] No Device :\nPlease check you have a soundcard and Alsa installed" 
-	   << endl;
-      AlertDialog(_("Critical error"), _("You have no soundcard, Wired will exit."));
+      cout << "[MAINWIN] No Device :\nPlease check if your soundcard is not busy" << endl;
+      AlertDialog(_("Critical error"), _("You have no soundcard or it's busy, Wired will exit."));
       exit(1);
     }
   
@@ -143,10 +142,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_ExportWave, _("E&xport Wave file..."));
   FileMenu->Append(MainWin_ExportMIDI, _("Ex&port MIDI file..."));
-
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_Quit, _("&Quit\tCtrl-Q"));
-
 
   EditMenu->AppendSeparator();
   EditMenu->Append(MainWin_Cut, _("C&ut\tCtrl+X"));
@@ -169,8 +166,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   HelpMenu->Append(MainWin_IntHelp, _("&Show Integrated Help"));
   HelpMenu->Append(MainWin_About, _("&About..."));
   
-  MediaLibraryMenu->Append(MainWin_MediaLibraryShow, _("&Show\tCtrl-M"));
-  MediaLibraryMenu->Append(MainWin_MediaLibraryHide, _("&Hide\tCtrl-M"));
+  MediaLibraryMenu->Append(MainWin_MediaLibraryBeta, _("Please beware it is in alpha state"))->Enable(false);
+  ItemShowMediaLibrary = MediaLibraryMenu->Append(MainWin_MediaLibraryShow, _("&Show\tCtrl-M"));
+  ItemHideMediaLibrary = MediaLibraryMenu->Append(MainWin_MediaLibraryHide, _("&Hide\tCtrl-M"));
   ItemFloatingMediaLibrary = MediaLibraryMenu->AppendCheckItem(MainWin_FloatMediaLibrary, _("Floating"));
   
   WindowMenu->Append(MainWin_SwitchRack, _("Switch &Rack/Optional view\tTAB"));
@@ -193,17 +191,18 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar->Append(RacksMenu, _("&Racks"));
   MenuBar->Append(CreateInstrMenu, _("&Instruments"));
   MenuBar->Append(CreateEffectMenu, _("Effec&ts"));
-  MenuBar->Append(VideoMenu, _("&Video"));
+  // Video menu is empty... and not finished
+  //  MenuBar->Append(VideoMenu, _("&Video"));
   MenuBar->Append(MediaLibraryMenu, _("&MediaLibrary"));
   MenuBar->Append(WindowMenu, _("&Window"));
   MenuBar->Append(HelpMenu, _("&Help"));
     
   SetMenuBar(MenuBar);
 
-  splitVert = new wxSplitterWindow(this, -1, wxPoint(0, 0), wxSize(0, 454));
+  splitVert = new wxSplitterWindow(this);
   split = new wxSplitterWindow(splitVert);  
-  split->SetMinimumPaneSize(1);
-  splitVert->SetMinimumPaneSize(1);
+  split->SetMinimumPaneSize(2);
+  splitVert->SetMinimumPaneSize(2);
 
   /* Creation Panel */
   RackPanel = new Rack(split, -1, wxPoint(0, 0), wxSize(800, 250));
@@ -227,7 +226,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
   SetSizer(TopSizer);
 
-  splitVert->SetSashPosition(200);
+  // Hide Medialibrary by setting this to 2, or 200 to show it.
+  splitVert->SetSashPosition(2);
   RackPanel->SetBackgroundColour(*wxBLACK);
   SeqPanel->SetBackgroundColour(*wxWHITE);
   OptPanel->SetBackgroundColour(*wxLIGHT_GREY);
@@ -1278,37 +1278,63 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
 
 void					MainWindow::OnFloatMediaLibrary(wxCommandEvent &event)
 {
-  if (MediaLibraryPanel->IsVisible() == false)
-    {
-      splitVert->SetSashPosition(200);
-      MediaLibraryPanel->Show();
-      MediaLibraryPanel->SetVisible();
-    }
   if (MediaLibraryMenu->IsChecked(MainWin_FloatMediaLibrary))
     {
-      splitVert->Unsplit(MediaLibraryPanel);
-      
-      cout << "[MEDIALIBRARY] Float" << endl;
+      wxSize		size;
+
+      // force width to be large enough
+      size.SetWidth(200);
+      size.SetHeight(MediaLibraryPanel->GetSize().GetHeight());
       MediaLibraryFrame = new FloatingFrame(0x0, -1, _("MediaLibrary"), MediaLibraryPanel->GetPosition(), 
-					    MediaLibraryPanel->GetSize(), MediaLibraryPanel->GetParent(),
+					    size, MediaLibraryPanel->GetParent(),
 					    ItemFloatingMediaLibrary, MainWin_FloatMediaLibrary);
+
+      // detach media library from vertical splitter
+      splitVert->Unsplit(MediaLibraryPanel);
       MediaLibraryPanel->Reparent(MediaLibraryFrame);
-      MediaLibraryPanel->SetVisible();
       MediaLibraryPanel->SetFloating();
-      MediaLibraryPanel->Show();
+      MediaLibraryShow(event);
+
       MediaLibraryFrame->Show();
+
+      // disable Show and Hide menu actions
+      ItemShowMediaLibrary->Enable(false);
+      ItemHideMediaLibrary->Enable(false);
     }
   else
     {
-      cout << "[MEDIALIBRARY] UnFloat" << endl;
+      // re-attach media library 
       MediaLibraryPanel->Reparent(splitVert);
-      splitVert->SplitVertically(MediaLibraryPanel, split);
+
+      // delete frame of media library
       delete MediaLibraryFrame;
       MediaLibraryFrame = 0x0;
+
+      splitVert->SplitVertically(MediaLibraryPanel, split);
+      splitVert->SetSashPosition(200);
+
       MediaLibraryPanel->SetVisible();
       MediaLibraryPanel->SetDocked();
-      splitVert->SetSashPosition(200);
+
+      // enable Show and Hide menu actions
+      ItemShowMediaLibrary->Enable();
+      ItemHideMediaLibrary->Enable();
     }
+}
+
+void					MainWindow::MediaLibraryShow(wxCommandEvent &event)
+{
+  if (!MediaLibraryPanel->IsFloating())
+    splitVert->SetSashPosition(200);
+  MediaLibraryPanel->Show();
+  MediaLibraryPanel->SetVisible();
+}
+
+void					MainWindow::MediaLibraryHide(wxCommandEvent &event)
+{
+  if (!MediaLibraryPanel->IsFloating())
+    splitVert->SetSashPosition(2);
+  MediaLibraryPanel->SetInvisible();
 }
 
 void					MainWindow::OnSwitchRackOptViewEvent(wxCommandEvent &event)
@@ -1423,31 +1449,6 @@ void					MainWindow::SwitchSeqOptView()
       OptPanel->Show();
     }
   SeqModeView = !SeqModeView;
-}
-
-void					MainWindow::MediaLibraryShow(wxCommandEvent &event)
-{
-  
-  cout << "[MAINWIN] Launching MediaLibrary" << endl;
-  
-  if (MediaLibraryPanel->IsVisible() == false)
-    {
-      splitVert->SetSashPosition(200);
-      MediaLibraryPanel->Show();
-      MediaLibraryPanel->SetVisible();
-    }
-}
-
-void					MainWindow::MediaLibraryHide(wxCommandEvent &event)
-{
-  cout << "[MAINWIN] Hiding MediaLibrary" << endl;
-  
-  if (!(MediaLibraryPanel->IsVisible() == false || MediaLibraryPanel->IsFloating() == true))
-    {
-      splitVert->SetSashPosition(1);
-      //MediaLibraryPanel->Hide();
-      MediaLibraryPanel->SetInvisible();
-    }
 }
 
 void					MainWindow::OnSettings(wxCommandEvent &event)
