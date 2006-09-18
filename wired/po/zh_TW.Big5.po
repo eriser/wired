@@ -1,0 +1,1466 @@
+# chinese translation file of wired.
+# Copyright (C) 2006
+# This file is distributed under the same license as the PACKAGE package.
+# Lin Yu-Hua <lin_y@epitech.net>, 2006
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.3\n"
+"Report-Msgid-Bugs-To: wired@bloodshed.net\n"
+"POT-Creation-Date: 2006-06-19 15:51+0200\n"
+"PO-Revision-Date: 2006-06-19 15:51+0200\n"
+"Last-Translator: Lin Yu-Hua <lin_y@epitech.net>\n"
+"Language-Team: zh_TW <zh_TW@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:481
+msgid "This is a LADSPA or DSSI Plugin, named '"
+msgstr "這是LADSPA或DSSI的外掛,命名 '"
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:486
+msgid "<BR>Maker is : "
+msgstr "<BR>製作 : "
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:491
+msgid "<BR>Copyright : "
+msgstr "<BR>版權 : "
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:494
+msgid "<BR>This plugin is currently "
+msgstr "<BR>這個外掛是正確的"
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:496
+msgid "disabled.<BR>"
+msgstr "關閉。<BR> "
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:498
+msgid "enabled.<BR>"
+msgstr "開啟。<BR>"
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:501
+msgid "Audio Inputs are : "
+msgstr "音頻輸入是 ： "
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:505
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:514
+msgid "<BR>"
+msgstr ""
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:510
+msgid "Data Inputs are : "
+msgstr "資料輸入為 ： "
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:519
+msgid "Audio Outputs are : "
+msgstr "音頻輸出是 ： "
+
+#: ../src/dssi/WiredExternalPluginLADSPA.cpp:528
+msgid "Data Outputs are : "
+msgstr "資料輸出是 ： "
+
+#: ../src/editmidi/EditMidi.cpp:265 ../src/gui/SequencerGui.cpp:367
+msgid "Move"
+msgstr "移動"
+
+#: ../src/editmidi/EditMidi.cpp:265
+msgid "Moves notes"
+msgstr "移動音符"
+
+#: ../src/editmidi/EditMidi.cpp:266
+msgid "Edit"
+msgstr "編輯"
+
+#: ../src/editmidi/EditMidi.cpp:266
+msgid "Resizes notes"
+msgstr "調整音符"
+
+#: ../src/editmidi/EditMidi.cpp:267
+msgid "Del"
+msgstr "刪除"
+
+#: ../src/editmidi/EditMidi.cpp:267 ../src/gui/SequencerGui.cpp:369
+msgid "Deletes notes"
+msgstr "刪除音符"   
+
+#: ../src/fileloader/FileLoader.cpp:109
+msgid "Name"
+msgstr "名稱"
+
+#: ../src/fileloader/FileLoader.cpp:111
+msgid "Size"
+msgstr "大小"
+
+#: ../src/fileloader/FileLoader.cpp:115
+msgid "Modified"
+msgstr "已修改"
+
+#: ../src/fileloader/FileLoader.cpp:120 ../src/fileloader/FileLoader.cpp:142
+msgid "Type"
+msgstr "類型"
+
+#: ../src/fileloader/FileLoader.cpp:137
+msgid "Filename"
+msgstr "檔案名稱"
+
+#: ../src/fileloader/FileLoader.cpp:151
+msgid "Akai device"
+msgstr "Akai位置"
+
+#: ../src/fileloader/FileLoader.cpp:161 ../src/fileloader/FileLoader.cpp:1212
+msgid "Preview"
+msgstr "預覽"
+
+#: ../src/fileloader/FileLoader.cpp:164
+msgid "Open"
+msgstr "開啟"
+
+#: ../src/fileloader/FileLoader.cpp:171
+msgid "Save"
+msgstr "存檔"
+
+#: ../src/fileloader/FileLoader.cpp:174 ../src/gui/SettingWindow.cpp:80
+#: ../src/midi/MidiController.cpp:21
+#: ../src/plugins/loop_sampler/BeatDialog.cpp:18
+msgid "Cancel"
+msgstr "取消"
+
+#: ../src/fileloader/FileLoader.cpp:178
+msgid "Favorites"
+msgstr "我的最愛"
+
+#: ../src/fileloader/FileLoader.cpp:186
+msgid "Recents"
+msgstr "最近開啟的檔案"
+
+#: ../src/fileloader/FileLoader.cpp:303
+msgid "All supported files (*."
+msgstr "所有支援檔案 (*."
+
+#: ../src/fileloader/FileLoader.cpp:309
+msgid "All files (*.*)"
+msgstr "所有檔案 (*.*)"
+
+#: ../src/fileloader/FileLoader.cpp:489 ../src/fileloader/FileLoader.cpp:497
+#: ../src/fileloader/FileLoader.cpp:535
+msgid "Partition "
+msgstr "分割"
+
+#: ../src/fileloader/FileLoader.cpp:916
+msgid "Add to favorites"
+msgstr "新增至我的最愛"
+
+#: ../src/fileloader/FileLoader.cpp:993 ../src/fileloader/FileLoader.cpp:1082
+#: ../src/fileloader/FileLoader.cpp:1138
+msgid "Please enter a name"
+msgstr "請輸入名稱"
+
+#: ../src/fileloader/FileLoader.cpp:1007 ../src/fileloader/FileLoader.cpp:1096
+#: ../src/fileloader/FileLoader.cpp:1152
+msgid "File already exists, replace ?"
+msgstr "檔案已存在,要取代它嗎?"
+
+#: ../src/fileloader/FileLoader.cpp:1224
+msgid "Stop"
+msgstr "停止"
+
+#: ../src/fileloader/FileStat.cpp:72
+msgid "Sub format unknown"
+msgstr "Sub格式不明"
+
+#: ../src/fileloader/FileStat.cpp:86
+msgid "Format unknown"
+msgstr "格式不明"
+
+#: ../src/gui/AudioPattern.cpp:100
+msgid "This is an Audio pattern. Double-click on it to open the Audio editor."
+msgstr "這是音頻樂段. 點二下開啟音頻編輯器"
+
+#: ../src/gui/ChannelGui.cpp:248
+msgid "MASTER"
+msgstr "主控"
+
+#: ../src/gui/FileConversion.cpp:191
+msgid "Conversion"
+msgstr "轉換"
+
+#: ../src/gui/FileConversion.cpp:191
+msgid "Decoding file, please wait."
+msgstr "解譯檔案中,請稍等."
+
+#: ../src/gui/FileConversion.cpp:305
+msgid "Do you want to copy this file to your project directory ?"
+msgstr "要複製此檔案到你的專案資料夾嗎?"
+
+#: ../src/gui/FileConversion.cpp:316
+msgid "Could not copy file"
+msgstr "無法複製檔案"
+
+#: ../src/gui/HelpCtrl.cpp:9 ../src/gui/OptionPanel.cpp:132
+msgid "Wired Help"
+msgstr "Wired說明"
+
+#: ../src/gui/MainWindow.cpp:122
+msgid "&New\tCtrl-N"
+msgstr "新增\tCtrl-N"
+
+#: ../src/gui/MainWindow.cpp:123
+msgid "&Open...\tCtrl-O"
+msgstr "開啟...\tCtrl-O"
+
+#: ../src/gui/MainWindow.cpp:124
+msgid "&Save\tCtrl-S"
+msgstr "存檔\tCtrl-S"
+
+#: ../src/gui/MainWindow.cpp:125
+msgid "Save &as...\tF12"
+msgstr "另存新檔...\tF12"
+
+#: ../src/gui/MainWindow.cpp:127
+msgid "& Wave file..."
+msgstr "匯入Wave檔"
+
+#: ../src/gui/MainWindow.cpp:128
+msgid "&Import MIDI file..."
+msgstr "匯入MIDI檔..."
+
+#: ../src/gui/MainWindow.cpp:129
+msgid "&Import AKAI sample..."
+msgstr "匯入 AKAI取樣..."
+
+#: ../src/gui/MainWindow.cpp:131
+msgid "&Export Wave file..."
+msgstr "匯出 Wave檔..."
+
+#: ../src/gui/MainWindow.cpp:132
+msgid "&Export MIDI file..."
+msgstr "匯出MIDI檔..."
+
+#: ../src/gui/MainWindow.cpp:135
+msgid "&Quit\tCtrl-Q"
+msgstr "離開\tCtrl-Q"
+
+#: ../src/gui/MainWindow.cpp:139
+msgid "C&ut\tCtrl+X"
+msgstr "剪下\tCtrl+X"
+
+#: ../src/gui/MainWindow.cpp:140
+msgid "&Copy\tCtrl+C"
+msgstr "複製\\tCtrl+C"
+
+#: ../src/gui/MainWindow.cpp:141
+msgid "&Paste\tCtrl+V"
+msgstr "貼上\tCtrl+V"
+
+#: ../src/gui/MainWindow.cpp:143
+msgid "&Delete\tDel"
+msgstr "刪除\\tDel"
+
+#: ../src/gui/MainWindow.cpp:144
+msgid "&Select all\tCtrl+A"
+msgstr "全選\\tCtrl+A"
+
+#: ../src/gui/MainWindow.cpp:146
+msgid "&Settings..."
+msgstr "設定..."
+
+#: ../src/gui/MainWindow.cpp:148
+msgid "&Add Audio Track"
+msgstr "增加音軌"
+
+#: ../src/gui/MainWindow.cpp:149
+msgid "&Add MIDI Track"
+msgstr "增加MIDI軌"
+
+#: ../src/gui/MainWindow.cpp:150
+msgid "&Delete Track"
+msgstr "刪除軌"
+
+#: ../src/gui/MainWindow.cpp:152
+msgid "&Change Audio directory..."
+msgstr "改變音頻的資料夾位置..."
+
+#: ../src/gui/MainWindow.cpp:154
+msgid "D&elete Rack"
+msgstr "刪除操作視窗"
+
+#: ../src/gui/MainWindow.cpp:156
+msgid "&Show Integrated Help"
+msgstr "顯示完整說明"
+
+#: ../src/gui/MainWindow.cpp:157
+msgid "&About..."
+msgstr "關於..."
+
+#: ../src/gui/MainWindow.cpp:159
+msgid "Switch &Rack/Optional view\tTAB"
+msgstr "切換操作視窗/任意視窗\tTAB"
+
+#: ../src/gui/MainWindow.cpp:160
+msgid "Switch &Sequencer/Optional view\tCtrl+TAB"
+msgstr "切換 編曲機/任意視窗\tCtrl+TAB"
+
+#: ../src/gui/MainWindow.cpp:162
+msgid "Floating Transport"
+msgstr "浮動轉送面板"
+
+#: ../src/gui/MainWindow.cpp:164
+msgid "Floating Sequencer"
+msgstr "浮動編曲機"
+
+#: ../src/gui/MainWindow.cpp:165
+msgid "Floating Racks"
+msgstr "浮動操作視窗"
+
+#: ../src/gui/MainWindow.cpp:168
+msgid "&Fullscreen"
+msgstr "全螢幕"
+
+#: ../src/gui/MainWindow.cpp:170
+msgid "&Log window"
+msgstr "記錄視窗"
+
+#: ../src/gui/MainWindow.cpp:172
+msgid "&File"
+msgstr "檔案"
+
+#: ../src/gui/MainWindow.cpp:173
+msgid "&Edit"
+msgstr "編輯"
+
+#: ../src/gui/MainWindow.cpp:174
+msgid "&Sequencer"
+msgstr "編曲機"
+
+#: ../src/gui/MainWindow.cpp:175
+msgid "&Racks"
+msgstr "操作視窗"
+
+#: ../src/gui/MainWindow.cpp:176 ../src/gui/Rack.cpp:229
+msgid "&Instruments"
+msgstr "樂器"
+
+#: ../src/gui/MainWindow.cpp:177
+msgid "Effec&ts"
+msgstr "效果"
+
+#: ../src/gui/MainWindow.cpp:178
+msgid "&Video"
+msgstr "視頻"
+
+#: ../src/gui/MainWindow.cpp:179
+msgid "&Window"
+msgstr "視窗"
+
+#: ../src/gui/MainWindow.cpp:180
+msgid "&Help"
+msgstr "說明"
+
+#: ../src/gui/MainWindow.cpp:266 ../src/gui/MainWindow.cpp:1380
+#: ../src/gui/SettingWindow.cpp:308
+msgid "audio engine"
+msgstr "音頻工具"
+
+#: ../src/gui/MainWindow.cpp:267 ../src/gui/MainWindow.cpp:1381
+#: ../src/gui/SettingWindow.cpp:309
+msgid "You may check for your audio settings if you want to use Wired.."
+msgstr "如要使用Wired,請確認你的音頻設定"
+
+#: ../src/gui/MainWindow.cpp:438
+msgid "Choose the audio working directory"
+msgstr "選擇一個音頻工作資料夾"
+
+#: ../src/gui/MainWindow.cpp:462
+msgid "U&ndo"
+msgstr "復原"
+
+#: ../src/gui/MainWindow.cpp:463
+msgid "&Redo"
+msgstr "重做"
+
+#: ../src/gui/MainWindow.cpp:470
+msgid "&Open video"
+msgstr "打開視頻"
+
+#: ../src/gui/MainWindow.cpp:471
+msgid "&Close video"
+msgstr "關閉視頻"
+
+#: ../src/gui/MainWindow.cpp:472
+msgid "&Seek with video playing"
+msgstr ""
+
+#: ../src/gui/MainWindow.cpp:486 ../src/gui/MainWindow.cpp:600
+msgid "Save current session ?"
+msgstr "儲存此區段"
+
+#: ../src/gui/MainWindow.cpp:636
+msgid "wrd\tWired session file (*.wrd)"
+msgstr "wrd\tWired區段檔 (*.wrd)"
+
+#: ../src/gui/MainWindow.cpp:637 ../src/gui/MainWindow.cpp:691
+msgid "xml\tWired session file (*.xml)"
+msgstr "xml\tWired區段檔 (*.xml)"
+
+#: ../src/gui/MainWindow.cpp:638
+msgid "Open session"
+msgstr "開啟區段"
+
+#: ../src/gui/MainWindow.cpp:692
+msgid "Save session"
+msgstr "儲存區段"
+
+#: ../src/gui/MainWindow.cpp:723 ../src/plugins/beatbox/BeatBoxChannel.cpp:554
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1215
+msgid "Loading sound file"
+msgstr "載入聲音檔"
+
+#: ../src/gui/MainWindow.cpp:734 ../src/gui/MainWindow.cpp:1425
+#: ../src/gui/Transport.cpp:212
+msgid "Choose the Audio file directory"
+msgstr "選擇一個音頻檔案資料夾"
+
+#: ../src/gui/MainWindow.cpp:761 ../src/gui/MainWindow.cpp:909
+msgid "mid\tMidi file (*.mid)"
+msgstr "mid\tMIDI檔 (*.mid)"
+
+#: ../src/gui/MainWindow.cpp:762
+msgid "Import MIDI file"
+msgstr "匯入MIDI檔"
+
+#: ../src/gui/MainWindow.cpp:768 ../src/gui/MainWindow.cpp:810
+msgid "Loading midi file"
+msgstr "載入MIDI檔"
+
+#: ../src/gui/MainWindow.cpp:768 ../src/gui/MainWindow.cpp:810
+#: ../src/gui/MainWindow.cpp:888
+#: ../src/plugins/akai_sampler/AkaiSampler.cpp:768
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:560
+#: ../src/plugins/beatbox/BeatBox.cpp:1764
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1220
+#: ../src/samplerate/WiredSampleRate.cpp:171
+msgid "Please wait..."
+msgstr "請稍等..."
+
+#: ../src/gui/MainWindow.cpp:804
+msgid "Import AKAI samples"
+msgstr "匯入AKAI取樣"
+
+#: ../src/gui/MainWindow.cpp:865
+msgid "Please correctly place the Left and Right markers"
+msgstr "請正確放置左右二邊的記號"
+
+#: ../src/gui/MainWindow.cpp:870
+msgid "Exporting sound file"
+msgstr "匯出聲音檔"
+
+#: ../src/gui/MainWindow.cpp:888
+msgid "Exporting mix"
+msgstr "匯出混音"
+
+#: ../src/gui/MainWindow.cpp:911
+msgid "Export MIDI file"
+msgstr "匯出MIDI檔"
+
+#: ../src/gui/MainWindow.cpp:1152
+msgid "Transport"
+msgstr "轉送面板"
+
+#: ../src/gui/MainWindow.cpp:1179
+msgid "Sequencer"
+msgstr "編曲機"
+
+#: ../src/gui/MainWindow.cpp:1222
+msgid "Racks"
+msgstr "操作視窗"
+
+#: ../src/gui/MainWindow.cpp:1678
+msgid "Left space on drive : "
+msgstr "硬碟剩餘空間 : "
+
+#: ../src/gui/MainWindow.cpp:1678
+msgid "Free memory : "
+msgstr "可用記憶體 : "
+
+#: ../src/gui/MainWindow.cpp:1685
+msgid "Unknown"
+msgstr "不明"
+
+#: ../src/gui/MidiPattern.cpp:81
+msgid "This is a MIDI pattern. Double-click on it to open the MIDI editor."
+msgstr "這是個MIDI樂段. 點二下以開啟MIDI編輯器"
+
+#: ../src/gui/OptionPanel.cpp:97
+msgid "Midi pattern"
+msgstr "MIDI樂段"
+
+#: ../src/gui/OptionPanel.cpp:128
+msgid "Wired Mixer"
+msgstr "Wired混音座"
+
+#: ../src/gui/OptionPanel.cpp:340
+msgid "No Tool"
+msgstr "無工具"
+
+#: ../src/gui/Rack.cpp:34
+#, c-format
+msgid "Rack %d"
+msgstr "操作視窗 %d"
+
+#: ../src/gui/Rack.cpp:228 ../src/plugins/beatbox/BeatBoxView.cpp:231
+msgid "Add"
+msgstr "新增"
+
+#: ../src/gui/Rack.cpp:230
+msgid "&Effects"
+msgstr "效果"
+
+#: ../src/gui/Rack.cpp:231 ../src/gui/SequencerGui.cpp:464
+#: ../src/gui/WaveEditor.cpp:47 ../src/gui/WavePanel.cpp:52
+#: ../src/gui/WavePanel.cpp:53 ../src/plugins/beatbox/BeatBoxView.cpp:234
+msgid "Cut"
+msgstr "剪下"
+
+#: ../src/gui/Rack.cpp:232 ../src/gui/SequencerGui.cpp:465
+#: ../src/gui/WaveEditor.cpp:48 ../src/gui/WavePanel.cpp:48
+#: ../src/gui/WavePanel.cpp:49 ../src/plugins/beatbox/BeatBoxView.cpp:235
+msgid "Copy"
+msgstr "複製"
+
+#: ../src/gui/Rack.cpp:233 ../src/gui/SequencerGui.cpp:466
+#: ../src/gui/WaveEditor.cpp:49 ../src/gui/WavePanel.cpp:50
+#: ../src/gui/WavePanel.cpp:51 ../src/plugins/beatbox/BeatBoxView.cpp:236
+msgid "Paste"
+msgstr "貼上"
+
+#: ../src/gui/Rack.cpp:235 ../src/gui/SequencerGui.cpp:369
+#: ../src/gui/SequencerGui.cpp:462 ../src/gui/WaveEditor.cpp:50
+#: ../src/gui/WavePanel.cpp:54 ../src/gui/WavePanel.cpp:55
+#: ../src/plugins/beatbox/BeatBoxView.cpp:232
+msgid "Delete"
+msgstr "刪除"
+
+#: ../src/gui/Rack.cpp:797
+msgid ""
+"This is the Rack view of Wired, where you can add plugins. Plugins are "
+"organized into tracks vertically, meaning the first plugin in a column will "
+"send its output signal to the plugin below it. You can connect sequencer "
+"tracks to plugins"
+msgstr "" 
+"這是Wired的操作視窗，你能在此新增外掛效果器。"
+"外掛效果器能有效的處理音軌,當第一個端子插入插孔時會傳送它的輸出訊號到它屬於的外掛效果器。"
+"你能連接編曲機的音軌至外掛效果器。"
+
+#: ../src/gui/SeqTrack.cpp:49
+#, c-format
+msgid "Audio %d"
+msgstr "音頻 %d"
+
+#: ../src/gui/SeqTrack.cpp:110
+msgid ""
+"Click on this button to show the list of instruments and effects you can "
+"connect your track to."
+msgstr ""
+"點擊此按鈕能顯示你能連接的音軌其所屬的樂器選單和效果"     
+
+
+#: ../src/gui/SeqTrack.cpp:119
+msgid "Click on this box to select the device you would like to record from."
+msgstr "點擊這裡以選擇一個你想要用哪個裝置來錄製。"
+
+#: ../src/gui/SeqTrack.cpp:131 ../src/gui/SeqTrack.cpp:163
+#: ../src/gui/SettingWindow.cpp:135 ../src/gui/SettingWindow.cpp:156
+msgid "None"
+msgstr "無"
+
+#: ../src/gui/SeqTrack.cpp:137 ../src/gui/SettingWindow.cpp:239
+#: ../src/gui/SettingWindow.cpp:335
+#, c-format
+msgid "Input %d"
+msgstr "輸入 %d"
+
+#: ../src/gui/SeqTrack.cpp:145
+#, c-format
+msgid "Midi In %d"
+msgstr "MIDI 在 %d"
+
+#: ../src/gui/SequencerGui.cpp:38
+msgid "Bar"
+msgstr "小節"
+
+#: ../src/gui/SequencerGui.cpp:277
+msgid ""
+"This is the Wired sequencer. You can add here Audio or MIDI tracks, which "
+"can be output to plugins. Use the toolbar above to choose one of the "
+"sequencer editing tools."
+msgstr ""
+"這是Wired編曲機. 你可以在此新增能在外掛效果器輸出的音頻軌或MIDI軌。"
+"選擇工具列上的任一個編曲機編輯工具。"
+
+#: ../src/gui/SequencerGui.cpp:367
+msgid "Move Pattern"
+msgstr "移動樂段"
+
+#: ../src/gui/SequencerGui.cpp:368
+msgid "Draw"
+msgstr "繪製"
+
+#: ../src/gui/SequencerGui.cpp:368
+msgid "Draw Pattern"
+msgstr "繪製樂段"
+
+#: ../src/gui/SequencerGui.cpp:369
+msgid "Delete Pattern"
+msgstr "刪除樂段"
+
+#: ../src/gui/SequencerGui.cpp:370
+msgid "Split"
+msgstr "分離"
+
+#: ../src/gui/SequencerGui.cpp:370
+msgid "Split Pattern"
+msgstr "分離樂段"
+
+#: ../src/gui/SequencerGui.cpp:371
+msgid "Color"
+msgstr "顏色"
+
+#: ../src/gui/SequencerGui.cpp:390 ../src/plugins/beatbox/BeatBoxView.cpp:928
+msgid "Magnet"
+msgstr "合併"
+
+#: ../src/gui/SequencerGui.cpp:408
+msgid "Vertical Zoom"
+msgstr "垂直延展"
+
+#: ../src/gui/SequencerGui.cpp:461
+msgid "Move to cursor"
+msgstr "移動到遊標"
+
+#: ../src/gui/SequencerGui.cpp:468 ../src/plugins/beatbox/BeatBoxView.cpp:238
+msgid "Select all"
+msgstr "全選"
+
+#: ../src/gui/SettingWindow.cpp:37
+msgid "Wired Settings"
+msgstr "Wired設定"
+
+#: ../src/gui/SettingWindow.cpp:65
+msgid "General"
+msgstr "一般"
+
+#: ../src/gui/SettingWindow.cpp:66
+msgid "Audio"
+msgstr "音頻"
+
+#: ../src/gui/SettingWindow.cpp:67
+msgid "Output"
+msgstr "輸出端"
+
+#: ../src/gui/SettingWindow.cpp:68
+msgid "Input"
+msgstr "輸入端"
+
+#: ../src/gui/SettingWindow.cpp:69
+msgid "Midi"
+msgstr "MIDI"
+
+#: ../src/gui/SettingWindow.cpp:78 ../src/midi/MidiController.cpp:20
+#: ../src/plugins/loop_sampler/BeatDialog.cpp:17
+msgid "OK"
+msgstr "確定"
+
+#: ../src/gui/SettingWindow.cpp:79
+msgid "Apply"
+msgstr "套用"
+
+#: ../src/gui/SettingWindow.cpp:92
+msgid "Quickly render waveforms"
+msgstr "快速回報波型"
+
+#: ../src/gui/SettingWindow.cpp:93
+msgid "Render waveforms in dB mode"
+msgstr "以分貝模式回報波型"
+
+#: ../src/gui/SettingWindow.cpp:95
+msgid "Undo redo maximum depth"
+msgstr "復原到最上層"
+
+#: ../src/gui/SettingWindow.cpp:103
+msgid "Sample format:"
+msgstr "取樣格式："
+
+#: ../src/gui/SettingWindow.cpp:108
+msgid "Sample rate:"
+msgstr "取樣頻率："
+
+#: ../src/gui/SettingWindow.cpp:114
+msgid "Latency:"
+msgstr "等待時間："
+
+#: ../src/gui/SettingWindow.cpp:132
+msgid "Select Input sound card:"
+msgstr "選取輸入的音效卡："
+
+#: ../src/gui/SettingWindow.cpp:139
+msgid "Select Input channels to use with this sound card:"
+msgstr "選擇一個聲道來使用此音效卡："
+
+#: ../src/gui/SettingWindow.cpp:153
+msgid "Select Output sound card:"
+msgstr "選擇輸出音效卡："
+
+#: ../src/gui/SettingWindow.cpp:160
+msgid "Select left and right Output channels for this sound card:"
+msgstr "選擇左右輸出聲道來使用此音效卡："
+
+#: ../src/gui/SettingWindow.cpp:170
+msgid "Select MIDI In devices to use:"
+msgstr "選擇使用的MIDI設備："
+
+#: ../src/gui/SettingWindow.cpp:225 ../src/gui/SettingWindow.cpp:368
+#, c-format
+msgid "Output %d"
+msgstr "輸出 %d"
+
+#: ../src/gui/SettingWindow.cpp:284
+#, c-format
+msgid "In %d: %s"
+msgstr "在 %d: %s"
+
+#: ../src/gui/SettingWindow.cpp:396
+msgid "No more than 2 output channels can be selected"
+msgstr "不能選擇超出二個輸出頻道"
+
+#: ../src/gui/SettingWindow.cpp:502
+msgid "8 bits[currently unsupported]"
+msgstr "8 bits[無此支援]"
+
+#: ../src/gui/SettingWindow.cpp:507
+msgid "8 bits (unsigned)[currently unsupported]"
+msgstr "8 bits (unsigned)[無此支援]"
+
+#: ../src/gui/SettingWindow.cpp:513
+msgid "16 bits[currently unsupported]"
+msgstr "16 bits[無此支援]"
+
+#: ../src/gui/SettingWindow.cpp:518
+msgid "24 bits[currently unsupported]"
+msgstr "24 bits[無此支援]"
+
+#: ../src/gui/SettingWindow.cpp:523
+msgid "32 bits[currently unsupported]"
+msgstr "32 bits[無此支援]"
+
+#: ../src/gui/SettingWindow.cpp:528
+msgid "32 bits (float)"
+msgstr "32 bits (浮點數)"
+
+#: ../src/gui/SettingWindow.cpp:619
+#, c-format
+msgid "Latency: %d samples per buffer, %.2f msec"
+msgstr "等待時間： %d 個取樣，%.2f 微秒"
+
+#: ../src/gui/Transport.cpp:171
+msgid ""
+"Turns On or Off Loop mode. If On, the sequencer will loop between the L and "
+"R marker in the sequencer."
+msgstr ""
+"開啟或關閉反覆模式。如開啟，編曲機會在左和右的標記之間反覆。"
+
+#: ../src/gui/Transport.cpp:180
+msgid ""
+"Turns On or Off Click mode. If On, a click will be played over each beat per "
+"bar."
+msgstr ""
+"開啟或關閉Click模式。如果開啟，會播放小節裡的每一個拍子"
+
+#: ../src/gui/WaveEditor.cpp:44
+msgid "Gain..."
+msgstr "增益..."
+
+#: ../src/gui/WaveEditor.cpp:45
+msgid "Normalize.."
+msgstr "標準化.."
+
+#: ../src/gui/WaveEditor.cpp:52
+msgid "Select All"
+msgstr "全選"
+
+#: ../src/gui/WaveEditor.cpp:54
+msgid "Effects"
+msgstr "效果"
+
+#: ../src/gui/WaveEditor.cpp:273 ../src/gui/WavePanel.cpp:65
+msgid "ZOOM"
+msgstr "縮放"
+
+#: ../src/gui/WaveEditor.cpp:316 ../src/gui/WaveEditor.cpp:351
+#: ../src/gui/WaveEditor.cpp:385 ../src/gui/WaveEditor.cpp:449
+#: ../src/gui/WaveEditor.cpp:535
+msgid "File opened in read only mode"
+msgstr "檔案開啟為只能讀取的模式"
+
+#: ../src/gui/WaveEditor.cpp:457
+msgid "Enter gain "
+msgstr "進入增益 "
+
+#: ../src/gui/WaveEditor.cpp:457 ../src/gui/WaveEditor.cpp:543
+msgid "Please enter text"
+msgstr "請輸入文字"
+
+#: ../src/gui/WaveEditor.cpp:543
+msgid "Enter normalize level "
+msgstr "進入標準化音量"
+
+#: ../src/gui/WavePanel.cpp:49
+msgid "Copy wave"
+msgstr "複製 Wave"
+
+#: ../src/gui/WavePanel.cpp:51
+msgid "Paste wave"
+msgstr "貼上Wave"
+
+#: ../src/gui/WavePanel.cpp:53
+msgid "Cut wave"
+msgstr "剪下Wave"
+
+#: ../src/gui/WavePanel.cpp:57 ../src/gui/WavePanel.cpp:58
+msgid "Undo"
+msgstr "復原"
+
+#: ../src/gui/WavePanel.cpp:58
+msgid "Undo last action"
+msgstr "復原上一個動作"
+
+#: ../src/gui/WavePanel.cpp:59 ../src/gui/WavePanel.cpp:60
+msgid "Redo"
+msgstr "重做"
+
+#: ../src/midi/MidiController.cpp:16
+msgid "Assign Midi Controller"
+msgstr "指定MIDI控制器"
+
+#: ../src/midi/MidiController.cpp:19
+msgid "Assign to controller number :"
+msgstr "指定控制器號碼 ： "
+
+#: ../src/midi/MidiController.cpp:23
+msgid "Channel:"
+msgstr "頻道："
+
+#: ../src/midi/MidiController.cpp:26
+msgid "Control:"
+msgstr "控制："
+
+#: ../src/midi/MidiController.cpp:29
+msgid "Value:"
+msgstr "值："
+
+#: ../src/plugins/HostCallback.cpp:52
+msgid "P31"
+msgstr ""
+
+#: ../src/plugins/akai_sampler/AkaiSampler.cpp:56
+msgid "Samples"
+msgstr "取樣"
+
+#: ../src/plugins/akai_sampler/AkaiSampler.cpp:510
+msgid " #0 for "
+msgstr "#0 用於"
+
+#: ../src/plugins/akai_sampler/AkaiSampler.cpp:761
+msgid "Load AKAI program"
+msgstr "載入AKAI程序"
+
+#: ../src/plugins/akai_sampler/AkaiSampler.cpp:767
+msgid "Loading AKAI program"
+msgstr "載入AKAI程序中"
+
+#: ../src/plugins/akai_sampler/AkaiSampler.cpp:869
+msgid "Keygroup editor for "
+msgstr "鍵盤編輯器用於"
+
+#: ../src/plugins/akai_sampler/AkaiSampler.cpp:906
+#: ../src/plugins/akai_sampler/AkaiSampler.cpp:918
+msgid " for "
+msgstr " 為了 "
+
+#: ../src/plugins/akai_sampler/AkaiSampler.cpp:979
+msgid "New effect"
+msgstr "新效果"
+
+#: ../src/plugins/akai_sampler/ASClavier.cpp:24
+msgid "CDEFGAB"
+msgstr "DoReMiFaSolRaSi"
+
+#: ../src/plugins/akai_sampler/ASClavier.cpp:137
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "C"
+msgstr "Do"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "C#"
+msgstr "升Do"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "D"
+msgstr "Re"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "D#"
+msgstr "升Re"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "E"
+msgstr "Mi"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "F"
+msgstr "Fa"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "F#"
+msgstr "升Fa"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "G"
+msgstr "Sol"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "G#"
+msgstr "升Sol"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "A"
+msgstr "Ra"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "A#"
+msgstr "升Ra"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:68
+msgid "B"
+msgstr "Si"
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:69
+msgid "Low key: "
+msgstr "低調："
+
+#: ../src/plugins/akai_sampler/ASKeygroupEditor.cpp:73
+msgid "High key: "
+msgstr "高調："
+
+#: ../src/plugins/akai_sampler/ASPlugPanel.cpp:63
+msgid "Plugin"
+msgstr "外掛效果器"
+
+#: ../src/plugins/akai_sampler/ASPlugPanel.cpp:180
+msgid "No Plugin"
+msgstr "無外掛"
+
+#: ../src/plugins/akai_sampler/ASSampleList.cpp:53
+msgid "Load Sample"
+msgstr "載入取樣"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:85
+msgid "empty"
+msgstr "空白"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:560
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1220
+msgid "Loading wave file"
+msgstr "載入wave檔中"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:981
+msgid ""
+"Use this button to display and edit the tracker associated to this channel"
+msgstr ""
+"使用此按鍵可顯示和編輯與此頻道相關的追縱器"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:987
+msgid "Use this button to open the sound file browser"
+msgstr "使用此按鈕來開啟聲音檔案瀏覽器"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:993
+msgid "Invert playing order of samples"
+msgstr "將指定播放取樣轉位"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:999
+msgid "Mute the channel"
+msgstr "靜音"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:1005
+msgid "Mute all other channels"
+msgstr "全部靜音"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:1011
+msgid "Play the sound instantaneously"
+msgstr "立即播放此聲音"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:1017
+msgid "Set level of the channel"
+msgstr "設定頻道的音量"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:1023
+msgid "Panoramic left - right"
+msgstr "全景 左 - 右"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:1029
+msgid "Set the starting point of the playing sound"
+msgstr "設定此播放聲音的起點"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:1035
+msgid "Set the ending point of the playing sound"
+msgstr "設定此播放聲音的終點"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:1041
+msgid "Set channel's pitch"
+msgstr "設定頻道的音高"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:1047
+msgid "Set channel's velocity"
+msgstr "設定頻道的速度"
+
+#: ../src/plugins/beatbox/BeatBoxChannel.cpp:1053
+msgid "Set the number of voices for this channel"
+msgstr "設定頻道的聲音個數"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:76
+msgid "Copy pattern"
+msgstr "複製樂段"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:77
+msgid "Paste pattern"
+msgstr "貼上樂段"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:550
+msgid ""
+"One of the 11 channels available, each channel can load a soundfile and can "
+"contain up to 40 different rythms providing fine tunings for them"
+msgstr "" 
+"11種頻道中的任一個可使用，每個頻道能載入聲音檔"
+"且包含40種不同的節奏，以有效的提供細微節奏的調整。"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:556
+msgid ""
+"This is the auto play button, when enabled, DRM31 will play selected pattern "
+"synchronously with Wired's Sequencer"
+msgstr ""
+"這是自動播放按鈕,當運作時,DRM31和編曲機會同步播放所選擇的樂段。"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:562
+msgid ""
+"This is a tracker edition control, it can be clicked in 5 different places "
+"to obtain different velocities, right click returns to unclicked state"
+msgstr ""
+"這是追蹤器編輯控制,它能選取五個不同的地方以取得不同的速度,"
+"按右鍵能回復無選取狀態。"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:568
+msgid ""
+"This is Wired's Beat Box plugin (DRM31). It brings you 11 channels to make "
+"up to 40 complex and realistic drum sequences within the traditional tracker "
+"or the optional sequencer view attached"
+msgstr ""
+"這是Wired的電子鼓外掛效果器 (DRM31)."
+"包括十一種頻道可製作四十種真實的鼓編曲機於傳統的追縱器"
+"或其它編曲機"
+
+
+#: ../src/plugins/beatbox/BeatBox.cpp:574
+msgid "This knob sets the master level output of the DRM31 plugin"
+msgstr "此旋轉鈕能設定DRM31外掛效果器輸出的總音量。"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:580
+msgid "These buttons control the position of the 16 strokes represented below"
+msgstr "這些按鈕控制下面十六個代表的位置"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:586
+msgid ""
+"These buttons control the signature of the current rythm, note that the "
+"greater the denominator is, the faster the rythm will play"
+msgstr ""
+"這些按鈕控制此節奏的拍號。"
+"請注意:當分母愈大時,節奏會播放的愈快。"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:592
+msgid "Set the number of steps for the current rythm"
+msgstr "設定此節奏的順序"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:597
+msgid ""
+"The bank control allows you to choose one of the 5 banks proposed, each bank "
+"contains 8 rythms"
+msgstr ""
+"組控制。選取五組中其中一個,每組包含八個節奏。"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:602
+msgid ""
+"This button switches the plugin to edit mode, when activated, you can edit "
+"other rythms on an other bank while playing the old selected rythm"
+msgstr ""
+"此按鈕能切換此外掛到編輯模式。當播放原本選擇的節奏時,你能編輯其它組裡的節奏。"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:607
+msgid "These buttons represent 8 different rythms"
+msgstr "這些按鈕代表八種不同的節奏"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:612
+msgid ""
+"These buttons are used if you want to import or export a patch apart from "
+"the session"
+msgstr "這些按鈕使用於匯入或匯出此區段以外的音色"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:1703
+#: ../src/plugins/beatbox/BeatBox.cpp:1740
+msgid "drm\tDRM-31 patch file (*.drm)"
+msgstr "drm\tDRM-31 音色檔  (*.drm)"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:1706
+msgid "Save Patch"
+msgstr "儲存音色"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:1742
+msgid "Load Patch"
+msgstr "載入音色"
+
+#: ../src/plugins/beatbox/BeatBox.cpp:1764
+msgid "Loading patch file"
+msgstr "音色檔載入中"
+
+#: ../src/plugins/beatbox/BeatBoxView.cpp:166
+msgid "channel empty"
+msgstr "空白頻道"
+
+#: ../src/plugins/beatbox/BeatBoxView.cpp:935
+msgid "Activate magnetism"
+msgstr "使用磁性"
+
+#: ../src/plugins/beatbox/BeatBoxView.cpp:935
+msgid "Deactivate magnetism"
+msgstr "取消使用磁性"
+
+#: ../src/plugins/beatbox/BeatBoxView.cpp:962
+#: ../src/plugins/beatbox/BeatBoxView.cpp:970
+msgid "LEVEL"
+msgstr "音量"
+
+#: ../src/plugins/beatbox/BeatBoxView.cpp:963
+msgid "VELOCITY"
+msgstr "速度"
+
+#: ../src/plugins/beatbox/BeatBoxView.cpp:964
+msgid "PITCH"
+msgstr "音高"
+
+#: ../src/plugins/beatbox/BeatBoxView.cpp:965
+msgid "PAN"
+msgstr "偏位"
+
+#: ../src/plugins/beatbox/BeatBoxView.cpp:966
+msgid "START"
+msgstr "開始"
+
+#: ../src/plugins/beatbox/BeatBoxView.cpp:967
+msgid "END"
+msgstr "結束"
+
+#: ../src/plugins/loop_sampler/BeatDialog.cpp:12
+msgid "Set loop's number of beat per bar"
+msgstr "設定每個小節裡拍子的反覆次數"
+
+#: ../src/plugins/loop_sampler/BeatDialog.cpp:20
+msgid "Number of beat per bar:"
+msgstr "每小節裡拍次："
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:354
+msgid ""
+"This is Wired's Loop Sampler. It enables you to load loops and modify them, "
+"by cutting them into slices for automatic loop scaling, with pitch shifting "
+"and time stretching."
+msgstr ""
+"這是Wired的反覆取樣機。你能執行反覆及修改"
+"自動反覆所剪裁的樂段變換音高和延展時間。"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:360
+msgid ""
+"This knob sets the octave of the loaded sample. It will use a pitch shifting "
+"algorithm to achieve that effect. Right click on it to set the MIDI "
+"automation controller."
+msgstr ""
+"這個旋轉鈕設定此載入取樣的八度。它會使用音高變換邏輯來達成效果。"
+"按右鍵能設定MIDI自動控制器。"
+
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:366
+msgid ""
+"Changes the pitch (speed) of the whole loaded sample. Right click on it to "
+"set the MIDI automation controller."
+msgstr ""
+"改變整個載入取樣的音高(速度)。"
+"按右鍵以設定MIDI自動控制器。"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:372
+msgid ""
+"Stretch the whole sample that it synchronizes with the sequencer BPM Right "
+"click on it to set the MIDI automation controller."
+msgstr ""
+"與BPM編曲機同步延伸整個取樣,按右鍵以設定MIDI自動控制器。"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:378
+msgid ""
+"Inverts the sample audio data. Right click on it to set the MIDI automation "
+"controller."
+msgstr ""
+"轉位此取樣音頻資料。按右鍵以設定MIDI自動控制器。"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:385
+msgid "Plays the sample, synchronized with the sequencer."
+msgstr "與編曲機同步播放此取樣。"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:391
+msgid "Opens an audio file or Loop Sampler patch."
+msgstr "開啟音頻檔或反覆取樣機音色。"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:397
+msgid "Saves current configuration to a Loop Sampler patch file."
+msgstr "儲存此配置成反覆取樣機音色檔。"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:403
+msgid ""
+"Send current slices configuration to the selected MIDI tracks, as MIDI notes."
+msgstr "傳送此分離配置到已選擇的MIDI軌，當MIDI音符。"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:409
+msgid "Shows Loop Sampler's optional view."
+msgstr "顯示反覆取樣機的任意視窗。"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1199
+msgid "wav\tMicrosoft WAV format (*.wav)"
+msgstr "wav\t微軟 WAV 格式 (*.wav)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1200
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1284
+msgid "wls\tLoop Sampler patch (*.wls)"
+msgstr "wls\t反覆取樣機音色 (*.wls)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1201
+msgid "aif\tApple/SGI AIFF format (*.aif)"
+msgstr "aif\tApple/SGI AIFF 格式 (*.aif)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1202
+msgid "au;snd\tSun/NeXT AU format (*.au; *.snd)"
+msgstr "au;snd\tSun/NeXT AU 格式 (*.au; *.snd)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1203
+msgid "svx\tAmiga IFF / SVX8 / SV16 format (*.svx)"
+msgstr "svx\tAmiga IFF / SVX8 / SV16 格式 (*.svx)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1204
+msgid "paf;fap\tEnsoniq PARIS format (*.paf; *.fap)"
+msgstr "paf;fap\tEnsoniq PARIS 格式 (*.paf; *.fap)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1205
+msgid "nist\tSphere NIST format (*.nist)"
+msgstr "nist\tSphere NIST 格式 (*.nist)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1206
+msgid "ircam;sf\tBerkeley/IRCAM/CARL format (*.ircam; *.sf)"
+msgstr "ircam;sf\tBerkeley/IRCAM/CARL 格式 (*.ircam; *.sf)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1207
+msgid "voc\tCreative Labs VOC format (*.voc)"
+msgstr "voc\tCreative Labs VOC 格式 (*.voc)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1208
+msgid "w64\tSonic Foundry's 64 bit RIFF/WAV format (*.w64)"
+msgstr "w64\tSonic Foundry's 64 bit RIFF/WAV 格式 (*.w64)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1209
+msgid "raw\tRAW PCM data format (*.raw)"
+msgstr "raw\tRAW PCM data 格式 (*.raw)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1210
+msgid "mat4;mat\tMatlab (tm) V4.2 / GNU Octave 2.0 format (*.mat4; *.mat)"
+msgstr "mat4;mat\tMatlab (tm) V4.2 / GNU Octave 2.0 格式 (*.mat4; *.mat)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1211
+msgid "mat5\tMatlab (tm) V5 / GNU Octave 2.1 format (*.mat5)"
+msgstr "mat5\tMatlab (tm) V5 / GNU Octave 2.1 格式 (*.mat5)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1212
+msgid "pvf\tPortable Voice Format (*.pvf)"
+msgstr "pvf\tPortable Voice 格式 (*.pvf)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1213
+msgid "xi\tFastracker 2 format (*.xi)"
+msgstr "xi\tFastracker 2 格式 (*.xi)"
+
+#: ../src/plugins/loop_sampler/LoopSampler.cpp:1285
+msgid "Save Loop Sampler patch"
+msgstr "儲存反覆取樣機音色"
+
+#: ../src/plugins/loop_sampler/LoopSamplerView.cpp:70
+msgid "Note"
+msgstr "音符"
+
+#: ../src/plugins/loop_sampler/LoopSamplerView.cpp:73
+msgid "Pitch"
+msgstr "音高"
+
+#: ../src/plugins/loop_sampler/LoopSamplerView.cpp:85
+msgid "Volume"
+msgstr "音量"
+
+#: ../src/plugins/loop_sampler/LoopSamplerView.cpp:88
+msgid "Affect"
+msgstr "作用"
+
+#: ../src/samplerate/WiredSampleRate.cpp:68
+msgid "Would you like to convert your file from "
+msgstr "你想轉換你的檔案從"
+
+#: ../src/samplerate/WiredSampleRate.cpp:75
+msgid " to "
+msgstr "到"
+
+#: ../src/samplerate/WiredSampleRate.cpp:81
+msgid " and  "
+msgstr " 和 "
+
+#: ../src/samplerate/WiredSampleRate.cpp:82
+msgid "samplerate "
+msgstr "取樣頻率"
+
+#: ../src/samplerate/WiredSampleRate.cpp:83
+#, c-format
+msgid "%d Hz to %ld Hz ?"
+msgstr ""
+
+#: ../src/samplerate/WiredSampleRate.cpp:87
+msgid "File format mismatch"
+msgstr "檔案格式不符"
+
+#: ../src/samplerate/WiredSampleRate.cpp:109
+msgid "Please Choose conversion quality (default is better)"
+msgstr "請選擇轉換質量 （建議使用預設值）"
+
+#: ../src/samplerate/WiredSampleRate.cpp:110
+msgid "Conversion quality"
+msgstr "轉換質量"
+
+#: ../src/samplerate/WiredSampleRate.cpp:171
+msgid "Converting wave file"
+msgstr "Wave檔轉換中"
+
+#: ../src/samplerate/WiredSampleRate.cpp:294
+msgid "File format selection"
+msgstr "檔案格式選擇"
+
+#: ../src/samplerate/WiredSampleRate.cpp:296
+msgid ""
+"Please select the options that\n"
+"you want for the downmix.\n"
+"(Defaults are current project's configuration)"
+msgstr ""
+"請選擇你要的混音功能。"
+"(此專案的配置為預設值)"
+
+
+#: ../src/samplerate/WiredSampleRateTypes.cpp:8
+msgid "Unsigned 8 bits"
+msgstr ""
+
+#: ../src/samplerate/WiredSampleRateTypes.cpp:9
+msgid "8 bits"
+msgstr ""
+
+#: ../src/samplerate/WiredSampleRateTypes.cpp:10
+msgid "16 bits"
+msgstr ""
+
+#: ../src/samplerate/WiredSampleRateTypes.cpp:11
+msgid "24 bits"
+msgstr ""
+
+#: ../src/samplerate/WiredSampleRateTypes.cpp:12
+msgid "Floating 32 bits"
+msgstr ""
+
+#~ msgid "No help provided for this plugin"
+#~ msgstr "尚未提供此外掛效果器的說明"
+
+#~ msgid "BaseLength"
+#~ msgstr "標準長度"
+
+#~ msgid "Frequency"
+#~ msgstr "頻率"
+
+#~ msgid "Feedback"
+#~ msgstr "回報"
+
+#~ msgid "Filter"
+#~ msgstr "濾波器"
+
+#~ msgid "Cutoff"
+#~ msgstr "載頻"
+
+#~ msgid "Resonance"
+#~ msgstr "共鳴"
+
+#~ msgid "MIDICutoff1"
+#~ msgstr "載頻MIDI1"
+
+#~ msgid "MIDIResonance1"
+#~ msgstr "共鳴MIDI1"
+
+#~ msgid "MIDICutoff2"
+#~ msgstr "載頻MIDI2"
+
+#~ msgid "MIDIResonance2"
+#~ msgstr "共鳴MIDI2"
+
+#~ msgid "ReverbSelected"
+#~ msgstr "殘響所選的部分"
+
+#~ msgid "MixLevel"
+#~ msgstr "混音等級"
+
+#~ msgid "Decay"
+#~ msgstr "衰減"
+
+#~ msgid "Depth"
+#~ msgstr "深度"
+
+#~ msgid "FrequencyOFS"
+#~ msgstr "OFS頻率"
+
+#~ msgid "Resolution"
+#~ msgstr "解析度"
+
+#~ msgid "Undo "
+#~ msgstr "復原 "
+
+#~ msgid "Redo "
+#~ msgstr "重做 "
+
+#~ msgid "AddTrackAction"
+#~ msgstr "增加音軌動作"
+
+#~ msgid "creating rack effect"
+#~ msgstr "增加操作視窗效果"
+
+#~ msgid "importing wave"
+#~ msgstr "匯入WAVE"
+
+#~ msgid "importing AKAI"
+#~ msgstr "匯入AKAI"
+
+#~ msgid "creating rack"
+#~ msgstr "增加操作視窗"
+
+#~ msgid "changing rack effect parameters"
+#~ msgstr "改變操作視窗效果參數"

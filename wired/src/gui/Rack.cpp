@@ -193,7 +193,7 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	is_cut = false;
 	InitContextMenu();
 	copy_plug = NULL;
-	filePath.Printf(_("/tmp/.tmpccp"));
+	filePath.Printf(wxT("/tmp/.tmpccp"));
 }
 
 Rack::~Rack()

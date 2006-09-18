@@ -278,15 +278,15 @@ int				MLTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& ite
 	{
 	  s_nodeInfo temp;
 	  temp = (*it).second;
-	  if (!selected.Cmp(_("filesize")))
+	  if (!selected.Cmp(wxT("filesize")))
 	    text1 = temp.length;
-	  else if (!selected.Cmp(_("filename")))
+	  else if (!selected.Cmp(wxT("filename")))
 	    {
 	      text1 = temp.label;
 	      slashPos = text1.Find('/', true);
 	      text1 = text1.Mid(slashPos + 1);
 	    }
-	  else if (!selected.Cmp(_("filetype")))
+	  else if (!selected.Cmp(wxT("filetype")))
 	    text1 = temp.extention;
 	  else
 	    text1 = temp.label;
@@ -298,15 +298,15 @@ int				MLTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& ite
 	{
 	  s_nodeInfo temp;
 	  temp = (*it).second;
-	  if (!selected.Cmp(_("filesize")))
+	  if (!selected.Cmp(wxT("filesize")))
 	    text2 = temp.length;
-	  else if (!selected.Cmp(_("filename")))
+	  else if (!selected.Cmp(wxT("filename")))
 	    {
 	      text2 = temp.label;
 	      slashPos = text2.Find('/', true);
 	      text2 = text2.Mid(slashPos + 1);
 	    }
-	  else if (!selected.Cmp(_("filetype")))
+	  else if (!selected.Cmp(wxT("filetype")))
 	    text2 = temp.extention;
 	  else
 	    text2 = temp.label;
@@ -478,7 +478,7 @@ void				MLTree::OnRightClick(wxMouseEvent& event)
 
   item = GetSelection();
   infos = GetTreeItemStructFromId(item);
-  if (infos.extention.Cmp(_("")))
+  if (infos.extention.Cmp(wxT("")))
     {
       myMenu->Append(ML_ID_MENU_INFOS, wxT("Infos"), wxT("Infos"));
       myMenu->Append(ML_ID_MENU_PREVIEW, wxT("Preview"), wxT("Preview"));
