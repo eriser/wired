@@ -8,6 +8,7 @@
 #define __RACK_H__
 
 #include <wx/wx.h>
+#include <wx/file.h>
 #include <list>
 
 using namespace									std;
@@ -126,14 +127,16 @@ class				Rack: public wxScrolledWindow
 	int					OldY;
 	int					new_x;
 	int					new_y;		
-	int					fd_copy;
 	int					fd_size;
+
 	bool				is_cut;
 	Plugin*				copy_plug;
+	wxFile				tmpFile;
 	wxMenu*				menu;
 	wxMenu*				submenu;
 	wxMenu*				instr_menu;
 	wxMenu*				effects_menu;
+	wxString			filePath;
 	bool				WasDragging;
 	
 	virtual void		OnPaint(wxPaintEvent &event);							// Not used ...

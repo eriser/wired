@@ -190,32 +190,33 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	SetVirtualSize(760, 180);  
 	selectedPlugin = 0x0;
 	selectedTrack = 0x0;
-	fd_copy = -1;
 	is_cut = false;
 	InitContextMenu();
 	copy_plug = NULL;
+	filePath.Printf(_("/tmp/.tmpccp"));
 }
 
 Rack::~Rack()
 {
   t_ListRackTrack::iterator i;
-
+  
   for (i = RackTracks.begin(); i != RackTracks.end(); i++)
     delete *i;
 
-t_ListRackTrack		RackTracks;
+  t_ListRackTrack		RackTracks;
+  
+  RackTrack*			selectedTrack;
+  Plugin*				selectedPlugin;
+  
+  if (tmpFile.IsOpened())
+    {
+      tmpFile.Close();
+      if(wxRemoveFile(filePath) == false)
+	cout << "error supression\n" <<endl;
+    }
 
-	RackTrack*			selectedTrack;
-	Plugin*				selectedPlugin;
- 
-  if(fd_copy != -1)
-  {
-  	close(fd_copy);
-    if(wxRemoveFile(wxT("/tmp/.tmpccp")) == false)
-			cout << "error supression\n" <<endl;
-  }
-	if (copy_plug) delete copy_plug;
-	cout << "[Rack] End destructor" << endl;
+  if (copy_plug) delete copy_plug;
+  cout << "[Rack] End destructor" << endl;
 }
 
 void				Rack::InitContextMenu()
@@ -654,49 +655,60 @@ inline void			Rack::OnDeleteClick()
 
 inline void			Rack::OnCutClick()
 {
-  char file[12] ;
-
   if(selectedPlugin == 0x0)
     return;
     
   copy_plug = selectedPlugin;
-  strcpy(file, "/tmp/.tmpccp");
-  if(fd_copy != -1)
-    close(fd_copy);
-  fd_copy = open(file,  O_CREAT | O_TRUNC | O_RDWR, 0644);
-  
-  if(fd_copy < 0)
-    cout << "[RACKPANEL] Error creating tmp file"<< endl;
-  
-  else{
-    fd_size = copy_plug->Save(fd_copy);
-    menu->Enable(ID_MENU_PASTE, true);
-    is_cut = true;
-  }
+  if (tmpFile.IsOpened())
+    tmpFile.Close();
 
-  
+  if (!tmpFile.Exists(filePath))
+    tmpFile.Create(filePath);
+  if (!tmpFile.Exists(filePath))
+    cout << "[RACKPANEL] Error creating tmp file"<< endl;
+  else
+    {
+      tmpFile.Open(filePath, wxFile::read_write);
+        
+      if (!tmpFile.IsOpened())
+	cout << "[RACKPANEL] Error opening tmp file"<< endl;  
+      else
+	{
+	  // TODO : replace line below when remaking plug-in API giving wxFile arg instead of fd
+	  fd_size = copy_plug->Save(tmpFile.fd());
+	  menu->Enable(ID_MENU_PASTE, true);
+	  is_cut = true;
+	}
+    }
 }
 
 inline void			Rack::OnCopyClick()
 {
-  char file[12] ;
-
   if(selectedPlugin == 0x0)
     return;
   
   copy_plug = selectedPlugin;
-  strcpy(file, "/tmp/.tmpccp");
-  if(fd_copy != -1)
-    close(fd_copy);
-  fd_copy = open(file,  O_CREAT | O_TRUNC | O_RDWR, 0644);
-  
-  if(fd_copy < 0)
-     cout << "[RACKPANEL] Error creating tmp file" << endl;
-   
-  else{
-    fd_size = copy_plug->Save(fd_copy);
-    menu->Enable(ID_MENU_PASTE, true);
-  }  
+
+  if (tmpFile.IsOpened())
+    tmpFile.Close();
+
+  if (!tmpFile.Exists(filePath))
+    tmpFile.Create(filePath);
+  if (!tmpFile.Exists(filePath))
+    cout << "[RACKPANEL] Error creating tmp file"<< endl;
+  else
+    {
+      tmpFile.Open(filePath, wxFile::read_write);
+        
+      if (!tmpFile.IsOpened())
+	cout << "[RACKPANEL] Error opening tmp file"<< endl;  
+      else
+	{
+	  // TODO : replace line below when remaking plug-in API giving wxFile arg instead of fd
+	  fd_size = copy_plug->Save(tmpFile.fd());
+	  menu->Enable(ID_MENU_PASTE, true);
+	}  
+    }
 }
 
 inline void			Rack::OnPasteClick()
@@ -714,14 +726,17 @@ inline void			Rack::OnPasteClick()
       }
    if (p)
     {
-      if(fd_copy >= 0){
-	cout << fd_copy << endl;
-	if(lseek(fd_copy,0,SEEK_SET) != -1){
-	  tmp = AddToSelectedTrack(StartInfo, p);
-	  tmp->Load(fd_copy, fd_size);
-	  cout << "[RACKPANEL] plugin pasted" <<endl;
-	}
-      }       
+
+      if (tmpFile.IsOpened())
+	{
+	  cout << tmpFile.fd() << endl;
+	  if (tmpFile.Seek(0, wxFromStart) != wxInvalidOffset)
+	    {
+	      tmp = AddToSelectedTrack(StartInfo, p);
+	      tmp->Load(tmpFile.fd(), fd_size);
+	      cout << "[RACKPANEL] plugin pasted" <<endl;
+	    }
+	}       
     }
 
    if (is_cut && copy_plug)
