@@ -56,25 +56,25 @@ MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
   s_nodeInfo		infos;
   wxTreeItemId		itemTemp;
 
-  infos = SetStructInfos(infos, _("Sounds"), _(""), _(""));
+  infos = SetStructInfos(infos, _("Sounds"), wxT(""), wxT(""));
   itemTemp = AppendItem(root, _("Sound Files"));
   SetItemImage(itemTemp, 0);
   nodes[itemTemp] = infos;
 
   s_nodeInfo	infos1;
-  infos1 = SetStructInfos(infos1, _("MIDI"), _(""), _(""));
+  infos1 = SetStructInfos(infos1, _("MIDI"), wxT(""), wxT(""));
   itemTemp = AppendItem(root, _("MIDI Files"));
   SetItemImage(itemTemp, 0);
   nodes[itemTemp] = infos1;
 
   s_nodeInfo	infos2;
-  infos2 = SetStructInfos(infos2, _("Videos"), _(""), _(""));
+  infos2 = SetStructInfos(infos2, _("Videos"), wxT(""), wxT(""));
   itemTemp = AppendItem(root, _("Videos Files"));
   SetItemImage(itemTemp, 0);
   nodes[itemTemp] = infos2;
 
   s_nodeInfo	infos3;
-  infos3 = SetStructInfos(infos3, _("Effects"), _(""), _(""));
+  infos3 = SetStructInfos(infos3, _("Effects"), wxT(""), wxT(""));
   itemTemp = AppendItem(root, _("Effects Files"));
   SetItemImage(itemTemp, 0);
   nodes[itemTemp] = infos3;
@@ -181,7 +181,7 @@ void				MLTree::OnCreateDir()
 
   itemParent = GetSelection();
 
-  infos = SetStructInfos(infos, _("New Directory"), _(""), _(""));
+  infos = SetStructInfos(infos, _("New Directory"), wxT(""), wxT(""));
   itemAdded = AppendItem(itemParent, _("New Directory"));
   SetItemImage(itemAdded, 0);
   nodes[itemAdded] = infos;
@@ -374,7 +374,7 @@ void				MLTree::OnAdd(wxString FileToAdd)
 		  s_nodeInfo		infos;
 		  int			slashPos;
 
-		  infos = SetStructInfos(infos, FileToAdd, File->GetExt(), _(""));
+		  infos = SetStructInfos(infos, FileToAdd, File->GetExt(), wxT(""));
 		  slashPos = FileToAdd.Find('/', true);
 		  this->AddFile(GetTreeItemIdFromLabel(_("Sounds")), FileToAdd.Mid(slashPos + 1), infos);
 		}
@@ -408,7 +408,7 @@ wxString			MLTree::getSelection(int flag)
 	  temp = GetTreeItemStructFromId(selection[i]);
 	  return (temp.label);
 	}
-  return (_(""));
+  return (wxT(""));
 }
 
 // When removing an element
