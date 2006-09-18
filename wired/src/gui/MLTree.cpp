@@ -16,7 +16,6 @@
 #include "VUMCtrl.h"
 #include "../engine/Settings.h"
 #include "../engine/AudioEngine.h"
-
 #include "file.xpm"
 #include "audio.xpm"
 #include "icon5.xpm"
@@ -115,6 +114,7 @@ void				MLTree::AddIcon(wxImageList *images, wxIcon icon)
     images->Add(wxBitmap(wxBitmap(icon).ConvertToImage().Rescale(16, 16)));
 }
 
+// Load extentions known by wired
 bool				MLTree::LoadKnownExtentions()
 {
   wxTextFile			file(WiredSettings->ConfDir + EXT_FILE);
@@ -169,9 +169,10 @@ bool				MLTree::IsTreeCollapsed()
   return (collapsed);
 }
 
+// When creating a directory
 void				MLTree::OnCreateDir()
 {
-  cout << "[MEDIALIBRARY] OmCreateDir" << endl;
+  //  cout << "[MEDIALIBRARY] OmCreateDir" << endl;
 
   s_nodeInfo		infos;
   wxTreeItemId		itemParent;
@@ -188,6 +189,7 @@ void				MLTree::OnCreateDir()
   EditLabel(itemAdded);
 }
 
+// When inserting a file
 void				MLTree::OnInsert()
 {
   wxCommandEvent		event;
@@ -195,6 +197,7 @@ void				MLTree::OnInsert()
   MediaLibraryPanel->OnInsert(event);
 }
 
+// When editing a file
 void				MLTree::OnEdit()
 {
   wxCommandEvent		event;
@@ -202,6 +205,7 @@ void				MLTree::OnEdit()
   MediaLibraryPanel->OnEdit(event);
 }
 
+// When previewing a file
 void				MLTree::OnPreview()
 {
   wxCommandEvent		event;
@@ -209,11 +213,13 @@ void				MLTree::OnPreview()
   MediaLibraryPanel->OnPreview(event);
 }
 
+// Display infos corresponding to a node
 void				MLTree::DisplayInfos()
 {
-  cout << "[MEDIALIBRARY] DISPLAYINFOS" << endl;
+  //  cout << "[MEDIALIBRARY] DISPLAYINFOS" << endl;
 }
 
+// When adding a file
 void				MLTree::AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo infos)
 {
 
@@ -223,6 +229,7 @@ void				MLTree::AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo 
   nodes[itemToAdd] = infos;
 }
 
+// Return an item Id from a label node
 wxTreeItemId			MLTree::GetTreeItemIdFromLabel(wxString label)
 {
   wxTreeItemId			ItemToReturn;
@@ -240,6 +247,7 @@ wxTreeItemId			MLTree::GetTreeItemIdFromLabel(wxString label)
   return (ItemToReturn);
 }
 
+// DEBUG display nodes names
 void				MLTree::DisplayNodes()
 {
   map<wxTreeItemId, s_nodeInfo>::iterator it;
@@ -249,12 +257,13 @@ void				MLTree::DisplayNodes()
     {
       s_nodeInfo temp;
       temp = (*it).second;
-      cout << "value : [" << temp.label << "]" << endl;
+      //      cout << "value : [" << temp.label << "]" << endl;
       cnt++;
     }
-  cout << "  total : " << cnt << endl;
+  //  cout << "  total : " << cnt << endl;
 }
 
+// Compare two existing items
 int				MLTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
 {
   map<wxTreeItemId, s_nodeInfo>::iterator it;
@@ -262,7 +271,7 @@ int				MLTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& ite
   wxString	text2;
   int		slashPos;
 
-  cout << "selected : " << selected.mb_str() << endl;
+  //  cout << "selected : " << selected.mb_str() << endl;
   for (it = nodes.begin(); it != nodes.end(); it++)
     {
       if ((*it).first == item1)
@@ -304,12 +313,13 @@ int				MLTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& ite
 	}
     }
   //  cout << "text1: " << text1.mb_str() << " | text2: " << text2.mb_str() << "comp: " << text1.Cmp(text2) << endl;
-  cout << "sort:" << m_reverseSort << endl;
+  //  cout << "sort:" << m_reverseSort << endl;
 
   return text1.Cmp(text2) * m_reverseSort;
 
 }
 
+// Sort existing nodes
 void				MLTree::SortNodes(wxString MLselected)
 {
   map<wxTreeItemId, s_nodeInfo>::iterator it;
@@ -327,7 +337,7 @@ void				MLTree::SortNodes(wxString MLselected)
     }
 }
 
-
+// Return the struct associated to a node, from an ID
 s_nodeInfo			MLTree::GetTreeItemStructFromId(wxTreeItemId ItemToFind)
 {
   s_nodeInfo			structToReturn;
@@ -346,6 +356,7 @@ s_nodeInfo			MLTree::GetTreeItemStructFromId(wxTreeItemId ItemToFind)
   return (structToReturn);
 }
 
+// When adding a file/directory
 void				MLTree::OnAdd(wxString FileToAdd)
 {
 
@@ -355,7 +366,7 @@ void				MLTree::OnAdd(wxString FileToAdd)
 
       if (File->FileExists() == true)
 	{
-	  cout << "[MEDIALIBRARY] File added : " << FileToAdd <<  " Extention is : " << File->GetExt() << endl;
+	  //	  cout << "[MEDIALIBRARY] File added : " << FileToAdd <<  " Extention is : " << File->GetExt() << endl;
 	  for (vector<wxString>::iterator iter = Exts.begin(); iter != Exts.end(); iter++)
 	    {
 	      if (iter->Contains(File->GetExt()) == true)
@@ -373,7 +384,7 @@ void				MLTree::OnAdd(wxString FileToAdd)
     }
 }
 
-
+// Return selection label
 wxString			MLTree::getSelection(int flag)
 {
   wxArrayTreeItemIds		selection;
@@ -400,6 +411,7 @@ wxString			MLTree::getSelection(int flag)
   return (_(""));
 }
 
+// When removing an element
 void				MLTree::OnRemove()
 {
   wxArrayTreeItemIds		selection;
@@ -420,6 +432,7 @@ void				MLTree::OnRemove()
   DisplayNodes();
 }
 
+// Expand all existing nodes
 void				MLTree::ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldExpand, int toLevel)
 {
   if (toLevel == 0 || !ItemHasChildren(id))
@@ -437,9 +450,10 @@ void				MLTree::ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldE
     ExpandAll(Tree, child, shouldExpand, toLevel - 1);
 }
 
+// Collapse all existing nodes
 void				MLTree::OnCollapse()
 {
-  cout << "[MEDIALIBRARY] Expand/Collapse Tree (OnCollapse)" << endl;
+  //  cout << "[MEDIALIBRARY] Expand/Collapse Tree (OnCollapse)" << endl;
   if (IsTreeCollapsed() == true)
     {
       ExpandAll(Tree, GetRootItem(), true, 2);
@@ -454,19 +468,30 @@ void				MLTree::OnCollapse()
     }
 }
 
+// Display menu on right click
 void				MLTree::OnRightClick(wxMouseEvent& event)
 {
-  cout << "[MEDIALIBRARY] RightClick" << endl;
-
+  //  cout << "[MEDIALIBRARY] RightClick" << endl;
+  wxTreeItemId		item;
   wxMenu* myMenu = new wxMenu();
-  myMenu->Append(ML_ID_MENU_INFOS, wxT("Infos"), wxT("Infos"));
-  myMenu->Append(ML_ID_MENU_PREVIEW, wxT("Preview"), wxT("Preview"));
-  myMenu->Append(ML_ID_MENU_INSERT, wxT("Insert"), wxT("Insert"));
-  myMenu->Append(ML_ID_MENU_EDIT, wxT("Edit"), wxT("Edit"));
+  s_nodeInfo		infos;
+
+  item = GetSelection();
+  infos = GetTreeItemStructFromId(item);
+  if (infos.extention.Cmp(_("")))
+    {
+      myMenu->Append(ML_ID_MENU_INFOS, wxT("Infos"), wxT("Infos"));
+      myMenu->Append(ML_ID_MENU_PREVIEW, wxT("Preview"), wxT("Preview"));
+      myMenu->Append(ML_ID_MENU_INSERT, wxT("Insert"), wxT("Insert"));
+      myMenu->Append(ML_ID_MENU_EDIT, wxT("Edit"), wxT("Edit"));
+      myMenu->Append(ML_ID_MENU_DELETE, wxT("Delete"), wxT("Delete"));
+      myMenu->AppendSeparator();
+    }
+  else
+    {
+      myMenu->Append(ML_ID_MENU_CREATEDIR, wxT("New Directory"), wxT("New Directory"));
+    }
   myMenu->Append(ML_ID_MENU_DELETE, wxT("Delete"), wxT("Delete"));
-  myMenu->AppendSeparator();
-  myMenu->Append(ML_ID_MENU_CREATEDIR, wxT("New Directory"), wxT("New Directory"));
-  //  myMenu->Append(5112, wxT("New Snippet"), wxT("New Snippet"));
   PopupMenu(myMenu);
   delete myMenu;
 }
