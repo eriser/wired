@@ -263,7 +263,7 @@ void				MediaLibrary::OnPreview(wxCommandEvent &WXUNUSED(event))
 
   item = MLTreeView->GetSelection();
   infos = MLTreeView->GetTreeItemStructFromId(item);
-  if (infos.extention.Cmp(_("")))
+  if (infos.extention.Cmp(wxT("")))
     {
       Seq->PlayFile(selfile, true);
     }
