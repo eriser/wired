@@ -58,8 +58,6 @@ Settings::Settings() :
     {
       f.SetName(WIRED_CONF);
 
-      cout << "test path : " << f.GetPath().mb_str() << endl;
-      cout << "test file : " << f.GetName().mb_str() << endl;
       if (!f.FileExists())
 	{
 	  wxString	welcome;
