@@ -24,6 +24,7 @@ those dependancies problems.
       http://www.wxwidgets.org
 	* When compiling wxWidgets, be sure you are using GTK2 support by 
 	passing to configure script: --enable-gtk2
+	* or you can install it with 2 packages: libwxgtk2.6-dev, wx-common
 
   - SoundTouch: 
       http://sky.prohosting.com/oparviai/soundtouch/

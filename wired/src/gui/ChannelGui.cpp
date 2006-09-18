@@ -19,11 +19,11 @@
 
 ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
 		       wxWindow* parent, wxWindowID id,
-		       const wxPoint& pos, const wxSize& size, 
+		       const wxPoint& pos, const wxSize& size,
 		       const wxString& label)
   : wxPanel( parent, id, pos, size )
 {
-  
+
   ConnectedSeqTrack = 0x0;
   SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);
   bg = new wxImage(wxString(WiredSettings->DataDir + wxString(BG)).c_str(), wxBITMAP_TYPE_PNG);
@@ -34,8 +34,8 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
   ImgFaderFg = img_fg;
   if (Chan->Stereo)
     {
-      FaderLeft  = new FaderCtrl(this, FaderLeftId, ImgFaderBg, ImgFaderFg, 0, 
-				 127, &Chan->VolumeLeft, true, wxPoint(17, 10), wxDefaultSize, 
+      FaderLeft  = new FaderCtrl(this, FaderLeftId, ImgFaderBg, ImgFaderFg, 0,
+				 127, &Chan->VolumeLeft, true, wxPoint(17, 10), wxDefaultSize,
 				 this, GetPosition() + wxPoint(5,15));
       wxImage *green = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
       wxImage *orange = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
@@ -43,7 +43,7 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
       VumLeft  = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(8, 23), wxSize(4, 65), wxNO_BORDER);
       VumRight = new VUMCtrl(this, -1, 100, green, orange, red, wxPoint(60, 23), wxSize(4, 65), wxNO_BORDER);
       FaderRight = new FaderCtrl(this, FaderRightId, ImgFaderBg, ImgFaderFg, 0,
-				 127, &Chan->VolumeRight, true, wxPoint(69, 10), wxDefaultSize, 
+				 127, &Chan->VolumeRight, true, wxPoint(69, 10), wxDefaultSize,
 				 this, GetPosition() + wxPoint(75,15));
       /*VolumeLeft = new wxStaticText(this, -1, "100", wxPoint(5, 90));
       VolumeLeft->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));
@@ -62,11 +62,11 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
       hp_dn = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERHPDOWN)).c_str(), wxBITMAP_TYPE_PNG);
       lock_up = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERLOCKUP)).c_str(), wxBITMAP_TYPE_PNG);
       lock_dn = new wxImage(wxString(WiredSettings->DataDir + wxString(MIXERLOCKDOWN)).c_str(), wxBITMAP_TYPE_PNG);
-      MuteLeftButton = 	new DownButton(this, MuteLeftId, wxPoint(24, 105), 
+      MuteLeftButton = 	new DownButton(this, MuteLeftId, wxPoint(24, 105),
 				       wxSize(13, 13), hp_up, hp_dn, false);
-      MuteRightButton = new DownButton(this, MuteRightId, wxPoint(63, 105), 
+      MuteRightButton = new DownButton(this, MuteRightId, wxPoint(63, 105),
 				       wxSize(13, 13), hp_up, hp_dn, false);
-      LockButton = new DownButton(this, LockId, wxPoint(41, 99), 
+      LockButton = new DownButton(this, LockId, wxPoint(41, 99),
 				  wxSize(19, 19), lock_up, lock_dn, false);
       Lock = true;
       LockButton->SetOn();
@@ -92,27 +92,27 @@ void				ChannelGui::OnPaint(wxPaintEvent& WXUNUSED(event))
   memDC.SelectObject(*MixerBmp);
 
   while (upd)
-    {    
-      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, 
-	      upd.GetX(), upd.GetY(), 
-	      wxCOPY, FALSE);      
+    {
+      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC,
+	      upd.GetX(), upd.GetY(),
+	      wxCOPY, FALSE);
       upd++;
-    }  
+    }
 }
 
 void				ChannelGui::OnFaderLeft(wxScrollEvent& WXUNUSED(e))
 {
   float				res = static_cast<float>(FaderLeft->GetValue() / 100.f);
   //wxString			s;
-  
+
   //s.Printf("%d", FaderLeft->GetValue());
-  if (Lock) 
+  if (Lock)
     {
       MixMutex.Lock();			//mutex used by Channel::PushBuffer()
       FaderRight->SetValue(FaderLeft->GetValue());
       MixMutex.Unlock();
     }
-  //else 
+  //else
   //{
   //  MixMutex.Lock();			//mutex used by Channel::PushBuffer()
       //Chan->VolumeLeft = res;
@@ -123,12 +123,12 @@ void				ChannelGui::OnFaderLeft(wxScrollEvent& WXUNUSED(e))
 }
 
 void				ChannelGui::OnFaderRight(wxScrollEvent& WXUNUSED(e))
-{ 
+{
   //float				res = static_cast<float>(FaderRight->GetValue() / 100.f);
   //wxString			s;
 
   //s.Printf("%d", FaderRight->GetValue());
-  if (Lock) 
+  if (Lock)
     {
 
       //Chan->VolumeRight = res;
@@ -139,7 +139,7 @@ void				ChannelGui::OnFaderRight(wxScrollEvent& WXUNUSED(e))
       //cout << "in lock" << endl;
       //VolumeLeft->SetLabel(s);
     }
-  //else 
+  //else
   //{
       //MixMutex.Lock();			//mutex used by Channel::PushBuffer()
       //Chan->VolumeRight = res;
@@ -173,7 +173,7 @@ void				ChannelGui::SetOpt(SeqTrack* st)
 void				ChannelGui::UpdateScreen()
 {
   float				lrms, rrms;
-  
+
   MixMutex.Lock();		//mutex used by Channel::PushBuffer()
   lrms= Chan->Lrms;
   rrms= Chan->Rrms;
@@ -241,9 +241,9 @@ void				ChannelGui::OnLock(wxCommandEvent& WXUNUSED(e))
     LockButton->SetOff();
 }
 
-MasterChannelGui::MasterChannelGui( Channel *channel, wxImage *img_bg, 
-				    wxImage *img_fg, wxWindow* parent, 
-				    wxWindowID id, const wxPoint& pos, 
+MasterChannelGui::MasterChannelGui( Channel *channel, wxImage *img_bg,
+				    wxImage *img_fg, wxWindow* parent,
+				    wxWindowID id, const wxPoint& pos,
 				    const wxSize& size )
   : ChannelGui(channel, img_bg, img_fg, parent, id, pos, size, _("MASTER"))
 {
@@ -252,7 +252,7 @@ MasterChannelGui::MasterChannelGui( Channel *channel, wxImage *img_bg,
 
 MasterChannelGui::~MasterChannelGui()
 {
-  
+
 }
 
 void				MasterChannelGui::OnFaderLeft(wxScrollEvent &e)
@@ -261,7 +261,7 @@ void				MasterChannelGui::OnFaderLeft(wxScrollEvent &e)
   //wxString			s;
 
   //s.Printf("%d", FaderLeft->GetValue());
-  if (Lock) 
+  if (Lock)
     {
       MixMutex.Lock();			//mutex used by Mixer::Mixouput()
       Mix->VolumeRight = Chan->VolumeRight / 100.f;
@@ -270,23 +270,23 @@ void				MasterChannelGui::OnFaderLeft(wxScrollEvent &e)
       FaderRight->SetValue(FaderLeft->GetValue());
       //VolumeRight->SetLabel(s);
     }
-  else 
+  else
     {
       MixMutex.Lock();			//mutex used by Channel::PushBuffer()
       Mix->VolumeLeft = Chan->VolumeLeft / 100.f;
       MixMutex.Unlock();
     }
   //cout << Mix->VolumeLeft << " | " << Mix->VolumeRight << endl;
-  //VolumeLeft->SetLabel(s); 
+  //VolumeLeft->SetLabel(s);
 }
 
 void				MasterChannelGui::OnFaderRight(wxScrollEvent &e)
-{ 
+{
   //float				res = static_cast<float>(FaderRight->GetValue() / 100.f);
   //wxString			s;
 
   //s.Printf("%d", FaderRight->GetValue());
-  if (Lock) 
+  if (Lock)
     {
       MixMutex.Lock();			//mutex used by Mixer::Mixoutput()
       Mix->VolumeRight = Chan->VolumeRight / 100.f;
@@ -294,7 +294,7 @@ void				MasterChannelGui::OnFaderRight(wxScrollEvent &e)
       FaderLeft->SetValue(FaderRight->GetValue());
       MixMutex.Unlock();
     }
-  else 
+  else
     {
       MixMutex.Lock();			//mutex used by Mixer::Mixoutput()
       Mix->VolumeRight = Chan->VolumeRight / 100.f;

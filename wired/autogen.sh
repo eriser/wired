@@ -28,7 +28,7 @@ mkdir intl
 
 # execute autotools cmds
 autopoint -f				&& \
-aclocal --force				&& \
+aclocal --force	-I config/m4		&& \
 libtoolize --force -c			&& \
 autoconf				&& \
 automake -a -f -c
