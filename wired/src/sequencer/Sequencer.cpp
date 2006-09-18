@@ -637,7 +637,8 @@ void					Sequencer::SetSigNumerator(int signum)
   list<RackTrack *>::iterator i;
   list<Plugin *>::iterator j;
 
-  SigNumerator = signum;
+  if (signum != 0)
+    SigNumerator = signum;
   CalcSpeed();
   for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)
     for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)

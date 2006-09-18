@@ -44,8 +44,7 @@ class Mixer
 
   void			FlushInput(long num); 
   void			MixInput(void);
-  
-  float			Volume;
+
   float			VolumeLeft;
   float			VolumeRight;
   bool			MuteL;
