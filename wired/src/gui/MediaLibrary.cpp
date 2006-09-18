@@ -192,8 +192,6 @@ void				MediaLibrary::OnCollapse(wxCommandEvent &WXUNUSED(event))
 
 void				MediaLibrary::OnSize(wxSizeEvent &event)
 {
-  cout << "[MEDIALIBRARY] Resize (OnSize) : X = " << this->GetSize().x << "; Y = " << this->GetSize().y << endl;
-
   BottomToolbar->Move(0, this->GetSize().y - 100);
   FiltersToolbar->Move(0, this->GetSize().y - 50);
 }
