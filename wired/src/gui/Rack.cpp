@@ -556,21 +556,21 @@ void				Rack::AddPlugToMenu()
     }
 }
 
+// called from OnPaint()'s plugins (via HostCallback)
 void				Rack::HandlePaintEvent(Plugin *plug, wxPaintEvent *event)
 {
-	int xx, yy;
-	
+  int xx, yy;
 
-	CalcScrolledPosition(0, 0, &xx, &yy);
-	if (selectedPlugin == 0x0)
-		return;
-	if (selectedPlugin == plug)
+  CalcScrolledPosition(0, 0, &xx, &yy);
+  if (selectedPlugin == 0x0)
+    return;
+  if (selectedPlugin == plug)
     {
-    	wxPaintDC dc(selectedPlugin);
-	    PrepareDC(dc);
-	    dc.SetPen(wxPen(wxColour(255,0,0), 3, wxSOLID));
-	    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	    dc.DrawRectangle(0 - xx, 0 - yy, selectedPlugin->GetSize().x, selectedPlugin->GetSize().y);
+      wxPaintDC dc(selectedPlugin);
+      PrepareDC(dc);
+      dc.SetPen(wxPen(wxColour(255,0,0), 3, wxSOLID));
+      dc.SetBrush(*wxTRANSPARENT_BRUSH);
+      dc.DrawRectangle(0 - xx, 0 - yy, selectedPlugin->GetSize().x, selectedPlugin->GetSize().y);
     }
 }
 

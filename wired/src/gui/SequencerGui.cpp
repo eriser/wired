@@ -149,8 +149,11 @@ void					SequencerView::OnRightClick(wxMouseEvent &event)
 
 void					SequencerView::OnPaint(wxPaintEvent &event)
 {
-  DrawMeasures();
-  DrawTrackLines();
+  wxPaintDC				dc(this);
+
+  PrepareDC(dc);
+  DrawMeasures(&dc);
+  DrawTrackLines(&dc);
 }
 
 void					SequencerView::AutoScroll(double xmove, double ymove)
@@ -279,27 +282,26 @@ void					SequencerView::OnHelp(wxMouseEvent &event)
     }
 }
 
-void					SequencerView::DrawMeasures()
+void					SequencerView::DrawMeasures(wxDC &dc)
 {
-  wxPaintDC				dc(this);
   wxSize				size;
   wxString				s;
   double				x;
-  double				u;
+  double				u = 1;
   long					m;
 
-  PrepareDC(dc);
   size = GetClientSize();
   dc.SetPen(wxPen(CL_SEQVIEW_BACKGROUND, 1, wxSOLID));
   dc.SetBrush(wxBrush(CL_SEQVIEW_BACKGROUND));
   dc.SetTextForeground(CL_SEQVIEW_FOREGROUND);
   dc.DrawRectangle(0, 0, size.x, size.y);
   dc.SetPen(wxPen(CL_SEQVIEW_BAR, 1, wxSOLID));
-  u = MEASURE_WIDTH * SeqPanel->HoriZoomFactor / Seq->SigNumerator;
+  if (Seq->SigNumerator != 0)
+    u = MEASURE_WIDTH * SeqPanel->HoriZoomFactor / Seq->SigNumerator;
   m = (long) ceil(XScroll / u);
   for (x = u * m - XScroll; (long) floor(x) < size.x; x += u)
     {
-      if (!(m++ % Seq->SigNumerator))
+      if (Seq->SigNumerator != 0 && !(m++ % Seq->SigNumerator))
         {
 	  dc.SetPen(wxPen(CL_SEQVIEW_MES, 1, wxSOLID));
 	  dc.DrawLine((int) floor(x), 0,
@@ -312,13 +314,11 @@ void					SequencerView::DrawMeasures()
     }
 }
 
-void					SequencerView::DrawTrackLines()
+void					SequencerView::DrawTrackLines(wxDC &dc)
 {
-  wxPaintDC				dc(this);
   vector<Track *>::iterator		i;
   long					h;
   
-  PrepareDC(dc);
   for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)  
     if ((*i)->TrackPattern)
       {
@@ -513,10 +513,13 @@ Track					*SequencerGui::AddTrack(bool is_audio)
   UpdateTracks();
   SeqPanel->SetScrolling();
   ReSizeCursors();
-  SeqView->DrawTrackLines();
+
+  wxClientDC				drawme(SeqView);
+  PrepareDC(drawme);
+  SeqView->DrawMeasures(drawme);
+  SeqView->DrawTrackLines(drawme);
   return (n);
 }
-
 
 void					SequencerGui::RemoveTrack()
 {
