@@ -221,7 +221,7 @@ void				MediaLibrary::OnInsert(wxCommandEvent &WXUNUSED(event))
   
   selfile = MLTreeView->getSelection(1);
   // Test the selfile content HERE
-  cout << "[MEDIALIBRARY] Insert File (OnInsert)" << selfile << endl;
+  //  cout << "[MEDIALIBRARY] Insert File (OnInsert)" << selfile << endl;
   MidiMutex.Lock();
   MidiDeviceMutex.Lock();
   AudioMutex.Lock();
@@ -234,38 +234,45 @@ void				MediaLibrary::OnInsert(wxCommandEvent &WXUNUSED(event))
 
 void				MediaLibrary::OnFilterAudio(wxCommandEvent &WXUNUSED(event))
 {
-  cout << "[MEDIALIBRARY] Filter AudioFile (OnFilterAudio)" << endl;
+  //  cout << "[MEDIALIBRARY] Filter AudioFile (OnFilterAudio)" << endl;
 }
 
 void				MediaLibrary::OnFilterMIDI(wxCommandEvent &WXUNUSED(event))
 {
-  cout << "[MEDIALIBRARY] Filter MIDIFile (OnFilterMidi)" << endl;
+  //  cout << "[MEDIALIBRARY] Filter MIDIFile (OnFilterMidi)" << endl;
 }
 
 void				MediaLibrary::OnFilterVideo(wxCommandEvent &WXUNUSED(event))
 {
-  cout << "[MEDIALIBRARY] Filter VideoFile (OnFilterVideo)" << endl;
+  //  cout << "[MEDIALIBRARY] Filter VideoFile (OnFilterVideo)" << endl;
 }
 
 void				MediaLibrary::OnFilterEffects(wxCommandEvent &WXUNUSED(event))
 {
-  cout << "[MEDIALIBRARY] Filter EffectsFile (OnFilterEffects)" << endl;
+  //  cout << "[MEDIALIBRARY] Filter EffectsFile (OnFilterEffects)" << endl;
 }
 
 void				MediaLibrary::OnPreview(wxCommandEvent &WXUNUSED(event))
 {
   wxString			selfile;
+  wxTreeItemId		item;
+  s_nodeInfo		infos;
   
   selfile = MLTreeView->getSelection(1);
-  cout << "[MEDIALIBRARY] Preview File (OnPreview)" << selfile << endl;
+  //  cout << "[MEDIALIBRARY] Preview File (OnPreview)" << selfile << endl;
 
-  Seq->PlayFile(selfile, true);
+  item = MLTreeView->GetSelection();
+  infos = MLTreeView->GetTreeItemStructFromId(item);
+  if (infos.extention.Cmp(_("")))
+    {
+      Seq->PlayFile(selfile, true);
+    }
 }
 
 void				MediaLibrary::OnSortToggle(wxCommandEvent &WXUNUSED(event))
 {
   wxString selected = SortSelect->GetValue();
-  cout << "[MEDIALIBRARY] Sort Files (OnSortToggle) [" << selected << "]" << endl;
+  //  cout << "[MEDIALIBRARY] Sort Files (OnSortToggle) [" << selected << "]" << endl;
   MLTreeView->SortNodes(selected);
 }
 
