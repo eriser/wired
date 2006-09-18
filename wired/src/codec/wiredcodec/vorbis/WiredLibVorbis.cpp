@@ -4,6 +4,7 @@
 #include	"WiredLibVorbis.h"
 #include	<sys/types.h>
 #include	<sys/stat.h>
+#include	<wx/file.h>
 #include	<fcntl.h>
 
 WiredLibVorbis			WiredLibVorbis::operator=(const WiredLibVorbis& right)
@@ -94,16 +95,18 @@ int WiredLibVorbis::encode(float** pcm)
 
 bool	WiredLibVorbis::CanConvert(const wxString& path, int Decode)
 {
-  int		fd;
+  wxFile	oggFile;
   char		*buf;
   
   if (Decode & ENCODE)
     return false;
-  if ((fd = open((char*)(const char*)path.mb_str(*wxConvCurrent), O_RDONLY)) == -1)
+
+  if (!oggFile.Open(path), wxFile::read)
     return false;
   buf = new char((VORBIS_FCC_LENGHT + 1) * sizeof(char));
   buf[VORBIS_FCC_LENGHT] = 0;
-  if (read(fd, buf, VORBIS_FCC_LENGHT) == VORBIS_FCC_LENGHT)
+
+  if (oggFile.Read(buf, VORBIS_FCC_LENGHT) == VORBIS_FCC_LENGHT)
     {
       if (strcmp(buf, VORBIS_FCC_LABEL) == 0)
     	{
