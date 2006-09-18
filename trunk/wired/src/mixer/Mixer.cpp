@@ -13,10 +13,13 @@
 extern Mixer			*Mix;
 wxMutex				MixMutex;
 
-Mixer::Mixer() : VolumeLeft(1), VolumeRight(1), Volume(1), 
-		 MuteL(false), MuteR(false)
+Mixer::Mixer()
 {
-  //Audio->SamplesPerBuffer;
+  VolumeLeft = 1.f;
+  VolumeRight = 1.f;
+  MuteL = false;
+  MuteR = false;
+
   OutputLeft = new float[Audio->SamplesPerBuffer];
   OutputRight = new float[Audio->SamplesPerBuffer];
   Input = new float*[PREBUF_NUM];
@@ -45,23 +48,28 @@ Mixer::~Mixer()
 	  delete[] OutputLeft;
   if (OutputRight)
 	  delete[] OutputRight;
-  for (int i = 0; i < PREBUF_NUM; i++)
-  {
-  	if (Input[i])
-	    delete[] Input[i];
-  }
+
   if (Input)
-	  delete[] Input;
+    {
+      for (int i = 0; i < PREBUF_NUM; i++)
+	{
+	  if (Input[i])
+	    delete [] Input[i];
+	}
+      delete [] Input;
+    }
 }
 
 Mixer 	Mixer::operator=(const Mixer& right)
 {
+  cerr << "WARNING : Soon, Wired will miserably fail" << endl;
+
+  // Ptr must NOT be copied, but content of data does.
 	if (this != &right)
 	{
 		OutputLeft = right.OutputLeft;
 		OutputRight = right.OutputRight;
 		Input = right.Input;
-		Volume = right.Volume;
 		VolumeLeft = right.VolumeLeft;
 		VolumeRight = right.VolumeLeft;
 		MuteL = right.MuteL;
@@ -75,7 +83,7 @@ Mixer 	Mixer::operator=(const Mixer& right)
 Channel				*Mixer::AddMonoOutputChannel()
 {
   Channel *chan;
-  
+
   try
     {
       chan = new Channel(false);
@@ -140,7 +148,7 @@ Channel				*Mixer::AddMonoOutputChannel(bool visible)
 
   try
     {
-      chan = new Channel(false, true);
+      chan = new Channel(false, visible);
       OutChannels.push_back(chan);
       //MixerPanel->AddChannel(chan);
     }

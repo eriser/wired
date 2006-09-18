@@ -36,6 +36,9 @@ Channel::~Channel()
 
 Channel		Channel::operator=(const Channel& right)
 {
+  cerr << "WARNING : Soon, Wired will fail" << endl;
+
+  // Ptr must NOT be copied, but content of data does.
 	if (this != &right)
 	{
 		Label = right.Label;
@@ -123,7 +126,6 @@ void Channel::PushBuffer(float **buffer)
 {
   float lrms = 0.f, rrms = 0.f, lvol, rvol;
   bool ml, mr;
-  bool	static_var = true;
   
   MixMutex.Lock();		//used in ChannelGui::OnFader....()
   ml = MuteLeft;
@@ -143,7 +145,6 @@ void Channel::PushBuffer(float **buffer)
 	{
 	  for (unsigned long i = 0; i < Audio->SamplesPerBuffer; i++)
 	    {
-	      static_var = false;
 	      (StereoBuffers[0])[0][i] = buffer[0][i] * lvol;
 	      (StereoBuffers[0])[1][i] = buffer[1][i] * rvol;
 	      
