@@ -1,4 +1,4 @@
-SUBDIRS = intl po src
+SUBDIRS = intl po src/portaudio src
 
 ACLOCAL_AMFLAGS = -I config/m4
 

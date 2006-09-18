@@ -18,7 +18,6 @@ SUBDIRS =				\
 	codec				\
 	wiredvideo			\
 	dssi				
-#	portaudio
 
 
 DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so libs/WiredAkai/src/.libs/libWiredAkai.so -Lfileloader -lfileloader
@@ -29,24 +28,24 @@ wired_CPPFLAGS = $(shell wx-config --cflags) -Igui -Iplugins -Ifileloader -I/opt
 
 bin_PROGRAMS = wired
 
-wired_SOURCES = 
+wired_SOURCES =
 
-wired_LDADD =				\
-	gui/libgui.a			\
-	sequencer/libsequencer.a	\
-	audio/libaudio.a		\
-	editmidi/libeditmidi.a		\
-	engine/libengine.a		\
-	fileloader/libfileloader.a	\
-	midi/libmidi.a			\
-	midi/portmidi/libportmidi.a	\
+wired_LDADD =					\
+	gui/libgui.a				\
+	sequencer/libsequencer.a		\
+	audio/libaudio.a			\
+	editmidi/libeditmidi.a			\
+	engine/libengine.a			\
+	fileloader/libfileloader.a		\
+	midi/libmidi.a				\
+	midi/portmidi/libportmidi.a		\
 	midi/portmidi/porttime/libporttime.a	\
-	mixer/libmixer.a		\
-	plugins/libplugins.a		\
-	redist/libredist.a		\
-	undo/libundo.a			\
-	xml/libwiredxml.a		\
-	samplerate/libwiredsamplerate.a	\
-	codec/libwiredCodec.a		\
-	wiredvideo/libwiredvideo.a	\
+	mixer/libmixer.a			\
+	plugins/libplugins.a			\
+	redist/libredist.a			\
+	undo/libundo.a				\
+	xml/libwiredxml.a			\
+	samplerate/libwiredsamplerate.a		\
+	codec/libwiredCodec.a			\
+	wiredvideo/libwiredvideo.a		\
 	dssi/libwireddssi.a
