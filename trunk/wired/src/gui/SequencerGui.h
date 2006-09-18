@@ -169,8 +169,8 @@ class				SequencerView: public wxWindow
   void				SetTotalHeight(unsigned long h);
 
  protected:
-  void				DrawMeasures();
-  void				DrawTrackLines();
+  void				DrawMeasures(wxDC &dc);
+  void				DrawTrackLines(wxDC &dc);
 
   DECLARE_EVENT_TABLE()
 };
