@@ -152,8 +152,8 @@ void					SequencerView::OnPaint(wxPaintEvent &event)
   wxPaintDC				dc(this);
 
   PrepareDC(dc);
-  DrawMeasures(&dc);
-  DrawTrackLines(&dc);
+  DrawMeasures(dc);
+  DrawTrackLines(dc);
 }
 
 void					SequencerView::AutoScroll(double xmove, double ymove)
