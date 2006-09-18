@@ -13,12 +13,13 @@ Device::~Device()
 
 bool Device::GetSupportedSettings(void)
 {
-  const PaDeviceInfo	*info = 0x0;
+  const PaDeviceInfo	*info = NULL;
   
-  if ((info = Pa_GetDeviceInfo( Id )) == NULL)
+  info = Pa_GetDeviceInfo(Id);
+
+  if (info == NULL)
     {
-      cout << "[AUDIO] Error Pa_GetDeviceInfo() bad return value" 
-	   << endl;
+      cout << "[AUDIO] Error Pa_GetDeviceInfo() bad return value" << endl;
       return (false);
     }
   /*cout << "[DEVICE] info Low In Latency: " << info->defaultLowInputLatency 
@@ -35,21 +36,20 @@ bool Device::GetSupportedSettings(void)
   InputLatencyRange[MIN] = info->defaultLowOutputLatency;
   InputLatencyRange[MAX] = info->defaultHighOutputLatency;
   
-  
   PaStreamParameters InParams, OutParams;
 
   memset(&InParams, 0, sizeof(InParams));
-  memset(&OutParams, 0, sizeof(OutParams));
   InParams.device = Id;
   InParams.channelCount = MaxInputChannels;
   InParams.suggestedLatency = InputLatencyRange[MIN];
   InParams.hostApiSpecificStreamInfo = NULL;
-  
+
+  memset(&OutParams, 0, sizeof(OutParams));
   OutParams.device = Id;
   OutParams.channelCount = MaxOutputChannels;
   OutParams.suggestedLatency = OutputLatencyRange[MIN];
   OutParams.hostApiSpecificStreamInfo = NULL;
-
+  
   PaError err;
   DeviceFormat *f;
   for (int sf = 0; sf < MAX_SAMPLE_FORMATS; sf++)
@@ -61,9 +61,10 @@ bool Device::GetSupportedSettings(void)
       f->SampleFormat = standardSampleFormats[sf];
       for (int i = 0; standardSampleRates[i] > 0; i++)
 	{
-	  err = 
-	    Pa_IsFormatSupported( &InParams, &OutParams, 
-				  standardSampleRates[i] );
+	  //If Max*Channels is 0, we have to give NULL to Portaudio.
+	  err = Pa_IsFormatSupported((MaxInputChannels > 0 ? &InParams : NULL),
+				     (MaxOutputChannels > 0 ? &OutParams : NULL),
+				     standardSampleRates[i]);
 	  if( err == paFormatIsSupported )
 	    f->SampleRates.push_back(standardSampleRates[i]);
 	}
