@@ -172,13 +172,13 @@ AC_MSG_RESULT([$CFGDEBUG])
 #Portaudio configuration
 if test x"$enable_jack" = xyes;
 then
-   have_jack=yes
+   with_jack=yes
    with_oss=no
-   have_alsa=no
+   with_alsa=no
 else
-   have_jack=no
+   with_jack=no
    with_oss=yes
-   have_alsa=yes
+   with_alsa=yes
 fi
 
 AC_CONFIG_SUBDIRS([src/portaudio])
@@ -282,9 +282,9 @@ if test x$ac_cv_c_compiler_gnu = xyes ; then
 AC_MSG_RESULT([
    Options :
 
-    Jack : ......................... ${have_jack}
-    OSS : .......................... ${with_oss}
-    ALSA : ......................... ${have_alsa}
+    Jack : ........................ ${with_jack}
+    OSS : ......................... ${with_oss}
+    ALSA : ........................ ${with_alsa}
  ])
 
 AC_MSG_RESULT([
