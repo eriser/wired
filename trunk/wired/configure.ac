@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([Wired], [0.2.2], [wired@bloodshed.net])
+AC_INIT([Wired], [0.3], [wired@bloodshed.net])
 
 
 # Auxiliary files.
@@ -116,12 +116,16 @@ AC_ARG_ENABLE(debug,
 	[enable_debug="$enableval"],
 	[enable_debug="no"])
 
-#, disable_optimize=yes, disable_optimize=no)
 AC_ARG_ENABLE(optimize,
 	[  --enable-optimize Enable or disable compilation optimizations (default enabled)],
 	[enable_optimize="$enableval"],
 	[enable_optimize="yes"])
 
+
+AC_ARG_ENABLE(jack,
+	[  --enable-jack Enable or disable jack support (default disabled)],
+	[enable_jack="$enableval"],
+	[enable_jack="no"])
 
 
 # Checks for library functions.
@@ -166,6 +170,17 @@ AC_MSG_RESULT([$CFGDEBUG])
 
 
 #Portaudio configuration
+if test x"$enable_jack" = xyes;
+then
+   have_jack=yes
+   with_oss=no
+   have_alsa=no
+else
+   have_jack=no
+   with_oss=yes
+   have_alsa=yes
+fi
+
 AC_CONFIG_SUBDIRS([src/portaudio])
 
 
@@ -262,6 +277,15 @@ if test x$ac_cv_c_compiler_gnu = xyes ; then
 	echo "    Compiler is GCC : ............. ${ac_cv_c_compiler_gnu}"
 	echo "    GCC major version : ........... ${GCC_MAJOR_VERSION}"
 	fi
+
+
+AC_MSG_RESULT([
+   Options :
+
+    Jack : ......................... ${have_jack}
+    OSS : .......................... ${with_oss}
+    ALSA : ......................... ${have_alsa}
+ ])
 
 AC_MSG_RESULT([
   Extra tools required :
