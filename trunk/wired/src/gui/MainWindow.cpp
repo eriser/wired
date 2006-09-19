@@ -1658,7 +1658,7 @@ void					MainWindow::OnAbout(wxCommandEvent &event)
       wxSplashScreen* splash = new wxSplashScreen(splashbtm,
 						  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT,
 						  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
-						  wxSTAY_ON_TOP);
+						  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
     }
   //wxYield();
 }
