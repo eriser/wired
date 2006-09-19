@@ -70,6 +70,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
 	    wxDEFAULT_FRAME_STYLE | wxWS_EX_PROCESS_IDLE)
 {	
+
+
+
   SeqTimer = NULL;
   InitLocale();
   
@@ -258,6 +261,20 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   Connect(MainWin_ImportWave, wxEVT_COMMAND_MENU_SELECTED, 
 	  (wxObjectEventFunction)(wxEventFunction) 
 	  (wxCommandEventFunction)&MainWindow::OnImportWave);
+
+  //Funky icon.
+  wxIcon wiredIcon;
+  wxString iconPath;
+
+  std::cout << "icon data dir = " << WiredSettings->DataDir.mb_str() << std::endl;
+
+  iconPath << WiredSettings->DataDir << wxT("ihm/splash/icon-small.gif");
+
+  if(wiredIcon.LoadFile(iconPath, wxBITMAP_TYPE_GIF)) 
+    {
+      SetIcon(wiredIcon);
+      std::cout << " icon okay ! " << std::endl;
+    }
 
 #if wxUSE_STATUSBAR
   Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
@@ -1641,7 +1658,7 @@ void					MainWindow::OnAbout(wxCommandEvent &event)
       wxSplashScreen* splash = new wxSplashScreen(splashbtm,
 						  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT,
 						  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
-						  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
+						  wxSTAY_ON_TOP);
     }
   //wxYield();
 }

@@ -28,9 +28,13 @@ bool				MainApp::OnInit()
   wxBitmap			bitmap;
   wxSplashScreen*		splash;
 
+
 #if wxUSE_LIBPNG
   wxImage::AddHandler(new wxPNGHandler);
 #endif
+
+  wxImage::AddHandler(new wxGIFHandler);
+
   SetAppName(L"wired");
   if (!wxApp::OnInit())
     return false;
@@ -47,7 +51,7 @@ bool				MainApp::OnInit()
       splash = new wxSplashScreen(bitmap,
 				  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
 				  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
-				  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
+				  wxSTAY_ON_TOP);
       splash->Update();
       // alert dialog can use it before frame loading
       wxYield();
