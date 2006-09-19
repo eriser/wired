@@ -18,8 +18,8 @@ AC_ARG_WITH(alsa,
             with_alsa=$withval, with_alsa="yes")
 
 AC_ARG_WITH(jack, 
-            [  --with-jack (default=yes)],
-            with_jack=$withval, with_jack="yes")
+            [  --with-jack (default=no)],
+            with_jack=$withval, with_jack="no")
 
 AC_ARG_WITH(oss, 
             [  --with-oss (default=yes)],

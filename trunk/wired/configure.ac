@@ -55,7 +55,7 @@ AC_CHECK_LIB([samplerate], [src_new], [SRC='yes' ], AC_MSG_ERROR([Couldn't find 
 
 #Checking for wxWidgets
 AM_OPTIONS_WXCONFIG
-reqwx=2.6.2
+reqwx=2.6.0
 AM_PATH_WXCONFIG($reqwx, wxWin=1)
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
@@ -170,18 +170,58 @@ AC_MSG_RESULT([$CFGDEBUG])
 
 
 #Portaudio configuration
+AC_CONFIG_SUBDIRS([src/portaudio])
+
 if test x"$enable_jack" = xyes;
 then
+
+#AC_DEFINE(with_jack, "yes")
+#AC_DEFINE(with_oss, "no")
+#AC_DEFINE(with_alsa, "no")
+
    with_jack=yes
    with_oss=no
    with_alsa=no
+
+#DLL_LIBS="$DLL_LIBS $JACK_LIBS"
+#CFLAGS="$CFLAGS $JACK_CFLAGS"
+#OTHER_OBJS="$OTHER_OBJS src/portaudio/src/hostapi/jack/pa_jack.o"
+#AC_DEFINE(PA_USE_JACK)
+
+#AC_DEFINE(PA_USE_ALSA, "0")
+#AC_DEFINE(PA_USE_OSS, "0")
+
 else
+
+#DLL_LIBS="$DLL_LIBS -lasound"
+#OTHER_OBJS="$OTHER_OBJS src/portaudio/src/hostapi/alsa/pa_linux_alsa.o"
+#AC_DEFINE(PA_USE_ALSA)
+
+#OTHER_OBJS="$OTHER_OBJS src/portaudio/src/hostapi/oss/pa_unix_oss.o"
+#AC_DEFINE(PA_USE_OSS)
+
+#AC_DEFINE(PA_USE_JACK, "0")
+
+
+#AC_DEFINE(with_jack, "no")
+#AC_DEFINE(with_oss, "yes")
+#AC_DEFINE(with_alsa, "yes")
+
    with_jack=no
    with_oss=yes
    with_alsa=yes
+
 fi
 
-AC_CONFIG_SUBDIRS([src/portaudio])
+#AC_CHECK_LIB(asound, snd_pcm_open, have_alsa=yes, have_alsa=no)
+#if [[ $have_alsa = "yes" ]] ; then
+#   LIBS="$LIBS -lasound"
+#fi
+#PKG_CHECK_MODULES(JACK, jack, have_jack=yes, have_jack=no)
+#if [[ $have_jack = "yes" ]] ; then
+#   LIBS="$LIBS $JACK_LIBS"
+#fi
+
 
 
 #Some locale things
