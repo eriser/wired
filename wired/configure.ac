@@ -22,10 +22,8 @@ if test $ac_cv_c_compiler_gnu = yes ; then
 fi
 
 #Get some libs versions
-WXWIDGET_VERSION=`wx-config --version`
 SAMPLERATE_VERSION=`pkg-config samplerate --modversion`
 SNDFILE_VERSION=`pkg-config sndfile --modversion`
-
 
 # for autoheader .. investigate this further :)
 AC_CONFIG_HEADER(src/include/config.h)
@@ -101,16 +99,17 @@ AC_CHECK_LIB([samplerate], [src_new], [SRC='yes' ], AC_MSG_ERROR([Couldn't find 
 
 # libs used in plugins
 if test x"$enable_plugins" = xyes; then
-AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch]))
+   AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch]))
 fi
 
 # libs used in codecs
 if test x"$enable_codecs" = xyes; then
-AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find libflac++]))
-AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find libvorbis]))
+   AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find libflac++]))
+   AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find libvorbis]))
 fi
 
 #Checking for wxWidgets
+WXWIDGET_VERSION=`wx-config --version`
 AM_OPTIONS_WXCONFIG
 reqwx=2.6.0
 AM_PATH_WXCONFIG($reqwx, wxWin=1)
@@ -126,15 +125,6 @@ if test "$wxWin" != 1; then
 		])
 else
 	AC_PATH_PROG(WX_CONFIG, wx-config, no)
-
-	if test `${WX_CONFIG} --unicode` ; then
-	   	AC_MSG_ERROR([
-		wxWidgets must be installed with unicode support.
-
-		Please try wx-config --unicode=yes.
-		])
-	fi
-
 fi
 
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
