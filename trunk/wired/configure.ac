@@ -1,4 +1,4 @@
-#                                               -*- Autoconf -*-
+###############################################################
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
@@ -42,16 +42,73 @@ AC_LANG([C++])
 AC_PROG_CXXCPP
 
 
+####################
+# checks for options
+AC_ARG_ENABLE(debug,
+	[  --enable-debug Enable or disable debug symbol generation (default disabled)],
+	[enable_debug="$enableval"],
+	[enable_debug="no"])
+
+# can enable or disable Wired plugins
+AC_ARG_ENABLE(plugins,
+	[  --enable-plugins Enable or disable Wired plugins (default enabled)],
+	[enable_plugins="$enableval"],
+	[enable_plugins="yes"])
+AM_CONDITIONAL(PLUGINS, test x$enable_plugins = xyes)
+
+# can enable or disable Wired codecs
+AC_ARG_ENABLE(codecs,
+	[  --enable-codecs Enable or disable Wired codecs (default enabled)],
+	[enable_codecs="$enableval"],
+	[enable_codecs="yes"])
+AM_CONDITIONAL(CODECS, test x$enable_codecs = xyes)
+
+AC_ARG_ENABLE(optimize,
+	[  --enable-optimize Enable or disable compilation optimizations (default enabled)],
+	[enable_optimize="$enableval"],
+	[enable_optimize="yes"])
+
+# can enable or disable portaudio integration
+# Portaudio options
+AC_ARG_ENABLE(portaudio,
+	[  --enable-portaudio Enable or disable portaudio v19 built-in (default enabled)],
+	[enable_portaudio="$enableval"],
+	[enable_portaudio="yes"])
+
+AC_ARG_WITH(alsa, 
+            [  --with-alsa (default=auto)],
+            with_alsa=$withval, with_alsa="yes")
+
+AC_ARG_WITH(jack, 
+            [  --with-jack (default=auto)],
+            with_jack=$withval, with_jack="yes")
+
+AC_ARG_WITH(oss, 
+            [  --with-oss (default=yes)],
+            with_oss=$withval, with_oss="yes")
+
+# Portaudio configuration
+if test "$enable_portaudio" = yes; then
+   AC_CONFIG_SUBDIRS([src/portaudio])
+fi
+
+######################
 # Checks for libraries.
 AC_CHECK_LIB([pthread], [pthread_create], [PTHREAD='yes'], AC_MSG_ERROR([Couldn't find libpthread]))
 AC_CHECK_LIB([sndfile], [sf_open], [LIBSNDFILE='yes'], AC_MSG_ERROR([Couldn't find libsndfile]))
-AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch]))
-AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find libflac++]))
-AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find libvorbis]))
 AC_CHECK_LIB([xml2], [xmlParseMemory], [ XML2F='yes' ], AC_MSG_ERROR([Couldn't find libxml2]))
 AC_CHECK_LIB([samplerate], [src_new], [SRC='yes' ], AC_MSG_ERROR([Couldn't find libsamplerate]))
 
+# libs used in plugins
+if test x"$enable_plugins" = xyes; then
+AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch]))
+fi
 
+# libs used in codecs
+if test x"$enable_codecs" = xyes; then
+AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find libflac++]))
+AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find libvorbis]))
+fi
 
 #Checking for wxWidgets
 AM_OPTIONS_WXCONFIG
@@ -85,11 +142,6 @@ CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
 CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
 LIBS="$LIBS $WX_LIBS"
 
-# Checks for header files.
-AC_HEADER_DIRENT
-AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h netinet/in.h stdlib.h string.h unistd.h math.h sys/types.h sys/stat.h dlfcn.h stdint.h stdio.h dirent.h cmath wx/wx.h sndfile.h byteswap.h list.h errno.h soundtouch/SoundTouch.h assert.h samplerate.h io.h direct.h libintl.h FLAC++/all.h vorbis/vorbisfile.h])
-
 #Checks for libsamplerate
 PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.15,
             ac_cv_samplerate=1, ac_cv_samplerate=0)
@@ -100,6 +152,27 @@ AC_DEFINE_UNQUOTED([HAVE_SAMPLERATE],${ac_cv_samplerate},
 AC_SUBST(SAMPLERATE_CFLAGS)
 AC_SUBST(SAMPLERATE_LIBS)
 
+#########################
+# Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+
+# std headers
+AC_CHECK_HEADERS([fcntl.h netinet/in.h stdlib.h string.h unistd.h math.h sys/types.h sys/stat.h dlfcn.h stdint.h stdio.h dirent.h cmath byteswap.h list.h errno.h assert.h io.h direct.h libintl.h])
+
+# libs headers
+AC_CHECK_HEADERS([sndfile.h samplerate.h])
+
+# headers used in plugins
+if test x"$enable_plugins" = xyes; then
+   AC_CHECK_HEADERS([soundtouch/SoundTouch.h])
+fi
+
+# headers used in codecs
+if test x"$enable_codecs" = xyes; then
+   AC_CHECK_HEADERS([FLAC++/all.h vorbis/vorbisfile.h])
+fi
+
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -109,50 +182,6 @@ AC_TYPE_OFF_T
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_C_VOLATILE
-
-# checks for options
-AC_ARG_ENABLE(debug,
-	[  --enable-debug Enable or disable debug symbol generation (default disabled)],
-	[enable_debug="$enableval"],
-	[enable_debug="no"])
-
-AC_ARG_ENABLE(plugins,
-	[  --enable-plugins Enable or disable Wired plugins (default enabled)],
-	[enable_plugins="$enableval"],
-	[enable_plugins="yes"])
-# can enable or disable Wired plugins
-AM_CONDITIONAL(PLUGINS, test x$enable_plugins = xyes)
-
-AC_ARG_ENABLE(codecs,
-	[  --enable-codecs Enable or disable Wired codecs (default enabled)],
-	[enable_codecs="$enableval"],
-	[enable_codecs="yes"])
-# can enable or disable Wired codecs
-AM_CONDITIONAL(CODECS, test x$enable_codecs = xyes)
-
-AC_ARG_ENABLE(optimize,
-	[  --enable-optimize Enable or disable compilation optimizations (default enabled)],
-	[enable_optimize="$enableval"],
-	[enable_optimize="yes"])
-
-# Portaudio options
-AC_ARG_ENABLE(portaudio,
-	[  --enable-portaudio Enable or disable portaudio v19 built-in (default enabled)],
-	[enable_portaudio="$enableval"],
-	[enable_portaudio="yes"])
-
-AC_ARG_WITH(alsa, 
-            [  --with-alsa (default=auto)],
-            with_alsa=$withval, with_alsa="yes")
-
-AC_ARG_WITH(jack, 
-            [  --with-jack (default=auto)],
-            with_jack=$withval, with_jack="yes")
-
-AC_ARG_WITH(oss, 
-            [  --with-oss (default=yes)],
-            with_oss=$withval, with_oss="yes")
-
 
 # Checks for library functions.
 AC_FUNC_CLOSEDIR_VOID
@@ -170,7 +199,7 @@ else
         AC_DEFINE_UNQUOTED(INSTALL_PREFIX, "$prefix")
 fi
 
-
+##################
 # Checking Options
 AC_MSG_CHECKING([for enable-optimize])
 if test x"$enable_optimize" = xyes;
@@ -193,24 +222,6 @@ else
  CFGDEBUG=No
 fi
 AC_MSG_RESULT([$CFGDEBUG])
-
-
-#Portaudio configuration
-if test "$enable_portaudio" = yes; then
-   AC_CONFIG_SUBDIRS([src/portaudio])
-fi
-
-if test x"$with_jack" = xyes; then
-   with_jack=yes
-fi
-
-if test x"$enable_oss" = xyes; then
-   with_oss=yes
-fi
-
-if test x"$enable_alsa" = xyes; then
-   with_alsa=yes
-fi
 
 
 #Some locale things
@@ -304,11 +315,31 @@ AC_MSG_RESULT([    Enable optimizations : ........ ${CFGOPTIMIZE}
 ])
 
 if test x$ac_cv_c_compiler_gnu = xyes ; then
-	echo -e "  Tools :\n"
-	echo "    Compiler is GCC : ............. ${ac_cv_c_compiler_gnu}"
-	echo "    GCC major version : ........... ${GCC_MAJOR_VERSION}"
-	fi
+AC_MSG_RESULT([
+    Tools :\
+     Compiler is GCC : ............. ${ac_cv_c_compiler_gnu}
+     GCC major version : ........... ${GCC_MAJOR_VERSION}
+])
+fi
 
+# these vars are only used for output
+if test x"$with_jack" = xyes; then
+   with_jack=yes
+else
+   with_jack=no
+fi
+
+if test x"$with_oss" = xyes; then
+   with_oss=yes
+else
+   with_oss=no
+fi
+
+if test x"$with_alsa" = xyes; then
+   with_alsa=yes
+else
+   with_alsa=no
+fi
 
 if test x"$enable_portaudio" = xyes; then
 AC_MSG_RESULT([
