@@ -15,7 +15,6 @@
 
 using namespace std;
 
-#define CODEC_PATH	wxT("/usr/local/lib")
 #define	WLIBCONSTRUCT	"WiredCodecConstruct"
 
 class			WiredCodec
