@@ -1,4 +1,6 @@
+if PLUGINS
 SUBDIRS = beatbox compressor crusher delay filter loop_sampler akai_sampler test reverb chorus wahwah
+endif
 
 LDFLAGS = $(shell wx-config --libs)
 
