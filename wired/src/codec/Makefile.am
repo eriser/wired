@@ -1,4 +1,6 @@
+if CODECS
 SUBDIRS = wiredcodec
+endif
 
 CPPFLAGS = $(shell wx-config --cflags)
 

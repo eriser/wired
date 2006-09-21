@@ -123,6 +123,13 @@ AC_ARG_ENABLE(plugins,
 # can enable or disable Wired plugins
 AM_CONDITIONAL(PLUGINS, test x$enable_plugins = xyes)
 
+AC_ARG_ENABLE(codecs,
+	[  --enable-codecs Enable or disable Wired codecs (default enabled)],
+	[enable_codecs="$enableval"],
+	[enable_codecs="yes"])
+# can enable or disable Wired codecs
+AM_CONDITIONAL(CODECS, test x$enable_codecs = xyes)
+
 AC_ARG_ENABLE(optimize,
 	[  --enable-optimize Enable or disable compilation optimizations (default enabled)],
 	[enable_optimize="$enableval"],
