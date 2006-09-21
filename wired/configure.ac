@@ -116,6 +116,13 @@ AC_ARG_ENABLE(debug,
 	[enable_debug="$enableval"],
 	[enable_debug="no"])
 
+AC_ARG_ENABLE(plugins,
+	[  --enable-plugins Enable or disable Wired plugins (default enabled)],
+	[enable_plugins="$enableval"],
+	[enable_plugins="yes"])
+# can enable or disable Wired plugins
+AM_CONDITIONAL(PLUGINS, test x$enable_plugins = xyes)
+
 AC_ARG_ENABLE(optimize,
 	[  --enable-optimize Enable or disable compilation optimizations (default enabled)],
 	[enable_optimize="$enableval"],
@@ -210,19 +217,7 @@ else
  AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale")
 fi
 
-AC_CONFIG_FILES([Makefile po/Makefile.in intl/Makefile
-		src/Makefile
-		src/audio/Makefile
-		src/editmidi/Makefile
-		src/engine/Makefile
-		src/fileloader/Makefile
-		src/gui/Makefile
-		src/midi/Makefile
-		src/midi/portmidi/Makefile
-		src/midi/portmidi/porttime/Makefile
-		src/mixer/Makefile
-		src/plugins/Makefile
-		src/plugins/beatbox/Makefile
+AC_CONFIG_FILES([src/plugins/beatbox/Makefile
 		src/plugins/compressor/Makefile
 		src/plugins/crusher/Makefile
 		src/plugins/delay/Makefile
@@ -234,6 +229,20 @@ AC_CONFIG_FILES([Makefile po/Makefile.in intl/Makefile
 		src/plugins/chorus/Makefile
 		src/plugins/wahwah/Makefile
 		src/plugins/test/Makefile
+		Makefile
+		po/Makefile.in
+		intl/Makefile
+		src/Makefile
+		src/audio/Makefile
+		src/editmidi/Makefile
+		src/engine/Makefile
+		src/fileloader/Makefile
+		src/gui/Makefile
+		src/midi/Makefile
+		src/midi/portmidi/Makefile
+		src/midi/portmidi/porttime/Makefile
+		src/mixer/Makefile
+		src/plugins/Makefile
 		src/redist/Makefile
 		src/sequencer/Makefile
 		src/dssi/Makefile
@@ -294,13 +303,15 @@ if test x$ac_cv_c_compiler_gnu = xyes ; then
 	fi
 
 
+if test x"$enable_portaudio" = xyes; then
 AC_MSG_RESULT([
-   Options :
+   Portaudio options :
 
     Jack : ........................ ${with_jack}
     OSS : ......................... ${with_oss}
     ALSA : ........................ ${with_alsa}
  ])
+fi
 
 AC_MSG_RESULT([
   Extra tools required :
