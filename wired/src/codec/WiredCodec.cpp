@@ -7,7 +7,7 @@
 
 WiredCodec::WiredCodec()
 {
-  _WiredPath = CODEC_PATH;
+  _WiredPath = wxT(INSTALL_PREFIX) + wxT("/lib/");
   _CurrentUniqueID = 0;
   path = 0;
 }
@@ -201,7 +201,7 @@ unsigned long WiredCodec::Decode(const wxString &filename, t_Pcm *pcm, unsigned 
 
 void			WiredCodec::InitWLib()
 {
-  wxDir			dir(_WiredPath.c_str());
+  wxDir			dir(_WiredPath);
   wxString		filename;
   bool			cont;
   
