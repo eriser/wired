@@ -9,6 +9,8 @@
 #include <wx/splash.h>
 #include "MainApp.h"
 #include "MainWindow.h"
+#include "Settings.h"
+
 #include "../include/config.h"
 
 void	AllocationErrorHandler(void)
@@ -76,8 +78,31 @@ bool				MainApp::OnInit()
 
   // now error dialog are based on mainframe 
   MainWin = Frame;
+
+  // its obvious that user can't have deprecated conf with a fresh install
+  if (WiredSettings->ConfIsDeprecated() && !WiredSettings->IsFirstLaunch())
+    MainWin->AlertDialog(_("Warning"),
+			 _("Your configuration file is deprecated, settings need to be set"));
+  if (WiredSettings->IsFirstLaunch())
+    ShowWelcome();
+
+  // open stream, start fileconverter and co
   Frame->Init();
   return (true);
+}
+
+void	MainApp::ShowWelcome()
+{
+  wxString	welcome;
+
+  welcome = wxT("Welcome to version WIRED_VERSION of WIRED_NAME.\nWIRED_NAME is currently a beta software, some of its features may not work completly yet.\nWe recommend to do not use the following features at this time :\n- Undo/Redo\n- Drag and drop of plugins\n- Codec management is known to be quite unstable at this time\n\nThe next step is to configure your soundcard settings in WIRED_NAME Settings dialog.Select 32 bits float for sample format, 44100hz for sample rate (or whatever you prefer) and choose a latency which your soundcard is capable of. You can try different values (the lower the most realtime WIRED_NAME will perform) and see which one is the best for your soundcard. Setting the latency too low will cause drops and glitch to appear in the sound output.\n\nYou will find in the Help menu, a \"Show integrated help\" item which will display an interactive help window on the bottom right corner of WIRED_NAME. If you move your mouse over a control in WIRED_NAME or in a plugin, it will show you the help associated with this item. \nIf you find any bugs in WIRED_NAME, please make a bug report at :\nWIRED_BUGS\n\nIf you need help or want to discuss about WIRED_NAME, pleast visit :\nWIRED_FORUMS");
+  welcome.Replace(wxT("WIRED_VERSION"), WIRED_VERSION);
+  welcome.Replace(wxT("WIRED_NAME"), WIRED_NAME);
+  welcome.Replace(wxT("WIRED_BUGS"), WIRED_BUGS);
+  welcome.Replace(wxT("WIRED_FORUMS"), WIRED_FORUMS);
+
+  wxMessageDialog msg(MainWin, welcome, WIRED_NAME, wxOK | wxICON_INFORMATION | wxCENTRE);
+  msg.ShowModal();
 }
 
 void              MainApp::OnFatalException()

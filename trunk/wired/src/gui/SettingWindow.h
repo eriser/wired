@@ -25,7 +25,6 @@ class					SettingWindow : public wxDialog
 
   void					Load();
   void					Save();
-  //void					OnGeneralClick(wxCommandEvent &event);
   void					OnOkClick(wxCommandEvent &event);
   void					OnCancelClick(wxCommandEvent &event);
   void					OnApplyClick(wxCommandEvent &event);
@@ -51,13 +50,13 @@ class					SettingWindow : public wxDialog
   void                                  RefreshOutputDev();
   void                                  RefreshInputDev();
 
-  // refresh list of audio systems avalaible
+  // refresh list of audio systems available
   void					RefreshSystems(wxChoice* choice);
 
-  // refresh list of devices avalaible for selected audio system
+  // refresh list of devices available for selected audio system
   void					RefreshDevices(wxChoice* choice, int system_selected, int select);
 
-  // refresh list of channels avalaible for selected device 
+  // refresh list of channels available for selected device 
   void					RefreshChannels(wxCheckListBox* list, int system_selected,
 							int device_selected, bool input);
 

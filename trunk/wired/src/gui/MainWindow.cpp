@@ -70,9 +70,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
 	    wxDEFAULT_FRAME_STYLE | wxWS_EX_PROCESS_IDLE)
 {	
-
-
-
   SeqTimer = NULL;
   InitLocale();
   
@@ -302,8 +299,12 @@ int			MainWindow::Init()
 
   // init audio
   if (InitAudio() < 0)
-    AlertDialog(_("audio engine"), 
-		_("You may check for your audio settings if you want to use Wired.."));
+    {
+      // avoid to flood user, he already knows he has a deprecated config!
+      if (!WiredSettings->ConfIsDeprecated())
+	AlertDialog(_("audio engine"), 
+		    _("You may check for your audio settings if you want to use Wired.."));
+    }
   InitFileConverter();
 
   // start sequencer thread (after InitAudio is a good option)
@@ -1483,8 +1484,12 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
       (SettingsWin->AudioLoaded || SettingsWin->MidiLoaded))
     {
       if (InitAudio(true) < 0)
-	AlertDialog(_("audio engine"), 
-		    _("You may check for your audio settings if you want to use Wired.."));
+	{
+	  // avoid to flood user, he already knows he has a deprecated config!
+	  if (!WiredSettings->ConfIsDeprecated())
+	    AlertDialog(_("audio engine"), 
+			_("You may check for your audio settings if you want to use Wired.."));
+	}
     }
 }
 

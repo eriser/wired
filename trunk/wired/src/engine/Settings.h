@@ -14,6 +14,10 @@ using namespace std;
 #define WIRED_CONF	wxT("wired.conf")
 #define PLUG_CONF_FILE  wxT("wired_plugins.conf")
 
+#define DEFAULT_MAXUNDOREDODEPTH (20)
+
+#define WIRED_CONF_VERSION	wxT("1")
+
 class Settings
 {
  public:
@@ -21,41 +25,59 @@ class Settings
   ~Settings();
 
   // Options
-  bool QuickWaveRender;
-  bool dbWaveRender;
-  unsigned long	maxUndoRedoDepth;
+  bool		QuickWaveRender;
+  bool		dbWaveRender;
+  long		maxUndoRedoDepth;
 
-  long OutputSystem;
-  long InputSystem;
-
-  long OutputDev;
-  long InputDev;
-
-  double OutputLatency;
-  double InputLatency;
+  double	OutputLatency;
+  double	InputLatency;
   
   long		SampleRate;
   long		SamplesPerBuffer;
-  long		SampleFormat;
- 
+  long		SampleFormat; 
+
+  // string from conf file
+  wxString	OutputSystemStr;
+  wxString	InputSystemStr;
+
+  wxString	OutputDeviceStr;
+  wxString	InputDeviceStr;
+
+  // id not in conf file
+  long		OutputSystemId;
+  long		InputSystemId;
+
+  long		OutputDeviceId;
+  long		InputDeviceId;
+
   vector<long>	OutputChannels;
   vector<long>	InputChannels;
   vector<long>	MidiIn;
 
-  wxString PlugConfFile;
-  wxString ConfDir;
-  wxString DataDir;
-  wxString WorkingDir;
+  wxString	PlugConfFile;
+  wxString	ConfDir;
+  wxString	DataDir;
+  wxString	WorkingDir;
 
-  void Load();
-  void Save();
+  void		Load();
+  void		Save();
+
+  inline bool	IsFirstLaunch() { return(FirstLaunch); };
+  inline bool	ConfIsDeprecated() { return(ConfDeprecated); };
 
  protected:
-  wxConfig *conf;
+  wxConfig	*conf;
 
  private:
-  void	SaveChannels(wxString Group, vector<long>& list);
-  void	ReadChannels(wxString Group, vector<long>& list);
+  bool		FirstLaunch;
+  bool		ConfDeprecated;
+
+  void		SetDefault();
+
+  void		SaveChannels(wxString Group, vector<long>& list);
+  void		ReadChannels(wxString Group, vector<long>& list);
+
+  void		DeleteDeprecatedEntries();
 };
 
 extern Settings *WiredSettings;

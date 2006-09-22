@@ -6,6 +6,27 @@
 #include	"MainWindow.h"
 #include	"EngineError.h"
 
+const unsigned long standardSampleFormats[] =
+{
+  paFloat32, paInt32, 
+  paInt24, paInt16, 
+  paUInt8, paInt8
+};
+
+const char *standardSampleFormats_str[] =
+{
+  "non-interleaved 32 bit float", "non-interleaved 32 bit int",
+  "non-interleaved 24 bit int", "non-interleaved 16 bit int",
+  "non-interleaved 8 bit unsigned int", "non-interleaved 8 bit int"
+};
+
+const double standardSampleRates[] =
+{
+  8000.0, 9600.0, 11025.0, 12000.0, 16000.0, 22050.0, 24000.0, 32000.0,
+  44100.0, 48000.0, 88200.0, 96000.0, 192000.0, -1 
+  /* negative terminated  list */ 
+};
+
 AudioEngine::AudioEngine() 
 {
   IsOk = false;
@@ -44,6 +65,9 @@ AudioEngine::~AudioEngine()
       ResetChannels();
       if (UserData)
 	delete UserData;
+
+      // todo :
+      // delete DeviceList and SystemList
     }
 }
 
@@ -60,8 +84,8 @@ void AudioEngine::SetDefaultSettings(void)
 
 void AudioEngine::SetOutputDevice(void)
 {
-  if ((SelectedOutputDevice = GetDevice(WiredSettings->OutputDev,
-					WiredSettings->OutputSystem))
+  if ((SelectedOutputDevice = GetDevice(WiredSettings->OutputDeviceId,
+					WiredSettings->OutputSystemId))
       == 0x0)
     if ( (SelectedOutputDevice = GetDeviceById(Pa_GetDefaultOutputDevice()))
 	 == 0x0)
@@ -148,8 +172,8 @@ void AudioEngine::SetInputDevice(void)
 {
   if (WiredSettings->InputChannels.size() > 0)
     {
-      if (( SelectedInputDevice = GetDevice(WiredSettings->InputDev,
-					    WiredSettings->InputSystem))
+      if (( SelectedInputDevice = GetDevice(WiredSettings->InputDeviceId,
+					    WiredSettings->InputSystemId))
 	  == 0x0)
 	if ( (SelectedInputDevice = 
 	      GetDeviceById(Pa_GetDefaultInputDevice())) 
@@ -334,9 +358,9 @@ void AudioEngine::GetDevices()
 	}
       dev = new Device(i, wxString(info->name, *wxConvCurrent),
 		       info->maxInputChannels,
-		       info->maxOutputChannels, info->hostApi);
+		       info->maxOutputChannels, GetAudioSystemById(info->hostApi));
       DeviceList.push_back(dev);
-      cout << "[AUDIO] New device found #" << dev->Id << " for host " << dev->AudioSystem
+      cout << "[AUDIO] New device found #" << dev->Id << " for host " << dev->Host->GetId()
 	   << " : " << dev->Name.mb_str() << endl
 	   << "[AUDIO] Max Input Channels: " << dev->MaxInputChannels 
 	   << endl
@@ -755,7 +779,7 @@ Device*			AudioEngine::GetDevice(int dev_id, int system_id)
   n = 0;
   for (it = DeviceList.begin(); it != DeviceList.end(); it++)
     {
-      if (system_id  == (*it)->AudioSystem)
+      if (system_id  == (*it)->Host->GetId())
 	{
 	  if (n == dev_id)
 	    return ((*it));
@@ -776,7 +800,7 @@ int			AudioEngine::GetDeviceIdByTrueId(Device* dev)
   n = 1;
   for (it = DeviceList.begin(); it != DeviceList.end(); it++)
     {
-      if (dev->AudioSystem == (*it)->AudioSystem)
+      if (dev->Host == (*it)->Host)
 	{
 	  if (dev->Id == (*it)->Id)
 	    return (n);
@@ -784,6 +808,36 @@ int			AudioEngine::GetDeviceIdByTrueId(Device* dev)
 	}
     }
   return (0);
+}
+
+AudioSystem*				AudioEngine::GetAudioSystemById(int id)
+{
+  vector<AudioSystem*>::iterator	it;
+
+  for (it = SystemList.begin(); it != SystemList.end(); it++)
+    if ((*it)->GetId() == id)
+      return (*it);
+  return (NULL);
+}
+
+AudioSystem*		AudioEngine::GetAudioSystemByName(wxString name)
+{
+  vector<AudioSystem*>::iterator	it;
+
+  for (it = SystemList.begin(); it != SystemList.end(); it++)
+    if ((*it)->GetName() == name)
+      return (*it);
+  return (NULL);
+}
+
+Device*			AudioEngine::GetDeviceByName(wxString name)
+{
+  vector<Device*>::iterator	it;
+
+  for (it = DeviceList.begin(); it != DeviceList.end(); it++)
+    if ((*it)->Name == name)
+      return (*it);
+  return (NULL);
 }
 
 int			AudioEngine::GetDefaultInputDevice()

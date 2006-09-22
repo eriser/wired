@@ -14,27 +14,6 @@
 #define MAX_SAMPLE_FORMATS 6
 
 using namespace std;
-
-static const unsigned long standardSampleFormats[] =
-{
-  paFloat32, paInt32, 
-  paInt24, paInt16, 
-  paUInt8, paInt8
-};
-
-static const char *standardSampleFormats_str[] =
-{
-  "non-interleaved 32 bit float", "non-interleaved 32 bit int",
-  "non-interleaved 24 bit int", "non-interleaved 16 bit int",
-  "non-interleaved 8 bit unsigned int", "non-interleaved 8 bit int"
-};
-
-static double standardSampleRates[] =
-{
-  8000.0, 9600.0, 11025.0, 12000.0, 16000.0, 22050.0, 24000.0, 32000.0,
-  44100.0, 48000.0, 88200.0, 96000.0, 192000.0, -1 
-  /* negative terminated  list */ 
-};
  
 
 class DeviceFormat
@@ -47,20 +26,22 @@ class DeviceFormat
   vector<double> SampleRates;
 };
 
+class AudioSystem;
+
 class Device
 {
  public:
-  Device(int id, wxString name, int maxin, int maxout, int host)	
+  Device(int id, wxString name, int maxin, int maxout, AudioSystem* hostsystem)
 				{					\
 				  Id = id; Name = name;			\
 				  MaxInputChannels = maxin;		\
 				  MaxOutputChannels = maxout;		\
-				  AudioSystem = host;			\
+				  Host = hostsystem;			\
 				};
   ~Device();
   
   int		Id;
-  int		AudioSystem;
+  AudioSystem*	Host;
   wxString	Name;
   int		MaxInputChannels;
   int		MaxOutputChannels;

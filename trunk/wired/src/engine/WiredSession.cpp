@@ -1,10 +1,6 @@
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
-#include <unistd.h>
 #include <iostream>
 #include <wx/filename.h>
 #include "WiredSession.h"
@@ -26,9 +22,9 @@ extern vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo		StartInfo;
 
 WiredSession::WiredSession(wxString filename, wxString audiodir)
-  : FileName(filename), AudioDir(audiodir) 
 { 
-
+  FileName = filename;
+  AudioDir = audiodir;
 }
 
 WiredSession::~WiredSession()
@@ -39,7 +35,7 @@ WiredSession::~WiredSession()
 
 bool WiredSession::Load()
 {
-  if ((confFile.Open(FileName.c_str())) == true)
+  if ((confFile.Open(FileName)) == true)
     {
       t_Header		header;
       t_RackTrack	racktrack;
@@ -63,7 +59,7 @@ bool WiredSession::Load()
       wxChar s[header.AudioDirLen + 1];
       confFile.Read(s, header.AudioDirLen);
       s[header.AudioDirLen] = 0;
-      wxFileName session_dir(FileName.c_str());
+      wxFileName session_dir(FileName);
       wxFileName f(s);
 
       f.MakeAbsolute(session_dir.GetPath());
@@ -246,7 +242,7 @@ bool WiredSession::Load()
 
 bool WiredSession::Save()
 {
-  if (confFile.Open(FileName.c_str(), wxFile::write) == true)
+  if (confFile.Open(FileName, wxFile::write) == true)
     {
       t_Header		header;
       t_RackTrack	racktrack;
@@ -258,13 +254,13 @@ bool WiredSession::Save()
       t_MidiPattern	midi_pattern;
       t_MidiEvent	midi_event;
       
-      wxFileName session_dir(FileName.c_str());
+      wxFileName session_dir(FileName);
 
       // Header
       strcpy(header.Magic, "WIRE");
 
       // Make audio dir path absolute
-      wxFileName f(AudioDir.c_str());
+      wxFileName f(AudioDir);
 
       f.MakeRelativeTo(session_dir.GetPath());
 
