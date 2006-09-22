@@ -288,7 +288,10 @@ void				MediaLibrary::OnSortToggle(wxCommandEvent &WXUNUSED(event))
   //  cout << "[MEDIALIBRARY] Sort Files (OnSortToggle) [" << selected << "]" << endl;
   MLTreeView->SortNodes(selected);
 }
-
+void				MediaLibrary::OnLeftClick(wxMouseEvent &event)
+{
+  cout << "[MEDIALIBRARY] Test" << endl;
+}
 BEGIN_EVENT_TABLE(MediaLibrary, wxPanel)
   EVT_SIZE(MediaLibrary::OnSize)
   EVT_TOOL(MediaLibrary_Add, MediaLibrary::OnAdd)

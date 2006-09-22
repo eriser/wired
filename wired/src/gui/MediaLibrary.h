@@ -53,7 +53,7 @@ class				MediaLibrary : public wxPanel
 
 
  protected:
-  friend class			MainWindow;
+ 
   friend class			MLTree;
 
   bool				visible;
@@ -71,7 +71,8 @@ class				MediaLibrary : public wxPanel
   wxMenu			*PopMenu;
   MLTree			*MLTreeView;
   FileConversion		*FileConverter;
- 
+  
+ public:
   void				SetFileConverter(FileConversion *FileConv);
   void				OnSize(wxSizeEvent &event);
   void				OnEdit(wxCommandEvent &WXUNUSED(event));
@@ -86,6 +87,7 @@ class				MediaLibrary : public wxPanel
   void				OnFilterVideo(wxCommandEvent &WXUNUSED(event));
   void				OnFilterEffects(wxCommandEvent &WXUNUSED(event));
   void				OnRightClick(wxMouseEvent &event);
+  void				OnLeftClick(wxMouseEvent &event);
   void				ShowPopup(wxPoint pos);
  
   bool				IsVisible();
