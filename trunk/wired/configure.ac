@@ -307,7 +307,8 @@ AC_MSG_RESULT([    Enable optimizations : ........ ${CFGOPTIMIZE}
 
 if test x$ac_cv_c_compiler_gnu = xyes ; then
 AC_MSG_RESULT([
-    Tools :\
+   Tools :
+
      Compiler is GCC : ............. ${ac_cv_c_compiler_gnu}
      GCC major version : ........... ${GCC_MAJOR_VERSION}
 ])

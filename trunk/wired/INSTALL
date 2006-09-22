@@ -16,9 +16,7 @@ those dependancies problems.
 
   - libxml2
     http://xmlsoft.org/
-
-  - GTK 2 
-      http://www.gtk.org
+    * or you can install it with 1 package: libxml2-dev
 
   - wxGTK 2.6.x 
       http://www.wxwidgets.org
@@ -36,17 +34,29 @@ those dependancies problems.
 	  - find line "#define INTEGER_SAMPLES" and COMMENT it
 	  - find line "#define FLOAT_SAMPLES" and UNCOMMENT it
 	  - now you can compile and install SoundTouch
+	* or you can install it with 1 package: libsoundtouch1-dev
 
   - libsndfile 
       http://www.mega-nerd.com/libsndfile/
+      * You can install it with 1 package: libsndfile1-dev
 
   - libsamplerate
       http://www.mega-nerd.com/SRC/
+       * You can install it with 1 package: libsamplerate0-dev
 
   - dssi 
       http://dssi.sourceforge.net/
         * This is only useful if you want to have dssi plugins integrated.
 	However, it is highly reccomended as these are great plugins.
+       * You can install it with 1 package: dssi-dev
+
+  - FLAC++
+	http://flac.sourceforge.net/
+	* You can install it with 1 package: libflac++-dev
+
+  - Vorbis
+	http://www.vorbis.com/
+	* You can install it with 1 package: libvorbis-dev
 
 
 ==COMPILATION==
