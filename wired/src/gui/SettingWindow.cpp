@@ -15,7 +15,7 @@
 
 
 #define	WIN_WIDTH	650
-#define WIN_HEIGHT	510
+#define WIN_HEIGHT	520
 #define WIN_SIZE	wxSize(WIN_WIDTH, WIN_HEIGHT)
 
 #define WIN_MARGIN	12
