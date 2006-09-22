@@ -216,14 +216,20 @@ void				SettingWindow::AudioOutputPanelView()
   OutputBox->Add(OutputDeviceChoice, BoxFlags);
   OutputBox->Add(new wxStaticText(AudioOutputPanel, -1, _("Select left and right Output channels for this sound card:")),
 		 BoxFlags);
-
-  //add samplerate and bitrate choice
   OutputBox->Add(OutputChannelList, BoxFlags);
-  OutputBox->Add(BitRateText, BoxFlags);
-  OutputBox->Add(BitsChoice, BoxFlags);  
-  OutputBox->Add(SampleRateText, BoxFlags);  
-  OutputBox->Add(RateChoice, BoxFlags);
-  OutputBox->Add(Latency, BoxFlags);  
+  //add samplerate and bitrate choice
+  wxBoxSizer *BitRateBox =  new wxBoxSizer(wxHORIZONTAL);
+  BitRateBox->Add(BitRateText, BoxFlags);
+  BitRateBox->Add(BitsChoice, BoxFlags);
+ 
+  OutputBox->Add(BitRateBox, BoxFlags);
+
+  wxBoxSizer *SampleRateBox =  new wxBoxSizer(wxHORIZONTAL);
+  SampleRateBox->Add(SampleRateText, BoxFlags);
+  SampleRateBox->Add(RateChoice, BoxFlags);
+  OutputBox->Add(SampleRateBox, BoxFlags);
+ 
+  OutputBox->Add(Latency, BoxFlags);    
   OutputBox->Add(LatencySlider, BoxFlags);
   LatencySlider->SetRange(0, 8);
   LatencySlider->SetPageSize(1);
