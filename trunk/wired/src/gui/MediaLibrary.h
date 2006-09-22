@@ -7,11 +7,12 @@
 #include <wx/wx.h>
 #include "MainWindow.h"
 
-class				MainWindow;
-class				DownButton;
-class				HoldButton;
-class				StaticLabel;
-class				VUMCtrl;
+class					MainWindow;
+class					DownButton;
+class					HoldButton;
+class					StaticLabel;
+class					VUMCtrl;
+class					MLTree;
 
 #define MEDIALIBRARY_ADDUP_IMG		wxT("ihm/toolbar/add_up.png")
 #define MEDIALIBRARY_ADDDO_IMG		wxT("ihm/toolbar/add_up.png")
@@ -43,8 +44,6 @@ class				VUMCtrl;
 #define NB_SORTSELECT_CHOICES		(4)
 #define DEFAULT_SORTSELECT_VALUE	wxT("Sort by...")
 
-
-class				MLTree;
 
 class				MediaLibrary : public wxPanel
 {
