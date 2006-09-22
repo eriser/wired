@@ -122,6 +122,9 @@ void Settings::SaveChannels(wxString Group, vector<long>& list)
   wxString			s;
   long				l;
 
+  if (list.size() == 0)
+    return;
+
   conf->DeleteGroup(Group);
   conf->SetPath(Group);
   for (l = 0, i = list.begin(); i != list.end(); i++, l++)
@@ -140,7 +143,7 @@ void Settings::Load()
   conf->Read(wxT("confVersion"), &version, wxT("0"));
   if (version != WIRED_CONF_VERSION)
     {
-      cout << "[SETTINGS] You've a deprecated conf " << version.mb_str() << endl;
+      cout << "[SETTINGS] Your configuration file is deprecated" << version.mb_str() << endl;
       ConfDeprecated = true;
     }
 
@@ -173,7 +176,6 @@ void Settings::Save()
   // erase all deprecated entries
   DeleteDeprecatedEntries();
 
-
   // general part
   conf->SetPath(wxT("/General"));
   conf->Write(wxT("confVersion"), WIRED_CONF_VERSION);
@@ -186,7 +188,6 @@ void Settings::Save()
   conf->SetPath(wxT("/AudioSoundCard"));
   conf->Write(wxT("OutputSystemStr"), OutputSystemStr);
   conf->Write(wxT("InputSystemStr"), InputSystemStr);
-
   conf->Write(wxT("OutputDeviceStr"), OutputDeviceStr);
   conf->Write(wxT("InputDeviceStr"), InputDeviceStr);
 
