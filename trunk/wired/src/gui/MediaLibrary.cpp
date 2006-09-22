@@ -259,13 +259,13 @@ void				MediaLibrary::OnPreview(wxCommandEvent &WXUNUSED(event))
   s_nodeInfo		infos;
   
   selfile = MLTreeView->getSelection(1);
-  //  cout << "[MEDIALIBRARY] Preview File (OnPreview)" << selfile << endl;
+  //cout << "[MEDIALIBRARY] Preview File (OnPreview)" << selfile.mb_str() << endl;
 
   item = MLTreeView->GetSelection();
   infos = MLTreeView->GetTreeItemStructFromId(item);
   if (infos.extention.Cmp(wxT("")))
     {
-      Seq->PlayFile(selfile, true);
+      Seq->PlayFile(selfile, false);
     }
 }
 
