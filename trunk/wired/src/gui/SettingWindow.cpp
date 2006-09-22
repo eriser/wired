@@ -112,25 +112,6 @@ void				SettingWindow::GeneralPanelView()
 void				SettingWindow::AudioPanelView()
 {
   AudioPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
-
-  /*wxStaticText *t = new wxStaticText(AudioPanel, -1, _("Sample format:"), wxPoint(8, 10));
-
-  int x1, x2;
-  t->GetSize(&x1, 0x0);
-  BitsChoice = new wxChoice(AudioPanel, Setting_Bits, wxPoint(12 + x1, 2), wxSize(80, -1), 0, 0x0);    
-  t = new wxStaticText(AudioPanel, -1, _("Sample rate:"), 
-				     wxPoint(22 + x1 + BitsChoice->GetSize().x, 10));
-  t->GetSize(&x2, 0x0);
-  RateChoice = new wxChoice(AudioPanel, Setting_Rate, wxPoint(26 + x1 + BitsChoice->GetSize().x + x2, 2), 
-			    wxSize(96, -1), 0, 0x0);
-
-  Latency = new wxStaticText(AudioPanel, -1, _("Latency:"), wxPoint(8, 50));
-  LatencySlider = new wxSlider(AudioPanel, Setting_Latency, 4096, 0, 65536, wxPoint(8, 70), wxSize(368, -1));
-  LatencySlider->SetRange(0, 8);
-  LatencySlider->SetPageSize(1);
-  Latencies = new int [9];
-  for (int i = 0; i < 9; i++)
-  Latencies[i] = 16 << i;*/
 }
 
 //
@@ -203,7 +184,7 @@ void				SettingWindow::AudioOutputPanelView()
 		 Audio->GetDefaultOutputDevice());
 
   // list of channels
-  OutputChannelList = new wxCheckListBox(AudioOutputPanel, Setting_OutputChan);
+  OutputChannelList = new wxCheckListBox(AudioOutputPanel, Setting_OutputChan, wxPoint(0, 0), wxSize(45, 60));
   RefreshChannels(OutputChannelList,
 		  OutputSystemChoice->GetSelection(),
 		  OutputDeviceChoice->GetSelection(), false);
