@@ -5,6 +5,7 @@
 #include <wx/treectrl.h>
 #include "MediaLibrary.h"
 #include "MLTree.h"
+#include "MainWindow.h"
 #include "Sequencer.h"
 #include "SequencerGui.h"
 #include "Colour.h"
@@ -500,7 +501,35 @@ void				MLTree::OnRightClick(wxMouseEvent& event)
   PopupMenu(myMenu);
   delete myMenu;
 }
-
+void				MLTree::OnLeftClick(wxMouseEvent& event)
+{
+   wxTreeItemId		item;
+   s_nodeInfo		infos;
+   
+   item = GetSelection();
+   if (item == GetRootItem())
+    {
+      return ;
+    }
+   infos = GetTreeItemStructFromId(item);
+   if (infos.extention.Cmp(wxT("")))
+     {
+       MediaLibraryPanel->TopToolbar->EnableTool(1, false);
+       MediaLibraryPanel->TopToolbar->EnableTool(2, false);
+       MediaLibraryPanel->TopToolbar->EnableTool(3, true);
+       MediaLibraryPanel->TopToolbar->EnableTool(4, true);
+       MediaLibraryPanel->BottomToolbar->EnableTool(5, true);
+     }
+   else
+     {
+       MediaLibraryPanel->TopToolbar->EnableTool(1, true);
+       MediaLibraryPanel->TopToolbar->EnableTool(2, true);
+       MediaLibraryPanel->TopToolbar->EnableTool(3, false);
+       MediaLibraryPanel->TopToolbar->EnableTool(4, false);
+       MediaLibraryPanel->BottomToolbar->EnableTool(5, false);
+     }
+}
 BEGIN_EVENT_TABLE(MLTree, wxTreeCtrl)
-  EVT_RIGHT_UP(MLTree::OnRightClick) 
+  EVT_RIGHT_UP(MLTree::OnRightClick)
+  EVT_LEFT_UP(MLTree::OnLeftClick)
 END_EVENT_TABLE()
