@@ -1,1 +1,1 @@
-SUBDIRS = mixer player splash widgets opt seqtrack toolbar
+SUBDIRS = mixer player splash widgets opt seqtrack toolbar settings

@@ -79,6 +79,9 @@ class					SettingWindow : public wxDialog
   wxSlider				*LatencySlider;
   wxTextCtrl				*undoRedoMaxDepthTextCtrl;
   wxStaticText				*undoRedoMaxDepthStaticText;
+  wxStaticText				*SampleRateText;
+  wxStaticText				*BitRateText;
+  wxStaticText				*LatencyText;
   int					*Latencies;
   wxTreeCtrl				*SettingsTree;
 

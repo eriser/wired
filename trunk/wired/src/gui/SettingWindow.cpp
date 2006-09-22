@@ -15,7 +15,7 @@
 
 
 #define	WIN_WIDTH	650
-#define WIN_HEIGHT	500
+#define WIN_HEIGHT	510
 #define WIN_SIZE	wxSize(WIN_WIDTH, WIN_HEIGHT)
 
 #define WIN_MARGIN	12
@@ -46,6 +46,14 @@ SettingWindow::SettingWindow()
 				wxTR_HAS_BUTTONS | wxTR_SINGLE | wxTR_HIDE_ROOT |
 				wxTR_FULL_ROW_HIGHLIGHT);
 
+  wxImageList   *imagelist = new wxImageList();
+  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/general.xpm"), wxBITMAP_TYPE_XPM));
+  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/audio.xpm"), wxBITMAP_TYPE_XPM));
+  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/output.xpm"), wxBITMAP_TYPE_XPM));
+  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/input.xpm"), wxBITMAP_TYPE_XPM));
+  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/midi.xpm"), wxBITMAP_TYPE_XPM));
+  SettingsTree->AssignImageList(imagelist);
+
   // flags assigned to all sizer in all right panel
   BoxFlags.Left();
   BoxFlags.Expand();
@@ -60,11 +68,11 @@ SettingWindow::SettingWindow()
   
   SettingsTree->AddRoot(wxT(""), -1, -1);
   root = SettingsTree->GetRootItem();
-  SettingsTree->AppendItem(root, _("General"), -1, -1, (wxTreeItemData*)GeneralPanel);
-  id = SettingsTree->AppendItem(root, _("Audio"), -1, -1, (wxTreeItemData*)AudioPanel);
-  SettingsTree->AppendItem(id, _("Output"), -1, -1, (wxTreeItemData*)AudioOutputPanel);
-  SettingsTree->AppendItem(id, _("Input"), -1, -1, (wxTreeItemData*)AudioInputPanel);
-  SettingsTree->AppendItem(root, _("Midi"), -1, -1, (wxTreeItemData*)MidiPanel);
+  SettingsTree->AppendItem(root, _("General"), 0, -1, (wxTreeItemData*)GeneralPanel);
+  id = SettingsTree->AppendItem(root, _("Audio"), 1, -1, (wxTreeItemData*)AudioPanel);
+  SettingsTree->AppendItem(id, _("Output"), 2, -1, (wxTreeItemData*)AudioOutputPanel);
+  SettingsTree->AppendItem(id, _("Input"), 3, -1, (wxTreeItemData*)AudioInputPanel);
+  SettingsTree->AppendItem(root, _("Midi"), 4, -1, (wxTreeItemData*)MidiPanel);
 
   AudioPanel->Show(false);
   MidiPanel->Show(false);
@@ -104,7 +112,8 @@ void				SettingWindow::GeneralPanelView()
 void				SettingWindow::AudioPanelView()
 {
   AudioPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
-  wxStaticText *t = new wxStaticText(AudioPanel, -1, _("Sample format:"), wxPoint(8, 10));
+
+  /*wxStaticText *t = new wxStaticText(AudioPanel, -1, _("Sample format:"), wxPoint(8, 10));
 
   int x1, x2;
   t->GetSize(&x1, 0x0);
@@ -121,7 +130,7 @@ void				SettingWindow::AudioPanelView()
   LatencySlider->SetPageSize(1);
   Latencies = new int [9];
   for (int i = 0; i < 9; i++)
-    Latencies[i] = 16 << i;
+  Latencies[i] = 16 << i;*/
 }
 
 //
@@ -176,6 +185,14 @@ void				SettingWindow::AudioOutputPanelView()
   // right panel
   AudioOutputPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
 
+  //samplerate and bitrate choice
+  BitRateText = new wxStaticText(AudioOutputPanel, -1, _("Sample format:"), wxPoint(8, 10));
+  BitsChoice = new wxChoice(AudioOutputPanel, Setting_Bits);
+  SampleRateText = new wxStaticText(AudioOutputPanel, -1, _("Sample rate:"));
+  RateChoice = new wxChoice(AudioOutputPanel, Setting_Rate);
+  Latency = new wxStaticText(AudioOutputPanel, -1, _("Latency:"));
+  LatencySlider = new wxSlider(AudioOutputPanel, Setting_Latency, 4096, 0, 65536);
+
   // list of audio systems
   OutputSystemChoice = new wxChoice(AudioOutputPanel, Setting_OutputSystem);
   RefreshSystems(OutputSystemChoice);
@@ -199,7 +216,21 @@ void				SettingWindow::AudioOutputPanelView()
   OutputBox->Add(OutputDeviceChoice, BoxFlags);
   OutputBox->Add(new wxStaticText(AudioOutputPanel, -1, _("Select left and right Output channels for this sound card:")),
 		 BoxFlags);
+
+  //add samplerate and bitrate choice
   OutputBox->Add(OutputChannelList, BoxFlags);
+  OutputBox->Add(BitRateText, BoxFlags);
+  OutputBox->Add(BitsChoice, BoxFlags);  
+  OutputBox->Add(SampleRateText, BoxFlags);  
+  OutputBox->Add(RateChoice, BoxFlags);
+  OutputBox->Add(Latency, BoxFlags);  
+  OutputBox->Add(LatencySlider, BoxFlags);
+  LatencySlider->SetRange(0, 8);
+  LatencySlider->SetPageSize(1);
+  Latencies = new int [9];
+  
+  for (int i = 0; i < 9; i++)
+  Latencies[i] = 16 << i;
 
   AudioOutputPanel->SetSizer(OutputBox);
   OutputBox->SetSizeHints(AudioOutputPanel);
@@ -287,6 +318,8 @@ void SettingWindow::OnOutputSystemClick(wxCommandEvent &event)
 {
   AudioLoaded = true;
   RefreshDevices(OutputDeviceChoice, OutputSystemChoice->GetSelection(), Audio->GetDefaultOutputDevice());
+  LoadSampleFormat();
+  LoadSampleRates();
   OnOutputDevClick(event);
 }
 
@@ -302,6 +335,8 @@ void SettingWindow::OnOutputDevClick(wxCommandEvent &event)
   AudioLoaded = true;
   RefreshChannels(OutputChannelList, OutputSystemChoice->GetSelection(),
 		  OutputDeviceChoice->GetSelection(), false);
+  LoadSampleFormat();
+  LoadSampleRates();
 }
 
 void SettingWindow::RefreshSystems(wxChoice* choice)
@@ -550,6 +585,18 @@ void SettingWindow::LoadSampleFormat()
   
   if (WiredSettings->SampleFormat < BitsChoice->GetCount())
     BitsChoice->SetSelection(WiredSettings->SampleFormat);
+  else
+    BitsChoice->SetSelection(0);
+ if (BitsChoice->GetCount() == 0)
+    {
+      BitRateText->Hide();
+      BitsChoice->Hide();
+    }
+  else
+    {
+      BitRateText->Show();
+      BitsChoice->Show();
+    }
 }
 
 void SettingWindow::LoadSampleRates()
@@ -574,6 +621,22 @@ void SettingWindow::LoadSampleRates()
     }
   if (WiredSettings->SampleRate < RateChoice->GetCount())
     RateChoice->SetSelection(WiredSettings->SampleRate);
+  else
+    RateChoice->SetSelection(0);
+  if (RateChoice->GetCount() == 0)
+    {
+      SampleRateText->Hide();
+      Latency->Hide();
+      RateChoice->Hide();
+      LatencySlider->Hide();
+    }
+  else
+    {
+      SampleRateText->Show();
+      Latency->Show();
+      RateChoice->Show();
+      LatencySlider->Show();
+    }
 }
 
 void SettingWindow::SetDefaultSampleFormat(void)
