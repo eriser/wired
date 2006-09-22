@@ -74,7 +74,7 @@ MediaLibrary::MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &s
   MLTreeView = new MLTree(this, wxPoint(10, 50),
 			  wxSize(300, GetSize().y - 100),
 			  wxTR_DEFAULT_STYLE | wxTR_EDIT_LABELS | wxTR_MULTIPLE);
-  MLTreeView->SetTreeCollapsed();
+  MLTreeView->SetTreeExpanded();
 
   TopToolbar = new wxToolBar(this, -1, wxPoint(-1, -1), wxSize(1000, 46), wxTB_3DBUTTONS);
   TopToolbar->AddTool(MediaLibrary_Add, _("Add"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_ADDUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_ADDDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Add a file"), _("Add a file"), NULL);
@@ -200,9 +200,16 @@ void				MediaLibrary::OnEdit(wxCommandEvent &WXUNUSED(event))
 {
   cout << "[MEDIALIBRARY] Edit fille (OnEdit)" << endl;
   wxString			selfile;
-  
+
+  wxTreeItemId			item;
+  s_nodeInfo			infos;
+
   selfile = MLTreeView->getSelection(1);
+  item = MLTreeView->GetSelection();
+  infos = MLTreeView->GetTreeItemStructFromId(item);
   // Test the selfile content HERE
+  if (item == MLTreeView->GetRootItem() || selfile == wxT("")  || infos.extention == wxT(""))
+    return ;
   MidiMutex.Lock();
   MidiDeviceMutex.Lock();
   AudioMutex.Lock();
@@ -218,8 +225,14 @@ void				MediaLibrary::OnEdit(wxCommandEvent &WXUNUSED(event))
 void				MediaLibrary::OnInsert(wxCommandEvent &WXUNUSED(event))
 {
   wxString			selfile;
-  
+  wxTreeItemId			item;
+  s_nodeInfo			infos;
+
   selfile = MLTreeView->getSelection(1);
+  item = MLTreeView->GetSelection();
+  infos = MLTreeView->GetTreeItemStructFromId(item);
+  if (item == MLTreeView->GetRootItem() || selfile == wxT("")  || infos.extention == wxT(""))
+    return ;
   // Test the selfile content HERE
   //  cout << "[MEDIALIBRARY] Insert File (OnInsert)" << selfile << endl;
   MidiMutex.Lock();

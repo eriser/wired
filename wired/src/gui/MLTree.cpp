@@ -81,9 +81,8 @@ MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
 
   Expand(root);
   LoadKnownExtentions();
-
   //temp
-  DisplayNodes();
+  // DisplayNodes();
 
   Connect(ML_ID_MENU_DELETE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)&MLTree::OnRemove);
@@ -435,16 +434,14 @@ void				MLTree::OnRemove()
 // Expand all existing nodes
 void				MLTree::ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldExpand, int toLevel)
 {
+
   if (toLevel == 0 || !ItemHasChildren(id))
     return;
-
   bool isExpanded = IsExpanded(id);
-
   if (shouldExpand && !isExpanded)
     Expand(id);
   else if (!shouldExpand && isExpanded)
     Collapse(id);
-
   wxTreeItemIdValue cookie = &Tree;
   for (wxTreeItemId child = GetFirstChild(id, cookie); child.IsOk(); child = GetNextChild(id, cookie))
     ExpandAll(Tree, child, shouldExpand, toLevel - 1);
@@ -454,15 +451,17 @@ void				MLTree::ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldE
 void				MLTree::OnCollapse()
 {
   //  cout << "[MEDIALIBRARY] Expand/Collapse Tree (OnCollapse)" << endl;
+  // TODO : Find a way to get the max depth of node childs. 
+  // Currently using 100 as an arbitrary max depth
   if (IsTreeCollapsed() == true)
     {
-      ExpandAll(Tree, GetRootItem(), true, 2);
+      ExpandAll(Tree, GetRootItem(), true, 100);
       SetTreeExpanded();
     }
   else
     {
       wxTreeItemIdValue cookie = &Tree;
-      ExpandAll(Tree, GetRootItem(), false, 2);
+      ExpandAll(Tree, GetRootItem(), false, 100);
       EnsureVisible(GetFirstChild(GetRootItem(), cookie));
       SetTreeCollapsed();
     }
@@ -476,7 +475,12 @@ void				MLTree::OnRightClick(wxMouseEvent& event)
   wxMenu* myMenu = new wxMenu();
   s_nodeInfo		infos;
 
+
   item = GetSelection();
+  if (item == GetRootItem())
+    {
+      return ;
+    }
   infos = GetTreeItemStructFromId(item);
   if (infos.extention.Cmp(wxT("")))
     {
