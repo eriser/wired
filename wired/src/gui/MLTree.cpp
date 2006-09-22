@@ -224,6 +224,7 @@ void				MLTree::AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo 
 
   wxTreeItemId			itemToAdd;
   itemToAdd = AppendItem(ParentNode, FileToAdd);
+  Expand(ParentNode);
   SetItemImage(itemToAdd, 3);
   nodes[itemToAdd] = infos;
 }
