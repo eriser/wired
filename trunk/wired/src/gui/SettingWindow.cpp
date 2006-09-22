@@ -289,7 +289,7 @@ void SettingWindow::OnApplyClick(wxCommandEvent &event)
 {
   if (MainWin->InitAudio(true) < 0)
     MainWin->AlertDialog(_("audio engine"), 
-			 _("You may check for your audio settings if you want to use Wired.."));
+			 _("Could not open audio device : check that the device is not busy (used by another application) and that your audio settings are correct."));
   AudioLoaded = false;
   MidiLoaded = false;
 }

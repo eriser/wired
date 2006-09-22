@@ -263,15 +263,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   wxIcon wiredIcon;
   wxString iconPath;
 
-  std::cout << "icon data dir = " << WiredSettings->DataDir.mb_str() << std::endl;
-
   iconPath << WiredSettings->DataDir << wxT("ihm/splash/icon-small.gif");
 
   if(wiredIcon.LoadFile(iconPath, wxBITMAP_TYPE_GIF)) 
-    {
-      SetIcon(wiredIcon);
-      std::cout << " icon okay ! " << std::endl;
-    }
+    SetIcon(wiredIcon);
 
 #if wxUSE_STATUSBAR
   Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
@@ -303,7 +298,7 @@ int			MainWindow::Init()
       // avoid to flood user, he already knows he has a deprecated config!
       if (!WiredSettings->ConfIsDeprecated())
 	AlertDialog(_("audio engine"), 
-		    _("You may check for your audio settings if you want to use Wired.."));
+		    _("Could not open audio device : check that the device is not busy (used by another application) and that your audio settings are correct."));
     }
   InitFileConverter();
 
@@ -429,7 +424,7 @@ int			MainWindow::InitAudio(bool restart)
       
     }
   else
-    cout << "You may check for your audio settings if you want to use Wired.." << endl;
+    cout << "Could not open audio device : check that the device is not busy (used by another application) and that your audio settings are correct." << endl;
   
   // dialog can't be  before mutex unlocking (outside this function is better)
   if (!Audio->IsOk)
@@ -1488,7 +1483,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 	  // avoid to flood user, he already knows he has a deprecated config!
 	  if (!WiredSettings->ConfIsDeprecated())
 	    AlertDialog(_("audio engine"), 
-			_("You may check for your audio settings if you want to use Wired.."));
+			_("Could not open audio device : check that the device is not busy (used by another application) and that your audio settings are correct."));
 	}
     }
 }
@@ -1655,12 +1650,12 @@ void					MainWindow::OnFullScreen(wxCommandEvent &event)
 
 void					MainWindow::OnAbout(wxCommandEvent &event)
 {
-  wxBitmap splashbtm;
-  if (splashbtm.LoadFile(wxString(WiredSettings->DataDir +
-				  wxString(wxT("ihm/splash/splash.png"))), 
+  wxBitmap aboutbtm;
+  if (aboutbtm.LoadFile(wxString(WiredSettings->DataDir +
+				  wxString(wxT("ihm/splash/about.png"))), 
 			 wxBITMAP_TYPE_PNG))
     {
-      wxSplashScreen* splash = new wxSplashScreen(splashbtm,
+      wxSplashScreen* splash = new wxSplashScreen(aboutbtm,
 						  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT,
 						  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 						  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
