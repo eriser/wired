@@ -64,7 +64,7 @@ SettingWindow::SettingWindow()
   id = SettingsTree->AppendItem(root, _("Audio"), -1, -1, (wxTreeItemData*)AudioPanel);
   SettingsTree->AppendItem(id, _("Output"), -1, -1, (wxTreeItemData*)AudioOutputPanel);
   SettingsTree->AppendItem(id, _("Input"), -1, -1, (wxTreeItemData*)AudioInputPanel);
-  SettingsTree->AppendItem(root, wxString(_("Midi"), *wxConvCurrent), -1, -1, (wxTreeItemData*)MidiPanel);
+  SettingsTree->AppendItem(root, _("Midi"), -1, -1, (wxTreeItemData*)MidiPanel);
 
   AudioPanel->Show(false);
   MidiPanel->Show(false);
@@ -141,15 +141,18 @@ void				SettingWindow::AudioInputPanelView()
 
   // list of devices
   InputDeviceChoice = new wxChoice(AudioInputPanel, Setting_InputDev);
-  RefreshDevices(InputDeviceChoice, 0, Audio->GetDefaultInputDevice()); // based on system selection
+  RefreshDevices(InputDeviceChoice, InputSystemChoice->GetSelection(),
+		 Audio->GetDefaultInputDevice()); // based on system selection
 
   // list of channels
   InputChannelList = new wxCheckListBox(AudioInputPanel, Setting_InputChan);
-  RefreshChannels(InputChannelList, 0, 0, true);
+  RefreshChannels(InputChannelList,
+		  InputSystemChoice->GetSelection(),
+		  InputDeviceChoice->GetSelection(), true);
 
   // sizer
   InputBox = new wxBoxSizer(wxVERTICAL);
-  InputBox->Add(new wxStaticText(AudioInputPanel, -1, _("Avalaible sound system:")), BoxFlags);
+  InputBox->Add(new wxStaticText(AudioInputPanel, -1, _("Available sound system:")), BoxFlags);
   InputBox->Add(InputSystemChoice, BoxFlags);
   InputBox->Add(new wxStaticText(AudioInputPanel, -1, _("Select Input sound card:")), BoxFlags);
   InputBox->Add(InputDeviceChoice, BoxFlags);
@@ -179,15 +182,18 @@ void				SettingWindow::AudioOutputPanelView()
 
   // list of devices
   OutputDeviceChoice = new wxChoice(AudioOutputPanel, Setting_OutputDev);
-  RefreshDevices(OutputDeviceChoice, 0, Audio->GetDefaultOutputDevice());
+  RefreshDevices(OutputDeviceChoice, OutputSystemChoice->GetSelection(),
+		 Audio->GetDefaultOutputDevice());
 
   // list of channels
   OutputChannelList = new wxCheckListBox(AudioOutputPanel, Setting_OutputChan);
-  RefreshChannels(OutputChannelList, 0, 0, false);
+  RefreshChannels(OutputChannelList,
+		  OutputSystemChoice->GetSelection(),
+		  OutputDeviceChoice->GetSelection(), false);
 
   // sizer
   OutputBox = new wxBoxSizer(wxVERTICAL);
-  OutputBox->Add(new wxStaticText(AudioOutputPanel, -1, _("Avalaible sound system:")), BoxFlags);
+  OutputBox->Add(new wxStaticText(AudioOutputPanel, -1, _("Available sound system:")), BoxFlags);
   OutputBox->Add(OutputSystemChoice, BoxFlags);
   OutputBox->Add(new wxStaticText(AudioOutputPanel, -1, _("Select Output sound card:")), BoxFlags);
   OutputBox->Add(OutputDeviceChoice, BoxFlags);
@@ -324,7 +330,7 @@ void SettingWindow::RefreshDevices(wxChoice* choice, int system_selected, int se
 
   for (dev = Audio->DeviceList.begin(); dev != Audio->DeviceList.end(); dev++)
     {
-      if ((*dev)->AudioSystem == system_selected - 1)
+      if ((*dev)->Host->GetId() == system_selected - 1)
 	choice->Append((*dev)->Name);
     }
   choice->SetSelection(selected);
@@ -358,9 +364,12 @@ void SettingWindow::RefreshChannels(wxCheckListBox* list, int system_selected,
 	list->Check(i - 1);
     }
 
-  LoadSampleFormat();
-  LoadSampleRates();
-
+  // load only if it's Output 
+  if (!input)
+    {
+      LoadSampleFormat();
+      LoadSampleRates();
+    }
 }
 
 void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
@@ -384,36 +393,50 @@ void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
 
 void SettingWindow::Load()
 {
-  wxString strMaxUndoRedoDepth;
-  int i;
+  Device*	inCurrentDevice;
+  Device*	outCurrentDevice;
+  AudioSystem*	inCurrentSystem;
+  AudioSystem*	outCurrentSystem;
+  wxString	strMaxUndoRedoDepth;
+  int		i;
 
   QuickWaveBox->SetValue(WiredSettings->QuickWaveRender);
   dBWaveBox->SetValue(WiredSettings->dbWaveRender);
   strMaxUndoRedoDepth << WiredSettings->maxUndoRedoDepth;
   undoRedoMaxDepthTextCtrl->SetValue(strMaxUndoRedoDepth);
   
-  if (WiredSettings->OutputSystem > -1)
+  // init vars from conf file
+  inCurrentSystem = Audio->GetAudioSystemByName(WiredSettings->InputSystemStr);
+  outCurrentSystem = Audio->GetAudioSystemByName(WiredSettings->OutputSystemStr);
+  inCurrentDevice = Audio->GetDeviceByName(WiredSettings->InputDeviceStr);
+  outCurrentDevice = Audio->GetDeviceByName(WiredSettings->OutputDeviceStr);
+
+  if (outCurrentSystem)
     {
-      OutputSystemChoice->SetSelection(WiredSettings->OutputSystem);
+      WiredSettings->OutputSystemId = outCurrentSystem->GetId() + 1;
+      OutputSystemChoice->SetSelection(WiredSettings->OutputSystemId);
       RefreshDevices(OutputDeviceChoice, OutputSystemChoice->GetSelection(),
 		     Audio->GetDefaultOutputDevice());
     }
-  if (WiredSettings->OutputDev > -1)
+  if (outCurrentDevice)
     {
-      OutputDeviceChoice->SetSelection(WiredSettings->OutputDev);
+      WiredSettings->OutputDeviceId = Audio->GetDeviceIdByTrueId(outCurrentDevice);
+      OutputDeviceChoice->SetSelection(WiredSettings->OutputDeviceId);
       RefreshChannels(OutputChannelList, OutputSystemChoice->GetSelection(),
 		      OutputDeviceChoice->GetSelection(), false);
       LoadChannels(OutputChannelList, WiredSettings->OutputChannels);
     }
-  if (WiredSettings->InputSystem > -1)
+  if (inCurrentSystem)
     {
-      InputSystemChoice->SetSelection(WiredSettings->InputSystem);
+      WiredSettings->InputSystemId = inCurrentSystem->GetId() + 1;
+      InputSystemChoice->SetSelection(WiredSettings->InputSystemId);
       RefreshDevices(InputDeviceChoice, InputSystemChoice->GetSelection(),
 		     Audio->GetDefaultInputDevice());
     }
-  if (WiredSettings->InputDev > -1)
+  if (inCurrentDevice)
     {
-      InputDeviceChoice->SetSelection(WiredSettings->InputDev);
+      WiredSettings->InputDeviceId = Audio->GetDeviceIdByTrueId(inCurrentDevice);
+      InputDeviceChoice->SetSelection(WiredSettings->InputDeviceId);
       RefreshChannels(InputChannelList, InputSystemChoice->GetSelection(),
 		      InputDeviceChoice->GetSelection(), true);
       LoadChannels(InputChannelList, WiredSettings->InputChannels);
@@ -421,7 +444,7 @@ void SettingWindow::Load()
 
   if (WiredSettings->SamplesPerBuffer > 0)
     {
-      for (int i = 0; i < 9; i++)
+      for (i = 0; i < 9; i++)
 	if (Latencies[i] == WiredSettings->SamplesPerBuffer)
 	  LatencySlider->SetValue(i);
       UpdateLatency();
@@ -450,17 +473,31 @@ void SettingWindow::SaveChannels(wxCheckListBox* from, vector<long>& to)
 
 void SettingWindow::Save()
 {
-  long i;
-
   WiredSettings->QuickWaveRender = QuickWaveBox->IsChecked();
   WiredSettings->dbWaveRender = dBWaveBox->IsChecked();
+  undoRedoMaxDepthTextCtrl->GetValue().ToLong(&WiredSettings->maxUndoRedoDepth);
 
-  WiredSettings->OutputSystem = OutputSystemChoice->GetSelection();
-  WiredSettings->InputSystem = InputSystemChoice->GetSelection();
-  WiredSettings->OutputDev = OutputDeviceChoice->GetSelection();
-  WiredSettings->InputDev = InputDeviceChoice->GetSelection();
+  // we need to save system and device names instead their id
+  Device*	output;
+  Device*	input;
 
-  undoRedoMaxDepthTextCtrl->GetValue().ToULong(&WiredSettings->maxUndoRedoDepth);
+  WiredSettings->OutputSystemId = OutputSystemChoice->GetSelection();
+  WiredSettings->InputSystemId = InputSystemChoice->GetSelection();
+  WiredSettings->OutputDeviceId = OutputDeviceChoice->GetSelection();
+  WiredSettings->InputDeviceId = InputDeviceChoice->GetSelection();
+
+  output = Audio->GetDevice(WiredSettings->OutputDeviceId, WiredSettings->OutputSystemId);
+  input = Audio->GetDevice(WiredSettings->InputDeviceId, WiredSettings->InputSystemId);
+  if (output)
+    {
+      WiredSettings->OutputSystemStr = output->Host->GetName();
+      WiredSettings->OutputDeviceStr = output->Name;
+    }
+  if (input)
+    {
+      WiredSettings->InputSystemStr = input->Host->GetName();
+      WiredSettings->InputDeviceStr = input->Name;
+    }
 
   // if we changed audio settings
   if (AudioLoaded)

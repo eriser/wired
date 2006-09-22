@@ -34,6 +34,7 @@ class MainApp : public wxApp
   wxSingleInstanceChecker	*Checker;
   void			        OnFatalException();
   void				OnUnhandledException();
+  void				ShowWelcome();
 };
 
 DECLARE_APP(MainApp)

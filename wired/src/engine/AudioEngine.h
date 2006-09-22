@@ -4,15 +4,12 @@
 #ifndef __AUDIOENGINE_H__
 #define __AUDIOENGINE_H__
 
-#include <portaudio.h>
-#include "Device.h"
-
-//#include "MainWindow.h"
-
-
-#include <iostream>
 #include <vector>
+
+#include <portaudio.h>
 #include <wx/thread.h>
+
+#include "Device.h"
 #include "RingBuffer.h"
 #include "Settings.h"
 
@@ -23,6 +20,9 @@
 
 using namespace std;
 
+extern const char *standardSampleFormats_str[];
+extern const unsigned long standardSampleFormats[];
+extern const double standardSampleRates[];
 
 typedef struct
 {
@@ -104,17 +104,22 @@ class AudioEngine
   int			GetDefaultOutputDevice();
   Device*		GetDevice(int dev_id, int system_id);
 
+  AudioSystem*		GetAudioSystemByName(wxString name);
+  Device*		GetDeviceByName(wxString name);
+  int			GetDeviceIdByTrueId(Device* dev);
+
   void			SetDefaultSettings(void);
   callback_t		*UserData;
   bool			StreamIsOpened;
   bool			StreamIsStarted;
+
  private:
   void			GetAudioSystems();
   void			GetDevices();
   void			SetInputDevice(void);
   void			SetOutputDevice(void);
   Device*		GetDeviceById(PaDeviceIndex id);
-  int			GetDeviceIdByTrueId(Device* dev);
+  AudioSystem*		GetAudioSystemById(int id);
 
   void			AlertDialog(const wxString& from, const wxString& msg);
   PaStream		*Stream;
