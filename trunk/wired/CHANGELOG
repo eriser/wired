@@ -1,0 +1,149 @@
+
+WIRED 0.3.1 (work in progress)
+------------------------------------------------------------------------
+
+(until rev 983)
+
+- Added tooltip in Sequencer
+- Added some visual improvements in the settings window
+- Misc media library improvements
+- Removed forgotten debug messages
+- Changed about box
+- Changed some error messages to more explicit ones
+- Changed outdated first launch message by a more generic one
+- Changed structure of the conf file
+- Limited number of simultaneous pop-ups
+- Default Device selection is working (based on PortAudio choices)
+- Fixing and cleaning (always)
+- Partially reactivated codec management (vorbis,mpeg,flac :
+  add --enable-codecs to configure script)
+- Put relative path (prefix) instead of /usr
+- Added an "enable plugins" flag to the configure script. This allow
+  users to compile Wired with or without plugins
+- Added configure options : --enable-portaudio to use Wired built-in
+  portaudio snapshot (default), and options --with-jack,
+  --without-oss, etc..
+- Apdated portaudio sources
+- Added some  icons
+- Added CHANGELOG file
+- Updated INSTALL, BUGS and README files
+
+
+WIRED 0.3
+------------------------------------------------------------------------
+
+- Added the Media Library
+- Added new languages (french, chinese)
+- New installation script (autogen.sh). It executes local, libtoolize,
+  autoconf and automake
+- Imported a recent snapshot of PortaudioV19 into Wired
+- Jack support (portaudio implicit) but not active due to problems
+- Changed splashscreen, added tiny icon
+- Set help panel as default option panel (instead of mixer)
+- Session saving now works
+- Fixed some typos (they're still a lot)
+- Wired now exits with an error dialog if no soundcard is detected
+- Updated wired.conf structure
+- Minor changes in non-unicode output
+- Welcome popup is called only if wired.conf doesn't exist (Wired is
+  launched for the first time)
+- Added audio system selection (oss, alsa, jack)
+- Apply button really saves settings now
+- Added the possibility to load wired_*.conf from current directory
+- Adde the possibility to put plugins into different directory with
+  PREFIX (from configure)
+- Addded gettext support for autogen.sh
+- Moved m4 directory to the config directory and fixed bug with
+  mkinstalldirs
+- Removed deprecated files
+- Fixed ompilation errors
+- Splashscreen is now hidden once main window is loaded
+- HUGE debugging
+- HUGE code cleaning
+- Code portability
+- Optimisation
+
+
+WIRED 0.2.2
+------------------------------------------------------------------------
+
+- Made unicode modifications (some c_str() are removed)
+- Changed splashscreen
+- Did some cleaning in instruction files, and changed licence of files
+  It's now excplicitly under GPL v2.1
+- Setting Window displays all loaded parameters : fixes bug #1483792
+- Deleted useless files (Makefile.in.in is used)
+- Unicode fixing
+- Move all version informations in new file version.h.
+- Method declaration modified to fit with gcc 4.1
+- Fixed floating windows and window switching, it works altogether now
+- Fixed delete threads problem
+- Fixed bug 1483865 : WiredSampler double clic doesn't work
+- Fixed bug 1483831 : timeline has not correct height
+- Fixed bug 1482968 : can't see entire wavefile diagram
+- Fixed bug 1483873 : Magnetism ComboBox
+- Fixed bug 1483799 : optional view listing has optional floating view
+- Fixed bug 1472875 : bookmarks don't work after reload
+- Fixed bug 1468815 : deletion of a rack when it's loaded in a track
+- Other bug fixing
+- Code cleaning
+
+
+WIRED 0.2.1
+------------------------------------------------------------------------
+
+- Rack view and sequencer can't be floating windows at the same time
+  any more
+- Removed rack view minimum height
+- Misc visual improvements
+- Fixed working directory saving
+- Fixed configuration saving
+- Fixed bug 1470348 : no preview in file dialog
+- Fixed bug 1466901 : file dialog of loopsampler doesn't look for wav files
+- Fixed bug 1469115 : sequencer doesn't show tracks
+- Fixed bug 1469432 : closing optional view of LoopSampler crashes app
+- Other bug fixing
+- Code cleaning
+
+
+WIRED 0.2
+------------------------------------------------------------------------
+
+- Unicode support
+- OSS support
+- Added a timeout on quit
+- New Settings window look
+- Changed faders' default value in the loopsampler and the native effect plugins
+- Moved format thing to something much more elegant
+- Removed some ugly code
+- Changed default sound settings values
+- Translation updated
+- Favorites and MRUs are working
+- Added new conditions to compile
+- Added some messages
+- Fixed Fader control
+- Page up and page down now move the fader with a step of 1/10th the range
+  of values.
+- Added missing buttons
+- New Thread management
+- Cleaned i18n
+- Changed metronom and loop design
+- Added test on import
+- Conversion on saving file does work (at least ....)
+- Removed annoying warning messages
+- Some changes on file loading
+- A LOT OF bug fixing
+- A LOT OF code cleaning
+- A LOT OF optimisation
+- portability optimisations
+
+
+WIRED 0.11
+------------------------------------------------------------------------
+
+- Corrections in volume controls
+- Master channel control is back
+- Significant fader modifications
+- Added a log Frame
+- Some work on future features (WiredVideo)
+- Bug fixing and code cleaning

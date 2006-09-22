@@ -1,6 +1,6 @@
 This document contains installation notes and installation problems resolutions. 
-If, after having read it carefully, you still cannot install Wired, please 
-consider reporting in the user forum : http://wired.sf.net/
+If, after reading it carefully, you still can't install Wired, please 
+consider reporting to the user forum : http://wired.sf.net/
 
 ==DEPENDENCIES==
 Before trying to compile Wired, you should make sure you have the following 
@@ -21,7 +21,7 @@ those dependancies problems.
   - wxGTK 2.6.x 
       http://www.wxwidgets.org
 	* When compiling wxWidgets, be sure you are using GTK2 support by 
-	passing to configure script: --enable-gtk2
+	passing the "--enable-gtk2" argument to the configure script
 	* or you can install it with 2 packages: libwxgtk2.6-dev, wx-common
 
   - SoundTouch: 
@@ -46,7 +46,7 @@ those dependancies problems.
 
   - dssi 
       http://dssi.sourceforge.net/
-        * This is only useful if you want to have dssi plugins integrated.
+        * This is only useful if you want to use dssi plugins.
 	However, it is highly reccomended as these are great plugins.
        * You can install it with 1 package: dssi-dev
 
@@ -60,7 +60,7 @@ those dependancies problems.
 
 
 ==COMPILATION==
-The easy way is as follow.
+The easy way is as follows.
 
 $ ./autogen.sh
 $ ./configure
@@ -69,20 +69,18 @@ $ su
 Password:
 $ make install
 
-If everything has went well, you should be able to type wired in a console to 
-start enjoying Wired.
-If this doesn't work, there are a few known compilation problems.
+If everything went well, you should be able to launch wired just by typing
+"wired" in a console. If this doesn't work, there are a few known compilations.
 
 
 ==KNOWN COMPILATION ERRORS==
 
 1- Global considerations
 
-The configure script is there, among things, to check for your configuration to 
-be ready to receive Wired. However, you should check for its output. It should 
-print a summary of the informations it found when it is done. Make sure each 
-dependency is followed by a version number and that each option is followed by 
-the correct setting. 
+The configure script is there, among things, to check your configuration.
+However, you should check for its output. It should print a summary of the
+informations it found when it is done. Make sure each dependency is followed
+by a version number and that each option is followed by the correct setting. 
 
 2- Error in LoopSampler
 
@@ -98,11 +96,11 @@ If you have an error looking like "wired: error while loading shared libraries:
 libWiredWidgets.so.0: cannot open shared object file: No such file or directory",
 the problem comes from the fact that wired was installed in your /usr/local/ 
 directory and your system tries to find the libraries in /usr.
-There are two ways two solve this problems, install Wired in /usr or tell you 
+There are two ways two solve this problem, install Wired in /usr or tell your 
 system to look for libraries in /usr/local/.
 
 Solution 1 :
-pass --prefix=/usr to the configure script
+pass the "--prefix=/usr" argument to the configure script
 
 Solution2 :
 $ export LD_LIBRARY_PATH=/usr/local/lib
@@ -111,4 +109,4 @@ $ wired
 You can also add the export command to your .bashrc so you won't have to type it 
 each time.
 
-However solution one should prefer as long as it is possible.
+However solution one should be prefered as long as it is possible.
