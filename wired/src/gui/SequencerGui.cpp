@@ -368,7 +368,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Toolbar->AddRadioTool(ID_SEQ_DRAW, _("Draw"), wxBitmap(WiredSettings->DataDir + DRAW_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + DRAW_DOWN, wxBITMAP_TYPE_PNG), _("Draw Pattern"), _("Draw Pattern"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_DEL, _("Delete"), wxBitmap(WiredSettings->DataDir + ERASE_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + ERASE_DOWN, wxBITMAP_TYPE_PNG), _("Delete Pattern"), _("Deletes notes"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(WiredSettings->DataDir + SPLIT_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + SPLIT_DOWN, wxBITMAP_TYPE_PNG), _("Split Pattern"), _("Split Pattern"), NULL);
-  Toolbar->AddRadioTool(ID_SEQ_COLOR, _("Color"), wxBitmap(WiredSettings->DataDir + COLOR_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + COLOR_DOWN, wxBITMAP_TYPE_PNG));
+  Toolbar->AddRadioTool(ID_SEQ_COLOR, _("Color"), wxBitmap(WiredSettings->DataDir + COLOR_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + COLOR_DOWN, wxBITMAP_TYPE_PNG),  _("Color Pattern"),  _("Delete Pattern"), NULL);
   BrushColor = CL_DEFAULT_SEQ_BRUSH;
 
   wxPoint	pColor;
@@ -387,7 +387,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   ColorDialogBox = new wxColourDialog(mainwindow, 0);
   Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
   Toolbar->AddSeparator();
-  Toolbar->AddCheckTool(ID_SEQ_MAGNET, _("Magnet"), wxBitmap(WiredSettings->DataDir + MAGN_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + MAGN_DOWN, wxBITMAP_TYPE_PNG), wxT(""), wxT(""), NULL);
+  Toolbar->AddCheckTool(ID_SEQ_MAGNET, _("Magnet"), wxBitmap(WiredSettings->DataDir + MAGN_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + MAGN_DOWN, wxBITMAP_TYPE_PNG), _("Magnetize"), _("Magnetize"), NULL);
   for (c = 0; c < NB_COMBO_CHOICES; c++)
     combo_choices[c] = ComboChoices[c].s;
   MagnetQuant = new wxComboBox(Toolbar, ID_SEQ_COMBO_MAGNET, DEFAULT_MAGNETISM_COMBO_VALUE, 
