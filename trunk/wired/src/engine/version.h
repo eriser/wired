@@ -8,7 +8,7 @@
 #define WIRED_TITLE	(wxT("Wired 0.3"))
 #define WIRED_VERSION	(wxT("0.3"))
 
-#define WIRED_BUGS	(wxT("http://bloodshed.net/wired/bugs"))
-#define WIRED_FORUMS	(wxT("http://bloodshed.net/wired/forums"))
+#define WIRED_BUGS	(wxT("http://sourceforge.net/projects/wired"))
+#define WIRED_FORUMS	(wxT("http://wired.sourceforge.net"))
 
 #endif //  __VERSION_H__
