@@ -32,6 +32,8 @@ libgui_a_SOURCES = 			\
 		MediaLibrary.h		\
 		MLTree.cpp		\
 		MLTree.h		\
+		MLTreeInfos.cpp		\
+		MLTreeInfos.h		\
 		MidiPattern.cpp		\
 		MidiPattern.h		\
 		MixerGui.cpp		\
