@@ -44,7 +44,7 @@ void cImportWaveAction::AddWaveTrack()
 
 void cImportWaveAction::AddWaveToEditor()
 {
-  WaveFile *w = WaveCenter.AddWaveFile(wxString(_WavePath.c_str(), *wxConvCurrent));
+  WaveFile *w = WaveCenter.AddWaveFile(_WavePath);
   
   if (w) 
     {
