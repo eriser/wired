@@ -190,4 +190,8 @@ static int	AudioCallback(const void *input,
   return (0);
 }
 
+// Useful functions for debugging
+void		DumpStereoBuffer(float **buffer);
+
+
 #endif  // __AUDIOENGINE_H__
