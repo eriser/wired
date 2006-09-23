@@ -22,14 +22,14 @@ class Mixer
   Mixer operator=(const Mixer& right);
   ~Mixer();
   
-  Channel*		AddMonoOutputChannel(void);
-  Channel*		AddStereoOutputChannel(void);
+  void			Dump();
+
   Channel*		AddMonoInputChannel(void);
   Channel*		AddStereoInputChannel(void);
   Channel*              OpenInput(long num);
   
-  Channel*		AddMonoOutputChannel(bool visible);
-  Channel*		AddStereoOutputChannel(bool visible);
+  Channel*		AddMonoOutputChannel(bool visible = true);
+  Channel*		AddStereoOutputChannel(bool visible = true);
   
   bool			RemoveChannel(Channel*);
   bool			InitOutputBuffers(void);
@@ -40,6 +40,7 @@ class Mixer
     result in each output 
     ringbuffers 
  */
+
   void			MixOutput(bool soundcard, wxThread* caller = NULL);
 
   void			FlushInput(long num); 
@@ -52,7 +53,11 @@ class Mixer
   
   list<Channel*>	OutChannels;
   list<Channel*>	InChannels;
-  
+
+ private:
+  Channel*		AddChannel(list<Channel*>& listm,
+				   bool stereo, bool visible = true);
+
  protected:
   friend class		Sequencer;
   float			*OutputLeft;
