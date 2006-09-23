@@ -855,3 +855,17 @@ int			AudioEngine::GetDefaultAudioSystem()
 {
   return (Pa_GetDefaultHostApi() + 1);
 }
+
+void			DumpStereoBuffer(float **buffer)
+{
+  cout << "===DumpBuffer dump begin (first 10bytes)===" << endl;
+  if (buffer)
+    {
+      int	i;
+
+      if (buffer[0] && buffer[1])
+	for (i = 0; i < 10; i++)
+	  cout << buffer[0][i] << "\t" << buffer[1][i] << endl;
+    }
+  cout << "===DumpBuffer dump end===" << endl;
+}
