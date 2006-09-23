@@ -36,9 +36,18 @@ class WaveFile
   WaveFile(wxString filename, bool loadmem = true, t_opening_mode open_mode = read, int channel = 2);
   WaveFile(short *buffer, unsigned int size, int channels, long rate);
   ~WaveFile();
-  
+
+ private:
+  void	InitVars();
+  void	InitBuffers();
+  void	DumpSf();
+  int	Open(wxString filename, t_opening_mode open_mode = read, int channel = 2, int fd = -1);
+
+ public:
+
   WaveFile *Clone()
     {
+      cout << "ERROR ERROR Wired will fail miserably" << endl;
       WaveFile *w;
       w = new WaveFile(*this);
       if (LoadedInMem)
@@ -93,10 +102,10 @@ class WaveFile
   void		SetPitch(float p) { Pitch = p; }
   void		SetInvert(bool inv) { Invert = inv; }
 
-  float	   **Data;
-  wxString   Filename;
-  bool	   LoadedInMem;
-  bool	   Error;
+  float		**Data;
+  wxString	Filename;
+  bool		LoadedInMem;
+  bool		Error;
 
  protected:
   int m_open_mode; 

@@ -4,156 +4,39 @@
 #include "WaveFile.h"
 #include <math.h>
 #include "../error.hh"
-
-#include <iostream>
+#include "AudioEngine.h"
 
 using namespace std;
 
 WaveFile::WaveFile()
 {
-  LoadedInMem = false;
-  Data = NULL;
-  TempBuf = NULL;
-  // Initialise le header de fichier
-  memset (&sfinfo, 0, sizeof(sfinfo) );
+  cout << "[WaveFILE] Created" << endl;
+  InitVars();
 
-  // Ce fichier doit etre ouvert en mode read/write
-  // on initialise son sf_info avec des donnees valides
-  // Ces infos peuvent etre mis a jour avec la commande SFC_UPDATE_HEADER_NOW 
-  sfinfo.channels   = 1;
-  sfinfo.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
-  sfinfo.samplerate = 1;
-
-  // Determine le mode d'ouverture du fichier
-  // TODO : sf_open doit etre remplace par sf_open_fd pour gerer 
-  // correctement les fichiers temporaires
-  sffile = sf_open_fd (fileno( tmpfile() ), SFM_RDWR, &sfinfo, true);
-
-  if (sffile == NULL )
-  {
-    Error = true;
-    cout << "[WAVEFILE] Unable to create temporary file in read/write mode " << endl;
-    throw Error::File(wxString(wxT("")), wxString(sf_strerror(0), wxConvCurrent));
-  }    
+  Open(wxT(""), tmp, 1, fileno(tmpfile()));
 }
 
-
-  WaveFile::WaveFile(wxString filename, bool loadmem, t_opening_mode open_mode, int channel) 
-: Filename(filename), LoadedInMem(loadmem), TempBuf(0), Pitch(1), 
-  Invert(false), Data(0), Error(false),   m_open_mode (open_mode)
+WaveFile::WaveFile(wxString filename, bool loadmem, t_opening_mode open_mode, int channel) 
 {
-  unsigned long i;
-  long k;
+  InitVars();
 
-  // Initialise le header de fichier
-  memset (&sfinfo, 0, sizeof(sfinfo) );
+  Filename = filename;
+  m_open_mode = open_mode;
+  LoadedInMem = loadmem;
+  Open(Filename, open_mode, channel);
 
-  //cout << "[WaveFile ] ----  LoadedInMem = " << LoadedInMem << endl;
-  // Si le fichier doit etre ouvert en mode write ou read/write
-  // on initialise son sf_info avec des donnees valides
-  // Ces infos peuvent etre mis a jour avec la commande SFC_UPDATE_HEADER_NOW 
-  if ( (m_open_mode == rwrite) || (m_open_mode == write) )
-  {
-	if (channel == 1)
-	  sfinfo.channels   = 1;
-	else
-	  sfinfo.channels   = 2;
-    sfinfo.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
-    sfinfo.samplerate = 44100;
-  }
-
-  // Determine le mode d'ouverture du fichier
-  // TODO : sf_open doit etre remplace par sf_open_fd pour gerer 
-  // correctement les fichiers temporaires
-  switch (open_mode)
-  {
-    case read : 
-      sffile = sf_open (Filename.mb_str(), SFM_READ, &sfinfo);
-      break;
-    case write : 
-      sffile = sf_open (Filename.mb_str(), SFM_WRITE, &sfinfo);
-      break;
-    case rwrite :
-      sffile = sf_open (Filename.mb_str(), SFM_RDWR, &sfinfo);
-      cout << "[WAVEFILE] Temporary file created " << Filename.mb_str() << endl;
-      break;
-    case tmp :
-      //cout << "Trying to creat a new temporary file " << endl;
-      //sfinfo.format = SF_ENDIAN_CPU | SF_FORMAT_AU | SF_FORMAT_FLOAT;
-      sffile = sf_open_fd (fileno(tmpfile()), SFM_RDWR, &sfinfo, TRUE) ;
-      //cout << "Temporary file created" << endl;
-      break;
-    default: 
-      throw cException (wxT("[WAVEFILE] : Unknow opening mode!!"));
-  }
-
-  if (sffile == NULL )
-  {
-    Error = true;
-    cout << "[WAVEFILE] Error opening file for << " << open_mode << "  : " << filename.mb_str()
-      << "; with error : " << sf_strerror(0) << endl;
-
-    // We retry with read only
-    if (open_mode == rwrite)
-    {
-      cout << "[WAVEFILE] Could not open file for writing, trying read-only..." << endl;
-      sffile = sf_open (Filename.mb_str(), SFM_READ, &sfinfo);
-      m_open_mode = read;
-      if (sffile == NULL)
-        throw Error::File(filename, wxString(sf_strerror(0), *wxConvCurrent));
-    }
-    else
-      throw Error::File(filename, wxString(sf_strerror(0), *wxConvCurrent));
-  }    
-  /*  sf_close(sffile);
-
-      if (!(sffile = sf_open(filename.mb_str(), SFM_RDWR, &sfinfo)))
-      {
-      Error = true;
-      cout << "Error opening file for read/write: " << sf_strerror(0) << endl;
-      throw Error::File(filename, sf_strerror(0));
-      }
-      */
-  long  size = sfinfo.channels * WAVE_TEMP_SIZE;
-  unsigned long j, l;
-  float tmp[size];
-
-  if (loadmem)
-  {
-    Data = new float *[sfinfo.channels];
-    for (i = 0; i < sfinfo.channels; i++)
-      Data[i] = new float [sfinfo.frames];
-    NumberOfFrames = 0;
-    do
-    {
-      k = sf_readf_float(sffile, tmp, WAVE_TEMP_SIZE);
-
-      for (j = NumberOfFrames, l = 0; j < (NumberOfFrames + k); j++)
-        for (i = 0; i < sfinfo.channels; i++, l++)
-          Data[i][j] = tmp[l];
-      /*	      for (i = 0; i < sfinfo.channels; i++)
-                {		  
-                for (j = NumberOfFrames, l = NumberOfFrames  i; j < k; j++, l += j + i)
-                Data[i][j] = tmp[l];
-                }*/
-      NumberOfFrames += k;	  
-    }
-    while ((NumberOfFrames < sfinfo.frames) && (k > 0));
-  }
-  else
-  {
-    NumberOfFrames = sfinfo.frames;
-    TempBuf = new float[sfinfo.channels * WAVE_TEMP_SIZE];
-  }
- // cout << "[WAVEFILE] read: " << NumberOfFrames << "; sf: " << sfinfo.frames << endl;    
- cout << "[WAVEFILE] End" << endl;
+  InitBuffers();
 }
 
 WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
-  : Filename(wxT("")), LoadedInMem(true), sffile(0),  TempBuf(0), Pitch(1), Invert(false), 
-  Error(false)
 {
-  memset (&sfinfo, 0, sizeof (sfinfo));
+  int	i;
+  int	j;
+
+  cout << "[WaveFILE] 3Created with " << size << " and " << channels << " and " << rate << endl;
+  InitVars();
+
+  LoadedInMem = true;
   if (!channels)
   {
     Error = true;
@@ -163,54 +46,208 @@ WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
   sfinfo.channels = channels;
   //cout << "[WAVEFILE] Channels :" << channels << "; size: "  << size << "; NumberOfFrames: "  << NumberOfFrames << endl;    
   Data = new float *[channels];
-  for (int i = 0; i < channels; i++)
+  for (i = 0; i < channels; i++)
   {
     Data[i] = new float[NumberOfFrames];
-    for (int j = 0; j < NumberOfFrames; j++)
+    for (j = 0; j < NumberOfFrames; j++)
       Data[i][j] = (float)buffer[i * NumberOfFrames + j] / 32767.f;
   }
 }
 
 WaveFile::~WaveFile()
 {
+  // we must reset all vars
+  memset(&sfinfo, 0, sizeof(sfinfo));
   if (sffile)
     sf_close(sffile);
+  sffile = NULL;
 
-  if (LoadedInMem)
-  {
-  	if (Data)
-  	{
-	    for (int i = 0; i < sfinfo.channels; i++)
-	    	if(Data[i])
-		      delete[] Data[i];
-	    delete[] Data;
-  	}
-  }
-  else if (TempBuf)
-   delete[] TempBuf;
+  if (Data)
+    {
+      for (int i = 0; i < sfinfo.channels; i++)
+	if(Data[i])
+	  delete [] Data[i];
+      delete [] Data;
+    }
+  Data = NULL;
+
+  if (TempBuf)
+    delete [] TempBuf;
+  TempBuf = NULL;
 }
 
-unsigned long WaveFile::Read(float **buf, long pos, long size, 
-    long delta, long *new_pos)
+void		WaveFile::InitVars()
 {
-  long ret, i, j;
+  Data = NULL;
+  LoadedInMem = false;
+  Error = false;
+  sffile = NULL;
+  m_open_mode = read;
+
+  // Initialise le header de fichier
+  memset(&sfinfo, 0, sizeof(sfinfo));
+  NumberOfFrames = 0;
+  TempBuf = NULL;
+  Pitch = 1.f;
+  Invert = false;
+}
+
+void		WaveFile::InitBuffers()
+{
+  long		size = sfinfo.channels * WAVE_TEMP_SIZE;
+
+  // load full wav into memory
+  if (LoadedInMem)
+    {
+      float		*tmp;
+      unsigned long	i;
+      unsigned long	j, l;
+      long		k;
+
+      tmp = new float[size];
+      Data = new float *[sfinfo.channels];
+      for (i = 0; i < sfinfo.channels; i++)
+	Data[i] = new float [sfinfo.frames];
+      NumberOfFrames = 0;
+
+      do
+	{
+	  k = sf_readf_float(sffile, tmp, WAVE_TEMP_SIZE);
+
+	  for (j = NumberOfFrames, l = 0; j < (NumberOfFrames + k); j++)
+	    for (i = 0; i < sfinfo.channels; i++, l++)
+	      Data[i][j] = tmp[l];
+	  NumberOfFrames += k;	  
+	}
+      while ((NumberOfFrames < sfinfo.frames) && (k > 0));
+
+      delete [] tmp;
+    }
+  else // malloc a temporary buffer for reading file in the future
+    {
+      NumberOfFrames = sfinfo.frames;
+      TempBuf = new float[size];
+      memset(TempBuf, 0, sizeof(*TempBuf) * size);
+    }
+}
+
+void		WaveFile::DumpSf()
+{
+  cout << this << "-----START-----" << endl;
+
+  cout << "Sffile ptr : " << sffile << endl;
+  cout << "Sfinfo : " << sfinfo.frames << endl;
+  cout << "Sfinfo : " << sfinfo.samplerate << endl;
+  cout << "Sfinfo : " << sfinfo.channels << endl;
+  cout << "Sfinfo : " << sfinfo.format << endl;
+  cout << "Sfinfo : " << sfinfo.sections << endl;
+  cout << "Sfinfo : " << sfinfo.seekable << endl;
+  cout << "-----ENDING------" << endl;
+
+}
+
+int		WaveFile::Open(wxString filename, t_opening_mode open_mode, int channel, int fd)
+{
+  // Si le fichier doit etre ouvert en mode write ou read/write
+  // on initialise son sf_info avec des donnees valides
+  // Ces infos peuvent etre mis a jour avec la commande SFC_UPDATE_HEADER_NOW 
+  if ((m_open_mode == rwrite) || (m_open_mode == write) || (m_open_mode == tmp))
+    {
+      if (channel == 1)
+	sfinfo.channels   = 1;
+      else
+	sfinfo.channels   = 2;
+      sfinfo.format     = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
+
+      wxString samplerateStr;
+      samplerateStr.Printf(wxT("%f"), Audio->SampleRate);
+      samplerateStr.ToLong((long int*)&sfinfo.samplerate);
+    }
+
+  // Determine le mode d'ouverture du fichier
+  switch (open_mode)
+    {
+    case read : 
+      sffile = sf_open(Filename.mb_str(), SFM_READ, &sfinfo);
+      break;
+    case write : 
+      sffile = sf_open(Filename.mb_str(), SFM_WRITE, &sfinfo);
+      break;
+    case rwrite :
+      sffile = sf_open(Filename.mb_str(), SFM_RDWR, &sfinfo);
+      cout << "[WAVEFILE] Temporary file created " << Filename.mb_str() << endl;
+      break;
+    case tmp :
+      if (fd != -1)
+	sffile = sf_open_fd(fd, SFM_RDWR, &sfinfo, TRUE);
+      break;
+    default: 
+      throw cException(wxT("[WAVEFILE] : Unknow opening mode!!"));
+    }
+
+  if (sffile == NULL)
+    {
+      Error = true;
+      cout << "[WAVEFILE] " << open_mode << " " << sf_strerror(0) << " : " <<
+	filename.mb_str() << endl;
+
+      // We retry with read only
+      if (open_mode == rwrite)
+	{
+	  cout << "[WAVEFILE] Could not open file for writing, trying read-only..." << endl;
+	  m_open_mode = read;
+	  sffile = sf_open (Filename.mb_str(), SFM_READ, &sfinfo);
+	}
+      if (sffile == NULL)
+	{
+	  sf_close(sffile);
+	  throw Error::File(filename, wxString(sf_strerror(0), *wxConvCurrent));
+	}
+    }    
+  return (0);
+}
+
+unsigned long WaveFile::Read(float **buf, long pos, long size, long delta, long *new_pos)
+{
+  long		ret, i, j;
   float		k;
+  double	kk;
 
   if (!LoadedInMem)
-  {
-    if (WAVE_TEMP_SIZE < size)
     {
-    	if(TempBuf)
-	      delete TempBuf;
-      TempBuf = new float[sfinfo.channels * size];
-    }
-    if (Invert)	
-      sf_seek(sffile, NumberOfFrames - pos - size, SEEK_SET);      
-    else
-      sf_seek(sffile, pos, SEEK_SET);      
+      // this condition is very bad and useless, need to rewrite a bufferclass to avoid it
+      if (WAVE_TEMP_SIZE < size)
+	{
+	  if(TempBuf)
+	    delete [] TempBuf;
+	  TempBuf = new float[sfinfo.channels * size];
+	}
 
+    if (Invert)	
+      ret = sf_seek(sffile, NumberOfFrames - pos - size, SEEK_SET);
+    else
+      ret = sf_seek(sffile, pos, SEEK_SET);
+
+    if (ret == -1)
+      {
+	// if seek failed, we re-open file
+	cout << "[WAVEFILE] " << sf_strerror(sffile) << endl;
+
+	if (Open(Filename))
+	  {
+	    if (Invert)	
+	      ret = sf_seek(sffile, NumberOfFrames - pos - size, SEEK_SET);
+	    else
+	      ret = sf_seek(sffile, pos, SEEK_SET);
+	    if (ret)
+	      cout << "[WAVEFILE] Second : " << sf_strerror(sffile) << endl;
+	  }
+      }
+
+    // read from file
     ret = sf_readf_float(sffile, TempBuf, size);      
 
+    // fill the buffer if we can't read enough from file
     if (ret < size)
       for (j = 0; j < sfinfo.channels; j++)
         for (i = ret; i < size; i++)
@@ -236,11 +273,11 @@ unsigned long WaveFile::Read(float **buf, long pos, long size,
         k += j - 1;
       }
     }
-    if (sfinfo.channels == 1)	
-      memcpy(buf[1], buf[0] , ret * sizeof(float));
+    if (sfinfo.channels == 1)
+      memcpy(buf[1], buf[0] , size * sizeof(float));
     if (new_pos)
       *new_pos = pos + (int)ceilf(k);
-    return (ret);      
+    return (ret);
   }
   // Loading en mem
 
@@ -279,7 +316,6 @@ unsigned long WaveFile::Read(float **buf, long pos, long size,
     {
       if (Invert)
       {
-        double kk;
         ret = NumberOfFrames - pos - 1;
         for (k = ret, i = 0, kk = 0; (k >= 0.0) && (i < size); k -= Pitch, i++, kk += Pitch)
         {
@@ -332,7 +368,6 @@ unsigned long WaveFile::Read(float **buf, long pos, long size,
     {
       if (Invert)
       {
-        double kk;
         ret = NumberOfFrames - pos - 1;
         for (k = ret, i = 0, kk = 0; (k >= 0.0) && (i < size); k -= Pitch, i++, kk += Pitch)
           buf[0][delta + i] = Data[0][(int)k];
