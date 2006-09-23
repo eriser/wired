@@ -161,10 +161,10 @@ void				MediaLibrary::OnAdd(wxCommandEvent &WXUNUSED(event))
   if (dlg.ShowModal() == wxID_OK)
     {
       wxString 	selfile = dlg.GetSelectedFile();
-      
+
       if (CurrentXmlSession->GetAudioDir().empty() == false)
 	res = wxID_OK;
-      else	     
+      else
 	{
 	  wxDirDialog dir(this, _("Choose the Audio file directory"), wxFileName::GetCwd());
 	  if (dir.ShowModal() == wxID_OK)
