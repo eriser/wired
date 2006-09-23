@@ -56,10 +56,10 @@ Track::Track(SeqTrack *n1, SeqTrackPattern *n2, char typ)
 
 Track::~Track() 
 { 
-	if (TrackOpt)
-	  delete TrackOpt;
-    if (TrackPattern)
-	  delete TrackPattern;
+  if (TrackOpt)
+    delete TrackOpt;
+  if (TrackPattern)
+    delete TrackPattern;
   if (Wave)
     delete Wave;
   if (Midi)
@@ -68,8 +68,25 @@ Track::~Track()
     Mix->RemoveChannel(Output);
 }
 
+void		Track::Dump()
+{
+  cout << "===Track " << this << "dump begin===" << endl;
+  cout << "TrackOpt Ptr : {" << TrackOpt << "}" << endl;
+  cout << "TrackPattern Ptr : {" << TrackPattern << "}" << endl;
+  cout << "Wave Ptr : {" << Wave << "}" << endl;
+  cout << "Midi Ptr : {" << Midi << "}" << endl;
+  cout << "Index : {" << Index << "}" << endl;
+  cout << "Output Ptr : {" << Output << "}" << endl;
+  cout << "Type : {" << Type << "}" << endl;
+  cout << "ColourIndex : {" << ColourIndex << "}" << endl;
+  cout << "===Track dump end===" << endl;
+}
+
 Track			Track::operator=(const Track& right)
 {
+  cerr << "WARNING : Soon, Wired will miserably fail" << endl;
+
+  // Classes are copied, but they doesn't handle operator= correctly.
 	if (this != &right)
 	{
 		TrackOpt = right.TrackOpt;

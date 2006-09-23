@@ -59,6 +59,24 @@ Channel		Channel::operator=(const Channel& right)
 	return *this;
 }
 
+void		Channel::Dump()
+{
+  cout << "===Channel " << this << " dump begin===" << endl;
+  cout << "VolumeLeft : {" << VolumeLeft << "}" << endl;
+  cout << "VolumeRight : {" << VolumeRight << "}" << endl;
+  cout << "Stereo : {" << Stereo << "}" << endl;
+  cout << "InputNum : {" << InputNum << "}" << endl;
+  cout << "Label : {" << Label.mb_str() << "}" << endl;
+  cout << "Visible : {" << Visible << "}" << endl;
+  cout << "Lrms : {" << Lrms << "}" << endl;
+  cout << "Rrms : {" << Rrms << "}" << endl;
+  cout << "CurBuf : {" << CurBuf << "}" << endl;
+  cout << "Filled : {" << Filled << "}" << endl;
+  cout << "MuteLeft : {" << MuteLeft << "}" << endl;
+  cout << "MuteRight : {" << MuteRight << "}" << endl;
+  cout << "===Channel dump end===" << endl;
+}
+
 void Channel::AddBuffers(unsigned int num)
 {
   if (Stereo)
