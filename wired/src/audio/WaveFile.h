@@ -36,7 +36,7 @@ class WaveFile
   WaveFile(wxString filename, bool loadmem = true, t_opening_mode open_mode = read, int channel = 2);
   WaveFile(short *buffer, unsigned int size, int channels, long rate);
   ~WaveFile();
-
+ 
  private:
   void	InitVars();
   void	InitBuffers();
@@ -62,7 +62,8 @@ class WaveFile
 	  return w;
 	}
     }
-  
+
+ public:
   long GetNumberOfChannels() { return sfinfo.channels; }
   long GetNumberOfFrames()   { return NumberOfFrames; }
   
@@ -102,10 +103,10 @@ class WaveFile
   void		SetPitch(float p) { Pitch = p; }
   void		SetInvert(bool inv) { Invert = inv; }
 
-  float		**Data;
-  wxString	Filename;
-  bool		LoadedInMem;
-  bool		Error;
+  float	   **Data;
+  wxString   Filename;
+  bool	   LoadedInMem;
+  bool	   Error;
 
  protected:
   int m_open_mode; 
