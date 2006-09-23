@@ -41,14 +41,17 @@ class				MLTree : public wxTreeCtrl
   wxPoint			mouse_pos;
   int				m_reverseSort;
   wxString			selected;
-
+  wxTreeItemId		        item_begin;
+  wxTreeItemId		        item_to_drag;
+  wxArrayTreeItemIds		selection;
+  int				selection_length;
   bool				IsTreeCollapsed();
   void				SetTreeCollapsed();
   void				SetTreeExpanded();
   wxTreeItemId			GetTreeItemIdFromLabel(wxString label);
   s_nodeInfo			GetTreeItemStructFromId(wxTreeItemId ItemToFind);
   wxString			getSelection(int flag);
-  void				AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo infos);
+  void				AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo infos, bool expand);
   void				ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldExpand, int toLevel);
   void				OnCollapse();
   bool				LoadKnownExtentions();
@@ -64,13 +67,14 @@ class				MLTree : public wxTreeCtrl
   /////
   void				OnRightClick(wxMouseEvent &event);
   void				OnContextMenu(wxMouseEvent &WXUNUSED(event));
-   void				OnSelChange(wxTreeEvent &event);
-  void				OnTreeRightClick(wxTreeEvent& event);
-  void				OnItemRightClick(wxTreeEvent& event);
+  void				OnSelChange(wxTreeEvent &event);
+  void				BeginDrag(wxTreeEvent &event);
+  void				EndDrag(wxTreeEvent &event);
   void				DisplayNodes();
   void				SortNodes(wxString selected);
   int				OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
-
+  wxTreeItemId                  Copy(wxTreeItemId item);
+  void                          DragAndDrop(wxTreeItemId item);
   DECLARE_EVENT_TABLE()
 };
 
