@@ -196,12 +196,16 @@ int		WaveFile::Open(wxString filename, t_opening_mode open_mode, int channel, in
 	{
 	  cout << "[WAVEFILE] Could not open file for writing, trying read-only..." << endl;
 	  m_open_mode = read;
-	  sffile = sf_open (Filename.mb_str(), SFM_READ, &sfinfo);
+	  sf_close(sffile);
+	  sffile = sf_open(Filename.mb_str(), SFM_READ, &sfinfo);
 	}
       if (sffile == NULL)
 	{
+	  wxString	errmsg = wxString(sf_strerror(sffile), *wxConvCurrent);
+
+	  // we must close for free'ing resources
 	  sf_close(sffile);
-	  throw Error::File(filename, wxString(sf_strerror(0), *wxConvCurrent));
+	  throw Error::File(filename, errmsg);
 	}
     }    
   return (0);
@@ -233,6 +237,8 @@ unsigned long WaveFile::Read(float **buf, long pos, long size, long delta, long 
 	// if seek failed, we re-open file
 	cout << "[WAVEFILE] " << sf_strerror(sffile) << endl;
 
+	// we must close file
+	sf_close(sffile);
 	if (Open(Filename))
 	  {
 	    if (Invert)	
