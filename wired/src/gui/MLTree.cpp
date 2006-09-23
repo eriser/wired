@@ -5,6 +5,7 @@
 #include <wx/treectrl.h>
 #include "MediaLibrary.h"
 #include "MLTree.h"
+#include "MLTreeInfos.h"
 #include "MainWindow.h"
 #include "Sequencer.h"
 #include "SequencerGui.h"
@@ -218,6 +219,11 @@ void				MLTree::OnPreview()
 void				MLTree::DisplayInfos()
 {
   //  cout << "[MEDIALIBRARY] DISPLAYINFOS" << endl;
+  cout << "[MEDIALIBRARY] DISPLAYINFOS" << endl;
+  
+  mouse_pos.y += 50;
+  mouse_pos.x += 30;
+  MLTreeInfos	*infos = new MLTreeInfos(MediaLibraryPanel, mouse_pos, wxSize(300,150), wxCAPTION | wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxTHICK_FRAME);
 }
 
 // When adding a file
@@ -489,6 +495,7 @@ void				MLTree::OnRightClick(wxMouseEvent& event)
   s_nodeInfo		infos;
 
 
+  mouse_pos = event.GetPosition();
   item = GetSelection();
   if (item == GetRootItem())
     {

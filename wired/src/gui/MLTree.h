@@ -38,6 +38,7 @@ class				MLTree : public wxTreeCtrl
   wxString			filters;
   vector<wxString>		Exts;
   map<wxTreeItemId, s_nodeInfo>	nodes;
+  wxPoint			mouse_pos;
   int				m_reverseSort;
   wxString			selected;
 
