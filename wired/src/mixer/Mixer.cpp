@@ -80,101 +80,55 @@ Mixer 	Mixer::operator=(const Mixer& right)
 	return *this;
 }
 
-Channel				*Mixer::AddMonoOutputChannel()
+void				Mixer::Dump()
 {
-  Channel *chan;
+  cout << "===Mixer " << this << "dump begin===" << endl;
+  cout << "VolumeLeft : {" << VolumeLeft << "}" << endl;
+  cout << "VolumeRight : {" << VolumeRight << "}" << endl;
+  cout << "MuteL : {" << MuteL << "}" << endl;
+  cout << "MuteR : {" << MuteR << "}" << endl;
+  cout << "OutChannels Size : {" << OutChannels.size() << "}" << endl;
+  cout << "InChannels Size : {" << InChannels.size() << "}" << endl;
+  cout << "OutputLeft Ptr : {" << OutputLeft << "}" << endl;
+  cout << "OutputRight Ptr : {" << OutputRight << "}" << endl;
+  cout << "Input Ptr : {" << Input << "}" << endl;
+  cout << "===Mixer dump end===" << endl;
+}
+
+Channel*    	Mixer::AddChannel(list<Channel*>& list, bool stereo, bool visible)
+{
+  Channel*	chan;
 
   try
     {
-      chan = new Channel(false);
-      OutChannels.push_back(chan);
+      chan = new Channel(stereo);
+      list.push_back(chan);
     }
   catch (std::bad_alloc)
     {
       chan = NULL;
     }
-  return chan;
+  return (chan);
 }
 
 Channel				*Mixer::AddMonoInputChannel()
 { 
-  Channel			*chan;
-  
-  try
-    {
-      chan = new Channel(false);
-      InChannels.push_back(chan);
-    }
-  catch (std::bad_alloc)
-    {
-      chan = NULL;
-    }
-  return chan;
-}
-Channel				*Mixer::AddStereoOutputChannel()
-{
-  Channel			*chan;
-  try
-    {
-      chan = new Channel(true);
-      OutChannels.push_back(chan);
-    }
-  catch (std::bad_alloc)
-    {
-      chan = NULL;
-    }
-  return chan;
+  return (AddChannel(InChannels, false));
 }
 
 Channel				*Mixer::AddStereoInputChannel()
 { 
-  Channel			*chan;
-
-  try
-    {
-      chan = new Channel(true);
-      InChannels.push_back(chan);
-    }
-  catch (std::bad_alloc)
-    {
-      chan = NULL;
-    }
-  return chan;
+  return (AddChannel(InChannels, true));
 }
 
 Channel				*Mixer::AddMonoOutputChannel(bool visible)
 {
-  Channel *chan;
-
-  try
-    {
-      chan = new Channel(false, visible);
-      OutChannels.push_back(chan);
-      //MixerPanel->AddChannel(chan);
-    }
-  catch (std::bad_alloc)
-    {
-      chan = NULL;
-    }
-  return chan;
+  return (AddChannel(OutChannels, false, visible));
 }
 
 Channel				*Mixer::AddStereoOutputChannel(bool visible)
 {
-  Channel *chan;
-  
-  try
-    {
-      chan = new Channel(true, visible);
-      OutChannels.push_back(chan);
-      /* MixerPanel->AddChannel(chan); */
-      
-    }
-  catch (std::bad_alloc)
-    {
-      chan = NULL;
-    }
-  return chan;
+  return (AddChannel(OutChannels, true, visible));
 }
 
 bool				Mixer::RemoveChannel(Channel *chan)
@@ -208,24 +162,17 @@ bool				Mixer::InitOutputBuffers(void)
     delete[] OutputLeft;
   if (OutputRight)
     delete[] OutputRight;
-  OutputLeft = OutputRight = 0x0;
+  OutputLeft = NULL;
+  OutputRight = NULL;
   try
     {
       OutputLeft = new float[Audio->SamplesPerBuffer];
-    }
-  catch (std::bad_alloc)
-    {
-      cout << "[MIXER] insufficient memory"<< endl;
-      return false;
-    }
-  try
-    {
       OutputRight = new float[Audio->SamplesPerBuffer];
     }
   catch (std::bad_alloc)
     {
-    	if (OutputLeft)
-	      delete[] OutputLeft;
+      if (OutputLeft)
+	delete [] OutputLeft;
       cout << "[MIXER] insufficient memory"<< endl;
       return false;
     }
