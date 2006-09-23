@@ -13,13 +13,14 @@
 using namespace std;
 
 WaveDrawer::WaveDrawer(const wxSize& s, bool fulldraw, bool use_settings) 
-  : FullDraw(fulldraw), UseSettings(use_settings)
 {
+  FullDraw = fulldraw;
+  UseSettings = use_settings;
+
   if (!s.x)
-  {
     size.x = 1;
-  }
   size.y = s.y;
+
   Data = 0;
   DrawData = 0;
   NumberOfChannels = 0;  
@@ -29,6 +30,7 @@ WaveDrawer::WaveDrawer(const wxSize& s, bool fulldraw, bool use_settings)
   PenColor = CL_WAVE_DRAW;
   BrushColor = CL_WAVEDRAWER_BRUSH;
   Transparent = false;
+  Wave = NULL;
 }
 
 WaveDrawer::~WaveDrawer()

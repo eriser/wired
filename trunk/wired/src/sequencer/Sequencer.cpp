@@ -209,7 +209,7 @@ void					*Sequencer::Entry()
 		  if (!(*T)->TrackOpt->Mute)
 		    {
 		      /* R?cup?ration des buffers Audio */
-		      AudioP = GetCurrentAudioPattern(*T);  
+		      AudioP = GetCurrentAudioPattern(*T);
 		      if (AudioP)
 			{
 			  buf = GetCurrentAudioBuffer(AudioP);
@@ -724,12 +724,8 @@ float					**Sequencer::GetCurrentAudioBuffer(AudioPattern *p)
       p->LastBlock = CurPatternBlock;
       return (p->GetBlock(CurPatternBlock));
     }
-  else 
-    {
-      p->LastBlock++;
-      return (p->GetBlock(p->LastBlock));
-    }
-  //  cout << "[SEQ] Current Block: " << CurPatternBlock << endl;
+  p->LastBlock++;
+  return (p->GetBlock(p->LastBlock));
 }
 
 void					Sequencer::ProcessCurrentMidiEvents(Track *T, MidiPattern *p)
