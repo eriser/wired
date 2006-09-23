@@ -26,40 +26,14 @@ AudioPattern::AudioPattern(double pos, double endpos, long trackindex)
   : Pattern(pos, endpos, trackindex),
     WaveDrawer(Pattern::GetSize())
 {
-  Init();
-  Wave = 0;
-  SetWave(0);
-  InputChan = NULL;
-  RecordWave = NULL;
+  Init(NULL);
 }
 
 AudioPattern::AudioPattern(double pos, WaveFile *w, long trackindex)
   : Pattern(pos, pos + Seq->MeasurePerSample * w->GetNumberOfFrames(), trackindex),
     WaveDrawer(Pattern::GetSize())
 {
-  #ifdef __DEBUG__
-  cout << " ### NEW AUDIO PATTERN ###\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
-       << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
-  #endif
-  Init();
-  Wave = w;
-  SetWave(w);
-  InputChan = NULL;
-  RecordWave = NULL;
-
-  // put wav form in the optional panel in "wavedrawer form"
-  wxSize s = GetSize();
-  SetSize(s);
-  WaveDrawer::SetWave(w, s);
-
-  #ifdef __DEBUG__
-  cout << " ---  OK AUDIO PATTERN ---\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
-       << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
-  #endif
-
- 
-
- 
+  Init(w);
 }
 
 AudioPattern::~AudioPattern()
@@ -69,13 +43,28 @@ AudioPattern::~AudioPattern()
   if (RecordWave) delete RecordWave;
 }
 
-void					AudioPattern::Init()
+void					AudioPattern::Init(WaveFile* w)
 {
+#ifdef __DEBUG__
+  cout << " ### NEW AUDIO PATTERN ###\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
+       << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
+#endif
+
   Pattern::PenColor = CL_PATTERN_NORM;
   Pattern::BrushColor = CL_WAVEDRAWER_BRUSH;
   Name = wxString::Format(wxT("T%d A%d"), TrackIndex + 1, audio_pattern_count++);
   LastBlock = -1;  
   RecordWave = 0;
+  InputChan = NULL;
+  RecordWave = NULL;
+  SetWave(w);
+  if (w)
+    {
+      wxSize s = GetSize();
+      SetSize(s);
+      WaveDrawer::SetWave(w, s);
+    }
+
   Connect(GetId(), wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &AudioPattern::OnMotion);
   Connect(GetId(), wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
@@ -93,6 +82,11 @@ void					AudioPattern::Init()
   Connect(GetId(), wxEVT_ENTER_WINDOW, (wxObjectEventFunction)(wxEventFunction)
 	  (wxMouseEventFunction) &AudioPattern::OnHelp);
   SeqPanel->PutCursorsOnTop();
+
+#ifdef __DEBUG__
+  cout << " ---  OK AUDIO PATTERN ---\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
+       << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
+#endif
 }
 
 void					AudioPattern::OnHelp(wxMouseEvent &event)
@@ -179,12 +173,13 @@ float					**AudioPattern::GetBlock(long block)
       if (size > Audio->SamplesPerBuffer)
 	size = Audio->SamplesPerBuffer; 
       buf[0] = new float[Audio->SamplesPerBuffer];
-      buf[1] = new float[Audio->SamplesPerBuffer];	
+      buf[1] = new float[Audio->SamplesPerBuffer];
+      memset(buf[0], 0, sizeof(float) * sizeof(Audio->SamplesPerBuffer));
+      memset(buf[1], 0, sizeof(float) * sizeof(Audio->SamplesPerBuffer));
       Wave->Read(buf, pos, size);
       return (buf);
     }
-  else
-    return (0x0);
+  return (0x0);
 }
 
 void					AudioPattern::SetSelected(bool sel)

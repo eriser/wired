@@ -39,8 +39,10 @@ class					AudioPattern: public Pattern, public WaveDrawer
   long					LastBlock;
   wxString				FileName;
 
+ private:
+  void					Init(WaveFile *w);
+
  protected:
-  void					Init();
   void					OnClick(wxMouseEvent &e);
   void					OnLeftUp(wxMouseEvent &e);
   void					OnDoubleClick(wxMouseEvent &e);
