@@ -374,10 +374,20 @@ void				MLTree::OnAdd(wxString FileToAdd)
 		{
 		  s_nodeInfo		infos;
 		  int			slashPos;
+		  wxTreeItemId		selection;
 
 		  infos = SetStructInfos(infos, FileToAdd, File->GetExt(), wxT(""));
 		  slashPos = FileToAdd.Find('/', true);
-		  this->AddFile(GetTreeItemIdFromLabel(_("Sounds")), FileToAdd.Mid(slashPos + 1), infos);
+		  selection = GetSelection();
+
+		  if (selection.IsOk() == true && selection != GetRootItem())
+		    {
+		      this->AddFile(selection, FileToAdd.Mid(slashPos + 1), infos);
+		    }
+		  else
+		    {
+		      this->AddFile(GetTreeItemIdFromLabel(_("Sounds")), FileToAdd.Mid(slashPos + 1), infos);
+		    }
 		}
 	    }
 	  DisplayNodes();
