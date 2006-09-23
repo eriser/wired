@@ -17,7 +17,9 @@ class Channel
   Channel(const Channel& copy){*this = copy;}
   Channel	operator=(const Channel& right);
   ~Channel();
-  
+
+  void		Dump();
+
   bool		Stereo;
   float		VolumeLeft;
   float		VolumeRight;

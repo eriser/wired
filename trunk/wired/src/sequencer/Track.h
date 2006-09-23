@@ -30,6 +30,8 @@ class					Track
   Track(const Track& copy) {*this = copy;}
   Track	operator=(const Track& right);
 
+  void					Dump();
+
   AudioPattern				*AddPattern(WaveFile *w, double pos = 0);
   MidiPattern				*AddPattern(MidiTrack *t);
   void					AddPattern(Pattern *p);
@@ -39,6 +41,7 @@ class					Track
   void					ChangeTrackColour(wxColour &c);
   bool					IsAudioTrack() { return (Type == IS_AUDIO_TRACK); }
   bool					IsMidiTrack() { return (Type == IS_MIDI_TRACK); }
+
   SeqTrack				*TrackOpt;
   SeqTrackPattern			*TrackPattern;
   AudioPattern				*Wave;
