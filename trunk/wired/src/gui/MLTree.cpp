@@ -227,12 +227,13 @@ void				MLTree::DisplayInfos()
 }
 
 // When adding a file
-void				MLTree::AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo infos)
+void				MLTree::AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo infos, bool expand)
 {
 
   wxTreeItemId			itemToAdd;
   itemToAdd = AppendItem(ParentNode, FileToAdd);
-  Expand(ParentNode);
+  if (expand == true)
+    Expand(ParentNode);
   SetItemImage(itemToAdd, 3);
   nodes[itemToAdd] = infos;
 }
@@ -389,11 +390,11 @@ void				MLTree::OnAdd(wxString FileToAdd)
 
 		  if (selection.IsOk() == true && selection != GetRootItem())
 		    {
-		      this->AddFile(selection, FileToAdd.Mid(slashPos + 1), infos);
+		      this->AddFile(selection, FileToAdd.Mid(slashPos + 1), infos, true);
 		    }
 		  else
 		    {
-		      this->AddFile(GetTreeItemIdFromLabel(_("Sounds")), FileToAdd.Mid(slashPos + 1), infos);
+		      this->AddFile(GetTreeItemIdFromLabel(_("Sounds")), FileToAdd.Mid(slashPos + 1), infos, true);
 		    }
 		}
 	    }
@@ -555,7 +556,91 @@ void				MLTree::OnSelChange(wxTreeEvent &event)
      }
   
 }
+
+void				MLTree::BeginDrag(wxTreeEvent &event)
+{
+  event.Allow();
+  item_to_drag = event.GetItem();
+  selection_length = GetSelections(selection);
+}
+
+wxTreeItemId                    MLTree::Copy(wxTreeItemId item)
+{
+  wxTreeItemId		dad_item;
+  s_nodeInfo		infos;
+  wxString		selfile;
+  wxTreeItemId		itemAdded;
+  int			slashPos;
+ 
+
+  wxFileName	        *File = new wxFileName(selfile);
+
+ 
+  infos = GetTreeItemStructFromId(item_to_drag);
+  if (infos.label != wxT(""))
+    {
+      if (infos.extention.Cmp(wxT("")))
+	{
+	  selfile = infos.label;
+	  slashPos = selfile.Find('/', true);
+	  AddFile(item, selfile.Mid(slashPos + 1), infos, false);
+	  return item;
+	}
+      else
+	{
+	  itemAdded = AppendItem(item, GetItemText(item_to_drag));
+	  SetItemImage(itemAdded, 0);
+	  nodes[itemAdded] = infos;
+	  return itemAdded;
+	}
+    }
+ 
+}
+void                          MLTree::DragAndDrop(wxTreeItemId item)
+{
+ wxTreeItemIdValue cookie = &Tree;
+ wxTreeItemId		item_to_drag_save;
+ wxTreeItemId		item_save;
+ 
+
+ item = Copy(item);
+ if (item_to_drag == item_begin)
+   return;
+ for (item_to_drag = GetFirstChild(item_to_drag, cookie); item_to_drag.IsOk(); item_to_drag = GetFirstChild(item_to_drag, cookie))
+   {
+     if (item_to_drag == item_begin)
+       return;
+     item_save = item;
+     item = Copy(item);
+     item_to_drag_save = item_to_drag;
+     for (item_to_drag = GetNextSibling(item_to_drag); item_to_drag.IsOk(); item_to_drag = GetNextSibling(item_to_drag))
+       {
+	 if (item_to_drag == item_begin)
+	    return;
+	 DragAndDrop(item_save);
+       }
+    
+     item_to_drag = item_to_drag_save;
+   }
+}
+void				MLTree::EndDrag(wxTreeEvent &event)
+{
+  wxTreeItemId		item;
+  int			i;
+
+  
+  item = event.GetItem();
+  item_begin = item;
+  if (item.IsOk() && item != item_to_drag && item != GetRootItem() && GetItemParent(item) != item_to_drag && !GetTreeItemStructFromId(item).extention.Cmp(wxT("")))
+    {
+      DragAndDrop(item);
+      OnRemove();
+      Expand(item_begin);
+    }
+}
 BEGIN_EVENT_TABLE(MLTree, wxTreeCtrl)
   EVT_RIGHT_UP(MLTree::OnRightClick)
   EVT_TREE_SEL_CHANGED(MLTree_Selected, MLTree::OnSelChange)
+  EVT_TREE_BEGIN_DRAG(MLTree_Selected, MLTree::BeginDrag)
+  EVT_TREE_END_DRAG(MLTree_Selected, MLTree::EndDrag)
 END_EVENT_TABLE()
