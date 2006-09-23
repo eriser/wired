@@ -1,20 +1,21 @@
 
-WIRED 0.3.1 (work in progress)
+WIRED 0.3.1 (rev 1008)
 ------------------------------------------------------------------------
-
-(until rev 983)
 
 - Added tooltip in Sequencer
 - Added some visual improvements in the settings window
-- Misc media library improvements
+- Misc Media Library improvements
 - Removed forgotten debug messages
+- Fixed locale management
 - Changed about box
 - Changed some error messages to more explicit ones
 - Changed outdated first launch message by a more generic one
 - Changed structure of the conf file
 - Limited number of simultaneous pop-ups
 - Default Device selection is working (based on PortAudio choices)
-- Fixing and cleaning (always)
+- Fixed multichannel bugs
+- Fixed a bug that freezed Wired if no Output Channels were set in the
+  conf file and that prevented to update conf file (bug #1563624)
 - Partially reactivated codec management (vorbis,mpeg,flac :
   add --enable-codecs to configure script)
 - Put relative path (prefix) instead of /usr
@@ -24,12 +25,15 @@ WIRED 0.3.1 (work in progress)
   portaudio snapshot (default), and options --with-jack,
   --without-oss, etc..
 - Apdated portaudio sources
-- Added some  icons
+- Added some icons
 - Added CHANGELOG file
+- Updated chinese translation
+- Added Italian language (thanks to MaxG)
 - Updated INSTALL, BUGS and README files
+- Fixing and cleaning (as everytime)
 
 
-WIRED 0.3
+WIRED 0.3 (rev 958)
 ------------------------------------------------------------------------
 
 - Added the Media Library
@@ -64,7 +68,7 @@ WIRED 0.3
 - Optimisation
 
 
-WIRED 0.2.2
+WIRED 0.2.2 (rev 826)
 ------------------------------------------------------------------------
 
 - Made unicode modifications (some c_str() are removed)
@@ -106,7 +110,7 @@ WIRED 0.2.1
 - Code cleaning
 
 
-WIRED 0.2
+WIRED 0.2 (rev 767)
 ------------------------------------------------------------------------
 
 - Unicode support
