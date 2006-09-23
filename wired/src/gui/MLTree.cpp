@@ -37,8 +37,9 @@ s_nodeInfo					SetStructInfos(s_nodeInfo infos, wxString label, wxString extenti
 }
 
 MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
-  : wxTreeCtrl(MediaLibraryPanel, -1, p, s, style)
+  : wxTreeCtrl(MediaLibraryPanel, MLTree_Selected, p, s, style)
 {
+
   SetIndent(10);
   /* Set the Root node with the project's name in label */
   root = AddRoot(_("Project's name"));
@@ -511,26 +512,25 @@ void				MLTree::OnRightClick(wxMouseEvent& event)
   PopupMenu(myMenu);
   delete myMenu;
 }
-void				MLTree::OnLeftClick(wxMouseEvent& event)
+
+
+void				MLTree::OnSelChange(wxTreeEvent &event)
 {
    wxTreeItemId		item;
    s_nodeInfo		infos;
-   
+  
    item = GetSelection();
-   if (item == GetRootItem())
-    {
-      return ;
-    }
+  
    infos = GetTreeItemStructFromId(item);
    if (infos.extention.Cmp(wxT("")))
      {
        MediaLibraryPanel->TopToolbar->EnableTool(1, false);
-       MediaLibraryPanel->TopToolbar->EnableTool(2, false);
+       MediaLibraryPanel->TopToolbar->EnableTool(2, true);
        MediaLibraryPanel->TopToolbar->EnableTool(3, true);
        MediaLibraryPanel->TopToolbar->EnableTool(4, true);
        MediaLibraryPanel->BottomToolbar->EnableTool(5, true);
      }
-   else
+   else if (GetItemParent(item) != GetRootItem() && item != GetRootItem())
      {
        MediaLibraryPanel->TopToolbar->EnableTool(1, true);
        MediaLibraryPanel->TopToolbar->EnableTool(2, true);
@@ -538,8 +538,17 @@ void				MLTree::OnLeftClick(wxMouseEvent& event)
        MediaLibraryPanel->TopToolbar->EnableTool(4, false);
        MediaLibraryPanel->BottomToolbar->EnableTool(5, false);
      }
+   else
+     {
+       MediaLibraryPanel->TopToolbar->EnableTool(1, true);
+       MediaLibraryPanel->TopToolbar->EnableTool(2, false);
+       MediaLibraryPanel->TopToolbar->EnableTool(3, false);
+       MediaLibraryPanel->TopToolbar->EnableTool(4, false);
+       MediaLibraryPanel->BottomToolbar->EnableTool(5, false);
+     }
+  
 }
 BEGIN_EVENT_TABLE(MLTree, wxTreeCtrl)
   EVT_RIGHT_UP(MLTree::OnRightClick)
-  EVT_LEFT_UP(MLTree::OnLeftClick)
+  EVT_TREE_SEL_CHANGED(MLTree_Selected, MLTree::OnSelChange)
 END_EVENT_TABLE()
