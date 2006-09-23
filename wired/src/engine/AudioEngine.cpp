@@ -163,7 +163,8 @@ void AudioEngine::SetOutputDevice(void)
     }
   
   if (WiredSettings->OutputChannels.size() <= 0)
-    UserData->OutputChannels = 2;//SelectedOutputDevice->MaxOutputChannels;
+    throw Error::InvalidDeviceSettings();
+    //UserData->OutputChannels = 2;//SelectedOutputDevice->MaxOutputChannels;
   else
     UserData->OutputChannels = UserData->Sets->OutputChannels.size();
 }
