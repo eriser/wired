@@ -72,6 +72,7 @@ AC_ARG_ENABLE(portaudio,
 	[  --enable-portaudio Enable or disable portaudio v19 built-in (default enabled)],
 	[enable_portaudio="$enableval"],
 	[enable_portaudio="yes"])
+AM_CONDITIONAL(PORTAUDIO, test x$enable_portaudio = xyes)
 
 AC_ARG_WITH(alsa, 
             [  --with-alsa (default=auto)],
@@ -340,6 +341,8 @@ AC_MSG_RESULT([
     Jack : ........................ ${with_jack}
     OSS : ......................... ${with_oss}
     ALSA : ........................ ${with_alsa}
+
+WARNING: If you already have Portaudio in your System, it may be replaced by this one !
  ])
 fi
 

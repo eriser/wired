@@ -20,9 +20,15 @@ SUBDIRS =				\
 	dssi				
 
 
-DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so libs/WiredAkai/src/.libs/libWiredAkai.so -Lfileloader -lfileloader
+DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so libs/WiredAkai/src/.libs/libWiredAkai.so
 
-wired_LDFLAGS = $(shell wx-config --libs) -lsndfile -lasound -Lmidi/portmidi $(DEPS_LIBS) -lportaudio -Lportaudio/lib/.libs/  -L/usr/pkg/lib/ `xml2-config --libs` @SAMPLERATE_LIBS@ 
+wired_LDFLAGS = $(shell wx-config --libs) -lsndfile -lasound -Lmidi/portmidi $(DEPS_LIBS) -Lfileloader -lfileloader -L/usr/pkg/lib/ `xml2-config --libs` @SAMPLERATE_LIBS@
+
+if PORTAUDIO
+wired_LDFLAGS += -Lportaudio/lib/.libs/ -lportaudio
+else
+wired_LDFLAGS += -lportaudio
+endif
 
 wired_CPPFLAGS = $(shell wx-config --cflags) -Igui -Iplugins -Ifileloader -I/opt/gnome/include -Isequencer -Iredist -Iaudio -Iengine -Imixer -Imidi -Imidi/portmidi/pm_common -Imidi/portmidi/porttime -I. -Iasm -Ieditmidi -Iundo -I.  -I/usr/pkg/include/libxml2/ -I/usr/pkg/include `xml2-config --cflags` @SAMPLERATE_CFLAGS@
 

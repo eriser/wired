@@ -1,4 +1,9 @@
-CPPFLAGS = $(shell wx-config --cflags) @SAMPLERATE_CFLAGS@ -Wall -Wunused -I../portaudio/include
+CPPFLAGS = $(shell wx-config --cflags) @SAMPLERATE_CFLAGS@ -Wall -Wunused
+
+if PORTAUDIO
+CPPFLAGS += -I../portaudio/include
+endif
+
 
 LDFLAGS = $(shell wx-config --libs) -lm @SAMPLERATE_LIBS@
 

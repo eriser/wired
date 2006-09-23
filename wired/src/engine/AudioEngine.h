@@ -58,33 +58,33 @@ class AudioSystem
 class AudioEngine
 {
  public:
-  AudioEngine(); 
+  AudioEngine();
   ~AudioEngine();
-  
+
   vector<Device*>	DeviceList;
   vector<AudioSystem*>	SystemList;
-  
+
   bool			IsOk;
   bool			_paInit;
-  
+
   AudioSystem		*SelectedOutputSystem;
   Device		*SelectedOutputDevice;
   unsigned long		OutputSampleFormat;
   double		OutputLatency;
   int			OutputChannels;
-  
+
   AudioSystem		*SelectedInputSystem;
   Device		*SelectedInputDevice;
   unsigned long		InputSampleFormat;
   double		InputLatency;
   int			InputChannels;
-  
+
   unsigned long		SampleFormat;
-  
+
   double		SampleRate;
   unsigned long		SamplesPerBuffer;
   double		Latency;
-  
+
   void			Restart(void);
   void			OpenStream(void);
   bool			CloseStream(void);
@@ -132,7 +132,7 @@ static int	AudioCallback(const void *input,
 			      void *output,
 			      unsigned long frameCount,
 			      const PaStreamCallbackTimeInfo* timeInfo,
-			      PaStreamCallbackFlags statusFlags, 
+			      PaStreamCallbackFlags statusFlags,
 			      void *userData)
 {
   if (!userData)
@@ -142,16 +142,16 @@ static int	AudioCallback(const void *input,
   unsigned long bytes = frameCount, processed = 0;
   float **outputs = (float**)output;
   float **inputs  =(float**)input;
-  
-  
+
+
   int nchan = 0;
   vector<long>::iterator chan;
-  
+
   if (data->SampleFormat & paFloat32)
     {
     if (data->OutFIFOVector.size() > 0)
     {
-	      for (processed = 0, chan = data->Sets->OutputChannels.begin(); 
+	      for (processed = 0, chan = data->Sets->OutputChannels.begin();
 		   chan != data->Sets->OutputChannels.end();
 		   chan++, nchan++)
 		{
