@@ -447,19 +447,22 @@ void                MainWindow::InitLocale()
 {
   // disable extra output of wx
   wxLog		log(wxLogNull);
-  wxString	prefix = wxString(wxT(INSTALL_PREFIX)) + wxString(wxT("share/locale/"));
+  wxString	prefix = wxString(wxT(INSTALL_PREFIX)) + wxString(wxT("/share/locale/"));
   
   mLocale = new wxLocale();
   mLocale->AddCatalogLookupPathPrefix(prefix);
+
+  //try to set default language (is it really useful ? it seems to never work)
   if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
-    {
-      // add wx basic translation (File, Window, About, ..)
-      mLocale->AddCatalog(wxT("wxstd"));
-      // add our translations
-      mLocale->AddCatalog(wxT("wired"));
-    }
-  else
-    cout << "[MAINWIN] Could not initialize locale, falling down on default" << endl;
+    cout << "[MainWindow][InitLocale] locale inited to wxLANGUAGE_DEFAULT" << endl;;
+
+  // add wx basic translation (File, Window, About, ..) (It seems to never return true ...)
+  if(mLocale->AddCatalog(wxT("wxstd")))
+    cout << "[MainWindow][Initlocale] wxstd catalog added" << endl;;
+
+  // add our translations
+  if(mLocale->AddCatalog(wxT("wired")))
+    cout << "[MainWindow][InitLocale] wired catalog added" << endl;;
 }
 
 void					MainWindow::InitFileConverter()

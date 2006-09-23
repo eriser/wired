@@ -216,7 +216,7 @@ AC_MSG_RESULT([$CFGDEBUG])
 
 
 #Some locale things
-ALL_LINGUAS="fr"
+ALL_LINGUAS="fr_FR it_IT zh_TW.Big5"
 AM_GNU_GETTEXT([use-libtool])
 AM_GNU_GETTEXT_VERSION([0.14.4])
 
