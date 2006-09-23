@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <vector>
-#include <portaudio.h>
+#include "portaudio.h"
 #include <wx/wx.h>
 
 #define MIN	0

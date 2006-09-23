@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include <portaudio.h>
+#include "portaudio.h"
 #include <wx/thread.h>
 
 #include "Device.h"

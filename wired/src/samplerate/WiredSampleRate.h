@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <sndfile.h>
 #include <samplerate.h>
-#include <portaudio.h>
+#include "portaudio.h"
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
 #include <wx/choicdlg.h>
