@@ -23,7 +23,8 @@
 #include "icon5.xpm"
 #include "icon3.xpm"
 #include "delete.xpm"
-
+#include "../xml/WiredSessionXml.h"
+#include <wx/file.h>
 
 extern WiredSession				*CurrentSession;
 extern MediaLibrary				*MediaLibraryPanel;
@@ -45,8 +46,6 @@ MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
   /* Set the Root node with the project's name in label */
   root = AddRoot(_("Project's name"));
   SetItemBold(root);
-
-  m_reverseSort = 1;
 
   /* Create Image List */
   wxImageList *images = new wxImageList(16, 16, TRUE);
@@ -104,6 +103,22 @@ MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
 MLTree::~MLTree()
 {
  
+}
+
+
+bool				MLTree::SaveML()
+{
+  int		Res = 0;
+  wxChar	Buffer[20];
+
+  //CurrentXmlSession = new WiredSessionXml(wxString(wxT(""), *wxConvCurrent));
+
+
+  //Res += *CurrentXmlSession->StartElement(STR_ML);
+  
+
+
+  return Res == 0;
 }
 
 void				MLTree::AddIcon(wxImageList *images, wxIcon icon)
@@ -321,10 +336,9 @@ int				MLTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& ite
 	    text2 = temp.label;
 	}
     }
-  //  cout << "text1: " << text1.mb_str() << " | text2: " << text2.mb_str() << "comp: " << text1.Cmp(text2) << endl;
-  //  cout << "sort:" << m_reverseSort << endl;
+  // cout << "text1: " << text1.mb_str() << " | text2: " << text2.mb_str() << "comp: " << text1.Cmp(text2) << endl;
 
-  return text1.Cmp(text2) * m_reverseSort;
+  return text1.Cmp(text2);
 
 }
 
@@ -335,10 +349,10 @@ void				MLTree::SortNodes(wxString MLselected)
   wxTreeItemId temp;
 
   selected = MLselected;
-  if (m_reverseSort == 1)
+  /*if (m_reverseSort == 1)
     m_reverseSort = -1;
   else
-    m_reverseSort = 1;
+  m_reverseSort = 1;*/
   for (it = nodes.begin(); it != nodes.end(); it++)
     {
       temp = (*it).first;
@@ -376,28 +390,26 @@ void				MLTree::OnAdd(wxString FileToAdd)
       if (File->FileExists() == true)
 	{
 	  //	  cout << "[MEDIALIBRARY] File added : " << FileToAdd <<  " Extention is : " << File->GetExt() << endl;
+	  wxFile *FileInfos = new wxFile(FileToAdd);
+	  wxString length_str;
+	  int popo = FileInfos->Length();
+	  length_str << popo;
+
 	  for (vector<wxString>::iterator iter = Exts.begin(); iter != Exts.end(); iter++)
-	    {
-	      if (iter->Contains(File->GetExt()) == true)
-		{
-		  s_nodeInfo		infos;
-		  int			slashPos;
-		  wxTreeItemId		selection;
+	    if (iter->Contains(File->GetExt()) == true)
+	      {
+		s_nodeInfo		infos;
+		int			slashPos;
+		wxTreeItemId		selection;
 
-		  infos = SetStructInfos(infos, FileToAdd, File->GetExt(), wxT(""));
-		  slashPos = FileToAdd.Find('/', true);
-		  selection = GetSelection();
-
-		  if (selection.IsOk() == true && selection != GetRootItem())
-		    {
-		      this->AddFile(selection, FileToAdd.Mid(slashPos + 1), infos, true);
-		    }
-		  else
-		    {
-		      this->AddFile(GetTreeItemIdFromLabel(_("Sounds")), FileToAdd.Mid(slashPos + 1), infos, true);
-		    }
-		}
-	    }
+		infos = SetStructInfos(infos, FileToAdd, File->GetExt(), length_str);
+		slashPos = FileToAdd.Find('/', true);
+		selection = GetSelection();
+		if (selection.IsOk() == true && selection != GetRootItem())
+		  this->AddFile(selection, FileToAdd.Mid(slashPos + 1), infos, true);
+		else
+		  this->AddFile(GetTreeItemIdFromLabel(_("Sounds")), FileToAdd.Mid(slashPos + 1), infos, true);
+	      }
 	  DisplayNodes();
 	}
     }
