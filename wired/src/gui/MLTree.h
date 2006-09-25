@@ -39,12 +39,12 @@ class				MLTree : public wxTreeCtrl
   vector<wxString>		Exts;
   map<wxTreeItemId, s_nodeInfo>	nodes;
   wxPoint			mouse_pos;
-  int				m_reverseSort;
   wxString			selected;
   wxTreeItemId		        item_begin;
   wxTreeItemId		        item_to_drag;
   wxArrayTreeItemIds		selection;
   int				selection_length;
+  bool				SaveML();
   bool				IsTreeCollapsed();
   void				SetTreeCollapsed();
   void				SetTreeExpanded();
