@@ -26,7 +26,7 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
 
   ConnectedSeqTrack = 0x0;
   SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);
-  bg = new wxImage(wxString(WiredSettings->DataDir + wxString(BG)).c_str(), wxBITMAP_TYPE_PNG);
+  bg = new wxImage(wxString(WiredSettings->DataDir + wxString(BG)), wxBITMAP_TYPE_PNG);
   MixerBmp = new wxBitmap(bg);
   //cout << bg->GetWidth() << " " << bg->GetHeight() << endl;
   Chan = channel;
