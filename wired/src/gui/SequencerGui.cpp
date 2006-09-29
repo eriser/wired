@@ -79,11 +79,14 @@ void					SequencerView::OnClick(wxMouseEvent &e)
 void					SequencerView::OnMotion(wxMouseEvent &e)
 {
   if (e.Dragging())
-    if (TheZone->IsVisible())
-      {
-	TheZone->UpdateZone(e.m_x, e.m_y);
-	SelectZonePatterns(e.ShiftDown());
-      }
+    {
+      cout << "Dragging" << endl;
+      if (TheZone->IsVisible())
+	{
+	  TheZone->UpdateZone(e.m_x, e.m_y);
+	  SelectZonePatterns(e.ShiftDown());
+	}
+    }
 }
 
 void					SequencerView::SelectZonePatterns(bool shift)
@@ -739,6 +742,33 @@ void					SequencerGui::UnselectTracks()
       (*i)->TrackOpt->SetSelected(false);
 }
 
+void					SequencerGui::AddPattern(Pattern *p, long trackindex)
+{
+vector<Track *>::iterator		iter;
+
+	UnselectTracks();
+	for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
+    	if ((*iter)->Index == trackindex)
+	  (*iter)->AddPattern(p);
+}
+void					SequencerGui::DelPattern(Pattern *p, long trackindex)
+{
+  vector<Track *>::iterator		iter;
+
+	UnselectTracks();
+	for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
+    	if ((*iter)->Index == trackindex)
+	  (*iter)->DelPattern(p);
+}
+bool					SequencerGui::IsAudioTrack(long trackindex)
+{
+  vector<Track *>::iterator		iter;
+
+	UnselectTracks();
+	for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
+    	if ((*iter)->Index == trackindex)
+	  return (*iter)->IsAudioTrack();
+}
 void					SequencerGui::SelectTrack(long trackindex)
 {
 	vector<Track *>::iterator		iter;
@@ -978,6 +1008,7 @@ void					SequencerGui::MoveToCursor()
 {
  vector<Pattern *>::iterator		i, j;
  wxMutexLocker				m(SeqMutex);
+
 
  for (i = SelectedItems.begin(); i != SelectedItems.end(); i++)
    {

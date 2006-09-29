@@ -192,27 +192,44 @@ void					Pattern::OnMotion(wxMouseEvent &e)
   long					y;
   long					max;
   double				z;
+  int					trackfrom;
+  int					trackto;
   double				mes;
   
+ 
   if (IsSelected() && (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->Wave != this))
     {
       if (m_click.x != -1)
 	StateMask |= (unsigned char) PATTERN_MASK_DRAGGED;
       SeqMutex.Lock();
       if ((x = (e.GetPosition().x - m_click.x)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->HoriZoomFactor)))
-	x = max;
-      else
-	if (x < -max)
-	  x = -max;
+	  x = max;
+      else if (x < -max)
+	x = -max;
       if ((y = (e.GetPosition().y - m_click.y)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->VertZoomFactor)))
 	y = max;
-      else
-	if (y < -max)
-	  y = -max;
+      else if (y < -max)
+	y = -max;
       if ((z = x / (mes = MEASURE_WIDTH * SeqPanel->HoriZoomFactor)) != 0)
 	{
 	  if (SeqPanel->SelectedItems.size() == 1)
-	    XMove(z);
+	    {
+	      trackto = TrackIndex + floor((e.GetPosition().y  * SeqPanel->VertZoomFactor) / TRACK_HEIGHT);
+	      if (SeqPanel->IsAudioTrack(TrackIndex) == SeqPanel->IsAudioTrack(trackto))
+		{
+		  SeqPanel->ChangeMouseCursor(wxCursor(wxCURSOR_HAND));
+		  SeqPanel->AddPattern(this, trackto);
+		  SeqPanel->DelPattern(this, TrackIndex);
+		  TrackIndex = trackto;
+		  XMove(z);
+		}
+	      else
+		{
+		  SeqPanel->ChangeMouseCursor(wxCursor(wxCURSOR_NO_ENTRY));
+		  SeqMutex.Unlock();
+		  return;
+		}
+	    }
 	  else
 	    {
 	      for (p = SeqPanel->SelectedItems.begin(); p != SeqPanel->SelectedItems.end() && (z < 0); p++)

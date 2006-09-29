@@ -47,6 +47,7 @@ class					Pattern : public wxWindow
   double							EndPosition;
   double							Length;
   unsigned long				TrackIndex;
+  unsigned long				TrackFrom;
   unsigned char				StateMask;
   wxPoint							m_pos;
   wxSize							m_size;

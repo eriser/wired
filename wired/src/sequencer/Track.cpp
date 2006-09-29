@@ -123,7 +123,20 @@ AudioPattern					*Track::AddPattern(WaveFile *w, double pos)
 #endif
   return (a);
 }
-
+void						Track::DelPattern(Pattern *p)
+{
+#ifdef __DEBUG__
+  printf("Track::DelPattern(%d) -- START (PATTERN)\n", p);
+#endif
+  SeqMutex.Lock();
+  vector<Pattern *>::iterator		iter;
+  for (iter = TrackPattern->Patterns.begin(); *iter != p; iter++);
+  TrackPattern->Patterns.erase(iter);
+  SeqMutex.Unlock();
+#ifdef __DEBUG__
+  printf("Track::DelPattern(%d) -- OVER (PATTERN)\n", p);
+#endif
+}
 void						Track::AddPattern(Pattern *p)
 {
 #ifdef __DEBUG__
