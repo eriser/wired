@@ -4,10 +4,11 @@
 #ifndef __MLTREE_H__
 #define __MLTREE_H__
 
-#include <wx/wx.h>
+//#include <wx/wx.h>
 #include <vector>
-#include <list>
+//#include <list>
 #include <map>
+#include <wx/treectrl.h>
 
 using std::string;
 using std::vector;
@@ -20,17 +21,18 @@ struct				s_nodeInfo
   wxString			label;
   wxString			extention;
   wxString			length;
-
 };
 
 class				MLTree : public wxTreeCtrl
 {
+
  public:
   MLTree(wxWindow *dad, wxPoint p, wxSize s, long style);
   ~MLTree();
 
  protected:
   friend class			MediaLibrary;
+  friend class			MLTreeInfos;
 
   wxTreeCtrl			*Tree;
   bool				collapsed;

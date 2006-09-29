@@ -6,27 +6,40 @@
 
 using namespace			std;
 
-#include <vector>
-#include <wx/wx.h>
-#include <wx/string.h>
+#include "MLTree.h"
 
 enum
   {
 
   };
 
-class				MLTreeInfos: public wxWindow
+class				MywxStaticText : public wxStaticText
 {
- protected:
+
+ private:
+
+  wxWindow	*infoParent;
 
  public:
-  
-  
-  MLTreeInfos(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style);
-  ~MLTreeInfos();
 
-  void		OnClick(wxMouseEvent& event);
-  DECLARE_EVENT_TABLE();
+  MywxStaticText(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos, const wxSize& size, long style, const wxString& name);
+  void InfoDestroy(wxMouseEvent& event);
+
+  DECLARE_EVENT_TABLE()
+};
+
+class				MLTreeInfos: public wxWindow
+{
+
+ protected:
+
+ friend class			MediaLibrary;
+ friend class			MLTree;
+
+ public:
+
+  MLTreeInfos(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style, s_nodeInfo infos);
+  ~MLTreeInfos();
 };
 
 #endif

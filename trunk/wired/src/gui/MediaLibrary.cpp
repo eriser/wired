@@ -72,7 +72,7 @@ MediaLibrary::MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &s
   SetForegroundColour(ML_FOREGROUND);
 
   MLTreeView = new MLTree(this, wxPoint(10, 50),
-			  wxSize(300, GetSize().y - 100),
+			  wxSize(195, GetSize().y - 160),
 			  wxTR_DEFAULT_STYLE | wxTR_EDIT_LABELS | wxTR_MULTIPLE);
   MLTreeView->SetTreeExpanded();
 
@@ -192,6 +192,7 @@ void				MediaLibrary::OnCollapse(wxCommandEvent &WXUNUSED(event))
 
 void				MediaLibrary::OnSize(wxSizeEvent &event)
 {
+  MLTreeView->SetSize(this->GetSize().x - 15, this->GetSize().y - 160);
   BottomToolbar->Move(0, this->GetSize().y - 100);
   FiltersToolbar->Move(0, this->GetSize().y - 50);
 }
