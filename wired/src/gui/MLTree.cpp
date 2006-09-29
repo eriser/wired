@@ -2,6 +2,7 @@
 // Under the GNU General Public License
 
 #include <wx/filename.h>
+#include <wx/wx.h>
 #include <wx/treectrl.h>
 #include "MediaLibrary.h"
 #include "MLTree.h"
@@ -233,12 +234,13 @@ void				MLTree::OnPreview()
 // Display infos corresponding to a node
 void				MLTree::DisplayInfos()
 {
-  //  cout << "[MEDIALIBRARY] DISPLAYINFOS" << endl;
-  cout << "[MEDIALIBRARY] DISPLAYINFOS" << endl;
+  // cout << "[MEDIALIBRARY] DISPLAYINFOS" << endl;
+  s_nodeInfo			info;
   
+  info = GetTreeItemStructFromId(GetSelection());
   mouse_pos.y += 50;
   mouse_pos.x += 30;
-  MLTreeInfos	*infos = new MLTreeInfos(MediaLibraryPanel, mouse_pos, wxSize(300,150), wxCAPTION | wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxTHICK_FRAME);
+  MLTreeInfos	*infos = new MLTreeInfos(MediaLibraryPanel, wxPoint(2, mouse_pos.y), wxSize(197, 100), wxCAPTION | wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxTHICK_FRAME, info);
 }
 
 // When adding a file
