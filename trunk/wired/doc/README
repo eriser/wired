@@ -1,0 +1,7 @@
+This directory is meant to hold the Doxygen documentation.
+As it is way to big to be uploaded on the svn, we only commit the Doxygen configuration file.
+However, if you want to have it locally, you can install the doxygen package and run this command :
+ $ doxygen wired.doxy
+in the parent directory.
+
+This documentation is also available at : http://wired.is.free.fr/doxygen/
