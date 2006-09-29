@@ -35,6 +35,7 @@ class					Track
   AudioPattern				*AddPattern(WaveFile *w, double pos = 0);
   MidiPattern				*AddPattern(MidiTrack *t);
   void					AddPattern(Pattern *p);
+  void					DelPattern(Pattern *p);
   void					AddColoredPattern(Pattern *p);
   void					UpdateIndex(long trackindex);
   void					RefreshFullTrack();

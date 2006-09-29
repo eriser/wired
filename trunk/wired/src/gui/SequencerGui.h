@@ -40,6 +40,7 @@ using namespace std;
 #define MAGNETISM			(3)
 #define MEASURE_WIDTH			(80)
 
+
 #define CURSOR_MASK			(0x1)
 #define CURSOR_MAGNETISM		(MAGNETISM & CURSOR_MASK)
 #define CURSOR_DEFAULT_MAGNETISM	(4)
@@ -244,6 +245,9 @@ class				SequencerGui: public wxPanel
   void				RemoveTrack();
   void				UnselectTracks();
   void				SelectTrack(long trackindex);
+  void				AddPattern(Pattern *p, long trackindex);
+  void				DelPattern(Pattern *p, long trackindex);
+  bool				IsAudioTrack(long trackindex);
   void				ChangeSelectedTrackIndex(long trackindex);
   void				ScrollTrackList(long track_delta);
   void				AdjustHScrolling();
