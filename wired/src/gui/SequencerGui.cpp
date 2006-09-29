@@ -80,7 +80,6 @@ void					SequencerView::OnMotion(wxMouseEvent &e)
 {
   if (e.Dragging())
     {
-      cout << "Dragging" << endl;
       if (TheZone->IsVisible())
 	{
 	  TheZone->UpdateZone(e.m_x, e.m_y);
