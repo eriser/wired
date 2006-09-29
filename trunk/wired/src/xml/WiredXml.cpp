@@ -28,6 +28,10 @@ WiredXml::~WiredXml()
 
 WiredXml				WiredXml::operator=(const WiredXml& right)
 {
+  std::cerr << "WARNING : Soon, Wired will fail" << std::endl;
+
+  // Ptr must NOT be copied, but content of data does.
+
 	if (this != &right)
 	{
 		_DocumentFileName = right._DocumentFileName;
@@ -38,11 +42,6 @@ WiredXml				WiredXml::operator=(const WiredXml& right)
 		_DocumentWriterName = right._DocumentWriterName;
 		
 	}
-	return *this;
-}
-
-WiredXml				WiredXml::Clone()
-{
 	return *this;
 }
 
