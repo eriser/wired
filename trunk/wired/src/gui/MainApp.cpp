@@ -15,7 +15,7 @@
 
 void	AllocationErrorHandler(void)
 {
-	cout << "[MAINAPP] Allocation error or not enough memory, exiting" << endl;
+	cout << "[MAINAPP] Allocation error or not enough memory, aborting" << endl;
 	exit(-1);
 }
 
@@ -64,14 +64,14 @@ bool				MainApp::OnInit()
   Checker = new wxSingleInstanceChecker(name);
   if (Checker->IsAnotherRunning())
     {
-      cout << "Another Wired is already running, aborting." << endl;      
+      cout << "Another instance of Wired is already running, aborting." << endl;      
       return (false);
     }
   delete Checker;
 #endif  
   SetUseBestVisual(true);
   SetVendorName(L"Wired Team");
-  Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxSize(APP_WIDTH, APP_HEIGHT));
+  Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxGetDisplaySize());
   Frame->Show(true);
   SetTopWindow(Frame);
   splash->Hide();
@@ -123,7 +123,7 @@ void              MainApp::OnFatalException()
 void				MainApp::OnUnhandledException()
 {
   cout << "UnhandledException" << endl;
-  Frame->AlertDialog(_("Critical error"), _("An unhandled exception occurs, Wired stop now!"));
+  Frame->AlertDialog(_("Critical error"), _("An unhandled exception has occurred, aborting"));
 }
 
 int				MainApp::OnExit()
