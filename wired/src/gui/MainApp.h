@@ -13,9 +13,6 @@
 
 #include "version.h"
 
-#define APP_WIDTH		(800)
-#define APP_HEIGHT		(600)
-
 WX_DEFINE_ARRAY_PTR(wxThread *, wxArrayThread);
 
 class MainWindow;
