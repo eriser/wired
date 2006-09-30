@@ -6,37 +6,81 @@
 
 #include "WaveFile.h"
 
+/**
+ * This class aims to manage the clipboard with wave files.
+ * With this it's possible to copy, cut, paste and delete wave files.
+ */
 class cClipBoard : public WaveFile
 {
-public:
+ public:
 
-	// Destructeur 
-	~cClipBoard();
-    
-	// Retourne l'instance unique de cette classe
-	static cClipBoard& Global();
+  /**
+   * Destructor
+   */
+  ~cClipBoard();
 
-	// Copie des frames
-	void Copy (WaveFile& wave, int from, int size_of_copy);
+  /**
+   * Static method to get the current object of this class.
+   * \return returns the static ClipBoard pointer.
+   */
+  static cClipBoard& Global();
 
-	// Copie de frames dans le clipboard et suppression du wave source
-	void Cut (WaveFile& wave, int from, int size_of_copy);
+  /**
+   * Copies frames in the clipboard.
+   * \param wave a WaveFile, the wave file which must be edited.
+   * \param from an int, where the copy must begin.
+   * \param size_of_copy an int, the size of the copy.
+   */
+  void Copy (WaveFile& wave, int from, int size_of_copy);
 
-	// Insertion de frames dans un wave
-	void Paste (WaveFile& wave, int to);
-	
-	// Suppression de frames dans un wave
-	void Delete (WaveFile& wave, int from, int size_of_cut);
+  /**
+   * Cuts frames in the clipboard and delete
+   * the original wave file.
+   * \param wave a WaveFile pointer, the wave file which must be edited.
+   * \param from an int, where the copy must begin.
+   * \param size_of_copy an int, the size of the copy.
+   */
+  void Cut (WaveFile& wave, int from, int size_of_copy);
 
-	long sizec;
+  /**
+   * Inserts frames in a wave file.
+   * \param wave a WaveFile pointer, the wave file which must be edited.
+   * \param to an int, where the file must be copied.
+   */
+  void Paste (WaveFile& wave, int to);
 
-private:
-	// Pointer sur l'unique objet de cette classe
-	static cClipBoard* spSingleton;
+  /**
+   * Deletes frames in a wave file.
+   * \param wave a WaveFile, it's the wave file which must be edited.
+   * \param from an int, where the copy must begin.
+   * \param size_of_copy an int, the size of the delete part.
+   */
+  void Delete (WaveFile& wave, int from, int size_of_cut);
 
-	// Constructeur prive
-	// cClipBoard();
-	cClipBoard(wxString filename = wxT("/tmp/tmp.wav"), bool loadmem = false, t_opening_mode open_mode = WaveFile::rwrite);
+  /**
+   * Keeps the offset of the copy.
+   */
+  long sizec;
+
+ private:
+  /**
+   * spSingleton is the pointer "this" of this class.
+   */
+  static cClipBoard* spSingleton;
+
+
+  /**
+   * This is a private contructor with a filename,
+   * a load flag and a file open mode.
+   * \param filename a wxString, the file's path.
+   * By default it's "/tmp/tmp.wav".
+   * \param loadmen a bool, if the file will be mapped in the memory.
+   * \param open_mode a t_opening_mode, the file's permissions.
+   * By default wave files are opened in read and write mode.
+
+   */
+  cClipBoard(wxString filename = wxT("/tmp/tmp.wav"), bool loadmem = false,
+	     t_opening_mode open_mode = WaveFile::rwrite);
 };
 
 
