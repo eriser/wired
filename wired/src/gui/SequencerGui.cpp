@@ -27,6 +27,7 @@
 #include "MidiPattern.h"
 #include "SeqTrack.h"
 #include "SeqTrackPattern.h"
+#include "AudioCenter.h"
 #include "../midi/MidiDevice.h"
 #include "../engine/Settings.h"
 #include "../audio/WriteWaveFile.h"
@@ -78,6 +79,8 @@ void					SequencerView::OnClick(wxMouseEvent &e)
 
 void					SequencerView::OnMotion(wxMouseEvent &e)
 {
+  if (SeqPanel->GetCursor() != wxCursor(wxCURSOR_HAND))
+    SeqPanel->ChangeMouseCursor(wxCursor(wxCURSOR_HAND));
   if (e.Dragging())
     {
       if (TheZone->IsVisible())
@@ -313,6 +316,35 @@ void					SequencerView::DrawMeasures(wxDC &dc)
       else
 	dc.DrawLine((int) floor(x), 0,
 		    (int) floor(x), size.y);
+    }
+}
+
+void					SequencerView::Drop(int x, int y, wxString file)
+{
+  int					track;
+  vector<Track *>::iterator		i;
+  vector<Pattern *>::iterator		pattern_iterator;
+  int					cpt;
+  int					last_pos = 0;
+  Track					*track_to_add;
+  WaveFile				*wave;
+
+  ScreenToClient(&x, &y);
+  track = floor((y  * SeqPanel->VertZoomFactor) / TRACK_HEIGHT); 
+  for (i = Seq->Tracks.begin(), cpt = 0; i != Seq->Tracks.end() && cpt != track; i++, cpt++);
+  if (Seq->Tracks.size() != 0 && track < Seq->Tracks.size() && (*i)->IsAudioTrack())
+    {
+      wave = WaveCenter.AddWaveFile(file);
+      for (pattern_iterator = (*i)->TrackPattern->Patterns.begin(); pattern_iterator != (*i)->TrackPattern->Patterns.end(); pattern_iterator++)
+	if (last_pos < (*pattern_iterator)->GetEndPos())
+	  last_pos = (*pattern_iterator)->GetEndPos();
+      (*i)->AddPattern(wave, last_pos);
+    }
+  else
+    {
+       track_to_add = SeqPanel->AddTrack(true);
+       wave = WaveCenter.AddWaveFile(file);
+       track_to_add->AddPattern(wave, 0);
     }
 }
 
@@ -1253,6 +1285,12 @@ void					SequencerGui::SetEndLoopPos(double pos)
 void					SequencerGui::SetEndPos(double pos)
 {
   EndCursor->SetPos(pos);
+}
+void					SequencerGui::Drop(int x, int y, wxString file)
+{
+
+  SeqView->Drop(x, y, file);
+  
 }
 
 /*
