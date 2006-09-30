@@ -144,7 +144,6 @@ class				SequencerView: public wxWindow
   SelectionZone			*TheZone;
   AccelCenter			*HAxl;
   AccelCenter			*VAxl;
-
  public:
   SequencerView(wxWindow *parent, const wxPoint &pos, const wxSize &size);
   ~SequencerView();
@@ -168,6 +167,7 @@ class				SequencerView: public wxWindow
   void				SetTotalWidth(unsigned long w);
   unsigned long			GetTotalHeight();
   void				SetTotalHeight(unsigned long h);
+  void				Drop(int x, int y, wxString file);
 
  protected:
   void				DrawMeasures(wxDC &dc);
@@ -300,6 +300,7 @@ class				SequencerGui: public wxPanel
   void				OnMagnetismChange(wxCommandEvent &event);
   void				OnColorButtonClick(wxCommandEvent &event);
   void				OnColoredBoxClick(wxCommandEvent &event);
+  void				Drop(int x, int y, wxString file);
   //bool				Floating;
 
   double			CurrentPos;

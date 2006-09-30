@@ -83,7 +83,7 @@ class					Pattern : public wxWindow
   void								SetName(wxString n) { Name = n; };
   long								GetTrackIndex() { return (TrackIndex); };
   void								SetTrackIndex(long t) { TrackIndex = t; };
-  
+  double							GetEndPos();
 //  virtual Pattern			operator=(const Pattern& right) = 0;
 };
 

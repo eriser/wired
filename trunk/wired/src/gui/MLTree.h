@@ -77,6 +77,7 @@ class				MLTree : public wxTreeCtrl
   int				OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
   wxTreeItemId                  Copy(wxTreeItemId item);
   void                          DragAndDrop(wxTreeItemId item);
+  void				OnLeftClick(wxMouseEvent &event);
   DECLARE_EVENT_TABLE()
 };
 

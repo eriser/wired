@@ -642,7 +642,6 @@ void				MLTree::EndDrag(wxTreeEvent &event)
   wxTreeItemId		item;
   int			i;
 
-  
   item = event.GetItem();
   item_begin = item;
   if (item.IsOk() && item != item_to_drag && item != GetRootItem() && GetItemParent(item) != item_to_drag && !GetTreeItemStructFromId(item).extention.Cmp(wxT("")))
@@ -652,9 +651,32 @@ void				MLTree::EndDrag(wxTreeEvent &event)
       Expand(item_begin);
     }
 }
+void				MLTree::OnLeftClick(wxMouseEvent &event)
+{
+  int		x;
+  int		y;
+  wxString     	selfile;
+  s_nodeInfo   	infos;
+
+  infos = GetTreeItemStructFromId(item_to_drag);
+  if (infos.label != wxT(""))
+    {
+      if (infos.extention.Cmp(wxT("")))
+	{
+	  selfile = infos.label;
+	  x = event.GetPosition().x;
+	  y = event.GetPosition().y;
+	  ClientToScreen(&x, &y);
+	  SeqPanel->Drop(x, y, selfile);
+	}
+    }
+  event.Skip();
+}
+
 BEGIN_EVENT_TABLE(MLTree, wxTreeCtrl)
   EVT_RIGHT_UP(MLTree::OnRightClick)
   EVT_TREE_SEL_CHANGED(MLTree_Selected, MLTree::OnSelChange)
   EVT_TREE_BEGIN_DRAG(MLTree_Selected, MLTree::BeginDrag)
   EVT_TREE_END_DRAG(MLTree_Selected, MLTree::EndDrag)
+  EVT_LEFT_UP(MLTree::OnLeftClick)
 END_EVENT_TABLE()
