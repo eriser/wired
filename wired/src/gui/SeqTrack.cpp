@@ -45,26 +45,32 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
 
   SetBackgroundColour(CL_RULER_BACKGROUND);
   
+  // name of track
   if (audio)
     s.Printf(_("Audio %d"), ++AudioTrackCount);
   else
     s.Printf(wxT("MIDI %d"), ++MidiTrackCount);
-  
-  /*
-    if (Seq->Tracks[Index - 1]->Output)
-    MixerPanel->SetLabelByChan(Seq->Tracks[Index - 1]->Output, s);
-    else
-    cout << "SEQTRACK helas pas d output" << endl;
-  */
   Text = new wxTextCtrl(this, SeqTrack_OnNameChange, s, wxPoint(6, 8), 
-			wxSize(TRACK_WIDTH - 38, 18), wxTE_PROCESS_ENTER);
+			wxSize(TRACK_WIDTH - 68, 18), wxTE_PROCESS_ENTER);
   Text->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
 
-  wxImage *rec_up = new wxImage(wxString(WiredSettings->DataDir + wxString(REC_UP)).c_str(), wxBITMAP_TYPE_PNG);
+  // add pixmap to see what sort of track it is (audio or midi).
+  wxImage*		trackTypeImage;
+
+  if (!IsAudio)
+    trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-midi.png")), wxBITMAP_TYPE_PNG);
+  else
+    trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-wave.png")), wxBITMAP_TYPE_PNG);
+
+  trackTypeBitmap = new wxBitmap(trackTypeImage);
+  wxStaticBitmap*	trackTypeStatic = new wxStaticBitmap(this, -1, *trackTypeBitmap, wxPoint(62, 8));
+
+  // record and mute button
+  wxImage *rec_up = new wxImage(wxString(WiredSettings->DataDir + wxString(REC_UP)), wxBITMAP_TYPE_PNG);
   wxImage *rec_down = 
-    new wxImage(wxString(WiredSettings->DataDir + wxString(REC_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *mute_up = new wxImage(wxString(WiredSettings->DataDir + wxString(MUTE_UP)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *mute_down = new wxImage(wxString(WiredSettings->DataDir + wxString(MUTE_DOWN)).c_str(), wxBITMAP_TYPE_PNG);
+    new wxImage(wxString(WiredSettings->DataDir + wxString(REC_DOWN)), wxBITMAP_TYPE_PNG);
+  wxImage *mute_up = new wxImage(wxString(WiredSettings->DataDir + wxString(MUTE_UP)), wxBITMAP_TYPE_PNG);
+  wxImage *mute_down = new wxImage(wxString(WiredSettings->DataDir + wxString(MUTE_DOWN)), wxBITMAP_TYPE_PNG);
 
   RecBtn = new DownButton(this, SeqTrack_Record, wxPoint(6, 30), wxSize(25, 16), 
 			  rec_up, rec_down);
@@ -86,9 +92,9 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
 		     (wxObjectEventFunction)(wxEventFunction) 
 		     (wxMouseEventFunction)&SeqTrack::OnDeviceHelp);
 
-  wxImage *green = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_GREEN)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *orange = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_ORANGE)).c_str(), wxBITMAP_TYPE_PNG);
-  wxImage *red = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_RED)).c_str(), wxBITMAP_TYPE_PNG);
+  wxImage *green = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_GREEN)), wxBITMAP_TYPE_PNG);
+  wxImage *orange = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_ORANGE)), wxBITMAP_TYPE_PNG);
+  wxImage *red = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_RED)), wxBITMAP_TYPE_PNG);
 
   Vu = new VUMCtrl(this, -1, 100, green, orange, red,wxPoint(TRACK_WIDTH - 28, 8), wxSize(16, 64));
   Vu->SetValue(0);
@@ -170,7 +176,7 @@ void					SeqTrack::OnConnectTo(wxCommandEvent &event)
 	if ((IsAudio && (*j)->IsAudio()) ||
 	    (!IsAudio && (*j)->IsMidi()))
 	  {
-	    menu->Append(k, (*j)->Name.c_str());
+	    menu->Append(k, (*j)->Name);
 	    Connect(k, wxEVT_COMMAND_MENU_SELECTED, 
 		    (wxObjectEventFunction)(wxEventFunction)
 		    (wxCommandEventFunction)&SeqTrack::OnConnectSelected);
@@ -195,7 +201,7 @@ void					SeqTrack::ConnectTo(Plugin *plug)
       ConnectedRackTrack = RackPanel->GetRackTrack(plug);
       // Initialisation du plugin
       plug->Init();
-      //Label->SetLabel(plug->Name.c_str());
+      //Label->SetLabel(plug->Name);
       Image->SetImage(plug->GetBitmap());
     }
   Image->Refresh();
