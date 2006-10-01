@@ -53,7 +53,7 @@ class cClipBoard : public WaveFile
    * Deletes frames in a wave file.
    * \param wave a WaveFile, it's the wave file which must be edited.
    * \param from an int, where the copy must begin.
-   * \param size_of_copy an int, the size of the delete part.
+   * \param size_of_cut an int, the size of the delete part.
    */
   void Delete (WaveFile& wave, int from, int size_of_cut);
 
@@ -74,7 +74,7 @@ class cClipBoard : public WaveFile
    * a load flag and a file open mode.
    * \param filename a wxString, the file's path.
    * By default it's "/tmp/tmp.wav".
-   * \param loadmen a bool, if the file will be mapped in the memory.
+   * \param loadmem a bool, if the file will be mapped in the memory.
    * \param open_mode a t_opening_mode, the file's permissions.
    * By default wave files are opened in read and write mode.
 
