@@ -35,7 +35,7 @@ SettingWindow::SettingWindow()
   : wxDialog(0x0, -1, _("Wired Settings"), wxDefaultPosition, WIN_SIZE)
 {
   wxTreeItemId	root;
-  wxTreeItemId	id;
+  wxTreeItemId	AudioItem;
 
   MidiLoaded = false;
   AudioLoaded = false;
@@ -69,10 +69,13 @@ SettingWindow::SettingWindow()
   SettingsTree->AddRoot(wxT(""), -1, -1);
   root = SettingsTree->GetRootItem();
   SettingsTree->AppendItem(root, _("General"), 0, -1, (wxTreeItemData*)GeneralPanel);
-  id = SettingsTree->AppendItem(root, _("Audio"), 1, -1, (wxTreeItemData*)AudioPanel);
-  SettingsTree->AppendItem(id, _("Output"), 2, -1, (wxTreeItemData*)AudioOutputPanel);
-  SettingsTree->AppendItem(id, _("Input"), 3, -1, (wxTreeItemData*)AudioInputPanel);
+  AudioItem = SettingsTree->AppendItem(root, _("Audio"), 1, -1, (wxTreeItemData*)AudioPanel);
+  SettingsTree->AppendItem(AudioItem, _("Output"), 2, -1, (wxTreeItemData*)AudioOutputPanel);
+  SettingsTree->AppendItem(AudioItem, _("Input"), 3, -1, (wxTreeItemData*)AudioInputPanel);
   SettingsTree->AppendItem(root, _("Midi"), 4, -1, (wxTreeItemData*)MidiPanel);
+
+  // start with audio item already expanded
+  SettingsTree->Expand(AudioItem);
 
   AudioPanel->Show(false);
   MidiPanel->Show(false);
