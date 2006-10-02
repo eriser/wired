@@ -36,11 +36,11 @@ class					SeqTrack: public wxControl
 	   const wxSize& size, bool audio = true);
   ~SeqTrack();
 
+  void					PropagateEvent(wxEvent &event);
   void					OnConnectTo(wxCommandEvent &event);
   void					OnConnectSelected(wxCommandEvent &event);
   void					ConnectTo(Plugin *plug);
   void					OnPaint(wxPaintEvent &event);
-  void					OnClick(wxCommandEvent &event);
   void					OnMouseClick(wxMouseEvent &e);
   void					OnDeviceChoice(wxCommandEvent &event);
   void					FillChoices();
@@ -80,6 +80,11 @@ class					SeqTrack: public wxControl
   VUMCtrl				*Vu;
   bool					Selected;
   wxPoint				m_click;
+
+ private:
+  wxStaticBitmap*			trackTypeStatic;
+
+  void					SelectTrack();
 
   DECLARE_EVENT_TABLE()
 };

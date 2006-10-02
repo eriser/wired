@@ -44,6 +44,8 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   VuValue = 0;
 
   SetBackgroundColour(CL_RULER_BACKGROUND);
+  // only impact on GTK+ implementation (see wx Doc)
+  wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
   
   // name of track
   if (audio)
@@ -63,7 +65,7 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
     trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-wave.png")), wxBITMAP_TYPE_PNG);
 
   wxBitmap*		trackTypeBitmap = new wxBitmap(trackTypeImage);
-  wxStaticBitmap*	trackTypeStatic = new wxStaticBitmap(this, -1, *trackTypeBitmap, wxPoint(62, 8));
+  trackTypeStatic = new wxStaticBitmap(this, -1, *trackTypeBitmap, wxPoint(62, 8));
 
   // record and mute button
   wxImage *rec_up = new wxImage(wxString(WiredSettings->DataDir + wxString(REC_UP)), wxBITMAP_TYPE_PNG);
@@ -100,13 +102,28 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   Vu->SetValue(0);
   menu = 0x0;
   Selected = false;
-  wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+
+  // we overwrite LEFT_DOWN event of these class, but we propagate it on each
+  // parent, recursivly (until any catch has not .Skip() call).
+  trackTypeStatic->Connect(wxEVT_LEFT_DOWN, wxObjectEventFunction(&SeqTrack::PropagateEvent));
+  Vu->Connect(wxEVT_LEFT_DOWN, wxObjectEventFunction(&SeqTrack::PropagateEvent));
+
+  // 
 }
 
 SeqTrack::~SeqTrack()
 {
   if (menu)
     delete menu;
+}
+
+void					SeqTrack::PropagateEvent(wxEvent &event)
+{
+  // set events propagationlevel to run down through the parents
+  event.ResumePropagation(wxEVENT_PROPAGATE_MAX);
+
+  // continue the event 
+  event.Skip();
 }
 
 void					SeqTrack::OnConnectToHelp(wxMouseEvent &event)
@@ -160,7 +177,6 @@ void					SeqTrack::OnConnectTo(wxCommandEvent &event)
   list<Plugin *>::iterator		j;
   long					k = 1000;
   
-  OnClick(event);
   if (RackPanel->RackTracks.size() <= 0)
     return;
   if (menu)
@@ -252,9 +268,8 @@ void					SeqTrack::OnPaint(wxPaintEvent &WXUNUSED(event))
   dc.DrawRoundedRectangle(1, 1, s.x - 3 - BORDER, s.y - 2, 3);
 }
 
-void					SeqTrack::OnClick(wxCommandEvent &WXUNUSED(event))
+void					SeqTrack::SelectTrack()
 {
-  //printf("what 4 funciton ?\n");
   SeqPanel->UnselectTracks();
   SetSelected(true);
 }
@@ -263,8 +278,7 @@ void					SeqTrack::OnMouseClick(wxMouseEvent &e)
 {
   m_click.x = e.m_x;
   m_click.y = e.m_y;
-  SeqPanel->UnselectTracks();
-  SetSelected(true);
+  SelectTrack();
 }
 
 void					SeqTrack::OnMotion(wxMouseEvent &e)
@@ -429,7 +443,6 @@ void					SeqTrack::SetDeviceId(long devid)
 
 BEGIN_EVENT_TABLE(SeqTrack, wxControl)
   EVT_COMMAND(SeqTrack_ConnectTo, wxEVT_COMMAND_BUTTON_CLICKED, SeqTrack::OnConnectTo)
-  EVT_COMMAND(SeqTrack_OnClick, wxEVT_COMMAND_BUTTON_CLICKED, SeqTrack::OnClick)
   EVT_MENU(SeqTrack_ConnectSelected, SeqTrack::OnConnectSelected)
   EVT_TEXT_ENTER(SeqTrack_OnNameChange, SeqTrack::OnNameChange)
   EVT_CHOICE(SeqTrack_DeviceChoice, SeqTrack::OnDeviceChoice)
@@ -439,4 +452,3 @@ BEGIN_EVENT_TABLE(SeqTrack, wxControl)
   EVT_BUTTON(SeqTrack_Record, SeqTrack::OnRecordClick)
   EVT_BUTTON(SeqTrack_Mute, SeqTrack::OnMuteClick)
 END_EVENT_TABLE()
-
