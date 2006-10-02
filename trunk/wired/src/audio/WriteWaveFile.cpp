@@ -4,7 +4,7 @@
 #include "WriteWaveFile.h"
 #include "../error.hh"
 
-WriteWaveFile::WriteWaveFile(wxString filename, int sample_rate, int channels, 
+WriteWaveFile::WriteWaveFile(wxString filename, int sample_rate, int channels,
 			     unsigned long format, int type)
   : Filename(filename)
 {
@@ -13,7 +13,7 @@ WriteWaveFile::WriteWaveFile(wxString filename, int sample_rate, int channels,
   sfinfo.samplerate = sample_rate;
   sfinfo.frames = 0; // dummy
   sfinfo.channels = channels;
-  sfinfo.format = type | format;  
+  sfinfo.format = type | format;
 
   if (!(sffile = sf_open(filename.mb_str(*wxConvCurrent), SFM_WRITE, &sfinfo)))
     throw Error::File(filename, wxString(sf_strerror(0), *wxConvCurrent));
@@ -56,30 +56,30 @@ sf_count_t WriteWaveFile::WriteDouble(double *ptr, sf_count_t items)
 
 bool WriteWaveFile::WriteTitle(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_TITLE, s.mb_str(*wxConvCurrent)));
+  return (sf_set_string(sffile, SF_STR_TITLE, s.mb_str(*wxConvCurrent)));
 }
 
 bool WriteWaveFile::WriteCopyright(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_COPYRIGHT, s.mb_str(*wxConvCurrent)));
+  return (sf_set_string(sffile, SF_STR_COPYRIGHT, s.mb_str(*wxConvCurrent)));
 }
 
 bool WriteWaveFile::WriteSoftware(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_SOFTWARE, s.mb_str(*wxConvCurrent)));
+  return (sf_set_string(sffile, SF_STR_SOFTWARE, s.mb_str(*wxConvCurrent)));
 }
 
 bool WriteWaveFile::WriteArtist(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_ARTIST, s.mb_str(*wxConvCurrent)));
+  return (sf_set_string(sffile, SF_STR_ARTIST, s.mb_str(*wxConvCurrent)));
 }
 
 bool WriteWaveFile::WriteComment(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_COMMENT, s.mb_str(*wxConvCurrent)));
+  return (sf_set_string(sffile, SF_STR_COMMENT, s.mb_str(*wxConvCurrent)));
 
 }
 bool WriteWaveFile::WriteDate(wxString s)
 {
-  return (sf_set_string (sffile, SF_STR_DATE, s.mb_str(*wxConvCurrent)));
+  return (sf_set_string(sffile, SF_STR_DATE, s.mb_str(*wxConvCurrent)));
 }
