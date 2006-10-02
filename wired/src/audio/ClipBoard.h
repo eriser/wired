@@ -7,7 +7,7 @@
 #include "WaveFile.h"
 
 /**
- * This class aims to manage the clipboard with wave files.
+ * Manages the clipboard with wave files.
  * With this it's possible to copy, cut, paste and delete wave files.
  */
 class cClipBoard : public WaveFile
