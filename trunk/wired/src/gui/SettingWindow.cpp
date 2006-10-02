@@ -231,7 +231,23 @@ void				SettingWindow::MidiPanelView()
   new wxStaticText(MidiPanel, -1, _("Select MIDI In devices to use:"), 
 		   wxPoint(8, 8));
   MidiInList = new wxCheckListBox(MidiPanel, Setting_MidiIn, wxPoint(8, 30), wxSize(368, 200), 0);
+  PopulateMidiIn(MidiInList);
 }
+
+
+//Populates the Midi panel with the devices.
+void SettingWindow::PopulateMidiIn(wxCheckListBox* list)
+{
+  MidiDeviceList::iterator	deviceIt;
+
+  list->Clear();
+  for (deviceIt = MidiEngine->DeviceList.begin(); deviceIt != MidiEngine->DeviceList.end(); deviceIt++)
+    MidiInList->Append((*deviceIt)->Name);
+
+  std::cerr << "[Setting Window] Midi In list populated" << std::endl;
+
+}
+
 
 //
 // Callback when user selects a settings' category
@@ -242,12 +258,22 @@ void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
   wxTreeItemId		item = e.GetItem();
   wxPanel		*tmp = (wxPanel *)SettingsTree->GetItemData(item);
   
+  
+  //Hide old panel
   if (tmp)
     {
       CurrentPanel->Show(false);
       CurrentPanel = tmp;
-      tmp->Show(true);
     }
+
+  //Refresh panel content
+  if (CurrentPanel == MidiPanel)
+    PopulateMidiIn(MidiInList);
+
+  //Show new panel
+  CurrentPanel->Show(true);
+
+
 }
 
 //
@@ -257,17 +283,9 @@ void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
 void SettingWindow::OnMidiInClick(wxCommandEvent &event)
 {
   vector<long>::iterator	i;
-  MidiDeviceList::iterator	j;
-  int				k;
-  wxString			s;
 
   MidiLoaded = true;
-  MidiInList->Clear();
-  for (j = MidiEngine->DeviceList.begin(), k = 1; j != MidiEngine->DeviceList.end(); j++, k++)
-    {      
-      s.Printf(_("In %d: %s"), k, (const char *)(*j)->Name.mb_str(*wxConvCurrent));
-      MidiInList->Append(s);
-    }
+  
   for (i = WiredSettings->MidiIn.begin(); i != WiredSettings->MidiIn.end(); i++)
     if (*i < MidiInList->GetCount())
       MidiInList->Check(*i);

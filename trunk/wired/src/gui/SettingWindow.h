@@ -60,13 +60,14 @@ class					SettingWindow : public wxDialog
   void					RefreshChannels(wxCheckListBox* list, int system_selected,
 							int device_selected, bool input);
 
+  // Populates the Midi Panel
+  void					PopulateMidiIn(wxCheckListBox* list);
+
   wxButton				*OkBtn;
   wxButton				*ApplyBtn;
   wxButton				*CancelBtn;
   wxCheckBox				*QuickWaveBox;
   wxCheckBox				*dBWaveBox;
-  wxPanel				*AudioInputPanel;
-  wxPanel				*AudioOutputPanel;
   wxChoice				*OutputDeviceChoice;
   wxChoice				*OutputSystemChoice;
   wxChoice				*InputDeviceChoice;
@@ -85,7 +86,12 @@ class					SettingWindow : public wxDialog
   int					*Latencies;
   wxTreeCtrl				*SettingsTree;
 
+  //link to the current panel
   wxPanel				*CurrentPanel;
+
+  //different panels
+  wxPanel				*AudioInputPanel;
+  wxPanel				*AudioOutputPanel;
   wxPanel				*MidiPanel;
   wxPanel				*AudioPanel;
   wxPanel				*GeneralPanel;
