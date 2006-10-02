@@ -329,22 +329,26 @@ void					SequencerView::Drop(int x, int y, wxString file)
   Track					*track_to_add;
   WaveFile				*wave;
 
+
   ScreenToClient(&x, &y);
-  track = floor((y  * SeqPanel->VertZoomFactor) / TRACK_HEIGHT); 
-  for (i = Seq->Tracks.begin(), cpt = 0; i != Seq->Tracks.end() && cpt != track; i++, cpt++);
-  if (Seq->Tracks.size() != 0 && track < Seq->Tracks.size() && (*i)->IsAudioTrack())
+  if (x >= 0 && y >= 0)
     {
-      wave = WaveCenter.AddWaveFile(file);
-      for (pattern_iterator = (*i)->TrackPattern->Patterns.begin(); pattern_iterator != (*i)->TrackPattern->Patterns.end(); pattern_iterator++)
-	if (last_pos < (*pattern_iterator)->GetEndPos())
-	  last_pos = (*pattern_iterator)->GetEndPos();
-      (*i)->AddPattern(wave, last_pos);
-    }
-  else
-    {
-       track_to_add = SeqPanel->AddTrack(true);
-       wave = WaveCenter.AddWaveFile(file);
-       track_to_add->AddPattern(wave, 0);
+      track = floor((y  * SeqPanel->VertZoomFactor) / TRACK_HEIGHT); 
+      for (i = Seq->Tracks.begin(), cpt = 0; i != Seq->Tracks.end() && cpt != track; i++, cpt++);
+      if (Seq->Tracks.size() != 0 && track < Seq->Tracks.size() && (*i)->IsAudioTrack())
+	{
+	  wave = WaveCenter.AddWaveFile(file);
+	  for (pattern_iterator = (*i)->TrackPattern->Patterns.begin(); pattern_iterator != (*i)->TrackPattern->Patterns.end(); pattern_iterator++)
+	    if (last_pos < (*pattern_iterator)->GetEndPos())
+	      last_pos = (*pattern_iterator)->GetEndPos();
+	  (*i)->AddPattern(wave, last_pos);
+	}
+      else
+	{
+	  track_to_add = SeqPanel->AddTrack(true);
+	  wave = WaveCenter.AddWaveFile(file);
+	  track_to_add->AddPattern(wave, 0);
+	}
     }
 }
 
