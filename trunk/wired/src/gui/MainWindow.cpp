@@ -210,8 +210,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   OptPanel = new OptionPanel(this, wxPoint(306, 452), wxSize(470, 120), wxSIMPLE_BORDER);
   TransportPanel = new Transport(this, wxPoint(0, 452), wxSize(300, 150), wxNO_BORDER);
 
-  MediaLibraryPanel = new MediaLibrary(splitVert, wxPoint(0, 0), wxSize(0, 400), wxSIMPLE_BORDER);
-  MediaLibraryPanel->SetSizeHints(2, 0);
+  MediaLibraryPanel = new MediaLibrary(splitVert);
 
   splitVert->SplitVertically(MediaLibraryPanel, split);
   split->SplitHorizontally(RackPanel, SeqPanel, 200);
@@ -226,14 +225,13 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   TopSizer->Add(BottomSizer, 0, wxEXPAND | wxALL, 0);
   SetSizer(TopSizer);
 
-  // Hide Medialibrary by setting this to 2, or 200 to show it.
-  splitVert->SetSashPosition(2);
   RackPanel->SetBackgroundColour(*wxBLACK);
   SeqPanel->SetBackgroundColour(*wxWHITE);
   OptPanel->SetBackgroundColour(*wxLIGHT_GREY);
   MediaLibraryPanel->SetBackgroundColour(*wxWHITE);
-  
-  MediaLibraryPanel->Show();
+
+  // media lib start hidden until its state is stable
+  ShowMediaLibrary(panelHide);
   RackPanel->Show();
   SeqPanel->Show();
   OptPanel->Show();
@@ -1292,45 +1290,64 @@ void					MainWindow::OnFloatRack(wxCommandEvent &event)
     }
 }
 
-void					MainWindow::OnFloatMediaLibrary(wxCommandEvent &event)
+void					MainWindow::ShowMediaLibrary(panelState show)
 {
-  if (MediaLibraryMenu->IsChecked(MainWin_FloatMediaLibrary))
+  if (show == panelShowInWindow || show == panelHide)
     {
-      wxSize		size;
+      if (show == panelShowInWindow)
+	{
+	  wxSize		size;
 
-      // force width to be large enough
-      size.SetWidth(200);
-      size.SetHeight(MediaLibraryPanel->GetSize().GetHeight());
-      MediaLibraryFrame = new FloatingFrame(0x0, -1, _("MediaLibrary"), MediaLibraryPanel->GetPosition(), 
-					    size, MediaLibraryPanel->GetParent(),
-					    ItemFloatingMediaLibrary, MainWin_FloatMediaLibrary);
+	  // force size to be enough large
+	  size.SetWidth(200);
+	  size.SetHeight(400);
+	  MediaLibraryFrame = new FloatingFrame(0x0, -1, _("MediaLibrary"),
+						MediaLibraryPanel->GetPosition(), 
+						size, MediaLibraryPanel->GetParent(),
+						ItemFloatingMediaLibrary, MainWin_FloatMediaLibrary);
+	}
 
       // detach media library from vertical splitter
       splitVert->Unsplit(MediaLibraryPanel);
-      MediaLibraryPanel->Reparent(MediaLibraryFrame);
-      MediaLibraryPanel->SetFloating();
-      MediaLibraryShow(event);
 
-      MediaLibraryFrame->Show();
+      if (show == panelShowInWindow)
+	{
+	  // show panel
+	  MediaLibraryPanel->Reparent(MediaLibraryFrame);
+	  MediaLibraryPanel->Show();
+	  MediaLibraryPanel->SetVisible();
+	  MediaLibraryPanel->SetFloating();
 
-      // disable Show and Hide menu actions
-      ItemShowMediaLibrary->Enable(false);
-      ItemHideMediaLibrary->Enable(false);
+	  // show frame
+	  MediaLibraryFrame->Show();
+
+	  // disable Show and Hide menu actions
+	  ItemShowMediaLibrary->Enable(false);
+	  ItemHideMediaLibrary->Enable(false);
+	}
     }
-  else
+  else if (show == panelHideFromWindow || show == panelShow)
     {
-      // re-attach media library 
-      MediaLibraryPanel->Reparent(splitVert);
+      if (show == panelHideFromWindow)
+	{
+	  // re-attach media library 
+	  MediaLibraryPanel->Reparent(splitVert);
 
-      // delete frame of media library
-      delete MediaLibraryFrame;
-      MediaLibraryFrame = 0x0;
+	  // delete frame of media library
+	  delete MediaLibraryFrame;
+	  MediaLibraryFrame = 0x0;
+	}
 
       splitVert->SplitVertically(MediaLibraryPanel, split);
       splitVert->SetSashPosition(200);
 
-      MediaLibraryPanel->SetVisible();
-      MediaLibraryPanel->SetDocked();
+      if (show == panelShow)
+	{
+	  // show panel
+	  MediaLibraryPanel->Show();
+	  MediaLibraryPanel->SetVisible();
+	  MediaLibraryPanel->SetDocked();
+	}
 
       // enable Show and Hide menu actions
       ItemShowMediaLibrary->Enable();
@@ -1338,19 +1355,24 @@ void					MainWindow::OnFloatMediaLibrary(wxCommandEvent &event)
     }
 }
 
-void					MainWindow::MediaLibraryShow(wxCommandEvent &event)
+void					MainWindow::OnFloatMediaLibrary(wxCommandEvent &event)
 {
-  if (!MediaLibraryPanel->IsFloating())
-    splitVert->SetSashPosition(200);
-  MediaLibraryPanel->Show();
-  MediaLibraryPanel->SetVisible();
+  if (MediaLibraryMenu->IsChecked(MainWin_FloatMediaLibrary))
+    ShowMediaLibrary(panelShowInWindow);
+  else
+    ShowMediaLibrary(panelHideFromWindow);
 }
 
+// must be called only when medialibrary is docked
+void					MainWindow::MediaLibraryShow(wxCommandEvent &event)
+{
+  ShowMediaLibrary(panelShow);
+}
+
+// must be called only when medialibrary is docked
 void					MainWindow::MediaLibraryHide(wxCommandEvent &event)
 {
-  if (!MediaLibraryPanel->IsFloating())
-    splitVert->SetSashPosition(2);
-  MediaLibraryPanel->SetInvisible();
+  ShowMediaLibrary(panelHide);
 }
 
 void					MainWindow::OnSwitchRackOptViewEvent(wxCommandEvent &event)
