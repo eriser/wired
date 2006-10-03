@@ -48,7 +48,10 @@ class					MLTree;
 class				MediaLibrary : public wxPanel
 {
  public:
-  MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style);
+  MediaLibrary(wxWindow *parent,
+	       const wxPoint &pos = wxDefaultPosition,
+	       const wxSize &size = wxDefaultSize,
+	       long style = wxTAB_TRAVERSAL);
   ~MediaLibrary();
 
 

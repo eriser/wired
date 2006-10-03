@@ -121,6 +121,26 @@ class					MainWindow: public wxFrame
   bool					SeqModeView;
   void					OnIdle(wxIdleEvent &event);
 
+  /**
+   * Enumerate states of a panel
+   * \param panelShow, show the panel
+   * \param panelShowInWindow, show the panel in a detached window
+   * \parem panelHide, hide the panel
+   */
+  enum panelState
+  {
+    panelShow = 0,
+    panelShowInWindow,
+    panelHide,
+    panelHideFromWindow
+  }	;
+
+  /**
+   * Provide feature to show or to hide MediaLibrary
+   * \param show a panelState, define the state of the MediaLibrary
+   */
+  void					ShowMediaLibrary(panelState show);
+
     /* Locale */
   wxLocale				*mLocale;
   void					InitLocale();
