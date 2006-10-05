@@ -25,7 +25,6 @@ using namespace std;
 #include <wx/log.h>
 
 #include "version.h"
-#include "FileConversion.h"
 
 #define PLUG_MENU_INDEX_START		(50000)
 #define INDEX_MENUITEM_UNDO		0
@@ -39,6 +38,14 @@ typedef	struct s_PlugStartInfo		PlugStartInfo;
 class					PluginLoader;
 class					WiredSession;
 class					WiredSessionXml;
+class					MainWindow;
+
+extern MainWindow		*MainWin;
+extern vector<PluginLoader *>	LoadedPluginsList;
+extern PlugStartInfo		StartInfo;
+extern WiredSession		*CurrentSession;
+extern wxMutex		        AudioMutex;
+extern wxCondition*	        SeqStopped;
 
 class					MainWindow: public wxFrame
 {
@@ -273,13 +280,6 @@ enum
   MainWin_SeekVideo,
   MainWin_ShowLog
 };
-
-extern MainWindow		*MainWin;
-extern vector<PluginLoader *>	LoadedPluginsList;
-extern PlugStartInfo		StartInfo;
-extern WiredSession		*CurrentSession;
-extern wxMutex		        AudioMutex;
-extern wxCondition*	        SeqStopped;
 
 #endif
 

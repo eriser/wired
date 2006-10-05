@@ -6,6 +6,7 @@
 
 #include <wx/wx.h>
 #include "MainWindow.h"
+#include "FileConversion.h"
 
 class					MainWindow;
 class					DownButton;
