@@ -1,6 +1,10 @@
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+/**
+ * The EditMidi class is used to handle the midi audio format.
+ */
+
 #ifndef __EDITMIDI_H__
 #define __EDITMIDI_H__
 
