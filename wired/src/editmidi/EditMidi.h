@@ -1,9 +1,7 @@
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-/**
- * The EditMidi class is used to handle the midi audio format.
- */
+
 
 #ifndef __EDITMIDI_H__
 #define __EDITMIDI_H__
@@ -33,7 +31,15 @@ enum
 #define	SBPASH				(10)
 #define	SBPASV				(10)
 
+/**
+ * The MidiPattern class is used for something.
+ */
+
 class					MidiPattern;
+
+/**
+ * The EditMidi class is used to handle the midi audio format.
+ */
 
 class					EditMidi: public wxPanel
 {
