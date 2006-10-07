@@ -151,6 +151,19 @@ class WaveFile
   sf_count_t ReadFloatF (float *rw_buffer, int nbr_of_frames = WAVE_TEMP_SIZE);
 
   /**
+   *Set the variable Channel_to_read
+   * \param channel a long, the channel wired should read in wavefile
+   */
+  void		SetChannelToRead(long channel);
+  
+  /**
+   *Get the variable Channel_to_read
+   * \return a long, the channel wired should read in wavefile
+   */
+  long		GetChannelToRead();
+
+
+  /**
    * Writes nbr_of_frames from rw_buffer to the wave file.
    * \param rw_buffer a float pointer, the data content.
    * \param nbr_of_frames a int, the length.
@@ -267,6 +280,11 @@ class WaveFile
 
 
  protected:
+
+  /**
+  *The channel read in wave file
+  */
+  long Channel_to_read;
 
   /**
    * The file opening mode.
