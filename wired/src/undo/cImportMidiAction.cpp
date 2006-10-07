@@ -42,6 +42,7 @@ void cImportWaveAction::AddWaveTrack()
 	{ 
 	  t = SeqPanel->AddTrack(_TrackKindFlag);
 	  w = WaveCenter.AddWaveFile(_WavePath);
+	  w->SetChannelToRead(nb_channel);
 	  t->AddPattern(w);
 	  _trackIndex = t->Index;
 	  NotifyActionManager();
