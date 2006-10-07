@@ -328,7 +328,7 @@ void					SequencerView::Drop(int x, int y, wxString file)
   int					last_pos = 0;
   Track					*track_to_add;
   WaveFile				*wave;
-
+  long					nb_channel;
 
   ScreenToClient(&x, &y);
   if (x >= 0 && y >= 0)
@@ -341,13 +341,23 @@ void					SequencerView::Drop(int x, int y, wxString file)
 	  for (pattern_iterator = (*i)->TrackPattern->Patterns.begin(); pattern_iterator != (*i)->TrackPattern->Patterns.end(); pattern_iterator++)
 	    if (last_pos < (*pattern_iterator)->GetEndPos())
 	      last_pos = (*pattern_iterator)->GetEndPos();
-	  (*i)->AddPattern(wave, last_pos);
+	  for (nb_channel = 0; nb_channel < wave->GetNumberOfChannels(); nb_channel++)
+	    {
+	      wave = WaveCenter.AddWaveFile(file);
+	      (*i)->AddPattern(wave, last_pos);
+	      i++;
+	    }
 	}
       else
 	{
-	  track_to_add = SeqPanel->AddTrack(true);
 	  wave = WaveCenter.AddWaveFile(file);
-	  track_to_add->AddPattern(wave, 0);
+	  for (nb_channel = 0; nb_channel < wave->GetNumberOfChannels(); nb_channel++)
+	    {
+	      track_to_add = SeqPanel->AddTrack(true);
+	      wave = WaveCenter.AddWaveFile(file);
+	      wave->SetChannelToRead(nb_channel);
+	      track_to_add->AddPattern(wave, 0);
+	    }
 	}
     }
 }
