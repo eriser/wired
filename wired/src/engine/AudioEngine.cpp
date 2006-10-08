@@ -84,42 +84,18 @@ void AudioEngine::SetDefaultSettings(void)
 
 void AudioEngine::SetOutputDevice(void)
 {
-  if ((SelectedOutputDevice = GetDevice(WiredSettings->OutputDeviceId,
-					WiredSettings->OutputSystemId))
-      == 0x0)
-    if ( (SelectedOutputDevice = GetDeviceById(Pa_GetDefaultOutputDevice()))
-	 == 0x0)
+  if (!(SelectedOutputDevice = GetDevice(WiredSettings->OutputDeviceId,
+					 WiredSettings->OutputSystemId)))
+    if (!(SelectedOutputDevice = GetDeviceById(Pa_GetDefaultOutputDevice())))
       {
 	throw Error::InvalidDeviceSettings();
       }
-  
-  /*
-    cout << "num format supported "
-       << SelectedOutputDevice->SupportedFormats.size() << endl;
-       for (vector<DeviceFormat*>::iterator df = 
-	 SelectedOutputDevice->SupportedFormats.begin();
-       df != SelectedOutputDevice->SupportedFormats.end();
-       df++)
-    {
-      cout << (*df)->SampleRates.size() << endl;
-      for (vector<double>::iterator it = (*df)->SampleRates.begin(); 
-	   it != (*df)->SampleRates.end();
-	   it++ )
-	{
-	  cout << *it << "\t"<< endl;
-	}
-      
-	}
-  */
+
   if ( SelectedOutputDevice->SupportedFormats.size() > 
        WiredSettings->SampleFormat )
     {
       UserData->SampleFormat = SelectedOutputDevice->
 	SupportedFormats[WiredSettings->SampleFormat]->SampleFormat;
-      //cout << "sample format " << WiredSettings->SampleFormat << endl;
-      //cout << "num rates supported " << SelectedOutputDevice->
-      //SupportedFormats[WiredSettings->SampleFormat]->SampleRates.size() 
-      //<< endl;
       if ( SelectedOutputDevice->
 	   SupportedFormats[WiredSettings->SampleFormat]->SampleRates.size() 
 	   > WiredSettings->SampleRate )
@@ -171,21 +147,25 @@ void AudioEngine::SetOutputDevice(void)
 
 void AudioEngine::SetInputDevice(void)
 {
-  if (WiredSettings->InputChannels.size() > 0)
+  // we check input device only if its id are not null
+  if (WiredSettings->InputChannels.size() > 0 &&
+      WiredSettings->InputDeviceId > 0 &&
+      WiredSettings->InputSystemId > 0)
     {
-      if (( SelectedInputDevice = GetDevice(WiredSettings->InputDeviceId,
-					    WiredSettings->InputSystemId))
-	  == 0x0)
-	if ( (SelectedInputDevice = 
-	      GetDeviceById(Pa_GetDefaultInputDevice())) 
-	     == 0x0)
+      if (!(SelectedInputDevice = GetDevice(WiredSettings->InputDeviceId,
+					    WiredSettings->InputSystemId)))
+	if (!(SelectedInputDevice = GetDeviceById(Pa_GetDefaultInputDevice())))
 	  {
 	    cout << "input" << endl;
 	    throw Error::InvalidDeviceSettings();
 	  }
+      UserData->InputChannels = UserData->Sets->InputChannels.size();
     }
-  UserData->InputChannels = UserData->Sets->InputChannels.size();
-  
+  else
+    {
+      SelectedInputDevice = NULL;
+      UserData->InputChannels = 0;
+    }  
 }
 
 void AudioEngine::GetDeviceSettings()
@@ -204,120 +184,6 @@ void AudioEngine::GetDeviceSettings()
 
   return (SetChannels(UserData->InputChannels,UserData->OutputChannels));
 }
-
-#if 0
-void AudioEngine::GetDeviceSettings()
-{
-  UserData->Sets = WiredSettings;
-  
-  SetOutputDevice();
-  SetInputDevice();
-  
-  if ((SelectedOutputDevice = GetDeviceById(WiredSettings->OutputDev))
-      == 0x0)
-    if ( (SelectedOutputDevice = GetDeviceById(Pa_GetDefaultOutputDevice())) 
-	 == 0x0)
-      throw Error::InvalidDeviceSettings();
-  
-  if (WiredSettings->InputChannels.size() > 0)
-    if (( SelectedInputDevice = GetDeviceById(WiredSettings->InputDev))
-	== 0x0)
-      if ( (SelectedInputDevice = GetDeviceById(Pa_GetDefaultInputDevice())) 
-	   == 0x0)
-	throw Error::InvalidDeviceSettings();
-  
-  cout << "[AUDIO] OUTPUT MIN LATENCY " 
-       << SelectedOutputDevice->OutputLatencyRange[MIN] * 1000 << " msec" << endl; 
-  cout << "[AUDIO] OUTPUT MAX LATENCY " 
-       << SelectedOutputDevice->OutputLatencyRange[MAX] * 1000 << " msec" << endl;
-  
-  cout << "[AUDIO] INPUT MIN LATENCY " 
-       << SelectedInputDevice->InputLatencyRange[MIN] * 1000 << " msec" << endl; 
-  cout << "[AUDIO] INPUT MAX LATENCY "
-       << SelectedInputDevice->InputLatencyRange[MAX] * 1000 << " msec" << endl; 
-  
-  
-  if ( (WiredSettings->OutputLatency > 
-	SelectedOutputDevice->OutputLatencyRange[MAX]) ||
-       (WiredSettings->OutputLatency < 
-	SelectedOutputDevice->OutputLatencyRange[MIN]) ||
-       (WiredSettings->InputLatency > 
-	SelectedInputDevice->InputLatencyRange[MAX]) ||
-       (WiredSettings->InputLatency < 
-	SelectedInputDevice->InputLatencyRange[MIN]) )
-    {
-      OutputLatency =  SelectedOutputDevice->OutputLatencyRange[MIN];
-      InputLatency = SelectedInputDevice->InputLatencyRange[MIN];
-    }
-  else 
-    {
-      OutputLatency = WiredSettings->OutputLatency;
-      InputLatency = WiredSettings->InputLatency;
-    }
-  
-  if ( SelectedOutputDevice->SupportedFormats.size() > 
-       WiredSettings->SampleFormat )
-    {
-      UserData->SampleFormat = SelectedOutputDevice->
-	SupportedFormats[WiredSettings->SampleFormat]->SampleFormat;
-      if ( SelectedOutputDevice->
-	   SupportedFormats[WiredSettings->SampleFormat]->SampleRates.size() 
-	   > WiredSettings->SampleRate )
-	SampleRate = SelectedOutputDevice->
-	  SupportedFormats[WiredSettings->SampleFormat]->
-	  SampleRates[WiredSettings->SampleRate];
-      else
-	throw Error::InvalidDeviceSettings();
-    }
-  else if (!SelectedOutputDevice->SupportedFormats.empty())
-    {
-      /*
-	if ( !(SelectedOutputDevice->SupportedFormats[0])->SampleRates.empty() )
-	{
-	UserData->SampleFormat = 
-	(SelectedOutputDevice->SupportedFormats[0])->SampleFormat;
-	SampleRate = 
-	(SelectedOutputDevice->SupportedFormats[0])->SampleRates.front();
-	}
-	else
-      */
-	throw Error::InvalidDeviceSettings();
-      /*{
-	SampleRate = 44100.0;
-	cout << "[AUDIO] Sample rate not defined: default selected: "
-	<< SampleRate << endl;
-	return false;
-	}*/
-    }
-  else
-    throw Error::InvalidDeviceSettings(); // FIXME add a better error msg
-  /*{
-    SampleRate = 44100.0;
-    cout << "[AUDIO] Sample rate not defined: default selected: "
-    << SampleRate << endl;
-    return false;
-    }*/
-  if (WiredSettings->SamplesPerBuffer)
-    SamplesPerBuffer = WiredSettings->SamplesPerBuffer;
-  else
-    SamplesPerBuffer = DEFAULT_SAMPLES_PER_BUFFER;
-  
-  //   UserData->OutputChannels = UserData->Sets->OutputChannels.size();
-  //   UserData->InputChannels = UserData->Sets->InputChannels.size();
-  
-  if (UserData->Sets->OutputChannels.size() <= 0)
-    UserData->OutputChannels = 2;//SelectedOutputDevice->MaxOutputChannels;
-  else
-    UserData->OutputChannels = UserData->Sets->OutputChannels.size();
-  
-  UserData->InputChannels = UserData->Sets->InputChannels.size();
-  
-  //UserData->InputChannels = DeviceList.back()->MaxInputChannels;   //FIXME
-  //UserData->OutputChannels = DeviceList.back()->MaxOutputChannels; //FIXME
-  return SetChannels(UserData->InputChannels, 
-		     UserData->OutputChannels);
-}
-#endif
 
 void AudioEngine::GetAudioSystems()
 {
@@ -376,16 +242,16 @@ void AudioEngine::OpenStream()
   if (StreamIsOpened)
     return ;
   if (!SelectedOutputDevice || 
-      (WiredSettings->InputChannels.size() && !SelectedInputDevice))
+      (UserData->InputChannels > 0 && !SelectedInputDevice))
     {
-      cout << "[AUDIO] No default device was found" << endl; 
+      cout << "[AUDIO] No default device was found (Unreachable error)" << endl; 
       throw Error::StreamNotOpen();
     }
   
   PaStreamParameters	OutputParameters, InputParameters;
   PaError err;
 
-  if (WiredSettings->OutputChannels.size())
+  if (UserData->OutputChannels)
     {
       OutputParameters.device = SelectedOutputDevice->Id;
       OutputParameters.channelCount = SelectedOutputDevice->MaxOutputChannels;
@@ -394,7 +260,7 @@ void AudioEngine::OpenStream()
       OutputParameters.hostApiSpecificStreamInfo = NULL;
     }
   
-  if (WiredSettings->InputChannels.size())
+  if (UserData->InputChannels)
     {
       InputParameters.device = SelectedInputDevice->Id;
       InputParameters.channelCount = SelectedInputDevice->MaxInputChannels;
@@ -412,11 +278,11 @@ void AudioEngine::OpenStream()
 
   err = Pa_OpenStream((PaStream **)&Stream,
 		      (const PaStreamParameters*)
-		      ( WiredSettings->InputChannels.empty() ? 
-			NULL : &InputParameters ),
+		      ( UserData->InputChannels > 0 ? 
+			&InputParameters : NULL ),
 		      (const PaStreamParameters*)
-		      ( WiredSettings->OutputChannels.empty() ?
-			NULL : &OutputParameters ),
+		      ( UserData->OutputChannels > 0 ?
+			&OutputParameters : NULL ),
 		      (double)SampleRate,
 		      (unsigned long)SamplesPerBuffer,
 		      (PaStreamFlags)paClipOff, 
@@ -441,9 +307,9 @@ void AudioEngine::OpenStream()
     if (standardSampleFormats[i] == UserData->SampleFormat)
       { cout << standardSampleFormats_str[i]; break; }
   cout << endl;
-  if (!WiredSettings->OutputChannels.empty())
+  if (UserData->OutputChannels > 0 && SelectedOutputDevice)
     cout <<"[AUDIO] Output Device is " << SelectedOutputDevice->Name.mb_str() << endl;
-  if (!WiredSettings->InputChannels.empty())
+  if (UserData->InputChannels > 0 && SelectedInputDevice)
     cout << "[AUDIO] Input Device is " << SelectedInputDevice->Name.mb_str() << endl;
   StreamIsOpened = true;
 }
