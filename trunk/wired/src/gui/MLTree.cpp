@@ -42,7 +42,6 @@ s_nodeInfo					SetStructInfos(s_nodeInfo infos, wxString label, wxString extenti
 MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
   : wxTreeCtrl(MediaLibraryPanel, MLTree_Selected, p, s, style)
 {
-
   SetIndent(10);
   /* Set the Root node with the project's name in label */
   root = AddRoot(_("Project's name"));
@@ -103,7 +102,7 @@ MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
 
 MLTree::~MLTree()
 {
- 
+
 }
 
 
@@ -116,7 +115,6 @@ bool				MLTree::SaveML()
 
 
   //Res += *CurrentXmlSession->StartElement(STR_ML);
-  
 
 
   return Res == 0;

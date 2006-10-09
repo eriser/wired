@@ -41,26 +41,25 @@ MixerGui::MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size)
 
 MixerGui::~MixerGui()
 {
-  
+
 }
 
 void MixerGui::OnMasterChange(wxCommandEvent &event)
 {
   float l, r;
-  
+
   MixMutex.Lock();
   l = MasterLeft;
   r = MasterRight;
   MixMutex.Unlock();
-  
+
   l = (20.f * static_cast<float>(log10( l )));
   r =  (20.f * static_cast<float>(log10( r )));
-  
+
   l = ((l + 96.f) / 96.f) * 100.f;
   r = ((r + 96.f) / 96.f) * 100.f;
   vuMasterLeft->SetValue(static_cast<long>(floor(l)));
   vuMasterRight->SetValue(static_cast<long>(floor(r)));
-  
   vector<ChannelGui*>::iterator cg = ChannelGuiVector.begin();
   for (cg++; cg != ChannelGuiVector.end(); cg++)
     (*cg)->UpdateScreen();
