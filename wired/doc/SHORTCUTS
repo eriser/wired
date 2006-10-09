@@ -1,0 +1,69 @@
+Here is a list of Wired's keyboard shortcuts :
+
+New				-> Ctrl-N
+Open				-> Ctrl-O
+Save				-> Ctrl-S
+Save as				-> F12
+Quit				-> Ctrl-Q
+Cut				-> Ctrl+X
+Copy				-> Ctrl+C
+Paste				-> Ctrl+V
+Delete				-> Del
+Select all			-> Ctrl+A
+Show/Hide MediaLibrary		-> Ctrl-M
+Switch Rack/Optional view	-> TAB
+Switch Sequencer/Optional view	-> Ctrl+TAB
+
+
+---------------------------------------------------
+
+
+Here is a list of Wired's menu shortcuts :
+
+In the File menu (Alt+F) :
+New				-> N
+Open				-> O
+Save				-> S
+Save as				-> A
+Import Wave file		-> I
+Import MIDI file		-> M
+Import AKAI sample		-> K
+Export Wave file		-> X
+Export MIDI file		-> P
+Quit				-> Q
+
+In the Edit menu (Alt+E) :
+Cut				-> U
+Copy				-> C
+Paste				-> P
+Delete				-> D
+Select all			-> A
+Settings			-> S
+
+In the Sequencer menu (Alt+S) :
+Add Audio Track			-> A
+Add MIDI Track			-> M
+Delete Track			-> D
+Change Audio directory		-> C
+
+In the Racks menu (Alt+R) :
+Delete Rack			-> E
+
+No shortcuts in the Intruments (Alt+I) and Effects (Alt+T) menus
+
+In the Media Library menu (Alt+M) :
+Show/Hide			-> S
+Floating			-> F
+
+In the Window menu (Alt+W) :
+Switch Rack/Optional view	-> R
+Switch Sequencer/Optional view	-> S
+Floating Transport		-> T
+Floating Sequencer		-> E
+Floating Racks			-> A
+Fullscreen			-> F
+Log window			-> L
+
+In the Help menu (Alt+H) :
+Show Integrated Help		-> S
+About				-> A
