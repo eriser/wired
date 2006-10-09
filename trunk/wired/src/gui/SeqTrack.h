@@ -21,6 +21,7 @@ using namespace std;
 #define REC_DOWN			L"ihm/seqtrack/rec_down.png"
 #define MUTE_UP				L"ihm/seqtrack/mute_up.png"
 #define MUTE_DOWN			L"ihm/seqtrack/mute_down.png"
+#define UNASSIGNED			L"ihm/seqtrack/unassigned.png"
 
 class					ChannelGui;
 class					Plugin;
@@ -64,6 +65,7 @@ class					SeqTrack: public wxControl
   bool					Record;
   bool					Mute;
   wxTextCtrl				*Text;
+  wxBitmap				*UnassignedBmp;
   ChannelGui*				ChanGui;
   Plugin				*Connected;
   RackTrack				*ConnectedRackTrack;
