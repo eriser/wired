@@ -78,11 +78,18 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
 			  rec_up, rec_down);
   MuteBtn = new DownButton(this, SeqTrack_Mute, wxPoint(34, 30), wxSize(25, 16),
 			   mute_up, mute_down);
-  Image = new ChoiceButton(this, SeqTrack_ConnectTo, wxPoint(62, 30), wxSize(24, 16), wxT(""));
+  Image = new ChoiceButton(this, SeqTrack_ConnectTo, wxPoint(62, 30), wxSize(25, 16), wxT(""));
   
+  // add pixmap for unassigned track
+  wxImage*		unassigned;
+
+  unassigned = new wxImage(wxString(WiredSettings->DataDir + UNASSIGNED), wxBITMAP_TYPE_PNG);
+  UnassignedBmp = new wxBitmap(unassigned);
+
   Image->Connect(SeqTrack_ConnectTo, wxEVT_ENTER_WINDOW, 
 		 (wxObjectEventFunction)(wxEventFunction) 
 		 (wxMouseEventFunction)&SeqTrack::OnConnectToHelp);
+  Image->SetImage(UnassignedBmp);
 
   DeviceBox = new wxChoice(this, SeqTrack_DeviceChoice, wxPoint(5, 50), wxSize(TRACK_WIDTH - 38, 22), 
 			   0, 0x0);
@@ -209,7 +216,7 @@ void					SeqTrack::ConnectTo(Plugin *plug)
       Connected = 0x0;
       ConnectedRackTrack = 0x0;
       //Label->SetLabel("No Instrument");
-      Image->SetImage(0x0);
+      Image->SetImage(UnassignedBmp);
     }
   else
     {
@@ -233,6 +240,7 @@ void					SeqTrack::OnConnectSelected(wxCommandEvent &event)
   if (event.GetId() == NONE_SELECTED_ID)
     {
       ConnectTo(0x0);
+      Image->SetImage(UnassignedBmp);
       return;
     }
   for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)
