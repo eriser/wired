@@ -41,6 +41,7 @@ class				MLTree : public wxTreeCtrl
 
  protected:
   friend class			MediaLibrary;
+  //friend class		WiredXml;
   friend class			MLTreeInfos;
 
 /**
@@ -94,10 +95,17 @@ class				MLTree : public wxTreeCtrl
 */
   int				selection_length;
 /**
- * The method used to serialize the MediaLibrary Content
- * \return a boolean
+ * Parse the tree and write xml file
+ * \param parent a wxTreeItemId
+ * \param depth an int
+ * \return void
 */
-  bool				SaveML();
+  void				SaveTree(wxTreeItemId parent, int depth);
+/**
+ * The method used to serialize the MediaLibrary Content (calls SaveTree)
+ * \return void
+*/
+  void				SaveML();
 /**
  * The function IsTreeCollapsed is used to know if the nodes are expanded or
  * not.

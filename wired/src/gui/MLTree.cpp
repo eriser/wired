@@ -27,8 +27,9 @@
 #include "../xml/WiredSessionXml.h"
 #include <wx/file.h>
 
-extern WiredSession				*CurrentSession;
-extern MediaLibrary				*MediaLibraryPanel;
+extern WiredSession	*CurrentSession;
+extern MediaLibrary	*MediaLibraryPanel;
+WiredSessionXml		*CurrXmlSession = NULL;
 
 s_nodeInfo					SetStructInfos(s_nodeInfo infos, wxString label, wxString extention, wxString length)
 {
@@ -105,19 +106,44 @@ MLTree::~MLTree()
 
 }
 
-
-bool				MLTree::SaveML()
+void				MLTree::SaveTree(wxTreeItemId parent, int depth)
 {
-  int		Res = 0;
-  wxChar	Buffer[20];
+  wxTreeItemIdValue cookie;
+  wxTreeItemId item = GetFirstChild(parent, cookie);
+  wxTreeItemId item_last = GetLastChild(parent);
 
-  //CurrentXmlSession = new WiredSessionXml(wxString(wxT(""), *wxConvCurrent));
+  while (item.IsOk())
+    {
+      wxString text = GetItemText(item);
+      //cout << "DEPTH " << depth << endl;
+      if (ItemHasChildren(item))
+	{
+	  depth++;
+	  cout << "<" << text.mb_str() << ">\t" << depth << endl;
+	  SaveTree(item, depth);
+	  // depth--; A CHANGER
+	  cout << "</" << text.mb_str() << ">\t" << endl;//<< depth << endl;
+	}
+      else
+	cout << " <" << text.mb_str() << " />\t" << depth << endl;
+
+      if (item == item_last)
+	{
+	  ;
+	  //depth--;
+	  //cout << "recursive over" << endl;
+	}
+      item = GetNextChild(parent, cookie);
+    }
+}
 
 
-  //Res += *CurrentXmlSession->StartElement(STR_ML);
-
-
-  return Res == 0;
+void				MLTree::SaveML()
+{
+  CurrXmlSession = new WiredSessionXml(wxString(wxT(""), *wxConvCurrent));
+  CurrXmlSession->InitSaveML();
+  SaveTree(GetRootItem(), -1);
+  CurrXmlSession->EndSaveML();
 }
 
 void				MLTree::AddIcon(wxImageList *images, wxIcon icon)
@@ -358,6 +384,7 @@ void				MLTree::SortNodes(wxString MLselected)
       temp = (*it).first;
       SortChildren(temp);
     }
+  SaveML();
 }
 
 // Return the struct associated to a node, from an ID

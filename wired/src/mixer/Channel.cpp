@@ -39,24 +39,24 @@ Channel		Channel::operator=(const Channel& right)
   cerr << "WARNING : Soon, Wired will fail" << endl;
 
   // Ptr must NOT be copied, but content of data does.
-	if (this != &right)
-	{
-		Label = right.Label;
-		Visible = right.Visible;
-		Lrms = right.Lrms;
-		Rrms = right.Rrms;	  
-		MonoBuffers = right.MonoBuffers;
-		StereoBuffers = right.StereoBuffers;	  
-		CurBuf = right.CurBuf;	  
-		Filled = right.Filled;
-		Stereo = right.Stereo;
-		MuteLeft = right.MuteLeft;
-		MuteRight = right.MuteRight;
-		VolumeLeft = right.VolumeLeft;
-		VolumeRight = right.VolumeRight;	 
-		InputNum = right.InputNum;
-	}
-	return *this;
+  if (this != &right)
+    {
+      Label = right.Label;
+      Visible = right.Visible;
+      Lrms = right.Lrms;
+      Rrms = right.Rrms;
+      MonoBuffers = right.MonoBuffers;
+      StereoBuffers = right.StereoBuffers;
+      CurBuf = right.CurBuf;
+      Filled = right.Filled;
+      Stereo = right.Stereo;
+      MuteLeft = right.MuteLeft;
+      MuteRight = right.MuteRight;
+      VolumeLeft = right.VolumeLeft;
+      VolumeRight = right.VolumeRight;
+      InputNum = right.InputNum;
+    }
+  return *this;
 }
 
 void		Channel::Dump()
@@ -109,10 +109,10 @@ void Channel::AddBuffers(unsigned int num)
 void Channel::PushBuffer(float *buffer)
 {
   float rms = 0.f;
-  
+
   MixMutex.Lock();
   MixMutex.Unlock();
-  
+
   if (!MonoBuffers.empty())
     {
       if (Visible)
@@ -122,21 +122,17 @@ void Channel::PushBuffer(float *buffer)
 	    {
 	      (MonoBuffers[0])[i] = buffer[i] * VolumeLeft / 100.f;
 	      rms += fabsf( (MonoBuffers[0])[i] );
-	      
 	      //abs = ((*(int*)&((MonoBuffers[0])[i]))&0x7fffffff);
 	      //Lrms += (float)(*(float*)&abs);
-	    }	  
+	    }
 	  rms /= Audio->SamplesPerBuffer;
-	  
+
 	  MixMutex.Lock();
 	  Rrms = Lrms = rms;
 	  MixMutex.Unlock();
 	}
       else
-	{
-	  memcpy(MonoBuffers[0], buffer,
-		 Audio->SamplesPerBuffer * sizeof(float));
-	}
+	memcpy(MonoBuffers[0], buffer, Audio->SamplesPerBuffer*sizeof(float));
     }
 }
 
@@ -144,14 +140,14 @@ void Channel::PushBuffer(float **buffer)
 {
   float lrms = 0.f, rrms = 0.f, lvol, rvol;
   bool ml, mr;
-  
+
   MixMutex.Lock();		//used in ChannelGui::OnFader....()
   ml = MuteLeft;
   mr = MuteRight;
   lvol = VolumeLeft / 100.f;
   rvol = VolumeRight / 100.f;
   MixMutex.Unlock();
-  
+
   if (ml == true)
     lvol = 0.f;
   if (mr == true)
@@ -165,14 +161,12 @@ void Channel::PushBuffer(float **buffer)
 	    {
 	      (StereoBuffers[0])[0][i] = buffer[0][i] * lvol;
 	      (StereoBuffers[0])[1][i] = buffer[1][i] * rvol;
-	      
 	      lrms += fabsf( (StereoBuffers[0])[0][i] );
 	      rrms += fabsf( (StereoBuffers[0])[1][i] );
 	    }
-
 	  lrms /= Audio->SamplesPerBuffer;
 	  rrms /= Audio->SamplesPerBuffer;
-	  
+
 	  MixMutex.Lock();	//mutex used by ChannelGui::UpdateScreen
 	  Lrms = lrms;
 	  Rrms = rrms;
@@ -180,9 +174,9 @@ void Channel::PushBuffer(float **buffer)
 	}
       else
 	{
-	  memcpy((StereoBuffers[0])[0], buffer[0], 
+	  memcpy((StereoBuffers[0])[0], buffer[0],
 		 Audio->SamplesPerBuffer * sizeof(float));
-	  memcpy((StereoBuffers[0])[1], buffer[1], 
+	  memcpy((StereoBuffers[0])[1], buffer[1],
 		 Audio->SamplesPerBuffer * sizeof(float));
 	}
     }
@@ -197,7 +191,6 @@ float *Channel::PopBuffer(int i)
 {
   if (MonoBuffers.size() < i)
     return (0x0);
-  
   return (MonoBuffers[i]);
   /*
     float *buf = MonoBuffers.front();
@@ -206,18 +199,18 @@ float *Channel::PopBuffer(int i)
     {
     AddBuffers(NUM_BUFFERS);
     }
-    return (buf);  
+    return (buf);
   */
 }
 
 void Channel::RemoveFirstBuffer()
 {
-  
+
   MixMutex.Lock();
   Rrms = 0.f;
   Lrms = 0.f;
   MixMutex.Unlock();
-  
+
   if (!StereoBuffers.empty())
     {
       memset(StereoBuffers[0][0], 0, Audio->SamplesPerBuffer*sizeof(float));
@@ -248,7 +241,7 @@ void Channel::ClearAllBuffers(bool renew)
 {
   vector<float*>::iterator	mon;
   vector<float**>::iterator	ste;
-  
+
   MixMutex.Lock();
   Rrms = 0.f;
   Lrms = 0.f;

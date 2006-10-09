@@ -67,7 +67,7 @@ class WiredXml
 	 * \return the current object.
 	*/
 	WiredXml			operator=(const WiredXml& right);
-	
+
 	/** Returns the currently opened document name.
 	 * \return the name of the document.
 	 */
@@ -220,6 +220,7 @@ protected:
 	
 	/** Destroys the DocumentReader.
 	 * \return true on success, else false.
+
 	 */
 	bool				CloseDocumentReader();
 
@@ -227,6 +228,7 @@ protected:
 	 * If the data read is a white space (significant or not) this method is called recursively.
 	 * \return true on success, else false.
 	 */
+
 	bool				Read();
 
 	/** Gets the name of the current node.
