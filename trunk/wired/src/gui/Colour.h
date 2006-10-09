@@ -79,4 +79,10 @@
 
 #define CL_WAVEEDITOR_BACKGROUND	wxColour(242, 242, 255)
 
+/*
+** Help Panel
+*/
+
+#define CL_HELPPAN_BACKGROUND		wxColour( 62,  76, 148)
+
 #endif/*__COLOUR_H__*/
