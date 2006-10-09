@@ -325,7 +325,7 @@ void					SequencerView::Drop(int x, int y, wxString file)
   vector<Track *>::iterator		i;
   vector<Pattern *>::iterator		pattern_iterator;
   int					cpt;
-  int					last_pos = 0;
+  double       				last_pos = 0;
   Track					*track_to_add;
   WaveFile				*wave;
   long					nb_channel;
@@ -339,14 +339,21 @@ void					SequencerView::Drop(int x, int y, wxString file)
 	{
 	  wave = WaveCenter.AddWaveFile(file);
 	  for (pattern_iterator = (*i)->TrackPattern->Patterns.begin(); pattern_iterator != (*i)->TrackPattern->Patterns.end(); pattern_iterator++)
-	    if (last_pos < (*pattern_iterator)->GetEndPos())
-	      last_pos = (*pattern_iterator)->GetEndPos();
-	  for (nb_channel = 0; nb_channel < wave->GetNumberOfChannels(); nb_channel++)
+	    if (last_pos < (*pattern_iterator)->GetEndPosition())
+	      last_pos = (*pattern_iterator)->GetEndPosition();
+	  for (nb_channel = 0; nb_channel < wave->GetNumberOfChannels() && i != Seq->Tracks.end(); nb_channel++)
 	    {
 	      wave = WaveCenter.AddWaveFile(file);
 	      wave->SetChannelToRead(nb_channel);
 	      (*i)->AddPattern(wave, last_pos);
 	      i++;
+	    }
+	  for (;nb_channel < wave->GetNumberOfChannels(); nb_channel++)
+	    {
+	      track_to_add = SeqPanel->AddTrack(true);
+	      wave = WaveCenter.AddWaveFile(file);
+	      wave->SetChannelToRead(nb_channel);
+	      track_to_add->AddPattern(wave, 0);
 	    }
 	}
       else
@@ -986,11 +993,18 @@ void					SequencerGui::CopySelectedItems()
 void					SequencerGui::PasteItems()
 {
   vector<Pattern *>::iterator		j;
+  vector<Track *>::iterator		i;
+  double       				last_pos = 0;
   Pattern				*pattern;
-  
+  vector<Pattern *>::iterator		pattern_iterator;
+
   for (j = CopyItems.begin(); j != CopyItems.end(); j++)
     {
-      pattern = ((Pattern *) *j)->CreateCopy(((Pattern *) *j)->GetEndPosition());
+      for (i = Seq->Tracks.begin(); *i != i[((Pattern *) *j)->GetTrackIndex()]; i++);
+       for (pattern_iterator = (*i)->TrackPattern->Patterns.begin(); pattern_iterator != (*i)->TrackPattern->Patterns.end(); pattern_iterator++)
+	    if (last_pos < (*pattern_iterator)->GetEndPosition())
+	      last_pos = (*pattern_iterator)->GetEndPosition();
+      pattern = ((Pattern *) *j)->CreateCopy(last_pos);
       /* If the end of pattern is above the end of the Sequencer, we raise the size of the Sequencer */
       /*if ((((Pattern *) *j)->GetXPos(((Pattern *) *j)->GetEndPosition()) + (((Pattern *) *j)->GetSize()).GetWidth()) > SeqView->GetTotalWidth())
 	{

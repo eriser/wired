@@ -142,7 +142,6 @@ void						Track::AddPattern(Pattern *p)
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d) -- START (PATTERN)\n", p);
 #endif
-  p->SetDrawColour(PatternColours[ColourIndex]);
   SeqMutex.Lock();
   TrackPattern->Patterns.push_back(p);
   SeqMutex.Unlock();
