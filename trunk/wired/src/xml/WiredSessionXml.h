@@ -38,6 +38,9 @@
 #include "../gui/Transport.h"
 #include "../engine/AudioCenter.h"
 
+#include "../gui/MLTree.h"
+
+
 //For Windows future ...
 
 //#ifdefined	WIN32
@@ -110,6 +113,11 @@
 #define STR_FILENAME wxT("FileName")
 
 
+#define STR_ML wxT("TARASSE")
+#define STR_ML2 wxT("TARASSEENKOR")
+#define STR_TEST wxT("TEST")
+
+
 
 typedef std::vector<Track *>::iterator 		TrackIter;
 typedef std::vector<Pattern *>::iterator 	PatternIter;
@@ -144,8 +152,9 @@ typedef struct  s_AudioPatternXml
 
 typedef struct  s_MidiPatternXml
 {
-	unsigned short 				PPQN;
-	std::vector<MidiEvent *>	Events;
+  unsigned short		PPQN;
+  std::vector<MidiEvent *>	Events;
+
 } t_MidiPatternXml;
 
 typedef std::map<wxString, wxString>::iterator PluginParamsIter;
@@ -157,9 +166,9 @@ typedef struct	s_PluginXml
   // is only a 4 char id, sometimes its a unsigned long (with atol)
   // don't care about unicode
 	char		Id[4];
-	wxString		Name;
-	int				Width;
-	int				Height;
+	wxString	Name;
+	int		Width;
+	int		Height;
 	WiredPluginData	Data;
 } t_PluginXml;
 
@@ -173,33 +182,36 @@ public:
 	WiredSessionXml			operator=(const WiredSessionXml& right);
 
 	WiredSessionXml			Clone();
-	bool					Load(const wxString& FileName = wxString(wxT(""), *wxConvCurrent));
-	bool					Save();
-	bool					CreateFile();
-	void					Dumpfile(const wxString& FileName);
+	bool				Load(const wxString& FileName = wxString(wxT(""), *wxConvCurrent));
+	bool				Save();
+	bool				CreateFile();
+	void				Dumpfile(const wxString& FileName);
 	wxString&      			GetAudioDir();
+	bool				InitSaveML(); // Saving MediaLibrary
+	bool				WriteElement(WiredSessionXml *urrXmlSession, wxString type, wxString elem);
+	bool				EndSaveML();
 private:
-	bool					SaveSeq(); // Saving Sequenceur infos to XML File
-	bool					SaveTrack(Track* TrackInfo); // Saving Track infos to XML File
-	bool					SavePattern(Pattern* PatternInfo, bool AudioTrack); //Saving Pattern infos to XML File
-	bool					SavePatternAudioData(AudioPattern* PatternInfo); //Saving Audio Pattern Data to XML File
-	bool					SavePatternMIDIData(MidiPattern* PatternInfo); //Saving MIDI Pattern Data to XML File
-	bool					SaveTrackPlugins(Track* TrackInfo);
-	bool					SaveFreePlugins(); // for plugins not attached to a track
-	bool					IsPluginConnected(Plugin *Plug);
-	bool					SavePlugin(Plugin* PluginInfo);
-	void					LoadWorkingDir();
-	void					LoadSeq();
-	void					LoadTrack(int Number);
-	void					LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInfo);
-	void					LoadPlugin(Track* TrackInfo);
-	void					LoadPluginData(t_PluginXml *Params);
-	void					LoadPattern(Track *AddedTrack, int TrackNumber);
-	void					LoadPatternAudio(Track *AddedTrack, t_PatternXml *InfoPattern);
-	void					LoadPatternMIDI(Track *AddedTrack, t_PatternXml *InfoPattern);
-	bool					ParseWiredSession();
+	bool				SaveSeq(); // Saving Sequenceur infos to XML File
+	bool				SaveTrack(Track* TrackInfo); // Saving Track infos to XML File
+	bool				SavePattern(Pattern* PatternInfo, bool AudioTrack); //Saving Pattern infos to XML File
+	bool				SavePatternAudioData(AudioPattern* PatternInfo); //Saving Audio Pattern Data to XML File
+	bool				SavePatternMIDIData(MidiPattern* PatternInfo); //Saving MIDI Pattern Data to XML File
+	bool				SaveTrackPlugins(Track* TrackInfo);
+	bool				SaveFreePlugins(); // for plugins not attached to a track
+	bool				IsPluginConnected(Plugin *Plug);
+	bool				SavePlugin(Plugin* PluginInfo);
+	void				LoadWorkingDir();
+	void				LoadSeq();
+	void				LoadTrack(int Number);
+	void				LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInfo);
+	void				LoadPlugin(Track* TrackInfo);
+	void				LoadPluginData(t_PluginXml *Params);
+	void				LoadPattern(Track *AddedTrack, int TrackNumber);
+	void				LoadPatternAudio(Track *AddedTrack, t_PatternXml *InfoPattern);
+	void				LoadPatternMIDI(Track *AddedTrack, t_PatternXml *InfoPattern);
+	bool				ParseWiredSession();
 
-	wxString   				_WorkingDir;
+	wxString   			_WorkingDir;
 };
 
 #endif

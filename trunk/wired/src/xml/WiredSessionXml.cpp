@@ -12,88 +12,148 @@ extern PlugStartInfo				StartInfo;
 
 WiredSessionXml::~WiredSessionXml()
 {
-	;
+  ;
 }
 
 WiredSessionXml::WiredSessionXml(const WiredSessionXml& copy)
 {
-	*this = copy;	
+  *this = copy;	
 }
 
 WiredSessionXml	WiredSessionXml::operator=(const WiredSessionXml& right)
 {
-	if (this != &right)
-	{
-		this->WiredXml::operator=(right);
-		_WorkingDir = right._WorkingDir;
-	}
-	return *this;
+  if (this != &right)
+    {
+      this->WiredXml::operator=(right);
+      _WorkingDir = right._WorkingDir;
+    }
+  return *this;
 }
 
 WiredSessionXml	WiredSessionXml::Clone()
 {
-	return *this;
+  return *this;
 }
 
 bool			WiredSessionXml::Load(const wxString& FileName)
 {
-	if (FileName != wxT(""))
-		_DocumentFileName = FileName;
-	if (OpenDocument(_DocumentFileName) == true)
+  if (FileName != wxT(""))
+    _DocumentFileName = FileName;
+  if (OpenDocument(_DocumentFileName) == true)
+    {
+      if (OpenDtd(wxString(DTD_FILENAME)) == true)
 	{
-		if (OpenDtd(wxString(DTD_FILENAME)) == true)
-		{
-			if (ValidDocument() == true)
-				return ParseWiredSession();
-			else
-				std::cout << "[WIREDSESSION] File {" << _DocumentFileName.mb_str() 
-					<< "} does not comply with DTD {" << DTD_FILENAME << "}" 
-					<< std::endl;
-		}
-		else
-		{
-			std::cout << "[WIREDSESSION] Unable to load DTD file {" 
-				<< DTD_FILENAME << "}" << std::endl << "error == " << strerror(errno) << std::endl;
-		}
+	  if (ValidDocument() == true)
+	    return ParseWiredSession();
+	  else
+	    std::cout << "[WIREDSESSION] File {" << _DocumentFileName.mb_str() 
+		      << "} does not comply with DTD {" << DTD_FILENAME << "}" 
+		      << std::endl;
 	}
-	else
+      else
 	{
-		std::cout << "[WIREDSESSION] Unable to load file {" 
-			<< _DocumentFileName.mb_str() << "}" << std::endl;
+	  std::cout << "[WIREDSESSION] Unable to load DTD file {" 
+		    << DTD_FILENAME << "}" << std::endl << "error == " << strerror(errno) << std::endl;
 	}
-	return false;
+    }
+  else
+    {
+      std::cout << "[WIREDSESSION] Unable to load file {" 
+		<< _DocumentFileName.mb_str() << "}" << std::endl;
+    }
+  return false;
 }
 
 bool			WiredSessionXml::Save()
 {
-	if (CreateFile() == true)
+  if (CreateFile() == true)
+    {
+      if (_DocumentWriter != NULL)
 	{
-		if (_DocumentWriter != NULL)
-		{
-			wxFileName 	session_dir(_DocumentWriterName);
-			wxFileName 	f(_WorkingDir);
-			TrackIter	Ts;
+	  wxFileName 	session_dir(_DocumentWriterName);
+	  wxFileName 	f(_WorkingDir);
+	  TrackIter	Ts;
 
-			f.MakeRelativeTo(session_dir.GetPath());
-			StartElement(STR_ROOT_NODE_NAME);
-			StartElement(STR_WORKING_DIR);
-			WriteString(f.GetFullPath());
-			EndElement();
-			SaveSeq();
-			for (Ts = Seq->Tracks.begin(); Ts != Seq->Tracks.end(); Ts++)
-			{
-				SaveTrack(*Ts);
-			}
-			SaveFreePlugins();
-			EndElement();
-			EndDocumentWriter(true, true);
-		}
-		return true;
+	  f.MakeRelativeTo(session_dir.GetPath());
+	  StartElement(STR_ROOT_NODE_NAME);
+	  StartElement(STR_WORKING_DIR);
+	  WriteString(f.GetFullPath());
+	  EndElement();
+	  SaveSeq();
+	  for (Ts = Seq->Tracks.begin(); Ts != Seq->Tracks.end(); Ts++)
+	    {
+	      SaveTrack(*Ts);
+	    }
+	  SaveFreePlugins();
+	  EndElement();
+	  EndDocumentWriter(true, true);
 	}
-	std::cout << "[WIREDSESSION] Writing XML failed for file: " << _DocumentFileName.mb_str() << std::endl;
-	return false;
+      return true;
+    }
+  std::cout << "[WIREDSESSION] Writing XML failed for file: " << _DocumentFileName.mb_str() << std::endl;
+  return false;
 }
 
+bool			WiredSessionXml::InitSaveML()
+{
+  int			Res = 0;
+  wxChar		Buffer[20];
+  wxString		xmlfile = wxT("popo2.xml");
+
+  cout << "Saving session..." << endl;
+  if (CreateDocument(xmlfile) == true)
+    {
+      if (OpenDocument(xmlfile) == true)
+	{
+	  if (OpenDtd(wxString(DTD_FILENAME)) == true)
+	    {
+	      if (ValidDocument() == true)
+		;
+	      else
+		std::cout << "[ML] File {" << xmlfile.mb_str() << "} does not comply with DTD {" << DTD_FILENAME << "}" << std::endl;
+	    }
+	  else
+	      std::cout << "[WIREDSESSION] Unable to load DTD file {" << DTD_FILENAME << "}" << std::endl << "error == " << strerror(errno) << std::endl;
+	}
+      else
+	  std::cout << "[WIREDSESSION] Unable to load file {" << xmlfile.mb_str() << "}" << std::endl;
+
+  //     Res += this->StartElement(STR_ML);
+//       Res += this->WriteAttribute(STR_TEST, STR_TRUE);
+//       //  Res += this->WriteAttribute(STR_CLICK, Seq->Click == true ? STR_TRUE : STR_FALSE);
+//       Res += this->EndElement();
+
+//       Res += this->StartElement(STR_ML2);
+//       Res += this->EndElement();
+  //Res += this->WriteString(Buffer);
+
+//   Res += this->StartElement(STR_SIG_NUM);
+//   wxSnprintf(Buffer, 20, wxT("%d"), Seq->SigNumerator);
+//   Res += this->WriteString(Buffer);
+//   Res += this->EndElement();
+//   Res += this->StartElement(STR_SIG_DEN);
+    }
+
+  return Res == 0;
+}
+
+bool			WiredSessionXml::WriteElement(WiredSessionXml *CurrXmlSession, wxString type, wxString elem)
+{
+  int			Res = 0;
+
+  Res += CurrXmlSession->StartElement(type);
+  Res += CurrXmlSession->WriteAttribute(wxT("name"), elem);
+  //  Res += this->WriteAttribute(STR_CLICK, Seq->Click == true ? STR_TRUE : STR_FALSE);
+  Res += CurrXmlSession->EndElement();
+
+  return Res == 0;
+}
+
+bool			WiredSessionXml::EndSaveML()
+{
+  EndDocumentWriter(true, true);
+  cout << "Saving saved..." << endl;
+}
 
 bool			WiredSessionXml::SaveSeq()
 {
@@ -352,31 +412,31 @@ bool			WiredSessionXml::CreateFile()
 
 bool			WiredSessionXml::ParseWiredSession()
 {
-	int			TrackNumber = 0;
-	bool		IsInProject = false;
-	bool		HasFoundProject = false;
-	
-	while (Read() == true)
+  int		TrackNumber = 0;
+  bool		IsInProject = false;
+  bool		HasFoundProject = false;
+
+  while (Read() == true)
+    {
+      wxString 	Name = GetNodeName();
+
+      if (Name.Cmp(STR_ROOT_NODE_NAME) == 0)
 	{
-		wxString 	Name = GetNodeName();
-		
-		if (Name.Cmp(STR_ROOT_NODE_NAME) == 0)
-		{
-			HasFoundProject = true;
-			IsInProject = IsInProject ? false : true;
-			if (IsInProject == false)
-				break;
-		}
-		if (Name.Cmp(STR_WORKING_DIR) == 0 && IsInProject)
-			LoadWorkingDir();
-		else if (Name.Cmp(STR_SEQUENCEUR) == 0 && IsInProject)
-			LoadSeq();
-		else if (Name.Cmp(STR_TRACK) == 0 && IsInProject)
-			LoadTrack(TrackNumber++);
-		else if (Name.Cmp(STR_PLUGIN) == 0 && IsInProject)
-			LoadPlugin(NULL);
+	  HasFoundProject = true;
+	  IsInProject = IsInProject ? false : true;
+	  if (IsInProject == false)
+	    break;
 	}
-	return HasFoundProject;
+      if (Name.Cmp(STR_WORKING_DIR) == 0 && IsInProject)
+	LoadWorkingDir();
+      else if (Name.Cmp(STR_SEQUENCEUR) == 0 && IsInProject)
+	LoadSeq();
+      else if (Name.Cmp(STR_TRACK) == 0 && IsInProject)
+	LoadTrack(TrackNumber++);
+      else if (Name.Cmp(STR_PLUGIN) == 0 && IsInProject)
+	LoadPlugin(NULL);
+    }
+  return HasFoundProject;
 }
 
 
@@ -650,7 +710,7 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
     if (NewPlugin)
 		NewPlugin->Name = PluginInfo->Name;
 	if (TrackInfo != NULL)
-		TrackInfo->TrackOpt->ConnectTo(NewPlugin);	
+		TrackInfo->TrackOpt->ConnectTo(NewPlugin);
 	NewPlugin->Load(PluginInfo->Data);
 
 }
@@ -658,84 +718,84 @@ void			WiredSessionXml::LoadTrackPlugin(Track* TrackInfo, t_PluginXml *PluginInf
 
 void			WiredSessionXml::LoadPluginData(t_PluginXml *Params)
 {
-	wxString		Buffer;
-	wxString		Value;
-	wxString		ParamValue;
-	wxString		ParamName;
-	
-	while (Read() == true)
+  wxString		Buffer;
+  wxString		Value;
+  wxString		ParamValue;
+  wxString		ParamName;
+  
+  while (Read() == true)
+    {
+      Buffer = GetNodeName();
+      if (Buffer.Cmp(STR_PLUGIN_DATA) == 0)
+	break;
+      if (Buffer.Cmp(STR_PLUGIN_DATA_PARAM_NAME) == 0)
 	{
-		Buffer = GetNodeName();
-		if (Buffer.Cmp(STR_PLUGIN_DATA) == 0)
-			break;
-		if (Buffer.Cmp(STR_PLUGIN_DATA_PARAM_NAME) == 0)
-		{
-			Read();
-			Value = GetNodeValue();
-			if (!Value.IsEmpty())
-				ParamName = Value;
-		}
-		else if (Buffer.Cmp(STR_PLUGIN_DATA_PARAM_VALUE) == 0)
-		{
-			Read();
-			Value = GetNodeValue();
-			if (!Value.IsEmpty())
-				ParamValue = Value;
-		}
-		else
-			continue;
-		Read();
+	  Read();
+	  Value = GetNodeValue();
+	  if (!Value.IsEmpty())
+	    ParamName = Value;
 	}
-	if (ParamValue.size() > 0 && ParamName.size() > 0)
-		Params->Data.SaveValue(ParamName, ParamValue);
+      else if (Buffer.Cmp(STR_PLUGIN_DATA_PARAM_VALUE) == 0)
+	{
+	  Read();
+	  Value = GetNodeValue();
+	  if (!Value.IsEmpty())
+	    ParamValue = Value;
+	}
+      else
+	continue;
+      Read();
+    }
+  if (ParamValue.size() > 0 && ParamName.size() > 0)
+    Params->Data.SaveValue(ParamName, ParamValue);
 }
 
 
 void			WiredSessionXml::LoadPattern(Track *AddedTrack, int TrackNumber)
 {
-	wxString		Buffer;
-	wxString		Value;
-	t_PatternXml	PatternInfo;
-	
-	PatternInfo.TrackNumber = TrackNumber;
-	while (Read() == true)
+  wxString		Buffer;
+  wxString		Value;
+  t_PatternXml	PatternInfo;
+  
+  PatternInfo.TrackNumber = TrackNumber;
+  while (Read() == true)
+    {
+      Buffer = GetNodeName();
+      if (Buffer.Cmp(STR_PATTERN) == 0)
+	break;
+      if (Buffer.Cmp(STR_START_POS) == 0)
 	{
-		Buffer = GetNodeName();
-		if (Buffer.Cmp(STR_PATTERN) == 0)
-			break;
-		if (Buffer.Cmp(STR_START_POS) == 0)
-		{
-			Read();
-			Value = GetNodeValue();
-			if (!Value.IsEmpty())
-			  Value.ToDouble(&PatternInfo.Position);
-		}
-		else if (Buffer.Cmp(STR_END_POS) == 0)
-		{
-			Read();
-			Value = GetNodeValue();
-			if (!Value.IsEmpty())
-			  Value.ToDouble(&PatternInfo.EndPosition);
-		}
-		else if (Buffer.Cmp(STR_NAME) == 0)
-		{
-			Read();
-			Value = GetNodeValue();
-			if (!Value.IsEmpty())
-			  PatternInfo.Name = Value;
-		}
-		else if (Buffer.Cmp(STR_PATTERN_DATA) == 0)
-		{
-			if (AddedTrack->IsAudioTrack() == true)
-				LoadPatternAudio(AddedTrack, &PatternInfo);
-			else
-				LoadPatternMIDI(AddedTrack, &PatternInfo);
-			continue;
-		}
-		else
-			continue;
-		Read();
+	  Read();
+	  Value = GetNodeValue();
+	  if (!Value.IsEmpty())
+	    Value.ToDouble(&PatternInfo.Position);
 	}
+      else if (Buffer.Cmp(STR_END_POS) == 0)
+	{
+	  Read();
+	  Value = GetNodeValue();
+	  if (!Value.IsEmpty())
+	    Value.ToDouble(&PatternInfo.EndPosition);
+	}
+      else if (Buffer.Cmp(STR_NAME) == 0)
+	{
+	  Read();
+	  Value = GetNodeValue();
+	  if (!Value.IsEmpty())
+	    PatternInfo.Name = Value;
+	}
+      else if (Buffer.Cmp(STR_PATTERN_DATA) == 0)
+	{
+	  if (AddedTrack->IsAudioTrack() == true)
+	    LoadPatternAudio(AddedTrack, &PatternInfo);
+	  else
+	    LoadPatternMIDI(AddedTrack, &PatternInfo);
+	  continue;
+	}
+      else
+	continue;
+      Read();
+    }
 }
 
 
