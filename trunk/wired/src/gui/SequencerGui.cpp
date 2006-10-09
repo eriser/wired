@@ -344,6 +344,7 @@ void					SequencerView::Drop(int x, int y, wxString file)
 	  for (nb_channel = 0; nb_channel < wave->GetNumberOfChannels(); nb_channel++)
 	    {
 	      wave = WaveCenter.AddWaveFile(file);
+	      wave->SetChannelToRead(nb_channel);
 	      (*i)->AddPattern(wave, last_pos);
 	      i++;
 	    }
@@ -991,21 +992,21 @@ void					SequencerGui::PasteItems()
     {
       pattern = ((Pattern *) *j)->CreateCopy(((Pattern *) *j)->GetEndPosition());
       /* If the end of pattern is above the end of the Sequencer, we raise the size of the Sequencer */
-      if ((((Pattern *) *j)->GetXPos(((Pattern *) *j)->GetEndPosition()) + (((Pattern *) *j)->GetSize()).GetWidth()) > SeqView->GetTotalWidth())
+      /*if ((((Pattern *) *j)->GetXPos(((Pattern *) *j)->GetEndPosition()) + (((Pattern *) *j)->GetSize()).GetWidth()) > SeqView->GetTotalWidth())
 	{
 	  SeqView->SetTotalWidth((long) (pattern->GetXPos(((Pattern *) *j)->GetEndPosition()) + (((Pattern *) *j)->GetSize()).GetWidth()));
 	  Seq->EndPos = pattern->GetEndPosition();
 	  AdjustHScrolling();
-	}
+	  }*/
       /* TODO : correct this */
       /* We move end's cursor if the end of the pattern is above it */
-      if (EndCursor->GetPos() < pattern->GetEndPosition())
+      /* if (EndCursor->GetPos() < pattern->GetEndPosition())
 	{	  	  
 	  EndCursor->SetPos(pattern->GetEndPosition());
 	  RedrawCursors();
 	  AdjustHScrolling();
 	  SeqView->Refresh();
-	}
+	}*/
     }
   if (DoCut)
     DeleteSelectedPatterns();

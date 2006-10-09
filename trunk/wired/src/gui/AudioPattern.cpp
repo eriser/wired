@@ -138,7 +138,8 @@ void					AudioPattern::SetWave(WaveFile *w)
 #ifdef __DEBUG__
   cout << "WaveDrawer::StartWavePos = " << WaveDrawer::StartWavePos<< " WaveDrawer::EndWavePos = " << WaveDrawer::EndWavePos << endl;
 #endif
-  if (!w)
+ 
+ if (!w)
     {
       StartWavePos = 0;
       EndWavePos = 0;
@@ -304,16 +305,14 @@ Pattern					*AudioPattern::CreateCopy(double pos)
 #ifdef __DEBUG__
   printf(" [ START ] AudioPattern::CreateCopy(%f) on track %d\n", pos, TrackIndex);
 #endif
-  p = new AudioPattern(pos, (pos + Length), TrackIndex);
- 
-  SeqMutex.Lock();
-  p->StartWavePos = StartWavePos;
-  p->EndWavePos = EndWavePos;
-  p->SetDrawColour(WaveDrawer::PenColor);
-  p->SetWave(Wave);
-  p->Update();
-  SeqMutex.Unlock();
-  Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
+   p = new AudioPattern(pos, Wave, TrackIndex);
+   SeqMutex.Lock();
+   p->StartWavePos = StartWavePos;
+   p->EndWavePos = EndWavePos;
+   p->SetDrawColour(WaveDrawer::PenColor);
+   p->Update();
+   SeqMutex.Unlock();
+   Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
  
   //p = new AudioPattern(pos, Wave, TrackIndex);
   //p = Seq->Tracks[TrackIndex]->AddPattern(Wave, pos);
@@ -377,10 +376,11 @@ void					AudioPattern::Split(double pos)
 
 void					AudioPattern::SetDrawColour(wxColour c)
 { 
-  Pattern::SetDrawColour(c);
-  WaveDrawer::PenColor = c;
-  RedrawBitmap(GetSize());
-  Refresh();
+   Pattern::SetDrawColour(c);
+   WaveDrawer::PenColor = c;
+   //SetDrawing();
+   Refresh();
+  
 }
 
 void					AudioPattern::OnDoubleClick(wxMouseEvent &e)
