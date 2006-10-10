@@ -280,6 +280,7 @@ t_RackTrackPlugin*	Rack::AddRackAndChannel(PlugStartInfo &startinfo, PluginLoade
   	result->plugin = tmp;
   	ResizeTracks();
 	SetScrolling();
+	SeqPanel->RefreshConnectMenu();
 	return (result);
 }
 
@@ -928,6 +929,7 @@ Plugin*				Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
 	SeqMutex.Unlock();
 	if (tmp->HasView())
 		SetScrolling();
+	SeqPanel->RefreshConnectMenu();
 	return tmp;
 }
 
