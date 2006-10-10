@@ -899,13 +899,21 @@ void					SequencerGui::ScrollTrackList(long track_delta)
   AdjustVScrolling();
 }
 
+// remove reference to Plug for each Track
 void					SequencerGui::RemoveReferenceTo(Plugin *plug)
 {
   vector<Track *>::iterator		i;
 
   for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
-    if ((*i)->TrackOpt->Connected == plug)
-      (*i)->TrackOpt->ConnectTo(0);
+    (*i)->TrackOpt->RemoveReferenceTo(plug);
+}
+
+void					SequencerGui::RefreshConnectMenu()
+{
+  vector<Track *>::iterator		i;
+
+  for (i = Seq->Tracks.begin(); i != Seq->Tracks.end(); i++)
+    (*i)->TrackOpt->RebuildConnectList();
 }
 
 void					SequencerGui::DeleteAllTracks()

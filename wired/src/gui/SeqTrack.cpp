@@ -80,17 +80,21 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
 			   mute_up, mute_down);
   Image = new ChoiceButton(this, SeqTrack_ConnectTo, wxPoint(62, 30), wxSize(25, 16), wxT(""));
   
-  // add pixmap for unassigned track
-  wxImage*		unassigned;
+  // add pixmap for unassigned track and for "can assign track"
+  wxImage*		assign;
 
-  unassigned = new wxImage(wxString(WiredSettings->DataDir + UNASSIGNED), wxBITMAP_TYPE_PNG);
-  UnassignedBmp = new wxBitmap(unassigned);
+  assign = new wxImage(wxString(WiredSettings->DataDir + UNASSIGNED), wxBITMAP_TYPE_PNG);
+  UnassignedBmp = new wxBitmap(assign);
+  assign = new wxImage(wxString(WiredSettings->DataDir + CAN_ASSIGN), wxBITMAP_TYPE_PNG);
+  CanAssignBmp = new wxBitmap(assign);
 
   Image->Connect(SeqTrack_ConnectTo, wxEVT_ENTER_WINDOW, 
 		 (wxObjectEventFunction)(wxEventFunction) 
 		 (wxMouseEventFunction)&SeqTrack::OnConnectToHelp);
   Image->SetImage(UnassignedBmp);
+  Image->Refresh();
 
+  // device input list
   DeviceBox = new wxChoice(this, SeqTrack_DeviceChoice, wxPoint(5, 50), wxSize(TRACK_WIDTH - 38, 22), 
 			   0, 0x0);
   DeviceBox->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
@@ -101,13 +105,19 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
 		     (wxObjectEventFunction)(wxEventFunction) 
 		     (wxMouseEventFunction)&SeqTrack::OnDeviceHelp);
 
+  // VU meter
   wxImage *green = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_GREEN)), wxBITMAP_TYPE_PNG);
   wxImage *orange = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_ORANGE)), wxBITMAP_TYPE_PNG);
   wxImage *red = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_RED)), wxBITMAP_TYPE_PNG);
 
   Vu = new VUMCtrl(this, -1, 100, green, orange, red,wxPoint(TRACK_WIDTH - 28, 8), wxSize(16, 64));
   Vu->SetValue(0);
+
+  // connection menu
   menu = 0x0;
+  RebuildConnectList();
+
+  // track selection
   Selected = false;
 
   // we overwrite LEFT_DOWN event of these class, but we propagate it on each
@@ -178,58 +188,89 @@ void					SeqTrack::FillChoices()
     }
 }
 
-void					SeqTrack::OnConnectTo(wxCommandEvent &event)
+// rebuild menu connection
+void					SeqTrack::RebuildConnectList()
 {
-  list<RackTrack *>::iterator		i;
-  list<Plugin *>::iterator		j;
-  long					k = 1000;
-  
-  if (RackPanel->RackTracks.size() <= 0)
-    return;
+  list<RackTrack *>::iterator		itRackTrack;
+  list<Plugin *>::iterator		itPlugin;
+  long					id = 1000;
+
   if (menu)
     delete menu;
-  menu = new wxMenu();  
+  menu = new wxMenu();
+
+  // always put "None" selection
   menu->Append(NONE_SELECTED_ID, _("None"));
   Connect(NONE_SELECTED_ID, wxEVT_COMMAND_MENU_SELECTED, 
 	  (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&SeqTrack::OnConnectSelected);
-  for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)
-    for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++, k++)
+  for (itRackTrack = RackPanel->RackTracks.begin(); itRackTrack != RackPanel->RackTracks.end();
+       itRackTrack++)
+    for (itPlugin = (*itRackTrack)->Racks.begin(); itPlugin != (*itRackTrack)->Racks.end();
+	 itPlugin++, id++)
       {
-	if ((IsAudio && (*j)->IsAudio()) ||
-	    (!IsAudio && (*j)->IsMidi()))
+	if ((IsAudio && (*itPlugin)->IsAudio()) ||
+	    (!IsAudio && (*itPlugin)->IsMidi()))
 	  {
-	    menu->Append(k, (*j)->Name);
-	    Connect(k, wxEVT_COMMAND_MENU_SELECTED, 
+	    // append valid rack, and connect the menu entry to OnConnectSelected()
+	    menu->Append(id, (*itPlugin)->Name);
+	    Connect(id, wxEVT_COMMAND_MENU_SELECTED, 
 		    (wxObjectEventFunction)(wxEventFunction)
 		    (wxCommandEventFunction)&SeqTrack::OnConnectSelected);
 	  }
       }
+
+  // if menu is empty
+  if (!ConnectedRackTrack)
+    {
+      if (!menu->FindItemByPosition(1))
+	Image->SetImage(UnassignedBmp);
+      else
+	Image->SetImage(CanAssignBmp);
+      Image->Refresh();
+    }
+}
+
+void					SeqTrack::OnConnectTo(wxCommandEvent &event)
+{
+  // rebuild menu list
+  RebuildConnectList();
+
+  // show menu list
   wxPoint p(Image->GetPosition());
   PopupMenu(menu, p.x, p.y);
 }
 
 void					SeqTrack::ConnectTo(Plugin *plug)
 {
+  // rebuild menu list
+  RebuildConnectList();
+
+  // if we deselect
   if (!plug)
     {
       Connected = 0x0;
       ConnectedRackTrack = 0x0;
-      //Label->SetLabel("No Instrument");
-      Image->SetImage(UnassignedBmp);
+
+      // if menu is empty
+      if (!menu->FindItemByPosition(1))
+	Image->SetImage(UnassignedBmp);
+      else
+	Image->SetImage(CanAssignBmp);
     }
   else
     {
       Connected = plug;
       ConnectedRackTrack = RackPanel->GetRackTrack(plug);
-      // Initialisation du plugin
+
+      // plugin initialisation, and set its bitmap
       plug->Init();
-      //Label->SetLabel(plug->Name);
       Image->SetImage(plug->GetBitmap());
     }
   Image->Refresh();
 }
 
+// called when user select an entry of connection menu
 void					SeqTrack::OnConnectSelected(wxCommandEvent &event)
 {
   list<RackTrack *>::iterator		i;
@@ -239,8 +280,7 @@ void					SeqTrack::OnConnectSelected(wxCommandEvent &event)
 
   if (event.GetId() == NONE_SELECTED_ID)
     {
-      ConnectTo(0x0);
-      Image->SetImage(UnassignedBmp);
+      ConnectTo(NULL);
       return;
     }
   for (i = RackPanel->RackTracks.begin(); i != RackPanel->RackTracks.end(); i++)
@@ -253,7 +293,14 @@ void					SeqTrack::OnConnectSelected(wxCommandEvent &event)
 	  }
       }
   // it's not going to happened...
-  ConnectTo(0x0);
+  ConnectTo(NULL);
+}
+
+void					SeqTrack::RemoveReferenceTo(Plugin *plug)
+{
+  RebuildConnectList();
+  if (Connected == plug)
+    ConnectTo(NULL);
 }
 
 void					SeqTrack::OnPaint(wxPaintEvent &WXUNUSED(event))

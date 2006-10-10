@@ -260,6 +260,7 @@ class				SequencerGui: public wxPanel
   void				SetBeginLoopPos(double pos);
   void				SetEndLoopPos(double pos);
   void				SetEndPos(double pos);
+  void				RefreshConnectMenu();
   void				RemoveReferenceTo(Plugin *plug);
   void				DeleteSelectedTrack();
   void				DeleteAllTracks();
