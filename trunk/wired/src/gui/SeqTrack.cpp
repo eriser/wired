@@ -114,7 +114,7 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   Vu->SetValue(0);
 
   // connection menu
-  menu = 0x0;
+  menu = new wxMenu();
   RebuildConnectList();
 
   // track selection
@@ -195,9 +195,14 @@ void					SeqTrack::RebuildConnectList()
   list<Plugin *>::iterator		itPlugin;
   long					id = 1000;
 
-  if (menu)
-    delete menu;
-  menu = new wxMenu();
+  // clear menu
+  int	i = menu->GetMenuItemCount();
+
+  while (i > 0)
+    {
+      menu->Destroy(menu->FindItemByPosition(i - 1));
+      i--;
+    }
 
   // always put "None" selection
   menu->Append(NONE_SELECTED_ID, _("None"));
