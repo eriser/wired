@@ -11,20 +11,47 @@
 #include <wx/tglbtn.h>
 #include <wx/treectrl.h>
 
+
+/** This class handles the Settings Window.
+ * It is instanciated once at startup, and then shown or hidden.
+ */
 class					SettingWindow : public wxDialog
 {
  public:
+  /** Default constructor.
+   * Instanciate every element of the window and calls the Load() method.
+   * \see Load()
+   */
   SettingWindow();
+  
+  /** Default destructor. */
   ~SettingWindow();
 
+  /** Instanciates the general panel. */
   void					GeneralPanelView();
+
+  /** Instanciates the audio panel. */
   void					AudioPanelView();
+
+  /** Instanciates the audio input panel. */
   void					AudioInputPanelView();
+
+  /** Instanciates the audio output panel. */
   void					AudioOutputPanelView();
+
+  /** Instanciates the midi input panel. */
   void					MidiPanelView();
 
+  /** Loads the settings.
+   * It takes infos from the WiredSetting object. 
+   */
   void					Load();
+
+  /** Saves the settings
+   * It fills a WiredSetting object and then calls its Save method. 
+   */
   void					Save();
+
   void					OnOkClick(wxCommandEvent &event);
   void					OnCancelClick(wxCommandEvent &event);
   void					OnApplyClick(wxCommandEvent &event);
@@ -39,28 +66,60 @@ class					SettingWindow : public wxDialog
   void					OnSelPrefCategory(wxTreeEvent &event);
   void					OnMidiInClick(wxCommandEvent &event);
 
-  bool					MidiLoaded; // true if midi settings has changed
-  bool					AudioLoaded; // true if audio settings has changed
+  /** Flag that indicates if the MIDI settings have changed. */
+  bool					MidiLoaded;
+
+  /** Flag that indicates if the Audio settings have changed. */
+  bool					AudioLoaded;
 
  protected:
+  /** Fills the sample format list. */
   void					LoadSampleFormat();
+
+  /** Fills the samplerate list */
   void					LoadSampleRates();
+
+  /** Updates the latency infos, based on the slider's value */
   void					UpdateLatency();
-  void					SetDefaultSampleFormat(void);
+
+  /** Sets the default sample format. */
+  void					SetDefaultSampleFormat();
+
+  /** Refreshes the list of output devices. */
   void                                  RefreshOutputDev();
+
+  /** Refreshes the list of input devices. */
   void                                  RefreshInputDev();
 
-  // refresh list of audio systems available
+  /** Refreshes the list of audio systems available.
+   * \param choice The wxChoice object containing the different systems.
+   */
   void					RefreshSystems(wxChoice* choice);
 
-  // refresh list of devices available for selected audio system
-  void					RefreshDevices(wxChoice* choice, int system_selected, int select);
+  /** Refreshes the list of devices available for the selected audio system. 
+   * \param choice The wxChoice object containing the different devices.
+   * \param system_selected The index of the selected system in the wxChoice of the systems.
+   * \param selected The index of the selected device.
+   */
+  void					RefreshDevices(wxChoice* choice, 
+						       int system_selected, 
+						       int selected);
 
-  // refresh list of channels available for selected device 
-  void					RefreshChannels(wxCheckListBox* list, int system_selected,
-							int device_selected, bool input);
+  /** Refreshes the list of channels available for the selected device.
+   * \param list the wxCheckListBox containing the different channels available.
+   * \param system_selected the index of the selected system in its wxChoice object.
+   * \param device_selected the index of the selected device in its wxChoice object.
+   * \param input true if we are talking about input channels.
+   */ 
+  void					RefreshChannels(wxCheckListBox* list, 
+							int system_selected,
+							int device_selected, 
+							bool input);
 
-  // Populates the Midi Panel
+
+  /** Populates the wxCheckListBox containing the MIDI device.
+   * \param list the wxCheckListBox containing the MIDI device.
+   */
   void					PopulateMidiIn(wxCheckListBox* list);
 
   wxButton				*OkBtn;
@@ -86,10 +145,13 @@ class					SettingWindow : public wxDialog
   int					*Latencies;
   wxTreeCtrl				*SettingsTree;
 
-  //link to the current panel
+  /** A pointer to the current panel.
+   * It does not correspond to a specific panel, and should be considered as a link
+   * to the current panel.
+   */
   wxPanel				*CurrentPanel;
 
-  //different panels
+  // The different panels.
   wxPanel				*AudioInputPanel;
   wxPanel				*AudioOutputPanel;
   wxPanel				*MidiPanel;
@@ -102,8 +164,18 @@ class					SettingWindow : public wxDialog
   wxSizerFlags				BoxFlags;
 
  private:
-  void					SaveChannels(wxCheckListBox* from, vector<long>& to);
-  void					LoadChannels(wxCheckListBox* to, vector<long>& from);
+  /** Saves the selected index of a wxCheckListBox into a vector<long>.
+   * \param from the wxCheckListBox where item are selected.
+   * \param to the vector<long> where indexes are saved.
+   */
+  void					SaveChannels(wxCheckListBox* from, 
+						     vector<long>& to);
+  /** Selects into a wxCheckListBox indexes stored into a vector<long>.
+   * \param to the wxCheckListBox to fill.
+   * \param from the vector<long> containing the indexes.
+   */ 
+  void					LoadChannels(wxCheckListBox* to, 
+						     vector<long>& from);
 
 
   DECLARE_EVENT_TABLE()

@@ -709,7 +709,7 @@ void SettingWindow::LoadSampleRates()
     }
 }
 
-void SettingWindow::SetDefaultSampleFormat(void)
+void SettingWindow::SetDefaultSampleFormat()
 {
   Device *dev = Audio->GetDevice(OutputDeviceChoice->GetSelection(),
 				 OutputSystemChoice->GetSelection());
