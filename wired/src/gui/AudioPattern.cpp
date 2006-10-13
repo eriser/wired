@@ -309,7 +309,7 @@ Pattern					*AudioPattern::CreateCopy(double pos)
    SeqMutex.Lock();
    p->StartWavePos = StartWavePos;
    p->EndWavePos = EndWavePos;
-   p->EndPosition = EndPosition;
+   p->EndPosition = pos +  Length;
    p->Length = Length;
    p->SetDrawColour(WaveDrawer::PenColor);
    p->Update();
