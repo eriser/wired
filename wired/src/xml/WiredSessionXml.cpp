@@ -94,9 +94,8 @@ bool			WiredSessionXml::Save()
   return false;
 }
 
-bool			WiredSessionXml::InitSaveML()
+void			WiredSessionXml::InitSaveML()
 {
-  int			Res = 0;
   wxChar		Buffer[20];
   wxString		xmlfile = wxT("popo2.xml");
 
@@ -113,40 +112,26 @@ bool			WiredSessionXml::InitSaveML()
 		std::cout << "[ML] File {" << xmlfile.mb_str() << "} does not comply with DTD {" << DTD_FILENAME << "}" << std::endl;
 	    }
 	  else
-	      std::cout << "[WIREDSESSION] Unable to load DTD file {" << DTD_FILENAME << "}" << std::endl << "error == " << strerror(errno) << std::endl;
+	    std::cout << "[WIREDSESSION] Unable to load DTD file {" << DTD_FILENAME << "}" << std::endl << "error == " << strerror(errno) << std::endl;
 	}
       else
-	  std::cout << "[WIREDSESSION] Unable to load file {" << xmlfile.mb_str() << "}" << std::endl;
-
-  //     Res += this->StartElement(STR_ML);
-//       Res += this->WriteAttribute(STR_TEST, STR_TRUE);
-//       //  Res += this->WriteAttribute(STR_CLICK, Seq->Click == true ? STR_TRUE : STR_FALSE);
-//       Res += this->EndElement();
-
-//       Res += this->StartElement(STR_ML2);
-//       Res += this->EndElement();
-  //Res += this->WriteString(Buffer);
-
-//   Res += this->StartElement(STR_SIG_NUM);
-//   wxSnprintf(Buffer, 20, wxT("%d"), Seq->SigNumerator);
-//   Res += this->WriteString(Buffer);
-//   Res += this->EndElement();
-//   Res += this->StartElement(STR_SIG_DEN);
+	std::cout << "[WIREDSESSION] Unable to load file {" << xmlfile.mb_str() << "}" << std::endl;
     }
-
-  return Res == 0;
 }
 
-bool			WiredSessionXml::WriteElement(WiredSessionXml *CurrXmlSession, wxString type, wxString elem)
+void			WiredSessionXml::MyStartElement(WiredSessionXml *CurrXmlSession, wxString type)
 {
-  int			Res = 0;
+  CurrXmlSession->StartElement(type);
+}
 
-  Res += CurrXmlSession->StartElement(type);
-  Res += CurrXmlSession->WriteAttribute(wxT("name"), elem);
-  //  Res += this->WriteAttribute(STR_CLICK, Seq->Click == true ? STR_TRUE : STR_FALSE);
-  Res += CurrXmlSession->EndElement();
+void			WiredSessionXml::MyWriteAttribute(WiredSessionXml *CurrXmlSession, wxString attr, wxString value)
+{
+  CurrXmlSession->WriteAttribute(attr, value);
+}
 
-  return Res == 0;
+void			WiredSessionXml::MyEndElement(WiredSessionXml *CurrXmlSession)
+{
+  CurrXmlSession->EndElement();
 }
 
 bool			WiredSessionXml::EndSaveML()
@@ -159,7 +144,7 @@ bool			WiredSessionXml::SaveSeq()
 {
 	int			Res = 0;
 	wxChar		Buffer[20];
-	
+
 	Res += this->StartElement(STR_SEQUENCEUR);
 	Res += this->WriteAttribute(STR_LOOP, 
 		Seq->Loop == true ? STR_TRUE : STR_FALSE, false);
@@ -250,7 +235,7 @@ bool			WiredSessionXml::SaveTrackPlugins(Track* TrackInfo)
 bool			WiredSessionXml::IsPluginConnected(Plugin *Plug)
 {
 	TrackIter	Ts;
-			
+
 	for (Ts = Seq->Tracks.begin(); Ts != Seq->Tracks.end(); Ts++)
 	{
 		if ((*Ts)->TrackOpt->Connected != NULL)

@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <wx/treectrl.h>
+#include "../xml/WiredSessionXml.h"
 
 using std::string;
 using std::vector;
@@ -41,7 +42,7 @@ class				MLTree : public wxTreeCtrl
 
  protected:
   friend class			MediaLibrary;
-  //friend class		WiredXml;
+  // friend class			WiredSessionXml;
   friend class			MLTreeInfos;
 
 /**
@@ -96,11 +97,11 @@ class				MLTree : public wxTreeCtrl
   int				selection_length;
 /**
  * Parse the tree and write xml file
+ * \param XmlSession a WiredSessionXml*
  * \param parent a wxTreeItemId
- * \param depth an int
  * \return void
 */
-  void				SaveTree(wxTreeItemId parent, int depth);
+  void				SaveTree(WiredSessionXml *XmlSession, wxTreeItemId parent);
 /**
  * The method used to serialize the MediaLibrary Content (calls SaveTree)
  * \return void

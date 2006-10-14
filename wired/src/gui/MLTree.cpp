@@ -3,7 +3,9 @@
 
 #include <wx/filename.h>
 #include <wx/wx.h>
+#include <wx/file.h>
 #include <wx/treectrl.h>
+//#include "../xml/WiredSessionXml.h"
 #include "MediaLibrary.h"
 #include "MLTree.h"
 #include "MLTreeInfos.h"
@@ -24,14 +26,12 @@
 #include "icon5.xpm"
 #include "icon3.xpm"
 #include "delete.xpm"
-#include "../xml/WiredSessionXml.h"
-#include <wx/file.h>
 
 extern WiredSession	*CurrentSession;
 extern MediaLibrary	*MediaLibraryPanel;
 WiredSessionXml		*CurrXmlSession = NULL;
 
-s_nodeInfo					SetStructInfos(s_nodeInfo infos, wxString label, wxString extention, wxString length)
+s_nodeInfo		SetStructInfos(s_nodeInfo infos, wxString label, wxString extention, wxString length)
 {
   infos.label = label;
   infos.extention = extention;
@@ -106,32 +106,40 @@ MLTree::~MLTree()
 
 }
 
-void				MLTree::SaveTree(wxTreeItemId parent, int depth)
+void			MLTree::SaveTree(WiredSessionXml *XmlSession, wxTreeItemId parent)
 {
-  wxTreeItemIdValue cookie;
-  wxTreeItemId item = GetFirstChild(parent, cookie);
-  wxTreeItemId item_last = GetLastChild(parent);
+  wxTreeItemIdValue	cookie;
+  s_nodeInfo		infos;
+  wxTreeItemId		item = GetFirstChild(parent, cookie);
+  wxTreeItemId		item_last = GetLastChild(parent);
 
   while (item.IsOk())
     {
       wxString text = GetItemText(item);
-      //cout << "DEPTH " << depth << endl;
+      infos = GetTreeItemStructFromId(item);
+
       if (ItemHasChildren(item))
 	{
-	  depth++;
-	  cout << "<" << text.mb_str() << ">\t" << depth << endl;
-	  SaveTree(item, depth);
-	  // depth--; A CHANGER
-	  cout << "</" << text.mb_str() << ">\t" << endl;//<< depth << endl;
+	  XmlSession->MyStartElement(XmlSession, _("folder"));
+	  XmlSession->MyWriteAttribute(XmlSession, _("name"), text);
+	  SaveTree(XmlSession, item);
+	  XmlSession->MyEndElement(XmlSession);
 	}
-      else
-	cout << " <" << text.mb_str() << " />\t" << depth << endl;
-
-      if (item == item_last)
+      else // no children
 	{
-	  ;
-	  //depth--;
-	  //cout << "recursive over" << endl;
+	  if (infos.extention.Cmp(_("")))
+	    {
+	      XmlSession->MyStartElement(XmlSession, _("file"));
+	      XmlSession->MyWriteAttribute(XmlSession, _("name"), text);
+	      XmlSession->MyWriteAttribute(XmlSession, _("ext"), infos.extention);
+	      XmlSession->MyEndElement(XmlSession);
+	    }
+	  else
+	    {
+	      XmlSession->MyStartElement(XmlSession, _("folder"));
+	      XmlSession->MyWriteAttribute(XmlSession, _("name"), text);
+	      XmlSession->MyEndElement(XmlSession);
+	    }
 	}
       item = GetNextChild(parent, cookie);
     }
@@ -142,7 +150,7 @@ void				MLTree::SaveML()
 {
   CurrXmlSession = new WiredSessionXml(wxString(wxT(""), *wxConvCurrent));
   CurrXmlSession->InitSaveML();
-  SaveTree(GetRootItem(), -1);
+  SaveTree(CurrXmlSession, GetRootItem());
   CurrXmlSession->EndSaveML();
 }
 
