@@ -38,7 +38,7 @@
 #include "../gui/Transport.h"
 #include "../engine/AudioCenter.h"
 
-#include "../gui/MLTree.h"
+//#include "../gui/MLTree.h"
 
 
 //For Windows future ...
@@ -187,8 +187,11 @@ public:
 	bool				CreateFile();
 	void				Dumpfile(const wxString& FileName);
 	wxString&      			GetAudioDir();
-	bool				InitSaveML(); // Saving MediaLibrary
-	bool				WriteElement(WiredSessionXml *urrXmlSession, wxString type, wxString elem);
+	void				InitSaveML(); // Saving MediaLibrary
+	void				MyStartElement(WiredSessionXml *CurrXmlSession, wxString type);
+	void				MyWriteAttribute(WiredSessionXml *CurrXmlSession, wxString attr, wxString value);
+	void				MyEndElement(WiredSessionXml *CurrXmlSession);
+
 	bool				EndSaveML();
 private:
 	bool				SaveSeq(); // Saving Sequenceur infos to XML File
