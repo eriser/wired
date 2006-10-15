@@ -75,6 +75,12 @@ class FileLoader: public wxDialog
 
  private:
 
+  void OnExpandFolder(wxTreeEvent &e);
+  void OnCollapseFolder(wxTreeEvent &e);
+  void OnSelectFolder(wxTreeEvent &e);
+  void OnActivateFolder(wxTreeEvent &e);
+  void PopupMenuFolder(wxTreeEvent &e);
+
   /** Called when a file is selected in the file List
    * Display informations about the file selected, enable preview, stop playing 
    * of another preview if there is one, and other things
