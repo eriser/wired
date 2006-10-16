@@ -34,7 +34,7 @@
 #define PAN_POS		wxPoint(222, WIN_MARGIN)
 
 #define MENUICON_SIZE   (20)
-#define RESIZE_ICON(ico, w, h)	(wxBitmap(wxBitmap(ico).ConvertToImage().Rescale(w, h)))
+#define RESIZE_ICON(ico, w, h)	(wxBitmap(ico).ConvertToImage().Rescale(w, h))
 
 using namespace std;
 
@@ -55,10 +55,10 @@ SettingWindow::SettingWindow()
 
   wxImageList   *imagelist = new wxImageList();
 
-  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/general.xpm"),
-				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
-  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/audio.xpm"),
-				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON((wxIcon(WiredSettings->DataDir + wxT("ihm/settings/general.xpm"),
+				     wxBITMAP_TYPE_XPM)), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON((wxIcon(WiredSettings->DataDir + wxT("ihm/settings/audio.xpm"),
+				     wxBITMAP_TYPE_XPM)), MENUICON_SIZE, MENUICON_SIZE));
   imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/output.xpm"),
 				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
   imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/input.xpm"),
