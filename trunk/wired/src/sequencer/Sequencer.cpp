@@ -46,6 +46,7 @@ Sequencer::Sequencer()
   SampleRateConverter = NULL;
   AllocBuf1 = NULL;
   AllocBuf2 = NULL;
+  cout << "[SEQUENCER] Sequencer initialized !" << endl;
 }
 
 Sequencer::~Sequencer()

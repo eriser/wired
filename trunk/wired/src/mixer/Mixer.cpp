@@ -25,6 +25,8 @@ Mixer::Mixer()
   Input = new float*[PREBUF_NUM];
   for (int i = 0; i < PREBUF_NUM; i++)
     Input[i] = new float[Audio->SamplesPerBuffer];
+
+  cout << "[MIXER] Mixer initialized" << endl;
 }
 
 Mixer::~Mixer()
