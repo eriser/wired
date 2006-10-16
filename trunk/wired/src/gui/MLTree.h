@@ -16,6 +16,12 @@ using std::map;
 #define EXT_FILE		wxT("wired_exts.conf")
 
 /**
+ * The size of ML icon (square)
+ */
+
+#define ICON_SIZE		(16)
+
+/**
  * The s_nodeInfo struct contains various informations about files
 */
 struct				s_nodeInfo

@@ -49,7 +49,7 @@ MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
   SetItemBold(root);
 
   /* Create Image List */
-  wxImageList *images = new wxImageList(16, 16, TRUE);
+  wxImageList *images = new wxImageList(ICON_SIZE, ICON_SIZE, TRUE);
   AddIcon(images, wxIcon(icon3_xpm));
   AddIcon(images, wxIcon(icon5_xpm));
   AddIcon(images, wxIcon(audio_xpm));
@@ -156,12 +156,13 @@ void				MLTree::SaveML()
 
 void				MLTree::AddIcon(wxImageList *images, wxIcon icon)
 {
-  int sizeInit = icon.GetWidth();
+  int wInit = icon.GetWidth();
+  int hInit = icon.GetWidth();
 
-  if (16 == sizeInit)
+  if (wInit == ICON_SIZE && hInit == ICON_SIZE)
     images->Add(icon);
   else
-    images->Add(wxBitmap(wxBitmap(icon).ConvertToImage().Rescale(16, 16)));
+    images->Add(wxBitmap(wxBitmap(icon).ConvertToImage().Rescale(ICON_SIZE, ICON_SIZE)));
 }
 
 // Load extentions known by wired
