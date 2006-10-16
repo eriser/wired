@@ -11,6 +11,7 @@
 #include <wx/tglbtn.h>
 #include <wx/treectrl.h>
 
+#include <vector>
 
 /** This class handles the Settings Window.
  * It is instanciated once at startup, and then shown or hidden.
@@ -169,13 +170,13 @@ class					SettingWindow : public wxDialog
    * \param to the vector<long> where indexes are saved.
    */
   void					SaveChannels(wxCheckListBox* from, 
-						     vector<long>& to);
+						     std::vector<long>& to);
   /** Selects into a wxCheckListBox indexes stored into a vector<long>.
    * \param to the wxCheckListBox to fill.
    * \param from the vector<long> containing the indexes.
    */ 
   void					LoadChannels(wxCheckListBox* to, 
-						     vector<long>& from);
+						     std::vector<long>& from);
 
 
   DECLARE_EVENT_TABLE()

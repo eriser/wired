@@ -1,6 +1,8 @@
 // Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#include <vector>
+
 #include "MainWindow.h"
 #include "SettingWindow.h"
 #include "AudioEngine.h"
@@ -31,6 +33,11 @@
 #define PAN_SIZE	wxSize(584, 436)
 #define PAN_POS		wxPoint(222, WIN_MARGIN)
 
+#define MENUICON_SIZE   (20)
+#define RESIZE_ICON(ico, w, h)	(wxBitmap(wxBitmap(ico).ConvertToImage().Rescale(w, h)))
+
+using namespace std;
+
 SettingWindow::SettingWindow()
   : wxDialog(0x0, -1, _("Wired Settings"), wxDefaultPosition, WIN_SIZE)
 {
@@ -47,11 +54,17 @@ SettingWindow::SettingWindow()
 				wxTR_FULL_ROW_HIGHLIGHT);
 
   wxImageList   *imagelist = new wxImageList();
-  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/general.xpm"), wxBITMAP_TYPE_XPM));
-  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/audio.xpm"), wxBITMAP_TYPE_XPM));
-  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/output.xpm"), wxBITMAP_TYPE_XPM));
-  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/input.xpm"), wxBITMAP_TYPE_XPM));
-  imagelist->Add(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/midi.xpm"), wxBITMAP_TYPE_XPM));
+
+  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/general.xpm"),
+				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/audio.xpm"),
+				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/output.xpm"),
+				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/input.xpm"),
+				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/midi.xpm"),
+				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
   SettingsTree->AssignImageList(imagelist);
 
   // flags assigned to all sizer in all right panel
