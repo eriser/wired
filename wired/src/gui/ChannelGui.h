@@ -96,7 +96,7 @@ class					MasterChannelGui : public ChannelGui
 
 enum
   {
-    FaderLeftId = 100000,
+    FaderLeftId = 11230,
     FaderRightId,
     MuteLeftId,
     MuteRightId,
