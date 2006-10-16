@@ -24,6 +24,9 @@ class					Channel;
 
 class					Track
 {
+ private:
+  long					Index;
+
  public:
   Track(SeqTrack *n1, SeqTrackPattern *n2, char typ = IS_MIDI_TRACK); 
   ~Track(); 
@@ -37,17 +40,27 @@ class					Track
   void					AddPattern(Pattern *p);
   void					DelPattern(Pattern *p);
   void					AddColoredPattern(Pattern *p);
+
   void					UpdateIndex(long trackindex);
   void					RefreshFullTrack();
   void					ChangeTrackColour(wxColour &c);
   bool					IsAudioTrack() { return (Type == IS_AUDIO_TRACK); }
   bool					IsMidiTrack() { return (Type == IS_MIDI_TRACK); }
 
+  inline long				GetIndex() { return (Index); };
+
+  /**
+   * This method is set only once, and just after his creation.
+   * To change his index after, you need to use UpdateIndex()
+   * \param trackindex First index of the Track
+   * \see UpdateIndex().
+   */
+  inline void				SetIndex(long trackindex) { Index = trackindex; };
+
   SeqTrack				*TrackOpt;
   SeqTrackPattern			*TrackPattern;
   AudioPattern				*Wave;
   MidiPattern				*Midi;
-  long					Index;
   Channel				*Output;
 
  protected:

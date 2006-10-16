@@ -333,8 +333,12 @@ void					SequencerView::Drop(int x, int y, wxString file)
   ScreenToClient(&x, &y);
   if (x >= 0 && y >= 0)
     {
-      track = floor((y  * SeqPanel->VertZoomFactor) / TRACK_HEIGHT); 
-      for (i = Seq->Tracks.begin(), cpt = 0; i != Seq->Tracks.end() && cpt != track; i++, cpt++);
+      wxString				convertme;
+
+      convertme << floor((y  * SeqPanel->VertZoomFactor) / TRACK_HEIGHT);
+      convertme.ToLong((long*)&track);
+      for (i = Seq->Tracks.begin(), cpt = 0; i != Seq->Tracks.end() && cpt != track; i++, cpt++)
+	;
       if (Seq->Tracks.size() != 0 && track < Seq->Tracks.size() && (*i)->IsAudioTrack())
 	{
 	  wave = WaveCenter.AddWaveFile(file);
@@ -797,39 +801,42 @@ void					SequencerGui::UnselectTracks()
 
 void					SequencerGui::AddPattern(Pattern *p, long trackindex)
 {
-vector<Track *>::iterator		iter;
+  vector<Track *>::iterator		iter;
 
-	UnselectTracks();
-	for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
-    	if ((*iter)->Index == trackindex)
-	  (*iter)->AddPattern(p);
+  UnselectTracks();
+  for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
+    if ((*iter)->GetIndex() == trackindex)
+      (*iter)->AddPattern(p);
 }
+
 void					SequencerGui::DelPattern(Pattern *p, long trackindex)
 {
   vector<Track *>::iterator		iter;
 
-	UnselectTracks();
-	for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
-    	if ((*iter)->Index == trackindex)
-	  (*iter)->DelPattern(p);
+  UnselectTracks();
+  for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
+    if ((*iter)->GetIndex() == trackindex)
+      (*iter)->DelPattern(p);
 }
+
 bool					SequencerGui::IsAudioTrack(long trackindex)
 {
   vector<Track *>::iterator		iter;
 
-	UnselectTracks();
-	for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
-    	if ((*iter)->Index == trackindex)
-	  return (*iter)->IsAudioTrack();
+  UnselectTracks();
+  for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
+    if ((*iter)->GetIndex() == trackindex)
+      return (*iter)->IsAudioTrack();
 }
+
 void					SequencerGui::SelectTrack(long trackindex)
 {
-	vector<Track *>::iterator		iter;
+  vector<Track *>::iterator		iter;
 
-	UnselectTracks();
-	for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
-    	if ((*iter)->Index == trackindex)
-			(*iter)->TrackOpt->SetSelected(true);
+  UnselectTracks();
+  for (iter = Seq->Tracks.begin(); iter != Seq->Tracks.end(); iter++)
+    if ((*iter)->GetIndex() == trackindex)
+      (*iter)->TrackOpt->SetSelected(true);
 }
 
 void					SequencerGui::SwapTracksPos(Track *t1, Track *t2)
@@ -861,7 +868,7 @@ void					SequencerGui::ChangeSelectedTrackIndex(long trackindexdelta)
 	    for (j = i++, x = 0; (x < z) && (i != Seq->Tracks.end()); x++)
     	{
 			SwapTracksPos(*i, *j);
-			(*i)->UpdateIndex((*i)->Index - 1);
+			(*i)->UpdateIndex((*i)->GetIndex() - 1);
 			u.push_back(*i);
 			t = *i;
 			*(i++) = *j;
@@ -871,13 +878,13 @@ void					SequencerGui::ChangeSelectedTrackIndex(long trackindexdelta)
     	for (j = i--, x = 0; (x > z) && (j != Seq->Tracks.begin()); x--)
 		{
 			SwapTracksPos(*i, *j);
-			(*i)->UpdateIndex((*i)->Index + 1);
+			(*i)->UpdateIndex((*i)->GetIndex() + 1);
 			u.push_back(*i);
 			t = *i;
 			*(i--) = *j;
 			*(j--) = t;
 		}
-	(*j)->UpdateIndex((*j)->Index + x);
+	(*j)->UpdateIndex((*j)->GetIndex() + x);
 	u.push_back(*j);
 	UpdateTrackList(&u);
 	u.clear();
@@ -933,35 +940,38 @@ void					SequencerGui::DeleteAllTracks()
 
 void					SequencerGui::DeleteSelectedTrack()
 {
-	vector<Track *>::iterator		iterTrack;
-	vector<Pattern *>::iterator		iterPattern;
-	long							j;
+  vector<Track *>::iterator		iterTrack;
+  vector<Pattern *>::iterator		iterPattern;
+  long							j;
   
 #ifdef __DEBUG__
   printf("SequencerGui::DeleteSelectedTrack()\n");
 #endif
 
-	for (iterTrack = Seq->Tracks.begin(); (iterTrack != Seq->Tracks.end()) && !((*iterTrack)->TrackOpt->GetSelected()); iterTrack++);
-	if (iterTrack == Seq->Tracks.end())
-    	return;
-	if ((*iterTrack)->TrackOpt->Record && Seq->Recording)
-    	return;
-	if ((*iterTrack)->TrackOpt->ChanGui)
-    	MixerPanel->RemoveChannel((*iterTrack)->TrackOpt->ChanGui);
-	for (iterPattern = SelectedItems.begin(); iterPattern != SelectedItems.end(); )
-    	if (((*iterTrack)->Index == (*iterPattern)->GetTrackIndex()) && (*iterPattern)->IsSelected())
-			SelectedItems.erase(iterPattern);
-		else
-			iterPattern++;
-	SeqMutex.Lock();
-	delete (*iterTrack);
-	Seq->Tracks.erase(iterTrack);
-	for (iterTrack = Seq->Tracks.begin(), j = 0; iterTrack != Seq->Tracks.end(); iterTrack++)
-    	(*iterTrack)->UpdateIndex(j++);
-	UpdateTracks();
-	SeqMutex.Unlock();
-	SetScrolling();
-	AdjustVScrolling();
+  for (iterTrack = Seq->Tracks.begin(); (iterTrack != Seq->Tracks.end()) && !((*iterTrack)->TrackOpt->GetSelected()); iterTrack++)
+    ;
+  if (iterTrack == Seq->Tracks.end())
+    return;
+  if ((*iterTrack)->TrackOpt->Record && Seq->Recording)
+    return;
+  if ((*iterTrack)->TrackOpt->ChanGui)
+    MixerPanel->RemoveChannel((*iterTrack)->TrackOpt->ChanGui);
+  for (iterPattern = SelectedItems.begin(); iterPattern != SelectedItems.end(); )
+    {
+      if (((*iterTrack)->GetIndex() == (*iterPattern)->GetTrackIndex()) && (*iterPattern)->IsSelected())
+	SelectedItems.erase(iterPattern);
+      else
+	iterPattern++;
+    }
+  SeqMutex.Lock();
+  delete (*iterTrack);
+  Seq->Tracks.erase(iterTrack);
+  for (iterTrack = Seq->Tracks.begin(), j = 0; iterTrack != Seq->Tracks.end(); iterTrack++)
+    (*iterTrack)->UpdateIndex(j++);
+  UpdateTracks();
+  SeqMutex.Unlock();
+  SetScrolling();
+  AdjustVScrolling();
 }
 
 void					SequencerGui::SelectItem(Pattern *p, bool shift)
@@ -1000,23 +1010,36 @@ void					SequencerGui::CopySelectedItems()
 
 void					SequencerGui::PasteItems()
 {
-  vector<Pattern *>::iterator		j;
-  vector<Track *>::iterator		i;
+  vector<Pattern *>::iterator		itSelected;
+  vector<Track *>::iterator		itTrackSelected;
   double       				last_pos = 0;
   Pattern				*pattern;
   vector<Pattern *>::iterator		pattern_iterator;
 
-  for (j = CopyItems.begin(); j != CopyItems.end(); j++)
+  for (itSelected = CopyItems.begin(); itSelected != CopyItems.end(); itSelected++)
     {
-      for (i = Seq->Tracks.begin(); *i != i[((Pattern *) *j)->GetTrackIndex()]; i++);
-       for (pattern_iterator = (*i)->TrackPattern->Patterns.begin(); pattern_iterator != (*i)->TrackPattern->Patterns.end(); pattern_iterator++)
-	    if (last_pos < (*pattern_iterator)->GetEndPosition())
-	      last_pos = (*pattern_iterator)->GetEndPosition();
-      pattern = ((Pattern *) *j)->CreateCopy(last_pos);
-      /* If the end of pattern is above the end of the Sequencer, we raise the size of the Sequencer */
-      /*if ((((Pattern *) *j)->GetXPos(((Pattern *) *j)->GetEndPosition()) + (((Pattern *) *j)->GetSize()).GetWidth()) > SeqView->GetTotalWidth())
+      for (itTrackSelected = Seq->Tracks.begin(); itTrackSelected != Seq->Tracks.end()
+	     && (*itTrackSelected)->GetIndex() != (*itSelected)->GetTrackIndex();
+	   itTrackSelected++)
+	;
+
+      if (itTrackSelected == Seq->Tracks.end())
 	{
-	  SeqView->SetTotalWidth((long) (pattern->GetXPos(((Pattern *) *j)->GetEndPosition()) + (((Pattern *) *j)->GetSize()).GetWidth()));
+	  cout << "WARNING : Pattern NOT belongs to track" << endl;
+	  return;
+	}
+
+      for (pattern_iterator = (*itTrackSelected)->TrackPattern->Patterns.begin();
+	   pattern_iterator != (*itTrackSelected)->TrackPattern->Patterns.end();
+	   pattern_iterator++)
+	if (last_pos < (*pattern_iterator)->GetEndPosition())
+	  last_pos = (*pattern_iterator)->GetEndPosition();
+
+      pattern = ((Pattern *) *itSelected)->CreateCopy(last_pos);
+      /* If the end of pattern is above the end of the Sequencer, we raise the size of the Sequencer */
+      /*if ((((Pattern *) *itSelected)->GetXPos(((Pattern *) *itSelected)->GetEndPosition()) + (((Pattern *) *itSelected)->GetSize()).GetWidth()) > SeqView->GetTotalWidth())
+	{
+	  SeqView->SetTotalWidth((long) (pattern->GetXPos(((Pattern *) *itSelected)->GetEndPosition()) + (((Pattern *) *itSelected)->GetSize()).GetWidth()));
 	  Seq->EndPos = pattern->GetEndPosition();
 	  AdjustHScrolling();
 	  }*/
