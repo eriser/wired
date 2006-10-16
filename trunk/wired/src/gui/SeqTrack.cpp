@@ -225,10 +225,11 @@ void					SeqTrack::RebuildConnectList()
 	  }
       }
 
-  // if menu is empty
+  // if no racks are connected
   if (!ConnectedRackTrack)
     {
-      if (!menu->FindItemByPosition(1))
+      // if menu is empty
+      if (menu->GetMenuItemCount() <= 1)
 	Image->SetImage(UnassignedBmp);
       else
 	Image->SetImage(CanAssignBmp);
@@ -258,7 +259,7 @@ void					SeqTrack::ConnectTo(Plugin *plug)
       ConnectedRackTrack = 0x0;
 
       // if menu is empty
-      if (!menu->FindItemByPosition(1))
+      if (menu->GetMenuItemCount() <= 1)
 	Image->SetImage(UnassignedBmp);
       else
 	Image->SetImage(CanAssignBmp);
