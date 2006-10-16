@@ -117,14 +117,6 @@ class						MixerGui : public wxScrolledWindow
    */
   VUMCtrl					*vuMasterRight;
   /**
-   * MasterLeftFader a FaderCtrl for left channel
-   */
-  FaderCtrl					*MasterLeftFader;
-  /**
-   * MasterRightFader a FaderCtrl for right channel
-   */
-  FaderCtrl					*MasterRightFader;
-  /**
    * ImgFaderBg a wxImage*
    */
   wxImage					*ImgFaderBg;
