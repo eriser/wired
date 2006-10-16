@@ -135,7 +135,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
   // Coefficient d'incr?mentation
   inc = (EndWavePos - StartWavePos) / size_x;
   channel_to_read = Wave->GetChannelToRead();
-   if (UseSettings && WiredSettings->dbWaveRender)
+  if (UseSettings && WiredSettings->dbWaveRender)
     {
       if (!Data) // Wave sur disque
 	{

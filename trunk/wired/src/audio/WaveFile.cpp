@@ -42,7 +42,7 @@ WaveFile::WaveFile(wxString filename, bool loadmem, t_opening_mode open_mode, in
   Open(filename, open_mode);
 
   InitBuffers();
-  }
+}
 
 WaveFile::WaveFile(short *buffer, unsigned int size, int channels, long rate)
 {
@@ -93,6 +93,7 @@ WaveFile::~WaveFile()
 
 void           WaveFile::InitVars()
 {
+  Channel_to_read = 0;
   Data = NULL;
   LoadedInMem = false;
   Error = false;
