@@ -181,7 +181,7 @@ void					Pattern::XMove(double Motion)
 {
   if ((Position = Position + Motion) >= 0)
     if (SeqPanel->Magnetism & PATTERN_MASK)
-      Position = round(Position * SeqPanel->PatternMagnetism) / SeqPanel->PatternMagnetism;
+      Position = floor(Position * SeqPanel->PatternMagnetism) / SeqPanel->PatternMagnetism;
   Move(SetPos(Position, TrackIndex) - wxPoint((int) floor(SeqPanel->CurrentXScrollPos), (int) floor(SeqPanel->CurrentYScrollPos)));
 }
 
