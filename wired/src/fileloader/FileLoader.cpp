@@ -40,18 +40,20 @@ using namespace std;
 #define F_WIDTH		640
 #define F_HEIGHT	520
 
-#define FOLDER_ID		2001
-#define FILE_ID			2002
-#define FILENAME_ID		2003
-#define TYPE_ID			2004
-#define PREVIEW_ID		2005
-#define OPEN_ID			2006
-#define CANCEL_ID		2007
-#define ADDTOFAVORITES_ID	2008
-#define FAVORITES_ID		2009
-#define MRU_ID			2010
-#define DELFAVORITES_ID		2011
-#define DELMRU_ID		2012
+enum {
+  FOLDER_ID	=	2001,
+  FILE_ID,
+  FILENAME_ID,
+  TYPE_ID,
+  PREVIEW_ID,
+  OPEN_ID,
+  CANCEL_ID,
+  ADDTOFAVORITES_ID,
+  FAVORITES_ID,
+  MRU_ID,
+  DELFAVORITES_ID,
+  DELMRU_ID
+};
 
 wxString  OldPath; // Used to store last visited path
 
