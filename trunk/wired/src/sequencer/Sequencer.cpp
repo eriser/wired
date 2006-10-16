@@ -434,7 +434,7 @@ void					Sequencer::StopRecord()
 void					Sequencer::AddTrack(Track *t)
 {
   SeqMutex.Lock();
-  t->Index = Tracks.size();
+  t->SetIndex(Tracks.size());
   Tracks.push_back(t);
   SeqMutex.Unlock();
 }
@@ -475,7 +475,7 @@ void					Sequencer::PrepareTrackForRecording(Track *T)
     {
       if (T->Wave)
 	delete T->Wave;
-      T->Wave = new AudioPattern(CurrentPos, CurrentPos + 0.1, T->Index); 
+      T->Wave = new AudioPattern(CurrentPos, CurrentPos + 0.1, T->GetIndex()); 
       if (!T->Wave->PrepareRecord(type))
 	{
 	  delete T->Wave;
@@ -489,7 +489,7 @@ void					Sequencer::PrepareTrackForRecording(Track *T)
     }
   else if (T->IsMidiTrack())
     {
-      T->Midi = new MidiPattern(CurrentPos, CurrentPos + 0.1, T->Index);
+      T->Midi = new MidiPattern(CurrentPos, CurrentPos + 0.1, T->GetIndex());
       T->TrackPattern->Patterns.push_back(T->Midi);
     }  
 }

@@ -44,7 +44,7 @@ void cImportWaveAction::AddWaveTrack()
 	  w = WaveCenter.AddWaveFile(_WavePath);
 	  w->SetChannelToRead(nb_channel);
 	  t->AddPattern(w);
-	  _trackIndex = t->Index;
+	  _trackIndex = t->GetIndex();
 	  NotifyActionManager();
 	}
     }
@@ -64,7 +64,7 @@ void cImportWaveAction::AddWaveToEditor()
 	  AudioPattern  *pattern = t->AddPattern(w);
 	  pattern->OnDirectEdit();
 	  
-	  _trackIndex = t->Index;
+	  _trackIndex = t->GetIndex();
 	  NotifyActionManager();
 	}
     }
