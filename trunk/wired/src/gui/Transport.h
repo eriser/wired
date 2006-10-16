@@ -40,7 +40,6 @@
 class				MainWindow;
 class				DownButton;
 class				HoldButton;
-class				FaderCtrl;
 class				StaticLabel;
 class				VUMCtrl;
 

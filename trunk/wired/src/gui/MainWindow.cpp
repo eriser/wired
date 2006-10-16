@@ -67,7 +67,7 @@ wxMutex			AudioMutex;
 wxCondition		*SeqStopped = NULL;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size)
-  : wxFrame((wxFrame *) NULL, -1, title, pos, size, 
+  : wxFrame((wxFrame *) NULL, wxID_ANY, title, pos, size, 
 	    wxDEFAULT_FRAME_STYLE | wxWS_EX_PROCESS_IDLE | wxMAXIMIZE)
 {	
   SeqTimer = NULL;

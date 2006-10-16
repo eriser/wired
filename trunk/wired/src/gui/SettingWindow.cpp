@@ -11,7 +11,7 @@
 
 #include "../samplerate/WiredSampleRate.h"
 
-#define	CATEGORY_ID	45001
+#define	CATEGORY_ID	25001
 
 
 #define	WIN_WIDTH	650

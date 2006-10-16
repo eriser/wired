@@ -327,7 +327,7 @@ enum
 
 enum
 {
-   MLTree_RightClick = 165238,
+   MLTree_RightClick = ML_ID_EFFECTS_MENU + 1,
    MLTree_Menu,
    MLTree_Selected
 };
