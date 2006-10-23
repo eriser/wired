@@ -97,9 +97,9 @@ bool			WiredSessionXml::Save()
 void			WiredSessionXml::InitSaveML()
 {
   wxChar		Buffer[20];
-  wxString		xmlfile = wxT("popo2.xml");
+  wxString		xmlfile = STR_XMLFILE_ML;
 
-  cout << "Saving session..." << endl;
+  cout << "Saving ML..." << endl;
   if (CreateDocument(xmlfile) == true)
     {
       if (OpenDocument(xmlfile) == true)
@@ -137,7 +137,7 @@ void			WiredSessionXml::MyEndElement(WiredSessionXml *CurrXmlSession)
 bool			WiredSessionXml::EndSaveML()
 {
   EndDocumentWriter(true, true);
-  cout << "Saving saved..." << endl;
+  cout << "ML saved..." << endl;
 }
 
 bool			WiredSessionXml::SaveSeq()

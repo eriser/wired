@@ -38,9 +38,6 @@
 #include "../gui/Transport.h"
 #include "../engine/AudioCenter.h"
 
-//#include "../gui/MLTree.h"
-
-
 //For Windows future ...
 
 //#ifdefined	WIN32
@@ -113,11 +110,7 @@
 #define STR_FILENAME wxT("FileName")
 
 
-#define STR_ML wxT("TARASSE")
-#define STR_ML2 wxT("TARASSEENKOR")
-#define STR_TEST wxT("TEST")
-
-
+#define STR_XMLFILE_ML wxT("ML.xml")
 
 typedef std::vector<Track *>::iterator 		TrackIter;
 typedef std::vector<Pattern *>::iterator 	PatternIter;
