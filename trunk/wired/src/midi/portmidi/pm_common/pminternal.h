@@ -1,12 +1,9 @@
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License Version 2, June 1991
-
 /* pminternal.h -- header for interface implementations */
 
 /* this file is included by files that implement library internals */
 /* Here is a guide to implementers:
      provide an initialization function similar to pm_winmm_init()
-     add your initizliation function to pm_init()
+     add your initialization function to pm_init()
      Note that your init function should never require not-standard
          libraries or fail in any way. If the interface is not available,
          simply do not call pm_add_device. This means that non-standard
@@ -24,12 +21,6 @@
 extern "C" {
 #endif
 
-#ifdef NDEBUG
-Please do not disable assert -- PortMidi depends upon actions inside assert()
-calls. If you really want to turn off assertion checking, you must change
-the code inside assert() macros to be side-effect free.
-#endif
-
 /* these are defined in system-specific file */
 void *pm_alloc(size_t s);
 void pm_free(void *ptr);
@@ -41,8 +32,18 @@ extern char pm_hosterror_text[PM_HOST_ERROR_MSG_LEN];
 struct pm_internal_struct;
 
 /* these do not use PmInternal because it is not defined yet... */
-typedef PmError (*pm_write_fn)(struct pm_internal_struct *midi, 
-                               PmEvent *buffer, long length);
+typedef PmError (*pm_write_short_fn)(struct pm_internal_struct *midi, 
+                                     PmEvent *buffer);
+typedef PmError (*pm_begin_sysex_fn)(struct pm_internal_struct *midi,
+                                     PmTimestamp timestamp);
+typedef PmError (*pm_end_sysex_fn)(struct pm_internal_struct *midi,
+                                   PmTimestamp timestamp);
+typedef PmError (*pm_write_byte_fn)(struct pm_internal_struct *midi,
+                                    unsigned char byte, PmTimestamp timestamp);
+typedef PmError (*pm_write_realtime_fn)(struct pm_internal_struct *midi,
+                                        PmEvent *buffer);
+typedef PmError (*pm_write_flush_fn)(struct pm_internal_struct *midi);
+typedef PmTimestamp (*pm_synchronize_fn)(struct pm_internal_struct *midi);
 /* pm_open_fn should clean up all memory and close the device if any part
    of the open fails */
 typedef PmError (*pm_open_fn)(struct pm_internal_struct *midi,
@@ -57,7 +58,13 @@ typedef void (*pm_host_error_fn)(struct pm_internal_struct *midi, char * msg,
 typedef unsigned int (*pm_has_host_error_fn)(struct pm_internal_struct *midi);
 
 typedef struct {
-    pm_write_fn write; /* output MIDI */
+    pm_write_short_fn write_short; /* output short MIDI msg */
+    pm_begin_sysex_fn begin_sysex; /* prepare to send a sysex message */
+    pm_end_sysex_fn end_sysex; /* marks end of sysex message */
+    pm_write_byte_fn write_byte; /* accumulate one more sysex byte */
+    pm_write_realtime_fn write_realtime; /* send real-time message within sysex */
+    pm_write_flush_fn write_flush; /* send any accumulated but unsent data */
+    pm_synchronize_fn synchronize; /* synchronize portmidi time to stream time */
     pm_open_fn open;   /* open MIDI device */
     pm_abort_fn abort; /* abort */
     pm_close_fn close; /* close device */
@@ -81,9 +88,9 @@ typedef struct {
     pm_fns_type dictionary;
 } descriptor_node, *descriptor_type;
 
-#define pm_descriptor_max 32
-extern descriptor_node descriptors[pm_descriptor_max];
-extern int descriptor_index;
+extern int pm_descriptor_max;
+extern descriptor_type descriptors;
+extern int pm_descriptor_index;
 
 typedef unsigned long (*time_get_proc_type)(void *time_info);
 
@@ -109,13 +116,15 @@ typedef struct pm_internal_struct {
     int overflow; /* set to non-zero if input is dropped */
     int flush; /* flag to drop incoming sysex data because of overflow */
     int sysex_in_progress; /* use for overflow management */
+    PmMessage sysex_message; /* buffer for 4 bytes of sysex data */
+    int sysex_message_count; /* how many bytes in sysex_message so far */
 
     long filters; /* flags that filter incoming message classes */
     
-    struct pm_internal_struct *thru; /* only used on midi input */
-    PmError callback_thru_error; /* stores error code from the Pm_Write
-                                    that implements midi thru */
     PmTimestamp last_msg_time; /* timestamp of last message */
+    PmTimestamp sync_time; /* time of last synchronization */
+    PmTimestamp now; /* set by PmWrite to current time */
+    int first_message; /* initially true, used to run first synchronization */
     pm_fns_type dictionary; /* implementation functions */
     void *descriptor; /* system-dependent state */
 
@@ -135,17 +144,28 @@ void pm_init(void);
 void pm_term(void); 
 
 /* defined by portMidi, used by pmwinmm */
-PmError none_write(PmInternal *midi, PmEvent *buffer, long length);
+PmError none_write_short(PmInternal *midi, PmEvent *buffer);
+PmError none_sysex(PmInternal *midi, PmTimestamp timestamp);
+PmError none_write_byte(PmInternal *midi, unsigned char byte, 
+                        PmTimestamp timestamp);
+PmTimestamp none_synchronize(PmInternal *midi);
+
 PmError pm_fail_fn(PmInternal *midi);
 PmError pm_success_fn(PmInternal *midi);
 PmError pm_add_device(char *interf, char *name, int input, void *descriptor,
                       pm_fns_type dictionary);
-extern int descriptor_index;
-void pm_enqueue(PmInternal *midi, PmEvent *event);
+void pm_read_byte(PmInternal *midi, unsigned char byte, PmTimestamp timestamp);
+void pm_begin_sysex(PmInternal *midi);
+void pm_end_sysex(PmInternal *midi);
+void pm_read_short(PmInternal *midi, PmEvent *event);
 
+#define none_write_flush pm_fail_fn
 #define none_poll pm_fail_fn
-
 #define success_poll pm_success_fn
+
+#define MIDI_REALTIME_MASK 0xf8
+#define is_real_time(msg) \
+    ((Pm_MessageStatus(msg) & MIDI_REALTIME_MASK) == MIDI_REALTIME_MASK)
 
 #ifdef __cplusplus
 }

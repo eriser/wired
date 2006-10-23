@@ -92,6 +92,13 @@ PmError Pm_Enqueue(PmQueue *q, void *msg)
     return pmNoError;
 }
 
+int Pm_QueueEmpty(PmQueue *q)
+{ 
+    PmQueueRep *queue = (PmQueueRep *) q;
+    if (!queue) return TRUE;
+    return (queue->head == queue->tail);
+}
+
 int Pm_QueueFull(PmQueue *q)
 {
     PmQueueRep *queue = (PmQueueRep *) q;
@@ -107,5 +114,19 @@ int Pm_QueueFull(PmQueue *q)
         tail = 0;
     }
     return (tail == queue->head);
+}
+
+void *Pm_QueuePeek(PmQueue *q)
+{
+    long head;
+    PmQueueRep *queue = (PmQueueRep *) q;
+
+	/* arg checking */
+    if(!queue)
+		return NULL;
+
+    head = queue->head; /* make sure this is written after access */
+    if (head == queue->tail) return NULL;
+    return queue->buffer + head;
 }
 

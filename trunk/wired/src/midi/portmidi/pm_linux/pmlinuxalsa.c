@@ -125,9 +125,6 @@ static int midi_message_length(PmMessage message)
 }
 
 
-/*
- *  Calls the ALSA rawmidi_open function with card 0.
- */
 static PmError alsa_out_open(PmInternal *midi, void *driverInfo) 
 {
     void *client_port = descriptors[midi->device_id].descriptor;
@@ -188,7 +185,7 @@ static PmError alsa_out_open(PmInternal *midi, void *driverInfo)
 }
     
 
-static void output_byte(PmInternal *midi, unsigned char byte, 
+static PmError alsa_write_byte(PmInternal *midi, unsigned char byte, 
                         PmTimestamp timestamp)
 {
     alsa_descriptor_type desc = (alsa_descriptor_type) midi->descriptor;
@@ -232,8 +229,10 @@ static void output_byte(PmInternal *midi, unsigned char byte,
         err = snd_seq_event_output(seq, &ev);
         if (err < 0) {
             desc->error = err;
+            return pmHostError;
         }
     }
+    return pmNoError;
 }
 
 
@@ -359,6 +358,8 @@ static PmError alsa_abort(PmInternal *midi)
 }
 
 
+#ifdef GARBAGE
+This is old code here temporarily for reference
 static PmError alsa_write(PmInternal *midi, PmEvent *buffer, long length)
 {
     alsa_descriptor_type desc = (alsa_descriptor_type) midi->descriptor;
@@ -375,7 +376,7 @@ static PmError alsa_write(PmInternal *midi, PmEvent *buffer, long length)
             msg = buffer->message;
             for (i = 0; i < 4; i++) {
                 byte = msg;  /* extract next byte to send */
-                output_byte(midi, byte, buffer->timestamp);
+                alsa_write_byte(midi, byte, buffer->timestamp);
                 if (byte == MIDI_EOX) {
                     desc->in_sysex = FALSE;
                     break;
@@ -389,7 +390,7 @@ static PmError alsa_write(PmInternal *midi, PmEvent *buffer, long length)
             for (i = 0; i < bytes; i++) {
                 byte = msg; /* extract next byte to send */
                 VERBOSE printf("sending 0x%x\n", byte);
-                output_byte(midi, byte, buffer->timestamp);
+                alsa_write_byte(midi, byte, buffer->timestamp);
                 if (desc->error < 0) break;
                 msg >>= 8; /* shift next byte into position */
             }
@@ -403,6 +404,54 @@ static PmError alsa_write(PmInternal *midi, PmEvent *buffer, long length)
 
     desc->error = pmNoError;
     return pmNoError;
+}
+#endif
+
+
+static PmError alsa_write_flush(PmInternal *midi)
+{
+    alsa_descriptor_type desc = (alsa_descriptor_type) midi->descriptor;
+    VERBOSE printf("snd_seq_drain_output: 0x%x\n", seq);
+    desc->error = snd_seq_drain_output(seq);
+    if (desc->error < 0) return pmHostError;
+
+    desc->error = pmNoError;
+    return pmNoError;
+}
+
+
+static PmError alsa_write_short(PmInternal *midi, PmEvent *event)
+{
+    int bytes = midi_message_length(event->message);
+    long msg = event->message;
+    int i;
+    alsa_descriptor_type desc = (alsa_descriptor_type) midi->descriptor;
+    for (i = 0; i < bytes; i++) {
+        unsigned char byte = msg;
+        VERBOSE printf("sending 0x%x\n", byte);
+        alsa_write_byte(midi, byte, event->timestamp);
+        if (desc->error < 0) break;
+        msg >>= 8; /* shift next byte into position */
+    }
+    if (desc->error < 0) return pmHostError;
+    desc->error = pmNoError;
+    return pmNoError;
+}
+
+
+/* alsa_sysex -- implements begin_sysex and end_sysex */
+PmError alsa_sysex(PmInternal *midi, PmTimestamp timestamp) {
+    return pmNoError;
+}
+
+
+static PmTimestamp alsa_synchronize(PmInternal *midi)
+{
+    return 0; /* linux implementation does not use this synchronize function */
+    /* Apparently, Alsa data is relative to the time you send it, and there
+       is no reference. If this is true, this is a serious shortcoming of
+       Alsa. If not true, then PortMidi has a serious shortcoming -- it 
+       should be scheduling relative to Alsa's time reference. */
 }
 
 
@@ -434,130 +483,114 @@ static void handle_event(snd_seq_event_t *ev)
         pm_ev.message = Pm_Message(0x90 | ev->data.note.channel,
                                    ev->data.note.note & 0x7f,
                                    ev->data.note.velocity & 0x7f);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_NOTEOFF:
         pm_ev.message = Pm_Message(0x80 | ev->data.note.channel,
                                    ev->data.note.note & 0x7f,
                                    ev->data.note.velocity & 0x7f);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_KEYPRESS:
         pm_ev.message = Pm_Message(0xa0 | ev->data.note.channel,
                                    ev->data.note.note & 0x7f,
                                    ev->data.note.velocity & 0x7f);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_CONTROLLER:
         pm_ev.message = Pm_Message(0xb0 | ev->data.note.channel,
                                    ev->data.control.param & 0x7f,
                                    ev->data.control.value & 0x7f);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_PGMCHANGE:
         pm_ev.message = Pm_Message(0xc0 | ev->data.note.channel,
                                    ev->data.control.value & 0x7f, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_CHANPRESS:
         pm_ev.message = Pm_Message(0xd0 | ev->data.note.channel,
                                    ev->data.control.value & 0x7f, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_PITCHBEND:
         pm_ev.message = Pm_Message(0xe0 | ev->data.note.channel,
                             (ev->data.control.value + 0x2000) & 0x7f,
                             ((ev->data.control.value + 0x2000) >> 7) & 0x7f);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_CONTROL14:
         if (ev->data.control.param < 0x20) {
             pm_ev.message = Pm_Message(0xb0 | ev->data.note.channel,
                                        ev->data.control.param,
                                        (ev->data.control.value >> 7) & 0x7f);
-            pm_enqueue(midi, &pm_ev);
+            pm_read_short(midi, &pm_ev);
             pm_ev.message = Pm_Message(0xb0 | ev->data.note.channel,
                                        ev->data.control.param + 0x20,
                                        ev->data.control.value & 0x7f);
-            pm_enqueue(midi, &pm_ev);
+            pm_read_short(midi, &pm_ev);
         } else {
             pm_ev.message = Pm_Message(0xb0 | ev->data.note.channel,
                                        ev->data.control.param & 0x7f,
                                        ev->data.control.value & 0x7f);
 
-            pm_enqueue(midi, &pm_ev);
+            pm_read_short(midi, &pm_ev);
         }
         break;
     case SND_SEQ_EVENT_SONGPOS:
         pm_ev.message = Pm_Message(0xf2,
                                    ev->data.control.value & 0x7f,
                                    (ev->data.control.value >> 7) & 0x7f);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_SONGSEL:
         pm_ev.message = Pm_Message(0xf3,
                                    ev->data.control.value & 0x7f, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_QFRAME:
         pm_ev.message = Pm_Message(0xf1,
                                    ev->data.control.value & 0x7f, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_START:
         pm_ev.message = Pm_Message(0xfa, 0, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_CONTINUE:
         pm_ev.message = Pm_Message(0xfb, 0, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_STOP:
         pm_ev.message = Pm_Message(0xfc, 0, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_CLOCK:
         pm_ev.message = Pm_Message(0xf8, 0, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_TUNE_REQUEST:
         pm_ev.message = Pm_Message(0xf6, 0, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_RESET:
         pm_ev.message = Pm_Message(0xff, 0, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_SENSING:
         pm_ev.message = Pm_Message(0xfe, 0, 0);
-        pm_enqueue(midi, &pm_ev);
+        pm_read_short(midi, &pm_ev);
         break;
     case SND_SEQ_EVENT_SYSEX: {
         const BYTE *ptr = (const BYTE *) ev->data.ext.ptr;
         int i;
         long msg = 0;
         int shift = 0;
-		midi->sysex_in_progress = TRUE;
-        for (i = 0; i < ev->data.ext.len; i++) {
-            msg = msg | (*ptr++ << shift);
-            shift += 8;
-            if ((i & 3) == 3) {
-                pm_ev.message = msg;
-                pm_enqueue(midi, &pm_ev);
-                msg = 0;
-                shift = 0;
+        if (!(midi->filters & PM_FILT_SYSEX)) {
+            for (i = 0; i < ev->data.ext.len; i++) {
+                pm_read_byte(midi, *ptr++, timestamp);
             }
         }
-        /* if i was not a multiple of 4, output rest of the message */
-        /* IS THIS CODE CORRECT? IF WE CAN GET SYSEX MESSAGES THAT ARE
-           NOT COMPLETE, THEN WE MIGHT BE INSERTING ZEROS BETWEEN 
-           PACKETS -RBD */
-        if (i & 3) {
-            pm_ev.message = msg;
-            pm_enqueue(midi, &pm_ev);
-        }
-		midi->sysex_in_progress = FALSE;
-		midi->flush = FALSE;
         break;
     }
     }
@@ -578,11 +611,11 @@ static PmError alsa_poll(PmInternal *midi)
 static unsigned int alsa_has_host_error(PmInternal *midi)
 {
     alsa_descriptor_type desc = (alsa_descriptor_type) midi->descriptor;
-    return pm_hosterror || desc->error;
+    return desc->error;
 }
 
 
-static void alsa_host_error(PmInternal *midi, char *msg, unsigned int len)
+static void alsa_get_host_error(PmInternal *midi, char *msg, unsigned int len)
 {
     alsa_descriptor_type desc = (alsa_descriptor_type) midi->descriptor;
     int err = (pm_hosterror || desc->error);
@@ -591,23 +624,35 @@ static void alsa_host_error(PmInternal *midi, char *msg, unsigned int len)
 
 
 pm_fns_node pm_linuxalsa_in_dictionary = {
-    none_write, 
+    none_write_short,
+    none_sysex,
+    none_sysex,
+    none_write_byte,
+    none_write_short,
+    none_write_flush,
+    alsa_synchronize,
     alsa_in_open,
     alsa_abort,
     alsa_in_close,
     alsa_poll,
     alsa_has_host_error,
-    alsa_host_error
+    alsa_get_host_error
 };
 
 pm_fns_node pm_linuxalsa_out_dictionary = {
-    alsa_write, 
+    alsa_write_short,
+    alsa_sysex,
+    alsa_sysex,
+    alsa_write_byte,
+    alsa_write_short, /* short realtime message */
+    alsa_write_flush,
+    alsa_synchronize,
     alsa_out_open, 
     alsa_abort, 
     alsa_out_close,
     none_poll,
     alsa_has_host_error,
-    alsa_host_error
+    alsa_get_host_error
 };
 
 
@@ -650,7 +695,7 @@ PmError pm_linuxalsa_init( void )
                 continue; /* ignore if you cannot read or write port */
             if (caps & SND_SEQ_PORT_CAP_SUBS_WRITE) {
                 if (pm_default_output_device_id == -1) 
-                    pm_default_output_device_id = descriptor_index;
+                    pm_default_output_device_id = pm_descriptor_index;
                 pm_add_device("ALSA",
                               pm_strdup(snd_seq_port_info_get_name(pinfo)),
                               FALSE,
@@ -660,7 +705,7 @@ PmError pm_linuxalsa_init( void )
             }
             if (caps & SND_SEQ_PORT_CAP_SUBS_READ) {
                 if (pm_default_input_device_id == -1) 
-                    pm_default_input_device_id = descriptor_index;
+                    pm_default_input_device_id = pm_descriptor_index;
                 pm_add_device("ALSA",
                               pm_strdup(snd_seq_port_info_get_name(pinfo)),
                               TRUE,

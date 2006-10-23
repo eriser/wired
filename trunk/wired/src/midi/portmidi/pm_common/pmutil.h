@@ -1,9 +1,10 @@
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License Version 2, June 1991
-
 /* pmutil.h -- some helpful utilities for building midi 
                applications that use PortMidi 
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 typedef void PmQueue;
 
@@ -46,4 +47,17 @@ PmError Pm_Enqueue(PmQueue *queue, void *msg);
     enqueue or dequeue operation could be in progress.
  */
 int Pm_QueueFull(PmQueue *queue);
-#define Pm_QueueEmpty(m) (m->head == m->tail)
+int Pm_QueueEmpty(PmQueue *queue);
+
+
+/*
+    Pm_QueuePeek() returns a pointer to the item at the head of the queue,
+    or NULL if the queue is empty. The item is not removed from the queue.
+    If queue is in an overflow state, a valid pointer is returned and the
+    queue remains in the overflow state.
+ */
+void *Pm_QueuePeek(PmQueue *queue);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
