@@ -17,7 +17,7 @@ int				MidiInDevice::OpenDevice(int ID)
   
   MidiDevice::CloseDevice();
   Pt_Start(1, 0, 0); 
-  if ((err = Pm_OpenInput(&stream, ID, NULL, MIDI_IN_BUFSIZE, NULL, NULL, NULL)) 
+  if ((err = Pm_OpenInput(&stream, ID, NULL, MIDI_IN_BUFSIZE, NULL, NULL)) 
       != pmNoError)        
     {
       cout << "[MIDIINDEVICE] Could not open device: PortMidi error : " 
