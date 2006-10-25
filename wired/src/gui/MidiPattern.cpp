@@ -225,50 +225,52 @@ void					MidiPattern::OnMoveToCursorClick(wxCommandEvent &e)
   SeqPanel->MoveToCursor();
 }
 
-void					MidiPattern::AddEvent(MidiFileEvent *event)
-{
-  MidiEvent				*e;
-  int					msg[3];
-  
-  msg[0] = event->GetID();
-  msg[0] += event->GetChannel();
-  msg[1] = event->GetParam(0);
-  msg[2] = event->GetParam(1);
-  e = new MidiEvent(0, ((double)event->GetPos()) / (Seq->SigNumerator * GetPPQN()), msg);
-  e->EndPosition = -1;
-  if (IS_ME_NOTEON(e->Msg[0]) && (e->Msg[2] != 0))
-    temp.push_back(e);
-  else
-    if (IS_ME_NOTEOFF(e->Msg[0]) ||
-        (IS_ME_NOTEON(e->Msg[0]) && (e->Msg[2] == 0)))
-      {
-	for (list<MidiEvent *>::iterator j = temp.begin(); j != temp.end(); j++)
-	  {
-	    if (((*j)->Msg[1] == e->Msg[1]) &&
-		((*j)->EndPosition == -1) &&
-		(ME_CHANNEL(e->Msg[0]) == ME_CHANNEL((*j)->Msg[0])))
-	      {
-		(*j)->EndPosition = e->Position;
-		Events.push_back(*j);
-		Events.push_back(e);
-		temp.erase(j);
-		break;
-	      }
-	  }
-      }
-    else
-      Events.push_back(e);
-}
+ void					MidiPattern::AddEvent(MidiFileEvent *event)
+ {
+   MidiEvent				*e;
+   int					msg[3];
 
-void					MidiPattern::AddEvent(MidiEvent *event)
+   msg[0] = event->GetID();
+   msg[0] += event->GetChannel();
+   msg[1] = event->GetParam(0);
+   msg[2] = event->GetParam(1);
+   e = new MidiEvent(0, ((double)event->GetPos()) / (Seq->SigNumerator * GetPPQN()), msg);
+   e->EndPosition = -1;
+   if (IS_ME_NOTEON(e->Msg[0]) && (e->Msg[2] != 0))
+     temp.push_back(e);
+   else
+     if (IS_ME_NOTEOFF(e->Msg[0]) ||
+         (IS_ME_NOTEON(e->Msg[0]) && (e->Msg[2] == 0)))
+       {
+ 	for (list<MidiEvent *>::iterator j = temp.begin(); j != temp.end(); j++)
+ 	  {
+ 	    if (((*j)->Msg[1] == e->Msg[1]) &&
+ 		((*j)->EndPosition == -1) &&
+ 		(ME_CHANNEL(e->Msg[0]) == ME_CHANNEL((*j)->Msg[0])))
+ 	      {
+ 		(*j)->EndPosition = e->Position;
+ 		Events.push_back(*j);
+ 		Events.push_back(e);
+ 		temp.erase(j);
+ 		break;
+ 	      }
+ 	  }
+       }
+     else
+       Events.push_back(e);
+ }
+
+void                    MidiPattern::AddEvent(MidiEvent *event)
 {
-  list<MidiEvent *>::iterator		j;
-  MidiEvent				*e;
-  
-  if ((event->EndPosition == 0.0) && 
+  list<MidiEvent *>::iterator        j;
+  MidiEvent                *e;
+ 
+  cout << "msg : " << hex << event->Msg[0];
+  if ((event->EndPosition == 0.0) &&
       ((event->Msg[0] == M_NOTEON1) || (event->Msg[0] == M_NOTEON2)))
     {
       // Gestion du NOTE OFF
+      cout << " " << hex << event->Msg[1] << " " << hex << event->Msg[2] << endl;;
       if (event->Msg[2] == 0)
         for (j = RecordingEvents.begin(); j != RecordingEvents.end(); j++)
           {
@@ -277,14 +279,13 @@ void					MidiPattern::AddEvent(MidiEvent *event)
                 (*j)->EndPosition = event->Position;
                 delete event;
                 Events.push_back(*j);
-		// adds the note off	       
+        // adds the note off           
 		e = new MidiEvent(0, (*j)->EndPosition, (*j)->Msg);
-		e->EndPosition = e->Position;
-		e->Msg[2] = 0;
-		Events.push_back(e);
-
-                cout << "[MIDIPATTERN] Note added with position: " << (*j)->Position 
-		     << "; end position: " << (*j)->EndPosition << endl;
+        e->EndPosition = e->Position;
+        e->Msg[2] = 0;
+        Events.push_back(e);
+                cout << "[MIDIPATTERN] Note added with position: " << (*j)->Position
+             << "; end position: " << (*j)->EndPosition << endl;
                 RecordingEvents.erase(j);
                 break;
               }
@@ -294,6 +295,7 @@ void					MidiPattern::AddEvent(MidiEvent *event)
     }
   else
     Events.push_back(event);
+  cout << endl;
 }
 
 /* TODO: gerer le draw d'un seul event */

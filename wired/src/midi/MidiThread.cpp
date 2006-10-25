@@ -100,6 +100,10 @@ MidiDeviceList				*MidiThread::ListDevices()
   MidiDeviceInfo			*d;
   int					numdev = Pm_CountDevices();
   
+  DeviceList.clear();
+  
+  std::cerr << "[MIDITHREAD] ListDevices : numdev = " << numdev << std::endl;
+
   for (unsigned int i = 0; i < numdev; i++)
     {
       pdi = Pm_GetDeviceInfo(i);
@@ -164,6 +168,42 @@ void					MidiThread::AnalyzeMidi(int id)
     Seq->AddMidiEvent(id, midi_msg);
 
   MidiMutex.Unlock();
+}
+
+void			MidiThread::RefreshDevices()
+{
+  ListDevices();
+}
+
+int			MidiThread::GetDeviceIdByName(wxString name)
+{
+  MidiDeviceList::iterator	midiDeviceIt;
+
+  for (midiDeviceIt = DeviceList.begin();
+       midiDeviceIt != DeviceList.end();
+       midiDeviceIt++)
+    if ((*midiDeviceIt)->Name == name)
+      return (*midiDeviceIt)->Id;
+    
+  return -1;
+}
+
+vector<int>		MidiThread::GetDevicesIdByName(vector<wxString> names)
+{
+  vector<int>			ids;
+  int				id;
+  vector<wxString>::iterator	namesIt;
+
+  for (namesIt = names.begin(); 
+       namesIt != names.end();
+       namesIt++)
+    {
+      id = GetDeviceIdByName(*namesIt);
+      if (id != -1)
+	ids.push_back(id);
+    }
+
+  return ids;
 }
 
 void                    MidiThread::OnExit()

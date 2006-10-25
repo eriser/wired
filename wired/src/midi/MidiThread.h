@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <wx/thread.h>
+#include <wx/string.h>
 
 using namespace				std;
 
@@ -27,7 +28,12 @@ class					MidiThread : public wxThread
   void					OpenDefaultDevices();
   void					CloseDevice(int id);
   void					RemoveDevice(int id);
+  //a simple call to ListDevices... is there a better way ? implementing accessors maybe...
+  void					RefreshDevices();
   
+  vector<int>				GetDevicesIdByName(vector<wxString>); 
+  int					GetDeviceIdByName(wxString); 
+
   MidiDeviceList			DeviceList;
   vector<MidiInDevice *>		MidiInDev;
 
