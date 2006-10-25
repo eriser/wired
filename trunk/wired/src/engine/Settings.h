@@ -138,6 +138,8 @@ class Settings
    */
   vector<long>	MidiIn;
 
+  vector<wxString> MidiInStr;
+
   /**
    * Setting a path to put a config file of plugin.
    */

@@ -166,7 +166,8 @@ void					SeqTrack::FillChoices()
 {
   wxString				s;
   vector<long>::iterator		i;
-
+  vector<wxString>::iterator		strIt;
+  
   DeviceBox->Clear();
   DeviceBox->Append(wxString(_("None")));
   DeviceBox->SetSelection(0);
@@ -180,9 +181,11 @@ void					SeqTrack::FillChoices()
     }
   else
     {
-      for (i = WiredSettings->MidiIn.begin(); i != WiredSettings->MidiIn.end(); i++)
+      for (strIt = WiredSettings->MidiInStr.begin(); strIt != WiredSettings->MidiInStr.end(); strIt++)
 	{
-	  s.Printf(_("Midi In %d"), (int)((*i) + 1));
+	  s.clear();
+	  s << (*strIt);
+	  //	  s.Printf(_("Midi In %d"), (int)((*i) + 1));
 	  DeviceBox->Append(s);
 	}
     }

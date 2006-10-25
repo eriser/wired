@@ -638,6 +638,15 @@ void SettingWindow::Save()
     {
       cout << "[SETTINGS] Save Midi settings" << endl;
       SaveChannels(MidiInList, WiredSettings->MidiIn);
+
+      // MidiInStr things
+      int	i;
+      
+      WiredSettings->MidiInStr.clear();
+      for (i = 0; i < MidiInList->GetCount(); i++)
+	if (MidiInList->IsChecked(i))
+	  WiredSettings->MidiInStr.push_back(MidiInList->GetString(i));
+
     }    
   if (AudioLoaded || MidiLoaded)
     WiredSettings->Save();

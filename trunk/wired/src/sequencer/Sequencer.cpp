@@ -245,8 +245,8 @@ void					*Sequencer::Entry()
 	  SetCurrentPos();
 	}
 
-      //SeqMutex.Unlock();
-      //SeqMutex.Lock();
+//       SeqMutex.Unlock();
+//       SeqMutex.Lock();
       /* - Calls each rack track plug-in's Process function */
       for (RacksTrack = RackPanel->RackTracks.begin(); RacksTrack != RackPanel->RackTracks.end(); 
 	   RacksTrack++)
