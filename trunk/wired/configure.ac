@@ -26,7 +26,7 @@ SAMPLERATE_VERSION=`pkg-config samplerate --modversion`
 SNDFILE_VERSION=`pkg-config sndfile --modversion`
 
 # for autoheader .. investigate this further :)
-AC_CONFIG_HEADER(src/include/config.h)
+AC_CONFIG_HEADERS(src/include/config.h)
 
 
 # Checks for programs.
@@ -182,13 +182,34 @@ AC_FUNC_MALLOC
 AC_FUNC_SELECT_ARGTYPES
 AC_CHECK_FUNCS([floor ftime getcwd memmove memset pow select sqrt strdup memset open])
 
+
 AC_PREFIX_DEFAULT(/usr/local)
 if [[ $prefix = "NONE" ]] ; then
         AC_DEFINE(INSTALL_PREFIX, "/usr/local",
         [define as prefix where Wired is installed])
 else
-        AC_DEFINE_UNQUOTED(INSTALL_PREFIX, "$prefix")
+        AC_DEFINE_UNQUOTED(INSTALL_PREFIX, "$prefix", 
+	[define as prefix where Wired is installed])
 fi
+
+
+# For include
+INCLUDE_DIR=`eval echo ${includedir}/wired`
+AC_DEFINE_UNQUOTED(INCLUDEDIR, "$INCLUDE_DIR", [define as includes dir])
+
+# For libdir
+LIB_DIR=`eval echo ${libdir}/wired`
+AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR", [define as libraries dir])
+
+# For share
+DATA_DIR=`eval echo ${datadir}/wired`
+AC_DEFINE_UNQUOTED(DATA_DIR, "$DATA_DIR", [define as datas dir])
+
+# For sysconfdir
+SYSCONF_DIR=`eval echo ${sysconfdir}/wired`
+AC_DEFINE_UNQUOTED(SYSCONF_DIR, "$SYSCONF_DIR", [define as sysconf dir])
+
+
 
 ##################
 # Checking Options
@@ -221,9 +242,9 @@ AM_GNU_GETTEXT([use-libtool])
 AM_GNU_GETTEXT_VERSION([0.14.4])
 
 if test "x${prefix}" = "xNONE"; then
- AC_DEFINE(PACKAGE_LOCALE_DIR, "/usr/local/share/wired/locale")
+ AC_DEFINE(PACKAGE_LOCALE_DIR, "/usr/local/share/wired/locale", [define the locale dir path])
 else
- AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale")
+ AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale", [define the locale dir path])
 fi
 
 AC_CONFIG_FILES([src/plugins/beatbox/Makefile

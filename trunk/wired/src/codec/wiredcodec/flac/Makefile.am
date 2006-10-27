@@ -2,7 +2,7 @@ LDFLAGS = -lFLAC++ $(shell wx-config --libs)
 
 CPPFLAGS =  $(shell wx-config --cflags)
 
-lib_LTLIBRARIES = libWiredFlac.la
+pkglib_LTLIBRARIES = libWiredFlac.la
 
 libWiredFlac_la_SOURCES =		\
 			WiredLibFlac.cpp	
