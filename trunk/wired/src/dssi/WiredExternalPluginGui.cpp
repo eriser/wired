@@ -115,6 +115,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       for (int i = 200; i < width - 200; i += 200)
 	dc.DrawBitmap(*tmp, wxPoint(i, 0), false);
 
+      dc.SelectObject(wxNullBitmap);
       delete tmp;
       delete tmp1;
       delete tmp2;
@@ -252,7 +253,9 @@ void		WiredDSSIGui::OnPaint(wxPaintEvent &event)
   wxMemoryDC	memDC;
   wxPaintDC	dc(this);
   
-  wxFont lblfont(5, wxDECORATIVE, wxFONTFLAG_BOLD, wxBOLD, false, wxT(""));
+  // pointSize, family, style, weight, underline
+  wxFont lblfont(5, wxFONTFAMILY_DECORATIVE, wxFONTFLAG_BOLD,
+		 wxFONTWEIGHT_BOLD, false);
   dc.SetFont(lblfont);  
   memDC.SelectObject(*TpBmp);
   wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
@@ -269,6 +272,10 @@ void		WiredDSSIGui::OnPaint(wxPaintEvent &event)
   else
 	  interspace = 1;
   for (i = 0, iter = _GuiControls.begin(); iter != _GuiControls.end(); iter++, i++)
-    dc.DrawRotatedText(wxString(iter->second.Descriptor.Name, *wxConvCurrent), 73 + i * interspace + interspace / 2 - 13 , 80, 90);
+    dc.DrawRotatedText(wxString(iter->second.Descriptor.Name, *wxConvCurrent),
+		       73 + i * interspace + interspace / 2 - 13 , 80, 90);
+
+  // deselect object
+  memDC.SelectObject(wxNullBitmap);
   Plugin::OnPaintEvent(event);
 }

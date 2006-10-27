@@ -75,7 +75,7 @@ bool				MainApp::OnInit()
   Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxSize(800,600));
   Frame->Show(true);
   SetTopWindow(Frame);
-  splash->Hide();
+  //splash->Hide();
 
   // now error dialog are based on mainframe 
   MainWin = Frame;
