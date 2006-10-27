@@ -2,7 +2,7 @@ LDFLAGS =  $(shell wx-config --libs)
 
 CPPFLAGS =  $(shell wx-config --cflags)
 
-lib_LTLIBRARIES = libWiredVorbis.la
+pkglib_LTLIBRARIES = libWiredVorbis.la
 
 libWiredVorbis_la_SOURCES =		\
 			WiredLibVorbis.cpp	

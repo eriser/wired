@@ -7,7 +7,7 @@ CPPFLAGS += -I../../portaudio/include
 endif
 
 
-lib_LTLIBRARIES = libWiredSampler.la
+pkglib_LTLIBRARIES = libWiredSampler.la
 
 libWiredSampler_la_SOURCES =				\
 			AkaiSampler.cpp			\

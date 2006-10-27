@@ -1,6 +1,6 @@
 SRCDIR = $(top_srcdir)/source/portaudiocpp
 
-lib_LTLIBRARIES = libportaudiocpp.la
+pkglib_LTLIBRARIES = libportaudiocpp.la
 
 LDADD = libportaudiocpp.la
 

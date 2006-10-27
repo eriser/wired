@@ -7,7 +7,7 @@ CPPFLAGS += -I../../portaudio/include
 endif
 
 
-lib_LTLIBRARIES = libWiredBeatBox.la
+pkglib_LTLIBRARIES = libWiredBeatBox.la
 
 
 libWiredBeatBox_la_SOURCES =				\

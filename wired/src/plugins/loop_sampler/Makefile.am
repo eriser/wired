@@ -7,7 +7,7 @@ CPPFLAGS += -I../../portaudio/include
 endif
 
 
-lib_LTLIBRARIES = libWiredLoopSampler.la
+pkglib_LTLIBRARIES = libWiredLoopSampler.la
 
 libWiredLoopSampler_la_SOURCES =			\
 			LoopSampler.cpp			\

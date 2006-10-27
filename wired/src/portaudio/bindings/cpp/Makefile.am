@@ -3,5 +3,5 @@ SUBDIRS = lib include bin
 
 EXTRA_DIST = portaudiocpp.pc
 
-pkgconfigdir = $(libdir)/pkgconfig
+pkgconfigdir = $(pkglibdir)/pkgconfig
 pkgconfig_DATA = portaudiocpp.pc
