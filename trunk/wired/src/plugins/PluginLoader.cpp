@@ -2,9 +2,8 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include <iostream>
-#include <dlfcn.h>
 #include "PluginLoader.h"
-#include "config.h"
+#include <config.h>
 
 PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, int MenuItemId, PlugStartInfo &info)
 {
@@ -26,7 +25,7 @@ PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, unsigned long Unique
 }
 
 PluginLoader::PluginLoader(wxString filename) : 
-  FileName(filename), handle(wxT(INSTALL_PREFIX) + wxString(wxT("/lib/")) + filename)
+  FileName(filename), handle(wxT(LIB_DIR) + filename)
 {
   External = false;
 
@@ -35,7 +34,7 @@ PluginLoader::PluginLoader(wxString filename) :
   if (!handle.IsLoaded())
     {
       cout << "[PLUGLOADER] Warning : " <<
-	wxString(wxT(INSTALL_PREFIX) + wxString(wxT("/lib/")) + filename).mb_str()
+	wxString(wxT(LIB_DIR) + filename).mb_str()
 	   << " can't be loaded" << endl;
       handle.Load(filename);
     }
