@@ -16,12 +16,12 @@ using namespace			std;
 #define OPT_TOOLBAR_HEIGHT	(17)
 #define OPT_TOOLBAR_BORDER	(2)
 
-#define OPT_LIST_TOOL_UP	wxT("ihm/opt/opt_list_up.png")
-#define OPT_LIST_TOOL_DOWN	wxT("ihm/opt/opt_list_down.png")
-#define OPT_DETACH_TOOL_UP	wxT("ihm/opt/opt_detach_up.png")
-#define OPT_DETACH_TOOL_DOWN	wxT("ihm/opt/opt_detach_down.png")
-#define OPT_CLOSE_TOOL_UP	wxT("ihm/opt/opt_close_up.png")
-#define OPT_CLOSE_TOOL_DOWN	wxT("ihm/opt/opt_close_down.png")
+#define OPT_LIST_TOOL_UP	wxT("/ihm/opt/opt_list_up.png")
+#define OPT_LIST_TOOL_DOWN	wxT("/ihm/opt/opt_list_down.png")
+#define OPT_DETACH_TOOL_UP	wxT("/ihm/opt/opt_detach_up.png")
+#define OPT_DETACH_TOOL_DOWN	wxT("/ihm/opt/opt_detach_down.png")
+#define OPT_CLOSE_TOOL_UP	wxT("/ihm/opt/opt_close_up.png")
+#define OPT_CLOSE_TOOL_DOWN	wxT("/ihm/opt/opt_close_down.png")
 
 #define OPT_TOOL_ID_START	(4042)
 

@@ -12,14 +12,14 @@
 #include "FaderCtrl.h"
 
 #define LABEL_MAXCHAR			(20)
-#define BG				L"ihm/mixer/mixer_bg.png"
-#define MIXERLOCKUP			L"ihm/mixer/mixer_lock_up.png"
-#define MIXERLOCKDOWN			L"ihm/mixer/mixer_lock_down.png"
-#define MIXERHPUP			L"ihm/mixer/mixer_mute_up.png"
-#define MIXERHPDOWN			L"ihm/mixer/mixer_mute_down.png"
-#define VUM_GREEN			L"ihm/widgets/vum_green.png"
-#define VUM_ORANGE			L"ihm/widgets/vum_orange.png"
-#define VUM_RED				L"ihm/widgets/vum_red.png"
+#define BG				L"/ihm/mixer/mixer_bg.png"
+#define MIXERLOCKUP			L"/ihm/mixer/mixer_lock_up.png"
+#define MIXERLOCKDOWN			L"/ihm/mixer/mixer_lock_down.png"
+#define MIXERHPUP			L"/ihm/mixer/mixer_mute_up.png"
+#define MIXERHPDOWN			L"/ihm/mixer/mixer_mute_down.png"
+#define VUM_GREEN			L"/ihm/widgets/vum_green.png"
+#define VUM_ORANGE			L"/ihm/widgets/vum_orange.png"
+#define VUM_RED				L"/ihm/widgets/vum_red.png"
 
 class					SeqTrack;
 class					Channel;

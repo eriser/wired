@@ -194,11 +194,12 @@ fi
 
 
 # For include
-INCLUDE_DIR=`eval echo ${includedir}/wired`
+includedir=`eval echo ${includedir}/wired`
+INCLUDE_DIR=${includedir}
 AC_DEFINE_UNQUOTED(INCLUDEDIR, "$INCLUDE_DIR", [define as includes dir])
 
 # For libdir
-LIB_DIR=`eval echo ${libdir}/wired`
+LIB_DIR=${libdir}/wired
 AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR", [define as libraries dir])
 
 # For share
@@ -206,7 +207,8 @@ DATA_DIR=`eval echo ${datadir}/wired`
 AC_DEFINE_UNQUOTED(DATA_DIR, "$DATA_DIR", [define as datas dir])
 
 # For sysconfdir
-SYSCONF_DIR=`eval echo ${sysconfdir}/wired`
+sysconfdir=`eval echo ${sysconfdir}/wired`
+SYSCONF_DIR=${sysconfdir}
 AC_DEFINE_UNQUOTED(SYSCONF_DIR, "$SYSCONF_DIR", [define as sysconf dir])
 
 
