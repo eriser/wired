@@ -2,13 +2,13 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include	"WiredCodec.h"
-#include	"config.h"
+#include	<config.h>
 
 #include <wx/dir.h>
 
 WiredCodec::WiredCodec()
 {
-  _WiredPath = wxString(wxT(INSTALL_PREFIX)) + wxT("/lib/");
+  _WiredPath = wxString(wxT(LIB_DIR));
   _CurrentUniqueID = 0;
   path = 0;
 }

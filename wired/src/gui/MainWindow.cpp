@@ -41,7 +41,7 @@
 #include "../xml/WiredSessionXml.h"
 #include "../dssi/WiredExternalPluginMgr.h"
 #include "FileConversion.h"
-#include "config.h"
+#include <config.h>
 #include "Threads.h"
 #include "MediaLibrary.h"
 #include "MLTree.h"
@@ -444,7 +444,7 @@ void                MainWindow::InitLocale()
 {
   // disable extra output of wx
   wxLog		log(wxLogNull);
-  wxString	prefix = wxString(wxT(INSTALL_PREFIX)) + wxString(wxT("/share/locale/"));
+  wxString	prefix = wxString(wxT(DATA_DIR)) + wxString(wxT("/locale/"));
   
   mLocale = new wxLocale();
   mLocale->AddCatalogLookupPathPrefix(prefix);

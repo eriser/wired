@@ -37,7 +37,7 @@
 #include "../xml/WiredSessionXml.h"
 #include "../dssi/WiredExternalPluginMgr.h"
 #include "FileConversion.h"
-#include "config.h"
+#include <config.h>
 #include "Threads.h"
 #include "MediaLibrary.h"
 #include "MLTree.h"

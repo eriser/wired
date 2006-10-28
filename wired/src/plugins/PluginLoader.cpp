@@ -25,7 +25,7 @@ PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, unsigned long Unique
 }
 
 PluginLoader::PluginLoader(wxString filename) : 
-  FileName(filename), handle(wxT(LIB_DIR) + filename)
+  FileName(filename), handle(wxString(wxT(LIB_DIR)) + wxT("/") + filename)
 {
   External = false;
 
@@ -34,7 +34,7 @@ PluginLoader::PluginLoader(wxString filename) :
   if (!handle.IsLoaded())
     {
       cout << "[PLUGLOADER] Warning : " <<
-	wxString(wxT(LIB_DIR) + filename).mb_str()
+	wxString(wxString(wxT(LIB_DIR)) + wxT("/") + filename).mb_str()
 	   << " can't be loaded" << endl;
       handle.Load(filename);
     }
