@@ -185,6 +185,7 @@ AC_CHECK_FUNCS([floor ftime getcwd memmove memset pow select sqrt strdup memset 
 
 AC_PREFIX_DEFAULT(/usr/local)
 if [[ $prefix = "NONE" ]] ; then
+	prefix="/usr/local"
         AC_DEFINE(INSTALL_PREFIX, "/usr/local",
         [define as prefix where Wired is installed])
 else
@@ -192,25 +193,46 @@ else
 	[define as prefix where Wired is installed])
 fi
 
+if [[ $exec_prefix = "NONE" ]] ; then
+exec_prefix=`eval echo ${prefix}`
+fi
+
+echo
+echo
+echo
+echo
+echo
+echo
+
+echo "EXEC PREFIX : $exec_prefix"
+echo " PREFIX : $prefix"
+echo
+echo
+echo
+echo
+echo
 
 # For include
-includedir=`eval echo ${includedir}/wired`
-INCLUDE_DIR=${includedir}
+includedir="`eval echo ${includedir}/wired`"
+INCLUDE_DIR="${includedir}"
 AC_DEFINE_UNQUOTED(INCLUDEDIR, "$INCLUDE_DIR", [define as includes dir])
 
 # For libdir
-LIB_DIR=${libdir}/wired
+LIB_DIR="`eval echo ${libdir}/wired`"
 AC_DEFINE_UNQUOTED(LIB_DIR, "$LIB_DIR", [define as libraries dir])
 
-# For share
-DATA_DIR=`eval echo ${datadir}/wired`
-AC_DEFINE_UNQUOTED(DATA_DIR, "$DATA_DIR", [define as datas dir])
-
 # For sysconfdir
-sysconfdir=`eval echo ${sysconfdir}/wired`
-SYSCONF_DIR=${sysconfdir}
+sysconfdir="`eval echo ${sysconfdir}/wired`"
+SYSCONF_DIR="${sysconfdir}"
 AC_DEFINE_UNQUOTED(SYSCONF_DIR, "$SYSCONF_DIR", [define as sysconf dir])
 
+# For share
+DATA_DIR="`eval echo ${datadir}`"
+AC_DEFINE_UNQUOTED(DATA_DIR, "$DATA_DIR", [define as datas dir])
+
+# for locale
+PACKAGE_LOCALE_DIR="`eval echo ${datadir}/locale`"
+AC_DEFINE_UNQUOTED(PACKAGE_LOCALE_DIR, "$PACKAGE_LOCALE_DIR", [define the locale dir path])
 
 
 ##################
@@ -242,12 +264,6 @@ AC_MSG_RESULT([$CFGDEBUG])
 ALL_LINGUAS="fr_FR it_IT zh_TW.Big5"
 AM_GNU_GETTEXT([use-libtool])
 AM_GNU_GETTEXT_VERSION([0.14.4])
-
-if test "x${prefix}" = "xNONE"; then
- AC_DEFINE(PACKAGE_LOCALE_DIR, "/usr/local/share/wired/locale", [define the locale dir path])
-else
- AC_DEFINE(PACKAGE_LOCALE_DIR, "${prefix}/share/wired/locale", [define the locale dir path])
-fi
 
 AC_CONFIG_FILES([src/plugins/beatbox/Makefile
 		src/plugins/compressor/Makefile
@@ -378,8 +394,8 @@ AC_MSG_RESULT([
  ])
 
 AC_MSG_RESULT([  Installation directories :
-
-    Library directory : ........... ${prefix}/lib
-    Program directory : ........... ${prefix}/bin
-    Data directory : .............. ${prefix}/shared/wired
+    Wired plugins directory: .............. ${LIB_DIR}
+    Wired binary directory : .............. ${prefix}/bin
+    Wired data directory   : .............. ${DATA_DIR}
+    Wired conf directory   : .............. ${SYSCONF_DIR}
 ])

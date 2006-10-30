@@ -444,7 +444,7 @@ void                MainWindow::InitLocale()
 {
   // disable extra output of wx
   wxLog		log(wxLogNull);
-  wxString	prefix = wxString(wxT(DATA_DIR)) + wxString(wxT("/locale/"));
+  wxString	prefix = wxT(PACKAGE_LOCALE_DIR);
   
   mLocale = new wxLocale();
   mLocale->AddCatalogLookupPathPrefix(prefix);
