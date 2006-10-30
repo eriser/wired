@@ -32,9 +32,7 @@ Settings::Settings()
       PlugConfFile = ConfDir + PLUG_CONF_FILE;
     }
 
-  // basicaly, we don't have to add a '/'.
-  // after API rewriting, we should remove it.
-  DataDir = wxString(wxT(DATA_DIR)) + wxT("/");
+  DataDir = wxString(wxT(DATA_DIR)) + wxT("/wired/");
   f.Assign(DataDir);
 
   if (!f.DirExists())

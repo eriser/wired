@@ -48,7 +48,7 @@ bool				MainApp::OnInit()
   m_condAllDone = new wxCondition(m_mutex);
 
   // splash screen
-  if (bitmap.LoadFile(wxString(DATA_DIR, *wxConvCurrent) + wxString(wxT("/wired/data/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
+  if (bitmap.LoadFile(wxString(DATA_DIR, *wxConvCurrent) + wxString(wxT("/wired/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
     {
       splash = new wxSplashScreen(bitmap,
 				  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
