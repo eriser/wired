@@ -197,21 +197,6 @@ if [[ $exec_prefix = "NONE" ]] ; then
 exec_prefix=`eval echo ${prefix}`
 fi
 
-echo
-echo
-echo
-echo
-echo
-echo
-
-echo "EXEC PREFIX : $exec_prefix"
-echo " PREFIX : $prefix"
-echo
-echo
-echo
-echo
-echo
-
 # For include
 includedir="`eval echo ${includedir}/wired`"
 INCLUDE_DIR="${includedir}"
