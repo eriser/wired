@@ -129,6 +129,9 @@ void					MidiPattern::OnClick(wxMouseEvent &e)
   if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
     Split((double) ((Pattern::GetMPosition().x + e.m_x)
 		    / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor)));
+  else if (SeqPanel->Tool == ID_TOOL_MERGE_SEQUENCER)
+    {
+    }
   else
     if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
       SetDrawColour(SeqPanel->ColorBox->GetColor());

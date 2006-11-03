@@ -428,6 +428,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Toolbar->AddRadioTool(ID_SEQ_DRAW, _("Draw"), wxBitmap(WiredSettings->DataDir + DRAW_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + DRAW_DOWN, wxBITMAP_TYPE_PNG), _("Draw Pattern"), _("Draw Pattern"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_DEL, _("Delete"), wxBitmap(WiredSettings->DataDir + ERASE_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + ERASE_DOWN, wxBITMAP_TYPE_PNG), _("Delete Pattern"), _("Deletes notes"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(WiredSettings->DataDir + SPLIT_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + SPLIT_DOWN, wxBITMAP_TYPE_PNG), _("Split Pattern"), _("Split Pattern"), NULL);
+  Toolbar->AddRadioTool(ID_SEQ_MERGE, _("Merge"), wxBitmap(WiredSettings->DataDir + MERGE_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + MERGE_DOWN, wxBITMAP_TYPE_PNG), _("Merge Patterns"), _("Merge Patterns"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_COLOR, _("Color"), wxBitmap(WiredSettings->DataDir + COLOR_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + COLOR_DOWN, wxBITMAP_TYPE_PNG),  _("Color Pattern"),  _("Delete Pattern"), NULL);
   BrushColor = CL_DEFAULT_SEQ_BRUSH;
 
@@ -1284,6 +1285,12 @@ void					SequencerGui::OnSplitClick(wxCommandEvent &event)
   ChangeMouseCursor(wxCursor(wxCURSOR_CROSS));
 }
 
+void					SequencerGui::OnMergeClick(wxCommandEvent &event)
+{
+  Tool = ID_TOOL_MERGE_SEQUENCER;
+  ChangeMouseCursor(wxCursor(wxCURSOR_HAND));
+}
+
 void					SequencerGui::OnMagnetismToggle(wxCommandEvent &event)
 {
   Magnetism = Toolbar->GetToolState(ID_SEQ_MAGNET) ? CURSOR_MASK | PATTERN_MASK : 0;
@@ -1381,6 +1388,7 @@ BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   EVT_TOOL(ID_SEQ_DRAW, SequencerGui::OnDrawClick)
   EVT_TOOL(ID_SEQ_DEL, SequencerGui::OnEraseClick)
   EVT_TOOL(ID_SEQ_SPLIT, SequencerGui::OnSplitClick)
+  EVT_TOOL(ID_SEQ_MERGE, SequencerGui::OnMergeClick)
   EVT_TOOL(ID_SEQ_MAGNET, SequencerGui::OnMagnetismToggle)
   EVT_TOOL(ID_SEQ_COLOR, SequencerGui::OnColorButtonClick)
   EVT_COMBOBOX(ID_SEQ_COMBO_MAGNET, SequencerGui::OnMagnetismChange)

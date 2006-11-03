@@ -74,7 +74,6 @@ class WriteWaveFile
    */
   sf_count_t	WriteDouble(double *ptr, sf_count_t items);
 
-
   /**
    * Writes the title in the file.
    * \param s a wxString, the title to set.

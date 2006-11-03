@@ -30,6 +30,7 @@ class					AudioPattern: public Pattern, public WaveDrawer
   void					SetWave(WaveFile *w);
   void					SetDrawColour(wxColour c);
   void					Split(double pos);
+  void					Merge(Pattern *pattern);
   void					OnDirectEdit();
   Pattern				*CreateCopy(double pos);
   
