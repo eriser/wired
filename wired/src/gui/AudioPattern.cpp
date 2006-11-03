@@ -16,6 +16,7 @@
 #include "../sequencer/Track.h"
 #include "../gui/SeqTrack.h"
 #include "../engine/AudioEngine.h"
+#include "../audio/WaveFile.h"
 #include "../audio/WriteWaveFile.h"
 #include "../mixer/Channel.h"
 
@@ -332,10 +333,12 @@ void					AudioPattern::OnClick(wxMouseEvent &e)
     {
       Split((double) ((GetMPosition().x + e.m_x)
 		      / (MEASURE_WIDTH * SeqPanel->HoriZoomFactor)));
-      }
-  else
-    if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
-      SetDrawColour(SeqPanel->ColorBox->GetColor());
+    }
+  else if (SeqPanel->Tool == ID_TOOL_MERGE_SEQUENCER)
+    {
+    }
+  else if (SeqPanel->Tool == ID_TOOL_PAINT_SEQUENCER)
+    SetDrawColour(SeqPanel->ColorBox->GetColor());
 }
 
 void					AudioPattern::OnLeftUp(wxMouseEvent &e)
@@ -377,15 +380,15 @@ void					AudioPattern::Split(double pos)
       Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
     }
   else
-    cout << "C QUOI CE DELIRE DE POS ?? " << pos << endl;
+    std::cout << "[AudioPattern] Can't split pattern (got incorrect position)." << pos << endl;
 }
 
 void					AudioPattern::SetDrawColour(wxColour c)
 { 
-   Pattern::SetDrawColour(c);
-   WaveDrawer::PenColor = c;
-   RedrawBitmap(GetSize());
-   //Refresh();
+  Pattern::SetDrawColour(c);
+  WaveDrawer::PenColor = c;
+  RedrawBitmap(GetSize());
+  //Refresh();
   
 }
 

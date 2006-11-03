@@ -145,7 +145,7 @@ class WaveFile
    * Reads nbr_of_frames from rw_buffer to the wave file.
    * \param rw_buffer a float pointer, the data content.
    * \param nbr_of_frames a int, the length.
-   * By default it's setted to WAVE_TEMP_SIZE.
+   * By default it's set to WAVE_TEMP_SIZE.
    * \return returns a sf_count_t.
    */
   sf_count_t ReadFloatF (float *rw_buffer, int nbr_of_frames = WAVE_TEMP_SIZE);
@@ -230,10 +230,10 @@ class WaveFile
    * \param pos a long, the index.
    * \param size a long, the reading size.
    * \param delta a long.
-   * By default it's setted to 0.
+   * By default it's set to 0.
    * \param new_pos a long pointer, the new pointer's position.
-   * By default it's setted to 0x0.
-   * \return returns an unsigned long, the readed size.
+   * By default it's set to 0x0.
+   * \return returns an unsigned long, the read size.
    */
   unsigned long	Read(float **buf, long pos, long size,
 		     long delta = 0, long *new_pos = 0x0);

@@ -84,9 +84,9 @@ class					Pattern : public wxWindow
   /**
    * The Index of track.
    */
-  unsigned long				TrackIndex;
-  unsigned long				TrackFrom;
-  unsigned char				StateMask;
+  unsigned long							TrackIndex;
+  unsigned long							TrackFrom;
+  unsigned char							StateMask;
 
   /**
    * To measure the position of pattern.
@@ -106,17 +106,27 @@ class					Pattern : public wxWindow
   /**
    * Name of pattern.
    */
-  wxString						Name;
+  wxString							Name;
 
   /**
    * Setting a color of a pattern.
    */ 
-  wxColour						PenColor;
+  wxColour							PenColor;
  
   /**
    * The background of pattern.
    */
-  wxColour						BrushColor;
+  wxColour							BrushColor;
+
+  /**
+   * Next merged pattern.
+   */
+  Pattern							*NextMergedPattern;
+
+  /**
+   * Previous merged pattern.
+   */
+  Pattern							*PrevMergedPattern;
 
  public:
 
@@ -148,21 +158,21 @@ class					Pattern : public wxWindow
   /**
    * To update a position of pattern and its size of pattern.
    */
-  virtual void				Update();
+  virtual void							Update();
   
   /**
    * Setting the selected of pattern.
    * \param sel a bool,If it selected or not.
    */
-  virtual void				SetSelected(bool sel);
-  virtual void				OnBpmChange() {};
+  virtual void							SetSelected(bool sel);
+  virtual void							OnBpmChange() {};
 
   /**
    * Setting the color of pen.
    * \param c a wxcolour,a color.
    */
-  virtual void				SetDrawColour(wxColour c) { PenColor = c; };
-  virtual Pattern			*CreateCopy(double pos) = 0x0;
+  virtual void							SetDrawColour(wxColour c) { PenColor = c; };
+  virtual Pattern						*CreateCopy(double pos) = 0x0;
 
   /**
    * Getting a measure of a position of pattern.
@@ -201,7 +211,7 @@ class					Pattern : public wxWindow
    * \param a double,a beginning of position.
    * \return returns a int.
    */ 
-  int									GetXPos(double pos);
+  int								GetXPos(double pos);
 
   /**
    * If selected a pattern.
@@ -231,7 +241,7 @@ class					Pattern : public wxWindow
    * Getting a name of pattern.
    * \return returns a wxString,the name of pattern.
    */
-  wxString						GetName() { return (Name); };
+  wxString							GetName() { return (Name); };
   
   /**
    * Setting the name of pattern.
@@ -250,6 +260,30 @@ class					Pattern : public wxWindow
    * \param a long,the index of track.
    */
   void								SetTrackIndex(long t) { TrackIndex = t; };
+
+  /**
+   * Sets the next merged pattern.
+   * \param points to the next merged pattern.
+   */
+  void								SetNextMergedPattern(Pattern *p) { NextMergedPattern = p; };
+
+  /**
+   * Sets the previous merged pattern.
+   * \param points to the previous merged pattern.
+   */
+  void								SetPrevMergedPattern(Pattern *p) { PrevMergedPattern = p; };
+
+  /**
+   * Gets the next merged pattern.
+   * \return returns pointer to the next merged pattern.
+   */
+  Pattern							*GetNextMergedPattern() { return NextMergedPattern; };
+
+  /**
+   * Gets the previous merged pattern.
+   * \return returns pointer to the previous merged pattern.
+   */
+  Pattern							*GetPrevMergedPattern() { return PrevMergedPattern; };
   
   /**
    * Getting the end of position.
