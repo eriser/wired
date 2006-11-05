@@ -313,6 +313,7 @@ Pattern					*AudioPattern::CreateCopy(double pos)
    p->EndPosition = pos +  Length;
    p->Length = Length;
    p->SetDrawColour(WaveDrawer::PenColor);
+   p->Position = pos;
    p->Update();
    SeqMutex.Unlock();
    Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
