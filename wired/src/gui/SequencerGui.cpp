@@ -1003,21 +1003,56 @@ void					SequencerGui::SelectItem(Pattern *p, bool shift)
 void					SequencerGui::CopySelectedItems()
 {
   vector<Pattern *>::iterator		j;
+  vector<Pattern *>::iterator		save;
+  int					i;
+  int					nb_item_track;
+  int					cpt_track;
+  double				end_position;
+  double				last_position;
 
   CopyItems.clear();
-  for (j = SelectedItems.begin(); j != SelectedItems.end(); j++)
-    CopyItems.push_back(*j);
+
+  for (cpt_track = 0; cpt_track != Seq->Tracks.size();)
+    {
+      last_position = 0;
+      for (nb_item_track = 0, j = SelectedItems.begin(); j != SelectedItems.end(); j++)
+	if (((Pattern *) *j)->GetTrackIndex() == cpt_track)
+	  nb_item_track++;
+       for (i = 0; i < nb_item_track;)
+	{
+	  for (j = SelectedItems.begin(), end_position = 50000000; j != SelectedItems.end(); j++)
+	    {
+	      if (((Pattern *) *j)->GetEndPosition() < end_position && ((Pattern *) *j)->GetEndPosition() > last_position && ((Pattern *) *j)->GetTrackIndex() == cpt_track)
+		{
+		  save = j;
+		  end_position = ((Pattern *) *j)->GetEndPosition();
+		}
+	        
+	    }
+	  if (end_position != 50000000)
+	    {
+	      last_position = end_position;
+	      CopyItems.push_back(*save);
+	      i++;
+	    }
+	 
+	}
+      cpt_track++;
+    }
 }
 
 void					SequencerGui::PasteItems()
 {
   vector<Pattern *>::iterator		itSelected;
+  vector<Pattern *>::iterator		itSelected_save;
   vector<Track *>::iterator		itTrackSelected;
   double       				last_pos = 0;
+  double       				begin_pos = 0;
+  double       				last_pos_save = 0;
   Pattern				*pattern;
   vector<Pattern *>::iterator		pattern_iterator;
 
-  for (itSelected = CopyItems.begin(); itSelected != CopyItems.end(); itSelected++)
+  for (itSelected_save = itSelected = CopyItems.begin(); itSelected != CopyItems.end(); itSelected++)
     {
       for (itTrackSelected = Seq->Tracks.begin(); itTrackSelected != Seq->Tracks.end()
 	     && (*itTrackSelected)->GetIndex() != (*itSelected)->GetTrackIndex();
@@ -1029,30 +1064,43 @@ void					SequencerGui::PasteItems()
 	  cout << "WARNING : Pattern NOT belongs to track" << endl;
 	  return;
 	}
-
+      if (((Pattern *) *itSelected)->GetTrackIndex() != ((Pattern *) *itSelected_save)->GetTrackIndex())
+	last_pos = 0;
       for (pattern_iterator = (*itTrackSelected)->TrackPattern->Patterns.begin();
 	   pattern_iterator != (*itTrackSelected)->TrackPattern->Patterns.end();
 	   pattern_iterator++)
 	if (last_pos < (*pattern_iterator)->GetEndPosition())
-	  last_pos = (*pattern_iterator)->GetEndPosition();
-
-      pattern = ((Pattern *) *itSelected)->CreateCopy(last_pos);
-      /* If the end of pattern is above the end of the Sequencer, we raise the size of the Sequencer */
-      /*if ((((Pattern *) *itSelected)->GetXPos(((Pattern *) *itSelected)->GetEndPosition()) + (((Pattern *) *itSelected)->GetSize()).GetWidth()) > SeqView->GetTotalWidth())
+	  {
+	    last_pos = (*pattern_iterator)->GetEndPosition();
+	  }
+      if (itSelected != CopyItems.begin())
 	{
-	  SeqView->SetTotalWidth((long) (pattern->GetXPos(((Pattern *) *itSelected)->GetEndPosition()) + (((Pattern *) *itSelected)->GetSize()).GetWidth()));
-	  Seq->EndPos = pattern->GetEndPosition();
-	  AdjustHScrolling();
-	  }*/
-      /* TODO : correct this */
-      /* We move end's cursor if the end of the pattern is above it */
-      /* if (EndCursor->GetPos() < pattern->GetEndPosition())
-	{	  	  
-	  EndCursor->SetPos(pattern->GetEndPosition());
-	  RedrawCursors();
-	  AdjustHScrolling();
-	  SeqView->Refresh();
-	}*/
+	  
+	  while (((Pattern *) *itSelected)->GetTrackIndex() != ((Pattern *) *itSelected_save)->GetTrackIndex())
+	    {
+	      if (itSelected_save == CopyItems.begin())
+		{
+		  itSelected_save = itSelected;
+		  break;
+		}
+	      itSelected_save--;
+	    }
+	  if (itSelected_save != itSelected)
+	    {
+	      last_pos_save = ((Pattern *) *itSelected_save)->GetEndPosition();
+	      begin_pos = ((Pattern *) *itSelected)->GetPosition();
+	    }
+	  else
+	    {
+	      last_pos_save = 0;
+	      begin_pos = 0;
+	    }
+	}
+      
+     
+      pattern = ((Pattern *) *itSelected)->CreateCopy(last_pos + (begin_pos - last_pos_save));
+  
+      itSelected_save = itSelected;
     }
   if (DoCut)
     DeleteSelectedPatterns();
