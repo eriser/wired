@@ -142,10 +142,16 @@ void					SequencerView::SelectZonePatterns(bool shift)
 	  }
 }
 
-void					SequencerView::OnLeftUp(wxMouseEvent &e)
+void					SequencerView::OnLeftUp(wxMouseEvent &event)
 {
   TheZone->Hide();
 }
+
+void					SequencerGui::HideAllPatterns(wxMouseEvent &e)
+{
+  SeqPanel->SelectItem(0x0, e.ShiftDown());
+}
+
 
 void					SequencerView::OnRightClick(wxMouseEvent &event)
 {

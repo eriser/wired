@@ -111,8 +111,13 @@ void			MLTree::SaveTree(WiredSessionXml *XmlSession, wxTreeItemId parent)
   wxTreeItemIdValue	cookie;
   s_nodeInfo		infos;
   wxTreeItemId		item = GetFirstChild(parent, cookie);
-  wxTreeItemId		item_last = GetLastChild(parent);
 
+ //  if (parent == GetRootItem())
+//     {
+//       XmlSession->MyStartElement(XmlSession, _("root"));
+//       XmlSession->MyWriteAttribute(XmlSession, _("name"), GetItemText(parent));
+//       XmlSession->MyEndElement(XmlSession);
+//     }
   while (item.IsOk())
     {
       wxString text = GetItemText(item);
@@ -145,6 +150,19 @@ void			MLTree::SaveTree(WiredSessionXml *XmlSession, wxTreeItemId parent)
     }
 }
 
+void				MLTree::LoadTree(WiredSessionXml *XmlSession)
+{
+  wxString	Buffer;
+
+  cout << "LoadTree...." << endl;
+  //  XmlSession->MyGet
+  XmlSession->Dumpfile(STR_XMLFILE_ML);
+//   while (XmlSession->MyRead(XmlSession) == true)
+//     {
+//       Buffer = XmlSession->MyGetNodeName(XmlSession);
+//       cout << "NAME : " << Buffer.mb_str() << endl;
+//     }
+}
 
 void				MLTree::SaveML()
 {
@@ -152,6 +170,14 @@ void				MLTree::SaveML()
   CurrXmlSession->InitSaveML();
   SaveTree(CurrXmlSession, GetRootItem());
   CurrXmlSession->EndSaveML();
+}
+
+void				MLTree::LoadML()
+{
+  CurrXmlSession = new WiredSessionXml(wxString(wxT(""), *wxConvCurrent));
+  //CurrXmlSession->InitLoadML(STR_XMLFILE_ML);
+  LoadTree(CurrXmlSession);
+  //  CurrXmlSession->EndSaveML();
 }
 
 void				MLTree::AddIcon(wxImageList *images, wxIcon icon)
@@ -513,6 +539,7 @@ void				MLTree::ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldE
   wxTreeItemIdValue cookie = &Tree;
   for (wxTreeItemId child = GetFirstChild(id, cookie); child.IsOk(); child = GetNextChild(id, cookie))
     ExpandAll(Tree, child, shouldExpand, toLevel - 1);
+  LoadML();
 }
 
 // Collapse all existing nodes
@@ -703,8 +730,20 @@ void				MLTree::OnLeftClick(wxMouseEvent &event)
 	  ClientToScreen(&x, &y);
 	  SeqPanel->Drop(x, y, selfile);
 	}
+      SeqPanel->HideAllPatterns(event);
     }
   event.Skip();
+}
+
+void				MLTree::OnSuppr(wxKeyEvent &event)
+{
+ //  long key = event.GetkeyCode();
+//   //cout << key << endl;
+//   if (key == 127)
+//     {
+//       OnRemove();
+//       cout << "removing" << endl;
+//     }
 }
 
 BEGIN_EVENT_TABLE(MLTree, wxTreeCtrl)
@@ -713,4 +752,5 @@ BEGIN_EVENT_TABLE(MLTree, wxTreeCtrl)
   EVT_TREE_BEGIN_DRAG(MLTree_Selected, MLTree::BeginDrag)
   EVT_TREE_END_DRAG(MLTree_Selected, MLTree::EndDrag)
   EVT_LEFT_UP(MLTree::OnLeftClick)
+  EVT_KEY_DOWN(MLTree::OnSuppr)
 END_EVENT_TABLE()

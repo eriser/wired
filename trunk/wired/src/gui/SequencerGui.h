@@ -245,6 +245,7 @@ class				SequencerGui: public wxPanel
   SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size, wxWindow *mainwindow = NULL);
   ~SequencerGui();
 
+  void				HideAllPatterns(wxMouseEvent &e);
   Track				*AddTrack(bool is_audio = true);
   void				RemoveTrack();
   void				UnselectTracks();

@@ -108,11 +108,16 @@ class				MLTree : public wxTreeCtrl
  * \return void
 */
   void				SaveTree(WiredSessionXml *XmlSession, wxTreeItemId parent);
+  void				LoadTree(WiredSessionXml *XmlSession);
 /**
  * The method used to serialize the MediaLibrary Content (calls SaveTree)
  * \return void
 */
   void				SaveML();
+
+  void				LoadML();
+  void				OnSuppr(wxKeyEvent &event);
+
 /**
  * The function IsTreeCollapsed is used to know if the nodes are expanded or
  * not.
