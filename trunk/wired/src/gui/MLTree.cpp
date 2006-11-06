@@ -5,6 +5,7 @@
 #include <wx/wx.h>
 #include <wx/file.h>
 #include <wx/treectrl.h>
+#include <wx/defs.h>
 //#include "../xml/WiredSessionXml.h"
 #include "MediaLibrary.h"
 #include "MLTree.h"
@@ -736,13 +737,18 @@ void				MLTree::OnLeftClick(wxMouseEvent &event)
 
 void				MLTree::OnSuppr(wxKeyEvent &event)
 {
- //  long key = event.GetkeyCode();
-//   //cout << key << endl;
-//   if (key == 127)
+
+//   if (wxGetKeyState())
 //     {
-//       OnRemove();
-//       cout << "removing" << endl;
+//       cout << "yeeeee" << endl;
 //     }
+  int key = event.GetKeyCode();
+  //cout << key << endl;
+  if (key == WXK_DELETE)
+    {
+      OnRemove();
+      cout << "removing" << endl;
+    }
 }
 
 BEGIN_EVENT_TABLE(MLTree, wxTreeCtrl)
