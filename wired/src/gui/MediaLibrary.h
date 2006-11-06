@@ -25,7 +25,7 @@ class					MLTree;
 #define MEDIALIBRARY_INSERTDO_IMG	wxT("ihm/toolbar/insert_up.png")
 
 #define MEDIALIBRARY_PREVIEWUP_IMG	wxT("ihm/toolbar/play.png")
-#define MEDIALIBRARY_PREVIEWDO_IMG	wxT("ihm/toolbar/play.png")
+#define MEDIALIBRARY_PREVIEWDO_IMG	wxT("ihm/toolbar/stop.png")
 #define MEDIALIBRARY_COLLAPSEUP_IMG	wxT("ihm/toolbar/collapse_up.png")
 #define MEDIALIBRARY_COLLAPSEDO_IMG	wxT("ihm/toolbar/collapse_up.png")
 
@@ -68,6 +68,10 @@ class				MediaLibrary : public wxPanel
 
   friend class			MLTree;
 /**
+ *Boolean used to know if the wav file is preview
+*/
+  bool				preview;
+/**
  * Boolean used to know if the media library panel is visible or unvisible
 */
   bool				visible;
@@ -104,6 +108,7 @@ class				MediaLibrary : public wxPanel
   MLTree			*MLTreeView;
 /**
  * FileConversion for converting files to the used samplerate before using
+
  * them in the Sequencer
 */
   FileConversion		*FileConverter;
@@ -305,10 +310,10 @@ enum
 {
    MediaLibrary_Add = 1,
    MediaLibrary_Remove,
-   MediaLibrary_Edit,
-   MediaLibrary_Insert,
-   MediaLibrary_Preview,
    MediaLibrary_TreeCollapse,
+   MediaLibrary_Insert,
+   MediaLibrary_Start_Preview,
+   MediaLibrary_Stop_Preview,
    MediaLibrary_SortSelect,
    MediaLibrary_FilterAudio,
    MediaLibrary_FilterMIDI,
