@@ -84,7 +84,7 @@ MediaLibrary::MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &s
   TopToolbar->Realize();
 
   BottomToolbar = new wxToolBar(this, -1, wxPoint(-1, this->GetSize().y - 50), wxSize(1000, 46), wxTB_3DBUTTONS);
-  BottomToolbar->AddTool(MediaLibrary_Preview, _("Preview"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWUP_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Preview file"), _("Preview a file"), NULL);
+//   BottomToolbar->AddTool(MediaLibrary_Preview, _("Preview"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWUP_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Preview file"), _("Preview a file"), NULL);
   BottomToolbar->AddTool(MediaLibrary_TreeCollapse, _("Expand/Collapse"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_COLLAPSEUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_COLLAPSEDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Expand/Collapse all"), _("Expand or Collapse all tree branches"), NULL);
   for (c = 0; c < NB_SORTSELECT_CHOICES; c++)
     sortselect_choices[c] = SortSelectChoices[c].s;
@@ -273,14 +273,29 @@ void				MediaLibrary::OnPreview(wxCommandEvent &WXUNUSED(event))
   s_nodeInfo		infos;
 
   selfile = MLTreeView->getSelection(1);
-  //cout << "[MEDIALIBRARY] Preview File (OnPreview)" << selfile.mb_str() << endl;
+  cout << "[MEDIALIBRARY] Preview File (OnPreview)" << selfile.mb_str() << endl;
 
   item = MLTreeView->GetSelection();
   infos = MLTreeView->GetTreeItemStructFromId(item);
-  if (infos.extention.Cmp(wxT("")))
-    {
-      Seq->PlayFile(selfile, false);
-    }
+
+
+  //   WaveFile *w = new WaveFile(_("/usr/share/sounds/shutdown1.wav"), false);
+  //   SeqMutex.Lock();
+  //	  PlayWavePos = 0;
+  //	  PlayWave = w;
+  //   SeqMutex.Unlock();
+  //   if (infos.extention.Cmp(wxT("")))
+  //     {
+  //  Seq->PlayFile(selfile, true);
+  //     }
+
+  //  FileLoader				dlg(this, MainWin_FileLoader, _("Loading sound file"), false, false, FileConverter->GetCodecsExtensions(), true);
+
+
+
+//   wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, Preview_Start);
+//   event.SetEventObject();
+//   wxPostEvent(GetParent(), event);
 }
 
 void				MediaLibrary::OnSortToggle(wxCommandEvent &WXUNUSED(event))
