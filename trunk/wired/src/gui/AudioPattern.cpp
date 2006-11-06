@@ -54,7 +54,7 @@ void					AudioPattern::Init(WaveFile* w)
   Pattern::PenColor = CL_PATTERN_NORM;
   Pattern::BrushColor = CL_WAVEDRAWER_BRUSH;
   Name = wxString::Format(wxT("T%d A%d"), TrackIndex + 1, audio_pattern_count++);
-  LastBlock = -1;  
+  LastBlock = -1;
   RecordWave = 0;
   InputChan = NULL;
   RecordWave = NULL;
@@ -74,8 +74,9 @@ void					AudioPattern::Init(WaveFile* w)
 	  &AudioPattern::OnLeftUp);
   Connect(GetId(), wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &AudioPattern::OnRightClick);
-  Connect(GetId(), wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
-	  &AudioPattern::OnDoubleClick);
+  // Double Click action commented FOR EPITECH FORUM PURPOSE
+  //   Connect(GetId(), wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
+  // 	  &AudioPattern::OnDoubleClick);
   Connect(GetId(), wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &AudioPattern::OnPaint);
   Connect(GetId(), wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
@@ -139,7 +140,7 @@ void					AudioPattern::SetWave(WaveFile *w)
 #ifdef __DEBUG__
   cout << "WaveDrawer::StartWavePos = " << WaveDrawer::StartWavePos<< " WaveDrawer::EndWavePos = " << WaveDrawer::EndWavePos << endl;
 #endif
- 
+
  if (!w)
     {
       StartWavePos = 0;
@@ -173,7 +174,7 @@ float					**AudioPattern::GetBlock(long block)
     {
       buf = new float *[2];
       if (size > Audio->SamplesPerBuffer)
-	size = Audio->SamplesPerBuffer; 
+	size = Audio->SamplesPerBuffer;
       buf[0] = new float[Audio->SamplesPerBuffer];
       buf[1] = new float[Audio->SamplesPerBuffer];
       memset(buf[0], 0, sizeof(float) * sizeof(Audio->SamplesPerBuffer));
@@ -203,7 +204,7 @@ bool					AudioPattern::PrepareRecord(int type)
   bool					done = false;
   int					i = 1;
 
-  cout << "Preparing record for pattern " << this 
+  cout << "Preparing record for pattern " << this
        << " with audio dir : " << CurrentXmlSession->GetAudioDir().mb_str() << endl;
   while (!done)
     {
@@ -228,7 +229,7 @@ bool					AudioPattern::PrepareRecord(int type)
 	  FileName = s;
 	  InputChan = Mix->OpenInput(Seq->Tracks[TrackIndex]->TrackOpt->DeviceId);
 	  Mix->FlushInput(Seq->Tracks[TrackIndex]->TrackOpt->DeviceId);
-	  cout << "[AUDIOPATTERN] Recording on input: " 
+	  cout << "[AUDIOPATTERN] Recording on input: "
 	       << Seq->Tracks[TrackIndex]->TrackOpt->DeviceId << endl;
 	  return (true);
 	}
@@ -238,7 +239,7 @@ bool					AudioPattern::PrepareRecord(int type)
 	}
     }
   else
-    cout << "[AUDIOPATTERN] Error : could not create audio file" << endl;    
+    cout << "[AUDIOPATTERN] Error : could not create audio file" << endl;
   return (false);
 }
 
@@ -317,7 +318,7 @@ Pattern					*AudioPattern::CreateCopy(double pos)
    p->Update();
    SeqMutex.Unlock();
    Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
- 
+
   //p = new AudioPattern(pos, Wave, TrackIndex);
   //p = Seq->Tracks[TrackIndex]->AddPattern(Wave, pos);
   //printf("AudioPattern::CreateCopy(%d) new pat %d -- OVER\n", pos, p);
@@ -351,7 +352,7 @@ void					AudioPattern::Split(double pos)
 {
   AudioPattern				*p;
 
- 
+
   if ((Position < pos) && (pos < EndPosition))
     {
       SeqMutex.Lock();
@@ -365,7 +366,7 @@ void					AudioPattern::Split(double pos)
 #endif
       p->StartWavePos = StartWavePos + (long) floor((pos - Position) * Seq->SamplesPerMeasure);
       p->EndWavePos = p->StartWavePos + (long) floor(p->Length * Seq->SamplesPerMeasure);
-      
+
       p->SetWave(Wave);
       p->SetDrawColour(WaveDrawer::PenColor);
       p->SetCursor(GetCursor());
@@ -374,7 +375,7 @@ void					AudioPattern::Split(double pos)
       p->Update();
       EndWavePos = p->StartWavePos;
       Length = (EndPosition = pos) - Position;
-      
+
       SetDrawing();
       Update();
       SeqMutex.Unlock();
@@ -385,12 +386,12 @@ void					AudioPattern::Split(double pos)
 }
 
 void					AudioPattern::SetDrawColour(wxColour c)
-{ 
+{
   Pattern::SetDrawColour(c);
   WaveDrawer::PenColor = c;
   RedrawBitmap(GetSize());
   //Refresh();
-  
+
 }
 
 void					AudioPattern::OnDoubleClick(wxMouseEvent &e)
@@ -432,7 +433,7 @@ void					AudioPattern::OnSize(wxSizeEvent &e)
     {
       WaveDrawer::SetDrawing(GetSize());
       Refresh();
-    }  
+    }
 }
 
 void					AudioPattern::SetSize(wxSize s)
