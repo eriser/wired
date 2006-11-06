@@ -292,6 +292,8 @@ void				MediaLibrary::OnSortToggle(wxCommandEvent &WXUNUSED(event))
 void				MediaLibrary::OnLeftClick(wxMouseEvent &event)
 {
   cout << "[MEDIALIBRARY] Test" << endl;
+  SetFocus();
+  cout << "popo" << endl;
 }
 
 BEGIN_EVENT_TABLE(MediaLibrary, wxPanel)
