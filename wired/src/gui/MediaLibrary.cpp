@@ -113,7 +113,7 @@ MediaLibrary::MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &s
 
 MediaLibrary::~MediaLibrary()
 {
-  
+
 }
 
 void				MediaLibrary::SetFileConverter(FileConversion *Fileconv)
@@ -169,7 +169,7 @@ void				MediaLibrary::OnAdd(wxCommandEvent &WXUNUSED(event))
 	  wxDirDialog dir(this, _("Choose the Audio file directory"), wxFileName::GetCwd());
 	  if (dir.ShowModal() == wxID_OK)
 	    {
-	      CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str(); 
+	      CurrentXmlSession->GetAudioDir() = dir.GetPath().c_str();
 	      res = wxID_OK;
 	    }
 	  else
@@ -241,7 +241,7 @@ void				MediaLibrary::OnInsert(wxCommandEvent &WXUNUSED(event))
   AudioMutex.Lock();
   SeqMutex.Unlock();
   FileConverter->ImportFile(selfile);
-  MidiMutex.Unlock();  
+  MidiMutex.Unlock();
   MidiDeviceMutex.Unlock();
   AudioMutex.Unlock();
 }
@@ -271,7 +271,7 @@ void				MediaLibrary::OnPreview(wxCommandEvent &WXUNUSED(event))
   wxString			selfile;
   wxTreeItemId		item;
   s_nodeInfo		infos;
-  
+
   selfile = MLTreeView->getSelection(1);
   //cout << "[MEDIALIBRARY] Preview File (OnPreview)" << selfile.mb_str() << endl;
 
@@ -298,7 +298,8 @@ BEGIN_EVENT_TABLE(MediaLibrary, wxPanel)
   EVT_SIZE(MediaLibrary::OnSize)
   EVT_TOOL(MediaLibrary_Add, MediaLibrary::OnAdd)
   EVT_TOOL(MediaLibrary_Remove, MediaLibrary::OnRemove)
-  EVT_TOOL(MediaLibrary_Edit, MediaLibrary::OnEdit)
+  // Commented for FORUM PURPOSE
+  //  EVT_TOOL(MediaLibrary_Edit, MediaLibrary::OnEdit)
   EVT_TOOL(MediaLibrary_Insert, MediaLibrary::OnInsert)
   EVT_TOOL(MediaLibrary_Preview, MediaLibrary::OnPreview)
   EVT_TOOL(MediaLibrary_TreeCollapse, MediaLibrary::OnCollapse)
