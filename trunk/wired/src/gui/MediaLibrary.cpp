@@ -66,6 +66,7 @@ MediaLibrary::MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &s
   wxString	sortselect_choices[NB_SORTSELECT_CHOICES];
   long		c;
 
+  preview = false;
   this->SetInvisible();
   this->SetDocked();
   SetBackgroundColour(ML_BACKGROUND);
@@ -79,18 +80,20 @@ MediaLibrary::MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &s
   TopToolbar = new wxToolBar(this, -1, wxPoint(-1, -1), wxSize(1000, 46), wxTB_3DBUTTONS);
   TopToolbar->AddTool(MediaLibrary_Add, _("Add"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_ADDUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_ADDDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Add a file"), _("Add a file"), NULL);
   TopToolbar->AddTool(MediaLibrary_Remove, _("Remove"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_REMOVEUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_REMOVEDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Remove file"), _("Remove file"), NULL);
-  TopToolbar->AddTool(MediaLibrary_Edit, _("Edit"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_EDITUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_EDITDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Edit file"), _("Edit file"), NULL);
+  TopToolbar->AddTool(MediaLibrary_TreeCollapse, _("Expand/Collapse"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_COLLAPSEUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_COLLAPSEDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Expand/Collapse all"), _("Expand or Collapse all tree branches"), NULL);
   TopToolbar->AddTool(MediaLibrary_Insert, _("Insert"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_INSERTUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_INSERTDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Insert file"), _("Insert file in a new track"), NULL);
   TopToolbar->Realize();
 
   BottomToolbar = new wxToolBar(this, -1, wxPoint(-1, this->GetSize().y - 50), wxSize(1000, 46), wxTB_3DBUTTONS);
-//   BottomToolbar->AddTool(MediaLibrary_Preview, _("Preview"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWUP_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Preview file"), _("Preview a file"), NULL);
-  BottomToolbar->AddTool(MediaLibrary_TreeCollapse, _("Expand/Collapse"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_COLLAPSEUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_COLLAPSEDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Expand/Collapse all"), _("Expand or Collapse all tree branches"), NULL);
+  BottomToolbar->AddTool(MediaLibrary_Start_Preview, _("Start Preview"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Preview file"), _("Preview a file"), NULL);
+  BottomToolbar->AddTool(MediaLibrary_Stop_Preview, _("Stop Preview"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWDO_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWDO_IMG)), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Stop Preview"), _("Stop Preview"), NULL);  
   for (c = 0; c < NB_SORTSELECT_CHOICES; c++)
     sortselect_choices[c] = SortSelectChoices[c].s;
   SortSelect = new wxComboBox(BottomToolbar, MediaLibrary_SortSelect, DEFAULT_SORTSELECT_VALUE, wxPoint(-1, -1), wxSize(100, -1), 4, sortselect_choices, wxCB_READONLY);
   BottomToolbar->AddControl(SortSelect);
   BottomToolbar->Realize();
+  BottomToolbar->EnableTool(5, false);
+  BottomToolbar->EnableTool(6, false);
 
   FiltersToolbar = new wxToolBar(this, -1, wxPoint(-1, this->GetSize().y - 100), wxSize(1000, 46), wxTB_3DBUTTONS);
   FiltersToolbar->AddCheckTool(MediaLibrary_FilterAudio, _("FAudio"), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_FILEAUDIOUP_IMG)), wxBITMAP_TYPE_PNG), wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_FILEAUDIODO_IMG)), wxBITMAP_TYPE_PNG), _("Show/Hide Audio files"), _("Show or hide audio files from the Media Library"), NULL);
@@ -273,12 +276,22 @@ void				MediaLibrary::OnPreview(wxCommandEvent &WXUNUSED(event))
   s_nodeInfo		infos;
 
   selfile = MLTreeView->getSelection(1);
-  cout << "[MEDIALIBRARY] Preview File (OnPreview)" << selfile.mb_str() << endl;
-
   item = MLTreeView->GetSelection();
   infos = MLTreeView->GetTreeItemStructFromId(item);
 
-
+  if (preview == false)
+    {
+      preview = true;
+      BottomToolbar->EnableTool(6, true);
+      Seq->PlayFile(selfile, false);
+    }
+  else
+    {
+      preview = false;
+      BottomToolbar->EnableTool(5, true);
+      BottomToolbar->EnableTool(6, false);
+      Seq->StopFile();
+    }
   //   WaveFile *w = new WaveFile(_("/usr/share/sounds/shutdown1.wav"), false);
   //   SeqMutex.Lock();
   //	  PlayWavePos = 0;
@@ -318,7 +331,8 @@ BEGIN_EVENT_TABLE(MediaLibrary, wxPanel)
   // Commented for FORUM PURPOSE
   //  EVT_TOOL(MediaLibrary_Edit, MediaLibrary::OnEdit)
   EVT_TOOL(MediaLibrary_Insert, MediaLibrary::OnInsert)
-  EVT_TOOL(MediaLibrary_Preview, MediaLibrary::OnPreview)
+  EVT_TOOL(MediaLibrary_Start_Preview, MediaLibrary::OnPreview)
+  EVT_TOOL(MediaLibrary_Stop_Preview, MediaLibrary::OnPreview)
   EVT_TOOL(MediaLibrary_TreeCollapse, MediaLibrary::OnCollapse)
   EVT_COMBOBOX(MediaLibrary_SortSelect, MediaLibrary::OnSortToggle)
   EVT_TEXT_ENTER(MediaLibrary_SortSelect, MediaLibrary::OnSortToggle)

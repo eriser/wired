@@ -582,7 +582,7 @@ void				MLTree::OnRightClick(wxMouseEvent& event)
   if (infos.extention.Cmp(wxT("")))
     {
       myMenu->Append(ML_ID_MENU_INFOS, wxT("Infos"), wxT("Infos"));
-//       myMenu->Append(ML_ID_MENU_PREVIEW, wxT("Preview"), wxT("Preview"));
+      myMenu->Append(ML_ID_MENU_PREVIEW, wxT("Preview"), wxT("Preview"));
       myMenu->Append(ML_ID_MENU_INSERT, wxT("Insert"), wxT("Insert"));
       myMenu->Append(ML_ID_MENU_EDIT, wxT("Edit"), wxT("Edit"));
       myMenu->AppendSeparator();
