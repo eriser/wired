@@ -282,6 +282,7 @@ void				MediaLibrary::OnPreview(wxCommandEvent &WXUNUSED(event))
   if (preview == false)
     {
       preview = true;
+      BottomToolbar->EnableTool(5, false);
       BottomToolbar->EnableTool(6, true);
       Seq->PlayFile(selfile, false);
     }
