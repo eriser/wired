@@ -1139,7 +1139,7 @@ void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
     {
       cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name.mb_str() << endl;     
       cActionManager::Global().AddEffectAction(&StartInfo, p, true);
-      CreateUndoRedoMenus(EditMenu);
+      //CreateUndoRedoMenus(EditMenu);
     }
 }
 
