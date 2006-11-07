@@ -100,15 +100,18 @@ Plugin*				RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin 
   return (plug);
 }
 
+void				RackTrack::SetSelected(Plugin *plugin)
+{
+  SelectedPlugin = plugin;
+}
 void				RackTrack::RemoveRack()
 {
 	//Dump();
-	Plugin* plugin = Racks.back();
-	Racks.pop_back();
+  Racks.remove(SelectedPlugin);
   	//Dump();
-	plugin->Hide();
-	SeqPanel->RemoveReferenceTo(plugin);
-       	delete plugin;
+	SelectedPlugin->Hide();
+	SeqPanel->RemoveReferenceTo(SelectedPlugin);
+       	//delete SelectedPlugin;
 	Parent->ResizeTracks();
 	Parent->SetScrolling();
 }
@@ -648,7 +651,9 @@ inline void			Rack::OnDeleteClick()
 			if (COMPARE_IDS((*k)->InitInfo.UniqueId, selectedPlugin->InitInfo->UniqueId))
 			{
 			  cout << "[MAINWIN] Destroying plugin: " << selectedPlugin->Name.mb_str() << endl;
-			  cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
+			  selectedTrack->SetSelected(selectedPlugin);
+			  selectedTrack->RemoveRack();
+			  //cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
 			  return;
 			}
     }
