@@ -609,7 +609,6 @@ void				MLTree::OnSelChange(wxTreeEvent &event)
      {
        MediaLibraryPanel->TopToolbar->EnableTool(1, false);
        MediaLibraryPanel->TopToolbar->EnableTool(2, true);
-       MediaLibraryPanel->TopToolbar->EnableTool(3, true);
        MediaLibraryPanel->TopToolbar->EnableTool(4, true);
        MediaLibraryPanel->BottomToolbar->EnableTool(5, true);
      }
@@ -617,7 +616,6 @@ void				MLTree::OnSelChange(wxTreeEvent &event)
      {
        MediaLibraryPanel->TopToolbar->EnableTool(1, true);
        MediaLibraryPanel->TopToolbar->EnableTool(2, true);
-       MediaLibraryPanel->TopToolbar->EnableTool(3, false);
        MediaLibraryPanel->TopToolbar->EnableTool(4, false);
        MediaLibraryPanel->BottomToolbar->EnableTool(5, false);
      }
@@ -625,7 +623,6 @@ void				MLTree::OnSelChange(wxTreeEvent &event)
      {
        MediaLibraryPanel->TopToolbar->EnableTool(1, true);
        MediaLibraryPanel->TopToolbar->EnableTool(2, false);
-       MediaLibraryPanel->TopToolbar->EnableTool(3, false);
        MediaLibraryPanel->TopToolbar->EnableTool(4, false);
        //       MediaLibraryPanel->BottomToolbar->EnableTool(5, false);
      }
