@@ -57,6 +57,8 @@ void				RackTrack::RemoveChannel()
 
 Plugin*				RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin *connect_to)
 {
+
+  cerr << "Add rack In Track" << endl;
   int xx, yy, xpos, ypos;
   static int num = 31000;
   Plugin *plug;
@@ -272,6 +274,7 @@ t_RackTrackPlugin*	Rack::AddRackAndChannel(PlugStartInfo &startinfo, PluginLoade
 	RackTrack			*t;
 	Plugin				*tmp;
 
+	cerr << "Add Rack and Channel" << endl;
 	result = new t_RackTrackPlugin();
 	t = new RackTrack(this, RackTracks.size());
 	tmp = t->AddRack(startinfo, p);
@@ -461,6 +464,7 @@ void				Rack::SetSelected(Plugin *p)
 	  if (*j == p)
 	    {
 	      selectedTrack = *i;
+	      selectedTrack->SetSelected(selectedPlugin);
 	      return;
 	    }
     }
@@ -644,15 +648,18 @@ void				Rack::UpdateUnitXSize()
 inline void			Rack::OnDeleteClick()
 {
 	vector<PluginLoader *>::iterator	k;
-  
+	int					RackIndex;
 	if (selectedPlugin)
     {
     	for (k = LoadedPluginsList.begin(); k != LoadedPluginsList.end(); k++)
 			if (COMPARE_IDS((*k)->InitInfo.UniqueId, selectedPlugin->InitInfo->UniqueId))
 			{
 			  cout << "[MAINWIN] Destroying plugin: " << selectedPlugin->Name.mb_str() << endl;
-			  selectedTrack->SetSelected(selectedPlugin);
 			  selectedTrack->RemoveRack();
+			  
+			  RackIndex =  selectedTrack->NbRacks();
+			  if (RackIndex < 1)
+			    RackPanel->RemoveTrack(selectedTrack->Index);
 			  //cActionManager::Global().AddEffectAction(&StartInfo, *k, false);
 			  return;
 			}
@@ -892,6 +899,7 @@ Plugin*				Rack::AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p)
   //if (!selectedTrack && (RackTracks.size() > 0))
   //  selectedTrack = *(RackTracks.begin());
   Plugin *tmp;
+  cerr << "Adddd" << endl;
   if (selectedTrack)
     {
       tmp = selectedTrack->AddRack(startinfo, p, selectedTrack->Racks.back());
@@ -927,7 +935,7 @@ Plugin*				Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
 
 	t = new RackTrack(this, RackTracks.size());
 	tmp = t->AddRack(startinfo, p);
-
+	cerr << "Add Track" << endl;
 	ConnectPluginChangeParamEventHandler(t);
 	SeqMutex.Lock(); 
 	RackTracks.push_back(t);
