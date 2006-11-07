@@ -53,6 +53,7 @@ class					RackTrack
 	void				RemoveChannel();
 	void				DeleteAllRacks();
 	void				SetSelected(Plugin *plugin);
+	int				NbRacks(){return Racks.size();};
 	RackTrack			operator=(const RackTrack& right);
 
 	void				Dump();													// Debug - Shows member variables
