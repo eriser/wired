@@ -145,7 +145,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_Quit, _("&Quit\tCtrl-Q"));
 
-  EditMenu->AppendSeparator();
+  //EditMenu->AppendSeparator();
   EditMenu->Append(MainWin_Cut, _("C&ut\tCtrl+X"));
   EditMenu->Append(MainWin_Copy, _("&Copy\tCtrl+C"));
   EditMenu->Append(MainWin_Paste, _("&Paste\tCtrl+V"));
@@ -308,7 +308,7 @@ int			MainWindow::Init()
   else
     wxGetApp().m_threads.Add(Seq);
 
-  InitUndoRedoMenuItems();
+  //InitUndoRedoMenuItems();
   //  InitVideoMenuItems();
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
