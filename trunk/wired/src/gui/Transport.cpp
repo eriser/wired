@@ -95,10 +95,15 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 			    up_up, up_down);
   BpmUpBtn = new HoldButton(this, Transport_BpmDown, wxPoint(112, 30), wxSize(11, 8), 
 			    down_up, down_down);
-  BpmLabel = new StaticLabel(this, Transport_BpmClick, wxT("096.00"), wxPoint(49, 20), wxSize(-1, 12));
+  BpmLabel = new StaticLabel(this, Transport_BpmClick, wxT("96"), wxPoint(49, 20), wxSize(-1, 12));
   BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));
-  BpmLabel->SetLabel(wxT("096.00"));
+  
+  wxString s;
+  int	i;
 
+  i = Seq->BPM;
+  s.Printf(wxT("%i"), i);
+  BpmLabel->SetLabel(s);
   SigNumUpBtn = new HoldButton(this, Transport_SigNumUp, wxPoint(42, 48), wxSize(11, 8), 
 			       up_up, up_down);
   SigNumDownBtn = new HoldButton(this, Transport_SigNumDown, wxPoint(42, 57), wxSize(11, 8), 
@@ -303,13 +308,14 @@ void				Transport::SetPlayPosition(double pos)
 void				Transport::OnBpmUp(wxCommandEvent &WXUNUSED(event))
 {
   wxMutexLocker m(SeqMutex);
+  int		i;
 
+  i = Seq->BPM;
   if (Seq->BPM < 999.f)
     {
-      Seq->SetBPM(Seq->BPM + 0.01f);
-
+      Seq->SetBPM(Seq->BPM + 1);
       wxString s;
-      s.Printf(wxT("%#06.2f"), Seq->BPM);
+      s.Printf(wxT("%i"), i);
       BpmLabel->SetLabel(s);
     }      
 }
@@ -317,13 +323,15 @@ void				Transport::OnBpmUp(wxCommandEvent &WXUNUSED(event))
 void				Transport::OnBpmDown(wxCommandEvent &WXUNUSED(event))
 {
   wxMutexLocker m(SeqMutex);
+  int		i;
 
+  i = Seq->BPM;
   if (Seq->BPM > 20.f)
     {
-      Seq->SetBPM(Seq->BPM - 0.01f);
+      Seq->SetBPM(Seq->BPM - 1);
 
       wxString s;
-      s.Printf(wxT("%#06.2f"), Seq->BPM);
+      s.Printf(wxT("%i"), i);
       BpmLabel->SetLabel(s);   
     }
 }
@@ -419,8 +427,11 @@ void				Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
 
 void				Transport::SetBpm(float bpm)
 {
+  int i;
+
+  i = bpm;
   wxString s;
-  s.Printf(wxT("%#06.2f"), bpm);
+  s.Printf(wxT("%i"), i);
   BpmLabel->SetLabel(s);
 }
 
@@ -434,7 +445,7 @@ void				Transport::SetSigNumerator(int n)
 void				Transport::SetSigDenominator(int d)
 {
   wxString s;
-  s.Printf(wxT("%d"), d);
+  s.Printf(wxT("%i"), d);
   SigDenLabel->SetLabel(s);
 }
 

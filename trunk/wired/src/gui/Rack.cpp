@@ -57,8 +57,6 @@ void				RackTrack::RemoveChannel()
 
 Plugin*				RackTrack::AddRack(PlugStartInfo &startinfo, PluginLoader *p, Plugin *connect_to)
 {
-
-  cerr << "Add rack In Track" << endl;
   int xx, yy, xpos, ypos;
   static int num = 31000;
   Plugin *plug;
@@ -274,7 +272,6 @@ t_RackTrackPlugin*	Rack::AddRackAndChannel(PlugStartInfo &startinfo, PluginLoade
 	RackTrack			*t;
 	Plugin				*tmp;
 
-	cerr << "Add Rack and Channel" << endl;
 	result = new t_RackTrackPlugin();
 	t = new RackTrack(this, RackTracks.size());
 	tmp = t->AddRack(startinfo, p);
@@ -900,7 +897,6 @@ Plugin*				Rack::AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p)
   //if (!selectedTrack && (RackTracks.size() > 0))
   //  selectedTrack = *(RackTracks.begin());
   Plugin *tmp;
-  cerr << "Adddd" << endl;
   if (selectedTrack)
     {
       tmp = selectedTrack->AddRack(startinfo, p, selectedTrack->Racks.back());
@@ -936,13 +932,11 @@ Plugin*				Rack::AddTrack(PlugStartInfo &startinfo, PluginLoader *p)
 
 	t = new RackTrack(this, RackTracks.size());
 	tmp = t->AddRack(startinfo, p);
-	cerr << "Add Track" << endl;
 	ConnectPluginChangeParamEventHandler(t);
 	SeqMutex.Lock(); 
 	RackTracks.push_back(t);
 	SeqMutex.Unlock();
-	if (tmp->HasView())
-		SetScrolling();
+	SetScrolling();
 	SeqPanel->RefreshConnectMenu();
 	return tmp;
 }
