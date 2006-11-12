@@ -588,11 +588,11 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 
   cout << "[MAINWIN] Closing all audio devices and streams..." << endl;
   // if we have to do something with already dead threads, it's here.
-  delete Mix;
-
   if (Audio)
     delete Audio;
   Audio = NULL; // for handling event of Transport::OnIdle
+
+  delete Mix;
 
   cout << "[MAINWIN] Unloading logging manager..." << endl;
   delete LogWin;
@@ -1740,8 +1740,6 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
 	}
     }
 
-  for (pluginIt = UpdatePlugins.begin(); pluginIt != UpdatePlugins.end(); pluginIt++)
-    (*pluginIt)->Update();
   UpdatePlugins.clear();
 
   for (trackIt = Seq->TracksToRefresh.begin(); trackIt != Seq->TracksToRefresh.end(); trackIt++)
