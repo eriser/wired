@@ -1,4 +1,5 @@
 SUBDIRS =				\
+	save				\
 	gui 				\
 	fileloader			\
 	sequencer 			\
@@ -35,6 +36,7 @@ bin_PROGRAMS = wired
 wired_SOURCES =
 
 wired_LDADD =					\
+	save/libsave.a				\
 	gui/libgui.a				\
 	sequencer/libsequencer.a		\
 	audio/libaudio.a			\

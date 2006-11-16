@@ -45,6 +45,7 @@
 #include "Threads.h"
 #include "MediaLibrary.h"
 #include "MLTree.h"
+#include "SaveCenter.h"
 
 Rack			*RackPanel = NULL;
 SequencerGui		*SeqPanel = NULL;
@@ -58,6 +59,7 @@ PlugStartInfo		StartInfo;
 vector<PluginLoader *>	LoadedPluginsList;
 WiredSession		*CurrentSession = NULL;
 WiredSessionXml		*CurrentXmlSession = NULL;
+//SaveCenter		*saveCenter = NULL;
 WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
 MediaLibrary		*MediaLibraryPanel = NULL;
 FileConversion		*FileConverter = NULL;
@@ -79,6 +81,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   WiredSettings = new Settings();
   CurrentSession = new WiredSession(wxString(wxT(""), *wxConvCurrent));
   CurrentXmlSession = new WiredSessionXml(wxString(wxT(""), *wxConvCurrent));
+  saveCenter = new SaveCenter(wxGetCwd());
   LoadedExternalPlugins = new WiredExternalPluginMgr();
   LogWin = new wxLogWindow(this, wxT("Wired log"), false);
   
@@ -167,6 +170,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   HelpMenu->Append(MainWin_About, _("&About..."));
   
   MediaLibraryMenu->Append(MainWin_MediaLibraryBeta, _("This feature is currently in alpha stage"))->Enable(false);
+  MediaLibraryMenu->Append(MainWin_SaveML, _("Save Media Library"));
+  MediaLibraryMenu->Append(MainWin_LoadML, _("Load Media Library"));
+  MediaLibraryMenu->AppendSeparator();
   ItemShowMediaLibrary = MediaLibraryMenu->AppendCheckItem(MainWin_MediaLibraryShow, _("&Show/Hide\tCtrl-M"));
   ItemFloatingMediaLibrary = MediaLibraryMenu->AppendCheckItem(MainWin_FloatMediaLibrary, _("&Floating"));
   
@@ -1834,6 +1840,33 @@ void		MainWindow::OnKey(wxKeyEvent& event)
     event.Skip();
 }
 
+void		MainWindow::OnLoadML(wxCommandEvent &WXUNUSED(event))
+{
+  vector<wxString> exts;
+  exts.push_back(_("xml\tMedia Library file (*.xml)"));
+  
+  FileLoader	dlg(this, MainWin_FileLoader, _("Load Media Library"), false, false, &exts);
+  if (dlg.ShowModal() == wxID_OK)
+    {
+      wxString filename = dlg.GetSelectedFile();    
+      MediaLibraryPanel->MLTreeView->LoadPatch(filename);
+    }
+}
+
+void		MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
+{
+  vector<wxString> exts;
+  exts.push_back(_("xml\tMedia Library file (*.xml)"));
+  
+  FileLoader	dlg(this, MainWin_FileLoader, _("Save Media Library"), false, true, &exts);
+  if (dlg.ShowModal() == wxID_OK)
+    {
+      wxString filename = dlg.GetSelectedFile();    
+      MediaLibraryPanel->MLTreeView->OnSave(filename);
+    }
+}
+
+
 BEGIN_DECLARE_EVENT_TYPES()
     DECLARE_EVENT_TYPE(wxSetCursorPos, 313131)
 END_DECLARE_EVENT_TYPES()
@@ -1863,6 +1896,8 @@ BEGIN_EVENT_TABLE(MainWindow, wxFrame)
   EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack) 
   EVT_MENU(MainWin_FloatMediaLibrary, MainWindow::OnFloatMediaLibrary) 
   EVT_MENU(MainWin_MediaLibraryShow, MainWindow::MediaLibraryShow)
+  EVT_MENU(MainWin_SaveML, MainWindow::OnSaveML)
+  EVT_MENU(MainWin_LoadML, MainWindow::OnLoadML)
   EVT_MENU(MainWin_Undo, MainWindow::OnUndo) 
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
   //EVT_MENU(MainWin_History, MainWindow::OnHistory)

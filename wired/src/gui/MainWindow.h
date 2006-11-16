@@ -101,6 +101,8 @@ class					MainWindow: public wxFrame
 
   void					MediaLibraryShow(wxCommandEvent &event);
   void					MediaLibraryHide(wxCommandEvent &event);
+  void					OnSaveML(wxCommandEvent &e);
+  void					OnLoadML(wxCommandEvent &e);
 
   void			                OnShowDebug(wxCommandEvent &event);
 
@@ -277,6 +279,8 @@ enum
   MainWin_MediaLibraryBeta,
   MainWin_MediaLibraryShow,
   MainWin_MediaLibraryHide,
+  MainWin_SaveML,
+  MainWin_LoadML,
   MainWin_SeekVideo,
   MainWin_ShowLog
 };

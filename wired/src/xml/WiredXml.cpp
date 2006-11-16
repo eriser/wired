@@ -100,19 +100,32 @@ bool					WiredXml::ValidDocument()
 
 bool					WiredXml::CreateDocument(const wxString& DocName)
 {
-	CloseDocumentWriter();
-	if (DocName.Cmp(wxT("")) == 0)
+  std::cerr << "[WiredXml] CreateDocument" << std::endl; 
+
+  CloseDocumentWriter();
+  std::cerr << "[WiredXml] CloseDocumentWriter" << std::endl; 
+
+  if (DocName.Cmp(wxT("")) == 0)
+    _DocumentWriterName = _DocumentFileName + TEMP_EXTENSION;
+  else
+    _DocumentWriterName = DocName;
+
+  std::cerr << "[WiredXml] _DocumentWriterName = " << _DocumentWriterName.mb_str() << std::endl;
+  if ((_DocumentWriter = xmlNewTextWriterFilename(_DocumentWriterName.mb_str(*wxConvCurrent), 0)) != NULL)
+    {      
+      std::cerr << "[WiredXml] 1" << std::endl;
+      if (xmlTextWriterSetIndent(_DocumentWriter, 4) == 0)
 	{
-		_DocumentWriterName = _DocumentFileName + TEMP_EXTENSION;
+	  std::cerr << "[WiredXml] 2" << std::endl;
+	  if (xmlTextWriterStartDocument(_DocumentWriter, NULL, NULL, NULL) >= 0)
+	    {	
+	      std::cerr << "[WiredXml] 3" << std::endl;
+	      //if (xmlTextWriterWriteDTDExternalEntity(_DocumentWriter, FALSE, ) >= 0)
+	      return true;
+	    }
 	}
-	else
-		_DocumentWriterName = DocName;
-	if ((_DocumentWriter = xmlNewTextWriterFilename(_DocumentWriterName.mb_str(*wxConvCurrent), 0)) != NULL)
-		if (xmlTextWriterSetIndent(_DocumentWriter, 4) == 0)
-			if (xmlTextWriterStartDocument(_DocumentWriter, NULL, NULL, NULL) >= 0)
-				//if (xmlTextWriterWriteDTDExternalEntity(_DocumentWriter, FALSE, ) >= 0)
-				return true;
-	return false;
+    }
+  return false;
 }
 
 bool					WiredXml::StartElement(const wxString& Name)
@@ -356,4 +369,56 @@ int						WiredXml::GetNodeType()
 const wxString&		WiredXml::GetDocumentName()
 {
 	return _DocumentFileName;
+}
+
+
+int			WiredXml::GetAttributeCount()
+{
+  if(_DocumentFile != NULL)
+    return xmlTextReaderAttributeCount(_DocumentFile);
+  return 0;
+}
+
+wxString		WiredXml::GetAttributeValue(int no)
+{
+  if(_DocumentFile != NULL && no <= GetAttributeCount())
+    return (wxString((const char*)xmlTextReaderGetAttributeNo(_DocumentFile, no),
+		     wxConvUTF8));
+  return wxT("");
+}
+
+wxString		WiredXml::GetAttributeName(int no)
+{
+  wxString	ret = wxT("");
+  if(_DocumentFile != NULL && no <= GetAttributeCount())
+    {
+      xmlTextReaderMoveToAttributeNo(_DocumentFile, no);
+      ret = wxString((const char*)xmlTextReaderConstName(_DocumentFile), 
+		     wxConvUTF8);
+      xmlTextReaderMoveToElement(_DocumentFile);
+    }
+
+  return ret;
+}
+
+bool			WiredXml::HasChildren()
+{
+  xmlNodePtr	currNode;
+  
+  if(_DocumentFile)
+    {
+      currNode = xmlTextReaderCurrentNode(_DocumentFile);
+
+      return (currNode->children == NULL);
+    }
+  else
+    return false;
+}
+
+int			WiredXml::GetDepth()
+{
+  if(_DocumentFile)
+    return xmlTextReaderDepth(_DocumentFile);
+  else 
+    return -1;
 }

@@ -39,12 +39,12 @@
 #define TEMP_EXTENSION wxT("~")
 
 /**
- * Interface with the linxml.
+ * Interface with the libxml.
  * It can read and write XML files, based on the 
  * <a href=" http://xmlsoft.org/">libxml</a>.<br>
  * Most of the methods are just interfacing the methods of the 
  * <a href=" http://xmlsoft.org/html/libxml-xmlwriter.html">xmlwriter</a> 
- * and <a href=" http://xmlsoft.org/html/libxml-xmlwriter.html">xmlreader</a> 
+ * and <a href=" http://xmlsoft.org/html/libxml-xmlreader.html">xmlreader</a> 
  * objects of the library. <br>
  * For further informations, you'd better have a look to this lib doc. <br>
  */
@@ -72,7 +72,6 @@ class WiredXml
 	 * \return the name of the document.
 	 */
 	const wxString&	GetDocumentName();
-protected:
 
 	/** Opens a document.
 	 * \param FileName The path to the document.
@@ -255,6 +254,14 @@ protected:
 	 * \return The value of the attribute, else an empty wxString
 	 */
 	wxString			GetAttribute(wxString Name);
+
+	int				GetAttributeCount();
+	
+	wxString			GetAttributeName(int no);
+	wxString			GetAttributeValue(int no);
+	
+	bool				HasChildren();
+	int				GetDepth();
 
 	/** Gets the node type of the current node.
 	 * This is mainly a call to xmlTextReaderNodeType. <br>
