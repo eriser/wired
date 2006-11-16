@@ -64,62 +64,73 @@ class				MediaLibrary : public wxPanel
 */
   ~MediaLibrary();
 
+  friend class			MLTree;
+
+/**
+ * MLTree derived from wxTreeCtrl. Contains the tree of the Media Library
+*/
+  MLTree			*MLTreeView;
+
  protected:
 
-  friend class			MLTree;
 /**
  *Boolean used to know if the wav file is preview
 */
   bool				preview;
+
 /**
  * Boolean used to know if the media library panel is visible or unvisible
 */
   bool				visible;
+
 /**
  * Boolean used to know if the media library panel is floating or docked
 */
   bool				floating;
+
 /**
  * wxToolBar containing the butons located on top of the medialibrary panel
 */
   wxToolBar			*TopToolbar;
+
 /**
  * wxToolBar containing the butons located on bottom of the medialibrary
  * panel
 */
   wxToolBar			*BottomToolbar;
+
 /**
  * wxToolBar containing the butons dedicated to the filters of the filetypes
  * This wxToolBar is located under the BottomToolbar
 */
   wxToolBar			*FiltersToolbar;
+
 /**
  * wxBoxSizer containing all the previously defined wxToolBar
 */
   wxBoxSizer			*TopSizer;
+
 /**
  * wxComboBox designed to hold the rolling menu offering sorting
  * possibilities
 */
   wxComboBox			*SortSelect;
-/**
- * MLTree derived from wxTreeCtrl. Contains the tree of the Media Library
-*/
-  MLTree			*MLTreeView;
+
 /**
  * FileConversion for converting files to the used samplerate before using
-
  * them in the Sequencer
 */
   FileConversion		*FileConverter;
 
  public:
+
 /**
  * The SetFileConverter, used to define a fileconverter in the medialibrary
  * \param FileConv an *FileConversion object
  * \return void
 */
   void				SetFileConverter(FileConversion *FileConv);
+
 /**
  * The OnSize function is called by an event every time the media library
  * panel is resized by the user. It change the size of the Tree and the
@@ -128,6 +139,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnSize(wxSizeEvent &event);
+
 /**
  * The OnEdit function is called by launching the Edit action, using the
  * dedicated button or the contextual menu. It insert the file into a track
@@ -137,6 +149,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnEdit(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnInsert function is called by launching the Insert action, using the
  * dedicated button or the contextual menu. It insert the file into a track
@@ -145,6 +158,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnInsert(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnPreview function is called by launching the Preview action, using
  * the dedicated button or the contextual menu. It launch a preview of the
@@ -154,6 +168,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnPreview(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnAdd function is called by launching the Add File action, using the
  * dedicated button. It launch the wired file browser allowing the user to
@@ -164,6 +179,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnAdd(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnRemove function is called by launching the Delete action, using the
  * dedicated button or the contextual menu. It delete the selected file
@@ -183,6 +199,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnCollapse(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnSortToggle function is called when changing the selection of the
  * SortToggle variable. It retreive the new selection before calling the
@@ -192,6 +209,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnSortToggle(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnFilterAudio function is called by launching the Filter Audio action
  * using the dedicated button. It will browse all existing nodes in the Tree
@@ -201,6 +219,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnFilterAudio(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnFilterMIDI function is called by launching the Filter MIDI action
  * using the dedicated button. It will browse all existing nodes in the Tree
@@ -210,6 +229,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnFilterMIDI(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnFilterVideo function is called by launching the Filter Video action
  * using the dedicated button. It will browse all existing nodes in the Tree
@@ -219,6 +239,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnFilterVideo(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnFilterEffects function is called by launching the Filter Effects 
  * action using the dedicated button. It will browse all existing nodes in 
@@ -228,6 +249,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnFilterEffects(wxCommandEvent &WXUNUSED(event));
+
 /**
  * The OnRightClick function is called by using the mouse right click on a
  * MLTree node. It displays a menu with possibles actions depending on the
@@ -237,6 +259,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnRightClick(wxMouseEvent &event);
+
 /**
  * The OnLeftClick function is called by using the mouse left click on a
  * MLTree node. 
@@ -245,6 +268,7 @@ class				MediaLibrary : public wxPanel
  * \return void
 */
   void				OnLeftClick(wxMouseEvent &event);
+
 /**
  * The ShowPopup function is called 
  * \param event a wxMouseEvent because it is the normal wx mouse event
@@ -259,30 +283,35 @@ class				MediaLibrary : public wxPanel
  \return a boolean. true if the MediaLibrary is visible, else return false
 */
   bool				IsVisible();
+
 /**
  * The SetInVisible function is a seter called when seting the MediaLibrary
  * panel to invisible. It set the boolean visible to false.
  \return void
 */
   void				SetInvisible();
+
 /**
  * The SetVisible function is a seter called when seting the MediaLibrary
  * panel to visible. It set the boolean visible to true.
  \return void
 */
   void				SetVisible();
+
 /**
  * The IsFloating function is used to test if the MediaLibrary is floating
  * or docked.
  \return a boolean. true if the MediaLibrary is floating, else return false
 */
   bool			        IsFloating();
+
 /**
  * The SetFloating function is a seter called when seting the MediaLibrary
  * panel to floating. It set the boolean floating to true.
  \return void
 */
   void				SetFloating();
+
 /**
  * The SetDocked function is a seter called when seting the MediaLibrary
  * panel to docked. It set the booelan floating to false.
