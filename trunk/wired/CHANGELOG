@@ -1,23 +1,23 @@
 
-WIRED 0.4a (rev 1211)
+WIRED 0.4 alpha (rev 1218)
 ------------------------------------------------------------------------
 - Add save and load function for Media Library, Drum31 and WiredSampler
-- Improve connecting between effect and instrument
-- Improve Rack connecting
-- Fix autoscroll when you add wiredsample
-- Fixed a bug in remove rack
-- Fix preview in media library
-- Improve copy/paste of multi-pattern
+- Improved connection management between effect and instrument
+- Improved Rack connection
+- Fix autoscroll when you add wiredsampler to the rack view
+- Fixed a bug when removing a rack
+- Fixed preview in media library
+- Improved copy/paste of multi-pattern
 - Add wired directories for lib, include, sysconf and data directories
 - Real name of the Midi device displayed in the header of the track
 - fixed use of PortMidi API
 - Removed forgotten debug messages
-- Add an icon when an effect can be assign to a track
-- Made some cleaning up in the menu and keyboard shortcuts
-- Resolve bug in Wave Drawer
-- Repair stereo in wired and prepare multichannel
-- Add drag and drop between Medialibrary and Sequencer
-- Add drag and drop features in Sequencer
+- Added an icon when an effect can be assign to a track
+- Made some clean up in the menu and keyboard shortcuts
+- Resolved bug in Wave Drawer
+- Repaired stereo in wired and prepared multichannel
+- Added drag and drop between Medialibrary and Sequencer
+- Added drag and drop features in Sequencer
 
 WIRED 0.3.1 (rev 1008)
 ------------------------------------------------------------------------
