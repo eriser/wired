@@ -48,8 +48,8 @@ MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
     WiredDocument(wxT("MLTree"))
 {
   SetIndent(10);
-  /* Set the Root node with the project's name in label */
-  root = AddRoot(_("Project's name"));
+  /* Set the Root node with the project name in label */
+  root = AddRoot(_("Project name"));
   SetItemBold(root);
 
   /* Create Image List */
