@@ -267,6 +267,7 @@ AC_CONFIG_FILES([src/plugins/beatbox/Makefile
 		po/Makefile.in
 		intl/Makefile
 		src/Makefile
+		src/save/Makefile
 		src/audio/Makefile
 		src/editmidi/Makefile
 		src/engine/Makefile
