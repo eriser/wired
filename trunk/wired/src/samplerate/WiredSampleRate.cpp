@@ -292,7 +292,7 @@ void					WiredSampleRate::ChooseFileFormat(SF_INFO *DestInfo)
 	wxPoint				ComboPos(40, 70);
 	wxDialog 			Dialog(NULL, -1, _("File format selection"), wxDefaultPosition, DialogSize,
 								wxCENTRE | wxCAPTION | wxTHICK_FRAME | wxSTAY_ON_TOP);
-	wxStaticText		DialogText(&Dialog, -1, wxString(_("Please select the options that\nyou want for the downmix.\n(Defaults are current project's configuration)")),
+	wxStaticText		DialogText(&Dialog, -1, wxString(_("Please select the options that\nyou want for the downmix.\n(Defaults are current project values)")),
 									wxPoint(13, 10), wxSize(-1, -1), wxALIGN_CENTER);
 	wxButton			DialogButton(&Dialog, wxID_OK, wxT(""), wxPoint(135, 110));
 	wxComboBox			CBFormat(&Dialog, -1, wxT(""), ComboPos, ComboSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY);
