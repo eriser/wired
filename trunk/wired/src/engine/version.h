@@ -5,8 +5,8 @@
 #define __VERSION_H__
 
 #define WIRED_NAME	(wxT("Wired"))
-#define WIRED_TITLE	(wxT("Wired 0.4a"))
-#define WIRED_VERSION	(wxT("0.4a"))
+#define WIRED_TITLE	(wxT("Wired 0.4 alpha"))
+#define WIRED_VERSION	(wxT("0.4 alpha"))
 
 #define WIRED_BUGS	(wxT("http://sourceforge.net/projects/wired"))
 #define WIRED_FORUMS	(wxT("http://wired.sourceforge.net"))
