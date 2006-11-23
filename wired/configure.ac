@@ -56,9 +56,9 @@ AM_CONDITIONAL(PLUGINS, test x$enable_plugins = xyes)
 
 # can enable or disable Wired codecs
 AC_ARG_ENABLE(codecs,
-	[  --enable-codecs Enable or disable Wired codecs (default enabled)],
+	[  --enable-codecs Enable or disable Wired codecs (default disabled)],
 	[enable_codecs="$enableval"],
-	[enable_codecs="yes"])
+	[enable_codecs="no"])
 AM_CONDITIONAL(CODECS, test x$enable_codecs = xyes)
 
 AC_ARG_ENABLE(optimize,
