@@ -9,7 +9,7 @@ AC_INIT([Wired], [0.4alpha], [wired@bloodshed.net])
 AC_CONFIG_AUX_DIR([config])
 
 # Needed for plugins
-AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL
 
 # Automake.
 AM_INIT_AUTOMAKE([1.8.2 foreign check-news dist-bzip2 no-dist-gzip])
