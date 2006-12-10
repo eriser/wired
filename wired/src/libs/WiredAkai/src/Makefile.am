@@ -4,4 +4,5 @@ CPPFLAGS = $(shell wx-config --cflags) -I../include -I../../../gui -I../../../pl
 
 lib_LTLIBRARIES = libWiredAkai.la
 
+libWiredAkai_la_SOURCES = -avoid-version
 libWiredAkai_la_SOURCES = akai.c list.c
