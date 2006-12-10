@@ -1,5 +1,8 @@
 if PLUGINS
-SUBDIRS = beatbox compressor crusher delay filter loop_sampler akai_sampler reverb chorus wahwah
+SUBDIRS = beatbox crusher delay loop_sampler akai_sampler reverb chorus wahwah 
+
+# experimental or bugged plugins:
+#SUBDIRS += synth compressor filter test
 endif
 
 LDFLAGS = $(shell wx-config --libs)
