@@ -21,7 +21,7 @@
 #ifndef SYNTHPLUG_H_
 # define SYNTHPLUG_H_
 
-#define PLUGIN_NAME	"Yeah-Yeah Synth"
+#define PLUGIN_NAME	wxT("Yeah-Yeah Synth")
 
 static PlugInitInfo info;
 
