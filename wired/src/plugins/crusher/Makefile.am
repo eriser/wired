@@ -4,6 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 pkglib_LTLIBRARIES = libWiredCrusher.la
 
+libWiredCrusher_la_LDFLAGS = -avoid-version
 libWiredCrusher_la_SOURCES =				\
 			CrusherPlug.cpp		\
 			../../redist/Plugin.cpp

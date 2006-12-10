@@ -9,6 +9,7 @@ endif
 
 pkglib_LTLIBRARIES = libWiredLoopSampler.la
 
+libWiredLoopSampler_la_LDFLAGS = -avoid-version
 libWiredLoopSampler_la_SOURCES =			\
 			LoopSampler.cpp			\
 			LoopSamplerView.cpp		\

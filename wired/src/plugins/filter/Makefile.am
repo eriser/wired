@@ -4,6 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 pkglib_LTLIBRARIES = libWiredFilter.la
 
+libWiredFilter_la_LDFLAGS = -avoid-version
 libWiredFilter_la_SOURCES =				\
 			FilterPlug.cpp		\
 			../../redist/Plugin.cpp

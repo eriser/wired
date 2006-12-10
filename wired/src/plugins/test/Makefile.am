@@ -4,6 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 pkglib_LTLIBRARIES = libWiredTest.la
 
+libWiredTest_la_LDFLAGS = -avoid-version
 libWiredTest_la_SOURCES =				\
 			plug.cpp		\
 			../../redist/Plugin.cpp

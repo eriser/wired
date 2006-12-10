@@ -4,6 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 pkglib_LTLIBRARIES = libWiredCompressor.la
 
+libWiredCompressor_la_LDFLAGS = -avoid-version
 libWiredCompressor_la_SOURCES =			\
 			CompressorPlug.cpp	\
 			../../redist/Plugin.cpp

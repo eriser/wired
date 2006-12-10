@@ -4,6 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 pkglib_LTLIBRARIES = libWiredReverb.la
 
+libWiredReverb_la_LDFLAGS = -avoid-version
 libWiredReverb_la_SOURCES =				\
 			Stk.cpp			\
 			Effect.cpp 		\
