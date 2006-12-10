@@ -35,13 +35,13 @@ SynthPlugin::SynthPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   cout << "[SYNTH] Host is " << GetHostProductName()
        << " version " << GetHostProductVersion() << endl;
 
-  png_tmp = new wxImage("data/synth.png", wxBITMAP_TYPE_PNG);
+  png_tmp = new wxImage(wxT("data/synth.png"), wxBITMAP_TYPE_PNG);
   BgBmp = new wxBitmap(png_tmp);
 
-  fader_bg = new wxImage("data/Fader_bg.png",wxBITMAP_TYPE_PNG);
-  fader_fg = new wxImage("data/fader_fg.png",wxBITMAP_TYPE_PNG);
-  knob_bg = new wxImage("data/knob_bg.png",wxBITMAP_TYPE_PNG);
-  knob_fg = new wxImage("data/knob_fg.png",wxBITMAP_TYPE_PNG);
+  fader_bg = new wxImage(wxT("data/Fader_bg.png"),wxBITMAP_TYPE_PNG);
+  fader_fg = new wxImage(wxT("data/fader_fg.png"),wxBITMAP_TYPE_PNG);
+  knob_bg = new wxImage(wxT("data/knob_bg.png"),wxBITMAP_TYPE_PNG);
+  knob_fg = new wxImage(wxT("data/knob_fg.png"),wxBITMAP_TYPE_PNG);
 
   // FIXME add a volume fader
   Osc1Phase = new KnobCtrl(this, Synth_Osc1_Phase, knob_bg, knob_fg, 0, 127, 63, 1,
