@@ -9,6 +9,8 @@ AC_INIT([Wired], [0.4alpha], [wired@bloodshed.net])
 AC_CONFIG_AUX_DIR([config])
 
 # Needed for plugins
+AC_DISABLE_STATIC
+AC_ENABLE_SHARED
 AC_PROG_LIBTOOL
 
 # Automake.
