@@ -4,6 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 pkglib_LTLIBRARIES = libWiredWahwah.la
 
+libWiredWahwah_la_LDFLAGS = -avoid-version
 libWiredWahwah_la_SOURCES =			\
 			WahwahPlug.cpp 		\
 			../../redist/Plugin.cpp

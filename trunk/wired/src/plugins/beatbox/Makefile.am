@@ -9,7 +9,7 @@ endif
 
 pkglib_LTLIBRARIES = libWiredBeatBox.la
 
-
+libWiredBeatBox_la_LDFLAGS = -avoid-version
 libWiredBeatBox_la_SOURCES =				\
 			../../redist/Polyphony.cpp	\
 			BeatBox.cpp			\

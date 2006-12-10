@@ -4,6 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 pkglib_LTLIBRARIES = libWiredChorus.la
 
+libWiredChorus_la_LDFLAGS = -avoid-version
 libWiredChorus_la_SOURCES =			\
 			ChorusPlug.cpp		\
 			Effect.cpp		\
