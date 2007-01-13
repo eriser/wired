@@ -28,7 +28,7 @@ bool				MainApp::OnInit()
   wxHandleFatalExceptions();
 	//std::set_new_handler(&AllocationErrorHandler);
   wxBitmap			bitmap;
-  wxSplashScreen*		splash;
+  wxSplashScreen*		splash = NULL;
 
 
 #if wxUSE_LIBPNG
@@ -78,7 +78,8 @@ bool				MainApp::OnInit()
   SetTopWindow(Frame);
 
   // Wired crash if loading main frame is more than splash timeout
-  splash->Hide();
+  if (splash)
+    splash->Hide();
 
   // now error dialog are based on mainframe 
   MainWin = Frame;
