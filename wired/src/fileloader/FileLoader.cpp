@@ -30,8 +30,8 @@
 using namespace std;
 
 #include "FileLoader.h"
-#include "icon5.xpm"
-#include "icon3.xpm"
+#include "folder.xpm"
+#include "folder-open.xpm"
 #include "file.xpm"
 #include "audio.xpm"
 #include "delete.xpm"
@@ -125,8 +125,8 @@ wxDialog(parent, id, title, wxDefaultPosition, wxSize(F_WIDTH, F_HEIGHT))
   FileInfo = new wxStaticText(this, -1, wxT(""), 
           wxPoint(10, F_HEIGHT - 105), wxSize(-1, -1), wxALIGN_LEFT);
   wxImageList *images = new wxImageList(16, 16, TRUE);
-  AddIcon(images, wxIcon(icon3_xpm));
-  AddIcon(images, wxIcon(icon5_xpm));
+  AddIcon(images, wxIcon(folder_xpm));
+  AddIcon(images, wxIcon(folder_open_xpm));
   folder->AssignImageList(images);
 
   wxImageList *imgs = new wxImageList(16, 16, TRUE);
