@@ -96,14 +96,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
       cout << "Critical error" << endl;
       exit(1);
     }
-  // from GetDevices
-  catch (Error::NoDevice)
-    {
-      cout << "[MAINWIN] No Device :\nPlease check if your soundcard is not busy" << endl;
-      AlertDialog(_("Critical error"), _("You have no soundcard or it's busy, Wired will exit."));
-      exit(1);
-    }
-  
+
   // Mixer must be declared after AudioEngine 
   Mix = new Mixer();
   Seq = new Sequencer();

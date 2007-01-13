@@ -180,61 +180,81 @@ void AudioEngine::GetDeviceSettings()
 
   SetOutputDevice();
   SetInputDevice();
-  Latency = (double)((double)SamplesPerBuffer / (double)SampleRate);
+  if (!SampleRate)
+    Latency = 0;
+  else
+    Latency = (double)((double)SamplesPerBuffer / (double)SampleRate);
 
   return (SetChannels(UserData->InputChannels,UserData->OutputChannels));
 }
 
 void AudioEngine::GetAudioSystems()
 {
-  PaHostApiIndex	Num = Pa_GetHostApiCount();
-  int			i;
+  PaHostApiIndex	deviceNumber = Pa_GetHostApiCount();
+  int			deviceIndex;
 
-  for (i = 0; i < Num; i++)
-    {
-      const PaHostApiInfo	*Infos = Pa_GetHostApiInfo(i);
+  if (deviceNumber < 0)
+    cout << "[AUDIO] Portaudio ERROR : " << Pa_GetErrorText(deviceNumber) << endl;
+  else if (!deviceNumber)
+    cout << "[AUDIO] No audio system found" << endl;    
+  else
+    for (deviceIndex = 0; deviceIndex < deviceNumber; deviceIndex++)
+      {
+	// retrieve host API informations
+	const PaHostApiInfo	*Infos = Pa_GetHostApiInfo(deviceIndex);
 
-      if (Infos)
-	{
-	  cout << "[AUDIO] Host API Number " << i << " is " << Infos->name 
-	       << ", devices count : " << Infos->deviceCount << endl;
+	if (Infos)
+	  {
+	    cout << "[AUDIO] Host API Number " << deviceIndex
+		 << " is " << Infos->name
+		 << " with " << Infos->deviceCount << " devices" << endl;
 
-	  SystemList.push_back(new AudioSystem(i, wxString(Infos->name, *wxConvCurrent)));
-	}
-    }
+	    // insert AudioSystem object in our list
+	    SystemList.push_back(new AudioSystem(deviceIndex, wxString(Infos->name, *wxConvCurrent)));
+	  }
+      }
 }
 
 void AudioEngine::GetDevices()
 {
-  int			n = Pa_GetDeviceCount();
+  int			deviceIndex;
+  int			deviceNumber = Pa_GetDeviceCount();
   const PaDeviceInfo	*info;
   Device		*dev;
   
-  if (!(n > 0))
-    {
-      cout << "[AUDIO] No device found" << endl;
-      throw Error::NoDevice();
-    }
-  for (int i = 0; i < n; i++)
-    {
-      if (!(info = Pa_GetDeviceInfo( i )))
-	{
-	  cout << "[AUDIO] Error Pa_GetDeviceInfo() bad return value" 
-	       << endl;
-	  throw Error::NoDevice();
-	}
-      dev = new Device(i, wxString(info->name, *wxConvCurrent),
-		       info->maxInputChannels,
-		       info->maxOutputChannels, GetAudioSystemById(info->hostApi));
-      DeviceList.push_back(dev);
-      cout << "[AUDIO] New device found #" << dev->Id << " for host " << dev->Host->GetId()
-	   << " : " << dev->Name.mb_str() << endl
-	   << "[AUDIO] Max Input Channels: " << dev->MaxInputChannels 
-	   << endl
-	   << "[AUDIO] Max Output Channels: " << dev->MaxOutputChannels
-	   << endl;
-      dev->GetSupportedSettings();
-    }
+  if (deviceNumber < 0)
+    cout << "[AUDIO] Portaudio ERROR: " << Pa_GetErrorText(deviceNumber) << endl;
+  else if (!deviceNumber)
+    cout << "[AUDIO] No device found" << endl;
+  else
+    for (deviceIndex = 0; deviceIndex < deviceNumber; deviceIndex++)
+      {
+	// if for some reasons index is misunderstood by Pa function..
+	if (!(info = Pa_GetDeviceInfo(deviceIndex)))
+	  {
+	    cout << "[AUDIO] Pa_GetDeviceInfo() failed with " << deviceIndex
+		 << endl;
+	  }
+	else
+	  {
+	    // create device node
+	    dev = new Device(deviceIndex, wxString(info->name, *wxConvCurrent),
+			     info->maxInputChannels,
+			     info->maxOutputChannels, GetAudioSystemById(info->hostApi));
+	    dev->GetSupportedSettings();
+
+	    // insert device node in our list 
+	    DeviceList.push_back(dev);
+
+	    // print device informations
+	    cout << "[AUDIO] New device found #" << dev->Id << " for host " << dev->Host->GetId()
+		 << " : " << dev->Name.mb_str() << endl
+		 << "[AUDIO] Max Input Channels: " << dev->MaxInputChannels 
+		 << endl
+		 << "[AUDIO] Max Output Channels: " << dev->MaxOutputChannels
+		 << endl;
+	  }
+      }
 }
 
 void AudioEngine::OpenStream()

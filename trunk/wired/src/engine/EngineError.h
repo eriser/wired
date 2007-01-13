@@ -8,7 +8,6 @@
 namespace Error
 {
   class AudioEngineError {};
-  class NoDevice : public AudioEngineError {};
   class InvalidDeviceSettings : public AudioEngineError {};
   class ChannelsNotSet : public AudioEngineError {};
   class StreamNotOpen : public AudioEngineError {};
