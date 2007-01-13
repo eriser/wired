@@ -50,9 +50,10 @@ bool				MainApp::OnInit()
   // splash screen
   if (bitmap.LoadFile(wxString(DATA_DIR, *wxConvCurrent) + wxString(wxT("/wired/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
     {
+      // we keep time-out very high for low cpu
       splash = new wxSplashScreen(bitmap,
 				  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_TIMEOUT,
-				  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
+				  120000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 				  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
       splash->Update();
       splash->Refresh();
