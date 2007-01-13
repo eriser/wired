@@ -24,8 +24,8 @@
 #include "../engine/AudioEngine.h"
 #include "file.xpm"
 #include "audio.xpm"
-#include "icon5.xpm"
-#include "icon3.xpm"
+#include "folder.xpm"
+#include "folder-open.xpm"
 #include "delete.xpm"
 #include <SaveCenter.h>
 
@@ -54,8 +54,8 @@ MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
 
   /* Create Image List */
   wxImageList *images = new wxImageList(ICON_SIZE, ICON_SIZE, TRUE);
-  AddIcon(images, wxIcon(icon3_xpm));
-  AddIcon(images, wxIcon(icon5_xpm));
+  AddIcon(images, wxIcon(folder_xpm));
+  AddIcon(images, wxIcon(folder_open_xpm));
   AddIcon(images, wxIcon(audio_xpm));
   AddIcon(images, wxIcon(file_xpm));
   AssignImageList(images);
