@@ -136,8 +136,6 @@ void				SettingWindow::AudioPanelView()
 
 void				SettingWindow::AudioInputPanelView()
 {
-  vector<Device*>::iterator	i;
-
   // right panel
   AudioInputPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
 
@@ -176,9 +174,6 @@ void				SettingWindow::AudioInputPanelView()
 
 void				SettingWindow::AudioOutputPanelView()
 {
-  vector<Device*>::iterator		i;
-  vector<AudioSystem*>::iterator	n;
-
   // right panel
   AudioOutputPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
 
@@ -189,6 +184,12 @@ void				SettingWindow::AudioOutputPanelView()
   RateChoice = new wxChoice(AudioOutputPanel, Setting_Rate);
   Latency = new wxStaticText(AudioOutputPanel, -1, _("Latency:"));
   LatencySlider = new wxSlider(AudioOutputPanel, Setting_Latency, 4096, 0, 65536);
+  LatencySlider->SetRange(0, 8);
+  LatencySlider->SetPageSize(1);
+  Latencies = new int [9];
+  
+  for (int t = 0; t < 9; t++)
+    Latencies[t] = 16 << t;
 
   // list of audio systems
   OutputSystemChoice = new wxChoice(AudioOutputPanel, Setting_OutputSystem);
@@ -228,12 +229,6 @@ void				SettingWindow::AudioOutputPanelView()
  
   OutputBox->Add(Latency, BoxFlags);    
   OutputBox->Add(LatencySlider, BoxFlags);
-  LatencySlider->SetRange(0, 8);
-  LatencySlider->SetPageSize(1);
-  Latencies = new int [9];
-  
-  for (int i = 0; i < 9; i++)
-  Latencies[i] = 16 << i;
 
   AudioOutputPanel->SetSizer(OutputBox);
   OutputBox->SetSizeHints(AudioOutputPanel);
@@ -455,6 +450,7 @@ void SettingWindow::Load()
   AudioSystem*	outCurrentSystem;
   wxString	strMaxUndoRedoDepth;
   int		i;
+  wxCommandEvent	fakeevent;
 
   // load misc settings
   QuickWaveBox->SetValue(WiredSettings->QuickWaveRender);
@@ -531,24 +527,24 @@ void SettingWindow::Load()
 
 
   // apply changes in controls for INPUT
-  InputDeviceChoice->SetSelection(WiredSettings->InputDeviceId);
   InputSystemChoice->SetSelection(WiredSettings->InputSystemId);
-  RefreshDevices(InputDeviceChoice, InputSystemChoice->GetSelection(),
-		 WiredSettings->InputDeviceId);
-  RefreshChannels(InputChannelList, InputSystemChoice->GetSelection(),
-		  InputDeviceChoice->GetSelection(), true);
+  OnInputSystemClick(fakeevent);
+  InputDeviceChoice->SetSelection(WiredSettings->InputDeviceId);
+  OnInputDevClick(fakeevent);
   LoadChannels(InputChannelList, WiredSettings->InputChannels);
 
   // apply changes in controls for OUTPUT
-  OutputDeviceChoice->SetSelection(WiredSettings->OutputDeviceId);
   OutputSystemChoice->SetSelection(WiredSettings->OutputSystemId);
-  RefreshDevices(OutputDeviceChoice, OutputSystemChoice->GetSelection(),
-		 WiredSettings->OutputDeviceId);
-  RefreshChannels(OutputChannelList, OutputSystemChoice->GetSelection(),
-		  OutputDeviceChoice->GetSelection(), false);
+  OnOutputSystemClick(fakeevent);
+  OutputDeviceChoice->SetSelection(WiredSettings->OutputDeviceId);
+  OnOutputDevClick(fakeevent);
   LoadChannels(OutputChannelList, WiredSettings->OutputChannels);
 
   // changes audio settings related to output device
+  if (WiredSettings->SampleRate >= 0 &&
+      WiredSettings->SampleRate < RateChoice->GetCount())
+    RateChoice->SetSelection(WiredSettings->SampleRate);
+
   if (WiredSettings->SamplesPerBuffer > 0)
     {
       for (i = 0; i < 9; i++)
@@ -628,7 +624,6 @@ void SettingWindow::Save()
       SaveChannels(InputChannelList, WiredSettings->InputChannels);
 
       WiredSettings->SampleRate = RateChoice->GetSelection();
-      SetDefaultSampleFormat();		//forcing 32 bit floats
       WiredSettings->SampleFormat = BitsChoice->GetSelection();
       WiredSettings->SamplesPerBuffer = Latencies[LatencySlider->GetValue()];
     }
@@ -674,10 +669,6 @@ void SettingWindow::LoadSampleFormat()
 	      BitsChoice->Append(wxString(_FormatTypes[n].FormatName) +
 				 _("[currently unsupported]"));
   
-  if (WiredSettings->SampleFormat < BitsChoice->GetCount())
-    BitsChoice->SetSelection(WiredSettings->SampleFormat);
-  else
-    BitsChoice->SetSelection(0);
  if (BitsChoice->GetCount() == 0)
     {
       BitRateText->Hide();
@@ -694,11 +685,17 @@ void SettingWindow::LoadSampleRates()
 {
   vector<double>::iterator	i;
   wxString			s;
+  wxString			defaultSampleRate;
   unsigned int			k = BitsChoice->GetSelection();
   Device *dev = Audio->GetDevice(OutputDeviceChoice->GetSelection(),
 				 OutputSystemChoice->GetSelection());
 
+  // put default sample rate into a string (same format like below)
+  s.Printf(wxT("%d Hz"), DEFAULT_SAMPLE_RATE_INT);
+  defaultSampleRate = s;
+
   RateChoice->Clear();
+  RateChoice->SetSelection(0);
   if (dev && k < dev->SupportedFormats.size())
     {
       DeviceFormat *f = dev->SupportedFormats.at(k);
@@ -706,15 +703,14 @@ void SettingWindow::LoadSampleRates()
 	{
 	  s.Printf(wxT("%.0f Hz"), *i);
 	  k = RateChoice->Append(s);
-	  if (*i == DEFAULT_SAMPLE_RATE)
+
+	  // check the default value
+	  if (s == defaultSampleRate || i == f->SampleRates.begin())
 	    RateChoice->SetSelection(k);
 	}
     }
-  if (WiredSettings->SampleRate >= 0 &&
-      WiredSettings->SampleRate < RateChoice->GetCount())
-    RateChoice->SetSelection(WiredSettings->SampleRate);
-  else
-    RateChoice->SetSelection(0);
+
+  // hide or show controls
   if (RateChoice->GetCount() == 0)
     {
       SampleRateText->Hide();
@@ -724,6 +720,7 @@ void SettingWindow::LoadSampleRates()
     }
   else
     {
+      UpdateLatency();
       SampleRateText->Show();
       Latency->Show();
       RateChoice->Show();
@@ -778,8 +775,9 @@ void SettingWindow::UpdateLatency()
 	res = f->SampleRates[l];
     }
   
-  s.Printf(_("Latency: %d samples per buffer, %.2f msec"), 
-	   Latencies[LatencySlider->GetValue()], 
+  // FIXME : sth really weird delete all things after %.2f
+  s.Printf(_("Latency: %d samples per buffer, %.2f msec"),
+	   Latencies[LatencySlider->GetValue()],
 	   static_cast<float>( static_cast<double>(
 	   (Latencies[LatencySlider->GetValue()]/res)*1000.0) ) );
   Latency->SetLabel(s);
