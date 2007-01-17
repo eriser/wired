@@ -17,8 +17,8 @@ HoldButton::HoldButton(wxWindow *parent, wxWindowID id, const wxPoint &pos,
   : wxWindow(parent, id, pos, wxSize(up->GetWidth(), up->GetHeight()))
 {
   isdown = false;
-  Up =  new wxBitmap(up);
-  Down = new wxBitmap(down);
+  Up =  new wxBitmap(*up);
+  Down = new wxBitmap(*down);
   Timer = new wxTimer(this, 31);
   CountTime = 0;
   Interval2 = false;

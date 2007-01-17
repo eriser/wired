@@ -77,7 +77,7 @@ LoopSampler::LoopSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   ls_bg = new wxImage(GetDataDir() + wxString(IMG_LS_BG), wxBITMAP_TYPE_PNG);
   if (ls_bg)
-    BgBmp = new wxBitmap(ls_bg);
+    BgBmp = new wxBitmap(*ls_bg);
 
   play_up = new wxImage(GetDataDir() + wxString(IMG_LS_PLAY_UP), wxBITMAP_TYPE_PNG);
   play_down = new wxImage(GetDataDir() + wxString(IMG_LS_PLAY_DOWN), wxBITMAP_TYPE_PNG);

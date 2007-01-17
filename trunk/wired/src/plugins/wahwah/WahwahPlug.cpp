@@ -33,7 +33,7 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   wxImage *tr_bg = 
     new wxImage(GetDataDir() + wxString(IMG_WW_BG), 
 		wxBITMAP_TYPE_PNG);
-  TpBmp = new wxBitmap(tr_bg);
+  TpBmp = new wxBitmap(*tr_bg);
   SetSize(-1, -1, 400, 100);
   bmp = new wxBitmap(GetDataDir() + wxString(IMG_WW_BMP), 
 		     wxBITMAP_TYPE_BMP);
@@ -77,7 +77,7 @@ EffectWahwah::EffectWahwah(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   liquid_off = 
     new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), 
 		wxBITMAP_TYPE_PNG);
-  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+  Liquid = new StaticBitmap(this, -1, wxBitmap(*liquid_on), wxPoint(22, 25));
   SetBackgroundColour(wxColour(237, 237, 237));
 
   // cout << "freq : " << LeftChannel.freq<< endl;
@@ -257,7 +257,7 @@ void		EffectWahwah::OnBypass(wxCommandEvent &e)
 {
   WahwahMutex.Lock();
   Bypass = BypassBtn->GetOn();
-  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+  Liquid->SetBitmap(wxBitmap((Bypass) ? (*liquid_off) : *(liquid_on)));
   WahwahMutex.Unlock();
 }
 

@@ -97,7 +97,7 @@ void ASLoop::OnPaint(wxPaintEvent &e)
     wxMemoryDC mdc;
     wxBitmap *bmp = wv->GetBitmap();
     wxPaintDC dc(this);
-    dc.BeginDrawing();
+
     if (bmp)
     {
       mdc.SelectObject(*bmp);
@@ -114,7 +114,6 @@ void ASLoop::OnPaint(wxPaintEvent &e)
     x = ZoomX * GetSize().GetWidth() * ass->GetLoopEnd() / ass->GetSample()->GetNumberOfFrames() - sbx->GetThumbPosition() + SBS;
     if (x <= GetSize().GetWidth() - SBS)
       dc.DrawLine(x, 0, x, GetSize().GetHeight() - SBS);
-    dc.EndDrawing();
   }
 }
 

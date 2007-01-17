@@ -31,8 +31,8 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
   IsInteger = is_int;
   Label = 0x0;
 
-  bg = new wxBitmap(img_bg, -1);
-  tmp_fg = new wxBitmap(img_fg, -1);
+  bg = new wxBitmap(*img_bg);
+  tmp_fg = new wxBitmap(*img_fg);
   tmp_fg->SetMask(new wxMask(*tmp_fg, *wxWHITE));
   fg = new StaticBitmap(this, -1, *tmp_fg, wxPoint(0, 0), 
 			wxSize(img_fg->GetWidth(), img_fg->GetHeight()));
@@ -57,8 +57,8 @@ FaderCtrl::FaderCtrl(wxWindow *parent, wxWindowID id,
   Ord = end_val;
   Coeff = (end_val - begin_val) / (double) (img_fg->GetHeight() - img_bg->GetHeight());
 
-  bg = new wxBitmap(img_bg, -1);
-  tmp_fg = new wxBitmap(img_fg, -1);
+  bg = new wxBitmap(*img_bg);
+  tmp_fg = new wxBitmap(*img_fg);
   tmp_fg->SetMask(new wxMask(*tmp_fg, *wxWHITE));
   fg = new StaticBitmap(this, -1, *tmp_fg, wxPoint(0, 0), 
 			wxSize(img_fg->GetWidth(), img_fg->GetHeight()));

@@ -33,7 +33,7 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   wxImage *tr_bg = 
     new wxImage(GetDataDir() + wxString(IMG_RV_BG), 
 		wxBITMAP_TYPE_PNG);
-  TpBmp = new wxBitmap(tr_bg);  
+  TpBmp = new wxBitmap(*tr_bg);  
   bmp = new wxBitmap(GetDataDir() + wxString(IMG_RV_BMP), 
 		     wxBITMAP_TYPE_BMP);
   img_bg = new wxImage(GetDataDir() + wxString(IMG_RV_FADER_BG), 
@@ -99,7 +99,7 @@ ReverbPlugin::ReverbPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   liquid_off = 
     new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), 
 		wxBITMAP_TYPE_PNG);
-  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+  Liquid = new StaticBitmap(this, -1, wxBitmap(*liquid_on), wxPoint(22, 25));
 
   // Knobs' background
 
@@ -266,7 +266,7 @@ void ReverbPlugin::OnBypass(wxCommandEvent &e)
 {
   ReverbMutex.Lock();
   Bypass = BypassBtn->GetOn();
-  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+  Liquid->SetBitmap(wxBitmap((Bypass) ? (*liquid_off) : (*liquid_on)));
   ReverbMutex.Unlock();
 }
 

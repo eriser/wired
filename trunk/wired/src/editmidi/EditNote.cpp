@@ -58,8 +58,8 @@ void				EditNote::OnMouseMove(wxMouseEvent &e)
   if (e.Dragging())
     {
       wxClientDC	dc(GetParent());
-      dc.BeginDrawing();
       wxMemoryDC	memdc;
+
       if (backsave != NULL)
 	{
 	  memdc.SelectObject(*backsave);
@@ -76,7 +76,6 @@ void				EditNote::OnMouseMove(wxMouseEvent &e)
       memdc.Blit(0, 0, GetSize().GetWidth(), GetSize().GetHeight(), &dc, GetPosition().x + mx - dx, GetPosition().y + my - dy);
       dc.SetBrush(wxColor(0x00, 0xff, 0x00));
       dc.DrawRectangle(GetPosition().x + mx - dx, GetPosition().y + my - dy, GetSize().GetWidth(), GetSize().GetHeight());
-      dc.EndDrawing();
     }
 }
 

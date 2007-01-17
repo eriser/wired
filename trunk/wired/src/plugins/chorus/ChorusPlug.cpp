@@ -36,7 +36,7 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   wxImage *tr_bg = 
     new wxImage(GetDataDir() + wxString(IMG_DL_BG), 
 		wxBITMAP_TYPE_PNG);
-  TpBmp = new wxBitmap(tr_bg);
+  TpBmp = new wxBitmap(*tr_bg);
   bmp = new wxBitmap(GetDataDir() + wxString(IMG_DL_BMP), 
 		     wxBITMAP_TYPE_BMP); 
   img_bg = new wxImage(GetDataDir() + wxString(IMG_DL_FADER_BG),
@@ -60,7 +60,7 @@ ChorusPlugin::ChorusPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   liquid_off = 
     new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), 
 		wxBITMAP_TYPE_PNG);
-  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+  Liquid = new StaticBitmap(this, -1, wxBitmap(*liquid_on), wxPoint(22, 25));
   BaseLengthFader = new FaderCtrl(this, Chorus_Feedback, img_bg, img_fg, 0, 
 				  10000, (float*)&BaseLength, true, wxPoint(73, 11), 
 				  wxSize(22,78), this, 
@@ -144,7 +144,7 @@ void ChorusPlugin::OnBypass(wxCommandEvent &e)
 {
   ChorusMutex.Lock();
   Bypass = BypassBtn->GetOn();
-  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+  Liquid->SetBitmap(wxBitmap((Bypass) ? (*liquid_off) : (*liquid_on)));
   ChorusMutex.Unlock();
 }
 

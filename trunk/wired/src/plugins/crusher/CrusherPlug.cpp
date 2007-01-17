@@ -109,7 +109,7 @@ CrusherPlugin::CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   wxImage *tr_bg = 
     new wxImage(GetDataDir() + wxString(IMG_CR_BG), wxBITMAP_TYPE_PNG);
   if (tr_bg)
-    TpBmp = new wxBitmap(tr_bg);
+    TpBmp = new wxBitmap(*tr_bg);
   
   bmp = new wxBitmap(GetDataDir() + wxString(IMG_CR_BMP), wxBITMAP_TYPE_BMP); 
 
@@ -123,7 +123,7 @@ CrusherPlugin::CrusherPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   liquid_on = new wxImage(GetDataDir() + wxString(IMG_LIQUID_ON), wxBITMAP_TYPE_PNG);
   liquid_off = new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), wxBITMAP_TYPE_PNG);
-  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+  Liquid = new StaticBitmap(this, -1, wxBitmap(*liquid_on), wxPoint(22, 25));
 
   BitsFader = new FaderCtrl(this, Crusher_Bits, img_bg, img_fg, 0, 76, &Bits,
 			    true, wxPoint(83, 12), wxSize(22,78), 
@@ -271,7 +271,7 @@ void			CrusherPlugin::OnBypass(wxCommandEvent &e)
 {
   CrusherMutex.Lock();
   Bypass = BypassBtn->GetOn();
-  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+  Liquid->SetBitmap(wxBitmap((Bypass) ? (*liquid_off) : (*liquid_on)));
   CrusherMutex.Unlock();
 }
 
