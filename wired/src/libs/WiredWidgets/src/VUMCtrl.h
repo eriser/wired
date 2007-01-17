@@ -50,9 +50,9 @@ class VUMCtrl : public wxWindow
   wxCoord w, h;
   int value;
   int tmp;
-  wxImage *img_g;
-  wxImage *img_o;
-  wxImage *img_r;
+  wxBitmap *img_g;
+  wxBitmap *img_o;
+  wxBitmap *img_r;
   virtual void OnPaint(wxPaintEvent &event);
   //  void SetValue(int val);
   

@@ -89,7 +89,7 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
     new wxImage(wxString(GetDataDir() + wxString(BEATBOX_MINI_BG)), 
 		wxBITMAP_TYPE_BMP);  
   if (mini_bmp)
-    MiniBmp = new wxBitmap(mini_bmp);
+    MiniBmp = new wxBitmap(*mini_bmp);
   
   delete mini_bmp;
   
@@ -112,7 +112,7 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
     new wxImage(wxString(GetDataDir() + wxString(BEATBOX_BG)), 
 		wxBITMAP_TYPE_PNG);  
   if (img_bg)
-    BgBmp = new wxBitmap(img_bg);
+    BgBmp = new wxBitmap(*img_bg);
   
   delete img_bg;
   
@@ -139,28 +139,28 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   
   Bitmaps = new wxBitmap*[MAX_BITMAPS];
   if (Imgs[ID_UNCLICKED])
-    Bitmaps[ID_UNCLICKED] = new wxBitmap( Imgs[ID_UNCLICKED] );
+    Bitmaps[ID_UNCLICKED] = new wxBitmap(*(Imgs[ID_UNCLICKED]));
   if (Imgs[ID_MEDIUM])
-    Bitmaps[ID_MEDIUM] =  new wxBitmap( Imgs[ID_MEDIUM] );
+    Bitmaps[ID_MEDIUM] =  new wxBitmap(*(Imgs[ID_MEDIUM]));
   if (Imgs[ID_VLOW])
-    Bitmaps[ID_VLOW] =  new wxBitmap( Imgs[ID_VLOW] );
+    Bitmaps[ID_VLOW] =  new wxBitmap(*(Imgs[ID_VLOW]));
   if (Imgs[ID_LOW])
-    Bitmaps[ID_LOW] = new wxBitmap( Imgs[ID_LOW] );
+    Bitmaps[ID_LOW] = new wxBitmap(*(Imgs[ID_LOW]));
   if (Imgs[ID_HIGH])
-    Bitmaps[ID_HIGH] = new wxBitmap( Imgs[ID_HIGH] );
+    Bitmaps[ID_HIGH] = new wxBitmap(*(Imgs[ID_HIGH]));
   if (Imgs[ID_VHIGH])
-    Bitmaps[ID_VHIGH] = new wxBitmap( Imgs[ID_VHIGH] );
+    Bitmaps[ID_VHIGH] = new wxBitmap(*(Imgs[ID_VHIGH]));
   
   wxImage* img_tmp = 
     new wxImage(wxString(GetDataDir() + wxString(POSON)), 
 		wxBITMAP_TYPE_PNG);
   if (img_tmp)
-    PositionOn = new wxBitmap(img_tmp);
+    PositionOn = new wxBitmap(*img_tmp);
   img_tmp = 
     new wxImage(wxString(GetDataDir() + wxString(POSOFF)), 
 		wxBITMAP_TYPE_PNG);
   if (img_tmp)
-    PositionOff = new wxBitmap(img_tmp);
+    PositionOff = new wxBitmap(*img_tmp);
   
   
   /* general   */

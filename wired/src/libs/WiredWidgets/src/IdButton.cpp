@@ -20,8 +20,8 @@ IdButton::IdButton(wxWindow* parent, wxWindowID id, const wxPoint& pos,
   Num = num_id;
   
   Bitmaps = new wxBitmap*[2];
-  Bitmaps[UNCLICKED] = new wxBitmap(up);
-  Bitmaps[CLICKED]   = new wxBitmap(down);
+  Bitmaps[UNCLICKED] = new wxBitmap(*up);
+  Bitmaps[CLICKED]   = new wxBitmap(*down);
 }
 
 IdButton::~IdButton()

@@ -44,7 +44,7 @@ END_EVENT_TABLE()
       wxBITMAP_TYPE_PNG);
   if (sp_bg)
   {
-    BgBmp = new wxBitmap(sp_bg);
+    BgBmp = new wxBitmap(*sp_bg);
     delete sp_bg;
   }
 
@@ -113,11 +113,11 @@ END_EVENT_TABLE()
 
   wxImage *img_led_off = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_LED_OFF)), wxBITMAP_TYPE_PNG);
   if (img_led_off)
-    LedOff = new wxBitmap(img_led_off);
+    LedOff = new wxBitmap(*img_led_off);
 
   wxImage *img_led_on = new wxImage(wxString(GetDataDir() + wxString(IMG_SP_LED_ON)), wxBITMAP_TYPE_PNG);
   if (img_led_on)
-    LedOn = new wxBitmap(img_led_on);
+    LedOn = new wxBitmap(*img_led_on);
 
   MidiInBmp = new wxStaticBitmap(this, -1, *LedOff, wxPoint(2, 180));
 

@@ -93,7 +93,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       tr_bg = 
 	new wxImage(wxString(GetDataDir() + wxString(IMG_DL_SINGLE_BG), *wxConvCurrent), 
 		    wxBITMAP_TYPE_PNG);
-      TpBmp = new wxBitmap(tr_bg);
+      TpBmp = new wxBitmap(*tr_bg);
       delete tr_bg;
     }
   else
@@ -106,11 +106,11 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
       TpBmp = new wxBitmap(width, 100);
       dc.SelectObject(*TpBmp);
 
-      wxBitmap *tmp1 = new wxBitmap(beg);
+      wxBitmap *tmp1 = new wxBitmap(*beg);
       dc.DrawBitmap(*tmp1, wxPoint(0, 0), false);
-      wxBitmap *tmp2 = new wxBitmap(end);
+      wxBitmap *tmp2 = new wxBitmap(*end);
       dc.DrawBitmap(*tmp2, wxPoint(width - 200, 0), false);
-      wxBitmap *tmp = new wxBitmap(mid);
+      wxBitmap *tmp = new wxBitmap(*mid);
 
       for (int i = 200; i < width - 200; i += 200)
 	dc.DrawBitmap(*tmp, wxPoint(i, 0), false);
@@ -180,7 +180,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
   
   liquid_off = new wxImage(wxString(GetDataDir() + wxString(IMG_LIQUID_OFF), *wxConvCurrent), wxBITMAP_TYPE_PNG);
   liquid_on = new wxImage(wxString(GetDataDir() + wxString(IMG_LIQUID_ON), *wxConvCurrent), wxBITMAP_TYPE_PNG);
-  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+  Liquid = new StaticBitmap(this, -1, wxBitmap(*liquid_on), wxPoint(22, 25));
   bypass_on = new wxImage(wxString(GetDataDir() + wxString(IMG_BYPASS_ON), *wxConvCurrent), wxBITMAP_TYPE_PNG);
   bypass_off = new wxImage(wxString(GetDataDir() + wxString(IMG_BYPASS_OFF), *wxConvCurrent), wxBITMAP_TYPE_PNG);
   BypassBtn = new DownButton(this, 4242, wxPoint(21, 58), wxSize(bypass_on->GetWidth(), bypass_on->GetHeight()),
@@ -195,7 +195,7 @@ wxWindow	*WiredDSSIGui::CreateView(wxWindow *rack, wxPoint &pos, wxSize &size)
 void		WiredDSSIGui::OnBypass(wxCommandEvent &e) 
 {
   Bypass = BypassBtn->GetOn();
-  Liquid->SetBitmap(wxBitmap((Bypass) ? liquid_off : liquid_on));
+  Liquid->SetBitmap(wxBitmap((Bypass) ? (*liquid_off) : (*liquid_on)));
   this->WiredLADSPAInstance::Bypass();
 }
 

@@ -24,11 +24,11 @@ DelayPlugin::DelayPlugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
   wxImage *tr_bg = 
     new wxImage(GetDataDir() + wxString(IMG_DL_BG), wxBITMAP_TYPE_PNG);
-  TpBmp = new wxBitmap(tr_bg);
+  TpBmp = new wxBitmap(*tr_bg);
 
   liquid_on = new wxImage(GetDataDir() + wxString(IMG_LIQUID_ON), wxBITMAP_TYPE_PNG);
   liquid_off = new wxImage(GetDataDir() + wxString(IMG_LIQUID_OFF), wxBITMAP_TYPE_PNG);
-  Liquid = new StaticBitmap(this, -1, wxBitmap(liquid_on), wxPoint(22, 25));
+  Liquid = new StaticBitmap(this, -1, wxBitmap(*liquid_on), wxPoint(22, 25));
 
   bypass_on = new wxImage(GetDataDir() + wxString(IMG_BYPASS_ON), wxBITMAP_TYPE_PNG);
   bypass_off = new wxImage(GetDataDir() + wxString(IMG_BYPASS_OFF), wxBITMAP_TYPE_PNG);
@@ -204,14 +204,14 @@ void DelayPlugin::ProcessEvent(WiredEvent &event)
 	  BypassBtn->SetOn();
 	  Bypass = true;
 	  // *** Known bug : something generates a X async reply 
-	  Liquid->SetBitmap(wxBitmap(liquid_off));
+	  Liquid->SetBitmap(wxBitmap(*liquid_off));
 	}
       else
 	{
 	  BypassBtn->SetOff();
 	  Bypass = false;
 	  // *** Known bug : something generates a X async reply 
-	  Liquid->SetBitmap(wxBitmap(liquid_on));
+	  Liquid->SetBitmap(wxBitmap(*liquid_on));
 	}
     }
 
@@ -374,9 +374,9 @@ void DelayPlugin::OnBypass(wxCommandEvent &e)
 
   Bypass = BypassBtn->GetOn();
   if (Bypass)
-    Liquid->SetBitmap(wxBitmap(liquid_off));
+    Liquid->SetBitmap(wxBitmap(*liquid_off));
   else
-    Liquid->SetBitmap(wxBitmap(liquid_on));	      
+    Liquid->SetBitmap(wxBitmap(*liquid_on));	      
 
   DelayMutex.Unlock();
 }

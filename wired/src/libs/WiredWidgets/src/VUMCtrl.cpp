@@ -11,8 +11,13 @@ END_EVENT_TABLE()
   VUMCtrl::VUMCtrl(wxWindow *parent, wxWindowID id, int max_value,
 		   wxImage *green , wxImage *orange, wxImage *red,
 		   const wxPoint &pos, const wxSize &size, long style)
-    : wxWindow(parent, id, pos, size, style), Max_Value(max_value), img_g(green), img_o(orange), img_r(red)
+    : wxWindow(parent, id, pos, size, style), Max_Value(max_value)
 {
+  // convert images to bitmap for faster drawing
+  img_g = new wxBitmap(*green);
+  img_o = new wxBitmap(*orange);
+  img_r = new wxBitmap(*red);
+
   SetBackgroundColour(*wxBLACK);
   height = size.GetHeight() - 4;
   width = size.GetWidth() -4 ;
@@ -22,20 +27,18 @@ END_EVENT_TABLE()
   orange_height = red_height * 2 ;
 }
 
-
 void VUMCtrl::OnPaint(wxPaintEvent &event)
 {
-  wxPaintDC dc(this);
-  wxMemoryDC memDC;
+  wxPaintDC	dc(this);
+  wxMemoryDC	memDC;
   int x,y;
 
   dc.GetSize(&w, &h);
   dc.SetPen(*wxTRANSPARENT_PEN);
   tmp = 0;
-  memDC.SelectObject(*img_g);
 
-  // Green part
-  
+  // Green part  
+  memDC.SelectObject(*img_g);
   if(value >= green_height)
     {      
       x = green_height /3;
@@ -111,13 +114,12 @@ int VUMCtrl::GetValue()
   return(tmp);
 }
 
-
 VUMCtrl::~VUMCtrl()
 {
-//	if (img_o)
-//		delete img_o;
-//	if (img_r)
-//		delete img_r;
-//	if (img_g)
-//		delete img_g;
+  if (img_o)
+    delete img_o;
+  if (img_r)
+    delete img_r;
+  if (img_g)
+    delete img_g;
 }

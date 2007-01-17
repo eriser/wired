@@ -20,8 +20,8 @@ DownButton::DownButton(wxWindow *parent, wxWindowID id, const wxPoint &pos,
   state = 0;
   isdown = false;
   Simple = simple;
-  Up =  new wxBitmap(up);
-  Down = new wxBitmap(down);
+  Up =  new wxBitmap(*up);
+  Down = new wxBitmap(*down);
 }
 
 DownButton::~DownButton()

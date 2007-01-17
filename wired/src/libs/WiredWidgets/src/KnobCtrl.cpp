@@ -35,7 +35,7 @@ KnobCtrl::KnobCtrl(wxWindow *parent, wxWindowID id, wxImage *img_bg,
   assert(Limits::Knob::Higher);
   if (Pas == 0)
     throw Pas; // FIXME throw something serious
-  fg_tmp = new wxBitmap(knob_fg, -1); 
+  fg_tmp = new wxBitmap(*knob_fg); 
   fg_mask = new wxMask(*fg_tmp, *wxBLACK);
   fg_tmp->SetMask(fg_mask);
   fg = new wxStaticBitmap(this, -1, *fg_tmp, wxPoint(0,0), wxSize(knob_fg->GetWidth(), knob_fg->GetHeight()));
@@ -55,7 +55,7 @@ KnobCtrl::KnobCtrl(wxWindow *parent, wxWindowID id,
   assert(Limits::Knob::Higher);
   if (Pas == 0)
     throw Pas; // FIXME throw something serious
-  fg_tmp = new wxBitmap(knob_fg, -1); 
+  fg_tmp = new wxBitmap(*knob_fg); 
   fg_mask = new wxMask(*fg_tmp, *wxBLACK);
   fg_tmp->SetMask(fg_mask);
   fg = new wxStaticBitmap(this, -1, *fg_tmp, 
@@ -91,9 +91,11 @@ KnobCtrl::~KnobCtrl()
 
 void KnobCtrl::OnPaint(wxPaintEvent &event)
 {
-  wxPaintDC dc(this);
-  wxMemoryDC memDC;
-  memDC.SelectObject(*knob_bg);
+  wxPaintDC	dc(this);
+  wxMemoryDC	memDC;
+  wxBitmap	selectedBitmap(*knob_bg);
+
+  memDC.SelectObject(selectedBitmap);
   dc.Blit(0, 0, knob_bg->GetWidth(), knob_bg->GetHeight(), &memDC, 0, 0, wxCOPY, FALSE);
 }
 

@@ -78,7 +78,7 @@ BeatBoxChannel::BeatBoxChannel( wxWindow *parent, wxWindowID id,
     new wxImage(DataDir + wxString(CHANNEL_BG), 
 		wxBITMAP_TYPE_PNG);
   if (ch_bg)
-    BgBmp = new wxBitmap(ch_bg);
+    BgBmp = new wxBitmap(*ch_bg);
   
   /* Wave label */
   WaveLabel = 

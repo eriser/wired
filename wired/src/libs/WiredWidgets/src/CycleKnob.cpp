@@ -37,7 +37,7 @@ CycleKnob::CycleKnob(wxWindow *parent, wxWindowID id,
   Bmps = new wxBitmap*[Steps];
   for (int i = 0; i < Steps; i++)
     {
-      Bmps[i] = new wxBitmap(imgs[i]);
+      Bmps[i] = new wxBitmap(*(imgs[i]));
     }
   
 }

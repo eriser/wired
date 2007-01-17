@@ -34,7 +34,7 @@ void ChoiceButton::OnPaint(wxPaintEvent &event)
   wxSize s;
 
   s = GetSize();
-  dc.SetPen(wxPen("BLACK", 1, wxSOLID)); 
+  dc.SetPen(wxPen(wxT("BLACK"), 1, wxSOLID)); 
   dc.DrawRectangle(0, 0, s.x, s.y);
 
   if (img)

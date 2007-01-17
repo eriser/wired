@@ -64,7 +64,9 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   else
     trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-wave.png")), wxBITMAP_TYPE_PNG);
 
-  wxBitmap*		trackTypeBitmap = new wxBitmap(trackTypeImage);
+  wxBitmap*		trackTypeBitmap = new wxBitmap(*trackTypeImage);
+  delete trackTypeImage;
+
   trackTypeStatic = new wxStaticBitmap(this, -1, *trackTypeBitmap, wxPoint(62, 8));
 
   // record and mute button
@@ -84,9 +86,10 @@ SeqTrack::SeqTrack(long index, wxWindow *parent,
   wxImage*		assign;
 
   assign = new wxImage(wxString(WiredSettings->DataDir + UNASSIGNED), wxBITMAP_TYPE_PNG);
-  UnassignedBmp = new wxBitmap(assign);
+  UnassignedBmp = new wxBitmap(*assign);
   assign = new wxImage(wxString(WiredSettings->DataDir + CAN_ASSIGN), wxBITMAP_TYPE_PNG);
-  CanAssignBmp = new wxBitmap(assign);
+  CanAssignBmp = new wxBitmap(*assign);
+  delete assign;
 
   Image->Connect(SeqTrack_ConnectTo, wxEVT_ENTER_WINDOW, 
 		 (wxObjectEventFunction)(wxEventFunction) 
