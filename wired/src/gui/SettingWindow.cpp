@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <wx/imaglist.h>
+
 #include "MainWindow.h"
 #include "SettingWindow.h"
 #include "AudioEngine.h"

@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <wx/treectrl.h>
+#include <wx/imaglist.h>
 #include <WiredDocument.h>
 #include "../xml/WiredSessionXml.h"
 
