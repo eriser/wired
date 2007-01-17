@@ -367,8 +367,6 @@ float					*WiredSampleRate::ConvertnChannels(float **Input, unsigned int NbChann
 		ToWrite = Data.output_frames_gen;
 	}
 
-	unsigned long		CurrentSample, CurrentResSample;
-
 	memset(_Buffer, 0, NbChannels * ToWrite);
 	ToWrite *= NbChannels;
 	return _Buffer;
