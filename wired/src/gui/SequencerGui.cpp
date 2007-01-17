@@ -79,8 +79,14 @@ void					SequencerView::OnClick(wxMouseEvent &e)
 
 void					SequencerView::OnMotion(wxMouseEvent &e)
 {
-  if (SeqPanel->GetCursor() != wxCursor(wxCURSOR_HAND))
-    SeqPanel->ChangeMouseCursor(wxCursor(wxCURSOR_HAND));
+  wxCursor				hand(wxCURSOR_HAND);
+
+#ifndef __WXGTK26__  // We're not superior to wx 2.6
+  if (SeqPanel->GetCursor() != hand)
+#else // We use >= wx 2.8 API
+  if (!SeqPanel->GetCursor().IsSameAs(hand))
+#endif
+    SeqPanel->ChangeMouseCursor(hand);
   if (e.Dragging())
     {
       if (TheZone->IsVisible())
