@@ -29,7 +29,9 @@ class MainApp : public wxApp
  private:
   MainWindow			*Frame;
   wxSingleInstanceChecker	*Checker;
+#if wxUSE_ON_FATAL_EXCEPTION
   void			        OnFatalException();
+#endif
   void				OnUnhandledException();
   void				ShowWelcome();
 };

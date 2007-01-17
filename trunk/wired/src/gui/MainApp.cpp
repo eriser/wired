@@ -25,8 +25,10 @@ MainWindow			*MainWin;
 
 bool				MainApp::OnInit()
 {
+#if wxUSE_ON_FATAL_EXCEPTION
   wxHandleFatalExceptions();
-	//std::set_new_handler(&AllocationErrorHandler);
+#endif
+
   wxBitmap			bitmap;
   wxSplashScreen*		splash = NULL;
 
@@ -110,20 +112,20 @@ void	MainApp::ShowWelcome()
   msg.ShowModal();
 }
 
+#if wxUSE_ON_FATAL_EXCEPTION
 void              MainApp::OnFatalException()
 {
-#if wxUSE_DEBUGREPORT
-	wxDebugReportCompress Report;
-    Report.AddAll();
-    if (wxDebugReportPreviewStd().Show(Report))
-//	if (ReportPreview->Show(*Report))
-	{
-		Report.Process();
-		Report.Reset();
-        //send a mail
-	}
-#endif
+# if wxUSE_DEBUGREPORT
+  wxDebugReportCompress Report;
+  Report.AddAll();
+  if (wxDebugReportPreviewStd().Show(Report))
+    {
+      Report.Process();
+      Report.Reset();
+    }
+# endif
 }
+#endif
 
 void				MainApp::OnUnhandledException()
 {
