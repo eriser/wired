@@ -22,7 +22,7 @@ MLTreeInfos::MLTreeInfos(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long 
   textContent.Append(_("\nSize : "));
   textContent.Append(_("\nCodec : "));
   Text = new MywxStaticText((wxWindow*)this, (wxWindowID)-1, (const wxString&)textContent, wxPoint(2, 2),
-		   wxSize(200, 100), wxALIGN_LEFT| wxST_NO_AUTORESIZE, "");
+		   wxSize(200, 100), wxALIGN_LEFT| wxST_NO_AUTORESIZE, wxT(""));
   Text->SetFont(wxFont(7, wxSWISS , wxNORMAL, wxNORMAL, false, _("Arial")));
   Show(true);
 }
