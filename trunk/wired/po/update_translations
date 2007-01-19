@@ -1,0 +1,11 @@
+#!/bin/sh
+
+## Finds all .cpp and .h file and execs xgettext on them
+# -j is to tell him to concatenate everything
+# -C is to tell him it is C++
+# -n is to tell him to add location info of the string in the code
+# -k is to add macros marking translatable strings
+
+find ../ \( -iname \*.cpp -o -iname \*.h \) -exec xgettext -j -C -n -k_ -kwxPLURAL:1,2 -kwxTRANSLATE -o wired.pot -i '{}' \;
+
+find ./ -iname \*.po -exec msgmerge -U \{\} wired.pot \;
