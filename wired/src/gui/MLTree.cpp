@@ -313,7 +313,7 @@ void			MLTree::SaveTree(WiredSessionXml *XmlSession, wxTreeItemId parent)
 	}
       else // no children
 	{
-	  if (infos.extention.Cmp(_("")))
+	  if (infos.extention.Cmp(""))
 	    {
 	      XmlSession->MyStartElement(XmlSession, _("file"));
 	      XmlSession->MyWriteAttribute(XmlSession, _("name"), text);
