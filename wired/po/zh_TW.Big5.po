@@ -389,7 +389,7 @@ msgstr ""
 
 #: src/fileloader/FileStat.cpp:180
 msgid "FLAC lossless file"
-msgstr ""
+msgstr "無損音頻壓縮編碼(FLAC)檔案"
 
 #: src/fileloader/FileStat.cpp:183
 msgid "Core Audio File"
@@ -896,7 +896,8 @@ msgstr "音頻 %d"
 msgid ""
 "Click on this button to show the list of instruments and effects you can "
 "connect your track to."
-msgstr "點擊此按鈕能顯示你能連接的音軌其所屬的樂器選單和效果"
+msgstr ""
+"點擊此按鈕能顯示你能連接的音軌其所屬的樂器選單和效果"
 
 #: src/gui/SeqTrack.cpp:116 ../src/gui/SeqTrack.cpp:119
 #: ../src/gui/SeqTrack.cpp:162
@@ -1127,13 +1128,14 @@ msgstr "等待時間： %d 個取樣，%.2f 微秒"
 msgid ""
 "Turns On or Off Loop mode. If On, the sequencer will loop between the L and "
 "R marker in the sequencer."
-msgstr "開啟或關閉反覆模式。如開啟，編曲機會在左和右的標記之間反覆。"
+msgstr ""
+"開啟或關閉反覆模式。如開啟，編曲機會在左(L)和右(R)的標記之間反覆。"
 
 #: src/gui/Transport.cpp:177 ../src/gui/Transport.cpp:180
 msgid ""
 "Turns On or Off Click mode. If On, a click will be played over each beat per "
 "bar."
-msgstr "開啟或關閉Click模式。如果開啟，會播放小節裡的每一個拍子"
+msgstr "開啟或關閉點擊模式。如果開啟，會播放小節裡的每一個拍子"
 
 #: src/gui/WaveEditor.cpp:35 ../src/gui/WaveEditor.cpp:44
 msgid "Gain..."
@@ -1177,7 +1179,7 @@ msgstr "請輸入文字"
 
 #: src/gui/WaveEditor.cpp:534 ../src/gui/WaveEditor.cpp:543
 msgid "Enter normalize level "
-msgstr "進入標準化音量"
+msgstr "進入標準化音量 "
 
 #: src/gui/WavePanel.cpp:46 ../src/gui/WavePanel.cpp:49
 msgid "Copy wave"
@@ -1255,7 +1257,7 @@ msgstr "鍵盤編輯器用於 "
 #: ../src/plugins/akai_sampler/AkaiSampler.cpp:906
 #: ../src/plugins/akai_sampler/AkaiSampler.cpp:918
 msgid " for "
-msgstr " 為了 "
+msgstr " 用於 "
 
 #: src/plugins/akai_sampler/AkaiSampler.cpp:975
 #: ../src/plugins/akai_sampler/AkaiSampler.cpp:979
@@ -1370,7 +1372,8 @@ msgstr "載入wave檔中"
 #: ../src/plugins/beatbox/BeatBoxChannel.cpp:981
 msgid ""
 "Use this button to display and edit the tracker associated to this channel"
-msgstr "使用此按鍵可顯示和編輯與此頻道相關的追縱器"
+msgstr ""
+"使用此按鍵可顯示和編輯與此頻道相關的追縱器"
 
 #: src/plugins/beatbox/BeatBoxChannel.cpp:984
 #: ../src/plugins/beatbox/BeatBoxChannel.cpp:987
@@ -1452,7 +1455,8 @@ msgstr ""
 msgid ""
 "This is the auto play button, when enabled, DRM31 will play selected pattern "
 "synchronously with Wired's Sequencer"
-msgstr "這是自動播放按鈕,當運作時,DRM31和編曲機會同步播放所選擇的樂段。"
+msgstr ""
+"這是自動播放按鈕,當運作時,DRM31和編曲機會同步播放所選擇的樂段。"
 
 #: src/plugins/beatbox/BeatBox.cpp:559 ../src/plugins/beatbox/BeatBox.cpp:562
 msgid ""
@@ -1483,7 +1487,8 @@ msgstr "這些按鈕控制下面十六個代表的位置"
 msgid ""
 "These buttons control the signature of the current rythm, note that the "
 "greater the denominator is, the faster the rythm will play"
-msgstr "這些按鈕控制此節奏的拍號。請注意:當分母愈大時,節奏會播放的愈快。"
+msgstr ""
+"這些按鈕控制此節奏的拍號。請注意:當分母愈大時,節奏會播放的愈快。"
 
 #: src/plugins/beatbox/BeatBox.cpp:589 ../src/plugins/beatbox/BeatBox.cpp:592
 msgid "Set the number of steps for the current rythm"
@@ -1493,7 +1498,8 @@ msgstr "設定此節奏的順序"
 msgid ""
 "The bank control allows you to choose one of the 5 banks proposed, each bank "
 "contains 8 rythms"
-msgstr "組控制。選取五組中其中一個,每組包含八個節奏。"
+msgstr ""
+"組控制。選取五組中其中一個,每組包含八個節奏。"
 
 #: src/plugins/beatbox/BeatBox.cpp:599 ../src/plugins/beatbox/BeatBox.cpp:602
 msgid ""
@@ -1510,7 +1516,8 @@ msgstr "這些按鈕代表八種不同的節奏"
 msgid ""
 "These buttons are used if you want to import or export a patch apart from "
 "the session"
-msgstr "這些按鈕使用於匯入或匯出此區段以外的音色"
+msgstr ""
+"這些按鈕使用於匯入或匯出此區段以外的音色"
 
 #: src/plugins/beatbox/BeatBox.cpp:1700 src/plugins/beatbox/BeatBox.cpp:1737
 #: ../src/plugins/beatbox/BeatBox.cpp:1703
@@ -1615,21 +1622,24 @@ msgstr ""
 msgid ""
 "Changes the pitch (speed) of the whole loaded sample. Right click on it to "
 "set the MIDI automation controller."
-msgstr "改變整個載入取樣的音高(速度)。按右鍵以設定MIDI自動控制器。"
+msgstr ""
+"改變整個載入取樣的音高(速度)。按右鍵以設定MIDI自動控制器。"
 
 #: src/plugins/loop_sampler/LoopSampler.cpp:364
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:369
 msgid ""
 "Stretch the whole sample that it synchronizes with the sequencer BPM Right "
 "click on it to set the MIDI automation controller."
-msgstr "與BPM編曲機同步延伸整個取樣,按右鍵以設定MIDI自動控制器。"
+msgstr ""
+"與BPM編曲機同步延伸整個取樣,按右鍵以設定MIDI自動控制器。"
 
 #: src/plugins/loop_sampler/LoopSampler.cpp:370
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:375
 msgid ""
 "Inverts the sample audio data. Right click on it to set the MIDI automation "
 "controller."
-msgstr "轉位此取樣音頻資料。按右鍵以設定MIDI自動控制器。"
+msgstr ""
+"轉位此取樣音頻資料。按右鍵以設定MIDI自動控制器。"
 
 #: src/plugins/loop_sampler/LoopSampler.cpp:377
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:382
@@ -1706,7 +1716,7 @@ msgstr "取樣頻率"
 #: ../src/samplerate/WiredSampleRate.cpp:83
 #, c-format
 msgid "%d Hz to %ld Hz ?"
-msgstr ""
+msgstr "%d 赫茲 到 %ld 赫茲 ?"
 
 #: src/samplerate/WiredSampleRate.cpp:84
 #: ../src/samplerate/WiredSampleRate.cpp:87
@@ -1739,7 +1749,8 @@ msgid ""
 "Please select the options that\n"
 "you want for the downmix.\n"
 "(Defaults are current project's configuration)"
-msgstr "請選擇你要的混音功能。(此專案的配置為預設值)"
+msgstr ""
+"請選擇你要的混音功能。(此專案的配置為預設值)"
 
 #: src/samplerate/WiredSampleRateTypes.cpp:5
 #: ../src/samplerate/WiredSampleRateTypes.cpp:8
@@ -1777,7 +1788,7 @@ msgstr "小節"
 #: ../src/gui/MediaLibrary.cpp:80 ../src/gui/MediaLibrary.cpp:81
 #, fuzzy
 msgid "Add a file"
-msgstr "新增至我的最愛"
+msgstr "新增檔案"
 
 #: ../src/gui/MediaLibrary.cpp:81 ../src/gui/MediaLibrary.cpp:82
 #, fuzzy
@@ -2082,7 +2093,7 @@ msgstr "改變操作視窗效果參數"
 
 #: ../src/codec/wiredcodec/flac/WiredLibFlac.cpp:52
 msgid "flac\tFree Lossless Audio Codec (*.flac)"
-msgstr ""
+msgstr "FLAC\t無損音頻壓縮編碼 (*.flac)"
 
 #: ../src/codec/wiredcodec/vorbis/WiredLibVorbis.h:16
 msgid "ogg\tVorbis Ogg (*.ogg)"
@@ -2124,27 +2135,27 @@ msgstr ""
 
 #: ../src/plugins/delay/DelayPlug.h:33 ../src/plugins/filter/FilterPlug.h:54
 msgid "MIDIBypass1"
-msgstr ""
+msgstr "MIDI旁路1"
 
 #: ../src/plugins/delay/DelayPlug.h:34 ../src/plugins/filter/FilterPlug.h:57
 msgid "MIDIBypass2"
-msgstr ""
+msgstr "MIDI旁路2"
 
 #: ../src/plugins/delay/DelayPlug.h:35
 msgid "MIDITime1"
-msgstr ""
+msgstr "MIDI時間1"
 
 #: ../src/plugins/delay/DelayPlug.h:36
 msgid "MIDITime2"
-msgstr ""
+msgstr "MIDI時間2"
 
 #: ../src/plugins/delay/DelayPlug.h:37
 msgid "MIDIFeedback1"
-msgstr ""
+msgstr "MIDI回報1"
 
 #: ../src/plugins/delay/DelayPlug.h:38
 msgid "MIDIFeedback2"
-msgstr ""
+msgstr "MIDI回報2"
 
 #: ../src/plugins/delay/DelayPlug.h:39
 msgid "MIDIDryWet1"
@@ -2164,7 +2175,7 @@ msgstr "基本長度"
 
 #: ../src/plugins/chorus/ChorusPlug.h:14
 msgid "ModDepth"
-msgstr ""
+msgstr "Mod深度"
 
 #: ../src/plugins/chorus/ChorusPlug.h:15 ../src/plugins/wahwah/WahwahPlug.h:68
 msgid "Frequency"
@@ -2309,11 +2320,11 @@ msgid ""
 "Could not open audio device : check that the device is not busy (used by "
 "another application) and that your audio settings are correct."
 msgstr ""
-
+"無法打開音頻設置 : 請確認你的音頻設定值是否正確。"
 #: ../src/gui/SequencerGui.cpp:371 ../src/gui/SequencerGui.cpp:444
 #, fuzzy
 msgid "Color Pattern"
-msgstr "複製樂段"
+msgstr "樂段顏色"
 
 #: ../src/gui/SequencerGui.cpp:390 ../src/gui/SequencerGui.cpp:463
 #, fuzzy
@@ -2322,54 +2333,54 @@ msgstr "合併"
 
 #: ../src/gui/MainApp.cpp:84 ../src/gui/MainApp.cpp:91
 msgid "Warning"
-msgstr ""
+msgstr "警告"
 
 #: ../src/gui/MainApp.cpp:85 ../src/gui/MainApp.cpp:92
 msgid "Your configuration file is deprecated, settings need to be set"
-msgstr ""
+msgstr "你的配置文件有問題，請重新設定"
 
 #: ../src/gui/MLTreeInfos.cpp:18
 msgid "Red text\n"
-msgstr ""
+msgstr "紅色字體\n"
 
 #: ../src/gui/SequencerGui.cpp:443
 msgid "Merge"
-msgstr ""
+msgstr "合併"
 
 #: ../src/gui/SequencerGui.cpp:443
 #, fuzzy
 msgid "Merge Patterns"
-msgstr "移動樂段"
+msgstr "合併樂段"
 
 #: ../src/gui/MainWindow.cpp:150
 #, fuzzy
 msgid "Select &all\tCtrl+A"
-msgstr "全選\\tCtrl+A"
+msgstr "全選\tCtrl+A"
 
 #: ../src/gui/MainWindow.cpp:155
 #, fuzzy
 msgid "Add &MIDI Track"
-msgstr "增加MIDI軌"
+msgstr "增加＆MIDI軌"
 
 #: ../src/gui/MainWindow.cpp:165
 #, fuzzy
 msgid "This feature is currently in alpha stage"
-msgstr "目前為測試版，請見諒"
+msgstr "目前為測試階段"
 
 #: ../src/gui/MainWindow.cpp:166 ../src/gui/MainWindow.cpp:1854
 #, fuzzy
 msgid "Save Media Library"
-msgstr "多媒體資料庫"
+msgstr "儲存多媒體資料庫"
 
 #: ../src/gui/MainWindow.cpp:167 ../src/gui/MainWindow.cpp:1841
 #, fuzzy
 msgid "Load Media Library"
-msgstr "多媒體資料庫"
+msgstr "載入多媒體資料庫"
 
 #: ../src/gui/MainWindow.cpp:169
 #, fuzzy
 msgid "&Show/Hide\tCtrl-M"
-msgstr "顯示\tCtrl-M"
+msgstr "顯示／隱藏\tCtrl-M"
 
 #: ../src/gui/MainWindow.cpp:170
 #, fuzzy
@@ -2394,7 +2405,7 @@ msgstr "浮動操作視窗"
 #: ../src/gui/MainWindow.cpp:1839 ../src/gui/MainWindow.cpp:1852
 #, fuzzy
 msgid "xml\tMedia Library file (*.xml)"
-msgstr "xml\tWired區段檔 (*.xml)"
+msgstr "xml\t多媒體資料庫檔 (*.xml)"
 
 #: ../src/gui/SeqTrack.cpp:63
 msgid "ihm/seqtrack/tracktype-midi.png"
@@ -2407,17 +2418,17 @@ msgstr ""
 #: ../src/gui/MainApp.cpp:133
 #, fuzzy
 msgid "An unhandled exception has occurred, aborting"
-msgstr "發生未處理的例外事件，Wired現在關閉！"
+msgstr "發生未處理的例外事件，強制關閉"
 
 #: ../src/gui/MediaLibrary.cpp:88
 #, fuzzy
 msgid "Start Preview"
-msgstr "預覽"
+msgstr "開始預覽"
 
 #: ../src/gui/MediaLibrary.cpp:89
 #, fuzzy
 msgid "Stop Preview"
-msgstr "預覽"
+msgstr "停止預覽"
 
 #: ../src/gui/MLTree.cpp:52
 #, fuzzy
@@ -2426,7 +2437,7 @@ msgstr "專案名稱"
 
 #: ../src/gui/MLTree.cpp:309 ../src/gui/MLTree.cpp:325
 msgid "folder"
-msgstr ""
+msgstr "資料夾"
 
 #: ../src/gui/MLTree.cpp:310 ../src/gui/MLTree.cpp:319
 #: ../src/gui/MLTree.cpp:326
@@ -2441,39 +2452,48 @@ msgstr "檔案"
 
 #: ../src/gui/MLTree.cpp:320
 msgid "ext"
-msgstr ""
+msgstr "副檔名"
 
 #: ../src/gui/MLTreeInfos.cpp:17
 msgid ""
 "\n"
 "Extention : "
 msgstr ""
-
+"\n"
+"副檔名 : "
 #: ../src/gui/MLTreeInfos.cpp:19
 #, fuzzy
 msgid ""
 "\n"
 "Length : "
-msgstr "基本長度"
+msgstr ""
+"\n"
+"長度 : "
 
 #: ../src/gui/MLTreeInfos.cpp:21
 msgid ""
 "\n"
 "Bitrate"
 msgstr ""
+"\n"
+"Bitrate"
 
 #: ../src/gui/MLTreeInfos.cpp:22
 #, fuzzy
 msgid ""
 "\n"
 "Size : "
-msgstr "大小"
+msgstr ""
+"\n"
+"大小"
 
 #: ../src/gui/MLTreeInfos.cpp:23
 msgid ""
 "\n"
 "Codec : "
 msgstr ""
+"\n"
+"轉碼程式 : "
 
 #: ../src/gui/MLTreeInfos.cpp:26
 msgid "Arial"
@@ -2481,7 +2501,7 @@ msgstr ""
 
 #: ../src/gui/MLTreeInfos.cpp:36
 msgid "staticText"
-msgstr ""
+msgstr "靜態文字"
 
 #: ../src/samplerate/WiredSampleRate.cpp:295
 #, fuzzy
@@ -2489,7 +2509,8 @@ msgid ""
 "Please select the options that\n"
 "you want for the downmix.\n"
 "(Defaults are current project values)"
-msgstr "請選擇你要的混音功能。(此專案的配置為預設值)"
+msgstr ""
+"請選擇你要的混音功能。(此專案的配置為預設值)"
 
 #~ msgid "& Wave file..."
 #~ msgstr "& Wave檔..."
