@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wired 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-23 19:47+0200\n"
+"POT-Creation-Date: 2007-01-19 12:29+0100\n"
 "PO-Revision-Date: 2006-09-22 16:37+0200\n"
 "Last-Translator: Nicola Mattei <nicola.solutiong@gmail.com>\n"
 "Language-Team: Italian <nicola.solutiong@gmail.org>\n"
@@ -74,6 +74,7 @@ msgstr "Le uscite dati sono : "
 
 #: src/editmidi/EditMidi.cpp:262 src/gui/SequencerGui.cpp:355
 #: ../src/gui/SequencerGui.cpp:367 ../src/editmidi/EditMidi.cpp:265
+#: ../src/gui/SequencerGui.cpp:439
 msgid "Move"
 msgstr "Sposta"
 
@@ -96,45 +97,55 @@ msgstr "Canc"
 
 #: src/editmidi/EditMidi.cpp:264 src/gui/SequencerGui.cpp:357
 #: ../src/gui/SequencerGui.cpp:369 ../src/editmidi/EditMidi.cpp:267
+#: ../src/gui/SequencerGui.cpp:441
 msgid "Deletes notes"
 msgstr "Cancella le note"
 
 #: src/fileloader/FileLoader.cpp:106 ../src/fileloader/FileLoader.cpp:109
+#: ../src/fileloader/FileLoader.cpp:95
 msgid "Name"
 msgstr "Nome"
 
 #: src/fileloader/FileLoader.cpp:108 ../src/fileloader/FileLoader.cpp:111
+#: ../src/fileloader/FileLoader.cpp:97
 msgid "Size"
 msgstr "Grandezza"
 
 #: src/fileloader/FileLoader.cpp:112 ../src/fileloader/FileLoader.cpp:115
+#: ../src/fileloader/FileLoader.cpp:101
 msgid "Modified"
 msgstr "Modificato"
 
 #: src/fileloader/FileLoader.cpp:117 src/fileloader/FileLoader.cpp:152
 #: ../src/fileloader/FileLoader.cpp:120 ../src/fileloader/FileLoader.cpp:142
+#: ../src/fileloader/FileLoader.cpp:106 ../src/fileloader/FileLoader.cpp:128
 msgid "Type"
 msgstr "Tipo"
 
 #: src/fileloader/FileLoader.cpp:134 ../src/fileloader/FileLoader.cpp:137
+#: ../src/fileloader/FileLoader.cpp:123
 msgid "Filename"
 msgstr "Nome del file"
 
 #: src/fileloader/FileLoader.cpp:143 ../src/fileloader/FileLoader.cpp:151
+#: ../src/fileloader/FileLoader.cpp:137
 msgid "Akai device"
 msgstr "Periferica AKAI"
 
 #: src/fileloader/FileLoader.cpp:159 src/fileloader/FileLoader.cpp:1287
 #: ../src/gui/MediaLibrary.cpp:87 ../src/fileloader/FileLoader.cpp:161
-#: ../src/fileloader/FileLoader.cpp:1212
+#: ../src/fileloader/FileLoader.cpp:1212 ../src/fileloader/FileLoader.cpp:147
+#: ../src/fileloader/FileLoader.cpp:1198
 msgid "Preview"
 msgstr "Anteprima"
 
 #: src/fileloader/FileLoader.cpp:165 ../src/fileloader/FileLoader.cpp:164
+#: ../src/fileloader/FileLoader.cpp:150
 msgid "Open"
 msgstr "Apri"
 
 #: src/fileloader/FileLoader.cpp:171 ../src/fileloader/FileLoader.cpp:171
+#: ../src/fileloader/FileLoader.cpp:157
 msgid "Save"
 msgstr "Salva"
 
@@ -142,15 +153,18 @@ msgstr "Salva"
 #: src/midi/MidiController.cpp:18 ../src/gui/SettingWindow.cpp:78
 #: ../src/midi/MidiController.cpp:21 ../src/fileloader/FileLoader.cpp:174
 #: ../src/plugins/loop_sampler/BeatDialog.cpp:18
-#: ../src/gui/SettingWindow.cpp:86
+#: ../src/gui/SettingWindow.cpp:86 ../src/gui/SettingWindow.cpp:104
+#: ../src/fileloader/FileLoader.cpp:160
 msgid "Cancel"
 msgstr "Annulla"
 
 #: src/fileloader/FileLoader.cpp:180 ../src/fileloader/FileLoader.cpp:178
+#: ../src/fileloader/FileLoader.cpp:164
 msgid "Favorites"
 msgstr "Favoriti"
 
 #: src/fileloader/FileLoader.cpp:187 ../src/fileloader/FileLoader.cpp:186
+#: ../src/fileloader/FileLoader.cpp:172
 msgid "Recents"
 msgstr "Recenti"
 
@@ -159,32 +173,41 @@ msgid "All supported soundfiles (*."
 msgstr "Tutti i formati supportati (*."
 
 #: src/fileloader/FileLoader.cpp:429 ../src/fileloader/FileLoader.cpp:309
+#: ../src/fileloader/FileLoader.cpp:295
 msgid "All files (*.*)"
 msgstr "Tutti i files (*.*)"
 
 #: src/fileloader/FileLoader.cpp:584 src/fileloader/FileLoader.cpp:592
 #: src/fileloader/FileLoader.cpp:630 ../src/fileloader/FileLoader.cpp:489
 #: ../src/fileloader/FileLoader.cpp:497 ../src/fileloader/FileLoader.cpp:535
+#: ../src/fileloader/FileLoader.cpp:475 ../src/fileloader/FileLoader.cpp:483
+#: ../src/fileloader/FileLoader.cpp:521
 msgid "Partition "
 msgstr "Partizione "
 
 #: src/fileloader/FileLoader.cpp:990 ../src/fileloader/FileLoader.cpp:916
+#: ../src/fileloader/FileLoader.cpp:902
 msgid "Add to favorites"
 msgstr "Aggiungi ai favoriti"
 
 #: src/fileloader/FileLoader.cpp:1068 src/fileloader/FileLoader.cpp:1157
 #: src/fileloader/FileLoader.cpp:1212 ../src/fileloader/FileLoader.cpp:993
 #: ../src/fileloader/FileLoader.cpp:1082 ../src/fileloader/FileLoader.cpp:1138
+#: ../src/fileloader/FileLoader.cpp:979 ../src/fileloader/FileLoader.cpp:1068
+#: ../src/fileloader/FileLoader.cpp:1124
 msgid "Please enter a name"
 msgstr "Inserisci un nome"
 
 #: src/fileloader/FileLoader.cpp:1082 src/fileloader/FileLoader.cpp:1171
 #: src/fileloader/FileLoader.cpp:1226 ../src/fileloader/FileLoader.cpp:1007
 #: ../src/fileloader/FileLoader.cpp:1096 ../src/fileloader/FileLoader.cpp:1152
+#: ../src/fileloader/FileLoader.cpp:993 ../src/fileloader/FileLoader.cpp:1082
+#: ../src/fileloader/FileLoader.cpp:1138
 msgid "File already exists, replace ?"
 msgstr "Il file esiste già, sovrascriverlo ?"
 
 #: src/fileloader/FileLoader.cpp:1299 ../src/fileloader/FileLoader.cpp:1225
+#: ../src/fileloader/FileLoader.cpp:1211
 msgid "Stop"
 msgstr "Ferma"
 
@@ -369,7 +392,7 @@ msgid "Core Audio File"
 msgstr "Core Audio File"
 
 #: src/gui/AudioPattern.cpp:98 ../src/gui/AudioPattern.cpp:102
-#: ../src/gui/AudioPattern.cpp:96
+#: ../src/gui/AudioPattern.cpp:96 ../src/gui/AudioPattern.cpp:98
 msgid "This is an Audio pattern. Double-click on it to open the Audio editor."
 msgstr ""
 "Questo è un pattern Audio. Doppio-click su quest'ultimo per aprire l'editor "
@@ -404,6 +427,8 @@ msgstr "Aiuto di Wired"
 #: ../src/gui/MainWindow.cpp:288 ../src/gui/MainWindow.cpp:1469
 #: ../src/gui/SettingWindow.cpp:267 ../src/gui/SettingWindow.cpp:291
 #: ../src/gui/MainWindow.cpp:300 ../src/gui/MainWindow.cpp:1488
+#: ../src/gui/SettingWindow.cpp:322 ../src/gui/MainWindow.cpp:296
+#: ../src/gui/MainWindow.cpp:1513
 msgid "audio engine"
 msgstr "motore audio"
 
@@ -414,22 +439,27 @@ msgstr ""
 "Dovresti controllare le tue impostazioni audio se vuoi utilizzare Wired.."
 
 #: src/gui/MainWindow.cpp:205 ../src/gui/MainWindow.cpp:134
+#: ../src/gui/MainWindow.cpp:130
 msgid "&New\tCtrl-N"
 msgstr "&Nuovo\tCtrl-N"
 
 #: src/gui/MainWindow.cpp:206 ../src/gui/MainWindow.cpp:135
+#: ../src/gui/MainWindow.cpp:131
 msgid "&Open...\tCtrl-O"
 msgstr "&Apri...\tCtrl-O"
 
 #: src/gui/MainWindow.cpp:207 ../src/gui/MainWindow.cpp:136
+#: ../src/gui/MainWindow.cpp:132
 msgid "&Save\tCtrl-S"
 msgstr "&Salva\tCtrl-S"
 
 #: src/gui/MainWindow.cpp:208 ../src/gui/MainWindow.cpp:137
+#: ../src/gui/MainWindow.cpp:133
 msgid "Save &as...\tF12"
 msgstr "Salva &con nome...\tF12"
 
 #: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
+#: ../src/gui/MainWindow.cpp:135
 msgid "&Import Wave file..."
 msgstr "&Importa un file Wave..."
 
@@ -450,22 +480,27 @@ msgid "&Export MIDI file..."
 msgstr "&Esporta un file MIDI..."
 
 #: src/gui/MainWindow.cpp:218 ../src/gui/MainWindow.cpp:146
+#: ../src/gui/MainWindow.cpp:142
 msgid "&Quit\tCtrl-Q"
 msgstr "Esc&i\tCtrl-Q"
 
 #: src/gui/MainWindow.cpp:222 ../src/gui/MainWindow.cpp:149
+#: ../src/gui/MainWindow.cpp:145
 msgid "C&ut\tCtrl+X"
 msgstr "&Taglia\tCtrl+X"
 
 #: src/gui/MainWindow.cpp:223 ../src/gui/MainWindow.cpp:150
+#: ../src/gui/MainWindow.cpp:146
 msgid "&Copy\tCtrl+C"
 msgstr "&Copia\tCtrl+C"
 
 #: src/gui/MainWindow.cpp:224 ../src/gui/MainWindow.cpp:151
+#: ../src/gui/MainWindow.cpp:147
 msgid "&Paste\tCtrl+V"
 msgstr "&Incolla\tCtrl+V"
 
 #: src/gui/MainWindow.cpp:226 ../src/gui/MainWindow.cpp:153
+#: ../src/gui/MainWindow.cpp:149
 msgid "&Delete\tDel"
 msgstr "&Cancella\tCanc"
 
@@ -474,10 +509,12 @@ msgid "&Select all\tCtrl+A"
 msgstr "&Seleziona tutto\tCtrl+A"
 
 #: src/gui/MainWindow.cpp:229 ../src/gui/MainWindow.cpp:156
+#: ../src/gui/MainWindow.cpp:152
 msgid "&Settings..."
 msgstr "&Impostazioni..."
 
 #: src/gui/MainWindow.cpp:231 ../src/gui/MainWindow.cpp:158
+#: ../src/gui/MainWindow.cpp:154
 msgid "&Add Audio Track"
 msgstr "&Aggiungi una traccia audio"
 
@@ -486,30 +523,37 @@ msgid "&Add MIDI Track"
 msgstr "&Aggiungi una traccia MIDI"
 
 #: src/gui/MainWindow.cpp:233 ../src/gui/MainWindow.cpp:160
+#: ../src/gui/MainWindow.cpp:156
 msgid "&Delete Track"
 msgstr "&Rimuovi la traccia"
 
 #: src/gui/MainWindow.cpp:235 ../src/gui/MainWindow.cpp:162
+#: ../src/gui/MainWindow.cpp:158
 msgid "&Change Audio directory..."
 msgstr "&Cambia la cartella di lavoro..."
 
 #: src/gui/MainWindow.cpp:237 ../src/gui/MainWindow.cpp:164
+#: ../src/gui/MainWindow.cpp:160
 msgid "D&elete Rack"
 msgstr "Rimuovi il rack"
 
 #: src/gui/MainWindow.cpp:239 ../src/gui/MainWindow.cpp:166
+#: ../src/gui/MainWindow.cpp:162
 msgid "&Show Integrated Help"
 msgstr "&Mostra l'aiuto contestuale"
 
 #: src/gui/MainWindow.cpp:240 ../src/gui/MainWindow.cpp:167
+#: ../src/gui/MainWindow.cpp:163
 msgid "&About..."
 msgstr "&A proposito di Wired..."
 
 #: src/gui/MainWindow.cpp:242 ../src/gui/MainWindow.cpp:174
+#: ../src/gui/MainWindow.cpp:172
 msgid "Switch &Rack/Optional view\tTAB"
 msgstr "Modalità &Rack/Vista Opzionale\tTAB"
 
 #: src/gui/MainWindow.cpp:243 ../src/gui/MainWindow.cpp:175
+#: ../src/gui/MainWindow.cpp:173
 msgid "Switch &Sequencer/Optional view\tCtrl+TAB"
 msgstr "Modalità &Sequencer/Vista Opzionale"
 
@@ -530,35 +574,43 @@ msgid "Floating Optional View"
 msgstr "Stacca la Visualizzazione Opzionale"
 
 #: src/gui/MainWindow.cpp:250 ../src/gui/MainWindow.cpp:184
+#: ../src/gui/MainWindow.cpp:182
 msgid "&Fullscreen"
 msgstr "&Schermo intero"
 
 #: src/gui/MainWindow.cpp:252 ../src/gui/MainWindow.cpp:186
+#: ../src/gui/MainWindow.cpp:184
 msgid "&Log window"
 msgstr "&Finestra dei messaggi"
 
 #: src/gui/MainWindow.cpp:254 ../src/gui/MainWindow.cpp:188
+#: ../src/gui/MainWindow.cpp:186
 msgid "&File"
 msgstr "&File"
 
 #: src/gui/MainWindow.cpp:255 ../src/gui/MainWindow.cpp:189
+#: ../src/gui/MainWindow.cpp:187
 msgid "&Edit"
 msgstr "&Modifica"
 
 #: src/gui/MainWindow.cpp:256 ../src/gui/MainWindow.cpp:190
+#: ../src/gui/MainWindow.cpp:188
 msgid "&Sequencer"
 msgstr "&Sequencer"
 
 #: src/gui/MainWindow.cpp:257 ../src/gui/MainWindow.cpp:191
+#: ../src/gui/MainWindow.cpp:189
 msgid "&Racks"
 msgstr "&Racks"
 
 #: src/gui/MainWindow.cpp:258 src/gui/Rack.cpp:228 ../src/gui/Rack.cpp:230
-#: ../src/gui/MainWindow.cpp:192
+#: ../src/gui/MainWindow.cpp:192 ../src/gui/Rack.cpp:233
+#: ../src/gui/MainWindow.cpp:190
 msgid "&Instruments"
 msgstr "&Strumenti"
 
 #: src/gui/MainWindow.cpp:259 ../src/gui/MainWindow.cpp:193
+#: ../src/gui/MainWindow.cpp:191
 msgid "Effec&ts"
 msgstr "&Effetti"
 
@@ -567,67 +619,71 @@ msgid "&Video"
 msgstr "&Video"
 
 #: src/gui/MainWindow.cpp:261 ../src/gui/MainWindow.cpp:197
+#: ../src/gui/MainWindow.cpp:195
 msgid "&Window"
 msgstr "&Finestra"
 
 #: src/gui/MainWindow.cpp:262 ../src/gui/MainWindow.cpp:198
+#: ../src/gui/MainWindow.cpp:196
 msgid "&Help"
 msgstr "&Aiuto"
 
 #: src/gui/MainWindow.cpp:362 ../src/gui/MainWindow.cpp:459
-#: ../src/gui/MainWindow.cpp:475
+#: ../src/gui/MainWindow.cpp:475 ../src/gui/MainWindow.cpp:471
 msgid "Choose the audio working directory"
 msgstr "Scegli la cartella di lavoro"
 
 #: src/gui/MainWindow.cpp:382 ../src/gui/MainWindow.cpp:483
-#: ../src/gui/MainWindow.cpp:499
+#: ../src/gui/MainWindow.cpp:499 ../src/gui/MainWindow.cpp:495
 msgid "U&ndo"
 msgstr "&Annulla"
 
 #: src/gui/MainWindow.cpp:383 ../src/gui/MainWindow.cpp:484
-#: ../src/gui/MainWindow.cpp:500
+#: ../src/gui/MainWindow.cpp:500 ../src/gui/MainWindow.cpp:496
 msgid "&Redo"
 msgstr "&Ripeti"
 
 #: src/gui/MainWindow.cpp:390 ../src/gui/MainWindow.cpp:491
-#: ../src/gui/MainWindow.cpp:507
+#: ../src/gui/MainWindow.cpp:507 ../src/gui/MainWindow.cpp:503
 msgid "&Open video"
 msgstr "&Apri video"
 
 #: src/gui/MainWindow.cpp:391 ../src/gui/MainWindow.cpp:492
-#: ../src/gui/MainWindow.cpp:508
+#: ../src/gui/MainWindow.cpp:508 ../src/gui/MainWindow.cpp:504
 msgid "&Close video"
 msgstr "&Chiudi video"
 
 #: src/gui/MainWindow.cpp:392 ../src/gui/MainWindow.cpp:493
-#: ../src/gui/MainWindow.cpp:509
+#: ../src/gui/MainWindow.cpp:509 ../src/gui/MainWindow.cpp:505
 msgid "&Seek with video playing"
 msgstr "&Avanza la riproduzione video"
 
 #: src/gui/MainWindow.cpp:406 src/gui/MainWindow.cpp:516
 #: ../src/gui/MainWindow.cpp:507 ../src/gui/MainWindow.cpp:619
 #: ../src/gui/MainWindow.cpp:523 ../src/gui/MainWindow.cpp:635
+#: ../src/gui/MainWindow.cpp:519 ../src/gui/MainWindow.cpp:631
 msgid "Save current session ?"
 msgstr "Salvare la sessione corrente ?"
 
 #: src/gui/MainWindow.cpp:552 ../src/gui/MainWindow.cpp:655
-#: ../src/gui/MainWindow.cpp:671
+#: ../src/gui/MainWindow.cpp:671 ../src/gui/MainWindow.cpp:667
 msgid "wrd\tWired session file (*.wrd)"
 msgstr "wrd\tFile sessione di Wired (*.wrd)"
 
 #: src/gui/MainWindow.cpp:553 src/gui/MainWindow.cpp:607
 #: ../src/gui/MainWindow.cpp:656 ../src/gui/MainWindow.cpp:710
 #: ../src/gui/MainWindow.cpp:672 ../src/gui/MainWindow.cpp:726
+#: ../src/gui/MainWindow.cpp:668 ../src/gui/MainWindow.cpp:722
 msgid "xml\tWired session file (*.xml)"
 msgstr "xml\tFile sessione di Wired (*.xml)"
 
 #: src/gui/MainWindow.cpp:554 ../src/gui/MainWindow.cpp:657
-#: ../src/gui/MainWindow.cpp:673
+#: ../src/gui/MainWindow.cpp:673 ../src/gui/MainWindow.cpp:669
 msgid "Open session"
 msgstr "Apri Sessione"
 
 #: src/gui/MainWindow.cpp:608 ../src/gui/MainWindow.cpp:711
-#: ../src/gui/MainWindow.cpp:727
+#: ../src/gui/MainWindow.cpp:727 ../src/gui/MainWindow.cpp:723
 msgid "Save session"
 msgstr "Salva Sessione"
 
@@ -636,7 +692,8 @@ msgstr "Salva Sessione"
 #: ../src/gui/MediaLibrary.cpp:158 ../src/gui/MainWindow.cpp:742
 #: ../src/plugins/beatbox/BeatBoxChannel.cpp:554
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:1212
-#: ../src/gui/MainWindow.cpp:758
+#: ../src/gui/MainWindow.cpp:758 ../src/gui/MainWindow.cpp:754
+#: ../src/gui/MediaLibrary.cpp:161
 msgid "Loading sound file"
 msgstr "Apertura del file audio in corso"
 
@@ -644,24 +701,27 @@ msgstr "Apertura del file audio in corso"
 #: src/gui/Transport.cpp:209 ../src/gui/MediaLibrary.cpp:169
 #: ../src/gui/Transport.cpp:212 ../src/gui/MainWindow.cpp:753
 #: ../src/gui/MainWindow.cpp:1514 ../src/gui/MainWindow.cpp:769
-#: ../src/gui/MainWindow.cpp:1534
+#: ../src/gui/MainWindow.cpp:1534 ../src/gui/MainWindow.cpp:765
+#: ../src/gui/MainWindow.cpp:1559 ../src/gui/MediaLibrary.cpp:172
 msgid "Choose the Audio file directory"
 msgstr "Scegli la cartella di lavoro"
 
 #: src/gui/MainWindow.cpp:679 src/gui/MainWindow.cpp:825
 #: ../src/gui/MainWindow.cpp:781 ../src/gui/MainWindow.cpp:928
 #: ../src/gui/MainWindow.cpp:797 ../src/gui/MainWindow.cpp:944
+#: ../src/gui/MainWindow.cpp:793 ../src/gui/MainWindow.cpp:940
 msgid "mid\tMidi file (*.mid)"
 msgstr "mid\tfile MIDI (*.mid)"
 
 #: src/gui/MainWindow.cpp:680 ../src/gui/MainWindow.cpp:782
-#: ../src/gui/MainWindow.cpp:798
+#: ../src/gui/MainWindow.cpp:798 ../src/gui/MainWindow.cpp:794
 msgid "Import MIDI file"
 msgstr "Importa un file MIDI"
 
 #: src/gui/MainWindow.cpp:686 src/gui/MainWindow.cpp:727
 #: ../src/gui/MainWindow.cpp:788 ../src/gui/MainWindow.cpp:829
 #: ../src/gui/MainWindow.cpp:804 ../src/gui/MainWindow.cpp:845
+#: ../src/gui/MainWindow.cpp:800 ../src/gui/MainWindow.cpp:841
 msgid "Loading midi file"
 msgstr "Apertura del file MIDI in corso"
 
@@ -678,42 +738,43 @@ msgstr "Apertura del file MIDI in corso"
 #: ../src/plugins/beatbox/BeatBoxChannel.cpp:560
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:1217
 #: ../src/gui/MainWindow.cpp:804 ../src/gui/MainWindow.cpp:845
-#: ../src/gui/MainWindow.cpp:923
+#: ../src/gui/MainWindow.cpp:923 ../src/gui/MainWindow.cpp:800
+#: ../src/gui/MainWindow.cpp:841 ../src/gui/MainWindow.cpp:919
 msgid "Please wait..."
 msgstr "Attendere, per favore..."
 
 #: src/gui/MainWindow.cpp:721 ../src/gui/MainWindow.cpp:823
-#: ../src/gui/MainWindow.cpp:839
+#: ../src/gui/MainWindow.cpp:839 ../src/gui/MainWindow.cpp:835
 msgid "Import AKAI samples"
 msgstr "Importa campioni AKAI"
 
 #: src/gui/MainWindow.cpp:781 ../src/gui/MainWindow.cpp:883
-#: ../src/gui/MainWindow.cpp:899
+#: ../src/gui/MainWindow.cpp:899 ../src/gui/MainWindow.cpp:895
 msgid "Please correctly place the Left and Right markers"
 msgstr "Posiziona correttamente i marcatori destro e sinistro, per favore"
 
 #: src/gui/MainWindow.cpp:786 ../src/gui/MainWindow.cpp:888
-#: ../src/gui/MainWindow.cpp:904
+#: ../src/gui/MainWindow.cpp:904 ../src/gui/MainWindow.cpp:900
 msgid "Exporting sound file"
 msgstr "Esportazione del file audio"
 
 #: src/gui/MainWindow.cpp:804 ../src/gui/MainWindow.cpp:907
-#: ../src/gui/MainWindow.cpp:923
+#: ../src/gui/MainWindow.cpp:923 ../src/gui/MainWindow.cpp:919
 msgid "Exporting mix"
 msgstr "Esportazione del mixaggio in corso"
 
 #: src/gui/MainWindow.cpp:1076 ../src/gui/MainWindow.cpp:1175
-#: ../src/gui/MainWindow.cpp:1191
+#: ../src/gui/MainWindow.cpp:1191 ../src/gui/MainWindow.cpp:1187
 msgid "Transport"
 msgstr "Trasporto"
 
 #: src/gui/MainWindow.cpp:1093 ../src/gui/MainWindow.cpp:1202
-#: ../src/gui/MainWindow.cpp:1218
+#: ../src/gui/MainWindow.cpp:1218 ../src/gui/MainWindow.cpp:1214
 msgid "Sequencer"
 msgstr "Sequencer"
 
 #: src/gui/MainWindow.cpp:1112 ../src/gui/MainWindow.cpp:1245
-#: ../src/gui/MainWindow.cpp:1261
+#: ../src/gui/MainWindow.cpp:1261 ../src/gui/MainWindow.cpp:1257
 msgid "Racks"
 msgstr "Racks"
 
@@ -723,17 +784,17 @@ msgstr ""
 "Dovresti controllare le tue impostazioni audio se vuoi utilizzare Wired.."
 
 #: src/gui/MainWindow.cpp:1631 ../src/gui/MainWindow.cpp:1759
-#: ../src/gui/MainWindow.cpp:1779
+#: ../src/gui/MainWindow.cpp:1779 ../src/gui/MainWindow.cpp:1802
 msgid "Left space on drive : "
 msgstr "Spazio rimanente sul disco : "
 
 #: src/gui/MainWindow.cpp:1631 ../src/gui/MainWindow.cpp:1759
-#: ../src/gui/MainWindow.cpp:1779
+#: ../src/gui/MainWindow.cpp:1779 ../src/gui/MainWindow.cpp:1802
 msgid "Free memory : "
 msgstr "Memoria disponibile : "
 
 #: src/gui/MainWindow.cpp:1638 ../src/gui/MainWindow.cpp:1766
-#: ../src/gui/MainWindow.cpp:1786
+#: ../src/gui/MainWindow.cpp:1786 ../src/gui/MainWindow.cpp:1809
 msgid "Unknown"
 msgstr "Sconosciuto"
 
@@ -762,11 +823,12 @@ msgstr "Rack %d"
 
 #: src/gui/Rack.cpp:227 src/plugins/beatbox/BeatBoxView.cpp:228
 #: ../src/gui/Rack.cpp:229 ../src/gui/MediaLibrary.cpp:80
-#: ../src/plugins/beatbox/BeatBoxView.cpp:231
+#: ../src/plugins/beatbox/BeatBoxView.cpp:231 ../src/gui/Rack.cpp:232
+#: ../src/gui/MediaLibrary.cpp:81
 msgid "Add"
 msgstr "Aggiungi"
 
-#: src/gui/Rack.cpp:229 ../src/gui/Rack.cpp:231
+#: src/gui/Rack.cpp:229 ../src/gui/Rack.cpp:231 ../src/gui/Rack.cpp:234
 msgid "&Effects"
 msgstr "&Effetti"
 
@@ -775,7 +837,8 @@ msgstr "&Effetti"
 #: src/plugins/beatbox/BeatBoxView.cpp:231 ../src/gui/Rack.cpp:232
 #: ../src/gui/SequencerGui.cpp:464 ../src/gui/WavePanel.cpp:52
 #: ../src/gui/WavePanel.cpp:53 ../src/gui/WaveEditor.cpp:47
-#: ../src/plugins/beatbox/BeatBoxView.cpp:234
+#: ../src/plugins/beatbox/BeatBoxView.cpp:234 ../src/gui/SequencerGui.cpp:537
+#: ../src/gui/Rack.cpp:235
 msgid "Cut"
 msgstr "Taglia"
 
@@ -784,7 +847,8 @@ msgstr "Taglia"
 #: src/plugins/beatbox/BeatBoxView.cpp:232 ../src/gui/Rack.cpp:233
 #: ../src/gui/SequencerGui.cpp:465 ../src/gui/WavePanel.cpp:48
 #: ../src/gui/WavePanel.cpp:49 ../src/gui/WaveEditor.cpp:48
-#: ../src/plugins/beatbox/BeatBoxView.cpp:235
+#: ../src/plugins/beatbox/BeatBoxView.cpp:235 ../src/gui/SequencerGui.cpp:538
+#: ../src/gui/Rack.cpp:236
 msgid "Copy"
 msgstr "Copia"
 
@@ -793,7 +857,8 @@ msgstr "Copia"
 #: src/plugins/beatbox/BeatBoxView.cpp:233 ../src/gui/Rack.cpp:234
 #: ../src/gui/SequencerGui.cpp:466 ../src/gui/WavePanel.cpp:50
 #: ../src/gui/WavePanel.cpp:51 ../src/gui/WaveEditor.cpp:49
-#: ../src/plugins/beatbox/BeatBoxView.cpp:236
+#: ../src/plugins/beatbox/BeatBoxView.cpp:236 ../src/gui/SequencerGui.cpp:539
+#: ../src/gui/Rack.cpp:237
 msgid "Paste"
 msgstr "Incolla"
 
@@ -804,10 +869,12 @@ msgstr "Incolla"
 #: ../src/gui/SequencerGui.cpp:369 ../src/gui/SequencerGui.cpp:462
 #: ../src/gui/WavePanel.cpp:54 ../src/gui/WavePanel.cpp:55
 #: ../src/gui/WaveEditor.cpp:50 ../src/plugins/beatbox/BeatBoxView.cpp:232
+#: ../src/gui/SequencerGui.cpp:441 ../src/gui/SequencerGui.cpp:535
+#: ../src/gui/Rack.cpp:239
 msgid "Delete"
 msgstr "Cancella"
 
-#: src/gui/Rack.cpp:811 ../src/gui/Rack.cpp:812
+#: src/gui/Rack.cpp:811 ../src/gui/Rack.cpp:812 ../src/gui/Rack.cpp:823
 msgid ""
 "This is the Rack view of Wired, where you can add plugins. Plugins are "
 "organized into tracks vertically, meaning the first plugin in a column will "
@@ -816,11 +883,13 @@ msgid ""
 msgstr ""
 
 #: src/gui/SeqTrack.cpp:46 ../src/gui/SeqTrack.cpp:49
+#: ../src/gui/SeqTrack.cpp:52
 #, c-format
 msgid "Audio %d"
 msgstr "Audio %d"
 
 #: src/gui/SeqTrack.cpp:107 ../src/gui/SeqTrack.cpp:110
+#: ../src/gui/SeqTrack.cpp:153
 msgid ""
 "Click on this button to show the list of instruments and effects you can "
 "connect your track to."
@@ -829,6 +898,7 @@ msgstr ""
 "puoi aggiungere alla tua traccia."
 
 #: src/gui/SeqTrack.cpp:116 ../src/gui/SeqTrack.cpp:119
+#: ../src/gui/SeqTrack.cpp:162
 msgid "Click on this box to select the device you would like to record from."
 msgstr ""
 "Clicka su questo pannello per selezionare il device dal quale vuoi "
@@ -839,11 +909,14 @@ msgstr ""
 #: ../src/gui/SeqTrack.cpp:131 ../src/gui/SeqTrack.cpp:163
 #: ../src/gui/SettingWindow.cpp:306 ../src/gui/SettingWindow.cpp:318
 #: ../src/gui/SettingWindow.cpp:334 ../src/gui/SettingWindow.cpp:346
+#: ../src/gui/SettingWindow.cpp:365 ../src/gui/SettingWindow.cpp:377
+#: ../src/gui/SeqTrack.cpp:175 ../src/gui/SeqTrack.cpp:214
 msgid "None"
 msgstr "Nessuno"
 
 #: src/gui/SeqTrack.cpp:134 src/gui/SettingWindow.cpp:176
 #: src/gui/SettingWindow.cpp:285 ../src/gui/SeqTrack.cpp:137
+#: ../src/gui/SeqTrack.cpp:181
 #, c-format
 msgid "Input %d"
 msgstr "Ingresso %d"
@@ -854,6 +927,7 @@ msgid "Midi In %d"
 msgstr "Ingresso MIDI %d"
 
 #: src/gui/SequencerGui.cpp:269 ../src/gui/SequencerGui.cpp:280
+#: ../src/gui/SequencerGui.cpp:297
 msgid ""
 "This is the Wired sequencer. You can add here Audio or MIDI tracks, which "
 "can be output to plugins. Use the toolbar above to choose one of the "
@@ -864,120 +938,131 @@ msgstr ""
 "per scegliere uno degli strumenti di modifica del Sequencer"
 
 #: src/gui/SequencerGui.cpp:355 ../src/gui/SequencerGui.cpp:367
+#: ../src/gui/SequencerGui.cpp:439
 msgid "Move Pattern"
 msgstr "Sposta il Pattern"
 
 #: src/gui/SequencerGui.cpp:356 ../src/gui/SequencerGui.cpp:368
+#: ../src/gui/SequencerGui.cpp:440
 msgid "Draw"
 msgstr "Disegna"
 
 #: src/gui/SequencerGui.cpp:356 ../src/gui/SequencerGui.cpp:368
+#: ../src/gui/SequencerGui.cpp:440
 msgid "Draw Pattern"
 msgstr "Disegna il Pattern"
 
 #: src/gui/SequencerGui.cpp:357 ../src/gui/SequencerGui.cpp:369
-#: ../src/gui/SequencerGui.cpp:371
+#: ../src/gui/SequencerGui.cpp:371 ../src/gui/SequencerGui.cpp:441
+#: ../src/gui/SequencerGui.cpp:444
 msgid "Delete Pattern"
 msgstr "Elimina il Pattern"
 
 #: src/gui/SequencerGui.cpp:358 ../src/gui/SequencerGui.cpp:370
+#: ../src/gui/SequencerGui.cpp:442
 msgid "Split"
 msgstr "Dividi"
 
 #: src/gui/SequencerGui.cpp:358 ../src/gui/SequencerGui.cpp:370
+#: ../src/gui/SequencerGui.cpp:442
 msgid "Split Pattern"
 msgstr "Dividi il Pattern"
 
 #: src/gui/SequencerGui.cpp:360 src/plugins/beatbox/BeatBoxView.cpp:925
 #: ../src/gui/SequencerGui.cpp:390 ../src/plugins/beatbox/BeatBoxView.cpp:928
+#: ../src/gui/SequencerGui.cpp:463
 msgid "Magnet"
 msgstr "Magnete"
 
 #: src/gui/SequencerGui.cpp:367 ../src/gui/SequencerGui.cpp:371
+#: ../src/gui/SequencerGui.cpp:444
 msgid "Color"
 msgstr "Colore"
 
 #: src/gui/SequencerGui.cpp:379 ../src/gui/SequencerGui.cpp:408
+#: ../src/gui/SequencerGui.cpp:481
 msgid "Vertical Zoom"
 msgstr "Zoom Verticale"
 
 #: src/gui/SequencerGui.cpp:440 ../src/gui/SequencerGui.cpp:461
+#: ../src/gui/SequencerGui.cpp:534
 msgid "Move to cursor"
 msgstr "Sposta il cursore"
 
 #: src/gui/SequencerGui.cpp:447 src/plugins/beatbox/BeatBoxView.cpp:235
 #: ../src/gui/SequencerGui.cpp:468 ../src/plugins/beatbox/BeatBoxView.cpp:238
+#: ../src/gui/SequencerGui.cpp:541
 msgid "Select all"
 msgstr "Seleziona tutto"
 
 #: src/gui/SettingWindow.cpp:20 ../src/gui/SettingWindow.cpp:63
-#: ../src/gui/SettingWindow.cpp:71
+#: ../src/gui/SettingWindow.cpp:71 ../src/gui/SettingWindow.cpp:86
 msgid "General"
 msgstr "Generale"
 
 #: src/gui/SettingWindow.cpp:22 ../src/gui/SettingWindow.cpp:64
-#: ../src/gui/SettingWindow.cpp:72
+#: ../src/gui/SettingWindow.cpp:72 ../src/gui/SettingWindow.cpp:87
 msgid "Audio"
 msgstr "Audio"
 
 #: src/gui/SettingWindow.cpp:24 ../src/gui/MLTree.cpp:66
-#: ../src/gui/MLTree.cpp:65 ../src/gui/MLTree.cpp:68
+#: ../src/gui/MLTree.cpp:65 ../src/gui/MLTree.cpp:68 ../src/gui/MLTree.cpp:72
 msgid "MIDI"
 msgstr "MIDI"
 
 #: src/gui/SettingWindow.cpp:28 ../src/gui/SettingWindow.cpp:96
-#: ../src/gui/SettingWindow.cpp:104
+#: ../src/gui/SettingWindow.cpp:104 ../src/gui/SettingWindow.cpp:122
 msgid "Quickly render waveforms"
 msgstr "Renderizza le forme d'onda velocemente"
 
 #: src/gui/SettingWindow.cpp:29 ../src/gui/SettingWindow.cpp:97
-#: ../src/gui/SettingWindow.cpp:105
+#: ../src/gui/SettingWindow.cpp:105 ../src/gui/SettingWindow.cpp:123
 msgid "Render waveforms in dB mode"
 msgstr "Renderizza le forme d'onda in decibels"
 
 #: src/gui/SettingWindow.cpp:31 ../src/gui/SettingWindow.cpp:99
-#: ../src/gui/SettingWindow.cpp:107
+#: ../src/gui/SettingWindow.cpp:107 ../src/gui/SettingWindow.cpp:125
 msgid "Undo redo maximum depth"
 msgstr "Massimo numero di azioni di Annulla/Ripeti"
 
 #: src/gui/SettingWindow.cpp:37 ../src/gui/SettingWindow.cpp:192
-#: ../src/gui/SettingWindow.cpp:196
+#: ../src/gui/SettingWindow.cpp:196 ../src/gui/SettingWindow.cpp:215
 msgid "Select Output sound card:"
 msgstr "Seleziona la scheda audio di uscita:"
 
 #: src/gui/SettingWindow.cpp:48 ../src/gui/SettingWindow.cpp:194
-#: ../src/gui/SettingWindow.cpp:198
+#: ../src/gui/SettingWindow.cpp:198 ../src/gui/SettingWindow.cpp:217
 msgid "Select left and right Output channels for this sound card:"
 msgstr ""
 "Seleziona i canali destro e sinistro di uscita per questa scheda audio:"
 
 #: src/gui/SettingWindow.cpp:52 ../src/gui/SettingWindow.cpp:107
-#: ../src/gui/SettingWindow.cpp:170
+#: ../src/gui/SettingWindow.cpp:170 ../src/gui/SettingWindow.cpp:183
 msgid "Sample format:"
 msgstr "Formato di campionamento:"
 
 #: src/gui/SettingWindow.cpp:59 ../src/gui/SettingWindow.cpp:112
-#: ../src/gui/SettingWindow.cpp:172
+#: ../src/gui/SettingWindow.cpp:172 ../src/gui/SettingWindow.cpp:185
 msgid "Sample rate:"
 msgstr "Frequenza di campionamento"
 
 #: src/gui/SettingWindow.cpp:66 ../src/gui/SettingWindow.cpp:118
-#: ../src/gui/SettingWindow.cpp:174
+#: ../src/gui/SettingWindow.cpp:174 ../src/gui/SettingWindow.cpp:187
 msgid "Latency:"
 msgstr "Latenza:"
 
 #: src/gui/SettingWindow.cpp:82 ../src/gui/SettingWindow.cpp:154
-#: ../src/gui/SettingWindow.cpp:147
+#: ../src/gui/SettingWindow.cpp:147 ../src/gui/SettingWindow.cpp:163
 msgid "Select Input sound card:"
 msgstr "Seleziona la scheda audio di ingresso:"
 
 #: src/gui/SettingWindow.cpp:93 ../src/gui/SettingWindow.cpp:156
-#: ../src/gui/SettingWindow.cpp:149
+#: ../src/gui/SettingWindow.cpp:149 ../src/gui/SettingWindow.cpp:165
 msgid "Select Input channels to use with this sound card:"
 msgstr "Seleziona i canali di ingresso da usare per questa scheda audio:"
 
 #: src/gui/SettingWindow.cpp:102 ../src/gui/SettingWindow.cpp:207
-#: ../src/gui/SettingWindow.cpp:231
+#: ../src/gui/SettingWindow.cpp:231 ../src/gui/SettingWindow.cpp:244
 msgid "Select MIDI In devices to use:"
 msgstr "Seleziona i device MIDI da utilizzare:"
 
@@ -985,12 +1070,12 @@ msgstr "Seleziona i device MIDI da utilizzare:"
 #: src/plugins/loop_sampler/BeatDialog.cpp:14 ../src/gui/SettingWindow.cpp:76
 #: ../src/midi/MidiController.cpp:20
 #: ../src/plugins/loop_sampler/BeatDialog.cpp:17
-#: ../src/gui/SettingWindow.cpp:84
+#: ../src/gui/SettingWindow.cpp:84 ../src/gui/SettingWindow.cpp:102
 msgid "OK"
 msgstr "OK"
 
 #: src/gui/SettingWindow.cpp:116 ../src/gui/SettingWindow.cpp:77
-#: ../src/gui/SettingWindow.cpp:85
+#: ../src/gui/SettingWindow.cpp:85 ../src/gui/SettingWindow.cpp:103
 msgid "Apply"
 msgstr "Applica"
 
@@ -1006,7 +1091,7 @@ msgid "In %d: %s"
 msgstr "Ingresso %d: %s"
 
 #: src/gui/SettingWindow.cpp:333 ../src/gui/SettingWindow.cpp:379
-#: ../src/gui/SettingWindow.cpp:410
+#: ../src/gui/SettingWindow.cpp:410 ../src/gui/SettingWindow.cpp:441
 msgid "No more than 2 output channels can be selected"
 msgstr "Non possono essere selezionati più di 2 canali di uscita"
 
@@ -1036,6 +1121,7 @@ msgstr "32 bits (float)"
 
 #: src/gui/SettingWindow.cpp:535 ../src/gui/SettingWindow.cpp:594
 #: ../src/gui/SettingWindow.cpp:589 ../src/gui/SettingWindow.cpp:676
+#: ../src/gui/SettingWindow.cpp:781
 #, c-format
 msgid "Latency: %d samples per buffer, %.2f msec"
 msgstr "Latenza: %d campioni per buffer, %.2f msec"
@@ -1070,7 +1156,7 @@ msgstr "Seleziona tutto"
 
 #: src/gui/WaveEditor.cpp:45 ../src/gui/MLTree.cpp:78
 #: ../src/gui/WaveEditor.cpp:54 ../src/gui/MLTree.cpp:77
-#: ../src/gui/MLTree.cpp:80
+#: ../src/gui/MLTree.cpp:80 ../src/gui/MLTree.cpp:84
 msgid "Effects"
 msgstr "Effetti"
 
@@ -1720,19 +1806,19 @@ msgstr "32 bits floating"
 msgid "/tmp/.tmpccp"
 msgstr "/tmp/.tmpccp"
 
-#: ../src/gui/SequencerGui.cpp:38
+#: ../src/gui/SequencerGui.cpp:38 ../src/gui/SequencerGui.cpp:39
 msgid "Bar"
 msgstr "Barra"
 
-#: ../src/gui/MediaLibrary.cpp:80
+#: ../src/gui/MediaLibrary.cpp:80 ../src/gui/MediaLibrary.cpp:81
 msgid "Add a file"
 msgstr "Aggiungi un file"
 
-#: ../src/gui/MediaLibrary.cpp:81
+#: ../src/gui/MediaLibrary.cpp:81 ../src/gui/MediaLibrary.cpp:82
 msgid "Remove"
 msgstr "Rimuovi"
 
-#: ../src/gui/MediaLibrary.cpp:81
+#: ../src/gui/MediaLibrary.cpp:81 ../src/gui/MediaLibrary.cpp:82
 msgid "Remove file"
 msgstr "Rimuovi il file"
 
@@ -1740,88 +1826,88 @@ msgstr "Rimuovi il file"
 msgid "Edit file"
 msgstr "Modifica il file"
 
-#: ../src/gui/MediaLibrary.cpp:83
+#: ../src/gui/MediaLibrary.cpp:83 ../src/gui/MediaLibrary.cpp:84
 msgid "Insert"
 msgstr "Inserisci"
 
-#: ../src/gui/MediaLibrary.cpp:83
+#: ../src/gui/MediaLibrary.cpp:83 ../src/gui/MediaLibrary.cpp:84
 msgid "Insert file"
 msgstr "Inserisci il file"
 
-#: ../src/gui/MediaLibrary.cpp:83
+#: ../src/gui/MediaLibrary.cpp:83 ../src/gui/MediaLibrary.cpp:84
 msgid "Insert file in a new track"
 msgstr "Inserisci il file in una nuova traccia"
 
-#: ../src/gui/MediaLibrary.cpp:87
+#: ../src/gui/MediaLibrary.cpp:87 ../src/gui/MediaLibrary.cpp:88
 msgid "Preview file"
 msgstr "Anteprima file"
 
-#: ../src/gui/MediaLibrary.cpp:87
+#: ../src/gui/MediaLibrary.cpp:87 ../src/gui/MediaLibrary.cpp:88
 msgid "Preview a file"
 msgstr "Anteprima del file"
 
-#: ../src/gui/MediaLibrary.cpp:88
+#: ../src/gui/MediaLibrary.cpp:88 ../src/gui/MediaLibrary.cpp:83
 msgid "Expand/Collapse"
 msgstr "Espandi/Collassa"
 
-#: ../src/gui/MediaLibrary.cpp:88
+#: ../src/gui/MediaLibrary.cpp:88 ../src/gui/MediaLibrary.cpp:83
 msgid "Expand/Collapse all"
 msgstr "Espandi/Collassa tutti"
 
-#: ../src/gui/MediaLibrary.cpp:88
+#: ../src/gui/MediaLibrary.cpp:88 ../src/gui/MediaLibrary.cpp:83
 msgid "Expand or Collapse all tree branches"
 msgstr "Espandi o Collassa tutti i rami"
 
-#: ../src/gui/MediaLibrary.cpp:96
+#: ../src/gui/MediaLibrary.cpp:96 ../src/gui/MediaLibrary.cpp:99
 msgid "FAudio"
 msgstr "FAudio"
 
-#: ../src/gui/MediaLibrary.cpp:96
+#: ../src/gui/MediaLibrary.cpp:96 ../src/gui/MediaLibrary.cpp:99
 msgid "Show/Hide Audio files"
 msgstr "Mostra/Nascondi i file audio"
 
-#: ../src/gui/MediaLibrary.cpp:96
+#: ../src/gui/MediaLibrary.cpp:96 ../src/gui/MediaLibrary.cpp:99
 msgid "Show or hide audio files from the Media Library"
 msgstr "Mostra o nascondi i file audio dalla Media Library"
 
-#: ../src/gui/MediaLibrary.cpp:97
+#: ../src/gui/MediaLibrary.cpp:97 ../src/gui/MediaLibrary.cpp:100
 msgid "FMIDI"
 msgstr "FMIDI"
 
-#: ../src/gui/MediaLibrary.cpp:97
+#: ../src/gui/MediaLibrary.cpp:97 ../src/gui/MediaLibrary.cpp:100
 msgid "Show/Hide MIDI files"
 msgstr "Mostra/Nascondi i file MIDI"
 
-#: ../src/gui/MediaLibrary.cpp:97
+#: ../src/gui/MediaLibrary.cpp:97 ../src/gui/MediaLibrary.cpp:100
 msgid "Show or hide MIDI files from the Media Library"
 msgstr "Mostra o Nascondi i file MIDI dalla Media Library"
 
-#: ../src/gui/MediaLibrary.cpp:98
+#: ../src/gui/MediaLibrary.cpp:98 ../src/gui/MediaLibrary.cpp:101
 msgid "FVideo"
 msgstr "FVideo"
 
-#: ../src/gui/MediaLibrary.cpp:98
+#: ../src/gui/MediaLibrary.cpp:98 ../src/gui/MediaLibrary.cpp:101
 msgid "Show/Hide Video files"
 msgstr "Mostra/Nascondi i file video"
 
-#: ../src/gui/MediaLibrary.cpp:98
+#: ../src/gui/MediaLibrary.cpp:98 ../src/gui/MediaLibrary.cpp:101
 msgid "Show or hide video files from the Media Library"
 msgstr "Mostra o Nascondi i file video dalla Media Library"
 
-#: ../src/gui/MediaLibrary.cpp:99
+#: ../src/gui/MediaLibrary.cpp:99 ../src/gui/MediaLibrary.cpp:102
 msgid "FEffects"
 msgstr "FEffects"
 
-#: ../src/gui/MediaLibrary.cpp:99
+#: ../src/gui/MediaLibrary.cpp:99 ../src/gui/MediaLibrary.cpp:102
 msgid "Show/Hide Effects Files"
 msgstr "Mostra/Nascondi i file degli Effetti"
 
-#: ../src/gui/MediaLibrary.cpp:99
+#: ../src/gui/MediaLibrary.cpp:99 ../src/gui/MediaLibrary.cpp:102
 msgid "Show or hide effects from the Media Library"
 msgstr "Mostra o Nascondi gli effetti dalla Media Library"
 
 #: ../src/gui/MainApp.cpp:96 ../src/gui/MainWindow.cpp:100
-#: ../src/gui/MainApp.cpp:126
+#: ../src/gui/MainApp.cpp:126 ../src/gui/MainApp.cpp:133
 msgid "Critical error"
 msgstr "Errore Critico"
 
@@ -1833,19 +1919,19 @@ msgstr "Si è verificata Un'eccezione non gestita, Wired si chiuderà adesso!"
 msgid "You have no soundcard or it's busy, Wired will exit."
 msgstr "Non avete una scheda audio oppure essa è occupata, ora Wired uscirà"
 
-#: ../src/gui/MainWindow.cpp:140
+#: ../src/gui/MainWindow.cpp:140 ../src/gui/MainWindow.cpp:136
 msgid "Import &MIDI file..."
 msgstr "Importa file &MIDI..."
 
-#: ../src/gui/MainWindow.cpp:141
+#: ../src/gui/MainWindow.cpp:141 ../src/gui/MainWindow.cpp:137
 msgid "Import A&KAI sample..."
 msgstr "Importa campione A&KAI..."
 
-#: ../src/gui/MainWindow.cpp:143
+#: ../src/gui/MainWindow.cpp:143 ../src/gui/MainWindow.cpp:139
 msgid "E&xport Wave file..."
 msgstr "E&sporta file Wave..."
 
-#: ../src/gui/MainWindow.cpp:144
+#: ../src/gui/MainWindow.cpp:144 ../src/gui/MainWindow.cpp:140
 msgid "Ex&port MIDI file..."
 msgstr "Es&porta file MIDI..."
 
@@ -1867,15 +1953,17 @@ msgstr "&NAscondi\tCtrl-M"
 msgid "Floating"
 msgstr "Floating"
 
-#: ../src/gui/MainWindow.cpp:196
+#: ../src/gui/MainWindow.cpp:196 ../src/gui/MainWindow.cpp:194
 msgid "&MediaLibrary"
 msgstr "&MediaLibrary"
 
 #: ../src/gui/MainWindow.cpp:930 ../src/gui/MainWindow.cpp:946
+#: ../src/gui/MainWindow.cpp:942
 msgid "Export MIDI file"
 msgstr "Esporta file MIDI"
 
 #: ../src/gui/MainWindow.cpp:1288 ../src/gui/MainWindow.cpp:1304
+#: ../src/gui/MainWindow.cpp:1302
 msgid "MediaLibrary"
 msgstr "MediaLibrary"
 
@@ -1885,33 +1973,40 @@ msgstr ""
 
 #: ../src/gui/MLTree.cpp:60 ../src/gui/MLTree.cpp:368 ../src/gui/MLTree.cpp:59
 #: ../src/gui/MLTree.cpp:379 ../src/gui/MLTree.cpp:62
-#: ../src/gui/MLTree.cpp:397
+#: ../src/gui/MLTree.cpp:397 ../src/gui/MLTree.cpp:66
+#: ../src/gui/MLTree.cpp:656
 msgid "Sounds"
 msgstr "Suoni"
 
 #: ../src/gui/MLTree.cpp:61 ../src/gui/MLTree.cpp:60 ../src/gui/MLTree.cpp:63
+#: ../src/gui/MLTree.cpp:67
 msgid "Sound Files"
 msgstr "Files audio"
 
 #: ../src/gui/MLTree.cpp:67 ../src/gui/MLTree.cpp:66 ../src/gui/MLTree.cpp:69
+#: ../src/gui/MLTree.cpp:73
 msgid "MIDI Files"
 msgstr "Files MIDI"
 
 #: ../src/gui/MLTree.cpp:72 ../src/gui/MLTree.cpp:71 ../src/gui/MLTree.cpp:74
+#: ../src/gui/MLTree.cpp:78
 msgid "Videos"
 msgstr "Video"
 
 #: ../src/gui/MLTree.cpp:73 ../src/gui/MLTree.cpp:72 ../src/gui/MLTree.cpp:75
+#: ../src/gui/MLTree.cpp:79
 msgid "Videos Files"
 msgstr "Files Video"
 
 #: ../src/gui/MLTree.cpp:79 ../src/gui/MLTree.cpp:78 ../src/gui/MLTree.cpp:81
+#: ../src/gui/MLTree.cpp:85
 msgid "Effects Files"
 msgstr "Files degli Effetti"
 
 #: ../src/gui/MLTree.cpp:183 ../src/gui/MLTree.cpp:184
 #: ../src/gui/MLTree.cpp:185 ../src/gui/MLTree.cpp:186
-#: ../src/gui/MLTree.cpp:187
+#: ../src/gui/MLTree.cpp:187 ../src/gui/MLTree.cpp:442
+#: ../src/gui/MLTree.cpp:443
 msgid "New Directory"
 msgstr "Nuova Cartella"
 
@@ -1927,19 +2022,22 @@ msgstr "filename"
 msgid "filetype"
 msgstr "filetype"
 
-#: ../src/gui/SettingWindow.cpp:35
+#: ../src/gui/SettingWindow.cpp:35 ../src/gui/SettingWindow.cpp:44
 msgid "Wired Settings"
 msgstr "Impostazioni..."
 
 #: ../src/gui/SettingWindow.cpp:65 ../src/gui/SettingWindow.cpp:73
+#: ../src/gui/SettingWindow.cpp:88
 msgid "Output"
 msgstr "Uscita"
 
 #: ../src/gui/SettingWindow.cpp:66 ../src/gui/SettingWindow.cpp:74
+#: ../src/gui/SettingWindow.cpp:89
 msgid "Input"
 msgstr "Ingresso"
 
 #: ../src/gui/SettingWindow.cpp:67 ../src/gui/SettingWindow.cpp:75
+#: ../src/gui/SettingWindow.cpp:90
 msgid "Midi"
 msgstr "Midi"
 
@@ -1948,15 +2046,17 @@ msgid "Avalaible sound system:"
 msgstr "Sistema audio disponibile:"
 
 #: ../src/gui/SettingWindow.cpp:352 ../src/gui/SettingWindow.cpp:380
+#: ../src/gui/SettingWindow.cpp:411
 msgid "Input "
 msgstr "Ingresso "
 
 #: ../src/gui/SettingWindow.cpp:354 ../src/gui/SettingWindow.cpp:382
+#: ../src/gui/SettingWindow.cpp:413
 msgid "Output "
 msgstr "Uscita "
 
 #: ../src/gui/SettingWindow.cpp:516 ../src/gui/SettingWindow.cpp:512
-#: ../src/gui/SettingWindow.cpp:571
+#: ../src/gui/SettingWindow.cpp:571 ../src/gui/SettingWindow.cpp:672
 msgid "[currently unsupported]"
 msgstr "8 bits[attualmente non supportato]"
 
@@ -2008,7 +2108,7 @@ msgstr "ogg\tVorbis Ogg (*.ogg)"
 msgid "Unknown format"
 msgstr "Formato sconosciuto"
 
-#: ../src/fileloader/FileLoader.cpp:303
+#: ../src/fileloader/FileLoader.cpp:303 ../src/fileloader/FileLoader.cpp:289
 msgid "All supported files (*."
 msgstr "Tutti i tipi di file supportati(*."
 
@@ -2210,35 +2310,200 @@ msgid "xi\tFastracker 2 format (*.xi)"
 msgstr "xi\tFormato Fastracker 2 (*.xi)"
 
 #: ../src/gui/SettingWindow.cpp:145 ../src/gui/SettingWindow.cpp:194
+#: ../src/gui/SettingWindow.cpp:161 ../src/gui/SettingWindow.cpp:213
 #, fuzzy
 msgid "Available sound system:"
 msgstr "Sistema audio disponibile:"
 
 #: ../src/gui/SettingWindow.cpp:292 ../src/gui/MainWindow.cpp:301
-#: ../src/gui/MainWindow.cpp:1489
+#: ../src/gui/MainWindow.cpp:1489 ../src/gui/SettingWindow.cpp:323
+#: ../src/gui/MainWindow.cpp:297 ../src/gui/MainWindow.cpp:1514
 msgid ""
 "Could not open audio device : check that the device is not busy (used by "
 "another application) and that your audio settings are correct."
 msgstr ""
 
-#: ../src/gui/SequencerGui.cpp:371
+#: ../src/gui/SequencerGui.cpp:371 ../src/gui/SequencerGui.cpp:444
 #, fuzzy
 msgid "Color Pattern"
 msgstr "Copia il Pattern"
 
-#: ../src/gui/SequencerGui.cpp:390
+#: ../src/gui/SequencerGui.cpp:390 ../src/gui/SequencerGui.cpp:463
 #, fuzzy
 msgid "Magnetize"
 msgstr "Magnete"
 
-#: ../src/gui/MainApp.cpp:84
+#: ../src/gui/MainApp.cpp:84 ../src/gui/MainApp.cpp:91
 msgid "Warning"
 msgstr ""
 
-#: ../src/gui/MainApp.cpp:85
+#: ../src/gui/MainApp.cpp:85 ../src/gui/MainApp.cpp:92
 msgid "Your configuration file is deprecated, settings need to be set"
 msgstr ""
 
 #: ../src/gui/MLTreeInfos.cpp:18
 msgid "Red text\n"
 msgstr ""
+
+#: ../src/gui/SequencerGui.cpp:443
+msgid "Merge"
+msgstr ""
+
+#: ../src/gui/SequencerGui.cpp:443
+#, fuzzy
+msgid "Merge Patterns"
+msgstr "Sposta il Pattern"
+
+#: ../src/gui/MainWindow.cpp:150
+#, fuzzy
+msgid "Select &all\tCtrl+A"
+msgstr "&Seleziona tutto\tCtrl+A"
+
+#: ../src/gui/MainWindow.cpp:155
+#, fuzzy
+msgid "Add &MIDI Track"
+msgstr "&Aggiungi una traccia MIDI"
+
+#: ../src/gui/MainWindow.cpp:165
+#, fuzzy
+msgid "This feature is currently in alpha stage"
+msgstr ""
+"Sei avvertito che la Media Library è nella fase alfa di sviluppo per cui è "
+"molto instabile"
+
+#: ../src/gui/MainWindow.cpp:166 ../src/gui/MainWindow.cpp:1854
+#, fuzzy
+msgid "Save Media Library"
+msgstr "MediaLibrary"
+
+#: ../src/gui/MainWindow.cpp:167 ../src/gui/MainWindow.cpp:1841
+#, fuzzy
+msgid "Load Media Library"
+msgstr "MediaLibrary"
+
+#: ../src/gui/MainWindow.cpp:169
+#, fuzzy
+msgid "&Show/Hide\tCtrl-M"
+msgstr "&Mostra\tCtrl-M"
+
+#: ../src/gui/MainWindow.cpp:170
+#, fuzzy
+msgid "&Floating"
+msgstr "Floating"
+
+#: ../src/gui/MainWindow.cpp:175
+#, fuzzy
+msgid "Floating &Transport"
+msgstr "Stacca la finestra del Trasporto"
+
+#: ../src/gui/MainWindow.cpp:177
+#, fuzzy
+msgid "Floating S&equencer"
+msgstr "Stacca il Sequencer"
+
+#: ../src/gui/MainWindow.cpp:178
+#, fuzzy
+msgid "Floating R&acks"
+msgstr "Stacca i Rack"
+
+#: ../src/gui/MainWindow.cpp:1839 ../src/gui/MainWindow.cpp:1852
+#, fuzzy
+msgid "xml\tMedia Library file (*.xml)"
+msgstr "xml\tFile sessione di Wired (*.xml)"
+
+#: ../src/gui/SeqTrack.cpp:63
+msgid "ihm/seqtrack/tracktype-midi.png"
+msgstr ""
+
+#: ../src/gui/SeqTrack.cpp:65
+msgid "ihm/seqtrack/tracktype-wave.png"
+msgstr ""
+
+#: ../src/gui/MainApp.cpp:133
+#, fuzzy
+msgid "An unhandled exception has occurred, aborting"
+msgstr "Si è verificata Un'eccezione non gestita, Wired si chiuderà adesso!"
+
+#: ../src/gui/MediaLibrary.cpp:88
+#, fuzzy
+msgid "Start Preview"
+msgstr "Anteprima"
+
+#: ../src/gui/MediaLibrary.cpp:89
+#, fuzzy
+msgid "Stop Preview"
+msgstr "Anteprima"
+
+#: ../src/gui/MLTree.cpp:52
+msgid "Project name"
+msgstr ""
+
+#: ../src/gui/MLTree.cpp:309 ../src/gui/MLTree.cpp:325
+msgid "folder"
+msgstr ""
+
+#: ../src/gui/MLTree.cpp:310 ../src/gui/MLTree.cpp:319
+#: ../src/gui/MLTree.cpp:326
+#, fuzzy
+msgid "name"
+msgstr "Nome"
+
+#: ../src/gui/MLTree.cpp:318
+#, fuzzy
+msgid "file"
+msgstr "&File"
+
+#: ../src/gui/MLTree.cpp:320
+msgid "ext"
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:17
+msgid ""
+"\n"
+"Extention : "
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:19
+#, fuzzy
+msgid ""
+"\n"
+"Length : "
+msgstr "BaseLength"
+
+#: ../src/gui/MLTreeInfos.cpp:21
+msgid ""
+"\n"
+"Bitrate"
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:22
+#, fuzzy
+msgid ""
+"\n"
+"Size : "
+msgstr "Grandezza"
+
+#: ../src/gui/MLTreeInfos.cpp:23
+msgid ""
+"\n"
+"Codec : "
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:26
+msgid "Arial"
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:36
+msgid "staticText"
+msgstr ""
+
+#: ../src/samplerate/WiredSampleRate.cpp:295
+#, fuzzy
+msgid ""
+"Please select the options that\n"
+"you want for the downmix.\n"
+"(Defaults are current project values)"
+msgstr ""
+"Per favore seleziona le opzioni che\n"
+"desideri per il mixaggio finale.\n"
+"(I valori predefiniti sono quelli attuali del progetto)"

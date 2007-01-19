@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-23 19:47+0200\n"
+"POT-Creation-Date: 2007-01-19 12:29+0100\n"
 "PO-Revision-Date: 2006-06-19 15:51+0200\n"
 "Last-Translator: Lin Yu-Hua <lin_y@epitech.net>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
@@ -75,6 +75,7 @@ msgstr "資料輸出是 ： "
 
 #: src/editmidi/EditMidi.cpp:262 src/gui/SequencerGui.cpp:355
 #: ../src/gui/SequencerGui.cpp:367 ../src/editmidi/EditMidi.cpp:265
+#: ../src/gui/SequencerGui.cpp:439
 msgid "Move"
 msgstr "移動"
 
@@ -97,45 +98,55 @@ msgstr "刪除"
 
 #: src/editmidi/EditMidi.cpp:264 src/gui/SequencerGui.cpp:357
 #: ../src/gui/SequencerGui.cpp:369 ../src/editmidi/EditMidi.cpp:267
+#: ../src/gui/SequencerGui.cpp:441
 msgid "Deletes notes"
 msgstr "刪除音符"
 
 #: src/fileloader/FileLoader.cpp:106 ../src/fileloader/FileLoader.cpp:109
+#: ../src/fileloader/FileLoader.cpp:95
 msgid "Name"
 msgstr "名稱"
 
 #: src/fileloader/FileLoader.cpp:108 ../src/fileloader/FileLoader.cpp:111
+#: ../src/fileloader/FileLoader.cpp:97
 msgid "Size"
 msgstr "大小"
 
 #: src/fileloader/FileLoader.cpp:112 ../src/fileloader/FileLoader.cpp:115
+#: ../src/fileloader/FileLoader.cpp:101
 msgid "Modified"
 msgstr "已修改"
 
 #: src/fileloader/FileLoader.cpp:117 src/fileloader/FileLoader.cpp:152
 #: ../src/fileloader/FileLoader.cpp:120 ../src/fileloader/FileLoader.cpp:142
+#: ../src/fileloader/FileLoader.cpp:106 ../src/fileloader/FileLoader.cpp:128
 msgid "Type"
 msgstr "類型"
 
 #: src/fileloader/FileLoader.cpp:134 ../src/fileloader/FileLoader.cpp:137
+#: ../src/fileloader/FileLoader.cpp:123
 msgid "Filename"
 msgstr "檔案名稱"
 
 #: src/fileloader/FileLoader.cpp:143 ../src/fileloader/FileLoader.cpp:151
+#: ../src/fileloader/FileLoader.cpp:137
 msgid "Akai device"
 msgstr "Akai位置"
 
 #: src/fileloader/FileLoader.cpp:159 src/fileloader/FileLoader.cpp:1287
 #: ../src/gui/MediaLibrary.cpp:87 ../src/fileloader/FileLoader.cpp:161
-#: ../src/fileloader/FileLoader.cpp:1212
+#: ../src/fileloader/FileLoader.cpp:1212 ../src/fileloader/FileLoader.cpp:147
+#: ../src/fileloader/FileLoader.cpp:1198
 msgid "Preview"
 msgstr "預覽"
 
 #: src/fileloader/FileLoader.cpp:165 ../src/fileloader/FileLoader.cpp:164
+#: ../src/fileloader/FileLoader.cpp:150
 msgid "Open"
 msgstr "開啟"
 
 #: src/fileloader/FileLoader.cpp:171 ../src/fileloader/FileLoader.cpp:171
+#: ../src/fileloader/FileLoader.cpp:157
 msgid "Save"
 msgstr "存檔"
 
@@ -143,15 +154,18 @@ msgstr "存檔"
 #: src/midi/MidiController.cpp:18 ../src/gui/SettingWindow.cpp:78
 #: ../src/midi/MidiController.cpp:21 ../src/fileloader/FileLoader.cpp:174
 #: ../src/plugins/loop_sampler/BeatDialog.cpp:18
-#: ../src/gui/SettingWindow.cpp:86
+#: ../src/gui/SettingWindow.cpp:86 ../src/gui/SettingWindow.cpp:104
+#: ../src/fileloader/FileLoader.cpp:160
 msgid "Cancel"
 msgstr "取消"
 
 #: src/fileloader/FileLoader.cpp:180 ../src/fileloader/FileLoader.cpp:178
+#: ../src/fileloader/FileLoader.cpp:164
 msgid "Favorites"
 msgstr "我的最愛"
 
 #: src/fileloader/FileLoader.cpp:187 ../src/fileloader/FileLoader.cpp:186
+#: ../src/fileloader/FileLoader.cpp:172
 msgid "Recents"
 msgstr "最近開啟的檔案"
 
@@ -161,32 +175,41 @@ msgid "All supported soundfiles (*."
 msgstr "所有支援檔案 (*."
 
 #: src/fileloader/FileLoader.cpp:429 ../src/fileloader/FileLoader.cpp:309
+#: ../src/fileloader/FileLoader.cpp:295
 msgid "All files (*.*)"
 msgstr "所有檔案 (*.*)"
 
 #: src/fileloader/FileLoader.cpp:584 src/fileloader/FileLoader.cpp:592
 #: src/fileloader/FileLoader.cpp:630 ../src/fileloader/FileLoader.cpp:489
 #: ../src/fileloader/FileLoader.cpp:497 ../src/fileloader/FileLoader.cpp:535
+#: ../src/fileloader/FileLoader.cpp:475 ../src/fileloader/FileLoader.cpp:483
+#: ../src/fileloader/FileLoader.cpp:521
 msgid "Partition "
 msgstr "分割 "
 
 #: src/fileloader/FileLoader.cpp:990 ../src/fileloader/FileLoader.cpp:916
+#: ../src/fileloader/FileLoader.cpp:902
 msgid "Add to favorites"
 msgstr "新增至我的最愛"
 
 #: src/fileloader/FileLoader.cpp:1068 src/fileloader/FileLoader.cpp:1157
 #: src/fileloader/FileLoader.cpp:1212 ../src/fileloader/FileLoader.cpp:993
 #: ../src/fileloader/FileLoader.cpp:1082 ../src/fileloader/FileLoader.cpp:1138
+#: ../src/fileloader/FileLoader.cpp:979 ../src/fileloader/FileLoader.cpp:1068
+#: ../src/fileloader/FileLoader.cpp:1124
 msgid "Please enter a name"
 msgstr "請輸入名稱"
 
 #: src/fileloader/FileLoader.cpp:1082 src/fileloader/FileLoader.cpp:1171
 #: src/fileloader/FileLoader.cpp:1226 ../src/fileloader/FileLoader.cpp:1007
 #: ../src/fileloader/FileLoader.cpp:1096 ../src/fileloader/FileLoader.cpp:1152
+#: ../src/fileloader/FileLoader.cpp:993 ../src/fileloader/FileLoader.cpp:1082
+#: ../src/fileloader/FileLoader.cpp:1138
 msgid "File already exists, replace ?"
 msgstr "檔案已存在,要取代它嗎?"
 
 #: src/fileloader/FileLoader.cpp:1299 ../src/fileloader/FileLoader.cpp:1225
+#: ../src/fileloader/FileLoader.cpp:1211
 msgid "Stop"
 msgstr "停止"
 
@@ -373,7 +396,7 @@ msgid "Core Audio File"
 msgstr ""
 
 #: src/gui/AudioPattern.cpp:98 ../src/gui/AudioPattern.cpp:102
-#: ../src/gui/AudioPattern.cpp:96
+#: ../src/gui/AudioPattern.cpp:96 ../src/gui/AudioPattern.cpp:98
 msgid "This is an Audio pattern. Double-click on it to open the Audio editor."
 msgstr "這是音頻樂段. 點二下開啟音頻編輯器。"
 
@@ -406,6 +429,8 @@ msgstr "Wired說明"
 #: ../src/gui/MainWindow.cpp:288 ../src/gui/MainWindow.cpp:1469
 #: ../src/gui/SettingWindow.cpp:267 ../src/gui/SettingWindow.cpp:291
 #: ../src/gui/MainWindow.cpp:300 ../src/gui/MainWindow.cpp:1488
+#: ../src/gui/SettingWindow.cpp:322 ../src/gui/MainWindow.cpp:296
+#: ../src/gui/MainWindow.cpp:1513
 msgid "audio engine"
 msgstr "音頻工具"
 
@@ -415,22 +440,27 @@ msgid "You may check for your audio settings if you want to use Wired.."
 msgstr "如要使用Wired,請確認你的音頻設定。"
 
 #: src/gui/MainWindow.cpp:205 ../src/gui/MainWindow.cpp:134
+#: ../src/gui/MainWindow.cpp:130
 msgid "&New\tCtrl-N"
 msgstr "新增\tCtrl-N"
 
 #: src/gui/MainWindow.cpp:206 ../src/gui/MainWindow.cpp:135
+#: ../src/gui/MainWindow.cpp:131
 msgid "&Open...\tCtrl-O"
 msgstr "開啟...\tCtrl-O"
 
 #: src/gui/MainWindow.cpp:207 ../src/gui/MainWindow.cpp:136
+#: ../src/gui/MainWindow.cpp:132
 msgid "&Save\tCtrl-S"
 msgstr "存檔\tCtrl-S"
 
 #: src/gui/MainWindow.cpp:208 ../src/gui/MainWindow.cpp:137
+#: ../src/gui/MainWindow.cpp:133
 msgid "Save &as...\tF12"
 msgstr "另存新檔...\tF12"
 
 #: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
+#: ../src/gui/MainWindow.cpp:135
 #, fuzzy
 msgid "&Import Wave file..."
 msgstr "匯出 Wave檔..."
@@ -452,22 +482,27 @@ msgid "&Export MIDI file..."
 msgstr "匯出MIDI檔..."
 
 #: src/gui/MainWindow.cpp:218 ../src/gui/MainWindow.cpp:146
+#: ../src/gui/MainWindow.cpp:142
 msgid "&Quit\tCtrl-Q"
 msgstr "離開\tCtrl-Q"
 
 #: src/gui/MainWindow.cpp:222 ../src/gui/MainWindow.cpp:149
+#: ../src/gui/MainWindow.cpp:145
 msgid "C&ut\tCtrl+X"
 msgstr "剪下\tCtrl+X"
 
 #: src/gui/MainWindow.cpp:223 ../src/gui/MainWindow.cpp:150
+#: ../src/gui/MainWindow.cpp:146
 msgid "&Copy\tCtrl+C"
 msgstr "複製\\tCtrl+C"
 
 #: src/gui/MainWindow.cpp:224 ../src/gui/MainWindow.cpp:151
+#: ../src/gui/MainWindow.cpp:147
 msgid "&Paste\tCtrl+V"
 msgstr "貼上\tCtrl+V"
 
 #: src/gui/MainWindow.cpp:226 ../src/gui/MainWindow.cpp:153
+#: ../src/gui/MainWindow.cpp:149
 msgid "&Delete\tDel"
 msgstr "刪除\\tDel"
 
@@ -476,10 +511,12 @@ msgid "&Select all\tCtrl+A"
 msgstr "全選\\tCtrl+A"
 
 #: src/gui/MainWindow.cpp:229 ../src/gui/MainWindow.cpp:156
+#: ../src/gui/MainWindow.cpp:152
 msgid "&Settings..."
 msgstr "設定..."
 
 #: src/gui/MainWindow.cpp:231 ../src/gui/MainWindow.cpp:158
+#: ../src/gui/MainWindow.cpp:154
 msgid "&Add Audio Track"
 msgstr "增加音軌"
 
@@ -488,30 +525,37 @@ msgid "&Add MIDI Track"
 msgstr "增加MIDI軌"
 
 #: src/gui/MainWindow.cpp:233 ../src/gui/MainWindow.cpp:160
+#: ../src/gui/MainWindow.cpp:156
 msgid "&Delete Track"
 msgstr "刪除軌"
 
 #: src/gui/MainWindow.cpp:235 ../src/gui/MainWindow.cpp:162
+#: ../src/gui/MainWindow.cpp:158
 msgid "&Change Audio directory..."
 msgstr "改變音頻的資料夾位置..."
 
 #: src/gui/MainWindow.cpp:237 ../src/gui/MainWindow.cpp:164
+#: ../src/gui/MainWindow.cpp:160
 msgid "D&elete Rack"
 msgstr "刪除操作視窗"
 
 #: src/gui/MainWindow.cpp:239 ../src/gui/MainWindow.cpp:166
+#: ../src/gui/MainWindow.cpp:162
 msgid "&Show Integrated Help"
 msgstr "顯示完整說明"
 
 #: src/gui/MainWindow.cpp:240 ../src/gui/MainWindow.cpp:167
+#: ../src/gui/MainWindow.cpp:163
 msgid "&About..."
 msgstr "關於..."
 
 #: src/gui/MainWindow.cpp:242 ../src/gui/MainWindow.cpp:174
+#: ../src/gui/MainWindow.cpp:172
 msgid "Switch &Rack/Optional view\tTAB"
 msgstr "切換操作視窗/任意視窗\tTAB"
 
 #: src/gui/MainWindow.cpp:243 ../src/gui/MainWindow.cpp:175
+#: ../src/gui/MainWindow.cpp:173
 msgid "Switch &Sequencer/Optional view\tCtrl+TAB"
 msgstr "切換 編曲機/任意視窗\tCtrl+TAB"
 
@@ -532,35 +576,43 @@ msgid "Floating Optional View"
 msgstr "浮動任意視窗"
 
 #: src/gui/MainWindow.cpp:250 ../src/gui/MainWindow.cpp:184
+#: ../src/gui/MainWindow.cpp:182
 msgid "&Fullscreen"
 msgstr "全螢幕"
 
 #: src/gui/MainWindow.cpp:252 ../src/gui/MainWindow.cpp:186
+#: ../src/gui/MainWindow.cpp:184
 msgid "&Log window"
 msgstr "記錄視窗"
 
 #: src/gui/MainWindow.cpp:254 ../src/gui/MainWindow.cpp:188
+#: ../src/gui/MainWindow.cpp:186
 msgid "&File"
 msgstr "檔案"
 
 #: src/gui/MainWindow.cpp:255 ../src/gui/MainWindow.cpp:189
+#: ../src/gui/MainWindow.cpp:187
 msgid "&Edit"
 msgstr "編輯"
 
 #: src/gui/MainWindow.cpp:256 ../src/gui/MainWindow.cpp:190
+#: ../src/gui/MainWindow.cpp:188
 msgid "&Sequencer"
 msgstr "編曲機"
 
 #: src/gui/MainWindow.cpp:257 ../src/gui/MainWindow.cpp:191
+#: ../src/gui/MainWindow.cpp:189
 msgid "&Racks"
 msgstr "操作視窗"
 
 #: src/gui/MainWindow.cpp:258 src/gui/Rack.cpp:228 ../src/gui/Rack.cpp:230
-#: ../src/gui/MainWindow.cpp:192
+#: ../src/gui/MainWindow.cpp:192 ../src/gui/Rack.cpp:233
+#: ../src/gui/MainWindow.cpp:190
 msgid "&Instruments"
 msgstr "樂器"
 
 #: src/gui/MainWindow.cpp:259 ../src/gui/MainWindow.cpp:193
+#: ../src/gui/MainWindow.cpp:191
 msgid "Effec&ts"
 msgstr "效果"
 
@@ -569,67 +621,71 @@ msgid "&Video"
 msgstr "影像"
 
 #: src/gui/MainWindow.cpp:261 ../src/gui/MainWindow.cpp:197
+#: ../src/gui/MainWindow.cpp:195
 msgid "&Window"
 msgstr "視窗"
 
 #: src/gui/MainWindow.cpp:262 ../src/gui/MainWindow.cpp:198
+#: ../src/gui/MainWindow.cpp:196
 msgid "&Help"
 msgstr "說明"
 
 #: src/gui/MainWindow.cpp:362 ../src/gui/MainWindow.cpp:459
-#: ../src/gui/MainWindow.cpp:475
+#: ../src/gui/MainWindow.cpp:475 ../src/gui/MainWindow.cpp:471
 msgid "Choose the audio working directory"
 msgstr "選擇一個音頻工作資料夾"
 
 #: src/gui/MainWindow.cpp:382 ../src/gui/MainWindow.cpp:483
-#: ../src/gui/MainWindow.cpp:499
+#: ../src/gui/MainWindow.cpp:499 ../src/gui/MainWindow.cpp:495
 msgid "U&ndo"
 msgstr "復原"
 
 #: src/gui/MainWindow.cpp:383 ../src/gui/MainWindow.cpp:484
-#: ../src/gui/MainWindow.cpp:500
+#: ../src/gui/MainWindow.cpp:500 ../src/gui/MainWindow.cpp:496
 msgid "&Redo"
 msgstr "重做"
 
 #: src/gui/MainWindow.cpp:390 ../src/gui/MainWindow.cpp:491
-#: ../src/gui/MainWindow.cpp:507
+#: ../src/gui/MainWindow.cpp:507 ../src/gui/MainWindow.cpp:503
 msgid "&Open video"
 msgstr "打開影像"
 
 #: src/gui/MainWindow.cpp:391 ../src/gui/MainWindow.cpp:492
-#: ../src/gui/MainWindow.cpp:508
+#: ../src/gui/MainWindow.cpp:508 ../src/gui/MainWindow.cpp:504
 msgid "&Close video"
 msgstr "關閉影像"
 
 #: src/gui/MainWindow.cpp:392 ../src/gui/MainWindow.cpp:493
-#: ../src/gui/MainWindow.cpp:509
+#: ../src/gui/MainWindow.cpp:509 ../src/gui/MainWindow.cpp:505
 msgid "&Seek with video playing"
 msgstr "於影像中搜尋"
 
 #: src/gui/MainWindow.cpp:406 src/gui/MainWindow.cpp:516
 #: ../src/gui/MainWindow.cpp:507 ../src/gui/MainWindow.cpp:619
 #: ../src/gui/MainWindow.cpp:523 ../src/gui/MainWindow.cpp:635
+#: ../src/gui/MainWindow.cpp:519 ../src/gui/MainWindow.cpp:631
 msgid "Save current session ?"
 msgstr "儲存此區段 ?"
 
 #: src/gui/MainWindow.cpp:552 ../src/gui/MainWindow.cpp:655
-#: ../src/gui/MainWindow.cpp:671
+#: ../src/gui/MainWindow.cpp:671 ../src/gui/MainWindow.cpp:667
 msgid "wrd\tWired session file (*.wrd)"
 msgstr "wrd\tWired區段檔 (*.wrd)"
 
 #: src/gui/MainWindow.cpp:553 src/gui/MainWindow.cpp:607
 #: ../src/gui/MainWindow.cpp:656 ../src/gui/MainWindow.cpp:710
 #: ../src/gui/MainWindow.cpp:672 ../src/gui/MainWindow.cpp:726
+#: ../src/gui/MainWindow.cpp:668 ../src/gui/MainWindow.cpp:722
 msgid "xml\tWired session file (*.xml)"
 msgstr "xml\tWired區段檔 (*.xml)"
 
 #: src/gui/MainWindow.cpp:554 ../src/gui/MainWindow.cpp:657
-#: ../src/gui/MainWindow.cpp:673
+#: ../src/gui/MainWindow.cpp:673 ../src/gui/MainWindow.cpp:669
 msgid "Open session"
 msgstr "開啟區段"
 
 #: src/gui/MainWindow.cpp:608 ../src/gui/MainWindow.cpp:711
-#: ../src/gui/MainWindow.cpp:727
+#: ../src/gui/MainWindow.cpp:727 ../src/gui/MainWindow.cpp:723
 msgid "Save session"
 msgstr "儲存區段"
 
@@ -638,7 +694,8 @@ msgstr "儲存區段"
 #: ../src/gui/MediaLibrary.cpp:158 ../src/gui/MainWindow.cpp:742
 #: ../src/plugins/beatbox/BeatBoxChannel.cpp:554
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:1212
-#: ../src/gui/MainWindow.cpp:758
+#: ../src/gui/MainWindow.cpp:758 ../src/gui/MainWindow.cpp:754
+#: ../src/gui/MediaLibrary.cpp:161
 msgid "Loading sound file"
 msgstr "載入聲音檔"
 
@@ -646,24 +703,27 @@ msgstr "載入聲音檔"
 #: src/gui/Transport.cpp:209 ../src/gui/MediaLibrary.cpp:169
 #: ../src/gui/Transport.cpp:212 ../src/gui/MainWindow.cpp:753
 #: ../src/gui/MainWindow.cpp:1514 ../src/gui/MainWindow.cpp:769
-#: ../src/gui/MainWindow.cpp:1534
+#: ../src/gui/MainWindow.cpp:1534 ../src/gui/MainWindow.cpp:765
+#: ../src/gui/MainWindow.cpp:1559 ../src/gui/MediaLibrary.cpp:172
 msgid "Choose the Audio file directory"
 msgstr "選擇一個音頻檔案資料夾"
 
 #: src/gui/MainWindow.cpp:679 src/gui/MainWindow.cpp:825
 #: ../src/gui/MainWindow.cpp:781 ../src/gui/MainWindow.cpp:928
 #: ../src/gui/MainWindow.cpp:797 ../src/gui/MainWindow.cpp:944
+#: ../src/gui/MainWindow.cpp:793 ../src/gui/MainWindow.cpp:940
 msgid "mid\tMidi file (*.mid)"
 msgstr "mid\tMIDI檔 (*.mid)"
 
 #: src/gui/MainWindow.cpp:680 ../src/gui/MainWindow.cpp:782
-#: ../src/gui/MainWindow.cpp:798
+#: ../src/gui/MainWindow.cpp:798 ../src/gui/MainWindow.cpp:794
 msgid "Import MIDI file"
 msgstr "匯入MIDI檔"
 
 #: src/gui/MainWindow.cpp:686 src/gui/MainWindow.cpp:727
 #: ../src/gui/MainWindow.cpp:788 ../src/gui/MainWindow.cpp:829
 #: ../src/gui/MainWindow.cpp:804 ../src/gui/MainWindow.cpp:845
+#: ../src/gui/MainWindow.cpp:800 ../src/gui/MainWindow.cpp:841
 msgid "Loading midi file"
 msgstr "載入MIDI檔"
 
@@ -680,42 +740,43 @@ msgstr "載入MIDI檔"
 #: ../src/plugins/beatbox/BeatBoxChannel.cpp:560
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:1217
 #: ../src/gui/MainWindow.cpp:804 ../src/gui/MainWindow.cpp:845
-#: ../src/gui/MainWindow.cpp:923
+#: ../src/gui/MainWindow.cpp:923 ../src/gui/MainWindow.cpp:800
+#: ../src/gui/MainWindow.cpp:841 ../src/gui/MainWindow.cpp:919
 msgid "Please wait..."
 msgstr "請稍等..."
 
 #: src/gui/MainWindow.cpp:721 ../src/gui/MainWindow.cpp:823
-#: ../src/gui/MainWindow.cpp:839
+#: ../src/gui/MainWindow.cpp:839 ../src/gui/MainWindow.cpp:835
 msgid "Import AKAI samples"
 msgstr "匯入AKAI取樣"
 
 #: src/gui/MainWindow.cpp:781 ../src/gui/MainWindow.cpp:883
-#: ../src/gui/MainWindow.cpp:899
+#: ../src/gui/MainWindow.cpp:899 ../src/gui/MainWindow.cpp:895
 msgid "Please correctly place the Left and Right markers"
 msgstr "請正確放置左右二邊的記號"
 
 #: src/gui/MainWindow.cpp:786 ../src/gui/MainWindow.cpp:888
-#: ../src/gui/MainWindow.cpp:904
+#: ../src/gui/MainWindow.cpp:904 ../src/gui/MainWindow.cpp:900
 msgid "Exporting sound file"
 msgstr "匯出聲音檔"
 
 #: src/gui/MainWindow.cpp:804 ../src/gui/MainWindow.cpp:907
-#: ../src/gui/MainWindow.cpp:923
+#: ../src/gui/MainWindow.cpp:923 ../src/gui/MainWindow.cpp:919
 msgid "Exporting mix"
 msgstr "匯出混音"
 
 #: src/gui/MainWindow.cpp:1076 ../src/gui/MainWindow.cpp:1175
-#: ../src/gui/MainWindow.cpp:1191
+#: ../src/gui/MainWindow.cpp:1191 ../src/gui/MainWindow.cpp:1187
 msgid "Transport"
 msgstr "轉送面板"
 
 #: src/gui/MainWindow.cpp:1093 ../src/gui/MainWindow.cpp:1202
-#: ../src/gui/MainWindow.cpp:1218
+#: ../src/gui/MainWindow.cpp:1218 ../src/gui/MainWindow.cpp:1214
 msgid "Sequencer"
 msgstr "編曲機"
 
 #: src/gui/MainWindow.cpp:1112 ../src/gui/MainWindow.cpp:1245
-#: ../src/gui/MainWindow.cpp:1261
+#: ../src/gui/MainWindow.cpp:1261 ../src/gui/MainWindow.cpp:1257
 msgid "Racks"
 msgstr "操作視窗"
 
@@ -725,17 +786,17 @@ msgid "You may check for your audio settings if you want to use wired.."
 msgstr "如要使用Wired,請確認你的音頻設定"
 
 #: src/gui/MainWindow.cpp:1631 ../src/gui/MainWindow.cpp:1759
-#: ../src/gui/MainWindow.cpp:1779
+#: ../src/gui/MainWindow.cpp:1779 ../src/gui/MainWindow.cpp:1802
 msgid "Left space on drive : "
 msgstr "硬碟剩餘空間 : "
 
 #: src/gui/MainWindow.cpp:1631 ../src/gui/MainWindow.cpp:1759
-#: ../src/gui/MainWindow.cpp:1779
+#: ../src/gui/MainWindow.cpp:1779 ../src/gui/MainWindow.cpp:1802
 msgid "Free memory : "
 msgstr "可用記憶體 : "
 
 #: src/gui/MainWindow.cpp:1638 ../src/gui/MainWindow.cpp:1766
-#: ../src/gui/MainWindow.cpp:1786
+#: ../src/gui/MainWindow.cpp:1786 ../src/gui/MainWindow.cpp:1809
 msgid "Unknown"
 msgstr "不明"
 
@@ -762,11 +823,12 @@ msgstr "操作視窗 %d"
 
 #: src/gui/Rack.cpp:227 src/plugins/beatbox/BeatBoxView.cpp:228
 #: ../src/gui/Rack.cpp:229 ../src/gui/MediaLibrary.cpp:80
-#: ../src/plugins/beatbox/BeatBoxView.cpp:231
+#: ../src/plugins/beatbox/BeatBoxView.cpp:231 ../src/gui/Rack.cpp:232
+#: ../src/gui/MediaLibrary.cpp:81
 msgid "Add"
 msgstr "新增"
 
-#: src/gui/Rack.cpp:229 ../src/gui/Rack.cpp:231
+#: src/gui/Rack.cpp:229 ../src/gui/Rack.cpp:231 ../src/gui/Rack.cpp:234
 msgid "&Effects"
 msgstr "效果"
 
@@ -775,7 +837,8 @@ msgstr "效果"
 #: src/plugins/beatbox/BeatBoxView.cpp:231 ../src/gui/Rack.cpp:232
 #: ../src/gui/SequencerGui.cpp:464 ../src/gui/WavePanel.cpp:52
 #: ../src/gui/WavePanel.cpp:53 ../src/gui/WaveEditor.cpp:47
-#: ../src/plugins/beatbox/BeatBoxView.cpp:234
+#: ../src/plugins/beatbox/BeatBoxView.cpp:234 ../src/gui/SequencerGui.cpp:537
+#: ../src/gui/Rack.cpp:235
 msgid "Cut"
 msgstr "剪下"
 
@@ -784,7 +847,8 @@ msgstr "剪下"
 #: src/plugins/beatbox/BeatBoxView.cpp:232 ../src/gui/Rack.cpp:233
 #: ../src/gui/SequencerGui.cpp:465 ../src/gui/WavePanel.cpp:48
 #: ../src/gui/WavePanel.cpp:49 ../src/gui/WaveEditor.cpp:48
-#: ../src/plugins/beatbox/BeatBoxView.cpp:235
+#: ../src/plugins/beatbox/BeatBoxView.cpp:235 ../src/gui/SequencerGui.cpp:538
+#: ../src/gui/Rack.cpp:236
 msgid "Copy"
 msgstr "複製"
 
@@ -793,7 +857,8 @@ msgstr "複製"
 #: src/plugins/beatbox/BeatBoxView.cpp:233 ../src/gui/Rack.cpp:234
 #: ../src/gui/SequencerGui.cpp:466 ../src/gui/WavePanel.cpp:50
 #: ../src/gui/WavePanel.cpp:51 ../src/gui/WaveEditor.cpp:49
-#: ../src/plugins/beatbox/BeatBoxView.cpp:236
+#: ../src/plugins/beatbox/BeatBoxView.cpp:236 ../src/gui/SequencerGui.cpp:539
+#: ../src/gui/Rack.cpp:237
 msgid "Paste"
 msgstr "貼上"
 
@@ -804,10 +869,12 @@ msgstr "貼上"
 #: ../src/gui/SequencerGui.cpp:369 ../src/gui/SequencerGui.cpp:462
 #: ../src/gui/WavePanel.cpp:54 ../src/gui/WavePanel.cpp:55
 #: ../src/gui/WaveEditor.cpp:50 ../src/plugins/beatbox/BeatBoxView.cpp:232
+#: ../src/gui/SequencerGui.cpp:441 ../src/gui/SequencerGui.cpp:535
+#: ../src/gui/Rack.cpp:239
 msgid "Delete"
 msgstr "刪除"
 
-#: src/gui/Rack.cpp:811 ../src/gui/Rack.cpp:812
+#: src/gui/Rack.cpp:811 ../src/gui/Rack.cpp:812 ../src/gui/Rack.cpp:823
 msgid ""
 "This is the Rack view of Wired, where you can add plugins. Plugins are "
 "organized into tracks vertically, meaning the first plugin in a column will "
@@ -819,17 +886,20 @@ msgstr ""
 "軌至外掛效果器。"
 
 #: src/gui/SeqTrack.cpp:46 ../src/gui/SeqTrack.cpp:49
+#: ../src/gui/SeqTrack.cpp:52
 #, c-format
 msgid "Audio %d"
 msgstr "音頻 %d"
 
 #: src/gui/SeqTrack.cpp:107 ../src/gui/SeqTrack.cpp:110
+#: ../src/gui/SeqTrack.cpp:153
 msgid ""
 "Click on this button to show the list of instruments and effects you can "
 "connect your track to."
 msgstr "點擊此按鈕能顯示你能連接的音軌其所屬的樂器選單和效果"
 
 #: src/gui/SeqTrack.cpp:116 ../src/gui/SeqTrack.cpp:119
+#: ../src/gui/SeqTrack.cpp:162
 msgid "Click on this box to select the device you would like to record from."
 msgstr "點擊這裡以選擇一個你想要用哪個裝置來錄製。"
 
@@ -838,11 +908,14 @@ msgstr "點擊這裡以選擇一個你想要用哪個裝置來錄製。"
 #: ../src/gui/SeqTrack.cpp:131 ../src/gui/SeqTrack.cpp:163
 #: ../src/gui/SettingWindow.cpp:306 ../src/gui/SettingWindow.cpp:318
 #: ../src/gui/SettingWindow.cpp:334 ../src/gui/SettingWindow.cpp:346
+#: ../src/gui/SettingWindow.cpp:365 ../src/gui/SettingWindow.cpp:377
+#: ../src/gui/SeqTrack.cpp:175 ../src/gui/SeqTrack.cpp:214
 msgid "None"
 msgstr "無"
 
 #: src/gui/SeqTrack.cpp:134 src/gui/SettingWindow.cpp:176
 #: src/gui/SettingWindow.cpp:285 ../src/gui/SeqTrack.cpp:137
+#: ../src/gui/SeqTrack.cpp:181
 #, c-format
 msgid "Input %d"
 msgstr "輸入 %d"
@@ -853,6 +926,7 @@ msgid "Midi In %d"
 msgstr "MIDI 在 %d"
 
 #: src/gui/SequencerGui.cpp:269 ../src/gui/SequencerGui.cpp:280
+#: ../src/gui/SequencerGui.cpp:297
 msgid ""
 "This is the Wired sequencer. You can add here Audio or MIDI tracks, which "
 "can be output to plugins. Use the toolbar above to choose one of the "
@@ -862,119 +936,130 @@ msgstr ""
 "上的任一個編曲機編輯工具。"
 
 #: src/gui/SequencerGui.cpp:355 ../src/gui/SequencerGui.cpp:367
+#: ../src/gui/SequencerGui.cpp:439
 msgid "Move Pattern"
 msgstr "移動樂段"
 
 #: src/gui/SequencerGui.cpp:356 ../src/gui/SequencerGui.cpp:368
+#: ../src/gui/SequencerGui.cpp:440
 msgid "Draw"
 msgstr "繪製"
 
 #: src/gui/SequencerGui.cpp:356 ../src/gui/SequencerGui.cpp:368
+#: ../src/gui/SequencerGui.cpp:440
 msgid "Draw Pattern"
 msgstr "繪製樂段"
 
 #: src/gui/SequencerGui.cpp:357 ../src/gui/SequencerGui.cpp:369
-#: ../src/gui/SequencerGui.cpp:371
+#: ../src/gui/SequencerGui.cpp:371 ../src/gui/SequencerGui.cpp:441
+#: ../src/gui/SequencerGui.cpp:444
 msgid "Delete Pattern"
 msgstr "刪除樂段"
 
 #: src/gui/SequencerGui.cpp:358 ../src/gui/SequencerGui.cpp:370
+#: ../src/gui/SequencerGui.cpp:442
 msgid "Split"
 msgstr "分離"
 
 #: src/gui/SequencerGui.cpp:358 ../src/gui/SequencerGui.cpp:370
+#: ../src/gui/SequencerGui.cpp:442
 msgid "Split Pattern"
 msgstr "分離樂段"
 
 #: src/gui/SequencerGui.cpp:360 src/plugins/beatbox/BeatBoxView.cpp:925
 #: ../src/gui/SequencerGui.cpp:390 ../src/plugins/beatbox/BeatBoxView.cpp:928
+#: ../src/gui/SequencerGui.cpp:463
 msgid "Magnet"
 msgstr "合併"
 
 #: src/gui/SequencerGui.cpp:367 ../src/gui/SequencerGui.cpp:371
+#: ../src/gui/SequencerGui.cpp:444
 msgid "Color"
 msgstr "顏色"
 
 #: src/gui/SequencerGui.cpp:379 ../src/gui/SequencerGui.cpp:408
+#: ../src/gui/SequencerGui.cpp:481
 msgid "Vertical Zoom"
 msgstr "垂直延展"
 
 #: src/gui/SequencerGui.cpp:440 ../src/gui/SequencerGui.cpp:461
+#: ../src/gui/SequencerGui.cpp:534
 msgid "Move to cursor"
 msgstr "移動到遊標"
 
 #: src/gui/SequencerGui.cpp:447 src/plugins/beatbox/BeatBoxView.cpp:235
 #: ../src/gui/SequencerGui.cpp:468 ../src/plugins/beatbox/BeatBoxView.cpp:238
+#: ../src/gui/SequencerGui.cpp:541
 msgid "Select all"
 msgstr "全選"
 
 #: src/gui/SettingWindow.cpp:20 ../src/gui/SettingWindow.cpp:63
-#: ../src/gui/SettingWindow.cpp:71
+#: ../src/gui/SettingWindow.cpp:71 ../src/gui/SettingWindow.cpp:86
 msgid "General"
 msgstr "一般"
 
 #: src/gui/SettingWindow.cpp:22 ../src/gui/SettingWindow.cpp:64
-#: ../src/gui/SettingWindow.cpp:72
+#: ../src/gui/SettingWindow.cpp:72 ../src/gui/SettingWindow.cpp:87
 msgid "Audio"
 msgstr "音頻"
 
 #: src/gui/SettingWindow.cpp:24 ../src/gui/MLTree.cpp:66
-#: ../src/gui/MLTree.cpp:65 ../src/gui/MLTree.cpp:68
+#: ../src/gui/MLTree.cpp:65 ../src/gui/MLTree.cpp:68 ../src/gui/MLTree.cpp:72
 msgid "MIDI"
 msgstr ""
 
 #: src/gui/SettingWindow.cpp:28 ../src/gui/SettingWindow.cpp:96
-#: ../src/gui/SettingWindow.cpp:104
+#: ../src/gui/SettingWindow.cpp:104 ../src/gui/SettingWindow.cpp:122
 msgid "Quickly render waveforms"
 msgstr "快速回報波型"
 
 #: src/gui/SettingWindow.cpp:29 ../src/gui/SettingWindow.cpp:97
-#: ../src/gui/SettingWindow.cpp:105
+#: ../src/gui/SettingWindow.cpp:105 ../src/gui/SettingWindow.cpp:123
 msgid "Render waveforms in dB mode"
 msgstr "以分貝模式回報波型"
 
 #: src/gui/SettingWindow.cpp:31 ../src/gui/SettingWindow.cpp:99
-#: ../src/gui/SettingWindow.cpp:107
+#: ../src/gui/SettingWindow.cpp:107 ../src/gui/SettingWindow.cpp:125
 msgid "Undo redo maximum depth"
 msgstr "復原到最上層"
 
 #: src/gui/SettingWindow.cpp:37 ../src/gui/SettingWindow.cpp:192
-#: ../src/gui/SettingWindow.cpp:196
+#: ../src/gui/SettingWindow.cpp:196 ../src/gui/SettingWindow.cpp:215
 msgid "Select Output sound card:"
 msgstr "選擇輸出音效卡："
 
 #: src/gui/SettingWindow.cpp:48 ../src/gui/SettingWindow.cpp:194
-#: ../src/gui/SettingWindow.cpp:198
+#: ../src/gui/SettingWindow.cpp:198 ../src/gui/SettingWindow.cpp:217
 msgid "Select left and right Output channels for this sound card:"
 msgstr "選擇左右輸出聲道來使用此音效卡："
 
 #: src/gui/SettingWindow.cpp:52 ../src/gui/SettingWindow.cpp:107
-#: ../src/gui/SettingWindow.cpp:170
+#: ../src/gui/SettingWindow.cpp:170 ../src/gui/SettingWindow.cpp:183
 msgid "Sample format:"
 msgstr "取樣格式："
 
 #: src/gui/SettingWindow.cpp:59 ../src/gui/SettingWindow.cpp:112
-#: ../src/gui/SettingWindow.cpp:172
+#: ../src/gui/SettingWindow.cpp:172 ../src/gui/SettingWindow.cpp:185
 msgid "Sample rate:"
 msgstr "取樣頻率："
 
 #: src/gui/SettingWindow.cpp:66 ../src/gui/SettingWindow.cpp:118
-#: ../src/gui/SettingWindow.cpp:174
+#: ../src/gui/SettingWindow.cpp:174 ../src/gui/SettingWindow.cpp:187
 msgid "Latency:"
 msgstr "等待時間："
 
 #: src/gui/SettingWindow.cpp:82 ../src/gui/SettingWindow.cpp:154
-#: ../src/gui/SettingWindow.cpp:147
+#: ../src/gui/SettingWindow.cpp:147 ../src/gui/SettingWindow.cpp:163
 msgid "Select Input sound card:"
 msgstr "選取輸入的音效卡："
 
 #: src/gui/SettingWindow.cpp:93 ../src/gui/SettingWindow.cpp:156
-#: ../src/gui/SettingWindow.cpp:149
+#: ../src/gui/SettingWindow.cpp:149 ../src/gui/SettingWindow.cpp:165
 msgid "Select Input channels to use with this sound card:"
 msgstr "選擇一個聲道來使用此音效卡："
 
 #: src/gui/SettingWindow.cpp:102 ../src/gui/SettingWindow.cpp:207
-#: ../src/gui/SettingWindow.cpp:231
+#: ../src/gui/SettingWindow.cpp:231 ../src/gui/SettingWindow.cpp:244
 msgid "Select MIDI In devices to use:"
 msgstr "選擇使用的MIDI設備："
 
@@ -982,12 +1067,12 @@ msgstr "選擇使用的MIDI設備："
 #: src/plugins/loop_sampler/BeatDialog.cpp:14 ../src/gui/SettingWindow.cpp:76
 #: ../src/midi/MidiController.cpp:20
 #: ../src/plugins/loop_sampler/BeatDialog.cpp:17
-#: ../src/gui/SettingWindow.cpp:84
+#: ../src/gui/SettingWindow.cpp:84 ../src/gui/SettingWindow.cpp:102
 msgid "OK"
 msgstr "確定"
 
 #: src/gui/SettingWindow.cpp:116 ../src/gui/SettingWindow.cpp:77
-#: ../src/gui/SettingWindow.cpp:85
+#: ../src/gui/SettingWindow.cpp:85 ../src/gui/SettingWindow.cpp:103
 msgid "Apply"
 msgstr "套用"
 
@@ -1003,7 +1088,7 @@ msgid "In %d: %s"
 msgstr "在 %d: %s"
 
 #: src/gui/SettingWindow.cpp:333 ../src/gui/SettingWindow.cpp:379
-#: ../src/gui/SettingWindow.cpp:410
+#: ../src/gui/SettingWindow.cpp:410 ../src/gui/SettingWindow.cpp:441
 msgid "No more than 2 output channels can be selected"
 msgstr "不能選擇超出二個輸出頻道"
 
@@ -1033,6 +1118,7 @@ msgstr "32 bits (浮點數)"
 
 #: src/gui/SettingWindow.cpp:535 ../src/gui/SettingWindow.cpp:594
 #: ../src/gui/SettingWindow.cpp:589 ../src/gui/SettingWindow.cpp:676
+#: ../src/gui/SettingWindow.cpp:781
 #, c-format
 msgid "Latency: %d samples per buffer, %.2f msec"
 msgstr "等待時間： %d 個取樣，%.2f 微秒"
@@ -1063,7 +1149,7 @@ msgstr "全選"
 
 #: src/gui/WaveEditor.cpp:45 ../src/gui/MLTree.cpp:78
 #: ../src/gui/WaveEditor.cpp:54 ../src/gui/MLTree.cpp:77
-#: ../src/gui/MLTree.cpp:80
+#: ../src/gui/MLTree.cpp:80 ../src/gui/MLTree.cpp:84
 msgid "Effects"
 msgstr "效果"
 
@@ -1684,21 +1770,21 @@ msgstr ""
 msgid "/tmp/.tmpccp"
 msgstr ""
 
-#: ../src/gui/SequencerGui.cpp:38
+#: ../src/gui/SequencerGui.cpp:38 ../src/gui/SequencerGui.cpp:39
 msgid "Bar"
 msgstr "小節"
 
-#: ../src/gui/MediaLibrary.cpp:80
+#: ../src/gui/MediaLibrary.cpp:80 ../src/gui/MediaLibrary.cpp:81
 #, fuzzy
 msgid "Add a file"
 msgstr "新增至我的最愛"
 
-#: ../src/gui/MediaLibrary.cpp:81
+#: ../src/gui/MediaLibrary.cpp:81 ../src/gui/MediaLibrary.cpp:82
 #, fuzzy
 msgid "Remove"
 msgstr "移除"
 
-#: ../src/gui/MediaLibrary.cpp:81
+#: ../src/gui/MediaLibrary.cpp:81 ../src/gui/MediaLibrary.cpp:82
 msgid "Remove file"
 msgstr "移除檔案"
 
@@ -1707,91 +1793,91 @@ msgstr "移除檔案"
 msgid "Edit file"
 msgstr "編輯檔案"
 
-#: ../src/gui/MediaLibrary.cpp:83
+#: ../src/gui/MediaLibrary.cpp:83 ../src/gui/MediaLibrary.cpp:84
 msgid "Insert"
 msgstr "插入"
 
-#: ../src/gui/MediaLibrary.cpp:83
+#: ../src/gui/MediaLibrary.cpp:83 ../src/gui/MediaLibrary.cpp:84
 msgid "Insert file"
 msgstr "插入檔案"
 
-#: ../src/gui/MediaLibrary.cpp:83
+#: ../src/gui/MediaLibrary.cpp:83 ../src/gui/MediaLibrary.cpp:84
 msgid "Insert file in a new track"
 msgstr "插入檔案至新的音軌"
 
-#: ../src/gui/MediaLibrary.cpp:87
+#: ../src/gui/MediaLibrary.cpp:87 ../src/gui/MediaLibrary.cpp:88
 #, fuzzy
 msgid "Preview file"
 msgstr "預覽檔案"
 
-#: ../src/gui/MediaLibrary.cpp:87
+#: ../src/gui/MediaLibrary.cpp:87 ../src/gui/MediaLibrary.cpp:88
 #, fuzzy
 msgid "Preview a file"
 msgstr "預覽檔案"
 
-#: ../src/gui/MediaLibrary.cpp:88
+#: ../src/gui/MediaLibrary.cpp:88 ../src/gui/MediaLibrary.cpp:83
 msgid "Expand/Collapse"
 msgstr "展開/縮小"
 
-#: ../src/gui/MediaLibrary.cpp:88
+#: ../src/gui/MediaLibrary.cpp:88 ../src/gui/MediaLibrary.cpp:83
 msgid "Expand/Collapse all"
 msgstr "展開/縮小全部"
 
-#: ../src/gui/MediaLibrary.cpp:88
+#: ../src/gui/MediaLibrary.cpp:88 ../src/gui/MediaLibrary.cpp:83
 msgid "Expand or Collapse all tree branches"
 msgstr "展開或隱藏所有子目錄"
 
-#: ../src/gui/MediaLibrary.cpp:96
+#: ../src/gui/MediaLibrary.cpp:96 ../src/gui/MediaLibrary.cpp:99
 msgid "FAudio"
 msgstr ""
 
-#: ../src/gui/MediaLibrary.cpp:96
+#: ../src/gui/MediaLibrary.cpp:96 ../src/gui/MediaLibrary.cpp:99
 msgid "Show/Hide Audio files"
 msgstr "顯示/隱藏音頻檔案"
 
-#: ../src/gui/MediaLibrary.cpp:96
+#: ../src/gui/MediaLibrary.cpp:96 ../src/gui/MediaLibrary.cpp:99
 msgid "Show or hide audio files from the Media Library"
 msgstr "從多媒體資料庫顯示或隱藏音頻檔案"
 
-#: ../src/gui/MediaLibrary.cpp:97
+#: ../src/gui/MediaLibrary.cpp:97 ../src/gui/MediaLibrary.cpp:100
 msgid "FMIDI"
 msgstr ""
 
-#: ../src/gui/MediaLibrary.cpp:97
+#: ../src/gui/MediaLibrary.cpp:97 ../src/gui/MediaLibrary.cpp:100
 #, fuzzy
 msgid "Show/Hide MIDI files"
 msgstr "顯示/隱藏 MIDI檔"
 
-#: ../src/gui/MediaLibrary.cpp:97
+#: ../src/gui/MediaLibrary.cpp:97 ../src/gui/MediaLibrary.cpp:100
 msgid "Show or hide MIDI files from the Media Library"
 msgstr "從多媒體資料庫顯示或隱藏MIDI檔案"
 
-#: ../src/gui/MediaLibrary.cpp:98
+#: ../src/gui/MediaLibrary.cpp:98 ../src/gui/MediaLibrary.cpp:101
 msgid "FVideo"
 msgstr ""
 
-#: ../src/gui/MediaLibrary.cpp:98
+#: ../src/gui/MediaLibrary.cpp:98 ../src/gui/MediaLibrary.cpp:101
 msgid "Show/Hide Video files"
 msgstr "顯示/隱藏 影像檔"
 
-#: ../src/gui/MediaLibrary.cpp:98
+#: ../src/gui/MediaLibrary.cpp:98 ../src/gui/MediaLibrary.cpp:101
 msgid "Show or hide video files from the Media Library"
 msgstr "從多媒體資料庫顯示或隱藏影像檔案"
 
-#: ../src/gui/MediaLibrary.cpp:99
+#: ../src/gui/MediaLibrary.cpp:99 ../src/gui/MediaLibrary.cpp:102
 msgid "FEffects"
 msgstr ""
 
-#: ../src/gui/MediaLibrary.cpp:99
+#: ../src/gui/MediaLibrary.cpp:99 ../src/gui/MediaLibrary.cpp:102
 msgid "Show/Hide Effects Files"
 msgstr "顯示/隱藏 效果檔案"
 
-#: ../src/gui/MediaLibrary.cpp:99
+#: ../src/gui/MediaLibrary.cpp:99 ../src/gui/MediaLibrary.cpp:102
 msgid "Show or hide effects from the Media Library"
 msgstr "從多媒體資料庫顯示或隱藏效果"
 
 #: ../src/gui/MainApp.cpp:96 ../src/gui/MainWindow.cpp:100
-#: ../src/gui/MainApp.cpp:126
+#: ../src/gui/MainApp.cpp:126 ../src/gui/MainApp.cpp:133
 msgid "Critical error"
 msgstr "嚴重錯誤"
 
@@ -1803,22 +1889,22 @@ msgstr "發生未處理的例外事件，Wired現在關閉！"
 msgid "You have no soundcard or it's busy, Wired will exit."
 msgstr "無音效卡或尚未找到，Wired將結束。"
 
-#: ../src/gui/MainWindow.cpp:140
+#: ../src/gui/MainWindow.cpp:140 ../src/gui/MainWindow.cpp:136
 #, fuzzy
 msgid "Import &MIDI file..."
 msgstr "匯入MIDI檔..."
 
-#: ../src/gui/MainWindow.cpp:141
+#: ../src/gui/MainWindow.cpp:141 ../src/gui/MainWindow.cpp:137
 #, fuzzy
 msgid "Import A&KAI sample..."
 msgstr "匯入 AKAI取樣..."
 
-#: ../src/gui/MainWindow.cpp:143
+#: ../src/gui/MainWindow.cpp:143 ../src/gui/MainWindow.cpp:139
 #, fuzzy
 msgid "E&xport Wave file..."
 msgstr "匯出 Wave檔..."
 
-#: ../src/gui/MainWindow.cpp:144
+#: ../src/gui/MainWindow.cpp:144 ../src/gui/MainWindow.cpp:140
 #, fuzzy
 msgid "Ex&port MIDI file..."
 msgstr "匯出MIDI檔..."
@@ -1842,15 +1928,17 @@ msgstr "隱藏\tCtrl-M"
 msgid "Floating"
 msgstr "浮動中"
 
-#: ../src/gui/MainWindow.cpp:196
+#: ../src/gui/MainWindow.cpp:196 ../src/gui/MainWindow.cpp:194
 msgid "&MediaLibrary"
 msgstr "多媒體資料庫"
 
 #: ../src/gui/MainWindow.cpp:930 ../src/gui/MainWindow.cpp:946
+#: ../src/gui/MainWindow.cpp:942
 msgid "Export MIDI file"
 msgstr "匯出MIDI檔"
 
 #: ../src/gui/MainWindow.cpp:1288 ../src/gui/MainWindow.cpp:1304
+#: ../src/gui/MainWindow.cpp:1302
 msgid "MediaLibrary"
 msgstr "多媒體資料庫"
 
@@ -1860,36 +1948,43 @@ msgstr "專案名稱"
 
 #: ../src/gui/MLTree.cpp:60 ../src/gui/MLTree.cpp:368 ../src/gui/MLTree.cpp:59
 #: ../src/gui/MLTree.cpp:379 ../src/gui/MLTree.cpp:62
-#: ../src/gui/MLTree.cpp:397
+#: ../src/gui/MLTree.cpp:397 ../src/gui/MLTree.cpp:66
+#: ../src/gui/MLTree.cpp:656
 msgid "Sounds"
 msgstr "聲音"
 
 #: ../src/gui/MLTree.cpp:61 ../src/gui/MLTree.cpp:60 ../src/gui/MLTree.cpp:63
+#: ../src/gui/MLTree.cpp:67
 msgid "Sound Files"
 msgstr "聲音檔"
 
 #: ../src/gui/MLTree.cpp:67 ../src/gui/MLTree.cpp:66 ../src/gui/MLTree.cpp:69
+#: ../src/gui/MLTree.cpp:73
 #, fuzzy
 msgid "MIDI Files"
 msgstr "MIDI檔"
 
 #: ../src/gui/MLTree.cpp:72 ../src/gui/MLTree.cpp:71 ../src/gui/MLTree.cpp:74
+#: ../src/gui/MLTree.cpp:78
 #, fuzzy
 msgid "Videos"
 msgstr "影像"
 
 #: ../src/gui/MLTree.cpp:73 ../src/gui/MLTree.cpp:72 ../src/gui/MLTree.cpp:75
+#: ../src/gui/MLTree.cpp:79
 msgid "Videos Files"
 msgstr "影像檔"
 
 #: ../src/gui/MLTree.cpp:79 ../src/gui/MLTree.cpp:78 ../src/gui/MLTree.cpp:81
+#: ../src/gui/MLTree.cpp:85
 #, fuzzy
 msgid "Effects Files"
 msgstr "效果檔案"
 
 #: ../src/gui/MLTree.cpp:183 ../src/gui/MLTree.cpp:184
 #: ../src/gui/MLTree.cpp:185 ../src/gui/MLTree.cpp:186
-#: ../src/gui/MLTree.cpp:187
+#: ../src/gui/MLTree.cpp:187 ../src/gui/MLTree.cpp:442
+#: ../src/gui/MLTree.cpp:443
 #, fuzzy
 msgid "New Directory"
 msgstr "新資料夾"
@@ -1907,19 +2002,22 @@ msgstr "檔案名稱"
 msgid "filetype"
 msgstr "檔案型態”"
 
-#: ../src/gui/SettingWindow.cpp:35
+#: ../src/gui/SettingWindow.cpp:35 ../src/gui/SettingWindow.cpp:44
 msgid "Wired Settings"
 msgstr "Wired設定"
 
 #: ../src/gui/SettingWindow.cpp:65 ../src/gui/SettingWindow.cpp:73
+#: ../src/gui/SettingWindow.cpp:88
 msgid "Output"
 msgstr "輸出端"
 
 #: ../src/gui/SettingWindow.cpp:66 ../src/gui/SettingWindow.cpp:74
+#: ../src/gui/SettingWindow.cpp:89
 msgid "Input"
 msgstr "輸入端"
 
 #: ../src/gui/SettingWindow.cpp:67 ../src/gui/SettingWindow.cpp:75
+#: ../src/gui/SettingWindow.cpp:90
 msgid "Midi"
 msgstr "MIDI"
 
@@ -1928,17 +2026,19 @@ msgid "Avalaible sound system:"
 msgstr "有效的聲音系統："
 
 #: ../src/gui/SettingWindow.cpp:352 ../src/gui/SettingWindow.cpp:380
+#: ../src/gui/SettingWindow.cpp:411
 #, fuzzy
 msgid "Input "
 msgstr "輸入端"
 
 #: ../src/gui/SettingWindow.cpp:354 ../src/gui/SettingWindow.cpp:382
+#: ../src/gui/SettingWindow.cpp:413
 #, fuzzy
 msgid "Output "
 msgstr "輸出端"
 
 #: ../src/gui/SettingWindow.cpp:516 ../src/gui/SettingWindow.cpp:512
-#: ../src/gui/SettingWindow.cpp:571
+#: ../src/gui/SettingWindow.cpp:571 ../src/gui/SettingWindow.cpp:672
 #, fuzzy
 msgid "[currently unsupported]"
 msgstr "[無此支援]"
@@ -1993,7 +2093,7 @@ msgstr ""
 msgid "Unknown format"
 msgstr "格式不明"
 
-#: ../src/fileloader/FileLoader.cpp:303
+#: ../src/fileloader/FileLoader.cpp:303 ../src/fileloader/FileLoader.cpp:289
 msgid "All supported files (*."
 msgstr "所有支援檔案 (*."
 
@@ -2197,38 +2297,199 @@ msgid "xi\tFastracker 2 format (*.xi)"
 msgstr "xi\tFastracker 2 格式 (*.xi)"
 
 #: ../src/gui/SettingWindow.cpp:145 ../src/gui/SettingWindow.cpp:194
+#: ../src/gui/SettingWindow.cpp:161 ../src/gui/SettingWindow.cpp:213
 #, fuzzy
 msgid "Available sound system:"
 msgstr "有效的聲音系統："
 
 #: ../src/gui/SettingWindow.cpp:292 ../src/gui/MainWindow.cpp:301
-#: ../src/gui/MainWindow.cpp:1489
+#: ../src/gui/MainWindow.cpp:1489 ../src/gui/SettingWindow.cpp:323
+#: ../src/gui/MainWindow.cpp:297 ../src/gui/MainWindow.cpp:1514
 msgid ""
 "Could not open audio device : check that the device is not busy (used by "
 "another application) and that your audio settings are correct."
 msgstr ""
 
-#: ../src/gui/SequencerGui.cpp:371
+#: ../src/gui/SequencerGui.cpp:371 ../src/gui/SequencerGui.cpp:444
 #, fuzzy
 msgid "Color Pattern"
 msgstr "複製樂段"
 
-#: ../src/gui/SequencerGui.cpp:390
+#: ../src/gui/SequencerGui.cpp:390 ../src/gui/SequencerGui.cpp:463
 #, fuzzy
 msgid "Magnetize"
 msgstr "合併"
 
-#: ../src/gui/MainApp.cpp:84
+#: ../src/gui/MainApp.cpp:84 ../src/gui/MainApp.cpp:91
 msgid "Warning"
 msgstr ""
 
-#: ../src/gui/MainApp.cpp:85
+#: ../src/gui/MainApp.cpp:85 ../src/gui/MainApp.cpp:92
 msgid "Your configuration file is deprecated, settings need to be set"
 msgstr ""
 
 #: ../src/gui/MLTreeInfos.cpp:18
 msgid "Red text\n"
 msgstr ""
+
+#: ../src/gui/SequencerGui.cpp:443
+msgid "Merge"
+msgstr ""
+
+#: ../src/gui/SequencerGui.cpp:443
+#, fuzzy
+msgid "Merge Patterns"
+msgstr "移動樂段"
+
+#: ../src/gui/MainWindow.cpp:150
+#, fuzzy
+msgid "Select &all\tCtrl+A"
+msgstr "全選\\tCtrl+A"
+
+#: ../src/gui/MainWindow.cpp:155
+#, fuzzy
+msgid "Add &MIDI Track"
+msgstr "增加MIDI軌"
+
+#: ../src/gui/MainWindow.cpp:165
+#, fuzzy
+msgid "This feature is currently in alpha stage"
+msgstr "目前為測試版，請見諒"
+
+#: ../src/gui/MainWindow.cpp:166 ../src/gui/MainWindow.cpp:1854
+#, fuzzy
+msgid "Save Media Library"
+msgstr "多媒體資料庫"
+
+#: ../src/gui/MainWindow.cpp:167 ../src/gui/MainWindow.cpp:1841
+#, fuzzy
+msgid "Load Media Library"
+msgstr "多媒體資料庫"
+
+#: ../src/gui/MainWindow.cpp:169
+#, fuzzy
+msgid "&Show/Hide\tCtrl-M"
+msgstr "顯示\tCtrl-M"
+
+#: ../src/gui/MainWindow.cpp:170
+#, fuzzy
+msgid "&Floating"
+msgstr "浮動中"
+
+#: ../src/gui/MainWindow.cpp:175
+#, fuzzy
+msgid "Floating &Transport"
+msgstr "浮動轉送面板"
+
+#: ../src/gui/MainWindow.cpp:177
+#, fuzzy
+msgid "Floating S&equencer"
+msgstr "浮動編曲機"
+
+#: ../src/gui/MainWindow.cpp:178
+#, fuzzy
+msgid "Floating R&acks"
+msgstr "浮動操作視窗"
+
+#: ../src/gui/MainWindow.cpp:1839 ../src/gui/MainWindow.cpp:1852
+#, fuzzy
+msgid "xml\tMedia Library file (*.xml)"
+msgstr "xml\tWired區段檔 (*.xml)"
+
+#: ../src/gui/SeqTrack.cpp:63
+msgid "ihm/seqtrack/tracktype-midi.png"
+msgstr ""
+
+#: ../src/gui/SeqTrack.cpp:65
+msgid "ihm/seqtrack/tracktype-wave.png"
+msgstr ""
+
+#: ../src/gui/MainApp.cpp:133
+#, fuzzy
+msgid "An unhandled exception has occurred, aborting"
+msgstr "發生未處理的例外事件，Wired現在關閉！"
+
+#: ../src/gui/MediaLibrary.cpp:88
+#, fuzzy
+msgid "Start Preview"
+msgstr "預覽"
+
+#: ../src/gui/MediaLibrary.cpp:89
+#, fuzzy
+msgid "Stop Preview"
+msgstr "預覽"
+
+#: ../src/gui/MLTree.cpp:52
+#, fuzzy
+msgid "Project name"
+msgstr "專案名稱"
+
+#: ../src/gui/MLTree.cpp:309 ../src/gui/MLTree.cpp:325
+msgid "folder"
+msgstr ""
+
+#: ../src/gui/MLTree.cpp:310 ../src/gui/MLTree.cpp:319
+#: ../src/gui/MLTree.cpp:326
+#, fuzzy
+msgid "name"
+msgstr "名稱"
+
+#: ../src/gui/MLTree.cpp:318
+#, fuzzy
+msgid "file"
+msgstr "檔案"
+
+#: ../src/gui/MLTree.cpp:320
+msgid "ext"
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:17
+msgid ""
+"\n"
+"Extention : "
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:19
+#, fuzzy
+msgid ""
+"\n"
+"Length : "
+msgstr "基本長度"
+
+#: ../src/gui/MLTreeInfos.cpp:21
+msgid ""
+"\n"
+"Bitrate"
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:22
+#, fuzzy
+msgid ""
+"\n"
+"Size : "
+msgstr "大小"
+
+#: ../src/gui/MLTreeInfos.cpp:23
+msgid ""
+"\n"
+"Codec : "
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:26
+msgid "Arial"
+msgstr ""
+
+#: ../src/gui/MLTreeInfos.cpp:36
+msgid "staticText"
+msgstr ""
+
+#: ../src/samplerate/WiredSampleRate.cpp:295
+#, fuzzy
+msgid ""
+"Please select the options that\n"
+"you want for the downmix.\n"
+"(Defaults are current project values)"
+msgstr "請選擇你要的混音功能。(此專案的配置為預設值)"
 
 #~ msgid "& Wave file..."
 #~ msgstr "& Wave檔..."
