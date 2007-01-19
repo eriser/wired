@@ -125,7 +125,7 @@ void		MLTree::SaveTreeSC(wxTreeItemId parent, SaveElement *parentElem)
 
       currSaveElem = new SaveElement();
       parentElem->addChildren(currSaveElem);
-      
+
       if (ItemHasChildren(item))
 	{
 	  currSaveElem->setKey(wxT("folder"));
@@ -134,7 +134,7 @@ void		MLTree::SaveTreeSC(wxTreeItemId parent, SaveElement *parentElem)
 	      currSaveElem->addAttribute(wxT("is_expanded"), wxT("true"));
 	  else
 	    currSaveElem->addAttribute(wxT("is_expanded"), wxT("false"));
-	  
+
 	  //call recursively on our children
 	  SaveTreeSC(item, currSaveElem);
 	}
@@ -152,7 +152,7 @@ void		MLTree::SaveTreeSC(wxTreeItemId parent, SaveElement *parentElem)
 	    {
 	      currSaveElem->setKey(wxT("folder"));
 	      currSaveElem->addAttribute(wxT("name"), text);
-	      currSaveElem->addAttribute(wxT("is_expanded"), wxT("false"));	      
+	      currSaveElem->addAttribute(wxT("is_expanded"), wxT("false"));
 	    }
 	}
       item = GetNextChild(parent, cookie);
@@ -169,7 +169,7 @@ void				MLTree::Save()
   SaveElement	*rootTreeSaveElem = new SaveElement();
 
   rootTreeSaveElem->setKey(wxT("root"));
-  
+
   SaveTreeSC(GetRootItem(), rootTreeSaveElem);
 
   saveDocData(rootTreeSaveElem, wxT("MediaLibrary/MLTree"));
@@ -210,7 +210,7 @@ void				MLTree::Load(SaveElementArray data)
 {
   //We assume that data contains only one SaveElement : The root node.
   //else, something has failed in the save or the file is corrupted...
-  
+
   std::cerr << "[MLTree] Load" << std::endl;
 
   SaveElement		*ref;
@@ -239,7 +239,7 @@ void				MLTree::Load(SaveElementArray data)
   Expand(root);
 }
 
-void				MLTree::LoadItem(wxTreeItemId parent, 
+void				MLTree::LoadItem(wxTreeItemId parent,
 						 SaveElement *parentData)
 {
   SaveElementArray	saveElemChildren;
@@ -264,7 +264,7 @@ void				MLTree::LoadItem(wxTreeItemId parent,
 	  else
 	    expand = false;
 
-	  next = AddFile(parent, infos.label, infos, expand); 
+	  next = AddFile(parent, infos.label, infos, expand);
 	  if(expand)
 	    SetItemImage(next, 1);
 	  else
@@ -277,7 +277,7 @@ void				MLTree::LoadItem(wxTreeItemId parent,
 	  infos = SetStructInfos(infos,
 				 currSaveElem->getAttribute(wxT("infos_label")),
 				 currSaveElem->getAttribute(wxT("infos_ext")),
-				 currSaveElem->getAttribute(wxT("infos_length"))); 
+				 currSaveElem->getAttribute(wxT("infos_length")));
 	  AddFile(parent, currSaveElem->getAttribute(wxT("name")), infos, false);
 	  SetItemImage(next, 3);
 	}
@@ -641,7 +641,7 @@ void				MLTree::OnAdd(wxString FileToAdd)
 	  length_str << popo;
 
 	  for (vector<wxString>::iterator iter = Exts.begin(); iter != Exts.end(); iter++)
-	    if (iter->Contains(File->GetExt()) == true)
+	    if (iter->Contains(File->GetExt().Lower()) == true)
 	      {
 		s_nodeInfo		infos;
 		int			slashPos;
