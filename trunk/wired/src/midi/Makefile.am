@@ -1,8 +1,14 @@
+if PORTMIDI
 SUBDIRS = portmidi
+endif
 
 LDFLAGS = $(shell wx-config --libs)
 
-CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../engine -I../mixer -I../audio -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../asm -I../editmidi -I../undo -I../libs/WiredWidgets/src
+CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I../sequencer -I../redist -I../engine -I../mixer -I../audio -I../editmidi -I../undo -I../libs/WiredWidgets/src
+
+if PORTMIDI
+CPPFLAGS += -I../midi/portmidi/pm_common -I../midi/portmidi/porttime 
+endif
 
 noinst_LIBRARIES = libmidi.a
 
