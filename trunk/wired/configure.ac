@@ -129,7 +129,8 @@ reqwx=2.6.0
 AM_PATH_WXCONFIG($reqwx, wxWin=1)
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
-		wxWidgets must be installed on your system.
+                wxWidgets must be installed on your system
+                but wx-config script couldn't be found.
 
 		Please check that wx-config is in path, the directory
 		where wxWidgets libraries are installed (returned by
