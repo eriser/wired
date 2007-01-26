@@ -1,4 +1,14 @@
 
+WIRED 0.4 (rev 1281)
+------------------------------------------------------------------------
+
+- Added --enable-portmidi flag. Allow to use an external portmidi library
+- Use wxUSE_ON_FATAL_EXCEPTION macro to be more flexible according to wx builds
+- Updated sources for wxWidgets 2.8
+- Fixed a bug when importing wave files with an upper case extention in the ML
+- Updated zh_TW translations
+- Added script to auto-update translations
+
 WIRED 0.4 alpha (rev 1218)
 ------------------------------------------------------------------------
 - Add save and load function for Media Library, Drum31 and WiredSampler
