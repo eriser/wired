@@ -450,7 +450,7 @@ void                MainWindow::InitLocale()
 
   //try to set default language (is it really useful ? it seems to never work)
   if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
-    cout << "[MainWindow][InitLocale] locale inited to wxLANGUAGE_DEFAULT" << endl;;
+    cout << "[MainWindow][InitLocale] locale initialized to wxLANGUAGE_DEFAULT" << endl;;
 
   // add wx basic translation (File, Window, About, ..) (It seems to never return true ...)
   if(mLocale->AddCatalog(wxT("wxstd")))
@@ -573,7 +573,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   
   cout << "[MAINWIN] Done !"<< endl;
   
-  cout << "[MAINWIN] Stopping graphics things..."<< endl;
+  cout << "[MAINWIN] Stopping graphic things..."<< endl;
   SeqTimer->Stop();
   delete SeqTimer;
   SeqTimer = NULL;
