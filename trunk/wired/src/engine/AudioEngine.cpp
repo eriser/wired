@@ -457,7 +457,7 @@ void AudioEngine::SetChannels(int in, int out)
       ResetChannels();
       throw Error::ChannelsNotSet();
     }
-  cout << "[AUDIO] Channels setted, in: " << in << ", out: " << out << endl;
+  cout << "[AUDIO] Channels set, in: " << in << ", out: " << out << endl;
 }
 
 void AudioEngine::ResetChannels(void)
