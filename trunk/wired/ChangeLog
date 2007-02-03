@@ -1,34 +1,61 @@
 
-WIRED 0.4 (rev 1281)
+WIRED 0.4 (rev 13xx)
 ------------------------------------------------------------------------
 
-- Added --enable-portmidi flag. Allow to use an external portmidi library
-- Use wxUSE_ON_FATAL_EXCEPTION macro to be more flexible according to wx builds
-- Updated sources for wxWidgets 2.8
+- Added --enable-portmidi flag allowing the use of an external portmidi library
+- Added a script to auto-update translations
+- Added -avoid-version to LDFLAGS (lighter plug-ins : it doesn't create symlink)
+- Added the possibility to launch Wired without any audio device
+- Added samplerate management when importing from ML
+- Remade project Save/Load from scratch using the new SaveCenter
+	(Save now includes : windows size and position, sequencer, racks
+	 mixer, transport, MediaLib, plug-ins patches, current tool)
+- From new Save/Load results new project handling 
+	(a project is now a directory containing project files,
+	 batch files and samples)
+- Improved wave and samplerate management with the new WaveCenter
+- Improved right click management on racks to prevent crashes (bug #1561088)
+- Use of wxUSE_ON_FATAL_EXCEPTION macro (more flexible according to wx builds)
+- Updated sources for wxWidgets 2.8 support
+- Updated zh_TW translation
+- Updated synth plugin to unicode
+- Changed some icons due to right issues
+- Removed compilation and use of non-working plugins.
+- Removed MediaLibrary filters toolbar (useless, no code behind)
+- Removed minor non-working stuff (ML sorting, ...)
 - Fixed a bug when importing wave files with an upper case extention in the ML
-- Updated zh_TW translations
-- Added script to auto-update translations
+- Fixed a bug causing Wired to crash when splash.png was not present
+- Fixed a bug causing Wired to crash when deleting a rack using the rack menu
+- Fixed a bug causing Wired to crash when stopping the recording of a wave
+- Fixed a preview related bug
+- Fixed minor issues with samplerate and settings window
+- Fixed some typos in output messages
+- Fixed some BPM related bugs
+- HUGE code cleaning and optimisation
+- Minor code portability
 
+	
 WIRED 0.4 alpha (rev 1218)
 ------------------------------------------------------------------------
-- Add save and load function for Media Library, Drum31 and WiredSampler
+- Added save and load function for Media Library, Drum31 and WiredSampler
 - Improved connection management between effect and instrument
 - Improved Rack connection
-- Fix autoscroll when you add wiredsampler to the rack view
+- Fixed autoscroll when you add wiredsampler to the rack view
 - Fixed a bug when removing a rack
 - Fixed preview in media library
-- Improved copy/paste of multi-pattern
-- Add wired directories for lib, include, sysconf and data directories
+- Improved copy/paste of multiple patterns
+- Added wired directories for lib, include, sysconf and data directories
 - Real name of the Midi device displayed in the header of the track
-- fixed use of PortMidi API
+- Fixed use of PortMidi API
 - Removed forgotten debug messages
 - Added an icon when an effect can be assign to a track
 - Made some clean up in the menu and keyboard shortcuts
-- Resolved bug in Wave Drawer
-- Repaired stereo in wired and prepared multichannel
+- Fixed a bug in Wave Drawer
+- Fixed stereo and prepared multichannel
 - Added drag and drop between Medialibrary and Sequencer
 - Added drag and drop features in Sequencer
 
+	
 WIRED 0.3.1 (rev 1008)
 ------------------------------------------------------------------------
 
@@ -171,7 +198,7 @@ WIRED 0.2 (rev 767)
 - A LOT OF optimisation
 - portability optimisations
 
-
+	
 WIRED 0.11
 ------------------------------------------------------------------------
 
