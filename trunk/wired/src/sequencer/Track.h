@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __TRACK_H__
@@ -9,8 +9,21 @@
    #include <wx/wx.h>
 #endif
 
-#define IS_MIDI_TRACK			(0x0)
-#define IS_AUDIO_TRACK		      	(0x1)
+enum trackType
+  {
+    eUnknownTrack = 0,
+    eMidiTrack,
+    eAudioTrack,
+    eEndTrackType
+  };
+
+#include "SeqTrack.h"
+#include "SeqTrackPattern.h"
+#include "Pattern.h"
+#include "SequencerGui.h"
+#include "ChannelGui.h"
+#include "WiredDocument.h"
+
 #define MAX_AUTO_COLOURS		(16)		
 
 class					WaveFile;
@@ -21,33 +34,65 @@ class					MidiPattern;
 class					SeqTrack;
 class					SeqTrackPattern;
 class					Channel;
+class					ChannelGui;
+class					SequencerView;
 
-class					Track
+class					Track : public WiredDocument
 {
  private:
   long					Index;
+  trackType				Type;
+
+  SeqTrack*				TrackOpt;
+  Channel*				Output;
+  ChannelGui*				ChanGui;
+
+  // They ARE elements in TrackPattern vector, they DONT need to be deleted.
+  // These pointers are used when we record on this Track.
+  AudioPattern*				Wave;
+  MidiPattern*				Midi;
 
  public:
-  Track(SeqTrack *n1, SeqTrackPattern *n2, char typ = IS_MIDI_TRACK); 
+  Track(WiredDocument* parentDoc, trackType type, wxPoint& pos, wxSize& size,
+	wxWindow* trackview); 
   ~Track(); 
-  Track(const Track& copy) {*this = copy;}
   Track	operator=(const Track& right);
+
+  //super degueu
+  SeqTrackPattern*			TrackPattern;
+
 
   void					Dump();
 
-  AudioPattern				*AddPattern(WaveFile *w, double pos = 0);
-  MidiPattern				*AddPattern(MidiTrack *t);
+  AudioPattern				*CreateAudioPattern(WaveFile *w, double pos = 0);
+  MidiPattern				*CreateMidiPattern(MidiTrack *t);
+
+  // this function should be used ONLY in Pattern constructor/destructor
   void					AddPattern(Pattern *p);
   void					DelPattern(Pattern *p);
-  void					AddColoredPattern(Pattern *p);
 
   void					UpdateIndex(long trackindex);
   void					RefreshFullTrack();
   void					ChangeTrackColour(wxColour &c);
-  bool					IsAudioTrack() { return (Type == IS_AUDIO_TRACK); }
-  bool					IsMidiTrack() { return (Type == IS_MIDI_TRACK); }
+  bool					IsAudioTrack() { return ((Type == eAudioTrack) ? (true) : (false)); }
+  bool					IsMidiTrack() { return ((Type == eMidiTrack) ? (true) : (false)); }
+  trackType				GetType() { return (Type); }
 
   inline long				GetIndex() { return (Index); };
+
+  inline SeqTrack*			GetTrackOpt() { return (TrackOpt); };
+  inline AudioPattern*			GetAudioPattern() { return (Wave); };
+  inline MidiPattern*			GetMidiPattern() { return (Midi); };
+  inline SeqTrackPattern*		GetTrackPattern() { return (TrackPattern); };
+  inline Channel*			GetOutputChannel() { return (Output); };
+
+  // used to set the newly created pattern where Record will be done
+  void					SetMidiPattern(MidiPattern* mp);
+  void					SetAudioPattern(AudioPattern* ap);
+
+  // WiredDocument implementation
+  void					Save();
+  void					Load(SaveElementArray data);
 
   /**
    * This method is set only once, and just after his creation.
@@ -57,15 +102,8 @@ class					Track
    */
   inline void				SetIndex(long trackindex) { Index = trackindex; };
 
-  SeqTrack				*TrackOpt;
-  SeqTrackPattern			*TrackPattern;
-  AudioPattern				*Wave;
-  MidiPattern				*Midi;
-  Channel				*Output;
-
  protected:
-  char					Type;
-  char					ColourIndex;
+  unsigned char				ColourIndex;
 };
 
 #endif

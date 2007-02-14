@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __AKAISAMPLER_H__
@@ -15,6 +15,7 @@
 #include "CycleKnob.h"
 #include "ASSampleList.h"
 #include "ASKeygroupList.h"
+#include "WiredDocument.h"
 
 #define IMG_SP_BMP	    wxT("plugins/akaisampler/WiredSampler.bmp")
 #define IMG_SP_BG	    wxT("plugins/akaisampler/sampler_bg.png")
@@ -65,7 +66,7 @@ class ASamplerNote
     long    Position;
 };
 
-class AkaiSampler : public Plugin
+class AkaiSampler : public Plugin, public WiredDocument
 {
   public:
     AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo);
@@ -73,8 +74,16 @@ class AkaiSampler : public Plugin
 
     void   Stop();
 
-    void   Load(int fd, long size);
-    long   Save(int fd);
+    void	Load(SaveElementArray data);
+    void	LoadSamples(SaveElement *data);
+    void	LoadKeygroups(SaveElement *data);
+    void	LoadPatch(wxString filename);
+
+    void	Save();
+    void	SaveSamples();
+    void	SaveKeygroups();
+    //SavePatch declared in WiredDocument.h
+
 
     void   SetBufferSize(long size);
     void   SetSamplingRate(double rate);

@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "WiredExternalPlugin.h"
@@ -65,7 +65,9 @@ bool			WiredDSSIPlugin::Load(const wxString& FileName, int& FirstIndex)
 			
 	  for (pos = 0, PluginInfo = 0; (CurrentDescriptor = _DSSIDescriptorFunction(pos)); pos++, PluginInfo = 0)
 	    {
-	      cout << "Adding DSSI Plugin {" << CurrentDescriptor->LADSPA_Plugin->Name << "}" << endl;
+#ifdef __DEBUG__
+	      cout << "[DSSIPLUG] Adding DSSI Plugin {" << CurrentDescriptor->LADSPA_Plugin->Name << "}" << endl;
+#endif
 	      _DSSIDescriptors[FirstIndex] = CurrentDescriptor;
 	      PluginInfo |= TYPE_PLUGINS_DSSI;
 				
@@ -89,7 +91,9 @@ bool			WiredDSSIPlugin::Load(const wxString& FileName, int& FirstIndex)
 			
 	  for (pos = 0, PluginInfo = 0; (CurrentDescriptor = _LADSPADescriptorFunction(pos)); pos++, PluginInfo = 0)
 	    {				
-	      cout << "Adding LADSPA Plugin {" << CurrentDescriptor->Name << "}" << endl;
+#ifdef __DEBUG__
+	      cout << "[DSSIPLUG] Adding LADSPA Plugin {" << CurrentDescriptor->Name << "}" << endl;
+#endif
 	      _LADSPADescriptors[FirstIndex] = CurrentDescriptor;
 	      PluginInfo |= TYPE_PLUGINS_LADSPA;
 	      for (PortPos = 0; PortPos < CurrentDescriptor->PortCount; PortPos++)
@@ -191,9 +195,9 @@ bool				WiredDSSIPlugin::CreatePlugin(int PluginId, WiredLADSPAInstance* Plugin)
 		Descriptor = _LADSPADescriptors.find(PluginId)->second;
 	else if (_DSSIDescriptorFunction)
 		Descriptor = _DSSIDescriptors.find(PluginId)->second->LADSPA_Plugin;
-	cout << "Creating Rack for Plugin " << Descriptor->Name << endl;
+	cout << "[DSSIPLUG] Creating Rack for Plugin " << Descriptor->Name << endl;
 	Plugin->Init(Descriptor);
-	cout << "Rack Created, loading" << endl;
+	cout << "[DSSIPLUG] Rack Created, loading" << endl;
 	return Plugin->Load();
 	return false;
 }

@@ -1,8 +1,5 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
-
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
 
 #ifndef __OPTIONPANEL_H__
 #define __OPTIONPANEL_H__
@@ -12,6 +9,8 @@ using namespace			std;
 #include <vector>
 #include <wx/wx.h>
 #include <wx/string.h>
+#include "WiredDocument.h"
+
 
 #define OPT_TOOLBAR_HEIGHT	(17)
 #define OPT_TOOLBAR_BORDER	(2)
@@ -60,7 +59,7 @@ class				WiredFrame: public wxFrame
  public:
   WiredFrame(WiredTool *t, wxString s) :
     wxFrame(0x0, -1, s, wxDefaultPosition, wxSize(400, 200)),
-    Tool(t) 
+    Tool(t)
     {
       em = NULL;
       Connect(GetId(), wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)(wxEventFunction)
@@ -82,6 +81,8 @@ class WiredTool
   void				Detach();
   void				OnClose(wxCloseEvent &event);
 
+  inline wxString&		GetName() { return (Name); };
+
   wxString			Name;
   int				Type;
   wxWindow			*Panel;
@@ -90,10 +91,10 @@ class WiredTool
   void				*Data;
 };
 
-class OptionPanel : public wxPanel
+class OptionPanel : public wxPanel, public WiredDocument
 {
  public:
-  OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style);
+  OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, WiredDocument* docParent);
   ~OptionPanel();
 
   void				AddAudioTool(AudioPattern *p);
@@ -110,6 +111,20 @@ class OptionPanel : public wxPanel
   void				ClosePlug(Plugin *p);
   void				DeleteTools();
   void				DeleteTools(void *DataPointer);		//Delete tool(s) associated with some data, for example delete editor for a pattern
+
+
+ //WiredDocument implementation
+  void				Save();
+  void				Load(SaveElementArray data);
+  void				CleanChildren();
+
+ private:
+  //Setters
+  void				SetTitle(const wxString& title);
+  void				SetListToolBtn(bool isDown);
+  void				SetDetachToolBtn(bool isDown);
+  void				SetCloseToolBtn(bool isDown);
+
 
  protected:
   wxPanel			*ToolbarPanel;
@@ -134,6 +149,6 @@ class OptionPanel : public wxPanel
   DECLARE_EVENT_TABLE()
 };
 
-extern OptionPanel		*OptPanel;
+extern OptionPanel*		OptPanel;
 
 #endif

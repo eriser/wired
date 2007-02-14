@@ -1,8 +1,5 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
-
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
 
 #ifndef __CHANNELGUI_H__
 #define __CHANNELGUI_H__
@@ -10,6 +7,7 @@
 #include <wx/wx.h>
 #include <vector>
 #include "FaderCtrl.h"
+#include "WiredDocument.h"
 
 #define LABEL_MAXCHAR			(20)
 #define BG				L"/ihm/mixer/mixer_bg.png"
@@ -27,25 +25,36 @@ class					HintedFader;
 class					VUMCtrl;
 class					DownButton;
 
-class					ChannelGui : public wxPanel
+
+class					ChannelGui : public wxPanel, public WiredDocument
 {
  public:
   ChannelGui(Channel *channel, wxImage* img_bg, wxImage* img_fg,
 	     wxWindow* parent, wxWindowID id,
 	     const wxPoint& pos, const wxSize& size,
-	     const wxString& label);
+	     const wxString& label, WiredDocument* docParent = NULL);
   ~ChannelGui();
-  
+
   void					OnFaderLeft(wxScrollEvent &e);
   void					OnFaderRight(wxScrollEvent &e);
   void					OnLock(wxCommandEvent& e);
   void					OnMuteLeft(wxCommandEvent& e);
   void					OnMuteRight(wxCommandEvent& e);
   void					OnPaint(wxPaintEvent& e);
-  void					SetLabel(const wxString&);
   void					SetOpt(SeqTrack*);
   void					UpdateScreen();
-  
+
+  /**
+   * WiredDocument implementation
+   */
+  void					Load(SaveElementArray data);
+
+  /**
+   * WiredDocument implementation
+   */
+  void					Save();
+
+
   SeqTrack				*ConnectedSeqTrack;
   FaderCtrl				*FaderLeft;
   FaderCtrl				*FaderRight;
@@ -53,16 +62,27 @@ class					ChannelGui : public wxPanel
   VUMCtrl				*VumRight;
   Channel				*Chan;
   bool					Stereo;
-  
+
+  void					SetLabel(const wxString& label);
+
+ private:
+  //Setters
+  void					SetStereo(bool stereo);
+  void					SetLock(bool lock);
+  void					SetMuteLeftButton(bool isDown);
+  void					SetMuteRightButton(bool isDown);
+  void					SetLockButton(bool isDown);
+
+
  protected:
   bool					Lock;
   DownButton				*MuteLeftButton;
   DownButton				*MuteRightButton;
   DownButton				*LockButton;
   wxStaticText				*Label;
-  wxStaticText				*VolumeLeft;
-  wxStaticText				*VolumeRight;
-  
+  //  wxStaticText				*VolumeLeft;
+  //  wxStaticText				*VolumeRight;
+
   //to delete
   wxImage				*hp_up;
   wxImage				*hp_dn;
@@ -78,13 +98,13 @@ class					ChannelGui : public wxPanel
 class					MasterChannelGui : public ChannelGui
 {
  public:
-  MasterChannelGui(Channel *channel, wxImage* img_bg, wxImage* img_fg,
+  MasterChannelGui(Channel* channel, wxImage* img_bg, wxImage* img_fg,
 		   wxWindow* parent, wxWindowID id,
-		   const wxPoint& pos, const wxSize& size );
+		   const wxPoint& pos, const wxSize& size, WiredDocument* docParent = NULL);
   ~MasterChannelGui();
-  
-  void					OnFaderLeft(wxScrollEvent &e);
-  void					OnFaderRight(wxScrollEvent &e);
+
+  void					OnFaderLeft(wxScrollEvent& e);
+  void					OnFaderRight(wxScrollEvent& e);
   void					OnMuteLeft(wxCommandEvent& e);
   void					OnMuteRight(wxCommandEvent& e);
   void					OnLock(wxCommandEvent& e);
@@ -103,7 +123,3 @@ enum
   };
 
 #endif//__CHANNELGUI_H__
-
-
-
-

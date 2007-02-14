@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __MAINWINDOW_H__
@@ -8,10 +8,6 @@ using namespace std;
 
 #include <iostream>
 #include <vector>
-//#include <stdlib.h>
-
-//a enlever
-//#include <sndfile.h>
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -23,6 +19,8 @@ using namespace std;
 #include <wx/splash.h>
 #include <wx/splitter.h>
 #include <wx/log.h>
+#include <wx/filename.h>
+
 
 #include "version.h"
 
@@ -33,24 +31,22 @@ using namespace std;
 #include	"Plugin.h"
 #include	"../wiredvideo/WiredVideo.h"
 #include        "FloatingFrame.h"
+#include "WiredDocument.h"
 
 typedef	struct s_PlugStartInfo		PlugStartInfo;
 class					PluginLoader;
-class					WiredSession;
-class					WiredSessionXml;
 class					MainWindow;
 
 extern MainWindow		*MainWin;
 extern vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo		StartInfo;
-extern WiredSession		*CurrentSession;
 extern wxMutex		        AudioMutex;
 extern wxCondition*	        SeqStopped;
 
-class					MainWindow: public wxFrame
+class					MainWindow: public wxFrame, public WiredDocument
 {
  public:
-  MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size);
+  MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size, WiredDocument *parent);
   void					OnClose(wxCloseEvent &event);
   void					OnQuit(wxCommandEvent &event);
   void					OnOpen(wxCommandEvent &event);
@@ -67,12 +63,14 @@ class					MainWindow: public wxFrame
   void					OnAddTrackAudio(wxCommandEvent &event);
   void					OnAddTrackMidi(wxCommandEvent &event);
   void					OnDeleteTrack(wxCommandEvent &event);
-  void					OnChangeAudioDir(wxCommandEvent &event);
   void					OnCreateRackClick(wxCommandEvent &event);
   void					OnCreateEffectClick(wxCommandEvent &event);
   void					OnFloatTransport(wxCommandEvent &event);
+  wxFrame				*FloatTransport();
   void					OnFloatSequencer(wxCommandEvent &event);
+  wxFrame				*FloatSequencer();
   void					OnFloatRack(wxCommandEvent &event);
+  wxFrame				*FloatRack();
   void					OnFloatMediaLibrary(wxCommandEvent &event);
 
   void					OnSwitchRackOptViewEvent(wxCommandEvent &event);
@@ -115,11 +113,27 @@ class					MainWindow: public wxFrame
   void					SwitchRackOptView();
   void					SwitchSeqOptView();  
   void					AddUpdatePlugin(Plugin *p);
+  
+  void					SwitchDockedFloat(bool isCurrentlyFloating, int mustBeFloating,
+							  wxCommandEvent evt, wxPoint pos, wxSize size,
+							  int checkBox, wxFrame *frame, 
+							  wxFrame *(MainWindow::*floatfunc)());
+  void					Save();
+  void					Load(SaveElementArray data);
+  void					CleanChildren();
 
   /* init func */
   int					Init();
+
   /* can be called from SettingWindow */
   int					InitAudio(bool restart = false);
+
+  /* Plugin creation */
+  void					CreatePluginFromUniqueId(wxString UniqueId,
+								 wxString name);
+
+  /* Shows a wxDirDialog to select a project folder */
+  void					OpenWizard();
 
  protected:
   friend class				MediaLibrary;
@@ -128,6 +142,8 @@ class					MainWindow: public wxFrame
   int					PluginMenuIndexCount;			
   bool					RackModeView;
   bool					SeqModeView;
+  wxSize				WindowSize;
+  wxPoint				WindowPos;
   void					OnIdle(wxIdleEvent &event);
 
   /**
@@ -247,7 +263,6 @@ enum
   MainWin_AddTrackAudio,
   MainWin_AddTrackMidi,
   MainWin_DeleteTrack,
-  MainWin_ChangeAudioDir,
   MainWin_Copy,
   MainWin_Cut,
   MainWin_Paste,

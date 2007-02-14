@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 
@@ -79,9 +79,9 @@ public:
 								PluginLoader* plugLoader, 
 								bool shouldAdd);
 	void		AddChangeParamsEffectAction(Plugin* plugin, bool shouldSave);	// Adds a cChangeParamsEffectAction in cActionManager
-	void		AddImportWaveAction(const wxString& path, bool kind, 
+	void		AddImportWaveAction(const wxString& path, trackType kind, 
 									bool selectFromIndex);				// Adds a cImportWaveAction in cActionManager
-	void		AddEditWaveAction(const wxString& path, bool kind, bool selectFromIndex);
+	void		AddEditWaveAction(const wxString& path, trackType kind, bool selectFromIndex);
 	std::list<t_menuInfo*>		getListActions(int* separatorIndex);	// Retourne la liste des actions Undo
 
 };

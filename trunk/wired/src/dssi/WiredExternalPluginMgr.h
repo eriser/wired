@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef _WIREDEXTERNALPLUGINMGR_H_
@@ -35,27 +35,30 @@ public:
 	WiredExternalPluginMgr(const WiredExternalPluginMgr& copy);
 	WiredExternalPluginMgr		operator=(const WiredExternalPluginMgr& right);
 	
-	void				LoadPLugins(int Type);
+	void			LoadPLugins(int Type);
 	map<int, wxString>	GetPluginsList();
 	list<wxString>		GetSortedPluginsList(const wxString& Separator = wxT("#"));
-	void				SetMenuItemId(int ModuleId, int MenuItemId);
-	int					GetPluginType(int PluginId);
-	WiredDSSIGui		*CreatePlugin(int MenuItemId, PlugStartInfo &info);
-	WiredDSSIGui		*CreatePlugin(unsigned long UniqueId);
-	void				DestroyPlugin(WiredDSSIGui *Plug);
-	void				SetStartInfo(PlugStartInfo &Info);
+	void			SetMenuItemId(int ModuleId, int MenuItemId);
+	int			GetPluginType(int PluginId);
+	WiredDSSIGui		*CreatePluginFromMenu(int MenuItemId, PlugStartInfo &info);
+	WiredDSSIGui		*CreatePluginFromUniqueId(unsigned long UniqueId);
+	WiredDSSIGui		*CreatePluginFromIdPlugin(unsigned long IdPlugin, PlugStartInfo &info);
+	WiredDSSIGui*		CreatePlugin(unsigned long IdPlugin, PlugStartInfo& info);
+
+	void			DestroyPlugin(WiredDSSIGui *Plug);
+	void			SetStartInfo(PlugStartInfo &Info);
 	
 private:
 	void			LoadPlugins(const wxString& FileName);
 	list<wxString>		SplitPath(const wxString& Path);
 	void			LoadPluginsFromPath(const wxString& Dirs, int Type);
 
-	list<WiredDSSIPlugin*>		_Plugins;
+	list<WiredDSSIPlugin*>	_Plugins;
 	list<WiredDSSIGui*>	_LoadedPlugins;
-	map<int, int>			_IdTable;									//Key == MenuItemId; Value == PluginId (auto-increment)
-	int						_CurrentPluginIndex;
-	map<unsigned long, int>			_UniqueIdTable;								//Key == Plugin unique ID; Value == PluginId
-	PlugStartInfo			_StartInfo;
+	map<int, int>		_IdTable;									//Key == MenuItemId; Value == PluginId (auto-increment)
+	int			_CurrentPluginIndex;
+	map<unsigned long, int>	_UniqueIdTable;								//Key == Plugin unique ID; Value == PluginId
+	PlugStartInfo		_StartInfo;
 };
 
 

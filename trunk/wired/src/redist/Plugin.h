@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __PLUGIN_H__
@@ -20,6 +20,7 @@
 #include <list> 
 #include <vector>
 #include <map>
+#include "Plugin.h"
 
 // methods are mainly in this class
 class Plugin;

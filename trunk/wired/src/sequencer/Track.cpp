@@ -1,71 +1,102 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include <wx/colour.h>
 #include "Track.h"
 #include "Sequencer.h"
-#include "../mixer/Mixer.h"
-#include "../gui/Pattern.h"
-#include "../gui/AudioPattern.h"
-#include "../gui/MidiPattern.h"
-#include "../gui/SeqTrack.h"
-#include "../gui/SeqTrackPattern.h"
+#include "Mixer.h"
+#include "Pattern.h"
+#include "AudioPattern.h"
+#include "MidiPattern.h"
+#include "SeqTrack.h"
+#include "SeqTrackPattern.h"
+#include "MixerGui.h"
 
-wxColour				PatternColours[MAX_AUTO_COLOURS] = 
-  {  
+wxColour				PatternColours[MAX_AUTO_COLOURS] =
+  {
     // blue
-    wxColour( 50, 166, 211),				
+    wxColour( 50, 166, 211),
     wxColour( 75, 133, 204),
     wxColour( 15,  98, 198),
     // purple
-    wxColour(134, 112, 175),				
+    wxColour(134, 112, 175),
     wxColour(133,  96, 204),
     wxColour( 96,  47, 188),
     // orange
-    wxColour(247, 186, 111),				
+    wxColour(247, 186, 111),
     wxColour(237, 134,  66),
     wxColour(239, 104,  75),
     // green
-    wxColour(182, 226,  99),				
+    wxColour(182, 226,  99),
     wxColour(130, 206,  95),
     wxColour( 97, 183, 166),
 
-    wxColour( 50, 166, 211),				
+    wxColour( 50, 166, 211),
     wxColour( 75, 133, 204),
     wxColour( 15,  98, 198),
-    wxColour( 15,  98, 198)    
+    wxColour( 15,  98, 198)
   };
 
-Track::Track(SeqTrack *n1, SeqTrackPattern *n2, char typ) 
+Track::Track(WiredDocument* parentDoc, trackType type,
+	     wxPoint& pos, wxSize& size, wxWindow* TrackView) :
+  WiredDocument(wxT("Track"), parentDoc)
 {
-  TrackOpt = n1;
-  TrackPattern = n2;
+  // basic initialization
   Wave = 0x0;
   Midi = 0x0;
   Index = 0;
-  Type = typ;
+  Type = type;
+
+  ColourIndex = (AudioTrackCount + MidiTrackCount) % MAX_AUTO_COLOURS;
+
+  // relative to the header of track (mostly GUI)
+  TrackOpt = new SeqTrack(Seq->Tracks.size() + 1, TrackView,
+			  pos, size, type, this);
+
+  // list of patterns in the track
+  TrackPattern = new SeqTrackPattern();
+
+  // mixer output
   if (IsAudioTrack())
-    {
-      Output = Mix->AddStereoOutputChannel(true);
-    }
+    Output = Mix->AddChannel(false, true, true);
   else
     Output = 0x0;
 
-  ColourIndex = (AudioTrackCount + MidiTrackCount - 1) % MAX_AUTO_COLOURS;
+  // mixer output GUI
+  if (type == eAudioTrack)
+    {
+      ChanGui = MixerPanel->AddChannel(Output, TrackOpt->Text->GetValue());
+      ChanGui->SetOpt(TrackOpt);
+      TrackOpt->SetChannelGui(ChanGui);
+    }
+  else
+    ChanGui = NULL;
+
+
+  // add itself to sequencer management, Track need it to get an Index
+  Seq->RegisterTrack(this);
 }
 
-Track::~Track() 
-{ 
-  if (TrackOpt)
-    delete TrackOpt;
-  if (TrackPattern)
+Track::~Track()
+{
+  wxMutexLocker		locker(SeqMutex);
+
+  // delete track's patterns
+  if (GetTrackPattern())
     delete TrackPattern;
-  if (Wave)
-    delete Wave;
-  if (Midi)
-    delete Midi;
+
+  // delete any reference to it AFTER deleted patterns (which refers to)
+  Seq->UnregisterTrack(this);
+
+  // delete mixer related
+  if (TrackOpt->ChanGui)
+    MixerPanel->RemoveChannel(TrackOpt->ChanGui);
   if (Output)
     Mix->RemoveChannel(Output);
+
+  // delete track's options
+  if (TrackOpt)
+    delete TrackOpt;
 }
 
 void		Track::Dump()
@@ -101,78 +132,88 @@ Track			Track::operator=(const Track& right)
 	return *this;
 }
 
-AudioPattern					*Track::AddPattern(WaveFile *w, double pos)
+AudioPattern					*Track::CreateAudioPattern(WaveFile *w, double pos)
 {
-  AudioPattern					*a;
+  AudioPattern					*newPattern;
 
 #ifdef __DEBUG__
-  printf("Track::AddPattern(%d, %f) -- START (AUDIO) Index=%d\n", w, pos, Index);
+  printf("Track::CreateAudioPattern(%d, %f) -- START (AUDIO) Index=%d\n", w, pos, Index);
 #endif
-  a = new AudioPattern(pos, w, Index);
-  a->SetDrawColour(PatternColours[ColourIndex]);
+
+  if (w)
+    newPattern = new AudioPattern(this, pos, w, Index);
+  else
+    newPattern = new AudioPattern(this, pos, 0.0f, Index);
+  newPattern->SetDrawColour(PatternColours[ColourIndex]);
 
   SeqMutex.Lock();
-  TrackPattern->Patterns.push_back(a);
-  if (a->GetEndPosition() > Seq->EndPos)
-    Seq->EndPos = a->GetEndPosition();
+  if (newPattern->GetEndPosition() > Seq->EndPos)
+    Seq->EndPos = newPattern->GetEndPosition();
   SeqMutex.Unlock();
 
-  a->Update();
+  newPattern->Update();
 #ifdef __DEBUG__
-  printf("Track::AddPattern(%d, %f) -- OVER (AUDIO)\n", w, pos);
+  printf("Track::CreateAudioPattern(%d, %f) -- OVER (AUDIO)\n", w, pos);
 #endif
-  return (a);
+  return (newPattern);
 }
+
 void						Track::DelPattern(Pattern *p)
 {
 #ifdef __DEBUG__
   printf("Track::DelPattern(%d) -- START (PATTERN)\n", p);
 #endif
-  SeqMutex.Lock();
+  wxMutexLocker				locker(SeqMutex);
   vector<Pattern *>::iterator		iter;
-  for (iter = TrackPattern->Patterns.begin(); *iter != p; iter++);
-  TrackPattern->Patterns.erase(iter);
-  SeqMutex.Unlock();
+
+  for (iter = TrackPattern->Patterns.begin();
+       iter != TrackPattern->Patterns.end(); iter++)
+    if (*iter == p)
+      {
+	TrackPattern->Patterns.erase(iter);
+	break;
+      }
 #ifdef __DEBUG__
   printf("Track::DelPattern(%d) -- OVER (PATTERN)\n", p);
 #endif
 }
+
 void						Track::AddPattern(Pattern *p)
 {
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d) -- START (PATTERN)\n", p);
 #endif
-  SeqMutex.Lock();
+  wxMutexLocker					locker(SeqMutex);
+
   TrackPattern->Patterns.push_back(p);
-  SeqMutex.Unlock();
 #ifdef __DEBUG__
   printf("Track::AddPattern(%d) -- OVER (PATTERN)\n", p);
 #endif
 }
 
-MidiPattern					*Track::AddPattern(MidiTrack *t)
+MidiPattern					*Track::CreateMidiPattern(MidiTrack *t)
 {
-  MidiPattern					*a;
+  MidiPattern					*newPattern;
 
 #ifdef __DEBUG__
-  printf("Track::AddPattern(%d) -- START (MIDI)\n", t);
+  printf("Track::CreateMidiPattern(%d) -- START (MIDI)\n", t);
 #endif
-  a = new MidiPattern(0, t, Index);
-  a->SetDrawColour(PatternColours[ColourIndex]);
-  SeqMutex.Lock();
-  TrackPattern->Patterns.push_back(a);
-  a->Update();
-  if (a->GetEndPosition() > Seq->EndPos)
-    Seq->EndPos = a->GetEndPosition();
-  SeqMutex.Unlock();
+  newPattern = new MidiPattern(this, 0, t, Index);
+  newPattern->SetDrawColour(PatternColours[ColourIndex]);
+
+  wxMutexLocker					locker(SeqMutex);
+
+  newPattern->Update();
+  if (newPattern->GetEndPosition() > Seq->EndPos)
+    Seq->EndPos = newPattern->GetEndPosition();
 #ifdef __DEBUG__
-  printf("Track::AddPattern(%d) -- OVER (MIDI)\n", t);
+  printf("Track::CreateMidiPattern(%d) -- OVER (MIDI)\n", t);
 #endif
-  return (a);
+  return (newPattern);
 }
 
 void						Track::UpdateIndex(long trackindex)
-{  
+{
   vector<Pattern *>::iterator			k;
 
 #ifdef __DEBUG__
@@ -189,27 +230,65 @@ void						Track::UpdateIndex(long trackindex)
 void						Track::RefreshFullTrack()
 {
   vector<Pattern *>::iterator			p;
-  
+
   TrackOpt->Refresh();
-  TrackPattern->Update();
   for (p = TrackPattern->Patterns.begin(); p != TrackPattern->Patterns.end(); p++)
     (*p)->Update();
-}  
-
-void						Track::ChangeTrackColour(wxColour &c)
-{
-  vector<Pattern *>::iterator			p;
-  
-  for (p = TrackPattern->Patterns.begin(); p != TrackPattern->Patterns.end(); p++)
-    {
-      (*p)->SetDrawColour(c);
-      (*p)->Refresh();
-    }
 }
 
-void						Track::AddColoredPattern(Pattern *p)
+void						Track::SetMidiPattern(MidiPattern* mp)
 {
-  SeqMutex.Lock();
-  TrackPattern->Patterns.push_back(p);
-  SeqMutex.Unlock();
+  Midi = mp;
+}
+
+void						Track::SetAudioPattern(AudioPattern* ap)
+{
+  Wave = ap;
+}
+
+// WiredDocument implementation
+void						Track::Save()
+{
+  saveDocData(new SaveElement(wxT("Index"), (int)Index));
+  saveDocData(new SaveElement(wxT("ColourIndex"), (int)ColourIndex));
+  saveDocData(new SaveElement(wxT("PatternsSize"), (int)TrackPattern->Patterns.size()));
+}
+
+void						Track::Load(SaveElementArray data)
+{
+  int						i;
+
+  for (i = 0; i < data.GetCount(); i++)
+    if (data[i]->getKey() == wxT("Index"))
+      {
+	long		height = SeqPanel->GetSeqHeaderHeight();
+	wxPoint		pos;
+	int		index = data[i]->getValueInt();
+
+
+	UpdateIndex(index);
+	GetTrackOpt()->SetPosition(wxPoint(0, ((SeqPanel->GetView()->GetTotalHeight() / height) * index)
+					   - SeqPanel->GetCurrentYScrollPos()));
+      }
+
+  for (i = 0; i < data.GetCount(); i++)
+    {
+      if (data[i]->getKey() == wxT("ColourIndex"))
+	ColourIndex = data[i]->getValueInt();
+      else if (data[i]->getKey() == wxT("PatternsSize"))
+	{
+	  int					n;
+	  int					nbPattern;
+
+	  nbPattern = data[i]->getValueInt();
+	  for (n = 0; n < nbPattern; n++)
+	    {
+	      if (GetType() == eAudioTrack)
+		CreateAudioPattern(NULL, 0.f);
+	      else if (GetType() == eMidiTrack)
+		new MidiPattern(this, 0.f, 0.f, Index);
+	    }
+	}
+    }
+  SeqPanel->UpdateTracks();
 }

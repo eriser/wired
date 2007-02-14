@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "cImportMidiAction.h"
@@ -13,7 +13,7 @@
 
 /********************   class cImportWaveAction   ********************/
 
-cImportWaveAction::cImportWaveAction (const wxString& path, bool kind, bool shouldAdd)
+cImportWaveAction::cImportWaveAction (const wxString& path, trackType kind, bool shouldAdd)
 {
 	_TrackKindFlag = kind;
 	_WavePath = path;
@@ -31,50 +31,52 @@ void cImportWaveAction::Do ()
 
 void cImportWaveAction::AddWaveTrack()
 {
-  WaveFile *w = WaveCenter.AddWaveFile(_WavePath);
+  WaveFile *w_tmp = WaveCenter.AddWaveFile(_WavePath);
+  WaveFile *w;
   long		nb_channel;
-  Track *t;
 
-	  
-  if (w) 
+  if (w_tmp) 
     {
-      for (nb_channel = 0; nb_channel < w->GetNumberOfChannels(); nb_channel++)
+      for (nb_channel = 0; nb_channel < w_tmp->GetNumberOfChannels(); nb_channel++)
 	{ 
-	  t = SeqPanel->AddTrack(_TrackKindFlag);
+	  _trackCreated = SeqPanel->CreateTrack(_TrackKindFlag);
 	  w = WaveCenter.AddWaveFile(_WavePath);
 	  w->SetChannelToRead(nb_channel);
-	  t->AddPattern(w);
-	  _trackIndex = t->GetIndex();
+	  _trackCreated->CreateAudioPattern(w);
+	  _trackIndex = _trackCreated->GetIndex();
 	  NotifyActionManager();
 	}
     }
+  WaveCenter.RemoveWaveFile(w_tmp);
 }
 
 void cImportWaveAction::AddWaveToEditor()
 {
-  WaveFile *w = WaveCenter.AddWaveFile(_WavePath);
+  WaveFile *w_tmp = WaveCenter.AddWaveFile(_WavePath);
+  WaveFile *w;
   long	   nb_channel;
 
-
-  if (w) 
+  if (w_tmp) 
     {
-      Track *t = SeqPanel->AddTrack(_TrackKindFlag);
-      for (nb_channel = 0; nb_channel < w->GetNumberOfChannels(); nb_channel++)
+      _trackCreated = SeqPanel->CreateTrack(_TrackKindFlag);
+      for (nb_channel = 0; nb_channel < w_tmp->GetNumberOfChannels(); nb_channel++)
 	{
-	  AudioPattern  *pattern = t->AddPattern(w);
+	  AudioPattern  *pattern = _trackCreated->CreateAudioPattern(w);
 	  pattern->OnDirectEdit();
-	  
-	  _trackIndex = t->GetIndex();
+
+	  _trackIndex = _trackCreated->GetIndex();
 	  NotifyActionManager();
 	}
     }
+  WaveCenter.RemoveWaveFile(w_tmp);
 }
 
 void cImportWaveAction::RemoveWaveTrack(bool selectFromIndex)
 {
   if (selectFromIndex == true)
-    SeqPanel->SelectTrack(_trackIndex);
-  SeqPanel->DeleteSelectedTrack();
+    SeqPanel->DeleteTrack(_trackCreated);
+  else
+    SeqPanel->DeleteSelectedTrack();
 }
 
 void cImportWaveAction::Redo ()
@@ -105,10 +107,11 @@ cImportWaveAction			cImportWaveAction::operator=(const cImportWaveAction& right)
 
 /********************   class cImportMidiAction   ********************/
 
-cImportMidiAction::cImportMidiAction (wxString& path, bool kind)
+cImportMidiAction::cImportMidiAction (wxString& path, trackType kind)
 {
   mTrackKindFlag = kind;
   mMidiPath = path;
+  trackCreated = NULL;
 }
 
 void cImportMidiAction::Do ()
@@ -121,8 +124,8 @@ void cImportMidiAction::Do ()
 	{
 	  if (m->GetTrack(i)->GetMaxPos() > 0)
 	  {
-		Track *t = SeqPanel->AddTrack(mTrackKindFlag);
-		t->AddPattern(m->GetTrack(i));
+		trackCreated = SeqPanel->CreateTrack(mTrackKindFlag);
+		trackCreated->CreateMidiPattern(m->GetTrack(i));
 	  }
 	}
   }
@@ -136,7 +139,7 @@ void cImportMidiAction::Redo ()
 
 void cImportMidiAction::Undo ()
 { 
-  SeqPanel->RemoveTrack(); 
+  SeqPanel->DeleteTrack(trackCreated); 
 }
 
 cImportMidiAction			cImportMidiAction::operator=(const cImportMidiAction& right)
@@ -151,7 +154,7 @@ cImportMidiAction			cImportMidiAction::operator=(const cImportMidiAction& right)
 
 /********************   class cImportAkaiAction   ********************/
 
-cImportAkaiAction::cImportAkaiAction (wxString& path, bool kind)
+cImportAkaiAction::cImportAkaiAction (wxString& path, trackType kind)
 {
   mTrackKindFlag = kind;
   mDevice = path.substr(0, path.find(wxT(":"), 0));
@@ -168,6 +171,7 @@ cImportAkaiAction::cImportAkaiAction (wxString& path, bool kind)
   mPath = mPath.substr(1, opos - 2);
   cout << "device: " << mDevice.mb_str() << "; part: " << mPart 
        << "; name: " << mName.mb_str() << "; path: " << mPath.mb_str() << endl;
+  trackCreated = NULL;
 }
 
 void cImportAkaiAction::Do ()
@@ -180,8 +184,8 @@ void cImportAkaiAction::Do ()
     try
       {
 	WaveFile *w = new WaveFile(sample->buffer, sample->size, 2, sample->rate);
-	Track *t = SeqPanel->AddTrack(true);
-	t->AddPattern(w);
+	trackCreated = SeqPanel->CreateTrack(eAudioTrack);
+	trackCreated->CreateAudioPattern(w);
       }
     catch (...)
       {	
@@ -199,7 +203,7 @@ void cImportAkaiAction::Redo ()
 
 void cImportAkaiAction::Undo ()
 { 
-  SeqPanel->RemoveTrack(); 
+  SeqPanel->DeleteTrack(trackCreated); 
 }
 
 cImportAkaiAction			cImportAkaiAction::operator=(const cImportAkaiAction& right)
@@ -323,9 +327,9 @@ void cCreateEffectAction::AddRackEffect ()
     {
     	if (mRackIndex < 0)
 			mRackIndex = RackPanel->RackTracks.size();
-    	//RackPanel->AddToSelectedTrack(*mStartInfo, mPluginLoader);
-    	RackPanel->AddRackAndChannel(*mStartInfo, mPluginLoader);
-	    NotifyActionManager();
+
+	if (RackPanel->AddNewRack(*mStartInfo, mPluginLoader))
+	  NotifyActionManager();
     }
 }
 
@@ -342,9 +346,11 @@ const wxString		cCreateEffectAction::getHistoryLabel()
 void cCreateEffectAction::RemoveRackEffect ()
 { 
 	if (mRackIndex < 0)
-		RackPanel->RemoveSelectedRackAndChannel();
+	  RackPanel->RemoveSelectedRackTrack();
 	else
-		RackPanel->RemoveTrack(mRackIndex);				// TODO: Should be identified by StartInfo and PluginLoader
+	  RackPanel->RemoveRackTrack(mRackIndex);
+	// TODO: Should be identified by StartInfo and PluginLoader
+	// TODO bis : must delete this undo engine...
 	NotifyActionManager();
 }
 
@@ -382,7 +388,7 @@ void cCreateRackAction::Do ()
 {
   if (mPluginLoader)
   {
-	RackPanel->AddTrack(*mStartInfo, mPluginLoader);
+	RackPanel->AddNewRack(*mStartInfo, mPluginLoader);
 	NotifyActionManager();
   }
 }
@@ -394,7 +400,7 @@ void cCreateRackAction::Redo ()
 
 void cCreateRackAction::Undo ()
 { 
-  RackPanel->RemoveTrack();
+  RackPanel->RemoveLastRackTrack();
 }
 
 cCreateRackAction			cCreateRackAction::operator=(const cCreateRackAction& right)
