@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "WaveFile.h"
@@ -11,6 +11,7 @@ using namespace std;
 
 WaveFile::WaveFile()
 {
+
   InitVars();
 
   // This file must be opened in read/write mode.
@@ -93,6 +94,7 @@ WaveFile::~WaveFile()
 
 void           WaveFile::InitVars()
 {
+  associated_pattern = 1;
   Channel_to_read = 0;
   Data = NULL;
   LoadedInMem = false;

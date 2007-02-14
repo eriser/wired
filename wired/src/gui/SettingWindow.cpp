@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include <vector>
@@ -295,7 +295,7 @@ void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
 
 void SettingWindow::OnMidiInClick(wxCommandEvent &event)
 {
-  vector<long>::iterator	i;
+  vector<int>::iterator	i;
 
   MidiLoaded = true;
   
@@ -556,17 +556,20 @@ void SettingWindow::Load()
     }
 }
 
-void SettingWindow::LoadChannels(wxCheckListBox* to, vector<long>& from)
+void SettingWindow::LoadChannels(wxCheckListBox* to, vector<int>& from)
 {
+  int	max;
   int	i;
 
-  for (i = 0; i < to->GetCount(); i++)
+  max = to->GetCount();
+  for (i = 0; i < max; i++)
     to->Check(i, false);
   for (i = 0; i < from.size(); i++)
-    to->Check(from[i]);
+    if (from[i] >= 0 && from[i] < max)
+      to->Check(from[i]);
 }
 
-void SettingWindow::SaveChannels(wxCheckListBox* from, vector<long>& to)
+void SettingWindow::SaveChannels(wxCheckListBox* from, vector<int>& to)
 {
   int	i;
 

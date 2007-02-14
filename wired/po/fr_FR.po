@@ -787,7 +787,7 @@ msgstr "Espace disque restant : "
 #: src/gui/MainWindow.cpp:1631 ../src/gui/MainWindow.cpp:1759
 #: ../src/gui/MainWindow.cpp:1779 ../src/gui/MainWindow.cpp:1802
 msgid "Free memory : "
-msgstr "Memoire disponibe : "
+msgstr "Memoire disponible : "
 
 #: src/gui/MainWindow.cpp:1638 ../src/gui/MainWindow.cpp:1766
 #: ../src/gui/MainWindow.cpp:1786 ../src/gui/MainWindow.cpp:1809

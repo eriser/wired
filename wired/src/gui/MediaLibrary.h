@@ -1,5 +1,5 @@
-// Copyright (C) 2004 by Wired Team
-// Under the GNU General Public License
+// Copyright (C) 2004-2007 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
 
 #ifndef __MEDIALIBRARY_H__
 #define __MEDIALIBRARY_H__
@@ -29,20 +29,24 @@ class					MLTree;
 #define MEDIALIBRARY_COLLAPSEUP_IMG	wxT("ihm/toolbar/collapse_up.png")
 #define MEDIALIBRARY_COLLAPSEDO_IMG	wxT("ihm/toolbar/collapse_up.png")
 
-#define MEDIALIBRARY_FILEAUDIOUP_IMG	wxT("ihm/toolbar/file_audio_up.png")
-#define MEDIALIBRARY_FILEAUDIODO_IMG	wxT("ihm/toolbar/file_audio_up.png")
-#define MEDIALIBRARY_FILEVIDEOUP_IMG	wxT("ihm/toolbar/file_mov_up.png")
-#define MEDIALIBRARY_FILEVIDEODO_IMG	wxT("ihm/toolbar/file_mov_up.png")
-#define MEDIALIBRARY_FILEMIDIUP_IMG	wxT("ihm/toolbar/file_midi_up.png")
-#define MEDIALIBRARY_FILEMIDIDO_IMG	wxT("ihm/toolbar/file_midi_up.png")
-#define MEDIALIBRARY_FILEFXUP_IMG	wxT("ihm/toolbar/file_fx_up.png")
-#define MEDIALIBRARY_FILEFXDO_IMG	wxT("ihm/toolbar/file_fx_up.png")
+#ifndef DEBUG_DISABLE_FILTERS
+ #define MEDIALIBRARY_FILEAUDIOUP_IMG	wxT("ihm/toolbar/file_audio_up.png")
+ #define MEDIALIBRARY_FILEAUDIODO_IMG	wxT("ihm/toolbar/file_audio_up.png")
+ #define MEDIALIBRARY_FILEVIDEOUP_IMG	wxT("ihm/toolbar/file_mov_up.png")
+ #define MEDIALIBRARY_FILEVIDEODO_IMG	wxT("ihm/toolbar/file_mov_up.png")
+ #define MEDIALIBRARY_FILEMIDIUP_IMG	wxT("ihm/toolbar/file_midi_up.png")
+ #define MEDIALIBRARY_FILEMIDIDO_IMG	wxT("ihm/toolbar/file_midi_up.png")
+ #define MEDIALIBRARY_FILEFXUP_IMG	wxT("ihm/toolbar/file_fx_up.png")
+ #define MEDIALIBRARY_FILEFXDO_IMG	wxT("ihm/toolbar/file_fx_up.png")
+#endif
 
 #define ML_BACKGROUND			wxColour(142, 142, 169)
 #define ML_FOREGROUND			wxColour(142, 142, 155)
 #define NB_SORTSELECT_CHOICES		(4)
-#define DEFAULT_SORTSELECT_VALUE	wxT("Sort by...")
 
+#ifndef DEBUG_1647295
+ #define DEFAULT_SORTSELECT_VALUE	wxT("Sort by...")
+#endif
 
 /**
  * The MediaLibrary class is the main class for the media library feature
@@ -72,7 +76,9 @@ class				MediaLibrary : public wxPanel
   MLTree			*MLTreeView;
 
  protected:
-
+  
+  wxWindow                     *Parent;
+  void                          Converts(wxString Path);
 /**
  *Boolean used to know if the wav file is preview
 */
@@ -103,7 +109,9 @@ class				MediaLibrary : public wxPanel
  * wxToolBar containing the butons dedicated to the filters of the filetypes
  * This wxToolBar is located under the BottomToolbar
 */
+#ifndef DEBUG_DISABLE_FILTERS
   wxToolBar			*FiltersToolbar;
+#endif
 
 /**
  * wxBoxSizer containing all the previously defined wxToolBar
@@ -114,8 +122,9 @@ class				MediaLibrary : public wxPanel
  * wxComboBox designed to hold the rolling menu offering sorting
  * possibilities
 */
+#ifndef DEBUG_1647295
   wxComboBox			*SortSelect;
-
+#endif
 /**
  * FileConversion for converting files to the used samplerate before using
  * them in the Sequencer
@@ -208,7 +217,9 @@ class				MediaLibrary : public wxPanel
  * handling
  * \return void
 */
+#ifndef DEBUG_1647295
   void				OnSortToggle(wxCommandEvent &WXUNUSED(event));
+#endif
 
 /**
  * The OnFilterAudio function is called by launching the Filter Audio action
@@ -218,7 +229,9 @@ class				MediaLibrary : public wxPanel
  * handling
  * \return void
 */
+#ifndef DEBUG_DISABLE_FILTERS
   void				OnFilterAudio(wxCommandEvent &WXUNUSED(event));
+#endif
 
 /**
  * The OnFilterMIDI function is called by launching the Filter MIDI action
@@ -228,7 +241,9 @@ class				MediaLibrary : public wxPanel
  * handling
  * \return void
 */
+#ifndef DEBUG_DISABLE_FILTERS
   void				OnFilterMIDI(wxCommandEvent &WXUNUSED(event));
+#endif
 
 /**
  * The OnFilterVideo function is called by launching the Filter Video action
@@ -238,7 +253,9 @@ class				MediaLibrary : public wxPanel
  * handling
  * \return void
 */
+#ifndef DEBUG_DISABLE_FILTERS
   void				OnFilterVideo(wxCommandEvent &WXUNUSED(event));
+#endif
 
 /**
  * The OnFilterEffects function is called by launching the Filter Effects 
@@ -248,7 +265,9 @@ class				MediaLibrary : public wxPanel
  * handling
  * \return void
 */
+#ifndef DEBUG_DISABLE_FILTERS
   void				OnFilterEffects(wxCommandEvent &WXUNUSED(event));
+#endif
 
 /**
  * The OnRightClick function is called by using the mouse right click on a
@@ -330,7 +349,9 @@ class				MediaLibrary : public wxPanel
  * Struct s_combo_choice containing the list of possible choices in the 
  * select button dedicated to the filetypes sorting.
 */
+#ifndef DEBUG_1647295
 extern const struct s_combo_choice	SortSelectChoices[NB_SORTSELECT_CHOICES + 1];
+#endif
 
 /**
  * The enum table
@@ -343,11 +364,15 @@ enum
    MediaLibrary_Insert,
    MediaLibrary_Start_Preview,
    MediaLibrary_Stop_Preview,
+#ifndef DEBUG_1647295
    MediaLibrary_SortSelect,
+#endif
+#ifndef DEBUG_DISABLE_FILTERS
    MediaLibrary_FilterAudio,
    MediaLibrary_FilterMIDI,
    MediaLibrary_FilterVideo,
    MediaLibrary_FilterEffects
+#endif
 };
 
 

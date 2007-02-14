@@ -1,28 +1,36 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
-
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
 
 #ifndef __MIDIPATTERN_H__
 #define __MIDIPATTERN_H__
 
-using namespace std;
-
+#include <vector>
 #include <list>
 #include "Pattern.h"
+#include "WiredDocument.h"
 
 class				MidiTrack;
 class				MidiEvent;
 class				MidiFileEvent;
 
-class				MidiPattern: public Pattern
+class				MidiPattern : public Pattern
 {
+ private:
+  WiredDocument*		_documentParent;
+
+  // only set when we add a pattern from MidiTrack class
+  wxString			_filename;
+  unsigned short		_noTrack;
+
  public:
-  MidiPattern(double pos, double endpos, long trackindex);
-  MidiPattern(double pos, MidiTrack *t, long trackindex);
+  MidiPattern(WiredDocument *parent, double pos, double endpos, long trackindex);
+  MidiPattern(WiredDocument *parent, double pos, MidiTrack *t, long trackindex);
   ~MidiPattern();
-  
+
+ private:
+  void				SetMidiTrack(MidiTrack* midiTrack);
+
+ public:
   void				AddEvent(MidiEvent *event);
   void				AddEvent(MidiFileEvent *event);
   void				Update();
@@ -33,13 +41,17 @@ class				MidiPattern: public Pattern
   Pattern			*CreateCopy(double pos);
   void				DrawMidi();
   void				Split(double pos);
-  
-  vector<MidiEvent *>		Events;
-  list<MidiEvent *>		temp;
-  list<MidiEvent *>		RecordingEvents;  // Events being record (waits for NOTE OFF)
+
+  // WiredDocument implementation
+  void				Save();
+  void				Load(SaveElementArray data);
+
+  std::vector<MidiEvent *>	Events;
+  std::list<MidiEvent *>	temp;
+  std::list<MidiEvent *>	RecordingEvents;  // Events being record (waits for NOTE OFF)
 
  protected:
-  void				Init();
+  void				Init(WiredDocument* parent);
   void				OnClick(wxMouseEvent &e);
   void				OnLeftUp(wxMouseEvent &e);
   void				OnDoubleClick(wxMouseEvent &e);
@@ -50,7 +62,7 @@ class				MidiPattern: public Pattern
   void				OnPaint(wxPaintEvent &e);
   void				OnHelp(wxMouseEvent &event);
 
-  vector<MidiEvent *>		*GetEvents() { return (&Events); };
+  std::vector<MidiEvent *>	*GetEvents() { return (&Events); };
   wxBitmap			*Bmp;
   wxMemoryDC			memDC;
   unsigned short		ppqn;

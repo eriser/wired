@@ -1,8 +1,13 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "AudioCenter.h"
 #include <wx/wx.h>
+#include "SaveCenter.h"
+#include "MLTree.h"
+//#include "<wx/filefn.h>"
+
+extern SaveCenter *saveCenter;
 
 AudioCenter::AudioCenter()
 {
@@ -16,10 +21,26 @@ AudioCenter::~AudioCenter()
 WaveFile *AudioCenter::AddWaveFile(wxString filename)
 {
   WaveFile *w;
-  
+  list<WaveFile *>::iterator i;
+  wxString path;
+  wxString to;
   try
     {
-      w = new WaveFile(filename, false, WaveFile::rwrite);
+      path = saveCenter->getAudioDir();
+      to = path + filename.AfterLast('/');
+      for (i = WaveFiles.begin(); i != WaveFiles.end(); i++)
+	{
+	if ((*i)->Filename == to)
+	  {
+	    w = new WaveFile((*i)->Filename, false, WaveFile::rwrite);
+	    WaveFiles.push_back(w);
+	    return (w);
+	  }
+	}
+      if (!wxFileExists(to))
+	wxCopyFile(filename, to, false);
+      MediaLibraryPanel->MLTreeView->AddFileInProject(to, true);
+      w = new WaveFile(to, false, WaveFile::rwrite);
       WaveFiles.push_back(w);
     }
   catch (...)
@@ -35,16 +56,26 @@ WaveFile *AudioCenter::AddWaveFile(wxString filename)
   return (w);
 }
 
-void		AudioCenter::RemoveWaveFile(WaveFile *File)
+void		AudioCenter::RemoveWaveFile(WaveFile *file)
 {
-  list<WaveFile *>::iterator i;
+  list<WaveFile *>::iterator	i;
+  int				cpt;
+  list<WaveFile *>::iterator	save;
 
-  for (i = WaveFiles.begin(); i != WaveFiles.end(); i++)
-  	if (*i == File)
-  	{
-	  	WaveFiles.erase(i);
-	    delete *i;
-  	}
+  for (cpt = 0, save = WaveFiles.end(), i = WaveFiles.begin(); i != WaveFiles.end(); i++)
+      if ((*i)->Filename == file->Filename)
+	{
+	  cpt++;
+	  if ((*i) == file)
+	    save = i;
+	}
+  if (save != WaveFiles.end() && (*save)->GetAssociatedPattern() == 1)
+    WaveFiles.erase(save);
+  if (cpt == 1 && (*save)->GetAssociatedPattern() == 1)
+    {
+      MediaLibraryPanel->MLTreeView->DelFileInProject(file->Filename, true);
+      wxRemoveFile(file->Filename);
+    }
 }
 
 void AudioCenter::Clear()

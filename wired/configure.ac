@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([Wired], [0.4], [wired@bloodshed.net])
+AC_INIT([Wired], [0.4alpha], [wired@bloodshed.net])
 
 
 # Auxiliary files.
@@ -71,16 +71,10 @@ AC_ARG_ENABLE(optimize,
 # can enable or disable portaudio integration
 # Portaudio options
 AC_ARG_ENABLE(portaudio,
-	[  --disable-portaudio Enable or disable portaudio v19 built-in (default enabled)],
+	[  --enable-portaudio Enable or disable portaudio v19 built-in (default enabled)],
 	[enable_portaudio="$enableval"],
 	[enable_portaudio="yes"])
 AM_CONDITIONAL(PORTAUDIO, test x$enable_portaudio = xyes)
-
-AC_ARG_ENABLE(portmidi,
-	[  --disable-portmidi Enable or disable portmidi built-in (default enabled)],
-	[enable_portmidi="$enableval"],
-	[enable_portmidi="yes"])
-AM_CONDITIONAL(PORTMIDI, test x$enable_portmidi = xyes)
 
 AC_ARG_WITH(alsa, 
             [  --with-alsa (default=auto)],
@@ -106,11 +100,6 @@ AC_CHECK_LIB([sndfile], [sf_open], [LIBSNDFILE='yes'], AC_MSG_ERROR([Couldn't fi
 AC_CHECK_LIB([xml2], [xmlParseMemory], [ XML2F='yes' ], AC_MSG_ERROR([Couldn't find libxml2]))
 AC_CHECK_LIB([samplerate], [src_new], [SRC='yes' ], AC_MSG_ERROR([Couldn't find libsamplerate]))
 
-# If we don't use our portmidi built-in
-if test "$enable_portmidi" = no; then
-   AC_CHECK_LIB([portmidi], [Pm_Initialize], [PORTMIDI='yes' ], AC_MSG_ERROR([Couldn't find libportmidi]))
-fi
-
 # libs used in plugins
 if test x"$enable_plugins" = xyes; then
    AC_CHECK_LIB([SoundTouch], [soundtouch_ac_test], [SNDTOUC='yes'], AC_MSG_ERROR([Couldn't find lib SoundTouch]))
@@ -129,8 +118,7 @@ reqwx=2.6.0
 AM_PATH_WXCONFIG($reqwx, wxWin=1)
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
-                wxWidgets must be installed on your system
-                but wx-config script couldn't be found.
+		wxWidgets must be installed on your system.
 
 		Please check that wx-config is in path, the directory
 		where wxWidgets libraries are installed (returned by
@@ -167,11 +155,6 @@ AC_CHECK_HEADERS([fcntl.h netinet/in.h stdlib.h string.h unistd.h math.h sys/typ
 
 # libs headers
 AC_CHECK_HEADERS([sndfile.h samplerate.h])
-
-# If we don't use our portmidi built-in
-if test "$enable_portmidi" = no; then
-   AC_CHECK_HEADERS([portmidi.h])
-fi
 
 # headers used in plugins
 if test x"$enable_plugins" = xyes; then
@@ -270,7 +253,19 @@ ALL_LINGUAS="fr_FR it_IT zh_TW.Big5"
 AM_GNU_GETTEXT([use-libtool])
 AM_GNU_GETTEXT_VERSION([0.14.4])
 
-AC_CONFIG_FILES([Makefile
+AC_CONFIG_FILES([src/plugins/beatbox/Makefile
+		src/plugins/compressor/Makefile
+		src/plugins/crusher/Makefile
+		src/plugins/delay/Makefile
+		src/plugins/filter/Makefile
+		src/plugins/loop_sampler/Makefile
+		src/plugins/akai_sampler/Makefile
+		src/plugins/reverb/Makefile
+		src/plugins/synth/Makefile
+		src/plugins/chorus/Makefile
+		src/plugins/wahwah/Makefile
+		src/plugins/test/Makefile
+		Makefile
 		po/Makefile.in
 		intl/Makefile
 		src/Makefile
@@ -281,6 +276,8 @@ AC_CONFIG_FILES([Makefile
 		src/fileloader/Makefile
 		src/gui/Makefile
 		src/midi/Makefile
+		src/midi/portmidi/Makefile
+		src/midi/portmidi/porttime/Makefile
 		src/mixer/Makefile
 		src/plugins/Makefile
 		src/redist/Makefile
@@ -303,27 +300,6 @@ AC_CONFIG_FILES([Makefile
 		src/data/ihm/widgets/Makefile
 		src/data/ihm/settings/Makefile
 		src/data/plugins/Makefile
-		src/data/dssi/Makefile
-		src/conf/Makefile
-		src/xml/Makefile
-		src/samplerate/Makefile
-		src/codec/Makefile
-		src/wiredvideo/Makefile])
-
-# Add Plugins files
-if test "$enable_plugins" = yes; then
-AC_CONFIG_FILES([src/plugins/beatbox/Makefile
-		src/plugins/compressor/Makefile
-		src/plugins/crusher/Makefile
-		src/plugins/delay/Makefile
-		src/plugins/filter/Makefile
-		src/plugins/loop_sampler/Makefile
-		src/plugins/akai_sampler/Makefile
-		src/plugins/reverb/Makefile
-		src/plugins/synth/Makefile
-		src/plugins/chorus/Makefile
-		src/plugins/wahwah/Makefile
-		src/plugins/test/Makefile
 		src/data/plugins/akaisampler/Makefile
 		src/data/plugins/beatbox/Makefile
 		src/data/plugins/compressor/Makefile
@@ -333,23 +309,17 @@ AC_CONFIG_FILES([src/plugins/beatbox/Makefile
 		src/data/plugins/loopsampler/Makefile
 		src/data/plugins/reverb/Makefile
 		src/data/plugins/wahwah/Makefile
-		src/data/plugins/chorus/Makefile])
-fi
-
-# Add Codecs files
-if test "$enable_codecs" = yes; then
-AC_CONFIG_FILES([src/codec/wiredcodec/Makefile
+		src/data/plugins/chorus/Makefile
+		src/data/dssi/Makefile
+		src/conf/Makefile
+		src/xml/Makefile
+		src/samplerate/Makefile
+		src/codec/Makefile
+		src/codec/wiredcodec/Makefile
 		src/codec/wiredcodec/mpeg/Makefile
 		src/codec/wiredcodec/flac/Makefile
 		src/codec/wiredcodec/vorbis/Makefile
-])
-fi
-
-# Add Portmidi files
-if test "$enable_portmidi" = yes; then
-   AC_CONFIG_FILES([src/midi/portmidi/Makefile
-		    src/midi/portmidi/porttime/Makefile])
-fi
+		src/wiredvideo/Makefile])
 
 AC_OUTPUT
 

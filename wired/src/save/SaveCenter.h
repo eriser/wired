@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef _SAVECENTER_H_
@@ -20,18 +20,24 @@
 //define standard XML tags for the project file
 #define WIRED_TAG_WIREDDOC wxT("wiredDoc")
 
+typedef struct
+{
+  wxString		name;
+  int			id;
+  SaveElementArray	data;
+} loadedDocument;
+
+WX_DEFINE_SORTED_ARRAY(loadedDocument *, LoadedDocumentArray);
 WX_DEFINE_ARRAY_PTR(SaveElementArray*, SaveElementArrayArray);
+
 WX_DECLARE_STRING_HASH_MAP(SaveElementArrayArray*, SaveElementArrayHashMap);
 WX_DECLARE_STRING_HASH_MAP(WiredDocumentArray*, WiredDocumentArrayHashMap);
 
 class SaveCenter : public WiredDocument
 {
  public:
-  /** Constructor.
-   * \param projectPath The path to the project. If none is set, a default one will 
-   * be assigned.
-   */
-  SaveCenter(wxFileName projectPath = wxString(wxT("")));
+  /** Constructor. */
+  SaveCenter();
 
   /** Destructor. */
   ~SaveCenter();
@@ -48,10 +54,17 @@ class SaveCenter : public WiredDocument
    */
   void		Load(SaveElementArray data);
   
+  /** Cleans the WiredDocument tree.
+   * This method is used to restore the initial state of the tree before a load.
+   * It calls the DeleteChildren() method of every WiredDocument.
+   */
+  void		CleanTree();
+
   /** Returns the project path. */
   wxFileName	getProjectPath();
 
-  /** Sets the project path
+  /** Sets the project path.
+   * As soon as the project path is set, every needed folder is created.
    * \param projectPath the new project path.
    */
   void		setProjectPath(wxFileName projectPath);
@@ -70,8 +83,6 @@ class SaveCenter : public WiredDocument
    * \param audioDir The new path to the audio directory.
    */
   void		setAudioDir(wxString audioDir);
-
-  bool		getSaved();
 
   /** Sets the project name
    * \param projectName the new project name.
@@ -109,6 +120,24 @@ class SaveCenter : public WiredDocument
    * \return The data contained in the external file.
    */
   SaveElementArray	LoadFile(wxString filename);
+
+  /** Dumps the whole WiredDocument objects tree. */
+  void			DumpWiredDocumentTree();
+  
+  /** Dumps the name of a WiredDocument object and calls itself 
+   * recursively over its children. 
+   * \param currentNode The current WiredDocument.
+   * \param depth The current depth, will be the number of spaces for indentation.
+   */
+  void			DumpWiredDocumentSubTree(WiredDocument *currentNode,
+						 int depth);
+
+  /** Checks if the path is the path to a valid project.
+   * A path is a valid project path if it contains a wired.xml file.
+   * TODO : Add deeper checks.
+   * \param path The path to the folder to check.
+   */
+  bool			IsProject(wxFileName path);
 
  private:
    /** Writes an element in the xmlfile.
@@ -161,17 +190,28 @@ class SaveCenter : public WiredDocument
    */
   wxFileName	getPathFromRelativeTag(wxString tag);
 
+  /** Returns true if the project has been saved at least once, else false */
+  bool		getSaved();
+
+  /** Sets the saved state of the session. */
+  void		setSaved(bool saved = true);
+
+  /** Removes the files in the project folder.
+   * Should be used only if the project hasn't been saved.
+   */
+  void		CleanProject();
+
  private:
-  
+
   /** Dumps a SaveElementArrayHashMap.
    * As this structure is quite complicated, this function is mainly used for debug.
-   * \param The SaveElementArrayHashMap to dump.
+   * \param dataLoaded The SaveElementArrayHashMap to dump.
    */
   void			DumpSaveElementArrayHashMap(SaveElementArrayHashMap dataLoaded);
 
   /** Dumps a WiredDocumentArrayHashMap.
    * As this structure is quite complicated, this function is mainly used for debug.
-   * \param The WireDocumentArrayHashMap to dump.
+   * \param toProcess The WireDocumentArrayHashMap to dump.
    */
   void			DumpWiredDocumentArrayHashMap(WiredDocumentArrayHashMap toProcess);
 
@@ -179,7 +219,7 @@ class SaveCenter : public WiredDocument
    * This method is the second part of the project loading.
    * \param dataLoaded The data to redistribute.
    */
-  void			RedistributeHash(SaveElementArrayHashMap dataLoaded);
+  void			RedistributeHash(LoadedDocumentArray dataLoaded);
 
   /** The path to the project. */
   wxFileName		_projectPath;
@@ -193,14 +233,20 @@ class SaveCenter : public WiredDocument
    * the suppression of WiredSessionXml.
    */ 
   wxFileName		_audioDir;
-  //
 
-  /** Stores if the project has already been saved once.
-   * When it is set to false, we will act like a "Save As".
-   */ 
+  /** Stores if the project has been saved at least once. */
   bool			_saved;
+
 };
 
 extern SaveCenter*	saveCenter;
+
+/** Used to sort the LoadedDocumentArray
+ * \param doc1 the first document.
+ * \param doc2 the second document.
+ * \return 1 if doc1>doc2, -1 if doc1<doc2, 0 else
+ */
+int		SortDataLoaded(loadedDocument *doc1, loadedDocument *doc2);
+
 
 #endif /*_SAVECENTER_H_ */

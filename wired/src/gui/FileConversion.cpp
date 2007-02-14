@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include <wx/string.h>
@@ -245,11 +245,34 @@ bool				FileConversion::ConvertSamplerate(wxString &FileName)
 //	FileConversionMutex.Unlock();
 }
 
+bool				FileConversion::ConvertSamplerateNoGraph(wxString &FileName)
+{
+	bool HasChangedPath;
+	return ConvertSamplerateNoGraph(FileName, HasChangedPath);
+//	EnqueueAction(AConvertSampleRate, FileName, wxString(wxT("")));
+//	FileConversionMutex.Unlock();
+}
+bool				FileConversion::ConvertSamplerateNoGraph(wxString &FileName, bool &HasChangedPath)
+{
+	int					HasConvertedFile;
+
+	HasConvertedFile = _SampleRateConverter.OpenFileNoGraph(FileName, _Parent);
+	if (HasConvertedFile == wxID_CANCEL)
+		return false;
+	else if (HasConvertedFile == wxID_NO)
+		return true;
+	else if (HasConvertedFile == wxID_YES)
+	{
+		HasChangedPath = true;
+		return true;
+	}
+	return true;
+}
 bool				FileConversion::ConvertSamplerate(wxString &FileName, bool &HasChangedPath)
 {
 	int					HasConvertedFile;
 
-    HasConvertedFile = _SampleRateConverter.OpenFile(FileName, _Parent);
+	HasConvertedFile = _SampleRateConverter.OpenFile(FileName, _Parent);
 	if (HasConvertedFile == wxID_CANCEL)
 		return false;
 	else if (HasConvertedFile == wxID_NO)
@@ -303,7 +326,7 @@ void				FileConversion::ImportWavePattern(wxString &FileName)
 //														NULL, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 //														| wxPD_REMAINING_TIME);
 //	Progress->Update(1);
-	cActionManager::Global().AddImportWaveAction(FileName, true, true);
+	cActionManager::Global().AddImportWaveAction(FileName, eAudioTrack, true);
 //	Progress->Update(80);
 	//CreateUndoRedoMenus(EditMenu); // ??
 //	Progress->Update(99);

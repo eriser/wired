@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include <wx/progdlg.h>
@@ -771,8 +771,6 @@ void BeatBoxChannel::SetLev(int lev)
   AskUpdateChannel = true;
   AskUpdateLevel = true;
   DRM31->AskUpdate();
-  
-  //KnobLev->SetValue(lev);
 }
 
 void BeatBoxChannel::SetPan(int pan)
@@ -781,12 +779,11 @@ void BeatBoxChannel::SetPan(int pan)
   PatternMutex->Lock();
   Params[PAN] = fpan;
   PatternMutex->Unlock();
-  
+  MidiPan[2] = pan;
+
   AskUpdateChannel = true;
   AskUpdatePan = true;
   DRM31->AskUpdate();
-
-  //KnobPan->SetValue(pan);
 }
 
 void BeatBoxChannel::SetStart(int start)
@@ -795,12 +792,11 @@ void BeatBoxChannel::SetStart(int start)
   PatternMutex->Lock();
   Params[STA] = s;
   PatternMutex->Unlock();
-  
+  MidiStart[2] = start;
+
   AskUpdateChannel = true;
   AskUpdateStart = true;
   DRM31->AskUpdate();
-  
-  //KnobStart->SetValue(start);
 }
 
 
@@ -810,11 +806,11 @@ void BeatBoxChannel::SetEnd(int end)
   PatternMutex->Lock();
   Params[END] = e;
   PatternMutex->Unlock();
-  
+  MidiEnd[2] = end;
+
   AskUpdateChannel = true;
   AskUpdateEnd = true;
   DRM31->AskUpdate();
-  //KnobEnd->SetValue(end);
 }
 
 void BeatBoxChannel::SetPitch(int pitch)
@@ -823,12 +819,11 @@ void BeatBoxChannel::SetPitch(int pitch)
   PatternMutex->Lock();
   Params[PIT] = p;
   PatternMutex->Unlock();
+  MidiPitch[2] = pitch;
   
   AskUpdateChannel = true;
   AskUpdatePitch = true;
   DRM31->AskUpdate();
-
-  //KnobPitch->SetValue(pitch);
 }
 
 void BeatBoxChannel::SetVel(int vel)
@@ -837,12 +832,11 @@ void BeatBoxChannel::SetVel(int vel)
   PatternMutex->Lock();
   Params[VEL] = v;
   PatternMutex->Unlock();
+  MidiVel[2] = vel;
   
   AskUpdateChannel = true;
   AskUpdateVel = true;
   DRM31->AskUpdate();
-
-  //KnobVel->SetValue(vel);
 }
 
 void BeatBoxChannel::SetPolyphony(int voices)

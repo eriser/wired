@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __PLUGINLOADER_H__
@@ -46,9 +46,21 @@ class				PluginLoader
   PluginLoader(WiredExternalPluginMgr *PlugMgr, unsigned long UniqueId);
 
 /**
+ * This contructor takes 2 params.
+ * \param PlugMgr manager a WiredExternalPluginMgr pointer, it manages all external plugins in Wired.
+ * \param IdPlugin it's TEH plugin's identifier.
+ */
+  PluginLoader(WiredExternalPluginMgr *PlugMgr, PlugStartInfo &info, int IdPlugin);
+
+/**
  * The main destructor.
  */
   ~PluginLoader();
+
+  /**
+   * Init basics vars
+   */
+  void				Init(WiredExternalPluginMgr* PlugMgr);
 
 /**
  * Called when the host initializes the plugin's shared library (usually at startup).

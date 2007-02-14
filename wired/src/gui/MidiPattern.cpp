@@ -1,8 +1,5 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
-
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
 
 #include <math.h>
 #include <vector>
@@ -13,35 +10,31 @@
 #include "ColoredBox.h"
 #include "MidiPattern.h"
 #include "HelpPanel.h"
-#include "../midi/midi.h"
-#include "../midi/MidiFile.h"
-#include "../sequencer/Track.h"
+#include "midi.h"
+#include "MidiFile.h"
+#include "Track.h"
 
 BEGIN_EVENT_TABLE(MidiPattern, wxWindow)
   EVT_PAINT(MidiPattern::OnPaint)
 END_EVENT_TABLE()
 
-
 static int midi_pattern_count = 1;
 
-MidiPattern::MidiPattern(double pos, double endpos, long trackindex)
-  : Pattern(pos, endpos, trackindex)
+MidiPattern::MidiPattern(WiredDocument *parent, double pos, double endpos, long trackindex)
+  : Pattern(parent, wxT("MidiPattern"), pos, endpos, trackindex)
 {
-  Init();
+  Init(parent);
 }
 
-MidiPattern::MidiPattern(double pos, MidiTrack *t, long trackindex)
-  : Pattern(pos, ((double) t->GetMaxPos()) / (Seq->SigNumerator * t->GetPPQN()), trackindex)
+MidiPattern::MidiPattern(WiredDocument *parent, double pos,
+			 MidiTrack *midiTrack, long trackindex)
+  : Pattern(parent, wxT("MidiPattern"), pos,
+	    ((double) midiTrack->GetMaxPos()) / 
+	    (Seq->SigNumerator * midiTrack->GetPPQN()),
+	    trackindex)
 {
-  vector<MidiFileEvent *>		me;
-  unsigned long				i;
-
-  Init();
-  ppqn = t->GetPPQN();
-  temp.clear();
-  me = t->GetMidiEvents();
-  for (i = 0; i < me.size(); i++)
-    AddEvent(me[i]);    
+  Init(parent);
+  SetMidiTrack(midiTrack);
 }
 
 MidiPattern::~MidiPattern()
@@ -49,14 +42,13 @@ MidiPattern::~MidiPattern()
   OptPanel->DeleteTools(this);
 }
 
-void					MidiPattern::Init()
+void					MidiPattern::Init(WiredDocument* parent)
 {
-  wxString	s;
-
-  s.Printf(wxT("T%d M%d"), TrackIndex + 1, midi_pattern_count++);
+  _filename.clear();
+  _noTrack = 0;
+  Name.Printf(wxT("T%d M%d"), TrackIndex + 1, midi_pattern_count++);
   PenColor = CL_MIDI_DRAW;
   BrushColor = CL_MIDIDRAWER_BRUSH;
-  Name = s.c_str();
   ppqn = 1;
   Bmp = 0x0;
   Connect(GetId(), wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
@@ -72,6 +64,21 @@ void					MidiPattern::Init()
   Connect(GetId(), wxEVT_ENTER_WINDOW, (wxObjectEventFunction)(wxEventFunction)
 	  (wxMouseEventFunction) &MidiPattern::OnHelp);
   SeqPanel->PutCursorsOnTop();
+}
+
+// we can't keep MidiTrack instance, because in MidiFile dtor, it delete them
+void					MidiPattern::SetMidiTrack(MidiTrack* midiTrack)
+{
+  vector<MidiFileEvent *>		me;
+  unsigned long				i;
+
+  _filename = midiTrack->GetFileName();
+  _noTrack = midiTrack->GetNoTrack();
+  ppqn = midiTrack->GetPPQN();
+  temp.clear();
+  me = midiTrack->GetMidiEvents();
+  for (i = 0; i < me.size(); i++)
+    AddEvent(me[i]);
 }
 
 void					MidiPattern::OnHelp(wxMouseEvent &event)
@@ -108,7 +115,7 @@ Pattern					*MidiPattern::CreateCopy(double pos)
   MidiPattern				*p;
   vector<MidiEvent *>::iterator		o;
 
-  p = new MidiPattern(pos, pos + Length, TrackIndex);
+  p = new MidiPattern(_documentParent, pos, pos + Length, TrackIndex);
   for (o = Events.begin(); o != Events.end(); o++)
     p->Events.push_back(*o);
   p->ppqn = ppqn;
@@ -149,15 +156,16 @@ void					MidiPattern::Split(double pos)
 
   if ((Position < pos) && (pos < EndPosition))
     {
-      SeqMutex.Lock();
 #ifdef __DEBUG__
       cout << " >>> HERE OLD:\n\t Position = " << Position << "\n\t Length = " << Length << "\n\t EndPosition = " << EndPosition << endl;
       cout << "new pos: " << pos << endl;
 #endif
-      p = new MidiPattern(pos, EndPosition, TrackIndex);
+      p = new MidiPattern(_documentParent, pos, EndPosition, TrackIndex);
 #ifdef __DEBUG__
       cout << " >>> HERE NEW :\n\t p->Position = " << p->Position << "\n\t p->Length = " << p->Length << "\n\t p->EndPosition = " << p->EndPosition << endl;
 #endif
+
+      SeqMutex.Lock();
       Length = (EndPosition = pos) - Position;
       for (o = Events.begin(), pos -= Position; o != Events.end(); )
 	if ((*o)->Position >= pos)
@@ -195,7 +203,6 @@ void					MidiPattern::Split(double pos)
       p->Update();
       Update();
       SeqMutex.Unlock();
-      Seq->Tracks[TrackIndex]->AddColoredPattern((Pattern *) p);
     }
   else
     cout << "C QUOI CE DELIRE DE POS ?? " << pos << " MAIS mpos.x ? " << Pattern::GetMPosition().x << endl;
@@ -345,3 +352,33 @@ void					MidiPattern::OnPaint(wxPaintEvent &e)
   Pattern::DrawName(dc, s);
 }
 
+void				MidiPattern::Save()
+{
+  SaveElement*			saved;
+
+  saved = new SaveElement(wxT("FileName"), _filename);
+  saved->addAttribute(wxT("NoTrack"), (int)_noTrack);
+  saveDocData(saved);
+  Pattern::Save();
+}
+
+void				MidiPattern::Load(SaveElementArray data)
+{
+  int				i;
+
+  for (i = 0; i < data.GetCount(); i++)
+    {
+      if (data[i]->getKey() == wxT("FileName"))
+	{
+	  MidiFile*	midiFile;
+	  int		noTrack;
+
+	  midiFile = new MidiFile(data[i]->getValue());
+	  noTrack = data[i]->getAttributeInt(wxT("NoTrack"));
+	  if (noTrack < midiFile->GetNumberOfTracks())
+	    SetMidiTrack(midiFile->GetTrack(noTrack));
+	  delete midiFile;
+	  Pattern::Load(data);
+	}
+    }
+}

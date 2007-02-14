@@ -1,4 +1,4 @@
-CPPFLAGS = $(shell wx-config --cflags) @SAMPLERATE_CFLAGS@ -Wall -Wunused
+CPPFLAGS = $(shell wx-config --cflags) @SAMPLERATE_CFLAGS@ -I ../xml/ -I ../save/ `xml2-config --cflags `
 
 if PORTAUDIO
 CPPFLAGS += -I../portaudio/include

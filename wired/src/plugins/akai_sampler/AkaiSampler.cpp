@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "AkaiSampler.h"
@@ -35,7 +35,8 @@ BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
 END_EVENT_TABLE()
 
   AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
-: Plugin(startinfo, initinfo), PolyphonyCount(8), Volume(100.f), AkaiProgram(0x0)
+    : Plugin(startinfo, initinfo), PolyphonyCount(8), Volume(100.f), AkaiProgram(0x0),
+      WiredDocument(wxT("AkaySampler"))
 {
 
   sampleid = 0;
@@ -169,321 +170,6 @@ bool AkaiSampler::IsAudio()
 bool AkaiSampler::IsMidi()
 {
   return true;
-}
-
-void AkaiSampler::Load(int fd, long size)
-{
-
-  long count;
-  /**** DEBUG ONLY ****/
-  /**
-    int i;
-    char *buffer = (char *)malloc(size);
-    count = read(fd, buffer, size);
-    printf("[WiredSampler] -- SAVE FILE DUMP --\n");
-    for (i = 0; i < count ; i++)
-    {
-    if (!(i & 15))
-    printf("[WiredSampler] %08X   ", i);
-    printf(" %02X ", buffer[i] & 0xFF);
-    if (!((i + 1) & 15))
-    {
-    printf("   ");
-    for (int j = i & 15; j >= 0; j--)
-    if ((buffer[i - j] >= 32) && (buffer[i - j] < 127))
-    printf("%c", buffer[i - j]);
-    else
-    printf(".");
-    printf("\n");
-    }
-    }
-    if (i & 15)
-    {
-    for (int j = i; j & 15; j++)
-    printf("    ");
-    printf("   ");
-    for (int j = i & 15; j > 0; j--)
-    if ((buffer[count - j] >= 32) && (buffer[count - j] < 127))
-    printf("%c", buffer[count - j]);
-    else
-    printf(".");
-    printf("\n");
-    }
-    printf("[WiredSampler] -- END OF DUMP --\n");
-    free(buffer);
-    lseek(fd, -count, SEEK_CUR);
-  **/
-  /**** END OF DEBUG ****/
-
-
-  long nbent;
-  count = 0;
-  count += read(fd, &nbent, sizeof(nbent));
-  cerr << "[WiredSampler] Loading " << nbent << " samples..." << endl;
-  for (int i = 0; i < nbent; i++)
-  {
-    long len;
-    char *str;
-
-    count += read(fd, &len, sizeof(len));
-    str = (char *)malloc(len + 1);
-    count += read(fd, str, len);
-    str[len] = 0;
-    wxString smpname(str, *wxConvCurrent);
-    free(str);
-    cerr << "[WiredSampler] Loaded sample " << smpname << endl;
-    unsigned long id;
-    count += read(fd, &id, sizeof(id));
-    cerr << "[WiredSampler] Loaded ID " << id << endl;
-    count += read(fd, &len, sizeof(len));
-    str = (char *)malloc(len + 1);
-    count += read(fd, str, len);
-    str[len] = 0;
-    wxString s(str, *wxConvCurrent);
-    wxString s2;
-    ASamplerSample *ass = NULL; 
-    if (s.StartsWith(wxT("[AKAI]"), &s2))
-    {
-      wxString dev(s2.SubString(0, s2.Find(':') - 1));
-      s2 = s2.SubString(s2.Find(':') + 1, s2.Len());
-      wxString path = s2; //.SubString(10, s2.size() - 10);
-      int pos = path.Find('/');
-      int part = path.SubString(0, pos).c_str()[0] - 64;
-      path = path.SubString(pos + 1, path.size() - pos);
-      //int opos = path.Find('/', true);
-      int opos = path.Find('/');
-      wxString name = path.SubString(opos + 1, path.Len());
-      path = path.SubString(0, opos - 1);
-      AkaiPrefix = wxT("[AKAI]");
-      AkaiPrefix += dev.c_str();
-      AkaiPrefix += ':';
-      AkaiPrefix += ((char)part + 64);
-      AkaiPrefix += '/';
-      AkaiPrefix += path.c_str();
-      AkaiPrefix += '/';
-      cerr << "device: " << dev << "; part: " << part << "; path: " << path << "; filename: " << name << endl;
-      cerr << "AkaiPrefix: " << AkaiPrefix << endl;
-      if ((opos = name.Find('/')) != -1)
-      {
-        cout << "Dual akai Sample found, getting the 2 samples and mixing it..." << endl;
-        wxString smp1 = name.SubString(0, opos - 1);
-        wxString smp2 = name.SubString(opos + 1, name.Len());
-        t_akaiSample *sampleL = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)smp1.c_str());
-        t_akaiSample *sampleR = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)smp2.c_str());
-        if (sampleL && sampleR)
-        {
-          ass = new ASamplerSample(this, sampleL, sampleR, AkaiPrefix, id);
-          free(sampleL);
-          free(sampleR);
-        }
-      }
-      else
-      {
-        t_akaiSample *sample = akaiGetSampleByName((char *)dev.c_str(), part, (char *)path.c_str(), (char *)name.c_str());
-        if (sample)
-        {
-          ass = new ASamplerSample(this, sample, NULL, AkaiPrefix, id);
-          free(sample);
-        }
-      }
-    }
-    else
-      ass = new ASamplerSample(this, new WaveFile(wxString(str, *wxConvCurrent), true), id);
-    if (ass)
-    {
-      cerr << "[WiredSampler] Loaded wav " << wxString(str, *wxConvCurrent) << endl;
-      Samples->List->AddEntry(smpname, (void *)ass);
-    }
-    else
-      cerr << "[WiredSampler] Wavefile " << wxString(str, *wxConvCurrent) << " can't be loaded skipping..." << endl;
-    free(str);
-    count += read(fd, &len, sizeof(len));
-    if (ass)
-    {
-      cerr << "[WiredSampler] Setting loop_count to " << len << endl;
-      ass->SetLoopCount(len);
-    }
-    count += read(fd, &len, sizeof(len));
-    if (ass)
-    {
-      cerr << "[WiredSampler] Setting loop_start to " << len << endl;
-      ass->SetLoopStart(len);
-    }
-    count += read(fd, &len, sizeof(len));
-    if (ass)
-    {
-      cerr << "[WiredSampler] Setting loop_end to " << len << endl;
-      ass->SetLoopEnd(len);
-    }
-    int nbplug;
-    count += read(fd, &nbplug, sizeof(nbplug));
-    cerr << "[WiredSampler] Loading " << nbplug << " plugins..." << endl;
-    for (int j = 0; j < nbplug ; j++)
-    {
-      count += read(fd, &len, sizeof(len));
-      str = (char *)malloc(len + 1);
-      count += read(fd, str, len);
-      str[len] = 0;
-      wxString type(str, *wxConvCurrent);
-      free(str);
-      count += read(fd, &len, sizeof(len));
-      str = (char *)malloc(len + 1);
-      count += read(fd, str, len);
-      str[len] = 0;
-      wxString name(str, *wxConvCurrent);
-      free(str);
-      cerr << "[WiredSampler] Creating effect type " << type << " name " << name << endl;
-      ASPlugin *p = NULL;
-      count += read(fd, &len, sizeof(len));
-      count += len;
-      if (type == EFFECTSNAMES[0])
-        p = new ASEnvel(this, name);
-      else if (type == EFFECTSNAMES[1])
-        p = new ASLoop(this, name);
-      if (p)
-      {
-        p->SetSample(ass);
-        ass->AddEffect(p);
-        PlugPanel->AddPlug(p);
-        cerr << "[WiredSampler] Loading " << len << " bytes of data for this plugin" << endl;
-        p->Load(fd, len);
-      }
-      else
-      {
-        cerr << "[WiredSampler] Plugin type unknown, can't load it !" << endl;
-        lseek(fd, len, SEEK_CUR);
-      }
-    }
-  }
-  count += read(fd, &nbent, sizeof(nbent));
-  cerr << "[WiredSampler] Loading " << nbent << " keygroups..." << endl;
-  for (int i = 0; i < nbent; i++)
-  {
-    long len;
-    char *str;
-
-    unsigned long id;
-    count += read(fd, &id, sizeof(id));
-    cerr << "[WiredSampler] Loaded ID " << id << endl;
-    long lokey;
-    count += read(fd, &lokey, sizeof(lokey));
-    cerr << "[WiredSampler] Loaded low key " << lokey << endl;
-    long hikey;
-    count += read(fd, &hikey, sizeof(hikey));
-    cerr << "[WiredSampler] Loaded high key " << hikey << endl;
-    ASamplerKeygroup *askg = new ASamplerKeygroup(this, lokey, hikey, id);
-    Keygroups.push_back(askg);
-    count += read(fd, &len, sizeof(len));
-    cerr << "[WiredSampler] Need to associate with sample " << len << endl;
-    vector<ASListEntry *> v = Samples->List->GetEntries();
-    for (vector<ASListEntry *>::iterator i = v.begin(); i != v.end(); i++)
-    {
-      ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
-      if (ass->GetID() == len)
-      {
-        cerr << "[WiredSampler] Sample found, associating..." << endl;
-        ass->SetKeygroup(askg);
-        askg->SetSample(ass);
-        break;
-      }
-    }
-  }
-  cerr << "[WiredSampler] Config loaded, total " << count << " bytes read (of " << size << ")." << endl;
-}
-
-long AkaiSampler::Save(int fd)
-{
-  long count = 0;
-
-  vector<ASListEntry *> entries = Samples->List->GetEntries();
-  long nbent = entries.size();
-  count += write(fd, &nbent, sizeof(nbent));
-  cerr << "[WiredSampler] Saving " << nbent << " samples..." << endl;
-  for (vector<ASListEntry *>::iterator i = entries.begin(); i != entries.end(); i++)
-  {
-    long len;
-    char *str;
-
-    cerr << "[WiredSampler] Saving sample " << (*i)->GetName() << endl;
-    ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
-    str = (char *)(*i)->GetName().c_str();
-    len = wxStrlen(wxString(str, *wxConvCurrent));
-    count += write(fd, &len, sizeof(len));
-    count += write(fd, str, len);
-    len = ass->GetID();
-    cerr << "[WiredSampler] Saving ID " << len << endl;
-    count += write(fd, &len, sizeof(len));
-    str = (char *)ass->GetSample()->Filename.c_str();
-    len = wxStrlen(wxString(str, *wxConvCurrent));
-    cerr << "[WiredSampler] Saving wavefile " << ass->GetSample()->Filename << endl;
-    count += write(fd, &len, sizeof(len));
-    count += write(fd, str, len);
-    len = ass->GetLoopCount();
-    cerr << "[WiredSampler] Saving loop_count " << len << endl;
-    count += write(fd, &len, sizeof(len));
-    len = ass->GetLoopStart();
-    cerr << "[WiredSampler] Saving loop_start " << len << endl;
-    count += write(fd, &len, sizeof(len));
-    len = ass->GetLoopEnd();
-    cerr << "[WiredSampler] Saving loop_end " << len << endl;
-    count += write(fd, &len, sizeof(len));
-    cerr << "[WiredSampler] Saving effects..." << endl;
-    vector<ASPlugin *> effects = ass->GetEffects();
-    nbent = effects.size();
-    count += write(fd, &nbent, sizeof(nbent));
-    cerr << "[WiredSampler] Saving " << nbent << " effects..." << endl;
-    for (vector<ASPlugin *>::iterator j = effects.begin(); j != effects.end(); j++)
-    {
-      str = (char *)(*j)->GetType().c_str();
-      len = wxStrlen(wxString(str, *wxConvCurrent));
-      cerr << "[WiredSampler] Saving plugin type " << str << endl;
-      count += write(fd, &len, sizeof(len));
-      count += write(fd, str, len);
-      str = (char *)(*j)->Name.c_str();
-      len = wxStrlen(wxString(str, *wxConvCurrent));
-      cerr << "[WiredSampler] Saving plugin name " << str << endl;
-      count += write(fd, &len, sizeof(len));
-      count += write(fd, str, len);
-      unsigned long pos = lseek(fd, 0, SEEK_CUR);
-      count += write(fd, &len, sizeof(len));
-      cerr << "[WiredSampler] Saving plugin data " << endl;
-      len = (*j)->Save(fd);
-      unsigned long pos2 = lseek(fd, 0, SEEK_CUR);
-      lseek(fd, pos, SEEK_SET);
-      cerr << "[WiredSampler] plugin data len " << len << endl;
-      write(fd, &len, sizeof(len));
-      lseek(fd, pos2, SEEK_SET);
-      count += len;
-    }
-    
-  }
-  nbent = Keygroups.size();
-  count += write(fd, &nbent, sizeof(nbent));
-  cerr << "[WiredSampler] Saving " << nbent << " keygroups..." << endl;
-  for (vector<ASamplerKeygroup*>::iterator i = Keygroups.begin(); i != Keygroups.end(); i++)
-  {
-    long len;
-    char *str;
-
-    len = (*i)->GetID();
-    cerr << "[WiredSampler] Saving ID " << len << endl;
-    count += write(fd, &len, sizeof(len));
-    len = (*i)->GetLowKey();
-    cerr << "[WiredSampler] Saving lokey " << len << endl;
-    count += write(fd, &len, sizeof(len));
-    len = (*i)->GetHighKey();
-    cerr << "[WiredSampler] Saving hikey " << len << endl;
-    count += write(fd, &len, sizeof(len));
-    ASamplerSample *smp = (*i)->GetSample();
-    if (!smp)
-      len = 0;
-    else
-      len = smp->GetID();
-    cerr << "[WiredSampler] Saving associated sample " << len << endl;
-    count += write(fd, &len, sizeof(len));
-  }
-  cerr << "[WiredSampler] Config saved, total " << count << " bytes written." << endl;
-  return count;
 }
 
 void AkaiSampler::LoadProgram()
@@ -757,65 +443,277 @@ void AkaiSampler::Update()
 
 void AkaiSampler::OnOpenFile(wxCommandEvent &event)
 {
-  //  FileLoader *dlg = new FileLoader(this, -1, "Load AKAI patch", true, false, NULL);
-  wxString s = OpenFileLoader(_("Load AKAI program"), 0x0, true);
-  if (!s.empty()) //dlg->ShowModal() == wxID_OK)
-  {
-    string filename = (const char *)s.mb_str(*wxConvCurrent); //dlg->GetSelectedFile();
-    //dlg->Destroy();
-
-    wxProgressDialog *Progress = new wxProgressDialog(_("Loading AKAI program"),
-        _("Please wait..."),
-        100, this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
-        | wxPD_REMAINING_TIME);
-    Progress->Update(1);
-    try
+  vector<wxString> exts;
+  exts.push_back(_("xml\tWiredSampler xml patch file (*.xml)"));
+  
+  wxString selfile = OpenFileLoader(_("Load Patch"), &exts);
+  if (!selfile.empty())
     {
-      DeleteProgram();
+      LoadPatch(selfile);
+    }
+  else
+    cout << "[WiredSampler] could not open patch file" << endl;
+  cout << "OnOpenFile(): end" << endl;
+}
 
-      Progress->Update(10);
-      string mDevice, mFilename, mName;
-      int mPart;
+void	AkaiSampler::LoadPatch(wxString filename)
+{
+  SaveElementArray	data;
+  int			dataIt;
+  wxString		s;
 
-      mDevice = filename.substr(0, filename.find(":", 0));
-      filename = filename.substr(filename.find(":", 0) + 1,
-          filename.size() - filename.find(":", 0));
-      mFilename = filename.substr(10, filename.size() - 10);
-      int pos = mFilename.find("/", 0);
-      mPart = mFilename.substr(0, pos).c_str()[0] - 64;
-      mFilename = mFilename.substr(pos, mFilename.size() - pos);
-      int opos = 0;
-      while ((pos = mFilename.find("/", opos)) != string::npos)
-        opos = pos + 1;
-      mName = mFilename.substr(opos, mFilename.size() - opos);
-      mFilename = mFilename.substr(1, opos - 2);
-      AkaiPrefix = wxT("[AKAI]");
-      AkaiPrefix += wxString(mDevice.c_str(), *wxConvCurrent);
-      AkaiPrefix += ':';
-      AkaiPrefix += ((char)mPart + 64);
-      AkaiPrefix += '/';
-      AkaiPrefix += wxString(mFilename.c_str(), *wxConvCurrent);
-      AkaiPrefix += '/';
-      cout << "device: " << mDevice << "; part: " << mPart << "; name: " << mName << "; path: " << mFilename << endl;
-      cout << "AkaiPrefix: " << AkaiPrefix << endl;
-      Progress->Update(20);
-      if (!(AkaiProgram = akaiLoadProgram((char *)mDevice.c_str(), mPart,
-              (char *)mFilename.c_str(),
-              (char *)mName.c_str())))
-        cout << "[SAMPLER] Cannot open AKAI program !" << endl;
+  data = AskData(filename);
+  std::cerr << "[WiredSampler] loading : " << filename.mb_str() << std::endl;
+
+  //nettoyer le patch
+
+  for(dataIt = 0; dataIt < data.GetCount(); dataIt++)
+    {
+      if(data[dataIt]->getKey() == wxT("samples"))
+	LoadSamples(data[dataIt]);
+      else if(data[dataIt]->getKey() == wxT("keygroups"))
+	LoadKeygroups(data[dataIt]);
+    }
+}
+
+void	AkaiSampler::LoadSamples(SaveElement *data)
+{
+  SaveElementArray	samplesData;
+
+  int			dataIt;
+
+  unsigned long		id;
+  wxString		filename;
+  wxString		name;
+  long			loop_start;
+  long			loop_end;
+  int			loop_count;
+  wxString		s;
+  ASamplerSample	*sample;
+  WaveFile		*w;
+
+  std::cerr << "Load Samples" << std::endl;
+
+  samplesData = data->getChildren();
+
+  for(dataIt = 0; dataIt < samplesData.GetCount(); dataIt++)
+    {
+      filename = samplesData[dataIt]->getValue();
+      name = samplesData[dataIt]->getAttribute(wxT("name"));
+      loop_count = samplesData[dataIt]->getAttributeInt(wxT("loop_count"));
+      s.clear();
+      s = samplesData[dataIt]->getAttribute(wxT("loop_start"));
+      s.ToLong(&loop_start);
+      s.clear();
+      s = samplesData[dataIt]->getAttribute(wxT("loop_end"));
+      s.ToLong(&loop_end);
+      s.clear();
+      s = samplesData[dataIt]->getAttribute(wxT("id"));
+      s.ToULong(&id);
+
+      std::cerr << "data loaded : id " << id << " name " << name.mb_str() << std::endl;
+      std::cerr << "loop_start " << loop_start << " loop_end " << loop_end << std::endl;
+      std::cerr << "loop_count " << loop_count << std::endl;
+
+
+      w = new WaveFile(filename, true);
+      sample = new ASamplerSample(this, w, id); 
+
+      Samples->List->AddEntry(name, sample);
+      sample->SetLoopCount(loop_count);
+      sample->SetLoopStart(loop_start);
+      sample->SetLoopEnd(loop_end);
+    }
+}
+
+void	AkaiSampler::LoadKeygroups(SaveElement *data)
+{
+  SaveElementArray	keygroupsData;
+  int			dataIt;
+
+  int		lo;
+  int		hi;
+  unsigned long	id;
+  unsigned long	sampleId;
+  wxString	s;
+
+  ASamplerKeygroup	*keygroup;
+  ASamplerSample	*sample;
+
+  keygroupsData = data->getChildren();
+
+  std::cerr << "[WiredSampler] LoadKeygroups" << std::endl;
+  std::cerr << "[WiredSampler] " << keygroupsData.GetCount() << " keygroups" << std::endl;
+  
+  for(dataIt = 0; dataIt < keygroupsData.GetCount(); dataIt++)
+    {
+      lo = keygroupsData[dataIt]->getAttributeInt(wxT("lokey"));
+      hi = keygroupsData[dataIt]->getAttributeInt(wxT("hikey"));
+      s.clear();
+      s = keygroupsData[dataIt]->getAttribute(wxT("id"));
+      s.ToULong(&id);
+      s.clear();
+      s = keygroupsData[dataIt]->getAttribute(wxT("sample_id"));
+      s.ToULong(&sampleId);
+
+      std::cerr << "data loaded : lo = " << lo << " hi = " << hi << std::endl;
+      std::cerr << "       sample_id = " << sampleId << " id = " << id << std::endl;
+
+      sample = Samples->GetSampleById(sampleId);
+      if(!sample)
+	std::cerr << "sample not found : id : " << sampleId << std::endl;
       else
-        LoadProgram();
+	{
+	  keygroup = new ASamplerKeygroup(this, lo, hi, id);
+	  
+	  sample->SetKeygroup(keygroup);
 
-      Progress->Update(99);
+	  keygroup->SetSample(sample);
+	  keygroup->SetLowKey(lo);
+	  keygroup->SetHighKey(hi);
+	  
+	  Keygroups.push_back(keygroup);
+	}
     }
-    catch (...)
+
+}
+
+void	AkaiSampler::Load(SaveElementArray data)
+{
+
+}
+
+void AkaiSampler::OnSaveFile(wxCommandEvent &event)
+{
+  vector<wxString> exts;
+  exts.push_back(_("xml\tWiredSampler xml patch file (*.xml)"));
+  
+  wxString selfile = SaveFileLoader(_("Save Patch"), &exts);
+  if (!selfile.empty())
+      SavePatch(wxString(GetName()) << wxT("/patch"), selfile);      
+  else
+    cout << "[WiredSampler] could not open save file" << endl;
+  cout << "OnSavePatch(): end" << endl;
+  //delete dlg;
+}
+
+void	AkaiSampler::Save()
+{  
+  SaveSamples();
+  SaveKeygroups();
+}
+
+void	AkaiSampler::SaveSamples()
+{
+  SaveElement		*samplesData = new SaveElement();
+  SaveElement		*sampleData;
+  SaveElement		*effectData;
+
+  vector<ASListEntry *>			SamplesListEntries;
+  vector<ASListEntry *>::iterator	SamplesListIt;
+
+  ASamplerSample		*sample; 
+
+  vector<ASPlugin *>		effects;
+  vector<ASPlugin *>::iterator	effectsIt;
+  
+  wxString	s;
+
+  samplesData->setKey(wxT("samples"));
+
+  SamplesListEntries = Samples->List->GetEntries();
+  
+  for (SamplesListIt = SamplesListEntries.begin(); 
+       SamplesListIt != SamplesListEntries.end(); 
+       SamplesListIt++)
+  {
+    sampleData = new SaveElement();
+
+    sample = (ASamplerSample *)(*SamplesListIt)->GetEntry();
+
+    sampleData->setKey(wxT("sample"));
+    sampleData->setValue(sample->GetSample()->Filename);
+
+    s.clear();
+    s << sample->GetID();
+    sampleData->addAttribute(wxT("id"), s);
+
+    sampleData->addAttribute(wxT("name"), 
+			     (*SamplesListIt)->GetName());
+
+    s.clear();
+    s << sample->GetLoopStart();
+    sampleData->addAttribute(wxT("loop_start"), s);
+
+    s.clear();
+    s << sample->GetLoopCount();
+    sampleData->addAttribute(wxT("loop_count"), s);
+
+    s.clear();
+    s << sample->GetLoopEnd();
+    sampleData->addAttribute(wxT("loop_end"), s);
+
+    effects = sample->GetEffects();
+    for (effectsIt = effects.begin(); 
+	 effectsIt != effects.end(); 
+	 effectsIt++)
     {
-      cout << "[SAMPLER] Cannot open AKAI program !" << endl;
+      effectData = new SaveElement();
+      effectData->setKey(wxT("effect"));
+      effectData->addAttribute(wxT("type"),
+			       (*effectsIt)->GetType());
+      effectData->addAttribute(wxT("name"),
+			       (*effectsIt)->Name);
+
+      //first we have to implement SavePatch() in every plugin
+      //      effectData->addChild((*effectIt)->SavePatch());
     }
-    delete Progress;
+    samplesData->addChildren(sampleData);
   }
-  //  else
-  //  dlg->Destroy();
+  saveDocData(samplesData, wxString(GetName()) << wxT("/patch"));
+}
+
+void	AkaiSampler::SaveKeygroups()
+{
+  SaveElement	*keygroupsData;
+  SaveElement	*keygroupData;
+
+  vector<ASamplerKeygroup*>::iterator	keygroupsIt;
+
+  ASamplerSample	*sample;
+  wxString		s;
+
+  keygroupsData = new SaveElement();
+  keygroupsData->setKey(wxT("keygroups"));
+
+
+  for (keygroupsIt = Keygroups.begin(); 
+       keygroupsIt != Keygroups.end(); 
+       keygroupsIt++)
+  {
+    keygroupData = new SaveElement();
+
+    keygroupData->setKey(wxT("keygroup"));
+
+    s.clear();
+    s << (*keygroupsIt)->GetID();
+    keygroupData->addAttribute(wxT("id"), s);
+    keygroupData->addAttribute(wxT("lokey"), 
+			       (*keygroupsIt)->GetLowKey());
+    keygroupData->addAttribute(wxT("hikey"), 
+			       (*keygroupsIt)->GetHighKey());
+    
+    sample = (*keygroupsIt)->GetSample();
+    if (sample)
+      {
+	s.clear();
+	s << sample->GetID();
+	keygroupData->addAttribute(wxT("sample_id"), s);
+      }
+    keygroupsData->addChildren(keygroupData);
+  }
+  saveDocData(keygroupsData, wxString(GetName()) << wxT("/patch"));
+
 }
 
 void AkaiSampler::OnVolume(wxScrollEvent &event)
@@ -987,10 +885,6 @@ void AkaiSampler::OnEffectButton(wxCommandEvent &event)
     wxPoint pt(((wxWindow *)event.GetEventObject())->GetPosition());
     PopupMenu(menu, pt.x, pt.y);
   }
-}
-
-void AkaiSampler::OnSaveFile(wxCommandEvent &event)
-{
 }
 
 /******** Main and mandatory library functions *********/

@@ -1,3 +1,5 @@
+// Copyright (C) 2004-2007 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
 #include "WiredDocument.h"
 
 //Only used for debug
@@ -7,15 +9,27 @@
 
 extern SaveCenter	*saveCenter;
 
+int WiredDocument::id = 0;
+
 WiredDocument::WiredDocument(wxString name, WiredDocument *parent, bool noParent)
 {
+  increaseId();
+  _id = id;
+
   if (!parent && !noParent)
     parent = saveCenter;
   
+  _parent = parent;
   if(parent)
-    parent->Register(this);
+    _parent->Register(this);
 
   _name = name;
+}
+
+WiredDocument::~WiredDocument()
+{
+  if(_parent)
+    _parent->Unregister(this);
 }
 
 void		WiredDocument::Register(WiredDocument *child)
@@ -23,6 +37,21 @@ void		WiredDocument::Register(WiredDocument *child)
   _children.Add(child);
 }
 
+void		WiredDocument::Unregister(WiredDocument *child)
+{
+  _children.Remove(child);
+}
+
+void		WiredDocument::ChangeParent(WiredDocument *newdad)
+{
+  if (_parent)
+    _parent->Unregister(this);
+  if (newdad)
+    {
+      _parent = newdad;
+      newdad->Register(this);
+    }
+}
 
 WiredDocumentArray	WiredDocument::getChildren()
 {
@@ -51,25 +80,33 @@ void		WiredDocument::saveDocData(SaveElement *data, wxString file)
 void		WiredDocument::clearDocData()
 {
   SaveElementsHashMap::iterator	dataSaveIt;
-
-  for (dataSaveIt = _dataSave.begin();
-       dataSaveIt != _dataSave.end();
-       dataSaveIt++)
-    rmDocDataFile(dataSaveIt->first);
-
+  
+  while(!_dataSave.empty())
+    {
+      dataSaveIt = _dataSave.begin();
+      if(dataSaveIt->second)
+	rmDocDataFile(dataSaveIt->first);
+    }
+ 
+  //to be sure...
   _dataSave.clear();
 }
 
 void		WiredDocument::rmDocDataFile(wxString file)
 {
-//   int	i;
+   int	i;
+   
+   if(_dataSave.find(file) != _dataSave.end())
+     while(!_dataSave[file]->IsEmpty())
+       {
+	 if(_dataSave[file]->Item(0))
+	   delete (_dataSave[file]->Item(0));
+	 
+	 _dataSave[file]->RemoveAt(0);
+       }
+   
+   _dataSave.erase(file);
 
-//   if(_dataSave.find(file) != _dataSave.end())
-//     for (i = 0; i < _dataSave[file]->GetCount(); i++)
-//       if(_dataSave[file]->Item(i) != NULL)
-// 	delete(_dataSave[file]->Item(i));
-
-//   _dataSave.erase(file);
 }
 
 SaveElementsHashMap	WiredDocument::getDocData()
