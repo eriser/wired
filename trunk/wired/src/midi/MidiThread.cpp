@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "MidiThread.h"
@@ -8,8 +8,8 @@
 #include "MidiInDevice.h"
 #include "../gui/Threads.h"
 
-wxMutex					MidiMutex(wxMUTEX_RECURSIVE);
-wxMutex					MidiDeviceMutex(wxMUTEX_RECURSIVE);
+wxMutex					MidiMutex;
+wxMutex					MidiDeviceMutex;
 MidiThread				*MidiEngine;
 
 MidiThread::MidiThread()
@@ -54,12 +54,12 @@ void					MidiThread::OpenDevice(int id)
 void					MidiThread::OpenDefaultDevices()
 {
   MidiDeviceList::iterator		i;
-  vector<int>:: iterator		j;
+  vector<long>:: iterator		j;
   long					k;
   
   for (j = WiredSettings->MidiIn.begin(); j != WiredSettings->MidiIn.end(); j++)
     for (k = 0, i = DeviceList.begin(); i != DeviceList.end(); i++, k++)
-      if (k == (long)*j)
+	if (k == *j)
 	  {
 	    OpenDevice((*i)->Id);       
 	    break;

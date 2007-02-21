@@ -1,9 +1,9 @@
 LDFLAGS = $(shell wx-config --libs)
 
-CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I../sequencer -I../redist -I../audio -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../undo -I../libs/WiredWidgets/src -I../save
+CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I../sequencer -I../redist -I../audio -I../engine -I../mixer -I../midi -I../undo -I../libs/WiredWidgets/src
 
-if PORTAUDIO
-CPPFLAGS += -I../portaudio/include
+if PORTMIDI
+CPPFLAGS += -I../midi/portmidi/pm_common -I../midi/portmidi/porttime 
 endif
 
 noinst_LIBRARIES = libeditmidi.a

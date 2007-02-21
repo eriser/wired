@@ -1,4 +1,5 @@
-CPPFLAGS = $(shell wx-config --cflags) -I../xml -I../save -I../gui -I../plugins -I../fileloader -I../sequencer -I../redist -I../audio -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../editmidi -I../undo -I../libs/WiredWidgets/src -I../xml -I/usr/pkg/include/libxml2 `xml2-config --cflags` -I../
+CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../audio -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../editmidi -I../undo -I../libs/WiredWidgets/src
+
 if PORTAUDIO
 CPPFLAGS += -I../portaudio/include
 endif
@@ -20,4 +21,6 @@ libengine_a_SOURCES =			\
 		RingBuffer.hxx		\
 		RingError.h		\
 		Settings.cpp		\
-		Settings.h		
+		Settings.h		\
+		WiredSession.cpp	\
+		WiredSession.h

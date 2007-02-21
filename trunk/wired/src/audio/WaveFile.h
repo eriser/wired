@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __WAVEFILE_H__
@@ -75,11 +75,9 @@ class WaveFile
 
  private:
 
-  int	associated_pattern;
   /**
    * Initializes every attribute of this class.
    */
- 
   void	InitVars();
 
   /**
@@ -105,9 +103,7 @@ class WaveFile
 
 
  public:
- void	AddAssociatedPattern(){associated_pattern++;};
-  void	DelAssociatedPattern(){associated_pattern--;};
-  int	GetAssociatedPattern(){return associated_pattern;};
+
   /**
    * Duplicates the static WaveFile object.
    * \return returns a new instantiated WaveFile object.

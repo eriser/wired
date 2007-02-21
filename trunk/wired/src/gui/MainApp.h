@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __MAINAPP_H__
@@ -14,7 +14,6 @@
 #include "version.h"
 
 WX_DEFINE_ARRAY_PTR(wxThread *, wxArrayThread);
-
 
 class MainWindow;
 
@@ -35,7 +34,6 @@ class MainApp : public wxApp
 #endif
   void				OnUnhandledException();
   void				ShowWelcome();
-
 };
 
 DECLARE_APP(MainApp)

@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 // Copyright (C) 2004-2006 by Wired Team
@@ -11,7 +11,6 @@ using namespace					std;
 
 #include <vector>
 #include <wx/wx.h>
-#include "WiredDocument.h"
 
 #define ID_MIXER_REFRESH			(101020)
 #define TYPE_MIXER_REFRESH			(9876600)
@@ -33,13 +32,13 @@ class						FaderCtrl;
  * The MixerGui handle the display of the mixer in wired.
  * It is derived from the wxScrolledWindow class
 */
-class						MixerGui : public wxScrolledWindow, public WiredDocument
+class						MixerGui : public wxScrolledWindow
 {
  public:
   /**
    * This is the default constructor for MixerGui class derived from wxScrolledWindow
    */
-  MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size, WiredDocument* docParent = NULL);
+  MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size);
   /**
    * This is the default destructor for MixerGui class
    */
@@ -103,20 +102,6 @@ class						MixerGui : public wxScrolledWindow, public WiredDocument
    * \return a ChannelGui *
    */
   ChannelGui*					GetGuiByChan(Channel*);
-
-
-
-  /**
-   * WiredDocument implementation
-   */
-  void						Load(SaveElementArray data);
-
-  /**
-   * WiredDocument implementation
-   */
-  void						Save();
-
-
  protected:
   /**
    * UpdateChannelsPos function. This function update the channels positions on the gui

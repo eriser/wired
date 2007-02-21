@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "MidiFile.h"
@@ -85,13 +85,8 @@ NonMidiEvent::~NonMidiEvent()
 /*** Classe MidiTrack                                                              ***/
 /*************************************************************************************/
 
-MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN,
-		     wxString filename, unsigned int noTrack)
+MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN)
 {
-  // save parent's reference
-  _filename = filename;
-  _noTrack = noTrack;
-
   unsigned int abs = 0;
   unsigned char runningst = 0;
   ppqn = PPQN;
@@ -235,7 +230,7 @@ MidiFile::MidiFile(wxString filename)
         char s = Division & 0xFF;
         cout << "[MidiFile] Division :" << f << " frames " << s << " subframes" << endl;
       }*/
-      for (unsigned short noTrack = 0; noTrack < NbTracks; noTrack++)
+      for (unsigned short t = 0; t < NbTracks; t++)
       {
         ch.Size = 0;
         do
@@ -249,12 +244,11 @@ MidiFile::MidiFile(wxString filename)
           unsigned char *track = (unsigned char *)malloc(ch.Size);
           len = MIDIFile.Read(track, ch.Size);
           if (len == ch.Size)
-            Tracks.push_back(new MidiTrack(ch.Size, track, Division,
-					   filename, noTrack));
+            Tracks.push_back(new MidiTrack(ch.Size, track, Division));
           free(track);
         }
         else
-          cout << "[MidiFile] Can't find track #" << noTrack << endl;
+          cout << "[MidiFile] Can't find track #" << t << endl;
       }
     }
    else

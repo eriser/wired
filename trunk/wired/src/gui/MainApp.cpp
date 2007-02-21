@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include <new>
@@ -7,13 +7,9 @@
 #include <wx/event.h>
 #include <wx/timer.h>
 #include <wx/splash.h>
-#include <wx/dirdlg.h>
-#include <wx/filename.h>
-
 #include "MainApp.h"
 #include "MainWindow.h"
 #include "Settings.h"
-#include "SaveCenter.h"
 
 #include <config.h>
 
@@ -36,15 +32,14 @@ bool				MainApp::OnInit()
   wxBitmap			bitmap;
   wxSplashScreen*		splash = NULL;
 
+
 #if wxUSE_LIBPNG
   wxImage::AddHandler(new wxPNGHandler);
 #endif
 
   wxImage::AddHandler(new wxGIFHandler);
 
-  SetAppName(wxT("wired"));
-
-  // allow use of command line process provided by wxWidgets
+  SetAppName(L"wired");
   if (!wxApp::OnInit())
     return false;
 
@@ -68,7 +63,7 @@ bool				MainApp::OnInit()
       wxYield();
     }
 #if 0
-  const wxString		name = wxString::Format(wxT("wired-%s"), wxGetUserId().c_str());
+  const wxString		name = wxString::Format(L"wired-%s", wxGetUserId().c_str());
   Checker = new wxSingleInstanceChecker(name);
   if (Checker->IsAnotherRunning())
     {
@@ -78,12 +73,9 @@ bool				MainApp::OnInit()
   delete Checker;
 #endif  
   SetUseBestVisual(true);
-  SetVendorName(wxT("Wired Team"));
+  SetVendorName(L"Wired Team");
   //  Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxGetDisplaySize());
-
-  saveCenter = new SaveCenter();
-
-  Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxSize(800,600), saveCenter);
+  Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxSize(800,600));
   Frame->Show(true);
   SetTopWindow(Frame);
 
@@ -100,18 +92,9 @@ bool				MainApp::OnInit()
 			 _("Your configuration file is deprecated, settings need to be set"));
   if (WiredSettings->IsFirstLaunch())
     ShowWelcome();
-  
+
   // open stream, start fileconverter and co
-  if (Frame->Init() != 0)
-    {
-      cerr << "[WIRED] Critical error, initialisation failed" << endl;
-
-      // returning false segfault.. so we exit instead
-      exit(-1);
-    }
-
-  MainWin->OpenWizard();
-
+  Frame->Init();
   return (true);
 }
 

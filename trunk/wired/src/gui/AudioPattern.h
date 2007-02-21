@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __AUDIOPATTERN_H__
@@ -7,32 +7,17 @@
 #include "Pattern.h"
 #include "WaveDrawer.h"
 
-#include "WiredDocument.h"
-
 class					WriteWaveFile;
 class					Channel;
 
 class					AudioPattern: public Pattern, public WaveDrawer
 {
- private:
-  WiredDocument*			_documentParent;
-
  public:
-  Channel*				InputChan;
-  long					LastBlock;
-  wxString				FileName;
-  WaveFile				*wavefile;
- public:
-  AudioPattern(WiredDocument *parent, double pos, double endpos, long trackindex);
-  AudioPattern(WiredDocument *parent, double pos, WaveFile *w, long trackindex);
+  AudioPattern(double pos, double endpos, long trackindex);
+  AudioPattern(double pos, WaveFile *w, long trackindex);
+	AudioPattern(const AudioPattern& copy){*this = copy;};
   ~AudioPattern();
-
-  AudioPattern				operator=(const AudioPattern& right);
-
- private:
-  void					Init(WaveFile *w, WiredDocument* parent);
-
- public:  
+  
   float					**GetBlock(long block);
   void					Update();
   void					SetSelected(bool sel);
@@ -41,17 +26,22 @@ class					AudioPattern: public Pattern, public WaveDrawer
   void					GetRecordBuffer();
   void					OnBpmChange();
   void					SetDrawing();
+  void					SetFullWave(WaveFile *w);
   void					SetWave(WaveFile *w);
   void					SetDrawColour(wxColour c);
   void					Split(double pos);
   void					Merge(Pattern *pattern);
   void					OnDirectEdit();
-  inline WaveFile*			GetWaveFile(){return Wave;};
- Pattern				*CreateCopy(double pos);
+  Pattern				*CreateCopy(double pos);
   
-  // WiredDocument implementation
-  void					Save();
-  void					Load(SaveElementArray data);
+  AudioPattern				operator=(const AudioPattern& right);
+
+  Channel				*InputChan;
+  long					LastBlock;
+  wxString				FileName;
+
+ private:
+  void					Init(WaveFile *w);
 
  protected:
   void					OnClick(wxMouseEvent &e);

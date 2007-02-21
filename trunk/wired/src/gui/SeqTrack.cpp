@@ -1,7 +1,8 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <list>
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License
 
 #include <math.h>
 #include "SeqTrack.h"
@@ -16,29 +17,27 @@
 #include "Plugin.h"
 #include "DownButton.h"
 #include "VUMCtrl.h"
-#include "MidiInDevice.h"
-#include "MidiThread.h"
-#include "Sequencer.h"
+#include "../midi/MidiInDevice.h"
+#include "../midi/MidiThread.h"
+#include "../sequencer/Sequencer.h"
 
 // Counts number of Audio and MIDI tracks created yet
 int				AudioTrackCount = 0;
 int				MidiTrackCount = 0;
 
-SeqTrack::SeqTrack(long index, wxWindow *winParent, 
+SeqTrack::SeqTrack(long index, wxWindow *parent, 
 		   const wxPoint& pos = wxDefaultPosition, 
-		   const wxSize& size = wxDefaultSize,
-		   trackType type = eAudioTrack,
-		   WiredDocument* docParent = NULL)
-  : wxControl(winParent, -1, pos, size),
-    WiredDocument(wxT("SeqTrack"), docParent)
+		   const wxSize& size = wxDefaultSize, bool audio)
+  : wxControl(parent, -1, pos, size)
 {
-  wxString	str;
+  wxString					s;
+  //  wxTextAttr					attr;  
 
   Index = index;
-  ChanGui = NULL;
+  ChanGui = 0X0;
   Connected = 0x0;
   ConnectedRackTrack = 0x0;
-  Type = type;
+  IsAudio = audio;
   DeviceId = -1;
   Record = false;
   Mute = false;
@@ -49,18 +48,18 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
   wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
   
   // name of track
-  if (type == eAudioTrack)
-    str.Printf(_("Audio %d"), ++AudioTrackCount);
+  if (audio)
+    s.Printf(_("Audio %d"), ++AudioTrackCount);
   else
-    str.Printf(wxT("MIDI %d"), ++MidiTrackCount);
-  Text = new wxTextCtrl(this, SeqTrack_OnNameChange, str, wxPoint(6, 8), 
+    s.Printf(wxT("MIDI %d"), ++MidiTrackCount);
+  Text = new wxTextCtrl(this, SeqTrack_OnNameChange, s, wxPoint(6, 8), 
 			wxSize(TRACK_WIDTH - 68, 18), wxTE_PROCESS_ENTER);
   Text->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
 
   // add pixmap to see what sort of track it is (audio or midi).
   wxImage*		trackTypeImage;
 
-  if (Type != eAudioTrack)
+  if (!IsAudio)
     trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-midi.png")), wxBITMAP_TYPE_PNG);
   else
     trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-wave.png")), wxBITMAP_TYPE_PNG);
@@ -169,13 +168,13 @@ void					SeqTrack::OnDeviceHelp(wxMouseEvent &event)
 void					SeqTrack::FillChoices()
 {
   wxString				s;
-  vector<int>::iterator		i;
+  vector<long>::iterator		i;
   vector<wxString>::iterator		strIt;
   
   DeviceBox->Clear();
   DeviceBox->Append(wxString(_("None")));
   DeviceBox->SetSelection(0);
-  if (Type == eAudioTrack)
+  if (IsAudio)
     {
       for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end(); i++)
 	{
@@ -200,7 +199,7 @@ void					SeqTrack::RebuildConnectList()
 {
   list<RackTrack *>::iterator		itRackTrack;
   list<Plugin *>::iterator		itPlugin;
-  int					id = 1000;
+  long					id = 1000;
 
   // clear menu
   int	i = menu->GetMenuItemCount();
@@ -221,8 +220,8 @@ void					SeqTrack::RebuildConnectList()
     for (itPlugin = (*itRackTrack)->Racks.begin(); itPlugin != (*itRackTrack)->Racks.end();
 	 itPlugin++, id++)
       {
-	if ((Type == eAudioTrack && (*itPlugin)->IsAudio()) ||
-	    (Type == eMidiTrack && (*itPlugin)->IsMidi()))
+	if ((IsAudio && (*itPlugin)->IsAudio()) ||
+	    (!IsAudio && (*itPlugin)->IsMidi()))
 	  {
 	    // append valid rack, and connect the menu entry to OnConnectSelected()
 	    menu->Append(id, (*itPlugin)->Name);
@@ -385,7 +384,7 @@ void					SeqTrack::SetSelected(bool sel)
   Refresh();
 }
 
-void					SeqTrack::OnNameChange(wxCommandEvent &WXUNUSED(event))
+void					SeqTrack::OnNameChange(wxCommandEvent& event)
 {
   if (ChanGui)
     ChanGui->SetLabel(Text->GetValue());
@@ -393,19 +392,18 @@ void					SeqTrack::OnNameChange(wxCommandEvent &WXUNUSED(event))
 
 void					SeqTrack::SetName(const wxString& name)
 {
-  wxCommandEvent			event;
-
   Text->SetValue(name);
-  OnNameChange(event);
+  if (ChanGui)
+    ChanGui->SetLabel(name);
 }
 
 void					SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
 {
   int					k = 0;
 
-  if (Type == eAudioTrack)
+  if (IsAudio)
     {
-      vector<int>::iterator		i;
+      vector<long>::iterator		i;
 
       for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end(); 
 	   i++, k++)
@@ -415,7 +413,7 @@ void					SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
 	    return;
 	  }
     }
-  else if (Type == eMidiTrack)
+  else
     {
       vector<MidiInDevice *>::iterator	i;
 
@@ -485,9 +483,9 @@ void					SeqTrack::SetDeviceId(long devid)
   int					k = 1; // + 1 for the "None" parameter
 
   DeviceId = devid; 
-  if (Type == eAudioTrack)
+  if (IsAudio)
     {
-      vector<int>::iterator		i;
+      vector<long>::iterator		i;
 
       for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end(); 
 	   i++, k++)
@@ -497,7 +495,7 @@ void					SeqTrack::SetDeviceId(long devid)
 	    return;
 	  }
     }
-  else if (Type == eMidiTrack)
+  else
     {
       vector<MidiInDevice *>::iterator	i;
 
@@ -507,38 +505,6 @@ void					SeqTrack::SetDeviceId(long devid)
 	    DeviceBox->SetSelection(k);
 	    return;
 	  }
-    }
-}
-
-// WiredDocument implementation
-void					SeqTrack::Save()
-{
-  saveDocData(new SaveElement(wxT("TrackName"), Text->GetValue()));
-  saveDocData(new SaveElement(wxT("VuValue"), VuValue));
-  saveDocData(new SaveElement(wxT("Record"), Record));
-  saveDocData(new SaveElement(wxT("Mute"), Mute));
-  saveDocData(new SaveElement(wxT("Selected"), Selected));
-  if(Connected)
-    saveDocData(new SaveElement(wxT("PluginsNameConnected"), Connected->Name));
-}
-
-void					SeqTrack::Load(SaveElementArray data)
-{
-  int					i;
-
-  for (i = 0; i < data.GetCount(); i++)
-    {
-      if (data[i]->getKey() == wxT("TrackName")) SetName(data[i]->getValue());
-      else if (data[i]->getKey() == wxT("VuValue")) SetVuValue(data[i]->getValueInt());
-      else if (data[i]->getKey() == wxT("Record")) SetRecording(data[i]->getValueInt());
-      else if (data[i]->getKey() == wxT("Mute")) SetMute(data[i]->getValueInt());
-      else if (data[i]->getKey() == wxT("Selected"))
-	{
-	  if (data[i]->getValueInt() == true)
-	    SelectTrack();
-	}
-      else if (data[i]->getKey() == wxT("PluginsNameConnected"))
- 	ConnectTo(RackPanel->FindPlugin(data[i]->getValue()));
     }
 }
 

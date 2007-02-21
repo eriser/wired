@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef _FILECONVERSION_H_
@@ -45,7 +45,6 @@ public:
 	bool				ConvertFromCodec(wxString& FileName);
 	void				ConvertToCodec(wxString& FileName);
 	bool				ConvertSamplerate(wxString& FileName);
-	bool				ConvertSamplerateNoGraph(wxString& FileName);
 
 	// import a wav file
 	void				ImportWaveFile(wxString& FileName);
@@ -61,7 +60,6 @@ private:
 	void				CopyToWorkingDir(wxString& FileName);
 	void				ImportWavePattern(wxString& FileName);
 	bool				ConvertSamplerate(wxString& FileName, bool &HasChangedPath);
-	bool				ConvertSamplerateNoGraph(wxString& FileName, bool &HasChangedPath);
 	int				GetSndFFormat(PcmType Type);
 	bool				Decode(wxString& FileName);
 	void				EnqueueAction(FileConversionTypeAction ActionType, wxString &SrcFile, wxString &DstFile);

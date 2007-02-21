@@ -1,13 +1,17 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
+
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License
 
 #ifndef __PATTERN_H__
 #define __PATTERN_H__
 
+#include <vector>
 #include <wx/string.h>
 #include <wx/wx.h>
 
-#include "WiredDocument.h"
+using namespace				std;
 
 #define PATTERN_DRAG_SCROLL_UNIT	(MEASURE_WIDTH + 1)
 #define PATTERN_NAME_WIDTH		(42)
@@ -26,9 +30,22 @@ class					MidiEvent;
 /**
  * creating a pattern.
  */
-class					Pattern : public wxWindow, public WiredDocument
+class					Pattern : public wxWindow
 {
+  
+  /**
+   * Still unused,it'll to be avoid wrong way scroll during a pattern dragging.
+   * The default value is 0. 
+   */    
+  double							xdrag;		
+  
+  /**
+   * The default value is 0.
+   */
+  double							ydrag;		
+
  protected:
+	Pattern(){};
 
   virtual void				OnClick(wxMouseEvent &e);
   virtual void				OnLeftUp(wxMouseEvent &e);
@@ -67,12 +84,9 @@ class					Pattern : public wxWindow, public WiredDocument
   /**
    * The Index of track.
    */
-  unsigned long				TrackIndex;
-
-  /**
-   * The state of pattern, selected, dragged and/or toggled (see PATTERN_MASK_*)
-   */
-  unsigned char				StateMask;
+  unsigned long							TrackIndex;
+  unsigned long							TrackFrom;
+  unsigned char							StateMask;
 
   /**
    * To measure the position of pattern.
@@ -92,17 +106,27 @@ class					Pattern : public wxWindow, public WiredDocument
   /**
    * Name of pattern.
    */
-  wxString						Name;
+  wxString							Name;
 
   /**
    * Setting a color of a pattern.
    */ 
-  wxColour						PenColor;
+  wxColour							PenColor;
  
   /**
    * The background of pattern.
    */
-  wxColour						BrushColor;
+  wxColour							BrushColor;
+
+  /**
+   * Next merged pattern.
+   */
+  Pattern							*NextMergedPattern;
+
+  /**
+   * Previous merged pattern.
+   */
+  Pattern							*PrevMergedPattern;
 
  public:
 
@@ -112,15 +136,9 @@ class					Pattern : public wxWindow, public WiredDocument
    * \param endpos a  double,the end position of pattern.
    * \param trackindex a long,the index of track.
    */
-  Pattern(WiredDocument *parent, wxString name, double pos, double endpos, long trackindex);
+  Pattern(double pos, double endpos, long trackindex);
 //  Pattern(const Pattern& copy){*this = copy;};
   virtual ~Pattern();
-
-
-  // WiredDocument implementation
-  void				Save();
-  void				Load(SaveElementArray data);
-
 
   /**
    * To modify the pattern.
@@ -140,21 +158,21 @@ class					Pattern : public wxWindow, public WiredDocument
   /**
    * To update a position of pattern and its size of pattern.
    */
-  virtual void				Update();
+  virtual void							Update();
   
   /**
    * Setting the selected of pattern.
    * \param sel a bool,If it selected or not.
    */
-  virtual void				SetSelected(bool sel);
-  virtual void				OnBpmChange() {};
+  virtual void							SetSelected(bool sel);
+  virtual void							OnBpmChange() {};
 
   /**
    * Setting the color of pen.
    * \param c a wxcolour,a color.
    */
-  virtual void				SetDrawColour(wxColour c) { PenColor = c; };
-  virtual Pattern			*CreateCopy(double pos) = 0x0;
+  virtual void							SetDrawColour(wxColour c) { PenColor = c; };
+  virtual Pattern						*CreateCopy(double pos) = 0x0;
 
   /**
    * Getting a measure of a position of pattern.
@@ -193,7 +211,7 @@ class					Pattern : public wxWindow, public WiredDocument
    * \param a double,a beginning of position.
    * \return returns a int.
    */ 
-  int									GetXPos(double pos);
+  int								GetXPos(double pos);
 
   /**
    * If selected a pattern.
@@ -223,7 +241,7 @@ class					Pattern : public wxWindow, public WiredDocument
    * Getting a name of pattern.
    * \return returns a wxString,the name of pattern.
    */
-  wxString						GetName() { return (Name); };
+  wxString							GetName() { return (Name); };
   
   /**
    * Setting the name of pattern.
@@ -242,15 +260,36 @@ class					Pattern : public wxWindow, public WiredDocument
    * \param a long,the index of track.
    */
   void								SetTrackIndex(long t) { TrackIndex = t; };
+
+  /**
+   * Sets the next merged pattern.
+   * \param points to the next merged pattern.
+   */
+  void								SetNextMergedPattern(Pattern *p) { NextMergedPattern = p; };
+
+  /**
+   * Sets the previous merged pattern.
+   * \param points to the previous merged pattern.
+   */
+  void								SetPrevMergedPattern(Pattern *p) { PrevMergedPattern = p; };
+
+  /**
+   * Gets the next merged pattern.
+   * \return returns pointer to the next merged pattern.
+   */
+  Pattern							*GetNextMergedPattern() { return NextMergedPattern; };
+
+  /**
+   * Gets the previous merged pattern.
+   * \return returns pointer to the previous merged pattern.
+   */
+  Pattern							*GetPrevMergedPattern() { return PrevMergedPattern; };
   
   /**
    * Getting the end of position.
    * \return returns a double,the end of position.
    */
   double							GetEndPos();
-
-
-  void								Dump();
 //  virtual Pattern			operator=(const Pattern& right) = 0;
 };
 

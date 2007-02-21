@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __SETTINGS_H__
@@ -125,17 +125,17 @@ class Settings
   /**
    * Output channels.
    */
-  vector<int>	OutputChannels;
+  vector<long>	OutputChannels;
 
   /**
    * Input channels.
    */
-  vector<int>	InputChannels;
+  vector<long>	InputChannels;
 
   /**
    * The midi devices.
    */
-  vector<int>	MidiIn;
+  vector<long>	MidiIn;
 
   vector<wxString> MidiInStr;
 
@@ -207,16 +207,16 @@ class Settings
   /**
    * Saving channels.
    * \param Group a wxString,the name of title.
-   * \param list a vector<int>&,the list of channels.
+   * \param list a vector<long>&,the list of channels.
    */
-  void		SaveChannels(wxString Group, vector<int>& list);
+  void		SaveChannels(wxString Group, vector<long>& list);
 
   /**
    * Reading channels.
    * \param Group a wxString,the name of title.
-   * \param list a vector<int>&,the list of channels.
+   * \param list a vector<long>&,the list of channels.
    */
-  void		ReadChannels(wxString Group, vector<int>& list);
+  void		ReadChannels(wxString Group, vector<long>& list);
 
   /**
    * Delete deprecated entries.

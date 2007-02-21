@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __CHANNEL_H__
@@ -7,7 +7,6 @@
 #include <vector>
 #include <iostream>
 #include "AudioEngine.h"
-#include "WiredDocument.h"
 
 #define  NUM_BUFFERS  1
 
@@ -18,21 +17,21 @@
  * on them.
 */
 
-class Channel : public WiredDocument
+class Channel
 {
  public:
 
 /**
  * Ctor setting volumes for each channel
 */
-  Channel(bool stereo, bool visible = true, WiredDocument* docParent = NULL);
+  Channel(bool stereo, bool visible = true);
 
 /**
  * Copy Ctor
 */
 
-//  Channel(const Channel& copy) {*this = copy;}
-//  Channel	operator=(const Channel& right);
+  Channel(const Channel& copy){*this = copy;}
+  Channel	operator=(const Channel& right);
 
 /**
  * DCtor cleaning all channels
@@ -183,45 +182,12 @@ class Channel : public WiredDocument
   inline void	SetMuteLeft(bool muted)
     { MuteLeft = muted; };
 
-  /**
-   * Mute setter for right channel
-   */
+/**
+ * Mute setter for right channel
+*/
 
   inline void	SetMuteRight(bool muted)
-  { MuteRight = muted; };
-
-  /**
-   * Mute getter for left channel
-   */
-
-  inline bool	GetMuteLeft()
-  { return MuteLeft; };
-
-  /**
-   * Mute getter for right channel
-   */
-
-  inline bool	GetMuteRight()
-  { return MuteRight; };
-
-
-  /**
-   * WiredDocument implementation
-   */
-  void		Save();
-
-  /**
-   * WiredDocument implementation
-   */
-  void		Load(SaveElementArray data);
-
-
-  /**
-   * WiredDocument implementation
-   */
-  void		CleanChildren();
-
-
+    { MuteRight = muted; };
 
  private:
 

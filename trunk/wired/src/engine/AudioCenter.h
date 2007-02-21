@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __AUDIOCENTER_H__
@@ -8,9 +8,10 @@
 #ifndef WX_PRECOMP
    #include <wx/wx.h>
 #endif
-
 #include <list>
 #include "WaveFile.h"
+
+using std::list;
 
 class AudioCenter
 {
@@ -18,11 +19,11 @@ class AudioCenter
   AudioCenter();
   ~AudioCenter();
 
-  WaveFile*		AddWaveFile(wxString filename);
-  void			RemoveWaveFile(WaveFile *File);
-  void			Clear();
+  WaveFile *AddWaveFile(wxString filename);
+  void		RemoveWaveFile(WaveFile *File);
+  void	    Clear();
 
-  std::list<WaveFile *> WaveFiles;
+  list<WaveFile *> WaveFiles;
 };
 
 extern AudioCenter WaveCenter;
