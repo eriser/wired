@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "cActionManager.h"
@@ -36,13 +36,13 @@ void	cActionManager::AddEffectAction(PlugStartInfo* startInfo, PluginLoader* plu
 	action->Do();
 }
 
-void	cActionManager::AddImportWaveAction(const wxString& path, trackType kind, bool selectFromIndex)
+void	cActionManager::AddImportWaveAction(const wxString& path, bool kind, bool selectFromIndex)
 {
 	cImportWaveAction* action = new cImportWaveAction(path, kind, selectFromIndex);
 	action->Do();
 }
 
-void	cActionManager::AddEditWaveAction(const wxString& path, trackType kind, bool selectFromIndex)
+void	cActionManager::AddEditWaveAction(const wxString& path, bool kind, bool selectFromIndex)
 {
 	cImportWaveAction* action = new cImportWaveAction(path, kind, selectFromIndex);
 	action->AddWaveToEditor();

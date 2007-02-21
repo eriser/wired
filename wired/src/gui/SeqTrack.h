@@ -1,16 +1,16 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
+
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License
 
 #ifndef __SEQTRACK_H__
 #define __SEQTRACK_H__
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
+using namespace std;
 
-#include "Track.h"
-#include "WiredDocument.h"
+#include <list>
+#include <wx/wx.h>
 
 #define NONE_SELECTED_ID		(999)
 
@@ -31,16 +31,12 @@ class					ChoiceButton;
 class					DownButton;
 class					VUMCtrl;
 
-class					SeqTrack: public wxControl,
-						  public WiredDocument
+class					SeqTrack: public wxControl
 {
  public:
-  SeqTrack(long index, wxWindow *winParent, const wxPoint& pos, 
-	   const wxSize& size, trackType type, WiredDocument* docParent);
+  SeqTrack(long index, wxWindow *parent, const wxPoint& pos, 
+	   const wxSize& size, bool audio = true);
   ~SeqTrack();
-
-  inline void				SetChannelGui(ChannelGui* chan)
-  { ChanGui = chan; };
 
   void					PropagateEvent(wxEvent &event);
   void					RebuildConnectList();
@@ -66,10 +62,6 @@ class					SeqTrack: public wxControl,
   void					OnNameChange(wxCommandEvent& event);
   void					SetName(const wxString&);
 
-  // WiredDocument implementation
-  void					Save();
-  void					Load(SaveElementArray data);
-
   long					DeviceId;
   long					Index;
   bool					IsAudio;
@@ -82,7 +74,6 @@ class					SeqTrack: public wxControl,
   Plugin				*Connected;
   RackTrack				*ConnectedRackTrack;
   int					VuValue;
-  trackType				Type;
 
  protected:
   void					OnMotion(wxMouseEvent &e);

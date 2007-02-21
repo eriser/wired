@@ -1,5 +1,3 @@
-// Copyright (C) 2004-2007 by Wired Team
-// Under the GNU General Public License Version 2, June 1991
 #ifndef _SAVEELEMENT_H_
 #define _SAVEELEMENT_H_
 

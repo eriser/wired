@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef _WIREDDOCUMENT_H_
@@ -22,17 +22,11 @@ class WiredDocument
    * (not for an instance of course...).
    * \param parent The parent WiredDocument. If left to NULL, it will be defaulted 
    * to the SaveCenter.
-   * \param noParent For specific use only and should usually not be set to true. Else,
-   * the WiredDocument will not be saved with the session. Is used by the SaveCenter
-   * and could be used for the settings for example.
+   * \param noParent For internal use only and should NEVER be set to true. Else,
+   * the WiredDocument will never be saved.
    */
   WiredDocument(wxString docName, WiredDocument *parent = NULL,
 		bool noParent = false);
-
-  /** Destructor.
-   * Removes this from the parent children.
-   */
-  ~WiredDocument();
 
   /** Main save function.
    * This function will be called by the SaveCenter when a save of the document
@@ -52,17 +46,6 @@ class WiredDocument
    */
   virtual void	Load(SaveElementArray data) = 0;
 
-  /** Cleaning function.
-   * It will be called before a Load to initialize the WiredDocument with
-   * no unneeded children.
-   * Every children created during a session should be deleted by this method.
-   * In other words, it should restore the state of the direct subtree to what
-   * it was at the first instanciation of the WiredDocument.
-   * Default values should not be handled by this method, a Load() will occur
-   * with them soon after the call to DeleteChildren().
-   */
-  virtual void	CleanChildren() {}
-
   /** Properly calls save. */
   void		SaveMe();
 
@@ -75,13 +58,6 @@ class WiredDocument
    * \param children The child to add.
    */
   void				Register(WiredDocument *children);
-
-  /** Removes a child from the _children array.
-   * \param child The child to remove.
-   */
-  void				Unregister(WiredDocument *child);
-
-  void				ChangeParent(WiredDocument *newdad);
   
   /** Returns the data stored in _dataSave.
    * \return The data stored in _dataSave.
@@ -98,27 +74,6 @@ class WiredDocument
    * \return The name of the WiredDocument.
    */
   inline wxString		getName() { return _name; }
-
-  /** Returns the id of the WiredDocument.
-   * \return the id of the WiredDocument.
-   */
-  inline int			getId() { return _id; }
-
-
-  /** The unique id of the WiredDocument. This id is
-   * incremented on each new WiredDocument, therefore
-   * permitting during the load to recreate the whole 
-   * tree in the same order it was created by the user.
-   */
-  static int		id;
-
-  /** Returns the total number of WiredDocument.
-   * \return the total number of WiredDocument.
-   */
-  static int		getTotalId(){ return id; }
-
-  /** Increases the id. */
-  static void		increaseId() { id++; }
 
  protected:
 
@@ -162,9 +117,6 @@ class WiredDocument
 
  private:
 
-  /** A pointer to the parent. */
-  WiredDocument			*_parent;
-
   /** The list of the children of this WiredDocument. */
   WiredDocumentArray		_children;
 
@@ -173,9 +125,6 @@ class WiredDocument
   
   /** The data to be written by the SaveCenter. */ 
   SaveElementsHashMap		_dataSave;
-
-  /** The WiredDocument's instance of its id. */
-  int		_id;
 };
 
 #endif /*_WIREDDOCUMENT_H */

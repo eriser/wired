@@ -1,10 +1,10 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #if !defined(IMPORT_WAVE_ACTION_H)
 #define IMPORT_WAVE_ACTION_H
 
-#include "Track.h"
+
 #include "cAction.h"
 #include "cActionManager.h"
 #include "Visitor.h"
@@ -25,15 +25,14 @@
 class					cImportWaveAction : public cAction 
 {
 private:
-  // audio, midi, ..
-   trackType				_TrackKindFlag;
+  // audio or midi (true for audio)
+   bool					_TrackKindFlag;
    wxString				_WavePath;
    long					_trackIndex;
    bool					_ShouldAdd;
-   Track*				_trackCreated;
-
+ 
 public:
-  cImportWaveAction (const wxString& path, trackType kind, bool shouldAdd);
+  cImportWaveAction (const wxString& path, bool kind, bool shouldAdd);
   cImportWaveAction (const cImportWaveAction& copy){*this = copy;};
   ~cImportWaveAction () {};
   
@@ -57,12 +56,11 @@ public:
 class					cImportMidiAction : public cAction 
 {
 private:
-   trackType				mTrackKindFlag;
+   bool					mTrackKindFlag;
    wxString				mMidiPath;
-   Track*				trackCreated;
 
 public:
-  cImportMidiAction (wxString& path, trackType kind);
+  cImportMidiAction (wxString& path, bool kind);
   cImportMidiAction (const cImportMidiAction& copy){*this = copy;};
   ~cImportMidiAction () {};
   virtual void				Do();
@@ -81,15 +79,14 @@ public:
 class					cImportAkaiAction : public cAction 
 {
 private:
-  trackType				mTrackKindFlag;
-  Track*				trackCreated;
+  bool					mTrackKindFlag;
   wxString				mDevice;
   int					mPart;
   wxString				mPath;
   wxString				mName;
-
+   
 public:
-  cImportAkaiAction (wxString& path, trackType kind);
+  cImportAkaiAction (wxString& path, bool kind);
   cImportAkaiAction (const cImportAkaiAction& copy){*this = copy;};
   ~cImportAkaiAction () {};
   virtual void			Do();
@@ -184,4 +181,3 @@ public:
 };
 
 #endif
-

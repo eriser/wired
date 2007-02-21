@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 // Copyright (C) 2004-2006 by Wired Team
@@ -165,18 +165,18 @@ class					SettingWindow : public wxDialog
   wxSizerFlags				BoxFlags;
 
  private:
-  /** Saves the selected index of a wxCheckListBox into a vector<int>.
+  /** Saves the selected index of a wxCheckListBox into a vector<long>.
    * \param from the wxCheckListBox where item are selected.
-   * \param to the vector<int> where indexes are saved.
+   * \param to the vector<long> where indexes are saved.
    */
   void					SaveChannels(wxCheckListBox* from, 
-						     std::vector<int>& to);
-  /** Selects into a wxCheckListBox indexes stored into a vector<int>.
+						     std::vector<long>& to);
+  /** Selects into a wxCheckListBox indexes stored into a vector<long>.
    * \param to the wxCheckListBox to fill.
-   * \param from the vector<int> containing the indexes.
+   * \param from the vector<long> containing the indexes.
    */ 
   void					LoadChannels(wxCheckListBox* to, 
-						     std::vector<int>& from);
+						     std::vector<long>& from);
 
 
   DECLARE_EVENT_TABLE()

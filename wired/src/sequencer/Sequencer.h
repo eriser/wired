@@ -1,26 +1,28 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __SEQUENCER_H__
 #define __SEQUENCER_H__
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
-
-#include <wx/thread.h>
+using namespace	std;
 
 #include <vector>
 #include <list>
 #include <iostream>
-#include "WiredDocument.h"
+
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
+#include <wx/thread.h>
+
 
 typedef struct s_SeqCreateEvent		SeqCreateEvent;
 typedef int				MidiType;
 class					Channel;
 class					Track;
 class					Plugin;
+class					Track;
 class					Pattern;
 class					AudioPattern;
 class					MidiPattern;
@@ -71,10 +73,8 @@ class ChanBuf
 
 /** This class handles the sequencer.
  */
-class Sequencer : public wxThread, public WiredDocument
+class Sequencer : public wxThread
 {
- private:
-
  public:
 
   /** Default constructor.
@@ -82,24 +82,10 @@ class Sequencer : public wxThread, public WiredDocument
    * directory. Creates the main output in the mixer. Initialiazes all buffers
    * to NULL.
    */
-  Sequencer(WiredDocument* docParent);
+  Sequencer();
 
   /** Default destructor. */
   ~Sequencer();
-
-  /**
-   * Saving implementation
-   */
-  void					Load(SaveElementArray data);
-  void					Save();
-  void					CleanChildren();
-  
-  /** Init basic vars */
-  void					Init();
-
-  /** Called from main thread when Audio configurations was changed.
-   */
-  void					AudioConfig();
 
   /** Executes sequencer thread.*/
   virtual void				*Entry();
@@ -110,9 +96,9 @@ class Sequencer : public wxThread, public WiredDocument
   /** Stops.*/
   void					Stop();
   /** Records.*/
-  void					Record(bool bRecording = true);
+  void					Record();
   /** Stops recording.*/
-  void					StopRecord() { Record(false); }
+  void					StopRecord();
   /** Exports project to a wave file.
    * \param filename is the filename (wxString) given to the file.
    */
@@ -126,11 +112,11 @@ class Sequencer : public wxThread, public WiredDocument
   void					PlayFile(wxString filename, bool isakai);
   /** Stops playinf of a file.*/
   void					StopFile();
-  /** Adds a reference to a created track to the sequencer.
+  /** Adds a track to the sequencer.
    * \param t points to the track to add.
    */
-  void					RegisterTrack(Track *t);
-  void					UnregisterTrack(Track *t);
+  void					AddTrack(Track *t);
+  void					RemoveTrack();
   /** Adds a MIDI event.
    * \param id is the MIDI device id.
    * \param MidiType is the MIDI event message.
@@ -140,7 +126,7 @@ class Sequencer : public wxThread, public WiredDocument
    * \param l is a list of the MIDI events.
    * \param plug points to the associated plug-in.
    */
-  void					AddMidiPattern(std::list<SeqCreateEvent *> *l, 
+  void					AddMidiPattern(list<SeqCreateEvent *> *l, 
 						       Plugin *plug);
   /** Adds a note to a MIDI track.
    * \param t points to the track.
@@ -171,7 +157,7 @@ class Sequencer : public wxThread, public WiredDocument
   void					DeleteBuffer(float** &Buffer, unsigned int NbChannels = 2);
 
   /** Flag indicating if in playing state.*/
-  bool					Playing;	// no need
+  bool					Playing;
   /** Flag indicating if in recording state.*/
   bool					Recording;
   /** Number of beats per minute.*/
@@ -197,18 +183,18 @@ class Sequencer : public wxThread, public WiredDocument
   /** End position.*/
   double				EndPos;
   /** Contains pointers to all the tracks.*/
-  std::vector<Track *>			Tracks;
+  vector<Track *>			Tracks;
   /** Number of measures per sample.*/
   double				MeasurePerSample;
   /** Number of samples per measure.*/
   double				SamplesPerMeasure;
   /** List of patterns to resize.*/
-  std::list<Pattern *>			PatternsToResize;
+  list<Pattern *>			PatternsToResize;
   /** List of patterns to refresh.*/
-  std::list<MidiPattern *>		PatternsToRefresh;
+  list<MidiPattern *>			PatternsToRefresh;
   /** List of tracks to refresh.*/
-  std::list<Track *>			TracksToRefresh;
-  WiredSampleRate                       *GetSampleRateConverter(){return SampleRateConverter;};
+  list<Track *>				TracksToRefresh;
+
  protected:
 
   void					SetCurrentPos();
@@ -224,7 +210,7 @@ class Sequencer : public wxThread, public WiredDocument
   void					FinishRecording();
 
   AudioPattern				*GetCurrentAudioPattern(Track *t);
-  std::list<MidiPattern *>		GetCurrentMidiPatterns(Track *t);
+  list<MidiPattern *>			GetCurrentMidiPatterns(Track *t);
 
   float					**GetCurrentAudioBuffer(AudioPattern *p);
   /** Processes MIDI events from a MIDI pattern.*/
@@ -234,7 +220,7 @@ class Sequencer : public wxThread, public WiredDocument
   /** Start position.*/
   double				StartAudioPos;
   /** List of MidiEvents.*/
-  std::list<MidiEvent *>		MidiEvents;
+  list<MidiEvent *>			MidiEvents;
   /** Wavefile of the metronome sound.*/
   WaveFile				*ClickWave;
   /** Output cahannel for the metronome.*/
@@ -250,10 +236,11 @@ class Sequencer : public wxThread, public WiredDocument
   long					PlayWavePos;
   /** PlayWave output channel.*/
   Channel				*PlayWaveChannel;
+  
   WiredSampleRate			*SampleRateConverter;
- 
 };
 
-static wxMutex				SeqMutex(wxMUTEX_RECURSIVE);
+static wxMutex				SeqMutex;
 extern Sequencer			*Seq;
+
 #endif

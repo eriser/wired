@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include <wx/string.h>
@@ -27,7 +27,7 @@ WiredTool::WiredTool(wxString name, int type, wxWindow *win)
   Frame = 0x0;
   Data = 0x0;
 }
-
+ 
 WiredTool::~WiredTool()
 {
   if (Type == ID_TOOL_OTHER_OPTIONPANEL)
@@ -87,14 +87,14 @@ void				WiredTool::Detach()
   Frame->Show();
 }
 
-OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, WiredDocument* docParent)
-  : wxPanel(parent, -1, pos, size, style), WiredDocument(wxT("OptionPanel"), docParent)
+OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style)
+  : wxPanel(parent, -1, pos, size, style)
 {
   SetBackgroundColour(CL_RULER_BACKGROUND);//wxColour(204, 199, 219));//*wxLIGHT_GREY);
   ToolbarPanel = new wxPanel(this, -1, wxPoint(0, 0), wxSize(GetSize().x, OPT_TOOLBAR_HEIGHT),
 			     wxSIMPLE_BORDER);
   ToolbarPanel->SetBackgroundColour(CL_OPTION_TOOLBAR);
-  Title = new wxStaticText(ToolbarPanel, -1, _("Midi pattern"), wxPoint(4, 0),
+  Title = new wxStaticText(ToolbarPanel, -1, _("Midi pattern"), wxPoint(4, 0), 
 			   wxSize(-1, OPT_TOOLBAR_HEIGHT));
   //Title->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   Title->SetForegroundColour(*wxWHITE);
@@ -104,30 +104,30 @@ OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
   wxImage *detach_down = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_DETACH_TOOL_DOWN)), wxBITMAP_TYPE_PNG);
   wxImage *close_up = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_CLOSE_TOOL_UP)), wxBITMAP_TYPE_PNG);
   wxImage *close_down = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_CLOSE_TOOL_DOWN)), wxBITMAP_TYPE_PNG);
-  ListToolBtn = new DownButton(this, ID_TOOL_LIST_OPTIONPANEL, wxPoint(GetSize().x - 34, 2), wxSize(14, 12),
+  ListToolBtn = new DownButton(this, ID_TOOL_LIST_OPTIONPANEL, wxPoint(GetSize().x - 34, 2), wxSize(14, 12), 
 			       list_up, list_down, true);
-  DetachToolBtn = new DownButton(this, ID_TOOL_DETACH_OPTIONPANEL, wxPoint(GetSize().x - 18, 2), wxSize(14, 12),
+  DetachToolBtn = new DownButton(this, ID_TOOL_DETACH_OPTIONPANEL, wxPoint(GetSize().x - 18, 2), wxSize(14, 12), 
 				 detach_up, detach_down, true);
-  CloseToolBtn = new DownButton(this, ID_TOOL_CLOSE_OPTIONPANEL, wxPoint(GetSize().x - 2, 2), wxSize(14, 12),
+  CloseToolBtn = new DownButton(this, ID_TOOL_CLOSE_OPTIONPANEL, wxPoint(GetSize().x - 2, 2), wxSize(14, 12), 
 				 close_up, close_down, true);
   wxBoxSizer *right_sizer;
   right_sizer = new wxBoxSizer(wxHORIZONTAL);
-  right_sizer->Add(ListToolBtn, 0, wxALL, 2);
-  right_sizer->Add(DetachToolBtn, 0, wxALL, 2);
-  right_sizer->Add(CloseToolBtn, 0, wxALL, 2);
+  right_sizer->Add(ListToolBtn, 0, wxALL, 2); 
+  right_sizer->Add(DetachToolBtn, 0, wxALL, 2); 
+  right_sizer->Add(CloseToolBtn, 0, wxALL, 2); 
   wxBoxSizer *sizer;
   sizer = new wxBoxSizer(wxHORIZONTAL);
-  sizer->Add(4, OPT_TOOLBAR_HEIGHT, 0, 0);
-  sizer->Add(Title, 1, 0, 0);
-  sizer->Add(right_sizer, 0, wxEXPAND, 0);
+  sizer->Add(4, OPT_TOOLBAR_HEIGHT, 0, 0); 
+  sizer->Add(Title, 1, 0, 0); 
+  sizer->Add(right_sizer, 0, wxEXPAND, 0); 
   ToolbarPanel->SetSizer(sizer);
   CurrentTool = 0x0;
   // Creation Mixer
-  MixerPanel = new MixerGui(this, wxPoint(0, OPT_TOOLBAR_HEIGHT),
-			    wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT), (WiredDocument*)this);
+  MixerPanel = new MixerGui(this, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
+			    wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT));
   MixerTool = new WiredTool(_("Wired Mixer"), ID_TOOL_MIXER_OPTIONPANEL, MixerPanel);
 
-  HelpWin = new HelpPanel(this, wxPoint(0, OPT_TOOLBAR_HEIGHT),
+  HelpWin = new HelpPanel(this, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
 			  wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT));
   HelpTool = new WiredTool(_("Wired Help"), ID_TOOL_HELP_OPTIONPANEL, HelpWin);
   ToolsList.push_back(MixerTool);
@@ -139,13 +139,7 @@ OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
 
 OptionPanel::~OptionPanel()
 {
-  CleanChildren();
   // don't have to delete windows attached to another
-}
-
-void				OptionPanel::CleanChildren()
-{
-  DeleteTools();
 }
 
 void				OptionPanel::AddAudioTool(AudioPattern *p)
@@ -154,12 +148,12 @@ void				OptionPanel::AddAudioTool(AudioPattern *p)
   WavePanel         *Panel;
 
 
-  Panel = new WavePanel(this, -1, wxPoint(0, OPT_TOOLBAR_HEIGHT),
+  Panel = new WavePanel(this, -1, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
 		     wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT));
-
-  // w = new WaveEditor(Panel, -1, wxPoint(0, OPT_TOOLBAR_HEIGHT),
+  
+  // w = new WaveEditor(Panel, -1, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
 // 		     wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT), true);
-  tool = new WiredTool(p->GetName(), ID_TOOL_AUDIO_OPTIONPANEL, Panel);
+  tool = new WiredTool(p->GetName(), ID_TOOL_AUDIO_OPTIONPANEL, Panel);  
   tool->Data = p;
   ToolsList.push_back(tool);
   Panel->w->SetWave(p->GetWaveFile());
@@ -172,9 +166,9 @@ void				OptionPanel::AddMidiTool(MidiPattern *p)
   EditMidi			*m;
   WiredTool			*tool;
 
-  m = new EditMidi(this, -1, wxPoint(0, OPT_TOOLBAR_HEIGHT),
+  m = new EditMidi(this, -1, wxPoint(0, OPT_TOOLBAR_HEIGHT), 
 		   wxSize(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT));
-  tool = new WiredTool(p->GetName(), ID_TOOL_MIDI_OPTIONPANEL, m);
+  tool = new WiredTool(p->GetName(), ID_TOOL_MIDI_OPTIONPANEL, m);  
   tool->Data = p;
   ToolsList.push_back(tool);
   m->SetMidiPattern(p);
@@ -187,9 +181,9 @@ void				OptionPanel::AddPlugTool(Plugin *p)
   WiredTool			*tool;
   wxPoint			pt(0, OPT_TOOLBAR_HEIGHT);
   wxSize			sz(GetSize().GetWidth(), GetSize().GetHeight() - OPT_TOOLBAR_HEIGHT);
-
+  
   m = p->CreateView(this, pt, sz);
-  tool = new WiredTool(wxString(p->Name.c_str()), ID_TOOL_OTHER_OPTIONPANEL, m);
+  tool = new WiredTool(wxString(p->Name.c_str()), ID_TOOL_OTHER_OPTIONPANEL, m);  
   tool->Data = p;
   ToolsList.push_back(tool);
   ShowTool(tool);
@@ -205,13 +199,13 @@ void				OptionPanel::ShowTool(WiredTool *t)
       for (i = ToolsList.begin(); i != ToolsList.end(); i++)
 	if (!(*i)->IsDetached && ((*i) != CurrentTool))
 	  (*i)->Panel->Show(false);
-      TopSizer = new wxBoxSizer(wxVERTICAL);
+      TopSizer = new wxBoxSizer(wxVERTICAL);    
       TopSizer->Add(ToolbarPanel, 0, wxEXPAND | wxALL, 0);
       TopSizer->Add(t->Panel, 1, wxEXPAND | wxALL, 0);
       SetSizer(TopSizer);
       Title->SetLabel(t->Name.c_str());
       t->Panel->SetSize(wxSize(GetSize().x, GetSize().y - OPT_TOOLBAR_HEIGHT));
-      t->Panel->Show(true);
+      t->Panel->Show(true);  
     }
   else
     {
@@ -245,13 +239,13 @@ void				OptionPanel::ShowMidi(MidiPattern *p)
 	  return;
 	}
     }
-  AddMidiTool(p);
+  AddMidiTool(p);  
 }
 
 void				OptionPanel::ShowPlug(Plugin *p)
 {
   vector<WiredTool *>::iterator	i;
-
+  
   for (i = ToolsList.begin(); i != ToolsList.end(); i++)
     {
       if (((*i)->Type == ID_TOOL_OTHER_OPTIONPANEL) && ((*i)->Data == p))
@@ -260,13 +254,13 @@ void				OptionPanel::ShowPlug(Plugin *p)
 	  return;
 	}
     }
-  AddPlugTool(p);
+  AddPlugTool(p);  
 }
 
 void				OptionPanel::ShowHelp()
 {
   vector<WiredTool *>::iterator	i;
-
+  
   for (i = ToolsList.begin(); i != ToolsList.end(); i++)
     {
       if ((*i)->Type == ID_TOOL_HELP_OPTIONPANEL)
@@ -282,14 +276,14 @@ void				OptionPanel::OnListToolClick(wxCommandEvent &event)
   vector<WiredTool *>::iterator	i;
   long				k;
   wxMenu			*menu;
-
+  
   menu = new wxMenu();
   for (k = OPT_TOOL_ID_START, i = ToolsList.begin(); i != ToolsList.end(); i++, k++)
     {
       if (!(*i)->IsDetached)
 	{
 	  menu->Append(k, (*i)->Name.c_str());
-	  Connect(k, wxEVT_COMMAND_MENU_SELECTED,
+	  Connect(k, wxEVT_COMMAND_MENU_SELECTED, 
 		  (wxObjectEventFunction)(wxEventFunction)
 		  (wxCommandEventFunction)&OptionPanel::OnSelectTool);
 	}
@@ -310,16 +304,16 @@ void				OptionPanel::OnDetachToolClick(wxCommandEvent &event)
 void				OptionPanel::OnCloseToolClick(wxCommandEvent &event)
 {
   vector<WiredTool *>::iterator	i;
-
-  if (CurrentTool && (CurrentTool->Type != ID_TOOL_MIXER_OPTIONPANEL)
+  
+  if (CurrentTool && (CurrentTool->Type != ID_TOOL_MIXER_OPTIONPANEL) 
       && (CurrentTool->Type != ID_TOOL_HELP_OPTIONPANEL))
     {
       for (i = ToolsList.begin(); i != ToolsList.end(); i++)
 	if (*i == CurrentTool)
-	  {
+	  {	    
 	    ToolsList.erase(i);
 	    break;
-	  }
+	  }     
       delete CurrentTool;
       ShowLastTool();
     }
@@ -338,7 +332,7 @@ void				OptionPanel::OnSelectTool(wxCommandEvent &event)
 void				OptionPanel::ShowLastTool()
 {
   vector<WiredTool *>::iterator	i;
-
+  
   for (i = ToolsList.begin(); i != ToolsList.end(); i++)
     if (!(*i)->IsDetached)
       {
@@ -352,10 +346,10 @@ void				OptionPanel::ShowLastTool()
 void				OptionPanel::DeleteTools()
 {
   vector<WiredTool *>::iterator	i;
-
+  
   for (i = ToolsList.begin(); i != ToolsList.end(); i++)
     {
-      if (((*i)->Type != ID_TOOL_MIXER_OPTIONPANEL)
+      if (((*i)->Type != ID_TOOL_MIXER_OPTIONPANEL) 
 	  && ((*i)->Type != ID_TOOL_HELP_OPTIONPANEL))
 	delete *i;
     }
@@ -370,11 +364,11 @@ void				OptionPanel::DeleteTools(void *DataPointer)
   if (!DataPointer)
     return;
   vector<WiredTool *>::iterator	i;
-
+  
   for (i = ToolsList.begin(); i != ToolsList.end(); i++)
     {
-      if (((*i)->Type != ID_TOOL_MIXER_OPTIONPANEL)
-	  && ((*i)->Type != ID_TOOL_HELP_OPTIONPANEL))
+      if (((*i)->Type != ID_TOOL_MIXER_OPTIONPANEL) 
+	  && ((*i)->Type != ID_TOOL_HELP_OPTIONPANEL)) 
 	    if ((*i)->Data == DataPointer)
   	    {
 	      ShowTool(MixerTool);
@@ -390,101 +384,6 @@ void				OptionPanel::ClosePlug(Plugin *p)
   DeleteTools(p);
 }
 
-void				OptionPanel::Save()
-{
-  //Title
-  saveDocData(new SaveElement(wxT("title"), this->Title->GetLabel()));
-
-  //ListToolBtn
-  saveDocData(new SaveElement(wxT("listToolBtn"), this->ListToolBtn->GetOn()));
-
-  //DetachToolBtn
-  saveDocData(new SaveElement(wxT("detachToolBtn"), this->DetachToolBtn->GetOn()));
-
-  //CloseToolBtn
-  saveDocData(new SaveElement(wxT("closeToolBtn"), this->CloseToolBtn->GetOn()));
-
-  saveDocData(new SaveElement(wxT("CurrentTool"), CurrentTool->GetName()));
-
-  //ToolsList
-  //vector of wiredTools
-
-}
-
-void				OptionPanel::Load(SaveElementArray data)
-{
-  int		dataCompt;
-
-  for (dataCompt = 0; dataCompt < data.GetCount(); dataCompt++)
-    {
-      if (data[dataCompt]->getKey() == wxT("title"))
-	{
-	  this->SetTitle(data[dataCompt]->getValue());
-	}
-      else if (data[dataCompt]->getKey() == wxT("listToolBtn"))
-	{
-	  if (data[dataCompt]->getValueInt())
-	    this->SetListToolBtn(true);
-	  else
-	    this->SetListToolBtn(false);
-	}
-      else if (data[dataCompt]->getKey() == wxT("detachToolBtn"))
-	{
-	  if (data[dataCompt]->getValueInt())
-	    this->SetDetachToolBtn(true);
-	  else
-	    this->SetDetachToolBtn(false);
-	}
-      else if (data[dataCompt]->getKey() == wxT("closeToolBtn"))
-	{
-	  if (data[dataCompt]->getValueInt())
-	    this->SetCloseToolBtn(true);
-	  else
-	    this->SetCloseToolBtn(false);
-	}
-      else if (data[dataCompt]->getKey() == wxT("CurrentTool"))
-	{
-	  vector<WiredTool *>::iterator	it;
-
-	  for (it = ToolsList.begin(); it != ToolsList.end(); it++)
-	    if (data[dataCompt]->getValue() == (*it)->GetName())
-	      ShowTool(*it);
-	}
-    }
-}
-
-//Setters
-void		OptionPanel::SetTitle(const wxString& title)
-{
-  this->Title->SetLabel(title);
-}
-
-void		OptionPanel::SetListToolBtn(bool isDown)
-{
-  if (isDown)
-    this->ListToolBtn->SetOn();
-  else
-    this->ListToolBtn->SetOff();
-}
-
-void		OptionPanel::SetDetachToolBtn(bool isDown)
-{
-  if (isDown)
-    this->DetachToolBtn->SetOn();
-  else
-    this->DetachToolBtn->SetOff();
-}
-
-void		OptionPanel::SetCloseToolBtn(bool isDown)
-{
-  if (isDown)
-    this->CloseToolBtn->SetOn();
-  else
-    this->CloseToolBtn->SetOff();
-}
-
-
-
 BEGIN_EVENT_TABLE(WiredFrame, wxFrame)
   EVT_MENU(ID_TOOL_MOVE_MIDIPART, WiredFrame::OnToolMove)
   EVT_MENU(ID_TOOL_EDIT_MIDIPART, WiredFrame::OnToolEdit)
@@ -496,4 +395,4 @@ BEGIN_EVENT_TABLE(OptionPanel, wxPanel)
   EVT_BUTTON(ID_TOOL_DETACH_OPTIONPANEL, OptionPanel::OnDetachToolClick)
   EVT_BUTTON(ID_TOOL_CLOSE_OPTIONPANEL, OptionPanel::OnCloseToolClick)
 END_EVENT_TABLE()
-
+  

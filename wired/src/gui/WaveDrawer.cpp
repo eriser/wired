@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 // Copyright (C) 2004-2006 by Wired Team
@@ -54,6 +54,33 @@ void					WaveDrawer::SetWave(float **data, unsigned long frame_length, long chan
 #endif
 }
 
+void					WaveDrawer::SetWave(WaveFile *w, wxSize s)
+{
+#ifdef __DEBUG__
+  printf(" [ START ] WaveDrawer::SetWave(%x, sise x %d y %d)\n", w, s.x, s.y);
+#endif
+  if (!w)
+    {
+      Wave = 0;
+      Data = 0;
+      NumberOfChannels = 0;
+      StartWavePos = 0;
+      EndWavePos = 0;
+    }
+  else
+    {
+      Wave = w;
+      Data = w->Data;
+      NumberOfChannels = w->GetNumberOfChannels();
+      StartWavePos = 0;
+      EndWavePos = w->GetNumberOfFrames();
+    }
+  SetDrawing(s);
+#ifdef __DEBUG__
+  printf(" [  END  ] WaveDrawer::SetWave(%d)\n", w);
+#endif
+}
+
 void					WaveDrawer::SetWave(WaveFile *w, wxSize s, long wstart, long wend)
 {
 #ifdef __DEBUG__
@@ -73,12 +100,9 @@ void					WaveDrawer::SetWave(WaveFile *w, wxSize s, long wstart, long wend)
       Data = w->Data;
       NumberOfChannels = w->GetNumberOfChannels();
       StartWavePos = wstart;
-      if (wend)
-	EndWavePos = (wend <= w->GetNumberOfFrames()) ? wend : w->GetNumberOfFrames();
-      else
-	EndWavePos = w->GetNumberOfFrames();
-      SetDrawing(s);
+      EndWavePos = (wend <= w->GetNumberOfFrames()) ? wend : w->GetNumberOfFrames();
     }
+  SetDrawing(s);
 #ifdef __DEBUG__
   printf(" [  END  ] WaveDrawer::SetWave(%x)\n", w);
 #endif
@@ -108,18 +132,12 @@ void					WaveDrawer::SetDrawing(wxSize s)
     delete [] DrawData;
   }
   DrawData = new long[size_x];
-  memset(DrawData, 0, size_x);
-
   // Coefficient d'incr?mentation
   inc = (EndWavePos - StartWavePos) / size_x;
-
-  if (Wave)
-    channel_to_read = Wave->GetChannelToRead();
-  else
-    channel_to_read = 1;
+  channel_to_read = Wave->GetChannelToRead();
   if (UseSettings && WiredSettings->dbWaveRender)
     {
-      if (Wave) // Wave on hdd
+      if (!Data) // Wave sur disque
 	{
 	  for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	    {
@@ -141,7 +159,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	      DrawData[i] = (long)(val * coeff);
 	    }	  
 	}
-      else if (Data) // Wave loaded in memory
+      else // Wave loade? en memoire
 	{
 	  for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	    {
@@ -159,15 +177,13 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	      DrawData[i] = (long)(val * coeff);
 	    }
 	}
-      else
-	cerr << "[WaveDrawer] Trying to draw an empty wave" << endl;
     }
   else
     {
     if (!UseSettings || !WiredSettings->QuickWaveRender)
       {
 	// Coefficient d'incr?mentation
-	if (Wave) // Wave on hdd
+	if (!Data) // Wave sur disque
 	  {
 #define WAVEVIEW_TEMP_BUF_SIZE	4096
 	    float		**TempBuf;
@@ -192,12 +208,12 @@ void					WaveDrawer::SetDrawing(wxSize s)
 	      }
 	    if (TempBuf[0])
 		    delete TempBuf[0];
-	    if (TempBuf[1])
+      	if (TempBuf[1])
 		    delete TempBuf[1];
 	    if (TempBuf)
 		    delete TempBuf;
 	  }	  
-	else if (Data) // Wave loaded in memory
+	else // Wave loade? en memoire
 	  {
      	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
@@ -207,12 +223,10 @@ void					WaveDrawer::SetDrawing(wxSize s)
 		DrawData[i] = (long)(((cur / (NumberOfChannels + inc) * coeff) + 0.5));
 	      }      
 	  }
-	else
-	  cerr << "[WaveDrawer] Trying to draw an empty wave" << endl;
       }
     else 
       {
-	if (Wave) // Wave on hdd
+	if (!Data) // Wave sur disque
 	  {
 	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
@@ -223,7 +237,7 @@ void					WaveDrawer::SetDrawing(wxSize s)
 		pos += inc;
 	      }
 	  }
-	else if (Data) // Wave loaded in memory
+	else
 	  {
 	    for (i = 0, pos = StartWavePos; (i < size_x) && (pos < end); i++)
 	      {
@@ -233,8 +247,6 @@ void					WaveDrawer::SetDrawing(wxSize s)
 		pos += inc;
 	      }
 	  }
-	else
-	  cerr << "[WaveDrawer] Trying to draw an empty wave" << endl;
       }
     }
   RedrawBitmap(s);

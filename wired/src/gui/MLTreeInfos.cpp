@@ -1,5 +1,5 @@
-// Copyright (C) 2004-2007 by Wired Team
-// Under the GNU General Public License Version 2, June 1991
+// Copyright (C) 2004 by Wired Team
+// Under the GNU General Public License
 
 #include <wx/wx.h>
 #include "MLTreeInfos.h"
@@ -14,8 +14,8 @@ MLTreeInfos::MLTreeInfos(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long 
   this->SetBackgroundColour(wxColour(206, 200, 200));
   new wxString(textContent);
   textContent.Append(infos.label);
-  textContent.Append(_("\nExtension : "));
-  textContent.Append(infos.extension);
+  textContent.Append(_("\nExtention : "));
+  textContent.Append(infos.extention);
   textContent.Append(_("\nLength : "));
   textContent.Append(infos.length);
   textContent.Append(_("\nBitrate"));

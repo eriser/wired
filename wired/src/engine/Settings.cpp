@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "version.h"
@@ -92,11 +92,11 @@ void Settings::SetDefault()
   ConfDeprecated = false;
 }
 
-void Settings::ReadChannels(wxString Group, vector<int>& list)
+void Settings::ReadChannels(wxString Group, vector<long>& list)
 {
   wxString			s;
-  int				l;
-  int				val;
+  long				l;
+  long				val;
 
   conf->SetPath(Group);
   for (l = 0; ; l++)
@@ -108,11 +108,11 @@ void Settings::ReadChannels(wxString Group, vector<int>& list)
     }
 }
 
-void Settings::SaveChannels(wxString Group, vector<int>& list)
+void Settings::SaveChannels(wxString Group, vector<long>& list)
 {
-  vector<int>::iterator	i;
+  vector<long>::iterator	i;
   wxString			s;
-  int				l;
+  long				l;
 
   if (list.size() == 0)
     return;

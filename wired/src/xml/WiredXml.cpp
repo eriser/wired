@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "WiredXml.h"
@@ -100,19 +100,26 @@ bool					WiredXml::ValidDocument()
 
 bool					WiredXml::CreateDocument(const wxString& DocName)
 {
+  std::cerr << "[WiredXml] CreateDocument" << std::endl; 
+
   CloseDocumentWriter();
+  std::cerr << "[WiredXml] CloseDocumentWriter" << std::endl; 
 
   if (DocName.Cmp(wxT("")) == 0)
     _DocumentWriterName = _DocumentFileName + TEMP_EXTENSION;
   else
     _DocumentWriterName = DocName;
 
+  std::cerr << "[WiredXml] _DocumentWriterName = " << _DocumentWriterName.mb_str() << std::endl;
   if ((_DocumentWriter = xmlNewTextWriterFilename(_DocumentWriterName.mb_str(*wxConvCurrent), 0)) != NULL)
     {      
+      std::cerr << "[WiredXml] 1" << std::endl;
       if (xmlTextWriterSetIndent(_DocumentWriter, 4) == 0)
 	{
+	  std::cerr << "[WiredXml] 2" << std::endl;
 	  if (xmlTextWriterStartDocument(_DocumentWriter, NULL, NULL, NULL) >= 0)
 	    {	
+	      std::cerr << "[WiredXml] 3" << std::endl;
 	      //if (xmlTextWriterWriteDTDExternalEntity(_DocumentWriter, FALSE, ) >= 0)
 	      return true;
 	    }

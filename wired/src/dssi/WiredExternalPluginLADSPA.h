@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef _WIREDEXTERNALPLUGINLADSPA_H_
@@ -6,7 +6,7 @@
 
 #include "ladspa.h"
 #include "../engine/AudioEngine.h"
-#include "Plugin.h"
+#include "../redist/Plugin.h"
 //#include <stdlib.h>
 #include <dlfcn.h>
 #include <math.h>

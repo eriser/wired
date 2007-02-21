@@ -912,8 +912,7 @@ static PaError TestParameters( const PaUtilHostApiRepresentation *hostApi, const
     /* See if we can find a best possible match */
     availableFormats = GetAvailableFormats( pcm );
     PA_ENSURE( hostFormat = PaUtil_SelectClosestAvailableFormat( availableFormats, parameters->sampleFormat ) );
-    //XXX : crashes on AMD64 for spdif, PaFloat32
-    //ENSURE_( snd_pcm_hw_params_set_format( pcm, hwParams, Pa2AlsaFormat( hostFormat ) ), paUnanticipatedHostError );
+    ENSURE_( snd_pcm_hw_params_set_format( pcm, hwParams, Pa2AlsaFormat( hostFormat ) ), paUnanticipatedHostError );
 
     {
         /* It happens that this call fails because the device is busy */

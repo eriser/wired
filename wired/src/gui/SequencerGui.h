@@ -1,35 +1,23 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
+
+// Copyright (C) 2004-2006 by Wired Team
+// Under the GNU General Public License
 
 #ifndef __SEQUENCERGUI_H__
 #define __SEQUENCERGUI_H__
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
+using namespace std;
 
+#include <vector>
+
+#include <wx/wx.h>
 #include <wx/statline.h>
 
 #include <wx/toolbar.h>
 #include <wx/colordlg.h>
 
-#include <vector>
-
-#include "Ruler.h"
-#include "Cursor.h"
-#include "SelectionZone.h"
-#include "ColoredBox.h"
-#include "Track.h"
-#include "AudioPattern.h"
 #include "MidiPattern.h"
-#include "AccelCenter.h"
-#include "MLTree.h"
-#include "SequencerView.h"
-
-BEGIN_DECLARE_EVENT_TYPES()
-  DECLARE_EVENT_TYPE(EVT_DROP, -1)
-END_DECLARE_EVENT_TYPES()
 
 #define ID_SEQ_SETPOS			(101010)
 #define ID_SEQ_RESIZE			(101011)
@@ -60,9 +48,9 @@ END_DECLARE_EVENT_TYPES()
 #define PATTERN_MAGNETISM		(MAGNETISM & PATTERN_MASK)
 #define PATTERN_DEFAULT_MAGNETISM	(4)
 #define DEFAULT_MAGNETISM_COMBO_VALUE	wxT("1/4")
-
+     
 #define PLAY_CURSOR_FOLLOWING		(42)
-
+     
 #define HAND_UP				wxT("ihm/toolbar/hand_up.png")
 #define HAND_DOWN			wxT("ihm/toolbar/hand_down.png")
 #define DRAW_UP				wxT("ihm/toolbar/draw_up.png")
@@ -88,7 +76,6 @@ enum
     ID_TOOL_SPLIT_SEQUENCER,
     ID_TOOL_MERGE_SEQUENCER,
     ID_TOOL_PAINT_SEQUENCER,
-    ID_EVENT_DROP,
   };
 
 #define NB_COMBO_CHOICES		(9)
@@ -126,8 +113,7 @@ enum
     ID_SEQ_MAGNET,
     ID_SEQ_COMBO_MAGNET,
     ID_SEQ_COLOR,
-    ID_SEQ_COLORBOX,
-    ID_EVT_DROP
+    ID_SEQ_COLORBOX
   };
 
 class				Ruler;
@@ -141,6 +127,59 @@ class				WaveFile;
 class				MidiEvent;
 class				AccelCenter;
 
+class				SequencerView: public wxWindow
+{
+  friend class			SequencerGui;
+  friend class			Pattern;
+
+ private:
+  void				OnClick(wxMouseEvent &e);
+  void				OnMotion(wxMouseEvent &e);
+  void				OnLeftUp(wxMouseEvent &e);
+  void				OnRightClick(wxMouseEvent &event);
+  void				OnPaint(wxPaintEvent &event);
+  void				OnHelp(wxMouseEvent &event);
+  void				SelectZonePatterns(bool shift);
+
+  unsigned long			TotalWidth;
+  unsigned long			TotalHeight;
+  long				XScroll;
+  long				YScroll;
+  SelectionZone			*TheZone;
+  AccelCenter			*HAxl;
+  AccelCenter			*VAxl;
+ public:
+  SequencerView(wxWindow *parent, const wxPoint &pos, const wxSize &size);
+  ~SequencerView();
+
+  void				SetXScroll(long x, long range, long seqwidth);
+  void				SetXScrollValue(long X);
+  long				GetXScroll();
+  void				SetYScroll(long y, long range, long seqwidth);
+  void				SetYScrollValue(long Y);
+  long				GetYScroll();
+  void				AutoScroll(double xmove, double ymove);
+  void				AutoXScroll(double xmove);
+  void				AutoXScrollBackward(long accel_type = 0);
+  void				AutoXScrollForward(long accel_type = 0);
+  void				AutoXScrollReset();
+  void				AutoYScroll(double ymove);
+  void				AutoYScrollBackward(long accel_type = 0);
+  void				AutoYScrollForward(long accel_type = 0);
+  void				AutoYScrollReset();
+  unsigned long			GetTotalWidth();
+  void				SetTotalWidth(unsigned long w);
+  unsigned long			GetTotalHeight();
+  void				SetTotalHeight(unsigned long h);
+  void				Drop(int x, int y, wxString file);
+
+ protected:
+  void				DrawMeasures(wxDC &dc);
+  void				DrawTrackLines(wxDC &dc);
+
+  DECLARE_EVENT_TABLE()
+};
+
 class				CursorEvent: public wxEvent
 {
   double			Position;
@@ -153,7 +192,7 @@ class				CursorEvent: public wxEvent
   virtual wxEvent*		Clone() const { return new CursorEvent(*this); }
 };
 
-class				SequencerGui: public wxPanel, public WiredDocument
+class				SequencerGui: public wxPanel
 {
   friend class			Pattern;
   friend class			AudioPattern;
@@ -187,9 +226,9 @@ class				SequencerGui: public wxPanel, public WiredDocument
   wxScrollBar			*HorizScrollBar;
   wxSlider			*VertZoomSlider;
   wxSlider			*HoriZoomSlider;
-  std::vector<wxStaticLine *>	Measures;
-  std::vector<Pattern *>	SelectedItems;
-  std::vector<Pattern *>	CopyItems;
+  vector<wxStaticLine *>	Measures;
+  vector<Pattern *>		SelectedItems;
+  vector<Pattern *>		CopyItems;
   Cursor			*PlayCursor;
   Cursor			*EndCursor;
   Cursor			*BeginLoopCursor;
@@ -201,29 +240,18 @@ class				SequencerGui: public wxPanel, public WiredDocument
   wxColour			PenColor;
   ColoredBox			*ColorBox;
 
+	
  public:
-  SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size,
-	       wxWindow *mainwindow, WiredDocument* docParent);
+  SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size, wxWindow *mainwindow = NULL);
   ~SequencerGui();
 
- private:
-
-  void				ReindexTrackArray();
-
- public:
-
-  // track creation and deletion
-  Track				*CreateTrack(trackType type = eAudioTrack);
-  void				DeleteTrack(Track* track);
-
-  // accessors
-  inline SequencerView*		GetView() { return (SeqView); };
-  int				GetCurrentYScrollPos();
-  int				GetSeqHeaderHeight();
-
+  void				HideAllPatterns(wxMouseEvent &e);
+  Track				*AddTrack(bool is_audio = true);
+  void				RemoveTrack();
   void				UnselectTracks();
   void				SelectTrack(long trackindex);
-  void				MovePattern(Pattern *p, long oldTrackIndex, long newTrackIndex);
+  void				AddPattern(Pattern *p, long trackindex);
+  void				DelPattern(Pattern *p, long trackindex);
   bool				IsAudioTrack(long trackindex);
   void				ChangeSelectedTrackIndex(long trackindex);
   void				ScrollTrackList(long track_delta);
@@ -251,8 +279,6 @@ class				SequencerGui: public wxPanel, public WiredDocument
   void				PasteItems();
   void				ShowPopup(wxPoint pos);
   void				ChangeMouseCursor(wxCursor c);
-
-  // wx events
   void				OnScroll(wxScrollEvent &event);
   void				OnWheelMove(wxMouseEvent &e);
   void				OnVertSliderUpdate(wxCommandEvent &event);
@@ -281,20 +307,15 @@ class				SequencerGui: public wxPanel, public WiredDocument
   void				OnMagnetismChange(wxCommandEvent &event);
   void				OnColorButtonClick(wxCommandEvent &event);
   void				OnColoredBoxClick(wxCommandEvent &event);
-  void				Drop(wxCommandEvent &event);
+  void				Drop(int x, int y, wxString file);
   //bool				Floating;
-  void				HideAllPatterns(wxMouseEvent &e);
-  // WiredDocument things
-  void				Save();
-  void				Load(SaveElementArray data);
-  void				CleanChildren();
 
   double			CurrentPos;
 
-  void				UpdateTracks();
  protected:
+  void				UpdateTracks();
   void				SwapTracksPos(Track *t1, Track *t2);
-  void				UpdateTrackList(std::vector<Track *> *track_list);
+  void				UpdateTrackList(vector<Track *> *track_list);
   void				UpdateMeasures();
   void				DrawMeasures();
   

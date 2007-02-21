@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include <wx/wx.h>
@@ -77,25 +77,4 @@ void  ASSampleList::OnDelSample(wxCommandEvent &e)
     List->DelEntry(ent->GetEntry());
     delete ass;
   }
-}
-
-ASamplerSample	*ASSampleList::GetSampleById(unsigned long askedId)
-{
-  vector<ASListEntry *>	samples;
-  ASamplerSample	*sample;
-  vector<ASListEntry *>::iterator i;
-
-  samples = List->GetEntries();
-
-  for(i = samples.begin(); 
-      i != samples.end(); 
-      i++)
-    {
-      ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
-      if (ass->GetID() == askedId)
-	return ass;
-    }
-  return NULL;
-
-
 }

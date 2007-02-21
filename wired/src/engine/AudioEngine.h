@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __AUDIOENGINE_H__
@@ -145,7 +145,7 @@ static int	AudioCallback(const void *input,
 
 
   int nchan = 0;
-  vector<int>::iterator chan;
+  vector<long>::iterator chan;
 
   if (data->SampleFormat & paFloat32)
     {

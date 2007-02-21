@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include <iostream>
@@ -20,8 +20,6 @@ using namespace std;
 #include "audio.xpm"
 #include "delete.xpm"
 #include "FileStat.h"
-#include "Sequencer.h"
-#include "FileConversion.h"
 
 #define F_WIDTH		640
 #define F_HEIGHT	520
@@ -1204,7 +1202,6 @@ void FileLoader::StopPlaying()
   wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, FileLoader_Stop);  
   event.SetEventObject(this);
   wxPostEvent(GetParent(), event);
-  
 }
 
 void FileLoader::StartPlaying()
@@ -1218,7 +1215,6 @@ void FileLoader::StartPlaying()
   wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, FileLoader_Start);  
   event.SetEventObject(this);
   wxPostEvent(GetParent(), event);
- 
 }
 
 void FileLoader::OnAddToFavorites(wxCommandEvent &e)

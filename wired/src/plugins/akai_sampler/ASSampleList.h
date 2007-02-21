@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2007 by Wired Team
+// Copyright (C) 2004-2006 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef _ASSAMPLELIST_H_
@@ -27,7 +27,6 @@ class ASSampleList : public ASPlugin
     void OnAddSample(wxCommandEvent &);
     void OnDelSample(wxCommandEvent &);
     void OnResize(wxSizeEvent &);
-    ASamplerSample *GetSampleById(unsigned long id);
     ASList *List;
 
   DECLARE_EVENT_TABLE()
