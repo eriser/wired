@@ -1,17 +1,13 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
-
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
 
 #ifndef __PATTERN_H__
 #define __PATTERN_H__
 
-#include <vector>
 #include <wx/string.h>
 #include <wx/wx.h>
 
-using namespace				std;
+#include "WiredDocument.h"
 
 #define PATTERN_DRAG_SCROLL_UNIT	(MEASURE_WIDTH + 1)
 #define PATTERN_NAME_WIDTH		(42)
@@ -30,7 +26,7 @@ class					MidiEvent;
 /**
  * creating a pattern.
  */
-class					Pattern : public wxWindow
+class					Pattern : public wxWindow, public WiredDocument
 {
   
   /**
@@ -45,7 +41,6 @@ class					Pattern : public wxWindow
   double							ydrag;		
 
  protected:
-	Pattern(){};
 
   virtual void				OnClick(wxMouseEvent &e);
   virtual void				OnLeftUp(wxMouseEvent &e);
@@ -84,9 +79,13 @@ class					Pattern : public wxWindow
   /**
    * The Index of track.
    */
-  unsigned long							TrackIndex;
+  unsigned long				TrackIndex;
+
+  /**
+   * The state of pattern, selected, dragged and/or toggled (see PATTERN_MASK_*)
+   */
+  unsigned char				StateMask;
   unsigned long							TrackFrom;
-  unsigned char							StateMask;
 
   /**
    * To measure the position of pattern.
@@ -136,9 +135,15 @@ class					Pattern : public wxWindow
    * \param endpos a  double,the end position of pattern.
    * \param trackindex a long,the index of track.
    */
-  Pattern(double pos, double endpos, long trackindex);
+  Pattern(WiredDocument *parent, wxString name, double pos, double endpos, long trackindex);
 //  Pattern(const Pattern& copy){*this = copy;};
   virtual ~Pattern();
+
+
+  // WiredDocument implementation
+  void				Save();
+  void				Load(SaveElementArray data);
+
 
   /**
    * To modify the pattern.
@@ -211,7 +216,7 @@ class					Pattern : public wxWindow
    * \param a double,a beginning of position.
    * \return returns a int.
    */ 
-  int								GetXPos(double pos);
+  int									GetXPos(double pos);
 
   /**
    * If selected a pattern.
@@ -241,7 +246,7 @@ class					Pattern : public wxWindow
    * Getting a name of pattern.
    * \return returns a wxString,the name of pattern.
    */
-  wxString							GetName() { return (Name); };
+  wxString						GetName() { return (Name); };
   
   /**
    * Setting the name of pattern.
@@ -290,6 +295,9 @@ class					Pattern : public wxWindow
    * \return returns a double,the end of position.
    */
   double							GetEndPos();
+
+
+  void								Dump();
 //  virtual Pattern			operator=(const Pattern& right) = 0;
 };
 

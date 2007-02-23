@@ -1,6 +1,8 @@
-LDFLAGS = $(shell wx-config --libs) -L/usr/pkg/lib/ `xml2-config --libs`
+LDFLAGS = $(shell wx-config --libs) `xml2-config --libs`
 
-CPPFLAGS = $(shell wx-config --cflags) -I../xml -I../save -I../audio -I../libs/WiredAkai/include -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../asm -I../editmidi -I../undo -I../libs/WiredWidgets/src -I/usr/pkg/include/libxml2/ -I/usr/pkg/include `xml2-config --cflags `
+# CPPFLAGS = $(shell wx-config --cflags) -I../xml -I../save -I../audio -I../libs/WiredAkai/include -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../asm -I../editmidi -I../undo -I../libs/WiredWidgets/src -I/usr/pkg/include/libxml2/ -I/usr/pkg/include `xml2-config --cflags `
+# XXX merge conflict...
+CPPFLAGS = $(shell wx-config --cflags) -I../samplerate -I../xml -I../save -I../audio -I../libs/WiredAkai/include -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../asm -I../editmidi -I../undo -I../libs/WiredWidgets/src `xml2-config --cflags ` -I../
 
 if PORTAUDIO
 CPPFLAGS += -I../portaudio/include
@@ -11,6 +13,7 @@ noinst_LIBRARIES = libgui.a
 libgui_a_SOURCES = 			\
 		AccelCenter.h		\
 		AccelCenter.cpp		\
+		AudioPattern.cpp	\
 		ChannelGui.cpp		\
 		ChannelGui.h		\
 		ColoredLine.cpp		\
@@ -30,6 +33,8 @@ libgui_a_SOURCES = 			\
 		MainWindow.h		\
 		MediaLibrary.cpp	\
 		MediaLibrary.h		\
+		MLTraverser.cpp		\
+		MLTraverser.h		\
 		MLTree.cpp		\
 		MLTree.h		\
 		MLTreeInfos.cpp		\
@@ -48,8 +53,8 @@ libgui_a_SOURCES = 			\
 		Ruler.h			\
 		SeqTrack.cpp		\
 		SeqTrack.h		\
-		SeqTrackPattern.cpp	\
-		SeqTrackPattern.h	\
+		SequencerView.cpp	\
+		SequencerView.h		\
 		SequencerGui.cpp	\
 		SequencerGui.h		\
 		SelectionZone.h		\
@@ -79,4 +84,4 @@ libgui_a_SOURCES = 			\
 		../save/WiredDocument.cpp	\
 		../save/SaveCenter.cpp
 
-libgui_a_LIBADD = ../save/libsave.a
+libgui_a_LIBADD = ../save/libsave.la

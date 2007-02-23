@@ -1,14 +1,12 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
-
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
 
 #ifndef __TRANSPORT_H__
 #define __TRANSPORT_H__
 
 #include <wx/wx.h>
 #include <wx/gauge.h>
+#include "WiredDocument.h"
 
 #define TRANSPORT_BACKGR_IMG	L"/ihm/player/tr_window_bg.png"
 #define TRANSPORT_BACKGR_LOOP_IMG	L"/ihm/player/tr_window_bg_loop.png"
@@ -43,10 +41,10 @@ class				HoldButton;
 class				StaticLabel;
 class				VUMCtrl;
 
-class				Transport : public wxPanel
+class				Transport : public wxPanel, WiredDocument
 {
  public:
-  Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style);
+  Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, WiredDocument *docParent);
   ~Transport();
 
   void				SetPlayPosition(double pos);
@@ -78,10 +76,14 @@ class				Transport : public wxPanel
   void				OnPaint(wxPaintEvent &event);
   void				OnIdle(wxIdleEvent &WXUNUSED(event));
 
+  // WiredDocument implementation
+  void				Save();
+  void				Load(SaveElementArray data);
+
  protected:
   friend class			MainWindow;
 
-  wxGauge				*vum;
+  wxGauge			*vum;
   DownButton			*PlayBtn;
   DownButton			*StopBtn;
   DownButton			*RecordBtn;
@@ -96,7 +98,7 @@ class				Transport : public wxPanel
   HoldButton			*SigNumDownBtn;
   HoldButton			*SigDenUpBtn;
   HoldButton			*SigDenDownBtn;
-  
+
   wxBitmap			*TrBmp;
   wxBitmap			*TrLoopBmp;
 
@@ -108,7 +110,7 @@ class				Transport : public wxPanel
   wxStaticText			*SigDenLabel;
 
   wxTextCtrl			*BpmText;
-  
+
   DECLARE_EVENT_TABLE()
 };
 

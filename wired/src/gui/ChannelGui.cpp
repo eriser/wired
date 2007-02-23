@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 // Copyright (C) 2004-2006 by Wired Team
@@ -17,13 +17,12 @@
 #include "../mixer/Channel.h"
 #include "../mixer/Mixer.h"
 
-ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
+ChannelGui::ChannelGui(Channel* channel, wxImage* img_bg, wxImage* img_fg,
 		       wxWindow* parent, wxWindowID id,
 		       const wxPoint& pos, const wxSize& size,
-		       const wxString& label)
-  : wxPanel( parent, id, pos, size )
+		       const wxString& label, WiredDocument* docParent)
+  : wxPanel(parent, id, pos, size), WiredDocument(wxT("ChannelGui"), docParent)
 {
-
   ConnectedSeqTrack = 0x0;
   SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);
 
@@ -33,7 +32,7 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
   Chan = channel;
   ImgFaderBg = img_bg;
   ImgFaderFg = img_fg;
-  if (Chan->Stereo)
+  if (Chan && Chan->Stereo)
     {
       FaderLeft  = new FaderCtrl(this, FaderLeftId, ImgFaderBg, ImgFaderFg, 0,
 				 127, &Chan->VolumeLeft, true, wxPoint(17, 10), wxDefaultSize,
@@ -53,7 +52,8 @@ ChannelGui::ChannelGui(Channel *channel, wxImage *img_bg, wxImage *img_fg,
       Label = new wxStaticText(this, -1, label, wxPoint(25, 0));
       Label->SetForegroundColour(*wxWHITE);
       Label->SetForegroundColour(*wxBLACK);
-      Label->SetFont(wxFont(8, wxBOLD, wxBOLD, wxBOLD));//wxNORMAL, wxNORMAL));
+      Label->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT,
+			    wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
       //cout << "Chan->VolumeGui : " << Chan->VolumeLeft << endl;
       FaderLeft->SetValue((int)(Chan->VolumeLeft * 100));
       FaderRight->SetValue((int)(Chan->VolumeRight * 100));
@@ -89,8 +89,8 @@ void				ChannelGui::OnPaint(wxPaintEvent& WXUNUSED(event))
   wxMemoryDC			memDC;
   wxPaintDC			dc(this);
   wxRegionIterator		upd(GetUpdateRegion());
-  memDC.SelectObject(*MixerBmp);
 
+  memDC.SelectObject(*MixerBmp);
   while (upd)
     {
       dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC,
@@ -186,6 +186,42 @@ void				ChannelGui::UpdateScreen()
     }
 }
 
+
+void				ChannelGui::SetStereo(bool stereo)
+{
+  this->Stereo = stereo;
+}
+
+void				ChannelGui::SetLock(bool lock)
+{
+  this->Lock = lock;
+}
+
+void				ChannelGui::SetMuteLeftButton(bool isDown)
+{
+  if (isDown)
+    this->MuteLeftButton->SetOn();
+  else
+    this->MuteLeftButton->SetOff();
+}
+
+void				ChannelGui::SetMuteRightButton(bool isDown)
+{
+  if (isDown)
+    this->MuteRightButton->SetOn();
+  else
+    this->MuteRightButton->SetOff();
+}
+
+void				ChannelGui::SetLockButton(bool isDown)
+{
+  if (isDown)
+    this->LockButton->SetOn();
+  else
+    this->LockButton->SetOff();
+}
+
+
 void				ChannelGui::OnMuteLeft(wxCommandEvent& WXUNUSED(e))
 {
   bool				m = MuteLeftButton->GetOn();
@@ -241,11 +277,124 @@ void				ChannelGui::OnLock(wxCommandEvent& WXUNUSED(e))
     LockButton->SetOff();
 }
 
-MasterChannelGui::MasterChannelGui( Channel *channel, wxImage *img_bg,
-				    wxImage *img_fg, wxWindow* parent,
-				    wxWindowID id, const wxPoint& pos,
-				    const wxSize& size )
-  : ChannelGui(channel, img_bg, img_fg, parent, id, pos, size, _("MASTER"))
+void				ChannelGui::Load(SaveElementArray data)
+{
+  int		dataCompt;
+
+#ifdef __DEBUG__
+  std::cerr << "ChannelGui::Load : " << this << std::endl;
+#endif
+  for (dataCompt = 0; dataCompt < data.GetCount(); dataCompt++)
+    {
+#ifdef __DEBUG__
+      std::cerr << "ChannelGui->key = " << data[dataCompt]->getKey().mb_str() << std::endl;
+      std::cerr << "ChannelGui->value = " << data[dataCompt]->getValue().mb_str() << std::endl;
+#endif
+
+      if (data[dataCompt]->getKey() == wxT("stereo"))
+	{
+	  if (!data[dataCompt]->getValueInt())
+	    SetStereo(false);
+	  else
+	    SetStereo(true);
+	}
+      else if (data[dataCompt]->getKey() == wxT("volumeLeft"))
+	{
+	  FaderLeft->SetValue((int)(data[dataCompt]->getValueFloat() * 100));
+	  //	  VolumeLeft->SetLabel(data[dataCompt]->getValueFloat());
+	}
+      else if (data[dataCompt]->getKey() == wxT("volumeRight"))
+	{
+	  FaderRight->SetValue((int)(data[dataCompt]->getValueFloat() * 100));
+	  //	  VolumeRight->SetLabel(data[dataCompt]->getValueFloat());
+	}
+      else if (data[dataCompt]->getKey() == wxT("muteLeftButton"))
+	{
+	  if (!data[dataCompt]->getValueInt())
+	    SetMuteLeftButton(false);
+	  else
+	    SetMuteLeftButton(true);
+	}
+      else if (data[dataCompt]->getKey() == wxT("muteRightButton"))
+	{
+	  if (!data[dataCompt]->getValueInt())
+	    SetMuteRightButton(false);
+	  else
+	    SetMuteRightButton(true);
+	}
+      else if (data[dataCompt]->getKey() == wxT("lockButton"))
+	{
+	  if (!data[dataCompt]->getValueInt()) {
+	    Lock = false;
+	    SetLockButton(false);
+	  }
+	  else {
+	    Lock = true;
+	    SetLockButton(true);
+	  }
+	}
+      else if (data[dataCompt]->getKey() == wxT("label"))
+	{
+	  Label->SetLabel(data[dataCompt]->getValue());
+	}
+
+    }
+}
+
+void 	ChannelGui::Save()
+{
+  SaveElement	*savedElem;
+
+  if (Stereo)
+    savedElem = new SaveElement(wxT("stereo"), wxT("1"));
+  else
+    savedElem = new SaveElement(wxT("stereo"), wxT("0"));
+  saveDocData(savedElem);
+
+  //VolumeLeft
+  savedElem = new SaveElement(wxT("volumeLeft"), FaderLeft->GetValue() / 100);
+  //FaderLeft->SetValue((int)(data[dataCompt]->getValueFloat() * 100));
+  //  savedElem = new SaveElement(wxT("volumeLeft"), VolumeLeft->GetLabel());
+  saveDocData(savedElem);
+
+  //VolumeRight
+  savedElem = new SaveElement(wxT("volumeRight"), FaderRight->GetValue() / 100);
+  // savedElem = new SaveElement(wxT("volumeRight"), VolumeRight->GetLabel());
+  saveDocData(savedElem);
+
+  //MuteLeft
+  if (MuteLeftButton->GetOn())
+    savedElem = new SaveElement(wxT("muteLeftButton"), wxT("1"));
+  else
+    savedElem = new SaveElement(wxT("muteLeftButton"), wxT("0"));
+  saveDocData(savedElem);
+
+  //MuteRight
+  if (MuteRightButton->GetOn())
+    savedElem = new SaveElement(wxT("muteRightButton"), wxT("1"));
+  else
+    savedElem = new SaveElement(wxT("muteRightButton"), wxT("0"));
+  saveDocData(savedElem);
+
+  //Lock
+  if (LockButton->GetOn())
+    savedElem = new SaveElement(wxT("lockButton"), wxT("1"));
+  else
+    savedElem = new SaveElement(wxT("lockButton"), wxT("0"));
+  saveDocData(savedElem);
+
+  //Label
+  savedElem = new SaveElement(wxT("label"), Label->GetLabel());
+  saveDocData(savedElem);
+
+}
+
+
+MasterChannelGui::MasterChannelGui(Channel* channel, wxImage* img_bg,
+				   wxImage* img_fg, wxWindow* parent,
+				   wxWindowID id, const wxPoint& pos,
+				   const wxSize& size, WiredDocument* parentDoc)
+  : ChannelGui(channel, img_bg, img_fg, parent, id, pos, size, _("MASTER"), parentDoc)
 {
   //  Label = new wxStaticText(this, -1, "MASTER", wxPoint(20, 0));
 }
@@ -255,10 +404,10 @@ MasterChannelGui::~MasterChannelGui()
 
 }
 
-void				MasterChannelGui::OnFaderLeft(wxScrollEvent &e)
+void				MasterChannelGui::OnFaderLeft(wxScrollEvent& e)
 {
-  //float				res = static_cast<float>(FaderLeft->GetValue() / 100.f);
-  //wxString			s;
+  //float		res = static_cast<float>(FaderLeft->GetValue() / 100.f);
+  //wxString		s;
 
   //s.Printf("%d", FaderLeft->GetValue());
   if (Lock)
@@ -280,7 +429,7 @@ void				MasterChannelGui::OnFaderLeft(wxScrollEvent &e)
   //VolumeLeft->SetLabel(s);
 }
 
-void				MasterChannelGui::OnFaderRight(wxScrollEvent &e)
+void				MasterChannelGui::OnFaderRight(wxScrollEvent& e)
 {
   //float				res = static_cast<float>(FaderRight->GetValue() / 100.f);
   //wxString			s;
@@ -370,8 +519,8 @@ END_EVENT_TABLE()
 BEGIN_EVENT_TABLE(MasterChannelGui, wxPanel)
   EVT_COMMAND_SCROLL(FaderLeftId, MasterChannelGui::OnFaderLeft)
   EVT_COMMAND_SCROLL(FaderRightId, MasterChannelGui::OnFaderRight)
-  EVT_BUTTON(MuteLeftId, ChannelGui::OnMuteLeft)
-  EVT_BUTTON(MuteRightId, ChannelGui::OnMuteRight)
+EVT_BUTTON(MuteLeftId, MasterChannelGui::OnMuteLeft)
+  EVT_BUTTON(MuteRightId, MasterChannelGui::OnMuteRight)
   EVT_BUTTON(LockId, ChannelGui::OnLock)
   EVT_PAINT(ChannelGui::OnPaint)
 END_EVENT_TABLE()

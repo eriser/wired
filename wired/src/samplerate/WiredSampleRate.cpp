@@ -1,9 +1,11 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "WiredSampleRate.h"
+#include "SaveCenter.h"
 
 static wxMutex				SampleRateMutex;
+extern SaveCenter *saveCenter;
 
 WiredSampleRate::WiredSampleRate()
 {
@@ -89,13 +91,33 @@ int						WiredSampleRate::OpenFile(wxString& Path, wxWindow* parent)
 			res = msg.ShowModal();
         	if (res == wxID_YES)
         	{
-        		if (Convert(&Info, Path, Result))
+        		if (Convert(&Info, Path, Result, true))
 	        		Res = wxID_YES;
 	        	else
 	        		Res = wxID_NO;
         	}
         	else if (res  == wxID_CANCEL)
         		Res = wxID_CANCEL;
+		}
+		sf_close(Result);
+	}
+	return Res;
+}
+int						WiredSampleRate::OpenFileNoGraph(wxString& Path, wxWindow* parent)
+{
+	SNDFILE				*Result;
+	SF_INFO				Info;
+	int					Res = wxID_NO;
+	bool				SameSampleRate, SameFormat;
+
+	Info.format = 0;
+	if ((Result = sf_open(Path.mb_str(*wxConvCurrent), SFM_READ, &Info)) != NULL)
+	{
+		SameFormat = IsSameFormat(Info.format, _ApplicationSettings.Format);
+		SameSampleRate = (int)Info.samplerate == (int)_ApplicationSettings.SampleRate ? true : false;
+		if (!SameFormat || !SameSampleRate)
+		{
+		  Convert(&Info, Path, Result, false);
 		}
 		sf_close(Result);
 	}
@@ -150,7 +172,7 @@ float					*WiredSampleRate::ConvertSampleRate(SRC_STATE* Converter, float *Input
 	}
 }
 
-bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *SrcData)
+bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *SrcData, bool isgraph)
 {
 
 	SNDFILE				*Result;
@@ -158,19 +180,34 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *
 	wxString				DestFileName;
 	int					ConversionQuality;
 
+
+
+	wxProgressDialog  *ProgressBar;
+
+	
+	if (isgraph == true)
+	  {
+	    ProgressBar = new wxProgressDialog(_("Converting wave file"), _("Please wait..."),
+					       SrcInfo->frames , NULL, wxPD_SMOOTH | wxPD_ELAPSED_TIME |
+					       wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_APP_MODAL);
+	  }
 	if (SrcFile.find(wxT("/")) != SrcFile.npos)
 	{
-		DestFileName = _ApplicationSettings.WorkingDirectory + SrcFile.substr(SrcFile.find_last_of(wxT("/")));
+		DestFileName = saveCenter->getAudioDir() + SrcFile.AfterLast('/');
 		Info.samplerate = _ApplicationSettings.SampleRate;
 		Info.channels = SrcInfo->channels;
 		Info.format = SrcInfo->format;
 		Info.format |= GetFileFormat(_ApplicationSettings.Format);
+
+		// if the last previewed file is the same
+		if (isgraph == false && wxFileExists(DestFileName))
+		  return false;
 		if ((Result = sf_open(DestFileName.mb_str(*wxConvCurrent), SFM_WRITE, &Info)))
 		{
-			ConversionQuality = GetConverterQuality();
-			wxProgressDialog ProgressBar(_("Converting wave file"), _("Please wait..."),
-										SrcInfo->frames , NULL, wxPD_SMOOTH | wxPD_ELAPSED_TIME |
-										wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_APP_MODAL);
+		  if (isgraph == true)
+		      ConversionQuality = GetConverterQuality();
+		  else
+		    ConversionQuality = 1;
 			if (sf_seek(SrcData, 0, SEEK_SET) != -1)
 			{
 				float		*Buffer, *Output;
@@ -182,7 +219,8 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *
 				int			ConverterError;
 				SRC_STATE*	Converter = src_new(ConversionQuality, SrcInfo->channels, &ConverterError);
 
-				ProgressBar.Update(NbLoop, wxT(""), &HasFailed);
+				 if (isgraph == true)
+				   ProgressBar->Update(NbLoop, wxT(""), &HasFailed);
 				Buffer = new float[_ApplicationSettings.SamplesPerBuffer * Info.channels];
 				while ((Readen = sf_readf_float(SrcData, Buffer, _ApplicationSettings.SamplesPerBuffer)) > 0)
 				{
@@ -206,12 +244,13 @@ bool					WiredSampleRate::Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *
 							sf_seek(SrcData, ReallyReaden - Readen, SEEK_CUR);
 					}
 					NbLoop += ReallyReaden;
-					if (HasFailed || ProgressBar.Update(NbLoop) == false)
-					{
-						sf_close(Result);
-						delete[] Buffer;
-						return false;
-					}
+					if (isgraph == true)
+					  if (HasFailed || ProgressBar->Update(NbLoop) == false)
+					    {
+					      sf_close(Result);
+					      delete[] Buffer;
+					      return false;
+					    }
 				}
 				if (sf_error(SrcData) != SF_ERR_NO_ERROR)
 				{

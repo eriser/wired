@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef _WIREDSAMPLERATE_H_
@@ -35,6 +35,8 @@ using namespace std;
 #define STR_UNKNOWN_FORMAT _("Unknown format")
 #define	NB_SAMPLERATE_QUALITY 5
 
+
+
 typedef struct s_format_types
 {
 	int				SndFileFormat;
@@ -70,7 +72,7 @@ public:
 
 	void		Init(t_samplerate_info *Info);
 	int		OpenFile(wxString& Path, wxWindow* parent);					//return wxID_NO if not modified (or invalid), 	
-														//else return wxID_YES r wxID_CANCEL if canceled
+	int		OpenFileNoGraph(wxString& Path, wxWindow* parent);													//else return wxID_YES r wxID_CANCEL if canceled
 														// and set Path to the new FilePath
 	bool		SaveFile(wxString& Path, unsigned int NbChannel, unsigned long NbSamples, bool interleaved);					//return false if saving canceled
 	void		EndSaveFile(unsigned int NbChannel);
@@ -82,8 +84,10 @@ public:
 	void		SetSampleRate(unsigned long SampleRate);
 	void		SetFormat(PaSampleFormat Format);
 	void		SetBufferSize(unsigned long Size);
+	t_samplerate_info Get_Apllication_Setting(){return _ApplicationSettings;};
+	bool		Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *SrcData, bool isgraph);
 private:
-	bool		Convert(SF_INFO *SrcInfo, wxString& SrcFile, SNDFILE *SrcData);
+
 	int			GetConverterQuality();
 	float		*ConvertSampleRate(SRC_STATE* Converter, float *Input, unsigned long FrameNb, double Ratio, unsigned long &ToWrite, bool End, int NbChannels, unsigned long &ReallyReaden);
 	int			GetFileFormat(PaSampleFormat PaFormat);

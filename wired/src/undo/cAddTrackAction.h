@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 
@@ -9,6 +9,7 @@
 #include "cActionManager.h"
 #include "Visitor.h"
 #include "SequencerGui.h"
+#include "Track.h"
 
 #define	HISTORY_LABEL_ADD_TRACK_ACTION	_("AddTrackAction")
 
@@ -19,10 +20,11 @@ extern SequencerGui		*SeqPanel;
 class				cAddTrackAction : public cAction 
 {
  private:
-  bool				mTrackKindFlag;
+  trackType			mTrackKindFlag;
+  Track*			trackCreated;
   
  public:
-  cAddTrackAction (bool kind)
+  cAddTrackAction (trackType kind)
     { mTrackKindFlag = kind; };
   cAddTrackAction(const cAddTrackAction& copy)
     { *this = copy; };
@@ -30,15 +32,14 @@ class				cAddTrackAction : public cAction
     {};
   
   virtual void			Do ()
-    { SeqPanel->AddTrack(mTrackKindFlag); NotifyActionManager(); };
+    { trackCreated = SeqPanel->CreateTrack(mTrackKindFlag); NotifyActionManager(); };
   
   virtual void			Redo ()
-    { SeqPanel->AddTrack(mTrackKindFlag); };
+    { trackCreated = SeqPanel->CreateTrack(mTrackKindFlag); };
   
   virtual void			Undo ()
     { 
-    	SeqPanel->RemoveTrack();
-    	//SeqPanel->DeleteSelectedTrack();
+      SeqPanel->DeleteTrack(trackCreated);
     };
   
   virtual void			Accept (cActionVisitor& visitor)
