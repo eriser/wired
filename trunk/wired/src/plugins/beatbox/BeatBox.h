@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __BEATBOX_H__
@@ -24,6 +24,7 @@
 #include "StaticPosKnob.h"
 #include "CycleKnob.h"
 #include "midi.h"
+#include "WiredDocument.h"
 
 using namespace std;
 
@@ -125,18 +126,27 @@ using namespace std;
 		}
 
 
-class WiredBeatBox : public Plugin
+class WiredBeatBox : public Plugin, public WiredDocument
 {
  public:
-  WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo);
+  WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo, 
+	       WiredDocument *parent = NULL);
   ~WiredBeatBox();
   
   void		Play();
   void		Stop();
   
-  void		Load(int fd, long size);
-  long		Save(int fd);
+  void		Save();
+  void		Load(SaveElementArray data);
+
+  void		LoadPatch(wxString filename);
+  void		LoadChannel(SaveElement *channelData);
+  void		LoadBank(SaveElement *bankData);
+  void		LoadPattern(SaveElement *patternData, int bank);
   
+  void		StringToIntArray(wxString s, int *i);
+  wxString	IntArrayToString(int *vect);
+
   void		SetBufferSize(long size);
   void		SetSamplingRate(long rate) { SamplingRate = rate; }
   void		Process(float **input, float **output, long sample_length);
@@ -253,6 +263,7 @@ class WiredBeatBox : public Plugin
   
   wxStaticText**	BeatLabels;
   wxStaticText*		StepsLabel;
+  wxStaticText*		PatchLabel;
   
   StaticPosKnob*	BankKnob;    
   CycleKnob*		StepsKnob;

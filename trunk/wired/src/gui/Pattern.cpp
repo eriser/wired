@@ -1,8 +1,5 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
-
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
 
 #include <math.h>
 #include <wx/font.h>
@@ -17,8 +14,9 @@
 #include "Ruler.h"
 #include "AccelCenter.h"
 
-Pattern::Pattern(double pos, double endpos, long trackindex) :
-  wxWindow(SeqPanel->SeqView, -1, wxPoint(0, 0), wxSize(0, 0))
+Pattern::Pattern(WiredDocument *parent, wxString name, double pos, double endpos, long trackindex) :
+  wxWindow(SeqPanel->SeqView, -1, wxPoint(0, 0), wxSize(0, 0)),
+  WiredDocument(name, parent)
 {
 #ifdef __DEBUG__
   printf("Pattern::Pattern(%f, %f, %d)\n", pos, endpos, trackindex);
@@ -28,8 +26,6 @@ Pattern::Pattern(double pos, double endpos, long trackindex) :
   Length = endpos - pos;
   TrackIndex = trackindex;
   StateMask = 0;
-  xdrag = 0;
-  ydrag = 0;
   m_pos = wxPoint((int) floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * pos), 
 		  (int) floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * trackindex));
   m_size = wxSize((int) ceil(Length * MEASURE_WIDTH * SeqPanel->HoriZoomFactor),
@@ -41,17 +37,32 @@ Pattern::Pattern(double pos, double endpos, long trackindex) :
 #ifdef __DEBUG__
   printf(">> NEW PATTERN from pos %f to %f (length=%f) on TRACK %d\n", Position, EndPosition, Length, TrackIndex);
 #endif
+
+  // add itself in track's array
+  wxMutexLocker		locker(SeqMutex);
+
+  if (trackindex >= 0 && trackindex < Seq->Tracks.size() && Seq->Tracks[trackindex])
+    Seq->Tracks[trackindex]->AddPattern(this);
+  else
+    cerr << "[Pattern] oooops, bad track index!" << endl;
+
 }
 
 Pattern::~Pattern()
 {
+  // remove itself in track's array
+  wxMutexLocker		locker(SeqMutex);
 
+  if (TrackIndex >= 0 && TrackIndex < Seq->Tracks.size() && Seq->Tracks[TrackIndex])
+    Seq->Tracks[TrackIndex]->DelPattern(this);
 }
 
 void					Pattern::Modify(double newpos, double newendpos, 
 							long newtrackindex,  double newlength)
 {
-  //printf("Pattern::Modify(%f, %f, %d, %f)\n", newpos, newendpos, newtrackindex, newlength);
+#ifdef __DEBUG__
+  printf("Pattern::Modify(%f, %f, %d, %f)\n", newpos, newendpos, newtrackindex, newlength);
+#endif
   if (newpos != -1)
     {
       if (newpos < 0.0)
@@ -77,7 +88,9 @@ void					Pattern::Modify(double newpos, double newendpos,
       TrackIndex = newtrackindex;
       m_pos.y = (int) floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * newtrackindex);
     }
-  //  printf("MOD PATTERN (pos=%f) (endpos=%f) (length=%f) (trackindex=%d)\n", Position, EndPosition, Length, TrackIndex);
+#ifdef __DEBUG__
+  printf("MOD PATTERN (pos=%f) (endpos=%f) (length=%f) (trackindex=%d)\n", Position, EndPosition, Length, TrackIndex);
+#endif
 }
 
 void					Pattern::Update()
@@ -192,12 +205,11 @@ void					Pattern::OnMotion(wxMouseEvent &e)
   long					y;
   long					max;
   double				z;
-  int					trackfrom;
   int					trackto;
   double				mes;
   
  
-  if (IsSelected() && (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->Wave != this))
+  if (IsSelected() && (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->GetAudioPattern() != this))
     {
       if (m_click.x != -1)
 	StateMask |= (unsigned char) PATTERN_MASK_DRAGGED;
@@ -218,8 +230,7 @@ void					Pattern::OnMotion(wxMouseEvent &e)
 	      if (SeqPanel->IsAudioTrack(TrackIndex) == SeqPanel->IsAudioTrack(trackto))
 		{
 		  SeqPanel->ChangeMouseCursor(wxCursor(wxCURSOR_HAND));
-		  SeqPanel->AddPattern(this, trackto);
-		  SeqPanel->DelPattern(this, TrackIndex);
+		  SeqPanel->MovePattern(this, TrackIndex, trackto);
 		  TrackIndex = trackto;
 		  XMove(z);
 		}
@@ -248,6 +259,7 @@ void					Pattern::OnMotion(wxMouseEvent &e)
 	}
       SeqMutex.Unlock();
     }
+
 //   else
 //     if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
 //       SeqPanel->RulerPanel->MoveXMark(e.GetPosition().x + GetXPos(Position));
@@ -281,4 +293,88 @@ void					Pattern::DrawName(wxPaintDC &dc, const wxSize &s)
 double					Pattern::GetEndPos()
 {
   return EndPosition;
+}
+
+void				Pattern::Save()
+{
+  SaveElement*			saved;
+
+  saveDocData(new SaveElement(wxT("Name"), Name));
+  saveDocData(new SaveElement(wxT("TrackIndex"), (int)TrackIndex));
+  saveDocData(new SaveElement(wxT("Position"), Position));
+  saveDocData(new SaveElement(wxT("EndPosition"), EndPosition));
+  saveDocData(new SaveElement(wxT("Length"), Length));
+  saveDocData(new SaveElement(wxT("StateMask"), (int)StateMask));
+
+  saved = new SaveElement();
+  saved->setKey(wxT("PenColor"));
+  saved->addAttribute(wxT("red"), (int)PenColor.Red());
+  saved->addAttribute(wxT("green"), (int)PenColor.Green());
+  saved->addAttribute(wxT("blue"), (int)PenColor.Blue());
+  saveDocData(saved);
+
+  saved = new SaveElement();
+  saved->setKey(wxT("BrushColor"));
+  saved->addAttribute(wxT("red"), (int)BrushColor.Red());
+  saved->addAttribute(wxT("green"), (int)BrushColor.Green());
+  saved->addAttribute(wxT("blue"), (int)BrushColor.Blue());
+  saveDocData(saved);
+}
+
+void				Pattern::Load(SaveElementArray data)
+{
+  int				i;
+  double			pos = -1.f;
+  double			endpos = -1.f;
+  double			length = -1.f;
+
+  for (i = 0; i < data.GetCount(); i++)
+    {
+      if (data[i]->getKey() == wxT("Name"))
+	Name = data[i]->getValue();
+      else if (data[i]->getKey() == wxT("TrackIndex"))
+        TrackIndex = data[i]->getValueInt();
+      else if (data[i]->getKey() == wxT("Position"))
+        pos = data[i]->getValueDouble();
+      else if (data[i]->getKey() == wxT("EndPosition"))
+	endpos = data[i]->getValueDouble();
+      else if (data[i]->getKey() == wxT("Length"))
+	length = data[i]->getValueDouble();
+      else if (data[i]->getKey() == wxT("StateMask"))
+	StateMask = data[i]->getValueInt();
+      else if (data[i]->getKey() == wxT("PenColor"))
+	{
+	  unsigned char		red = data[i]->getAttributeInt(wxT("red"));
+	  unsigned char		green = data[i]->getAttributeInt(wxT("green"));
+	  unsigned char		blue = data[i]->getAttributeInt(wxT("blue"));
+	  SetDrawColour(wxColour(red, green, blue));
+	}
+      else if (data[i]->getKey() == wxT("BrushColor"))
+	{
+	  unsigned char		red = data[i]->getAttributeInt(wxT("red"));
+	  unsigned char		green = data[i]->getAttributeInt(wxT("green"));
+	  unsigned char		blue = data[i]->getAttributeInt(wxT("blue"));
+	  BrushColor = wxColour(red, green, blue);
+	}
+    }
+  // modify update internal vars like m_pos, m_size, ...
+  Modify(pos, endpos, TrackIndex, length);
+  Update();
+}
+
+void			Pattern::Dump()
+{
+  std::cerr << "PatternDump()" << std::endl;
+  std::cerr << "Position = " << Position << std::endl;
+  std::cerr << "EndPosition = " << EndPosition << std::endl;
+  std::cerr << "Length = " << Length << std::endl;
+  std::cerr << "TrackIndex = " << TrackIndex << std::endl;
+  std::cerr << "StateMask = " << StateMask << std::endl;
+  std::cerr << "m_pos.x = " << m_pos.x << std::endl;
+  std::cerr << "m_pos.y = " << m_pos.y << std::endl;
+  std::cerr << "m_size.GetWidth() = " << m_size.GetWidth() << std::endl;
+  std::cerr << "m_size.GetHeighy() = " << m_size.GetHeight() << std::endl;
+  std::cerr << "m_click.x = " << m_click.x << std::endl;
+  std::cerr << "m_click.y = " << m_click.y << std::endl;
+  std::cerr << "Name.mb_str() = " << Name.mb_str() << std::endl;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include	<sndfile.h>
@@ -248,11 +248,11 @@ void AudioEngine::GetDevices()
 
 	    // print device informations
 	    cout << "[AUDIO] New device found #" << dev->Id << " for host " << dev->Host->GetId()
-		 << " : " << dev->Name.mb_str() << endl
-		 << "[AUDIO] Max Input Channels: " << dev->MaxInputChannels 
-		 << endl
-		 << "[AUDIO] Max Output Channels: " << dev->MaxOutputChannels
-		 << endl;
+		 << " : " << dev->Name.mb_str() << endl;
+#ifdef __DEBUG__
+	    cout << "[AUDIO] Max Input/Output Channels: " << dev->MaxInputChannels 
+		 << " / " << dev->MaxOutputChannels << endl;
+#endif
 	  }
       }
 }

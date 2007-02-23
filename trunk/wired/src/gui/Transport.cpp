@@ -1,15 +1,11 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
-
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
 
 #include <wx/filename.h>
 #include "Transport.h"
 #include "Sequencer.h"
 #include "SequencerGui.h"
 #include "Colour.h"
-#include "WiredSession.h"
 #include "HelpPanel.h"
 #include "DownButton.h"
 #include "HoldButton.h"
@@ -18,10 +14,8 @@
 #include "../engine/Settings.h"
 #include "../engine/AudioEngine.h"
 
-extern WiredSession				*CurrentSession;
-
-Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style)
-  : wxPanel(parent, -1, pos, size, style)
+Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, WiredDocument *docParent)
+  : wxPanel(parent, -1, pos, size, style), WiredDocument(wxT("Transport"), docParent)
 {
   SetBackgroundColour(CL_RULER_BACKGROUND);
   //wxColour(204, 199, 219));//*wxLIGHT_GREY);
@@ -93,11 +87,15 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 			    up_up, up_down);
   BpmUpBtn = new HoldButton(this, Transport_BpmDown, wxPoint(112, 30), wxSize(11, 8), 
 			    down_up, down_down);
-  BpmLabel = new StaticLabel(this, Transport_BpmClick, wxT("96"), wxPoint(49, 20), wxSize(-1, 12));
-  BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));
-  
   wxString s;
 
+  s.Printf(wxT("%d"), Seq->BPM);
+
+  BpmLabel = new StaticLabel(this, Transport_BpmClick, s, wxPoint(49, 20), wxSize(-1, 12));
+  BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));
+  
+  s.Printf(wxT("%.0f"), Seq->BPM);
+  BpmLabel->SetLabel(s);
   s.Printf(wxT("%.0f"), Seq->BPM);
   BpmLabel->SetLabel(s);
   SigNumUpBtn = new HoldButton(this, Transport_SigNumUp, wxPoint(42, 48), wxSize(11, 8), 
@@ -206,21 +204,22 @@ void				Transport::OnRecord(wxCommandEvent &WXUNUSED(event))
 {
   if (RecordBtn->GetOn())
     {
-      wxFileName f(CurrentSession->AudioDir);
-      if (CurrentSession->AudioDir.empty() || (!f.DirExists()))
-	{
-	  wxDirDialog dir(this, _("Choose the Audio file directory"), 
-			  wxFileName::GetCwd());
-	  if (dir.ShowModal() == wxID_OK)
-	    {
-	      CurrentSession->AudioDir = dir.GetPath();
-	    }
-	  else
-	    {
-	      RecordBtn->SetOff();
-	      return;
-	    }
-	}
+  // TODO : Replace WiredSession with SaveCenter
+//       wxFileName f(CurrentSession->AudioDir.c_str());
+//       if (CurrentSession->AudioDir.empty() || (!f.DirExists()))
+// 	{
+// 	  wxDirDialog dir(this, _("Choose the Audio file directory"), 
+// 			  wxFileName::GetCwd());
+// 	  if (dir.ShowModal() == wxID_OK)
+// 	    {
+// 	      CurrentSession->AudioDir = dir.GetPath().c_str();
+// 	    }
+// 	  else
+// 	    {
+// 	      RecordBtn->SetOff();
+// 	      return;
+// 	    }
+// 	}
       Seq->Record();
     }
   else
@@ -410,8 +409,10 @@ void				Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
 	  SeqMutex.Lock();
 	  Seq->SetBPM(d);
 	  SeqMutex.Unlock();
-	  BpmLabel->SetLabel(s);      
+	  SetBpm(d);
 	}
+      Disconnect(Transport_BpmEnter, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)(wxEventFunction) 
+		 (wxCommandEventFunction)&Transport::OnBpmEnter);
       BpmText->Destroy();
       BpmText = NULL;
     }
@@ -458,6 +459,21 @@ void				Transport::OnIdle(wxIdleEvent &WXUNUSED(event))
 {
   if (Audio)
     vum->SetValue((int)(Audio->GetCpuLoad() * 100));
+}
+
+void				Transport::Save()
+{
+}
+
+void				Transport::Load(SaveElementArray data)
+{
+  wxMutexLocker			m(SeqMutex);
+
+  SetBpm(Seq->BPM);
+  SetSigNumerator(Seq->SigNumerator);
+  SetSigDenominator(Seq->SigDenominator);
+  SetLoop(Seq->Loop);
+  SetClick(Seq->Click);
 }
 
 BEGIN_EVENT_TABLE(Transport, wxPanel)

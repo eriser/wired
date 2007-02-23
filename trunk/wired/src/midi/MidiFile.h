@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #ifndef __MIDIFILE_H__
@@ -159,12 +159,20 @@ class NonMidiEvent : public Event
 // All the events together is a track
 class MidiTrack
 {
-  public:
-    MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN);
-    ~MidiTrack();
-    unsigned long GetMaxPos() { return (MaxPos); }
-    vector<MidiFileEvent *> GetMidiEvents();
-    unsigned short GetPPQN() { return ppqn; }
+ private:
+  wxString	_filename;
+  unsigned int	_noTrack;
+
+ public:
+  MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN,
+	    wxString filename, unsigned int noTrack);
+  ~MidiTrack();
+  unsigned long GetMaxPos() { return (MaxPos); }
+  vector<MidiFileEvent *> GetMidiEvents();
+  unsigned short GetPPQN() { return ppqn; }
+
+  inline wxString&	GetFileName() { return (_filename); };
+  inline unsigned int	GetNoTrack() { return (_noTrack); };
 
   protected:
     unsigned long GetVLQ(unsigned char *buf, unsigned long &ofs);

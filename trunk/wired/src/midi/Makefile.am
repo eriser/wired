@@ -4,7 +4,7 @@ endif
 
 LDFLAGS = $(shell wx-config --libs)
 
-CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I../sequencer -I../redist -I../engine -I../mixer -I../audio -I../editmidi -I../undo -I../libs/WiredWidgets/src
+CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I../sequencer -I../redist -I../engine -I../mixer -I../audio -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../editmidi -I../undo -I../libs/WiredWidgets/src -I../save
 
 if PORTMIDI
 CPPFLAGS += -I../midi/portmidi/pm_common -I../midi/portmidi/porttime 

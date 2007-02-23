@@ -1,5 +1,5 @@
-// Copyright (C) 2004 by Wired Team
-// Under the GNU General Public License
+// Copyright (C) 2004-2007 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
 
 #ifndef __MLTREE_H__
 #define __MLTREE_H__
@@ -8,16 +8,24 @@
 #include <map>
 #include <wx/treectrl.h>
 #include <wx/imaglist.h>
-#include <WiredDocument.h>
-#include "../xml/WiredSessionXml.h"
+#include "WiredDocument.h"
+#include "MediaLibrary.h"
 
 using std::string;
 using std::vector;
 using std::map;
 
-#define EXT_FILE		wxT("wired_exts.conf")
-#define SAVE_TREE_FILE		wxT("MediaLibrary/MLTree");
+extern MediaLibrary	*MediaLibraryPanel;
 
+#define EXT_FILE		wxT("wired_exts.conf")
+#define SAVE_TREE_FILE		wxT("MediaLibrary/MLTree")
+#define LOCAL_TREE_FILE		wxT("LocalTree")
+#define LOCAL_TREE_PATH		wxT("~/.wired/LocalTree.xml")
+#define PROJECT_NODE            _("Project")
+#define LOCAL_NODE		_("Local")
+#define PROJECT_NODE_NAME       _("Project Files")
+#define LOCAL_NODE_NAME		_("Local Files")
+//#define NEW_DIRECTORY_NAME	_("New Directory")
 /**
  * The size of ML icon (square)
  */
@@ -30,7 +38,7 @@ using std::map;
 struct				s_nodeInfo
 {
   wxString			label;
-  wxString			extention;
+  wxString			extension;
   wxString			length;
 };
 
@@ -44,6 +52,10 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
  * Main constructor for class MLTree
 */
   MLTree(wxWindow *dad, wxPoint p, wxSize s, long style);
+  wxTreeItemId			AddFileInProject(wxString FileToAdd, bool expand);
+  wxTreeItemId			DelFileInProject(wxString FileToAdd, bool expand);
+  wxPoint                       GetPos(){return Pos;};
+  wxString                      GetFile(){return Selfile;};
 /**
  * Main destructor for class MLTree
 */
@@ -54,6 +66,8 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   void			OnSave(wxString filename);
 
  protected:
+  wxPoint                       Pos;
+  wxString     	                Selfile;
   friend class			MediaLibrary;
   // friend class			WiredSessionXml;
   friend class			MLTreeInfos;
@@ -76,7 +90,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
 */
   wxString			filters;
 /**
- * A vector of wxStrings containing all the known sounds extentions
+ * A vector of wxStrings containing all the known sounds extensions
 */
   vector<wxString>		Exts;
 /**
@@ -114,15 +128,16 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
  * \param parent a wxTreeItemId
  * \return void
 */
-  void				SaveTree(WiredSessionXml *XmlSession, wxTreeItemId parent);
+  /*void				SaveTree(WiredSessionXml *XmlSession, wxTreeItemId parent);
   void				LoadTree(WiredSessionXml *XmlSession);
+  */
 /**
  * The method used to serialize the MediaLibrary Content (calls SaveTree)
  * \return void
-*/
   void				SaveML();
 
   void				LoadML();
+*/
   void				OnSuppr(wxKeyEvent &event);
 
   /**
@@ -130,11 +145,21 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   */
   void			Save();
 
-  void			SaveTreeSC(wxTreeItemId parent, SaveElement *parentData);
+  void			SaveTreeSC(wxTreeItemId parent, SaveElement *parentData, bool relativePath);
 
   void			Load(SaveElementArray data);
   
   void			LoadItem(wxTreeItemId parent, SaveElement *parentData);
+
+  /**
+   * Used to save the local tree when closing wired.
+   */
+  void			SaveLocalTree();
+
+  /**
+   * Used to load the local tree when starting wired.
+   */
+  void			LoadLocalTree();
 
 /**
  * The function IsTreeCollapsed is used to know if the nodes are expanded or
@@ -186,9 +211,9 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
  * \param ParentNode a wxTreeItemId corresponding to the parent node of the
  * new node.
  * \param wxString FileToAdd the full path to the file to add
- * \param infosx a s_nodeInfo struct used to hold informations about the file
+ * \param infos a s_nodeInfo struct used to hold informations about the file
  * \param expand, a boolean used to expand or not the new node
- * \return the added node.
+ * \return the wxTreeItemId of the newly added tree item.
 */
   wxTreeItemId			AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo infos, bool expand);
 
@@ -200,6 +225,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
  * \param toLevel, an int which represent the level of expansion
  * \return void
 */
+
   void				ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldExpand, int toLevel);
 
 /**
@@ -210,10 +236,17 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   void				OnCollapse();
 
 /**
- * The LoadKnownExtentions function load the known extentions file types.
+ * The LoadKnownExtensions function load the known extensions file types.
  * \return void
 */
-  bool				LoadKnownExtentions();
+  bool				LoadKnownExtensions();
+
+/**
+ * The AddIcon function add a visual icon to a node.
+ * \param images a wxImageList holding the available images
+ * \param icon a wxIcon
+ * \return void
+*/
 
 /**
  * The AddIcon function add a visual icon to a node.
@@ -232,6 +265,16 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
 */
   void				OnAdd(wxString FileToAdd);
 
+  void				OnAddOnNode(wxString FileToAdd, wxTreeItemId selection);
+
+
+/**
+ * The OnAddDirectory function is called by launching the Add Directory action
+ *
+*/
+  void				ImportDir();
+  void				OnAddDirectory(wxString DirToAdd);
+
 /**
  * The OnRemove function remove the selected nodes
  * \return void
@@ -244,6 +287,21 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
  * \return void
 */
   void				OnCreateDir();
+
+/**
+ * The OnCreateDirName function is called when importing a directory.
+ * The parent node must be given
+ * \return the wxTreeItemId added
+*/
+  wxTreeItemId			OnCreateDirName(wxString, wxTreeItemId);
+
+/**
+ * getOrCreateNodeFromFName is a recursive function called by OnCreateDirName
+ * to get "aware" of subDirectories in the ML
+ * it takes a relative path and a parent wxTreeItemId as arguments
+ * \return the wxTreeItemId found or created
+*/
+  wxTreeItemId			getOrCreateNodeFromFName(wxString, wxTreeItemId);
 
 /**
  * The OnInsert function is called when inserting the selected item into a
@@ -374,12 +432,15 @@ enum
   ML_ID_MENU_INFOS,
   ML_ID_MENU_CREATEDIR,
   ML_ID_INSTR_MENU,
-  ML_ID_EFFECTS_MENU
+  ML_ID_EFFECTS_MENU,
+  ML_ID_MENU_ADDDIR,
+  ML_ID_LAST
 };
 
 enum
 {
-   MLTree_RightClick = ML_ID_EFFECTS_MENU + 1,
+   //XXX MLTree_RightClick = ML_ID_EFFECTS_MENU + 1,
+   MLTree_RightClick = ML_ID_LAST + 1,
    MLTree_Menu,
    MLTree_Selected
 };

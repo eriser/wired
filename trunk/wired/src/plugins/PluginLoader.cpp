@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include <iostream>
@@ -7,21 +7,31 @@
 
 PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, int MenuItemId, PlugStartInfo &info)
 {
-	External = true;
-	PluginMgr = PlugMgr;
-	IdMenuItem = MenuItemId;
-	ExternalPlug = PluginMgr->CreatePlugin(IdMenuItem, info);
-	ExternalPlug->SetInfo(&InitInfo);
-	//ExternalPlug->SetVirtualSize(400, 100);
+  IdMenuItem = MenuItemId;
+  ExternalPlug = PlugMgr->CreatePluginFromMenu(IdMenuItem, info);
+  Init(PlugMgr);
 }
 
 PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, unsigned long UniqueId)
 {
-	External = true;
-	PluginMgr = PlugMgr;
-	//IdMenuItem = MenuItemId;
-	ExternalPlug = PluginMgr->CreatePlugin(UniqueId);
-	ExternalPlug->SetInfo(&InitInfo);
+  ExternalPlug = PlugMgr->CreatePluginFromUniqueId(UniqueId);
+  Init(PlugMgr);
+}
+
+PluginLoader::PluginLoader(WiredExternalPluginMgr *PlugMgr, PlugStartInfo &info, int IdPlugin)
+{
+  ExternalPlug = PlugMgr->CreatePlugin((long)IdPlugin, info);
+  Init(PlugMgr);
+}
+
+void	PluginLoader::Init(WiredExternalPluginMgr *PlugMgr)
+{
+  External = true;
+  PluginMgr = PlugMgr;
+  if (ExternalPlug)
+    ExternalPlug->SetInfo(&InitInfo);
+  else
+    cerr << "[PLUGINLOADER] Can't create Plugin" << endl;
 }
 
 PluginLoader::PluginLoader(wxString filename) : 
@@ -43,7 +53,9 @@ PluginLoader::PluginLoader(wxString filename) :
   if (handle.IsLoaded())
     {
       // check all mandatory symbols
+#ifdef __DEBUG__
       cout << "[PLUGLOADER] Loading symbol init..." << endl;
+#endif
 
       init = (init_t) handle.GetSymbol(PLUG_INIT);
       if (!init) 
@@ -97,7 +109,9 @@ Plugin *PluginLoader::CreateRack(PlugStartInfo &info)
 {
 	if (External == false)
 	  return (create(&info));
-	ExternalPlug->SetInfo(&info);
+
+	if (ExternalPlug)
+	  ExternalPlug->SetInfo(&info);
 	
 	return (Plugin*) ExternalPlug;
 }

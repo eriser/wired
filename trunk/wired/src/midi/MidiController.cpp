@@ -1,4 +1,4 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
 #include "MidiController.h"
@@ -57,10 +57,10 @@ MidiController::~MidiController()
 void MidiController::ProcessMidi(int midi_msg[3])
 {
   Note = false;
-  if ((STATUS(midi_msg[0]) == M_NOTEON1) ||  (STATUS(midi_msg[0]) == M_NOTEON2))    
+  if ((STATUS(midi_msg[0]) == M_NOTEON1) ||  (STATUS(midi_msg[0]) == M_NOTEON2))
     Note = true;
   ChannelCtrl->SetValue(CHANNEL(midi_msg[0]) + 1);
-  ControllerCtrl->SetValue(midi_msg[1]);   
+  ControllerCtrl->SetValue(midi_msg[1]);
   ValueCtrl->SetValue(midi_msg[2]);
   Type = midi_msg[0];
   Controller = midi_msg[1];

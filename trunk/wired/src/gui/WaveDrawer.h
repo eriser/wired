@@ -1,8 +1,5 @@
-// Copyright (C) 2004-2006 by Wired Team
+// Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
-
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
 
 #ifndef __WAVE_DRAWER_H__
 #define __WAVE_DRAWER_H__
@@ -43,8 +40,7 @@ class				WaveDrawer
   virtual void			SetDrawing(wxSize s);
   void							RedrawBitmap(wxSize s);
   virtual void			SetWave(float **data, unsigned long frame_length, long channel_count, wxSize s);
-  virtual void			SetWave(WaveFile *w, wxSize s, long wstart, long wend);
-  virtual void			SetWave(WaveFile *w, wxSize s);
+  virtual void			SetWave(WaveFile *w, wxSize s, long wstart = 0, long wend = 0);
   virtual void			SetSize(wxSize s);
   virtual void			SetSize(int x, int y);
   void							SetPenColor(wxColour p) { PenColor = p; }
