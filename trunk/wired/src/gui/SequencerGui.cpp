@@ -323,10 +323,13 @@ void					SequencerGui::SetScrolling()
   if (z < (SeqView->GetYScroll() + SeqView->GetClientSize().y))
     SeqView->SetTotalHeight(z);
   if ((z = (SeqView->GetTotalHeight() - SeqView->GetClientSize().y)) > 0)
-    VertScrollBar->SetScrollbar((VertScrollBar->GetThumbPosition() >= z)
-				? z : VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, z + VSCROLL_THUMB_WIDTH, 42, true);
+  {
+    VertScrollBar->SetScrollbar((VertScrollBar->GetThumbPosition() >= z) ? z : VertScrollBar->GetThumbPosition(), VSCROLL_THUMB_WIDTH, z + VSCROLL_THUMB_WIDTH, 42, true);
+  }
   else
+  {
     VertScrollBar->SetScrollbar(0, VSCROLL_THUMB_WIDTH, VSCROLL_THUMB_WIDTH, 42, true);
+  }
   SeqView->SetTotalWidth((unsigned long) (z = (long) floor(Seq->EndPos * MEASURE_WIDTH * HoriZoomFactor)));
   if (z < (SeqView->GetXScroll() + SeqView->GetClientSize().x))
     SeqView->SetTotalWidth(z);

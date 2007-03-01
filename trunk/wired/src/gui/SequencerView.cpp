@@ -246,6 +246,8 @@ unsigned long				SequencerView::GetTotalHeight()
 
 void					SequencerView::SetTotalHeight(unsigned long h)
 {
+  // Adding space at the end to be able to add a new Track by DnD
+  h += VSCROLL_THUMB_WIDTH;
   TotalHeight = (h > GetClientSize().y) ? h : GetClientSize().y;
 }
 
@@ -307,6 +309,8 @@ void					SequencerView::Drop(int x, int y, wxString file)
     {
       wxString				convertme;
 
+      // Getting aware of current vertical scrolling position
+      y += SeqPanel->GetCurrentYScrollPos();
       convertme << floor((y  * SeqPanel->VertZoomFactor) / TRACK_HEIGHT);
       convertme.ToLong((long*)&track);
       for (i = Seq->Tracks.begin(), cpt = 0; i != Seq->Tracks.end() && cpt != track; i++, cpt++)
