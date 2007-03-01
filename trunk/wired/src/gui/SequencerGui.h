@@ -256,6 +256,7 @@ class				SequencerGui: public wxPanel, public WiredDocument
   void				ChangeMouseCursor(wxCursor c);
 
   // wx events
+  void				KeyDown(wxKeyEvent &event);
   void				OnScroll(wxScrollEvent &event);
   void				OnWheelMove(wxMouseEvent &e);
   void				OnVertSliderUpdate(wxCommandEvent &event);

@@ -1176,6 +1176,18 @@ void					SequencerGui::Load(SaveElementArray data)
     }
 }
 
+void	SequencerGui::KeyDown(wxKeyEvent &event)
+{
+  int	key = event.GetKeyCode();
+
+  cout << "[SEQUENCERGUI] key = " << key << endl;
+  if (key == WXK_BACK)
+  {
+    cout << "Backspace captured... deleting selected track" << endl;
+    DeleteSelectedTrack();
+  }
+}
+
 BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   EVT_BUTTON(ID_CURSOR_PLAY, SequencerGui::OnPlayCursorMove)
   EVT_BUTTON(ID_CURSOR_BEGIN, SequencerGui::OnBeginLCursorMove)
@@ -1195,4 +1207,5 @@ BEGIN_EVENT_TABLE(SequencerGui, wxPanel)
   EVT_SIZE(SequencerGui::OnSize)
   EVT_MOUSEWHEEL(SequencerGui::OnWheelMove)
   EVT_COMMAND(ID_EVT_DROP, EVT_DROP, SequencerGui::Drop)
+  EVT_KEY_DOWN(SequencerGui::KeyDown)
 END_EVENT_TABLE()

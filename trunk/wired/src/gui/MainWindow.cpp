@@ -163,7 +163,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   SequencerMenu->Append(MainWin_AddTrackAudio, _("&Add Audio Track"));
   SequencerMenu->Append(MainWin_AddTrackMidi, _("Add &MIDI Track"));
-  SequencerMenu->Append(MainWin_DeleteTrack, _("&Delete Track"));
+  SequencerMenu->Append(MainWin_DeleteTrack, _("&Delete Track (Backspace)"));
 
   RacksMenu->Append(MainWin_DeleteRack, _("D&elete Rack"));
 
