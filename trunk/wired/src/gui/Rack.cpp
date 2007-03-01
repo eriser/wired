@@ -87,6 +87,7 @@ Plugin*				RackTrack::CreateRack(PlugStartInfo &startinfo, PluginLoader *p)
 
 void				RackTrack::SetSelected(Plugin *plugin)
 {
+  /*
   //Dump();
   Racks.remove(SelectedPlugin);
   //Dump();
@@ -95,6 +96,7 @@ void				RackTrack::SetSelected(Plugin *plugin)
   //delete SelectedPlugin;
   Parent->ResizeTracks();
   Parent->SetScrolling();
+  */
   SelectedPlugin = plugin;
 }
 
