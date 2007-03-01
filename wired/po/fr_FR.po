@@ -521,8 +521,8 @@ msgstr "&Ajouter une piste MIDI"
 
 #: src/gui/MainWindow.cpp:233 ../src/gui/MainWindow.cpp:160
 #: ../src/gui/MainWindow.cpp:156
-msgid "&Delete Track"
-msgstr "&Supprimer la piste"
+msgid "&Delete Track (Backspace)"
+msgstr "&Supprimer la piste (Backspace)"
 
 #: src/gui/MainWindow.cpp:235 ../src/gui/MainWindow.cpp:162
 #: ../src/gui/MainWindow.cpp:158
