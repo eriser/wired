@@ -12,7 +12,15 @@ those dependancies problems.
   - ALSA support in your kernel and alsalib installed 
       http://www.alsa-project.org
 	* Kernels 2.6.x have integrated ALSA support
-	* You can download alsalib and latest card drivers at :
+	* You also need alsa-headers to compile on debian
+
+  - gettext
+      http://www.gnu.org/software/gettext/gettext.html    
+        * or you can install it with 1 package: gettext
+
+  - autotools (autoconf and automake)
+      http://www.gnu.org/
+	* or you can install it with 1 package: autotools-dev
 
   - libxml2
     http://xmlsoft.org/
