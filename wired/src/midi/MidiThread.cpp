@@ -61,6 +61,7 @@ void					MidiThread::OpenDefaultDevices()
     for (k = 0, i = DeviceList.begin(); i != DeviceList.end(); i++, k++)
       if (k == (long)*j)
 	  {
+	    cout << "toto k = " << k << endl;
 	    OpenDevice((*i)->Id);       
 	    break;
 	  }
