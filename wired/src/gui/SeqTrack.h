@@ -62,6 +62,7 @@ class					SeqTrack: public wxControl,
   void					SetVuValue();
   void					SetRecording(bool rec);
   void					SetMute(bool mut);
+  bool					GetMute();
   void					SetDeviceId(long devid);
   void					OnNameChange(wxCommandEvent& event);
   void					SetName(const wxString&);

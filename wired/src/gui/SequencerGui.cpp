@@ -643,40 +643,6 @@ void					SequencerGui::DeleteAllTracks()
 
 void					SequencerGui::DeleteSelectedTrack()
 {
-  /*
-  vector<Track *>::iterator		iterTrack;
-  vector<Pattern *>::iterator		iterPattern;
-  long							j;
-  
-#ifdef __DEBUG__
-  printf("SequencerGui::DeleteSelectedTrack()\n");
-#endif
-  for (iterTrack = Seq->Tracks.begin(); (iterTrack != Seq->Tracks.end()) && !((*iterTrack)->GetTrackOpt()->GetSelected()); iterTrack++)
-    ;
-  if (iterTrack == Seq->Tracks.end())
-    return;
-  if ((*iterTrack)->GetTrackOpt()->Record && Seq->Recording)
-    return;
-  if ((*iterTrack)->GetTrackOpt()->ChanGui)
-    MixerPanel->RemoveChannel((*iterTrack)->GetTrackOpt()->ChanGui);
-  for (iterPattern = SelectedItems.begin(); iterPattern != SelectedItems.end(); )
-    {
-      if (((*iterTrack)->GetIndex() == (*iterPattern)->GetTrackIndex()) && (*iterPattern)->IsSelected())
-	SelectedItems.erase(iterPattern);
-      else
-	iterPattern++;
-    }
-  SeqMutex.Lock();
-  //delete (*iterTrack);
-  DeleteTrack(*iterTrack);
-  Seq->Tracks.erase(iterTrack);
-  for (iterTrack = Seq->Tracks.begin(), j = 0; iterTrack != Seq->Tracks.end(); iterTrack++)
-    (*iterTrack)->UpdateIndex(j++);
-  UpdateTracks();
-  SeqMutex.Unlock();
-  SetScrolling();
-  AdjustVScrolling();
-  */
   vector<Track *>::iterator		iterTrack;
   long							j;
 
@@ -1176,15 +1142,47 @@ void					SequencerGui::Load(SaveElementArray data)
     }
 }
 
+void					SequencerGui::SetSelectedSolo()
+{
+  vector<Track *>::iterator		iterTrack;
+  bool					on;
+
+#ifdef __DEBUG__
+  cout << "SequencerGui::SetSelectedSolo()" << endl;
+#endif
+
+  on = true;
+  for (iterTrack = Seq->Tracks.begin(); (iterTrack != Seq->Tracks.end()); iterTrack++)
+    if (!(*iterTrack)->GetTrackOpt()->GetSelected() && \
+	(*iterTrack)->GetTrackOpt()->GetMute())
+      on = false;
+  for (iterTrack = Seq->Tracks.begin(); (iterTrack != Seq->Tracks.end()); iterTrack++)
+  {
+    if (!(*iterTrack)->GetTrackOpt()->GetSelected())
+      (*iterTrack)->GetTrackOpt()->SetMute(on);
+    else
+      (*iterTrack)->GetTrackOpt()->SetMute(false);
+  }
+}
+
 void	SequencerGui::KeyDown(wxKeyEvent &event)
 {
   int	key = event.GetKeyCode();
 
   cout << "[SEQUENCERGUI] key = " << key << endl;
-  if (key == WXK_BACK)
+  switch ( key )
   {
-    cout << "Backspace captured... deleting selected track" << endl;
-    DeleteSelectedTrack();
+    case WXK_BACK :
+      cout << "Backspace captured... deleting selected track" << endl;
+      DeleteSelectedTrack();
+      break;
+    case WXK_RETURN :
+      cout << "Enter key captured... setting selected track solo" << endl;
+      SetSelectedSolo();
+      break;
+    default :
+      cout << key << " pressed" << endl;
+      break;
   }
 }
 

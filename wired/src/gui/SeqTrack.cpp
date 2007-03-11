@@ -480,6 +480,11 @@ void					SeqTrack::SetMute(bool mut)
     MuteBtn->SetOff();
 }
 
+bool					SeqTrack::GetMute()
+{
+  return (Mute);
+}
+
 void					SeqTrack::SetDeviceId(long devid)
 {
   int					k = 1; // + 1 for the "None" parameter
