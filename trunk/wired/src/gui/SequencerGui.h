@@ -218,6 +218,7 @@ class				SequencerGui: public wxPanel, public WiredDocument
   // track creation and deletion
   Track				*CreateTrack(trackType type = eAudioTrack);
   void				DeleteTrack(Track* track);
+  void				SetSelectedSolo();
 
   // accessors
   inline SequencerView*		GetView() { return (SeqView); };

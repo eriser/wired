@@ -163,6 +163,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   SequencerMenu->Append(MainWin_AddTrackAudio, _("&Add Audio Track"));
   SequencerMenu->Append(MainWin_AddTrackMidi, _("Add &MIDI Track"));
+  SequencerMenu->Append(MainWin_SoloTrack, _("&Toggle solo (Enter)"));
   SequencerMenu->Append(MainWin_DeleteTrack, _("&Delete Track (Backspace)"));
 
   RacksMenu->Append(MainWin_DeleteRack, _("D&elete Rack"));
@@ -1547,6 +1548,11 @@ void					MainWindow::OnSeekVideo(wxCommandEvent &event)
   //  WiredVideoObject->SetSeek(VideoMenu->IsChecked(MainWin_SeekVideo));
 }
 
+void					MainWindow::SetSelectedSolo(wxCommandEvent &event)
+{
+  SeqPanel->SetSelectedSolo();
+}
+
 void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
 {
   SeqPanel->DeleteSelectedTrack();
@@ -2123,6 +2129,7 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_MENU(MainWin_AddTrackAudio, MainWindow::OnAddTrackAudio)
   EVT_MENU(MainWin_AddTrackMidi, MainWindow::OnAddTrackMidi)
   EVT_MENU(MainWin_DeleteTrack, MainWindow::OnDeleteTrack)
+  EVT_MENU(MainWin_SoloTrack, MainWindow::SetSelectedSolo)
   EVT_MENU(MainWin_FloatTransport, MainWindow::OnFloatTransport)
   EVT_MENU(MainWin_FloatSequencer, MainWindow::OnFloatSequencer)
   EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack)

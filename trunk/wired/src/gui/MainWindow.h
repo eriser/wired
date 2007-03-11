@@ -63,6 +63,7 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					OnAddTrackAudio(wxCommandEvent &event);
   void					OnAddTrackMidi(wxCommandEvent &event);
   void					OnDeleteTrack(wxCommandEvent &event);
+  void					SetSelectedSolo(wxCommandEvent &event);
   void					OnCreateRackClick(wxCommandEvent &event);
   void					OnCreateEffectClick(wxCommandEvent &event);
   void					OnFloatTransport(wxCommandEvent &event);
@@ -263,6 +264,7 @@ enum
   MainWin_AddTrackAudio,
   MainWin_AddTrackMidi,
   MainWin_DeleteTrack,
+  MainWin_SoloTrack,
   MainWin_Copy,
   MainWin_Cut,
   MainWin_Paste,
