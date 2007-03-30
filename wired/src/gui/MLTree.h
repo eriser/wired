@@ -275,6 +275,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   void				ImportDir();
   void				OnAddDirectory(wxString DirToAdd);
 
+  int				CheckEmptyDir(wxTreeItemId itemParent);
 /**
  * The OnRemove function remove the selected nodes
  * \return void
