@@ -796,20 +796,32 @@ void				MLTree::OnAddOnNode(wxString FileToAdd, wxTreeItemId selection)
       length_str << fileInfosLength;
 
       for (vector<wxString>::iterator iter = Exts.begin(); iter != Exts.end(); iter++)
-	if (iter->Contains(File.GetExt().Lower()) == true)
-	{
-	  s_nodeInfo		infos;
-	  int			slashPos;
-	  //wxTreeItemId		selection;
-
-	  infos = SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
-	  slashPos = FileToAdd.Find('/', true);
-	  //selection = GetSelection();
-	  if (selection.IsOk() == true && selection != GetRootItem())
-	    this->AddFile(selection, FileToAdd.Mid(slashPos + 1), infos, true);
-	  else
-	    this->AddFile(GetTreeItemIdFromLabel(LOCAL_NODE), FileToAdd.Mid(slashPos + 1), infos, true);
-	}
+		{
+			wxString ExtToCheck;
+			wxString ExtList = (*iter);
+			
+			while (ExtList.BeforeFirst(';').Cmp(wxT("")) != 0) 
+			{
+				ExtToCheck = ExtList.BeforeFirst(';');
+				ExtList = ExtList.AfterFirst(';');
+				//Check ext
+				if (ExtToCheck.Cmp(wxT("")) != 0 && ExtToCheck.Cmp(File.GetExt().Lower()) == 0)
+				{
+			 		s_nodeInfo		infos;
+			  		int			slashPos;
+			  		//wxTreeItemId		selection;
+		
+					infos = SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
+					slashPos = FileToAdd.Find('/', true);
+					//selection = GetSelection();
+					if (selection.IsOk() == true && selection != GetRootItem())
+					  this->AddFile(selection, FileToAdd.Mid(slashPos + 1), infos, true);
+					else
+					  this->AddFile(GetTreeItemIdFromLabel(LOCAL_NODE), FileToAdd.Mid(slashPos + 1), infos, true);
+				}
+			}
+			
+		}
       // we need to delete FileInfos so that the file doesn't stay open
       delete FileInfos;
       DisplayNodes();
@@ -825,10 +837,42 @@ void				MLTree::ImportDir()
   if (dlg.ShowModal() == wxID_OK)
     {
       wxString 	seldir = dlg.GetPath();
-
       this->OnAddDirectory(seldir);
+		if (CheckEmptyDir(GetTreeItemIdFromLabel(LOCAL_NODE)) == 0) 
+			wxMessageBox(wxT("This folder does not contain any allowed file."));
     }
 }
+
+
+int				MLTree::CheckEmptyDir(wxTreeItemId itemParent)
+{
+	wxTreeItemId							itemSearch;
+	wxTreeItemIdValue				cookie;
+	int 											nb_item = 0;
+	vector<wxTreeItemId>		ItemToDel;
+	
+	//Search item to del
+	itemSearch = GetFirstChild(itemParent, cookie);
+	while (itemSearch.IsOk())
+	{
+		if (GetItemImage(itemSearch, wxTreeItemIcon_Normal) == 0) { //Is folder
+			if (CheckEmptyDir(itemSearch) != 0)
+				nb_item++;
+			else {
+				ItemToDel.push_back(itemSearch);	
+			}
+		}
+		else	nb_item++;
+		itemSearch = GetNextChild(itemParent, cookie);
+	}
+	//Del item
+   for (vector<wxTreeItemId>::iterator iter = ItemToDel.begin(); iter != ItemToDel.end(); iter++)
+		this->Delete(*iter);
+	return nb_item;
+}
+
+
+
 wxTreeItemId	MLTree::getOrCreateNodeFromFName(wxString f, wxTreeItemId myRoot)
 {
   if (f.BeforeFirst('/').Cmp(wxT("")) != 0)
