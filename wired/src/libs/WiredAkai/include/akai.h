@@ -36,7 +36,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <byteswap.h>
+#if defined(__linux__) || defined (__GLIBC__) || defined(__GNU__)
+# include <byteswap.h>
+#elif !defined(WIN32)
+# include <sys/endian.h>
+#endif
 #include <list.h>
 
 #define FILE_ENTRY_SIZE      		24
