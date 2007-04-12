@@ -1181,7 +1181,6 @@ void	SequencerGui::KeyDown(wxKeyEvent &event)
       SetSelectedSolo();
       break;
     default :
-      cout << key << " pressed" << endl;
       break;
   }
 }
