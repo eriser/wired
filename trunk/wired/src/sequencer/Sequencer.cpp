@@ -1074,8 +1074,16 @@ void			Sequencer::Load(SaveElementArray data)
       else if (data[i]->getKey() == wxT("Loop")) Loop = data[i]->getValueInt();
       else if (data[i]->getKey() == wxT("Click")) Click = data[i]->getValueInt();
       else if (data[i]->getKey() == wxT("CurrentPos")) SetCurrentPos(data[i]->getValueFloat());
-      else if (data[i]->getKey() == wxT("BeginLoopPos")) BeginLoopPos = data[i]->getValueInt();
-      else if (data[i]->getKey() == wxT("EndLoopPos")) EndLoopPos = data[i]->getValueInt();
+      else if (data[i]->getKey() == wxT("BeginLoopPos"))
+      {
+	BeginLoopPos = data[i]->getValueInt();
+	SeqPanel->SetBeginLoopPos(data[i]->getValueDouble());
+      }
+      else if (data[i]->getKey() == wxT("EndLoopPos"))
+      {
+	EndLoopPos = data[i]->getValueInt();
+	SeqPanel->SetEndLoopPos(data[i]->getValueDouble());
+      }
       else if (data[i]->getKey() == wxT("EndPos")) EndPos = data[i]->getValueInt();
     }
   n = 0;
