@@ -1125,7 +1125,8 @@ void                          MLTree::DragAndDrop(wxTreeItemId item)
  item = Copy(item);
  if (item_to_drag == item_begin)
    return;
- for (item_to_drag = GetFirstChild(item_to_drag, cookie); item_to_drag.IsOk(); item_to_drag = GetFirstChild(item_to_drag, cookie))
+
+for (item_to_drag = GetFirstChild(item_to_drag, cookie); item_to_drag.IsOk(); item_to_drag = GetFirstChild(item_to_drag, cookie))
    {
      if (item_to_drag == item_begin)
        return;
@@ -1142,6 +1143,9 @@ void                          MLTree::DragAndDrop(wxTreeItemId item)
      item_to_drag = item_to_drag_save;
    }
 }
+
+
+
 void				MLTree::EndDrag(wxTreeEvent &event)
 {
   wxTreeItemId		item;
@@ -1153,28 +1157,36 @@ void				MLTree::EndDrag(wxTreeEvent &event)
   map<wxTreeItemId, s_nodeInfo>::iterator it;
   s_nodeInfo		infos;
 
-  for (it = nodes.begin(); it != nodes.end(); it++)
+for (i = 0; i < selection_length; i++)
+  {
+    if (GetItemParent(selection[i]) != GetRootItem() && selection[i] != GetRootItem())
     {
-      if ((*it).first == item_to_drag)
-	{
-	  infos = (*it).second;
-	  break;
-	}
-    } 
-  for (it = nodes.begin(); it != nodes.end(); it++)
-    {
-      if ((*it).second.label == infos.label && GetItemParent((*it).first) == item)
-	{
-	  return;
-	}
+      item_to_drag = selection[i];
+      for (it = nodes.begin(); it != nodes.end(); it++)
+      {
+        if ((*it).first == item_to_drag)
+	      {
+	        infos = (*it).second;
+	        break;
+	      }
+      } 
+      if (item.IsOk() && 
+          item != item_to_drag && 
+          item != GetRootItem() && 
+          GetItemParent(item) != item_to_drag && 
+          GetItemParent(item_to_drag) != item && 
+          !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
+      {
+        DragAndDrop(item);
+        Expand(item_begin);
+      }
     }
-  if (item.IsOk() && item != item_to_drag && item != GetRootItem() && GetItemParent(item) != item_to_drag && !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
-    {
-      DragAndDrop(item);
-      OnRemove();
-      Expand(item_begin);
-    }
+  } 
+  OnRemove();
 }
+
+
+
 void				MLTree::OnLeftClick(wxMouseEvent &event)
 {
   int		x;
