@@ -1157,32 +1157,38 @@ void				MLTree::EndDrag(wxTreeEvent &event)
   map<wxTreeItemId, s_nodeInfo>::iterator it;
   s_nodeInfo		infos;
 
-for (i = 0; i < selection_length; i++)
+  for (i = 0; i < selection_length; i++)
   {
     if (GetItemParent(selection[i]) != GetRootItem() && selection[i] != GetRootItem())
     {
       item_to_drag = selection[i];
       for (it = nodes.begin(); it != nodes.end(); it++)
       {
-        if ((*it).first == item_to_drag)
-	      {
-	        infos = (*it).second;
-	        break;
-	      }
+	if ((*it).first == item_to_drag)
+	{
+	  infos = (*it).second;
+	  break;
+	}
       } 
       if (item.IsOk() && 
-          item != item_to_drag && 
-          item != GetRootItem() && 
-          GetItemParent(item) != item_to_drag && 
-          GetItemParent(item_to_drag) != item && 
-          !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
+	  item != item_to_drag && 
+	  item != GetRootItem() && 
+	  GetItemParent(item) != item_to_drag && 
+	  GetItemParent(item_to_drag) != item && 
+	  !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
       {
-        DragAndDrop(item);
-        Expand(item_begin);
+	DragAndDrop(item);
+	Expand(item_begin);
       }
     }
   } 
-  OnRemove();
+  if (item.IsOk() && 
+      item != item_to_drag && 
+      item != GetRootItem() && 
+      GetItemParent(item) != item_to_drag && 
+      GetItemParent(item_to_drag) != item && 
+      !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
+    OnRemove();
 }
 
 
