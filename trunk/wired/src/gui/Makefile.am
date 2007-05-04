@@ -14,6 +14,7 @@ libgui_a_SOURCES = 			\
 		AccelCenter.h		\
 		AccelCenter.cpp		\
 		AudioPattern.cpp	\
+		AutomationTrack.cpp	\
 		ChannelGui.cpp		\
 		ChannelGui.h		\
 		ColoredLine.cpp		\
