@@ -15,6 +15,7 @@
 #include "AudioPattern.h"
 #include "AudioCenter.h"
 #include "EditMidi.h"
+#include "MidiFile.h"
 #include "cAddTrackAction.h"
 #include "cImportMidiAction.h"
 #include "Transport.h"
@@ -81,7 +82,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   CreateStatusBar(2);
 #endif
   WiredSettings = new Settings();
-  
+
   //saveCenter = new SaveCenter(wxGetCwd());
   LoadedExternalPlugins = new WiredExternalPluginMgr();
   LogWin = new wxLogWindow(this, wxT("Wired log"), false);
@@ -98,15 +99,15 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
       exit(1);
     }
 
-  // Mixer must be declared after AudioEngine 
+  // Mixer must be declared after AudioEngine
   Mix = new Mixer();
   Seq = new Sequencer(NULL);
   MidiEngine = new MidiThread();
   MidiEngine->OpenDefaultDevices();
   SettingsWin = new SettingWindow();
-  
+
   /* Creation Menu */
-  
+
   FileConverter = NULL;
 
   TransportFrame = NULL;
@@ -114,7 +115,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   SequencerFrame = NULL;
   RackFrame = NULL;
   MediaLibraryFrame = NULL;
-  
+
   MenuBar = new wxMenuBar;
   FileMenu = new wxMenu;
   EditMenu = new wxMenu;
@@ -150,7 +151,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->AppendSeparator();
 #endif
   FileMenu->Append(MainWin_Quit, _("&Quit\tCtrl-Q"));
-  
+
   //EditMenu->AppendSeparator();
   EditMenu->Append(MainWin_Cut, _("C&ut\tCtrl+X"));
   EditMenu->Append(MainWin_Copy, _("&Copy\tCtrl+C"));
@@ -163,6 +164,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   SequencerMenu->Append(MainWin_AddTrackAudio, _("&Add Audio Track"));
   SequencerMenu->Append(MainWin_AddTrackMidi, _("Add &MIDI Track"));
+  // Added by Julien Eres
+  SequencerMenu->Append(MainWin_AddTrackAutomation, _("Add A&utomation Track"));
   SequencerMenu->Append(MainWin_SoloTrack, _("&Toggle solo (Enter)"));
   SequencerMenu->Append(MainWin_DeleteTrack, _("&Delete Track (Backspace)"));
 
@@ -170,7 +173,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   HelpMenu->Append(MainWin_IntHelp, _("&Show Integrated Help"));
   HelpMenu->Append(MainWin_About, _("&About..."));
-  
+
   /* XXX
   MediaLibraryMenu->Append(MainWin_MediaLibraryBeta, _("This feature is currently in alpha stage"))->Enable(false);
   MediaLibraryMenu->Append(MainWin_SaveML, _("Save Media Library"));
@@ -180,7 +183,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   ItemShowMediaLibrary = MediaLibraryMenu->AppendCheckItem(MainWin_MediaLibraryShow, _("&Show/Hide\tCtrl-M"));
   ItemFloatingMediaLibrary = MediaLibraryMenu->AppendCheckItem(MainWin_FloatMediaLibrary, _("&Floating"));
   */
-  
+
   WindowMenu->Append(MainWin_SwitchRack, _("Switch &Rack/Optional view\tTAB"));
   WindowMenu->Append(MainWin_SwitchSeq, _("Switch &Sequencer/Optional view\tCtrl+TAB"));
   WindowMenu->AppendSeparator();
@@ -266,7 +269,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   RackModeView = true;
   SeqModeView = true;
- 
+
   // Minimum size of the window
   SetSizeHints(400, 300);
 
@@ -296,13 +299,13 @@ int			MainWindow::Init()
   // start midi thread
   if ((err = MidiEngine->Create()) != wxTHREAD_NO_ERROR)
     {
-      cout << "[MAINWIN] Create MidiEngine thread failed ! (error:" 
+      cout << "[MAINWIN] Create MidiEngine thread failed ! (error:"
 	   << err << ")" << endl;
       return (-1);
     }
   if ((err = MidiEngine->Run()) != wxTHREAD_NO_ERROR)
     {
-      cout << "[MAINWIN] Run MidiEngine thread failed ! (error:" 
+      cout << "[MAINWIN] Run MidiEngine thread failed ! (error:"
 	   << err << ")" << endl;
       return (-1);
     }
@@ -330,14 +333,14 @@ int			MainWindow::Init()
   // start sequencer thread (after InitAudio is a good option)
   if ((err = Seq->Create()) != wxTHREAD_NO_ERROR)
     {
-      cout << "[MAINWIN] Create sequencer thread failed ! (error:" 
+      cout << "[MAINWIN] Create sequencer thread failed ! (error:"
 	   << err << ")" << endl;
       return (-1);
     }
   Seq->SetPriority(WXTHREAD_MAX_PRIORITY);
   if ((err = Seq->Run()) != wxTHREAD_NO_ERROR)
     {
-      cout << "[MAINWIN] Run sequencer thread failed ! (error:" 
+      cout << "[MAINWIN] Run sequencer thread failed ! (error:"
 	   << err << ")" << endl;
       return (-1);
     }
@@ -1152,7 +1155,14 @@ void					MainWindow::OnAddTrackAudio(wxCommandEvent &event)
 
 void					MainWindow::OnAddTrackMidi(wxCommandEvent &event)
 {
-  SeqPanel->CreateTrack(eMidiTrack);
+  Track *newTrack = SeqPanel->CreateTrack(eMidiTrack);
+  newTrack->CreateMidiPattern(new MidiTrack(0, NULL, 96, wxT("new"), 1));
+}
+
+// Added by Julien Eres
+void					MainWindow::OnAddTrackAutomation(wxCommandEvent &event)
+{
+  cout << __FUNCTION__ << '@' << __LINE__ << ": Not implemented." << endl;
 }
 
 void					MainWindow::OnFloatTransport(wxCommandEvent &event)
@@ -1320,7 +1330,7 @@ void					MainWindow::ShowMediaLibrary(panelState show)
 	  // disable Show and Hide menu actions
 	  ItemShowMediaLibrary->Enable(false);
 	}
-      
+
       if (show == panelHide)
 	MediaLibraryPanel->SetInvisible();
     }
@@ -1677,7 +1687,7 @@ void					MainWindow::OnSelectAll(wxCommandEvent &event)
 void					MainWindow::OnFullScreen(wxCommandEvent &event)
 {
   WindowSize = MainWin->GetSize();
-  WindowPos = MainWin->GetPosition();  
+  WindowPos = MainWin->GetPosition();
   ShowFullScreen(!IsFullScreen(), wxFULLSCREEN_NOBORDER|wxFULLSCREEN_NOCAPTION );
 }
 
@@ -1847,7 +1857,7 @@ void		MainWindow::Save()
   SaveElement	*saveElem;
   wxSize	size;
   wxPoint	pos;
- 
+
   saveElem = new SaveElement(wxT("MainWindow"), wxT(""));
   size = MainWin->GetSize();
   pos = MainWin->GetPosition();
@@ -1865,19 +1875,19 @@ void		MainWindow::Save()
       saveElem->addAttribute(wxT("Pos_x"), pos.x);
       saveElem->addAttribute(wxT("Pos_y"), pos.y);
     }
-  saveDocData(saveElem); 
+  saveDocData(saveElem);
 
   saveElem = new SaveElement(wxT("SwitchView"), wxT(""));
   saveElem->addAttribute(wxT("RackModeView"), RackModeView);
   saveElem->addAttribute(wxT("SeqModeView"), SeqModeView);
-  saveDocData(saveElem);		       
- 
+  saveDocData(saveElem);
+
   saveElem = new SaveElement(wxT("FullScreen"), IsFullScreen());
-  saveDocData(saveElem); 
- 
+  saveDocData(saveElem);
+
   size = MediaLibraryPanel->GetSize();
   if (MediaLibraryFrame)
-    pos = MediaLibraryFrame->GetPosition(); 
+    pos = MediaLibraryFrame->GetPosition();
   saveElem = new SaveElement(wxT("MediaLibrary"), wxT(""));
   saveElem->addAttribute(wxT("Show"), MediaLibraryPanel->IsVisible());
   saveElem->addAttribute(wxT("floating"), MediaLibraryPanel->IsFloating());
@@ -1899,19 +1909,19 @@ void		MainWindow::Save()
   saveElem->addAttribute(wxT("Pos_y"), pos.y);
   saveDocData(saveElem);
 
-  size = SeqPanel->GetSize(); 
+  size = SeqPanel->GetSize();
   if (SequencerFrame)
     pos = SequencerFrame->GetPosition();
   saveElem = new SaveElement(wxT("Sequencer"), wxT(""));
-  saveElem->addAttribute(wxT("Floating"), (WindowMenu->IsChecked(MainWin_FloatSequencer))); 
+  saveElem->addAttribute(wxT("Floating"), (WindowMenu->IsChecked(MainWin_FloatSequencer)));
   saveElem->addAttribute(wxT("Width"), size.GetWidth());
   saveElem->addAttribute(wxT("Height"), size.GetHeight());
   saveElem->addAttribute(wxT("Pos_x"), pos.x);
   saveElem->addAttribute(wxT("Pos_y"), pos.y);
   saveElem->addAttribute(wxT("SashPos"), split->GetSashPosition());
   saveDocData(saveElem);
-  
-  size = RackPanel->GetSize(); 
+
+  size = RackPanel->GetSize();
   if (RackFrame)
     pos = RackFrame->GetPosition();
   saveElem = new SaveElement(wxT("Rack"), wxT(""));
@@ -1962,10 +1972,10 @@ void		MainWindow::Load(SaveElementArray data)
        if (data[i]->getKey() == wxT("MainWindow"))
 	 {
 	   pos.x = data[i]->getAttributeInt(wxT("Pos_x"));
-	   pos.y = data[i]->getAttributeInt(wxT("Pos_y"));         
-	   MainWin->SetSize(data[i]->getAttributeInt(wxT("Width")), 
+	   pos.y = data[i]->getAttributeInt(wxT("Pos_y"));
+	   MainWin->SetSize(data[i]->getAttributeInt(wxT("Width")),
 			    data[i]->getAttributeInt(wxT("Height")));
-           MainWin->SetPosition(pos);          
+           MainWin->SetPosition(pos);
          }
 
        else if (data[i]->getKey() == wxT("SwitchView"))
@@ -1997,7 +2007,7 @@ void		MainWindow::Load(SaveElementArray data)
 	   else
 	     {
 	       if (MediaLibraryPanel->IsVisible())
-		 { 
+		 {
 		   ShowMediaLibrary(panelHide);
 		   ItemShowMediaLibrary->Check(false);
 		 }
@@ -2030,7 +2040,7 @@ void		MainWindow::Load(SaveElementArray data)
 	 {
 	   wxCommandEvent evtFloatTrans(wxEVT_COMMAND_MENU_SELECTED, MainWin_FloatTransport);
 	   SwitchDockedFloat(WindowMenu->IsChecked(MainWin_FloatTransport), data[i]->getAttributeInt(wxT("Floating")),
-			     evtFloatTrans, 
+			     evtFloatTrans,
 			     wxPoint(data[i]->getAttributeInt(wxT("Pos_x")), data[i]->getAttributeInt(wxT("Pos_y"))),
 			     wxSize(data[i]->getAttributeInt(wxT("Width")), data[i]->getAttributeInt(wxT("Height"))),
 			     MainWin_FloatTransport, (wxFrame *) TransportFrame, &MainWindow::FloatTransport);
@@ -2066,11 +2076,11 @@ void		MainWindow::OnLoadML(wxCommandEvent &WXUNUSED(event))
 {
   vector<wxString> exts;
   exts.push_back(_("xml\tMedia Library file (*.xml)"));
-  
+
   FileLoader	dlg(this, MainWin_FileLoader, _("Load Media Library"), false, false, &exts);
   if (dlg.ShowModal() == wxID_OK)
     {
-      wxString filename = dlg.GetSelectedFile();    
+      wxString filename = dlg.GetSelectedFile();
       MediaLibraryPanel->MLTreeView->LoadPatch(filename);
     }
 }
@@ -2079,11 +2089,11 @@ void		MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
 {
   vector<wxString> exts;
   exts.push_back(_("xml\tMedia Library file (*.xml)"));
-  
+
   FileLoader	dlg(this, MainWin_FileLoader, _("Save Media Library"), false, true, &exts);
   if (dlg.ShowModal() == wxID_OK)
     {
-      wxString filename = dlg.GetSelectedFile();    
+      wxString filename = dlg.GetSelectedFile();
       MediaLibraryPanel->MLTreeView->OnSave(filename);
     }
 }
@@ -2097,7 +2107,7 @@ void		MainWindow::OpenWizard()
   while(dirDialog.ShowModal() != wxID_OK)
     AlertDialog(_("Warning"),
 			 _("You have to select a project folder."));
- 
+
   path.AssignDir(dirDialog.GetPath());
 
   saveCenter->setProjectPath(path);
@@ -2128,6 +2138,8 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_MENU(MainWin_DeleteRack, MainWindow::OnDeleteRack)
   EVT_MENU(MainWin_AddTrackAudio, MainWindow::OnAddTrackAudio)
   EVT_MENU(MainWin_AddTrackMidi, MainWindow::OnAddTrackMidi)
+  // Added by Julien Eres
+  EVT_MENU(MainWin_AddTrackAutomation, MainWindow::OnAddTrackAutomation)
   EVT_MENU(MainWin_DeleteTrack, MainWindow::OnDeleteTrack)
   EVT_MENU(MainWin_SoloTrack, MainWindow::SetSelectedSolo)
   EVT_MENU(MainWin_FloatTransport, MainWindow::OnFloatTransport)
@@ -2139,7 +2151,7 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_MENU(MainWin_SaveML, MainWindow::OnSaveML)
   EVT_MENU(MainWin_LoadML, MainWindow::OnLoadML)
 #endif
-  EVT_MENU(MainWin_Undo, MainWindow::OnUndo) 
+  EVT_MENU(MainWin_Undo, MainWindow::OnUndo)
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
   //EVT_MENU(MainWin_History, MainWindow::OnHistory)
   EVT_MENU(MainWin_Copy, MainWindow::OnCopy)

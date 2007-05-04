@@ -62,6 +62,8 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					OnDeleteRack(wxCommandEvent &event);
   void					OnAddTrackAudio(wxCommandEvent &event);
   void					OnAddTrackMidi(wxCommandEvent &event);
+  // Added by Julien Eres
+  void					OnAddTrackAutomation(wxCommandEvent &event);
   void					OnDeleteTrack(wxCommandEvent &event);
   void					SetSelectedSolo(wxCommandEvent &event);
   void					OnCreateRackClick(wxCommandEvent &event);
@@ -112,12 +114,12 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					OnKey(wxKeyEvent& event);
   void					OnSpaceKey();
   void					SwitchRackOptView();
-  void					SwitchSeqOptView();  
+  void					SwitchSeqOptView();
   void					AddUpdatePlugin(Plugin *p);
-  
+
   void					SwitchDockedFloat(bool isCurrentlyFloating, int mustBeFloating,
 							  wxCommandEvent evt, wxPoint pos, wxSize size,
-							  int checkBox, wxFrame *frame, 
+							  int checkBox, wxFrame *frame,
 							  wxFrame *(MainWindow::*floatfunc)());
   void					Save();
   void					Load(SaveElementArray data);
@@ -140,7 +142,7 @@ class					MainWindow: public wxFrame, public WiredDocument
   friend class				MediaLibrary;
 
  private:
-  int					PluginMenuIndexCount;			
+  int					PluginMenuIndexCount;
   bool					RackModeView;
   bool					SeqModeView;
   wxSize				WindowSize;
@@ -180,15 +182,15 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					InitUndoRedoMenuItems();
   void					CreateUndoRedoMenus(wxMenu *callingMenu);
   void					removeAllMenuItems(wxMenu *menu);
-  
+
   /* Video Menu */
   void					InitVideoMenuItems();
-  
+
   void					InitFileConverter();
-  
+
   /* Config files */
   wxTextFile				PluginsConfFile;
-  
+
   /* Visible controls */
   wxSplitterWindow			*split;
   wxSplitterWindow			*splitVert;
@@ -205,13 +207,13 @@ class					MainWindow: public wxFrame, public WiredDocument
   wxMenu				*CreateInstrMenu;
   wxMenu				*CreateDSSIInstrMenu;
   wxMenu				*CreateLADSPAInstrMenu;
-  wxMenu				*CreateEffectMenu;     
-  wxMenu				*CreateDSSIEffectMenu;     
-  wxMenu				*CreateLADSPAEffectMenu;     
+  wxMenu				*CreateEffectMenu;
+  wxMenu				*CreateDSSIEffectMenu;
+  wxMenu				*CreateLADSPAEffectMenu;
   wxMenu				*HelpMenu;
   wxMenu				*WindowMenu;
   wxMenu				*MediaLibraryMenu;
-  
+
   wxMenuItem				*ItemFloatingTrans;
   wxMenuItem				*ItemFloatingSeq;
   wxMenuItem				*ItemFloatingRacks;
@@ -239,7 +241,7 @@ class					MainWindow: public wxFrame, public WiredDocument
 
   /* List of plugins that need to be updated for their gui */
   list<Plugin *>			UpdatePlugins;
-    
+
   wxLogWindow                           *LogWin;
   wxLogStderr                           *LogTarget;
   FILE                                  *LogFile;
@@ -263,6 +265,8 @@ enum
   MainWin_DeleteRack,
   MainWin_AddTrackAudio,
   MainWin_AddTrackMidi,
+  // Added by Julien Eres
+  MainWin_AddTrackAutomation,
   MainWin_DeleteTrack,
   MainWin_SoloTrack,
   MainWin_Copy,
@@ -281,7 +285,7 @@ enum
   MainWin_FloatMediaLibrary,
   MainWin_Undo,
   MainWin_Redo,
-  MainWin_History, 
+  MainWin_History,
   MainWin_Delete,
   MainWin_SelectAll,
   MainWin_FullScreen,
@@ -290,8 +294,8 @@ enum
   MainWin_FileLoader,
   MainWin_IntHelp,
   MainWin_SwitchRack,
-  MainWin_SwitchSeq, 
-  MainWin_OpenVideo, 
+  MainWin_SwitchSeq,
+  MainWin_OpenVideo,
   MainWin_CloseVideo,
   MainWin_MediaLibraryBeta,
   MainWin_MediaLibraryShow,
