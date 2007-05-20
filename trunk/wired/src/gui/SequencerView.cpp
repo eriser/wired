@@ -303,6 +303,7 @@ void					SequencerView::Drop(int x, int y, wxString file)
   WaveFile				*wave;
   WaveFile				*wave_tmp;
   long					nb_channel;
+  double				x_seq;
 
   ScreenToClient(&x, &y);
   if (x >= 0 && y >= 0)
@@ -311,6 +312,8 @@ void					SequencerView::Drop(int x, int y, wxString file)
 
       // Getting aware of current vertical scrolling position
       y += SeqPanel->GetCurrentYScrollPos();
+      x += SeqPanel->GetCurrentXScrollPos();
+      x_seq = (x == 0 ? 0 : (double)x / (double)SeqPanel->HoriZoomFactor / HORIZ_SEQ_RATIO);
       convertme << floor((y  * SeqPanel->VertZoomFactor) / TRACK_HEIGHT);
       convertme.ToLong((long*)&track);
       for (i = Seq->Tracks.begin(), cpt = 0; i != Seq->Tracks.end() && cpt != track; i++, cpt++)
@@ -329,7 +332,9 @@ void					SequencerView::Drop(int x, int y, wxString file)
 	      std::cerr << "nb_channel = " << nb_channel << std::endl;
 	      wave = WaveCenter.AddWaveFile(file);
 	      wave->SetChannelToRead(nb_channel);
-	      (*i)->CreateAudioPattern(wave, last_pos);
+	      // should we put the new Pattern next to the last one or where the mouse cursor is ?
+	      //(*i)->CreateAudioPattern(wave, last_pos);
+	      (*i)->CreateAudioPattern(wave, x_seq);
 	      i++;
 	    }
 	  for (;nb_channel < wave_tmp->GetNumberOfChannels(); nb_channel++)
@@ -338,7 +343,7 @@ void					SequencerView::Drop(int x, int y, wxString file)
 	      track_to_add = SeqPanel->CreateTrack(eAudioTrack);
 	      wave = WaveCenter.AddWaveFile(file);
 	      wave->SetChannelToRead(nb_channel);
-	      track_to_add->CreateAudioPattern(wave, 0);
+	      track_to_add->CreateAudioPattern(wave, x_seq);
 	    }
 	}
       else
@@ -349,7 +354,7 @@ void					SequencerView::Drop(int x, int y, wxString file)
  	    track_to_add = SeqPanel->CreateTrack(eAudioTrack);
 	    wave = WaveCenter.AddWaveFile(file);
 	    wave->SetChannelToRead(nb_channel);
- 	    track_to_add->CreateAudioPattern(wave, 0);
+ 	    track_to_add->CreateAudioPattern(wave, x_seq);
 	  }
 	}
       WaveCenter.RemoveWaveFile(wave_tmp);
