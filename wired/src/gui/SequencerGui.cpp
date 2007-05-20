@@ -213,6 +213,11 @@ int					SequencerGui::GetCurrentYScrollPos()
   return ((int)floor(CurrentYScrollPos));
 }
 
+int					SequencerGui::GetCurrentXScrollPos()
+{
+  return ((int)floor(CurrentXScrollPos));
+}
+
 Track					*SequencerGui::CreateTrack(trackType type)
 {
   // create a new track

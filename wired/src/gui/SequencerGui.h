@@ -223,6 +223,7 @@ class				SequencerGui: public wxPanel, public WiredDocument
   // accessors
   inline SequencerView*		GetView() { return (SeqView); };
   int				GetCurrentYScrollPos();
+  int				GetCurrentXScrollPos();
   int				GetSeqHeaderHeight();
 
   void				UnselectTracks();

@@ -15,6 +15,8 @@
 #include "AccelCenter.h"
 #include "WiredDocument.h"
 
+// 80.6 ? any idea where to find a better value for the horiz pixel/track time ratio ?
+#define	HORIZ_SEQ_RATIO	80.6
 class				SequencerGui;
 class				SelectionZone;
 class				AccelCenter;
