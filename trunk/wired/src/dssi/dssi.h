@@ -27,8 +27,10 @@
 #ifndef DSSI_INCLUDED
 #define DSSI_INCLUDED
 
-#include "ladspa.h"
+// As long we include ALSA header, Wired can't be portable
 #include <alsa/seq_event.h>
+
+#include "ladspa.h"
 
 #define DSSI_VERSION "0.9"
 #define DSSI_VERSION_MAJOR 0
