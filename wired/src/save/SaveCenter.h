@@ -9,7 +9,6 @@
 
 //For the DirDialog
 #include <wx/dirdlg.h>
-#include <wx/generic/dirdlgg.h>
 #include <wx/filename.h>
 
 //wxArrayString
