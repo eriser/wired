@@ -6,6 +6,7 @@
 #include "BeatDialog.h"
 #include <stdio.h>
 #include <wx/progdlg.h>
+#include <wx/filename.h>
 #include <math.h>
 
 static PlugInitInfo info;

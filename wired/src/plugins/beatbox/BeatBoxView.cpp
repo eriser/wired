@@ -2,6 +2,7 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include <math.h>
+#include <wx/filename.h>
 #include "BeatBox.h"
 
 BEGIN_EVENT_TABLE(Ruler, wxWindow)
