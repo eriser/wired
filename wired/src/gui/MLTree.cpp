@@ -31,6 +31,7 @@
 #include "debug.h"
 
 extern SaveCenter	*saveCenter;
+extern const wxEventType EVT_DROP;
 
 //quite strange to have the s_nodeInfo as a return value and a parameter....
 //even stranger because the parameter is not a pointer... conception mistake ?
