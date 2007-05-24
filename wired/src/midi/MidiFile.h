@@ -48,7 +48,9 @@ using std::vector;
 #define ME_CODE(evt)			(evt & 0xF0)
 #define ME_CHANNEL(evt)			(evt & 0x0F)
 
+#ifndef MAKEWORD
 #define MAKEWORD(lsb, msb)		((lsb & 0xFF) + ((msb & 0xFF) << 8))
+#endif
 
 // MIDI EVENTS
 #define ME_NOTEOFF			0x80
