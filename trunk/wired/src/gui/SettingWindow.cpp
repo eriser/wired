@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <wx/imaglist.h>
+#include <wx/image.h>
 
 #include "MainWindow.h"
 #include "SettingWindow.h"

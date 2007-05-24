@@ -3,6 +3,7 @@
 
 
 #include "HoldButton.h"
+#include <wx/image.h>
 
 BEGIN_EVENT_TABLE(HoldButton, wxWindow)
   EVT_LEFT_DOWN(HoldButton::OnLeftDown) 

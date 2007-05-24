@@ -10,6 +10,8 @@
 #include <wx/filename.h>
 #include <wx/dir.h>
 #include <wx/imaglist.h>
+#include <wx/textfile.h>
+#include <wx/image.h>
 
 using namespace std;
 

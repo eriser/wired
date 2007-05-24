@@ -9,6 +9,7 @@
 #include <wx/splash.h>
 #include <wx/dirdlg.h>
 #include <wx/filename.h>
+#include <wx/image.h>
 
 #include "MainApp.h"
 #include "MainWindow.h"
