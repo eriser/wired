@@ -188,13 +188,13 @@ bool				Mixer::InitBuffers(void)
 
 void				Mixer::MixOutput(bool soundcard, wxThread* caller)
 {
-  struct timespec		t;
+  //struct timespec		t;
   float				Lrms = 0.f;
   float				Rrms = 0.f;
   unsigned int			i;
 
-  t.tv_sec = 0;
-  t.tv_nsec = 100;
+  //t.tv_sec = 0;
+  //t.tv_nsec = 100;
   memset(OutputLeft, 0, Audio->SamplesPerBuffer * sizeof(float));
   memset(OutputRight, 0, Audio->SamplesPerBuffer * sizeof(float));
 
