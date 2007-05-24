@@ -22,15 +22,15 @@
 #include <wx/filename.h>
 #include <wx/file.h>
 
-//#ifdefined	WIN32
-//#include <io.h>
-//#include <direct.h>
-//#pragma comment(lib, "libxml2.lib")
-//#define FLAGS_OPEN_RDONLY _O_RDONLY
-//#else
+#ifdef WIN32
+#include <io.h>
+#include <direct.h>
+#pragma comment(lib, "libxml2.lib")
+#define FLAGS_OPEN_RDONLY _O_RDONLY
+#else
 #include <unistd.h>
 #define FLAGS_OPEN_RDONLY O_RDONLY
-//#endif
+#endif
 
 #define INVALID_FD -1
 #define DTD_FILENAME wxT("WiredSession.dtd")
