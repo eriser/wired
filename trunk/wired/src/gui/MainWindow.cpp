@@ -220,7 +220,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   splitVert->SetMinimumPaneSize(2);
 
   /* Creation Panel */
-  cout << "[MAINWINDOW] Start creation of GUI objects";
+  cout << "[MAINWIN] Start creation of GUI objects";
   RackPanel = new Rack(split, -1, wxPoint(0, 0), wxSize(800, 250));
   cout << ". ";
   SeqPanel = new SequencerGui(split, wxPoint(0, 0), wxSize(800, 200), this, (WiredDocument*)Seq);
@@ -485,15 +485,15 @@ void                MainWindow::InitLocale()
 
   //try to set default language (is it really useful ? it seems to never work)
   if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
-    cout << "[MainWindow][InitLocale] locale initialized to wxLANGUAGE_DEFAULT" << endl;;
+    cout << "[MAINWIN][InitLocale] locale initialized to wxLANGUAGE_DEFAULT" << endl;;
 
   // add wx basic translation (File, Window, About, ..) (It seems to never return true ...)
   if(mLocale->AddCatalog(wxT("wxstd")))
-    cout << "[MainWindow][Initlocale] wxstd catalog added" << endl;;
+    cout << "[MAINWIN][Initlocale] wxstd catalog added" << endl;;
 
   // add our translations
   if(mLocale->AddCatalog(wxT("wired")))
-    cout << "[MainWindow][InitLocale] wired catalog added" << endl;;
+    cout << "[MAINWIN][InitLocale] wired catalog added" << endl;;
 }
 
 void					MainWindow::InitFileConverter()
