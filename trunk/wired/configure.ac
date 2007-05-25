@@ -301,7 +301,6 @@ AC_CONFIG_FILES([Makefile
 		src/data/ihm/splash/Makefile
 		src/data/ihm/toolbar/Makefile
 		src/data/ihm/widgets/Makefile
-		src/data/ihm/settings/Makefile
 		src/data/plugins/Makefile
 		src/data/dssi/Makefile
 		src/conf/Makefile
