@@ -4,8 +4,13 @@
 #include "MidiFile.h"
 #include <fcntl.h>
 #include <unistd.h>
+#ifdef WIN32
+#include <winsock2.h>
+#else
 #include <netinet/in.h>
+#endif
 #include <wx/file.h>
+#include <iostream>
 
 /*************************************************************************************/
 /*** Classe Event                                                                  ***/
