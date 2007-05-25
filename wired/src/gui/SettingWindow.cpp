@@ -16,6 +16,12 @@
 
 #include "../samplerate/WiredSampleRate.h"
 
+#include "general.xpm"
+#include "audio.xpm"
+#include "output.xpm"
+#include "input.xpm"
+#include "midi.xpm"
+
 #define	CATEGORY_ID	25001
 
 
@@ -56,18 +62,13 @@ SettingWindow::SettingWindow()
 				wxTR_HAS_BUTTONS | wxTR_SINGLE | wxTR_HIDE_ROOT |
 				wxTR_FULL_ROW_HIGHLIGHT);
 
-  wxImageList   *imagelist = new wxImageList();
+  wxImageList   *imagelist = new wxImageList(MENUICON_SIZE, MENUICON_SIZE, TRUE);
 
-  imagelist->Add(RESIZE_ICON((wxIcon(WiredSettings->DataDir + wxT("ihm/settings/general.xpm"),
-				     wxBITMAP_TYPE_XPM)), MENUICON_SIZE, MENUICON_SIZE));
-  imagelist->Add(RESIZE_ICON((wxIcon(WiredSettings->DataDir + wxT("ihm/settings/audio.xpm"),
-				     wxBITMAP_TYPE_XPM)), MENUICON_SIZE, MENUICON_SIZE));
-  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/output.xpm"),
-				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
-  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/input.xpm"),
-				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
-  imagelist->Add(RESIZE_ICON(wxIcon(WiredSettings->DataDir + wxT("ihm/settings/midi.xpm"),
-				    wxBITMAP_TYPE_XPM), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON(wxIcon(general_xpm), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON(wxIcon(audio_xpm), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON(wxIcon(output_xpm), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON(wxIcon(input_xpm), MENUICON_SIZE, MENUICON_SIZE));
+  imagelist->Add(RESIZE_ICON(wxIcon(midi_xpm), MENUICON_SIZE, MENUICON_SIZE));
   SettingsTree->AssignImageList(imagelist);
 
   // flags assigned to all sizer in all right panel
