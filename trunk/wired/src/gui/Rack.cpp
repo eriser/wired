@@ -787,8 +787,13 @@ void				Rack::Dump()
   cout << "  selectedPlugin at adress " << selectedPlugin << endl;
   cout << "  Virtual size x : " << m_virtualSize.x << endl;
   cout << "  Virtual size y : " << m_virtualSize.y << endl;
+#if wxCHECK_VERSION(2, 8, 0)
+  cout << "  height : unknown" << endl;
+  cout << "  width : unknown" << endl;
+#else
   cout << "  height : " << m_height << endl;
   cout << "  width : " << m_width << endl;
+#endif
   cout << "End dumping Rack" << endl;
 }
 
