@@ -46,10 +46,10 @@ void					SequencerView::OnMotion(wxMouseEvent &e)
 {
   wxCursor				hand(wxCURSOR_HAND);
 
-#ifndef __WXGTK26__  // We're not superior to wx 2.6
-  if (SeqPanel->GetCursor() != hand)
-#else // We use >= wx 2.8 API
+#if wxCHECK_VERSION(2, 8, 0)
   if (!SeqPanel->GetCursor().IsSameAs(hand))
+#else
+  if (SeqPanel->GetCursor() != hand)
 #endif
     SeqPanel->ChangeMouseCursor(hand);
   if (e.Dragging())
