@@ -155,7 +155,7 @@ void Settings::Load()
 
   // audio part, options
   conf->SetPath(wxT("/AudioOptions"));
-  conf->Read(wxT("SampleRate"), &SampleRate, DEFAULT_SAMPLE_RATE);
+  conf->Read(wxT("SampleRate"), &SampleRate, (int)DEFAULT_SAMPLE_RATE);
   conf->Read(wxT("SampleFormat"), &SampleFormat, 0);
   conf->Read(wxT("SamplesPerBuffer"), &SamplesPerBuffer, DEFAULT_SAMPLES_PER_BUFFER);
 

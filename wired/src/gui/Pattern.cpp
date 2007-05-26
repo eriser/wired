@@ -226,7 +226,7 @@ void					Pattern::OnMotion(wxMouseEvent &e)
 	{
 	  if (SeqPanel->SelectedItems.size() == 1)
 	    {
-	      trackto = TrackIndex + floor((e.GetPosition().y ) / (TRACK_HEIGHT * SeqPanel->VertZoomFactor));
+	      trackto = TrackIndex + (int)floor((e.GetPosition().y ) / (TRACK_HEIGHT * SeqPanel->VertZoomFactor));
 	      if (SeqPanel->IsAudioTrack(TrackIndex) == SeqPanel->IsAudioTrack(trackto))
 		{
 		  SeqPanel->ChangeMouseCursor(wxCursor(wxCURSOR_HAND));

@@ -26,11 +26,6 @@
 
 #ifndef _AKAI_H_
 #define _AKAI_H_
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -132,9 +127,4 @@ char		*akaiGetType(int);
 t_akaiSample	*akaiGetSampleByName(char *, int , char *, char *);
 int		akaiSample2WAV(t_akaiSample *, char *);
 t_akaiProgram	*akaiLoadProgram(char *dev, int partition, char *subdir, char *name);
-
-#ifdef __cplusplus
-  }
-#endif
-
 #endif

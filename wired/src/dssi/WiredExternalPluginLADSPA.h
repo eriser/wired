@@ -8,7 +8,9 @@
 #include "../engine/AudioEngine.h"
 #include "Plugin.h"
 //#include <stdlib.h>
+#ifndef WIN32
 #include <dlfcn.h>
+#endif
 #include <math.h>
 
 #include <list>

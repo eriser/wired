@@ -46,27 +46,32 @@ int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 {
 	wxString	msg;
 	wxString	tmpmsg;
-	char	*buf;
+	// We don't have asprintf on win32
+	//char	*buf;
+	char	buf[64];
 	
 	switch (seekMethod)
 	{
 			case relative: 
 				msg = ACTION_SEEK_RELATIVE;
-				asprintf(&buf, "%g 0", position);
+				//asprintf(&buf, "%g 0", position);
+				sprintf(buf, "%g 0", position);
 				msg += wxString(buf, *wxConvCurrent);
 				msg += CRLF;
 				cout << "[WIREDPLAYER] " << msg << endl;
 				break;
 			case percentage:
 				msg = ACTION_SEEK_PERCENTAGE;
-				asprintf(&buf, "%g 1", position);
+				//asprintf(&buf, "%g 1", position);
+				sprintf(buf, "%g 1", position);
 				msg += wxString(buf, *wxConvCurrent);
 				msg += CRLF;
 				cout << "[WIREDPLAYER] " << msg << endl;
 				break;
 			case absolute:
 				msg = ACTION_SEEK_ABSOLUTE;
-				asprintf(&buf, "%g 2", position);
+				//asprintf(&buf, "%g 2", position);
+				sprintf(buf, "%g 2", position);
 				tmpmsg = wxString(buf, *wxConvCurrent);
 				msg += tmpmsg;
 				msg += CRLF;
@@ -74,7 +79,7 @@ int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 				cout << "[WIREDPLAYER] Msg: " << msg << endl;
 				break;
 	}
-	free(buf);
+	//free(buf);
 	if (Playbool == false)
 	  {
 	    SendMPlayerMessage(msg.c_str(), msg.size());
@@ -87,6 +92,7 @@ int		WiredMplayer::SeekFile(eSeekMethod seekMethod, double position)
 
 bool		WiredMplayer::DisplayVideoFrame(const wxString& videoFilePath)
 {
+#ifndef WIN32
   extern char **environ;
   int	fd;
   wxString	launchString;
@@ -125,6 +131,10 @@ bool		WiredMplayer::DisplayVideoFrame(const wxString& videoFilePath)
   PauseFile();
   //  SetPlayBool(false);
   return 1;
+#else
+  cout << "[WIREDMPLAYER] not implemented yet" << endl;
+  return 0;
+#endif
 }
 
 int			WiredMplayer::SetPlayBool(bool value)
