@@ -27,9 +27,13 @@
 #ifndef DSSI_INCLUDED
 #define DSSI_INCLUDED
 
+#ifdef WIN32
+//It is only to compile the code and will be changed later
+typedef struct {int fake;} snd_seq_event_t;
+#else
 // As long we include ALSA header, Wired can't be portable
 #include <alsa/seq_event.h>
-
+#endif
 #include "ladspa.h"
 
 #define DSSI_VERSION "0.9"

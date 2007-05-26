@@ -16,7 +16,7 @@
 
 #include "Effect.h" 
 #include "DelayL.h" 
-#include "WaveLoop.h" 
+#include "WvLoop.h" 
 
 #include <iostream>
 using namespace std;
@@ -65,7 +65,7 @@ class Chorus : public Effect
 
  protected:  
   DelayL delayLine_[2];
-  WaveLoop *mods_[2];
+  WvLoop *mods_[2];
   StkFloat baseLength_;
   StkFloat modDepth_;
 

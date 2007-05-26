@@ -47,7 +47,7 @@ class		ChorusPlugin: public Plugin
   wxBitmap	*GetBitmap();
 
   DelayL	delayLine[2];
-  WaveLoop	*mods[2];
+  WvLoop	*mods[2];
   Chorus	*chorus1;
   Chorus	*chorus2;
 

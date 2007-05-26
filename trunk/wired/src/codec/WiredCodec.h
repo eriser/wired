@@ -6,7 +6,9 @@
 
 #include <wx/thread.h>
 #include <wx/string.h>
+#ifndef WIN32
 #include <dlfcn.h>
+#endif
 #include <vector>
 #include <list>
 #include <map>

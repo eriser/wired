@@ -18,7 +18,11 @@ WiredCodec::~WiredCodec()
 	list<t_WLib>::const_iterator	iter;
 	
 	for (iter = _WLib.begin(); iter != _WLib.end(); iter++)
+	#ifdef WIN32
+		cout << "dlopen" << endl;
+	#else
 		dlclose((*iter).handle);
+	#endif
 	if (path)
 	  delete path;
 }
@@ -260,13 +264,26 @@ void WiredCodec::WLibLoader(const wxString& filename)
   list<t_LibInfo>			Infos;
   bool					shouldDeleteNewLib = true;
   
+  #ifdef WIN32
+  handle = 0; cout << "dlopen" << endl;
+  #else
   handle = dlopen(filename.mb_str(*wxConvCurrent), RTLD_LAZY);
+  #endif
+
   if (!handle)
     return;
+  #ifdef WIN32
+  cout << "dlsym" << endl;
+  #else
   construct = (WiredCodecConstruct) dlsym(handle, WLIBCONSTRUCT);
+  #endif
   if (!construct)
     {
+      #ifdef WIN32
+      cout << "dlclose" << endl;
+      #else
       dlclose(handle);
+      #endif
       return;
     }
   WiredApiCodec *NewLib = construct();
@@ -286,6 +303,10 @@ void WiredCodec::WLibLoader(const wxString& filename)
   if (shouldDeleteNewLib == true)
     {
       delete NewLib;
+      #ifdef WIN32
+      cout << "dlclose" << endl;
+      #else
       dlclose(handle);
+      #endif
     }
 }

@@ -15,7 +15,7 @@
 #include "FaderCtrl.h"
 #include "DownButton.h"
 #include "WvIn.h"
-#include "WaveLoop.h"
+#include "WvLoop.h"
 #include "Effect.h"
 #include "Delay.h"
 #include "DelayL.h"

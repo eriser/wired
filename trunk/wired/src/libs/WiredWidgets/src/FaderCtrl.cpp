@@ -193,7 +193,7 @@ void		FaderCtrl::SetValue(float *val)
   else
     {
       *Value = *val;
-      fg->Move(wxPoint(0, (*Value - Ord) / Coeff));
+      fg->Move(wxPoint(0, (int)((*Value - Ord) / Coeff)));
     }
 }
 
