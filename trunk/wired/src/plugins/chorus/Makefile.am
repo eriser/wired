@@ -8,7 +8,7 @@ libWiredChorus_la_LDFLAGS = -avoid-version
 libWiredChorus_la_SOURCES =			\
 			ChorusPlug.cpp		\
 			Effect.cpp		\
-			WaveLoop.cpp		\
+			WvLoop.cpp		\
 			WvIn.cpp		\
 			WvOut.cpp		\
 			DelayL.cpp		\
