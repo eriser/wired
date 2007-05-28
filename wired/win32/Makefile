@@ -13,10 +13,10 @@ XMLLIBS    := -lxml2
 XMLCFLAGS  :=
 PLATLIBS   := -mconsole -lwinmm -lwsock32 -Wl,-u,_WinMain@16
 RESFILE    := $(BINPATH)/resource.o
-PLUGINSDEP := $(BINPATH)/libwiredwidgets.a
+PLUGINSDEP := $(BINPATH)/libWiredWidgets.a
 CONFPATH   := .
 else
-BINPATH    := ../.obj-linux
+BINPATH    := ./.obj-linux
 DLL        := so
 EXE        :=
 WXLIBS     := $(shell wx-config --libs)
@@ -25,7 +25,7 @@ XMLLIBS    := $(shell xml2-config --libs)
 XMLCFLAGS  := $(shell xml2-config --cflags)
 PLATLIBS   := 
 RESFILE    :=
-PLUGINSDEP := $(BINPATH)/libwiredwidgets.so
+PLUGINSDEP := $(BINPATH)/libWiredWidgets.so
 CONFPATH   := $(SRCPATH)/conf
 endif
 
@@ -50,16 +50,16 @@ WIREDLIBS                    := libsave.a                     \
                                 libwiredcodec.a               \
                                 libwiredvideo.a               \
                                 libwireddssi.a                \
-                                libwiredakai.$(DLL)           \
-                                libwiredwidgets.$(DLL)
-WIREDPLUG                    := libwiredbeatbox.$(DLL)        \
-                                libwiredcrusher.$(DLL)        \
-                                libwireddelay.$(DLL)          \
-                                libwiredloopsampler.$(DLL)    \
-                                libwiredakaisampler.$(DLL)    \
-                                libwiredreverb.$(DLL)         \
-                                libwiredchorus.$(DLL)         \
-                                libwiredwahwah.$(DLL)
+                                libWiredAkai.$(DLL)           \
+                                libWiredWidgets.$(DLL)
+WIREDPLUG                    := libWiredBeatBox.$(DLL)        \
+                                libWiredCrusher.$(DLL)        \
+                                libWiredDelay.$(DLL)          \
+                                libWiredLoopSampler.$(DLL)    \
+                                libWiredSampler.$(DLL)    \
+                                libWiredReverb.$(DLL)         \
+                                libWiredChorus.$(DLL)         \
+                                libWiredWahwah.$(DLL)
 SOURCES_libsave              := SaveCenter.cpp                \
                                 WiredDocument.cpp             \
                                 WiredXml.cpp
@@ -149,9 +149,9 @@ SOURCES_libwireddssi         := WiredExternalPluginMgr.cpp    \
                                 WiredExternalPluginLADSPA.cpp \
                                 WiredExternalPluginGui.cpp    \
                                 Plugin.cpp
-SOURCES_libwiredakai         := akai.cpp                      \
+SOURCES_libWiredAkai         := akai.cpp                      \
                                 list.cpp
-SOURCES_libwiredwidgets      := ChoiceButton.cpp              \
+SOURCES_libWiredWidgets      := ChoiceButton.cpp              \
                                 DownButton.cpp                \
                                 FaderCtrl.cpp                 \
                                 HoldButton.cpp                \
@@ -163,15 +163,15 @@ SOURCES_libwiredwidgets      := ChoiceButton.cpp              \
                                 HintedKnob.cpp                \
                                 StaticPosKnob.cpp             \
                                 CycleKnob.cpp
-SOURCES_libwiredbeatbox      := Polyphony.cpp                 \
+SOURCES_libWiredBeatBox      := Polyphony.cpp                 \
                                 BeatBox.cpp                   \
                                 BeatButton.cpp                \
                                 BeatBoxChannel.cpp            \
                                 BeatBoxView.cpp               \
                                 BeatNote.cpp
-SOURCES_libwiredcrusher      := CrusherPlug.cpp
-SOURCES_libwireddelay        := DelayPlug.cpp
-SOURCES_libwiredloopsampler  := LoopSampler.cpp               \
+SOURCES_libWiredCrusher      := CrusherPlug.cpp
+SOURCES_libWiredDelay        := DelayPlug.cpp
+SOURCES_libWiredLoopSampler  := LoopSampler.cpp               \
                                 LoopSamplerView.cpp           \
                                 WaveLoop.cpp                  \
                                 RulerLoop.cpp                 \
@@ -179,7 +179,7 @@ SOURCES_libwiredloopsampler  := LoopSampler.cpp               \
                                 SliceGui.cpp                  \
                                 BeatDialog.cpp                \
                                 LoopCursor.cpp
-SOURCES_libwiredakaisampler  := AkaiSampler.cpp               \
+SOURCES_libWiredSampler  := AkaiSampler.cpp               \
                                 ASClavier.cpp                 \
                                 ASPlugin.cpp                  \
                                 ASEnvel.cpp                   \
@@ -191,7 +191,7 @@ SOURCES_libwiredakaisampler  := AkaiSampler.cpp               \
                                 ASKeygroupEditor.cpp          \
                                 ASKeygroupList.cpp            \
                                 ASLoop.cpp
-SOURCES_libwiredreverb       := Stk.cpp                       \
+SOURCES_libWiredReverb       := Stk.cpp                       \
                                 Effect.cpp                    \
                                 Filter.cpp                    \
                                 PRCRev.cpp                    \
@@ -199,7 +199,7 @@ SOURCES_libwiredreverb       := Stk.cpp                       \
                                 JCRev.cpp                     \
                                 Delay.cpp                     \
                                 ReverbPlug.cpp
-SOURCES_libwiredchorus       := ChorusPlug.cpp                \
+SOURCES_libWiredChorus       := ChorusPlug.cpp                \
                                 Effect.cpp                    \
                                 WvLoop.cpp                    \
                                 WvIn.cpp                      \
@@ -209,7 +209,7 @@ SOURCES_libwiredchorus       := ChorusPlug.cpp                \
                                 Stk.cpp                       \
                                 Filter.cpp                    \
                                 Chorus.cpp
-SOURCES_libwiredwahwah       := WahwahPlug.cpp
+SOURCES_libWiredWahwah       := WahwahPlug.cpp
 
 INCPATHS   := .                                        \
               $(SRCPATH)                               \
@@ -292,8 +292,8 @@ install:
 	@mkdir --parents $(PREFIX)/data/wired
 	@mkdir --parents $(PREFIX)/conf
 	@cp $(BINPATH)/wired$(EXE)            $(PREFIX)
-	@cp $(BINPATH)/libwiredakai.$(DLL)    $(PREFIX)
-	@cp $(BINPATH)/libwiredwidgets.$(DLL) $(PREFIX)
+	@cp $(BINPATH)/libWiredAkai.$(DLL)    $(PREFIX)
+	@cp $(BINPATH)/libWiredWidgets.$(DLL) $(PREFIX)
 	@cp $(PLUGBIN)                        $(PREFIX)/plugins
 	@cp -r $(SRCPATH)/data/*              $(PREFIX)/data/wired
 	@find $(PREFIX)/data/wired -name Makefile.am | xargs rm
@@ -380,42 +380,42 @@ $(BINPATH)/libwireddssi.a: $(addprefix $(BINPATH)/,$(SOURCES_libwireddssi:.cpp=.
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libwiredakai.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwiredakai:.cpp=.o))
+$(BINPATH)/libWiredAkai.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredAkai:.cpp=.o))
 	@echo " ... linking $@"
 ifeq ($(DLL),dll)
 	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS) -Wl,--out-implib=$(@:.$(DLL)=.a)
 else
-	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS)
+	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS) -Wl,-soname=$(@F)
 endif
-$(BINPATH)/libwiredwidgets.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwiredwidgets:.cpp=.o))
+$(BINPATH)/libWiredWidgets.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredWidgets:.cpp=.o))
 	@echo " ... linking $@"
 ifeq ($(DLL),dll)
 	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS) -Wl,--out-implib=$(@:.$(DLL)=.a)
 else
-	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS)
+	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS) -Wl,-soname=$(@F)
 endif
-$(BINPATH)/libwiredbeatbox.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwiredbeatbox:.cpp=.o))
+$(BINPATH)/libWiredBeatBox.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredBeatBox:.cpp=.o))
 	@echo " ... linking $@"
 	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libwiredcrusher.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwiredcrusher:.cpp=.o))
+$(BINPATH)/libWiredCrusher.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredCrusher:.cpp=.o))
 	@echo " ... linking $@"
 	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libwireddelay.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwireddelay:.cpp=.o))
+$(BINPATH)/libWiredDelay.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredDelay:.cpp=.o))
 	@echo " ... linking $@"
 	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libwiredloopsampler.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwiredloopsampler:.cpp=.o))
+$(BINPATH)/libWiredLoopSampler.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredLoopSampler:.cpp=.o))
 	@echo " ... linking $@"
 	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libwiredakaisampler.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwiredakaisampler:.cpp=.o))
+$(BINPATH)/libWiredSampler.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredSampler:.cpp=.o))
 	@echo " ... linking $@"
 	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libwiredreverb.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwiredreverb:.cpp=.o))
+$(BINPATH)/libWiredReverb.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredReverb:.cpp=.o))
 	@echo " ... linking $@"
 	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libwiredchorus.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwiredchorus:.cpp=.o))
+$(BINPATH)/libWiredChorus.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredChorus:.cpp=.o))
 	@echo " ... linking $@"
 	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libwiredwahwah.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libwiredwahwah:.cpp=.o))
+$(BINPATH)/libWiredWahwah.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredWahwah:.cpp=.o))
 	@echo " ... linking $@"
 	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 ###############################################################################
