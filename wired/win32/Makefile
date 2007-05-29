@@ -297,6 +297,7 @@ install:
 	@cp $(PLUGBIN)                        $(PREFIX)/plugins
 	@cp -r $(SRCPATH)/data/*              $(PREFIX)/data/wired
 	@find $(PREFIX)/data/wired -name Makefile.am | xargs rm
+	@find $(PREFIX)/data/wired -name .svn | xargs rm -rf
 	@cp -r $(CONFPATH)/*.conf             $(PREFIX)/conf
 
 clean:
