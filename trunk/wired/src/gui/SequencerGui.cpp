@@ -72,6 +72,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   SetBackgroundColour(CL_SEQ_BACKGROUND);
   SetForegroundColour(CL_SEQ_FOREGROUND);
   Toolbar = new wxToolBar(this, -1, wxPoint(-1, -1), wxSize(-1, TOOLS_HEIGHT), wxTB_FLAT);
+  Toolbar->SetToolBitmapSize(wxSize(ICONS_SIZE,ICONS_SIZE));
   Toolbar->AddRadioTool(ID_SEQ_MOVE, _("Move"), wxBitmap(WiredSettings->DataDir + HAND_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + HAND_DOWN, wxBITMAP_TYPE_PNG), _("Move Pattern"), _("Move Pattern"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_DRAW, _("Draw"), wxBitmap(WiredSettings->DataDir + DRAW_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + DRAW_DOWN, wxBITMAP_TYPE_PNG), _("Draw Pattern"), _("Draw Pattern"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_DEL, _("Delete"), wxBitmap(WiredSettings->DataDir + ERASE_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + ERASE_DOWN, wxBITMAP_TYPE_PNG), _("Delete Pattern"), _("Deletes notes"), NULL);
