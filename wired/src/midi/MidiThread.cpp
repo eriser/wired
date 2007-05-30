@@ -208,7 +208,9 @@ vector<int>		MidiThread::GetDevicesIdByName(vector<wxString> names)
 
 void                    MidiThread::OnExit()
 {
-  wxMutexLocker		locker(wxGetApp().m_mutex);
+  //It freezes the application on Windows and don't
+  //makes difference on Linux
+  //wxMutexLocker		locker(wxGetApp().m_mutex);
   wxArrayThread& threads = wxGetApp().m_threads;
 
   threads.Remove(this);
