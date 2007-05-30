@@ -63,6 +63,7 @@ END_DECLARE_EVENT_TYPES()
 
 #define PLAY_CURSOR_FOLLOWING		(42)
 
+#define ICONS_SIZE			(37)
 #define HAND_UP				wxT("ihm/toolbar/hand_up.png")
 #define HAND_DOWN			wxT("ihm/toolbar/hand_down.png")
 #define DRAW_UP				wxT("ihm/toolbar/draw_up.png")

@@ -15,6 +15,7 @@ class					StaticLabel;
 class					VUMCtrl;
 class					MLTree;
 
+#define MEDIALIBRARY_IMG_SIZE		37
 #define MEDIALIBRARY_ADDUP_IMG		wxT("ihm/toolbar/add_up.png")
 #define MEDIALIBRARY_ADDDO_IMG		wxT("ihm/toolbar/add_up.png")
 #define MEDIALIBRARY_REMOVEUP_IMG	wxT("ihm/toolbar/del_up.png")

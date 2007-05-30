@@ -81,6 +81,7 @@ MediaLibrary::MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &s
   MLTreeView->SetTreeExpanded();
 
   TopToolbar = new wxToolBar(this, -1, wxDefaultPosition, wxDefaultSize, wxTB_3DBUTTONS);
+  TopToolbar->SetToolBitmapSize(wxSize(MEDIALIBRARY_IMG_SIZE,MEDIALIBRARY_IMG_SIZE));
   TopToolbar->AddTool(MediaLibrary_Add, _("Add"),
 		      wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_ADDUP_IMG)), wxBITMAP_TYPE_PNG),
 		      wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_ADDDO_IMG)), wxBITMAP_TYPE_PNG),
