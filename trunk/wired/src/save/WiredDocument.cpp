@@ -18,6 +18,14 @@ WiredDocument::WiredDocument(wxString name, WiredDocument *parent, bool noParent
 
   if (!parent && !noParent)
     parent = saveCenter;
+
+  if (parent == NULL && !noParent)
+  {
+    std::cerr << "[WiredDocument] No parent for " << name.mb_str() << " !!" << std::endl;
+    std::cerr << "[WiredDocument] Creating a new one... !?!" << std::endl;
+    saveCenter = new SaveCenter();
+    parent = saveCenter;
+  }
   
   _parent = parent;
   if(parent)

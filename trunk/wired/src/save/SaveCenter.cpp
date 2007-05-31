@@ -281,8 +281,11 @@ void		SaveCenter::WriteFile(wxString givenFileName,
 
   xmlFile->StartElement(rootTag);
   
-  for (i = 0; i < elements->GetCount(); i++)
-    WriteElement(elements->Item(i), xmlFile);
+  if (elements)
+    for (i = 0; i < elements->GetCount(); i++)
+      WriteElement(elements->Item(i), xmlFile);
+  else
+    std::cerr << "[SaveCenter] No elements to write !" << std::endl;
   
   xmlFile->EndElement();
   delete xmlFile;
@@ -291,7 +294,9 @@ void		SaveCenter::WriteFile(wxString givenFileName,
 //Accessors
 wxFileName	SaveCenter::getProjectPath()
 {
-  return _projectPath;
+  if (this == NULL)
+    return (wxGetCwd());
+  return (_projectPath);
 }
 
 wxString	SaveCenter::getAudioDir()

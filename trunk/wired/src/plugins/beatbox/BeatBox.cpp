@@ -1865,7 +1865,7 @@ void	WiredBeatBox::LoadChannel(SaveElement *channelData)
 
 void	WiredBeatBox::LoadBank(SaveElement *bankData)
 {
-  int			b;
+  long			b;
   SaveElementArray	patterns;
 
   bankData->getKey().AfterLast('_').ToLong((long *)&b);
@@ -1874,7 +1874,7 @@ void	WiredBeatBox::LoadBank(SaveElement *bankData)
   patterns = bankData->getChildren();
 
   for(int i = 0; i < patterns.GetCount(); i++)
-    LoadPattern(patterns[i], b);
+    LoadPattern(patterns[i], (int)b);
 }
 
 void	WiredBeatBox::LoadPattern(SaveElement *patternData, int bank)
