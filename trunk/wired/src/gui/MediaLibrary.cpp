@@ -122,6 +122,7 @@ MediaLibrary::MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &s
 #else
   BottomToolbar = new wxToolBar(this, -1, wxDefaultPosition, wxDefaultSize, wxTB_3DBUTTONS);
 #endif
+  BottomToolbar->SetToolBitmapSize(wxSize(MEDIALIBRARY_IMG_SIZE,MEDIALIBRARY_IMG_SIZE));
   BottomToolbar->AddTool(MediaLibrary_Start_Preview, _("Start Preview"),
 			 wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWUP_IMG)), wxBITMAP_TYPE_PNG),
 			 wxBitmap(wxString(WiredSettings->DataDir + wxString(MEDIALIBRARY_PREVIEWDO_IMG)), wxBITMAP_TYPE_PNG),
