@@ -23,7 +23,7 @@ WXLIBS     := $(shell wx-config --libs)
 WXCFLAGS   := $(shell wx-config --cflags)
 XMLLIBS    := $(shell xml2-config --libs)
 XMLCFLAGS  := $(shell xml2-config --cflags)
-PLATLIBS   := 
+PLATLIBS   :=
 RESFILE    :=
 PLUGINSDEP := $(BINPATH)/libWiredWidgets.so
 CONFPATH   := $(SRCPATH)/conf
@@ -33,8 +33,9 @@ ifeq ($(PREFIX),)
 PREFIX := ./bin
 endif
 
-WIREDLIBS                    := libsave.a                     \
-                                libgui.a                      \
+WIREDLIBS                    := libgui.a                      \
+                                libwireddssi.a                \
+                                libsave.a                     \
                                 libsequencer.a                \
                                 libaudio.a                    \
                                 libeditmidi.a                 \
@@ -49,7 +50,6 @@ WIREDLIBS                    := libsave.a                     \
                                 libwiredsamplerate.a          \
                                 libwiredcodec.a               \
                                 libwiredvideo.a               \
-                                libwireddssi.a                \
                                 libWiredAkai.$(DLL)           \
                                 libWiredWidgets.$(DLL)
 WIREDPLUG                    := libWiredBeatBox.$(DLL)        \
@@ -61,8 +61,7 @@ WIREDPLUG                    := libWiredBeatBox.$(DLL)        \
                                 libWiredChorus.$(DLL)         \
                                 libWiredWahwah.$(DLL)
 SOURCES_libsave              := SaveCenter.cpp                \
-                                WiredDocument.cpp             \
-                                WiredXml.cpp
+                                WiredDocument.cpp
 SOURCES_libgui               := AccelCenter.cpp               \
                                 AudioPattern.cpp              \
                                 AutomationTrack.cpp           \
@@ -98,13 +97,10 @@ SOURCES_libgui               := AccelCenter.cpp               \
                                 WavePanel.cpp                 \
                                 PluginEffect.cpp              \
                                 FileConversion.cpp            \
-                                FloatingFrame.cpp             \
-                                WiredDocument.cpp             \
-                                SaveCenter.cpp
+                                FloatingFrame.cpp
 SOURCES_libsequencer         := Sequencer.cpp                 \
                                 Track.cpp                     \
-                                SeqTrackPattern.cpp           \
-                                WaveDrawer.cpp
+                                SeqTrackPattern.cpp
 SOURCES_libaudio             := ClipBoard.cpp                 \
                                 WaveFile.cpp                  \
                                 WriteWaveFile.cpp
@@ -147,8 +143,7 @@ SOURCES_libwiredvideo        := WiredVideo.cpp                \
 SOURCES_libwireddssi         := WiredExternalPluginMgr.cpp    \
                                 WiredExternalPlugin.cpp       \
                                 WiredExternalPluginLADSPA.cpp \
-                                WiredExternalPluginGui.cpp    \
-                                Plugin.cpp
+                                WiredExternalPluginGui.cpp
 SOURCES_libWiredAkai         := akai.cpp                      \
                                 list.cpp
 SOURCES_libWiredWidgets      := ChoiceButton.cpp              \
@@ -222,19 +217,11 @@ INCPATHS   := .                                        \
               $(SRCPATH)/dssi                          \
               $(SRCPATH)/include                       \
               $(SRCPATH)/editmidi                      \
-              $(SRCPATH)/portaudio/include             \
-              $(SRCPATH)/portaudio/pablio              \
-              $(SRCPATH)/portaudio/src/common          \
-              $(SRCPATH)/portaudio/src/hostapi/dsound  \
-              $(SRCPATH)/portaudio/src/os/win          \
               $(SRCPATH)/sequencer                     \
               $(SRCPATH)/xml                           \
               $(SRCPATH)/fileloader                    \
               $(SRCPATH)/engine                        \
               $(SRCPATH)/midi                          \
-              $(SRCPATH)/midi/portmidi/porttime        \
-              $(SRCPATH)/midi/portmidi/pm_common       \
-              $(SRCPATH)/midi/portmidi/pm_win          \
               $(SRCPATH)/samplerate                    \
               $(SRCPATH)/redist                        \
               $(SRCPATH)/save                          \
@@ -397,28 +384,28 @@ else
 endif
 $(BINPATH)/libWiredBeatBox.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredBeatBox:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 $(BINPATH)/libWiredCrusher.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredCrusher:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 $(BINPATH)/libWiredDelay.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredDelay:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 $(BINPATH)/libWiredLoopSampler.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredLoopSampler:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 $(BINPATH)/libWiredSampler.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredSampler:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 $(BINPATH)/libWiredReverb.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredReverb:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 $(BINPATH)/libWiredChorus.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredChorus:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 $(BINPATH)/libWiredWahwah.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredWahwah:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 ###############################################################################
 
 ifneq "$(MAKECMDGOALS)" "clean"
