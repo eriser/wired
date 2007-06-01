@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="libWiredWidgets.cbp" />
+		<Project filename="wired.cbp" active="1">
+			<Depends filename="libWiredWidgets.cbp" />
+			<Depends filename="libWiredAkai.cbp" />
+		</Project>
+		<Project filename="libWiredAkai.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>
