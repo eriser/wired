@@ -22,6 +22,6 @@ Optionally, you can inform a directory for installation typing "make install PRE
 If the DLLs needed are not in you system PATH, copy all to the root of binary wired directory.
 
 Using Code::Blocks IDE:
-Open the file "Wired.workspace" and type Ctrl+F9 to compile everything.
+Open the file "Wired.workspace" and run "Build > Build workspace" to compile everything.
 More details at http://www.codeblocks.org/
 Run "copydata.bat" to copy src/data content to bin directory.

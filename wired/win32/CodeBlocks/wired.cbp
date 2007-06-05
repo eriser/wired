@@ -60,15 +60,15 @@
 			<Add directory="..\..\src" />
 		</Compiler>
 		<Linker>
+			<Add library="wx_msw-2.8" />
+			<Add library="WiredWidgets" />
+			<Add library="WiredAkai" />
 			<Add library="samplerate" />
 			<Add library="SoundTouch" />
 			<Add library="sndfile" />
 			<Add library="portaudio" />
 			<Add library="portmidi" />
 			<Add library="xml2" />
-			<Add library="wx_msw-2.8" />
-			<Add library="libWiredWidgets.a" />
-			<Add library="libWiredAkai.a" />
 			<Add library="winmm" />
 			<Add library="wsock32" />
 			<Add directory=".\bin" />
