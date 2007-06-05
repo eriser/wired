@@ -59,6 +59,9 @@
 			<Add directory=".." />
 			<Add directory="..\..\src" />
 		</Compiler>
+		<ResourceCompiler>
+			<Add directory=".." />
+		</ResourceCompiler>
 		<Linker>
 			<Add library="wx_msw-2.8" />
 			<Add library="WiredWidgets" />
@@ -266,6 +269,9 @@
 		<Unit filename="..\..\src\wiredvideo\WiredVideo.h" />
 		<Unit filename="..\..\src\xml\WiredXml.cpp" />
 		<Unit filename="..\..\src\xml\WiredXml.h" />
+		<Unit filename="..\resource.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 		</Extensions>
