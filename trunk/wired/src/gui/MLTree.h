@@ -19,8 +19,7 @@ extern MediaLibrary	*MediaLibraryPanel;
 
 #define EXT_FILE		wxT("wired_exts.conf")
 #define SAVE_TREE_FILE		wxT("MediaLibrary/MLTree")
-#define LOCAL_TREE_FILE		wxT("LocalTree")
-#define LOCAL_TREE_PATH		wxT("~/.wired/LocalTree.xml")
+#define LOCAL_TREE_FILE		wxT("LocalTree.xml")
 #define PROJECT_NODE            _("Project")
 #define LOCAL_NODE		_("Local")
 #define PROJECT_NODE_NAME       _("Project Files")
@@ -62,7 +61,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   ~MLTree();
 
   void			LoadPatch(wxString filename);
-  
+
   void			OnSave(wxString filename);
 
  protected:
@@ -94,7 +93,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
 */
   vector<wxString>		Exts;
 /**
- * A Map of wxTreeItemId and their corresponding struct which contains 
+ * A Map of wxTreeItemId and their corresponding struct which contains
  * various informations related to the item.
 */
   map<wxTreeItemId, s_nodeInfo>	nodes;
@@ -148,7 +147,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   void			SaveTreeSC(wxTreeItemId parent, SaveElement *parentData, bool relativePath);
 
   void			Load(SaveElementArray data);
-  
+
   void			LoadItem(wxTreeItemId parent, SaveElement *parentData);
 
   /**
@@ -183,7 +182,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   void				SetTreeExpanded();
 
 /**
- * The GetTreeItemIdFromLabel function is used to get the id of a node using 
+ * The GetTreeItemIdFromLabel function is used to get the id of a node using
  * it's label.
  * \param label a wxString containing the name of a node
  * \return a wxTreeItemId corresponding to the selectioned node
@@ -207,7 +206,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   wxString			getSelection(int flag);
 
 /**
- * The AddFile function adds a new node 
+ * The AddFile function adds a new node
  * \param ParentNode a wxTreeItemId corresponding to the parent node of the
  * new node.
  * \param wxString FileToAdd the full path to the file to add
@@ -218,7 +217,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   wxTreeItemId			AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo infos, bool expand);
 
 /**
- * The ExpandAll function sets all the existing nodes to the state expanded 
+ * The ExpandAll function sets all the existing nodes to the state expanded
  * \param Tree, a wxTreeCtrl which is the tree to expand
  * \param id, a wxTreeItemId which is used for recursivity
  * \param shouldExpand, a boolean used to expand or not the current node
@@ -229,7 +228,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   void				ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldExpand, int toLevel);
 
 /**
- * The OnCollapse function is called when launching the Expand or Collapse 
+ * The OnCollapse function is called when launching the Expand or Collapse
  * action.
  * \return void
 */
@@ -258,7 +257,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
 
 /**
  * The OnAdd function is called by launching the Add File action, using the
- * dedicated button. The file is added to the selected node or automaticaly 
+ * dedicated button. The file is added to the selected node or automaticaly
  * sorted if no node is selected
  * \param FileToAdd a wxString which is the full path to the file to add
  * \return void
@@ -283,7 +282,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   void				OnRemove();
 
 /**
- * The OnCreateDir function is called when creating a new directory. It 
+ * The OnCreateDir function is called when creating a new directory. It
  * create a new directory node.
  * \return void
 */
@@ -319,7 +318,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
   void				OnEdit();
 
 /**
- * The OnPreview function is called when lauching the preview action. It 
+ * The OnPreview function is called when lauching the preview action. It
  * starts playing the selected file
  * \return void
 */

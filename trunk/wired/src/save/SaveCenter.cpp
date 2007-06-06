@@ -25,7 +25,7 @@ void	SaveCenter::Save()
 {
   //return project specific infos ?
 }
- 
+
 void	SaveCenter::Load(SaveElementArray dataLoaded)
 {
   //load project specific infos ?
@@ -56,10 +56,10 @@ void	SaveCenter::CleanTree()
 
       //Clean the WiredDocument
       toProcess[toProcessIt]->CleanChildren();
-      //Retrieve its remaining children 
+      //Retrieve its remaining children
       toMergeInToProcess = toProcess[toProcessIt]->getChildren();
       //Merge them into the toProcessArray
-      WX_APPEND_ARRAY(toProcess, toMergeInToProcess);      
+      WX_APPEND_ARRAY(toProcess, toMergeInToProcess);
 
       toProcessIt++;
     }
@@ -70,10 +70,10 @@ void	SaveCenter::SaveProject()
 {
   wxString	fileName;
   WiredXml	*xmlFile = new WiredXml();
-  
+
   if(!_projectPath.DirExists())
     _projectPath.Mkdir();
-    
+
   fileName << _projectPath.GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME) << wxT("wired.xml");
 
   xmlFile->CreateDocument(fileName);
@@ -90,7 +90,7 @@ void	SaveCenter::SaveProject()
 void	SaveCenter::SaveFile(WiredDocument *doc, wxString file, wxString path)
 {
   wxFileName	normalizedPath;
-  
+
   if (path == wxT(""))
     path = file;
   else
@@ -102,7 +102,7 @@ void	SaveCenter::SaveFile(WiredDocument *doc, wxString file, wxString path)
   if (doc->getDocFile(file) == NULL)
     std::cerr << "[SaveCenter] trying to save a key not found..." << std::endl;
 
-  WriteFile(path, doc->getDocFile(file)); 
+  WriteFile(path + file, doc->getDocFile(file));
 }
 
 void	SaveCenter::SaveDocument(WiredDocument *currentNode, WiredXml *xmlFile)
@@ -119,7 +119,7 @@ void	SaveCenter::SaveDocument(WiredDocument *currentNode, WiredXml *xmlFile)
 
   //Save Document
   currentNode->SaveMe();
-  
+
   //get my SaveElements
   saveElements = currentNode->getDocData();
 
@@ -136,7 +136,7 @@ void	SaveCenter::SaveDocument(WiredDocument *currentNode, WiredXml *xmlFile)
 
   //get elements to write in the conf file
   if(saveElements.count(WIRED_PROJECT_FILE))
-    {      
+    {
       toWrite = saveElements[WIRED_PROJECT_FILE];
 
       //...then write the elements
@@ -153,12 +153,12 @@ void	SaveCenter::SaveDocument(WiredDocument *currentNode, WiredXml *xmlFile)
   //call recursively on our children
   for (i = 0; i < childrenOfCurrentNode.GetCount(); i++)
     SaveDocument(childrenOfCurrentNode[i], xmlFile);
-  
+
   //...finish by closing things
   xmlFile->EndElement();
 }
 
-void	SaveCenter::AddReferences(SaveElementsHashMap &saveElements, 
+void	SaveCenter::AddReferences(SaveElementsHashMap &saveElements,
 				  WiredXml *xmlFile)
 {
   SaveElementsHashMap::iterator	saveElementsIt;
@@ -182,10 +182,10 @@ void	SaveCenter::AddReferences(SaveElementsHashMap &saveElements,
 
 	relativePath.Assign(getPathFromRelativeTag(saveElementsIt->first));
 	dirs = relativePath.GetDirs();
-	
+
 	for(int j = 0; j < dirs.GetCount(); j++)
 	  absolutePath.AppendDir(dirs[j]);
-	
+
 	absolutePath.SetName(relativePath.GetName());
 	absolutePath.SetExt(relativePath.GetExt());
 
@@ -208,7 +208,7 @@ void	SaveCenter::WriteElement(SaveElement *elem, WiredXml *xmlFile)
 
   attributes = elem->getAttributes();
 
-  xmlFile->StartElement(elem->getKey());  
+  xmlFile->StartElement(elem->getKey());
 
   for(attributesIt = attributes.begin();
       attributesIt != attributes.end();
@@ -217,13 +217,13 @@ void	SaveCenter::WriteElement(SaveElement *elem, WiredXml *xmlFile)
       xmlFile->WriteAttribute(attributesIt->first, attributesIt->second, true);
     }
   xmlFile->WriteString(elem->getValue());
-  
+
   children = elem->getChildren();
-  
+
   for(int j = 0; j < children.GetCount(); j++)
       WriteElement(children.Item(j), xmlFile);
   xmlFile->EndElement();
-  
+
 }
 
 wxFileName	SaveCenter::getPathFromRelativeTag(wxString tag)
@@ -242,7 +242,7 @@ wxFileName	SaveCenter::getPathFromRelativeTag(wxString tag)
   return ret;
 }
 
-void		SaveCenter::WriteFile(wxString givenFileName, 
+void		SaveCenter::WriteFile(wxString givenFileName,
 				      SaveElementArray *elements)
 {
   wxFileName	filename;
@@ -253,20 +253,22 @@ void		SaveCenter::WriteFile(wxString givenFileName,
   WiredXml	*xmlFile = new WiredXml();
   int		i;
 
-  if(givenFileName.StartsWith(wxT("/")))
-    filename.Assign(givenFileName);
+  if (!wxFileName::DirExists(givenFileName) &&
+      !givenFileName.EndsWith(wxT("/"))     &&
+      !givenFileName.EndsWith(wxT("\\")))
+      filename.Assign(givenFileName);
   else
     {
       filename.Assign(getProjectPath());
       relativePath = getPathFromRelativeTag(givenFileName);
       dirs = relativePath.GetDirs();
-      
+
       for(int j = 0; j < dirs.GetCount(); j++)
 	filename.AppendDir(dirs[j]);
-      
+
       filename.SetName(relativePath.GetName());
       filename.SetExt(relativePath.GetExt());
-      
+
       filename.MakeAbsolute();
     }
   std::cerr << "[SaveCenter] filename to write : " << filename.GetFullPath().mb_str() << std::endl;
@@ -280,13 +282,13 @@ void		SaveCenter::WriteFile(wxString givenFileName,
   rootTag = filename.GetName();
 
   xmlFile->StartElement(rootTag);
-  
+
   if (elements)
     for (i = 0; i < elements->GetCount(); i++)
       WriteElement(elements->Item(i), xmlFile);
   else
     std::cerr << "[SaveCenter] No elements to write !" << std::endl;
-  
+
   xmlFile->EndElement();
   delete xmlFile;
 }
@@ -318,8 +320,8 @@ void		SaveCenter::setProjectPath(wxFileName projectPath)
       _projectPath.AppendDir(_projectName);
     }
   else
-    _projectPath.AssignDir(projectPath.GetFullPath());      
- 
+    _projectPath.AssignDir(projectPath.GetFullPath());
+
   _projectName = GetProjectNameFromProjectPath(_projectPath);
 
   _audioDir = _projectPath;
@@ -365,7 +367,7 @@ SaveElementArray	SaveCenter::LoadFile(wxString filename)
 
   absoluteFilename.Assign(filename);
   absoluteFilename.Normalize(wxPATH_NORM_ALL, getProjectPath().GetFullPath());
-  
+
   xmlFile->OpenDocument(absoluteFilename.GetFullPath());
 
   rootTag = absoluteFilename.GetName();
@@ -380,13 +382,13 @@ SaveElementArray	SaveCenter::LoadFile(wxString filename)
 	  if(nodeName != rootTag)
 	    {
 	      currSaveElem = new SaveElement();
-	      
+
 	      if(xmlFile->GetDepth() <= 1)
 		ret.Add(currSaveElem);
 	      else
 		history.Last()->addChildren(currSaveElem);
 	      currSaveElem->setKey(nodeName);
-	      
+
 	      //attributes handling
 	      for(int i = 0; i < xmlFile->GetAttributeCount(); i++)
 		currSaveElem->addAttribute(xmlFile->GetAttributeName(i),
@@ -420,13 +422,13 @@ void	SaveCenter::LoadProject()
   int			nodeType;
   SaveElement		*currSaveElem = NULL;
   loadedDocument	*currDoc = NULL;
-  
+
   //depth of the last wiredDocument
   int		lastWiredDocDepth;
 
   //infos about the last SaveElement
   SaveElement	*previousSaveElem = NULL;
-  
+
   //path of SaveElements to the current one
   SaveElementArray	pathToCurrSaveElem;
 
@@ -461,7 +463,7 @@ void	SaveCenter::LoadProject()
 	      currDoc = new loadedDocument();
 	      currDoc->name = xmlFile->GetAttribute(wxT("name"));
 	      wxString(xmlFile->GetAttribute(wxT("id"))).ToLong((long *)&currDoc->id);
-	      
+
 	      //and add it to the dataLoaded
 	      dataLoaded.Add(currDoc);
 	    }
@@ -472,7 +474,7 @@ void	SaveCenter::LoadProject()
 
 	      //we create a SaveElement to store the tag.
 	      currSaveElem = new SaveElement();
-	      
+
 	      //we fill it with the infos we can grab there
 	      currSaveElem->setKey(nodeName);
 	      for (int i = 0; i < xmlFile->GetAttributeCount(); i++)
@@ -508,11 +510,11 @@ void	SaveCenter::LoadProject()
 	    }
 	}
     }
-  
+
    //redistribute the elements loaded
   //In a separated method for readability and for logic
   //check technical documentation for more informations.
-  
+
   RedistributeHash(dataLoaded);
 
   //the current project is now a saved one
@@ -580,7 +582,7 @@ void		SaveCenter::RedistributeHash(LoadedDocumentArray dataLoaded)
   currentName = getName();
   toProcess[currentName] = new WiredDocumentArray();
   toProcess[currentName]->Add(this);
-  
+
   while(!toProcess.empty() && !dataLoaded.empty())
     {
       //Take the first element of dataLoaded
@@ -613,10 +615,10 @@ void		SaveCenter::RedistributeHash(LoadedDocumentArray dataLoaded)
 		toProcess[childName] = new WiredDocumentArray();
 	      toProcess[childName]->Add(children[i]);
 	    }
-      
+
 	  //Remove the current WiredDocument from the list to Process
 	  toProcess[currentName]->Remove(currentDoc);
-      
+
 	  //Clear the hashmap entry if needed
 	  if(toProcess[currentName]->IsEmpty())
 	    {
@@ -627,7 +629,7 @@ void		SaveCenter::RedistributeHash(LoadedDocumentArray dataLoaded)
 
       //Remove the current loadedDocument from the dataLoaded
       dataLoaded.Remove(currentLoadedDoc);
-    }  
+    }
 }
 
 wxString	SaveCenter::GetDefaultProjectName(wxFileName cwd)
@@ -653,7 +655,7 @@ wxString	SaveCenter::GetProjectNameFromProjectPath(wxFileName path)
 {
   wxString		ret;
   wxArrayString		dirs;
-  
+
   dirs = path.GetDirs();
 
   ret = dirs[dirs.GetCount() - 1];
@@ -723,7 +725,7 @@ void		SaveCenter::CleanProject()
   //removing the top one.
   wxDir::GetAllFiles(audioPath, &files);
   for(int i = 0; i < files.GetCount(); i++)
-    wxRemoveFile(files[i]);      
+    wxRemoveFile(files[i]);
 
   wxRmdir(audioPath);
 

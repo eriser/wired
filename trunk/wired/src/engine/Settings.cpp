@@ -44,6 +44,8 @@ Settings::Settings()
 
   f.AssignDir(f.GetHomeDir() + wxString(wxT("/")) + wxString(WIRED_DIRECTORY));
 
+  HomeDir = wxString(f.GetFullPath());
+
   if (f.Mkdir(0755, wxPATH_MKDIR_FULL))
     {
       f.SetName(WIRED_CONF);
@@ -54,7 +56,7 @@ Settings::Settings()
       conf = new wxConfig(WIRED_NAME, wxT("P31"),
 			  wxString(WIRED_DIRECTORY) + wxString(WIRED_CONF),
 			  wxString(WIRED_DIRECTORY) + wxString(WIRED_CONF),
-			  wxCONFIG_USE_LOCAL_FILE);  
+			  wxCONFIG_USE_LOCAL_FILE);
       Load();
     }
   else
@@ -68,7 +70,7 @@ Settings::Settings()
 Settings::~Settings()
 {
   if (conf)
-    delete conf;  
+    delete conf;
 }
 
 void Settings::SetDefault()
@@ -130,7 +132,7 @@ void Settings::Load()
 {
   // general part
   wxString	version;
- 
+
   conf->SetPath(wxT("/General"));
   conf->Read(wxT("confVersion"), &version, wxT("0"));
   if (version != WIRED_CONF_VERSION)
@@ -189,7 +191,7 @@ void Settings::Save()
   conf->Write(wxT("SampleRate"), SampleRate);
   conf->Write(wxT("SampleFormat"), SampleFormat);
   conf->Write(wxT("SamplesPerBuffer"), SamplesPerBuffer);
- 
+
   SaveChannels(wxT("/OutputChannels"), OutputChannels);
   SaveChannels(wxT("/InputChannels"), InputChannels);
   SaveChannels(wxT("/MidiDevices"), MidiIn);
