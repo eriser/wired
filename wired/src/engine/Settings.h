@@ -45,7 +45,7 @@ class Settings
   /**
    * Render waveforms in db mode.
    * The default setting is false.
-   */ 
+   */
   bool		dbWaveRender;
 
   /**
@@ -63,7 +63,7 @@ class Settings
    * the default value is -1.
    */
   double	InputLatency;
-  
+
   /**
    * Setting the sample rate.
    * the default value is DEFAULT_SAMPLE_RATE_INT.
@@ -76,11 +76,11 @@ class Settings
    */
   long		SamplesPerBuffer;
 
-  /** 
+  /**
    * The sample format.
    * The default value is DEFAULT_SAMPLE_FORMAT.
    */
-  long		SampleFormat; 
+  long		SampleFormat;
 
   /**
    * The string of output system from config file.
@@ -96,7 +96,7 @@ class Settings
    * The string of output device from config file.
    */
   wxString	OutputDeviceStr;
- 
+
   /**
    * The string of input device from config file.
    */
@@ -148,16 +148,21 @@ class Settings
    * Setting a directory of config file.
    */
   wxString	ConfDir;
- 
+
   /**
    * Setting a directory of data.
    */
   wxString	DataDir;
 
-  /** 
+  /**
    * Setting a working directory.
    */
   wxString	WorkingDir;
+
+  /**
+   * Setting a user home directory.
+   */
+  wxString	HomeDir;
 
   /**
    * Loading the settings.
@@ -170,7 +175,7 @@ class Settings
    */
   void		Save();
 
-  /** 
+  /**
    * Checking if it's first launch.
    * \return returns a bool,if it's first launch,then it returns TRUE.
    * else it returns FALSE.
@@ -199,11 +204,11 @@ class Settings
    */
   bool		ConfDeprecated;
 
-  /** 
+  /**
    * Setting all defaults.
    */
   void		SetDefault();
-  
+
   /**
    * Saving channels.
    * \param Group a wxString,the name of title.

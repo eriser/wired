@@ -45,7 +45,7 @@ s_nodeInfo		SetStructInfos(s_nodeInfo infos, wxString label, wxString extension,
 }
 
 MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
-  : wxTreeCtrl(MediaLibraryPanel, MLTree_Selected, p, s, style), 
+  : wxTreeCtrl(MediaLibraryPanel, MLTree_Selected, p, s, style),
     WiredDocument(wxT("MLTree"), NULL)
 {
   SetIndent(10);
@@ -121,7 +121,7 @@ void		MLTree::SaveTreeSC(wxTreeItemId parent, SaveElement *parentElem, bool rela
       path.Assign(infos.label);
       if(relativePath)
 	path.MakeRelativeTo(saveCenter->getAudioDir());
-      
+
       currSaveElem = new SaveElement();
       parentElem->addChildren(currSaveElem);
 
@@ -156,7 +156,7 @@ void		MLTree::SaveTreeSC(wxTreeItemId parent, SaveElement *parentElem, bool rela
 	}
       item = GetNextChild(parent, cookie);
     }
-  
+
 }
 
 void				MLTree::OnSave(wxString filename)
@@ -185,7 +185,7 @@ void				MLTree::SaveLocalTree()
 
   saveDocData(rootTreeSaveElem, LOCAL_TREE_FILE);
 
-  SavePatch(LOCAL_TREE_FILE, LOCAL_TREE_PATH);
+  SavePatch(LOCAL_TREE_FILE, WiredSettings->HomeDir);
 }
 
 void				MLTree::LoadLocalTree()
@@ -200,7 +200,7 @@ void				MLTree::LoadLocalTree()
 
   DeleteChildren(localNode);
 
-  treeData = AskData(LOCAL_TREE_PATH);
+  treeData = AskData(LOCAL_TREE_FILE);
 
   if(treeData.GetCount() > 0)
     {
@@ -295,7 +295,7 @@ void				MLTree::Load(SaveElementArray data)
 {
   //We assume that data contains only one SaveElement : The root node.
   //else, something has failed in the save or the file is corrupted...
-  
+
   std::cerr << "[MLTree] Load" << std::endl;
 
   SaveElement		*ref;
@@ -574,13 +574,13 @@ wxTreeItemId			MLTree::AddFileInProject(wxString FileToAdd, bool expand)
   wxTreeItemId                  ParentNode;
   wxFileName	File(FileToAdd);
   wxFile *FileInfos = new wxFile(FileToAdd);
-  wxString length_str;	
+  wxString length_str;
   int fileInfosLength = FileInfos->Length();
-  
+
   length_str << fileInfosLength;
 
   s_nodeInfo		infos;
-  
+
   infos = SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
   map<wxTreeItemId, s_nodeInfo>::iterator it;
 
@@ -800,8 +800,8 @@ void				MLTree::OnAddOnNode(wxString FileToAdd, wxTreeItemId selection)
 		{
 			wxString ExtToCheck;
 			wxString ExtList = (*iter);
-			
-			while (ExtList.BeforeFirst(';').Cmp(wxT("")) != 0) 
+
+			while (ExtList.BeforeFirst(';').Cmp(wxT("")) != 0)
 			{
 				ExtToCheck = ExtList.BeforeFirst(';');
 				ExtList = ExtList.AfterFirst(';');
@@ -811,7 +811,7 @@ void				MLTree::OnAddOnNode(wxString FileToAdd, wxTreeItemId selection)
 			 		s_nodeInfo		infos;
 			  		int			slashPos;
 			  		//wxTreeItemId		selection;
-		
+
 					infos = SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
 					slashPos = FileToAdd.Find('/', true);
 					//selection = GetSelection();
@@ -821,7 +821,7 @@ void				MLTree::OnAddOnNode(wxString FileToAdd, wxTreeItemId selection)
 					  this->AddFile(GetTreeItemIdFromLabel(LOCAL_NODE), FileToAdd.Mid(slashPos + 1), infos, true);
 				}
 			}
-			
+
 		}
       // we need to delete FileInfos so that the file doesn't stay open
       delete FileInfos;
@@ -839,7 +839,7 @@ void				MLTree::ImportDir()
     {
       wxString 	seldir = dlg.GetPath();
       this->OnAddDirectory(seldir);
-		if (CheckEmptyDir(GetTreeItemIdFromLabel(LOCAL_NODE)) == 0) 
+		if (CheckEmptyDir(GetTreeItemIdFromLabel(LOCAL_NODE)) == 0)
 			wxMessageBox(wxT("This folder does not contain any allowed file."));
     }
 }
@@ -851,7 +851,7 @@ int				MLTree::CheckEmptyDir(wxTreeItemId itemParent)
 	wxTreeItemIdValue				cookie;
 	int 											nb_item = 0;
 	vector<wxTreeItemId>		ItemToDel;
-	
+
 	//Search item to del
 	itemSearch = GetFirstChild(itemParent, cookie);
 	while (itemSearch.IsOk())
@@ -860,7 +860,7 @@ int				MLTree::CheckEmptyDir(wxTreeItemId itemParent)
 			if (CheckEmptyDir(itemSearch) != 0)
 				nb_item++;
 			else {
-				ItemToDel.push_back(itemSearch);	
+				ItemToDel.push_back(itemSearch);
 			}
 		}
 		else	nb_item++;
@@ -898,7 +898,7 @@ void				MLTree::OnAddDirectory(wxString DirToAdd)
       wxDir			Dir(DirToAdd);
 
       files.Empty();
-      Dir.Traverse(traverser);	
+      Dir.Traverse(traverser);
       if (!files.IsEmpty())
       {
 	size_t			nbFiles = files.GetCount();
@@ -1170,24 +1170,24 @@ void				MLTree::EndDrag(wxTreeEvent &event)
 	  infos = (*it).second;
 	  break;
 	}
-      } 
-      if (item.IsOk() && 
-	  item != item_to_drag && 
-	  item != GetRootItem() && 
-	  GetItemParent(item) != item_to_drag && 
-	  GetItemParent(item_to_drag) != item && 
+      }
+      if (item.IsOk() &&
+	  item != item_to_drag &&
+	  item != GetRootItem() &&
+	  GetItemParent(item) != item_to_drag &&
+	  GetItemParent(item_to_drag) != item &&
 	  !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
       {
 	DragAndDrop(item);
 	Expand(item_begin);
       }
     }
-  } 
-  if (item.IsOk() && 
-      item != item_to_drag && 
-      item != GetRootItem() && 
-      GetItemParent(item) != item_to_drag && 
-      GetItemParent(item_to_drag) != item && 
+  }
+  if (item.IsOk() &&
+      item != item_to_drag &&
+      item != GetRootItem() &&
+      GetItemParent(item) != item_to_drag &&
+      GetItemParent(item_to_drag) != item &&
       !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
     OnRemove();
 }
