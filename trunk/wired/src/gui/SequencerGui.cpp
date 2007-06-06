@@ -79,20 +79,10 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Toolbar->AddRadioTool(ID_SEQ_SPLIT, _("Split"), wxBitmap(WiredSettings->DataDir + SPLIT_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + SPLIT_DOWN, wxBITMAP_TYPE_PNG), _("Split Pattern"), _("Split Pattern"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_MERGE, _("Merge"), wxBitmap(WiredSettings->DataDir + MERGE_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + MERGE_DOWN, wxBITMAP_TYPE_PNG), _("Merge Patterns"), _("Merge Patterns"), NULL);
   Toolbar->AddRadioTool(ID_SEQ_COLOR, _("Color"), wxBitmap(WiredSettings->DataDir + COLOR_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + COLOR_DOWN, wxBITMAP_TYPE_PNG),  _("Color Pattern"),  _("Delete Pattern"), NULL);
+
   BrushColor = CL_DEFAULT_SEQ_BRUSH;
-
-  wxPoint	pColor;
-  wxSize	sColor;
-  int		posColor = Toolbar->GetToolPos(ID_SEQ_COLOR) + 1;
-  int		w = Toolbar->GetToolSize().GetWidth() + (COLORBOX_MARGINS * 2);
-  int		h = Toolbar->GetToolSize().GetHeight() + (COLORBOX_MARGINS * 2);
-
-  sColor.SetWidth((TOOLS_HEIGHT - 2 * COLORBOX_MARGINS) / 2);
-  sColor.SetHeight((TOOLS_HEIGHT - 2 * COLORBOX_MARGINS) / 2);
-  pColor.x = Toolbar->GetPosition().x + posColor * w - sColor.GetWidth() - 2;
-  pColor.y = Toolbar->GetPosition().y + h - sColor.GetHeight() - 4;
-  ColorBox = new ColoredBox(this, ID_SEQ_COLORBOX, pColor, sColor, CL_DEFAULT_SEQ_BRUSH, CL_DEFAULT_SEQ_PEN);
-  ColorBox->Show();
+  ColorBox = new ColoredBox(Toolbar, ID_SEQ_COLORBOX, wxDefaultPosition, wxSize(ICONS_SIZE,ICONS_SIZE), BrushColor, CL_DEFAULT_SEQ_PEN);
+  Toolbar->AddControl(ColorBox);
 
   ColorDialogBox = new wxColourDialog(mainwindow, 0);
   Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
@@ -722,7 +712,7 @@ void					SequencerGui::CopySelectedItems()
 		  save = j;
 		  end_position = ((Pattern *) *j)->GetEndPosition();
 		}
-	        
+
 	    }
 	  if (end_position != 50000000)
 	    {
@@ -730,7 +720,7 @@ void					SequencerGui::CopySelectedItems()
 	      CopyItems.push_back(*save);
 	      i++;
 	    }
-	 
+
 	}
       cpt_track++;
     }
@@ -770,7 +760,7 @@ void					SequencerGui::PasteItems()
 	  }
       if (itSelected != CopyItems.begin())
 	{
-	  
+
 	  while (((Pattern *) *itSelected)->GetTrackIndex() != ((Pattern *) *itSelected_save)->GetTrackIndex())
 	    {
 	      if (itSelected_save == CopyItems.begin())
@@ -791,15 +781,15 @@ void					SequencerGui::PasteItems()
 	      begin_pos = 0;
 	    }
 	}
-      
-     
+
+
       pattern = ((Pattern *) *itSelected)->CreateCopy(last_pos + (begin_pos - last_pos_save));
-  
+
       itSelected_save = itSelected;
     }
   if (DoCut)
     DeleteSelectedPatterns();
-  
+
 }
 
 void					SequencerGui::DeleteSelectedPatterns()
