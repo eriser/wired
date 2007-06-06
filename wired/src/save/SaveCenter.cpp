@@ -254,8 +254,15 @@ void		SaveCenter::WriteFile(wxString givenFileName,
   int		i;
 
   if (!wxFileName::DirExists(givenFileName) &&
+ // EndsWith was created in >= 2.8 and
+ // wxCHECK_VERSION test if we're >= 2.8.0
+#if wxCHECK_VERSION(2, 8, 0)
       !givenFileName.EndsWith(wxT("/"))     &&
       !givenFileName.EndsWith(wxT("\\")))
+#else
+      givenFileName.Right(1) != wxString(wxT("/")) &&
+      givenFileName.Right(1) != wxString(wxT("\\")))
+#endif
       filename.Assign(givenFileName);
   else
     {
