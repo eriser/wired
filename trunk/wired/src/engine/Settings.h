@@ -4,7 +4,7 @@
 #ifndef __SETTINGS_H__
 #define __SETTINGS_H__
 
-#include <wx/config.h>
+#include <wx/fileconf.h>
 #include <vector>
 
 using namespace std;
@@ -190,7 +190,7 @@ class Settings
   inline bool	ConfIsDeprecated() { return(ConfDeprecated); };
 
  protected:
-  wxConfig	*conf;
+  wxFileConfig	*conf;
 
  private:
 

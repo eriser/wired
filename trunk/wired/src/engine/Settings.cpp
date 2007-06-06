@@ -53,7 +53,7 @@ Settings::Settings()
       if (!f.FileExists())
 	FirstLaunch = true;
 
-      conf = new wxConfig(WIRED_NAME, wxT("P31"),
+      conf = new wxFileConfig(WIRED_NAME, wxT("P31"),
 			  wxString(WIRED_DIRECTORY) + wxString(WIRED_CONF),
 			  wxString(WIRED_DIRECTORY) + wxString(WIRED_CONF),
 			  wxCONFIG_USE_LOCAL_FILE);
