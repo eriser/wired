@@ -10,7 +10,7 @@
 #include <wx/wx.h>
 #include <wx/colour.h>
 
-class			ColoredBox : public wxWindow
+class			ColoredBox : public wxControl
 {
   wxColour		Color;
   wxColour		BorderColor;

@@ -10,7 +10,7 @@
 
 ColoredBox::ColoredBox(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size,
 		       		       const wxColour color, const wxColour bordercolor)
-  : wxWindow(parent, id, pos, size, wxNO_BORDER)
+  : wxControl(parent, id, pos, size, wxNO_BORDER)
 {
   Color = color;
   BorderColor = bordercolor;
@@ -31,8 +31,8 @@ void					ColoredBox::OnPaint(wxPaintEvent &e)
 {
   wxPaintDC				dc(this);
 
-  dc.SetPen(wxPen(BorderColor, 1, wxSOLID)); 
-  dc.SetBrush(wxBrush(Color, wxSOLID)); 
+  dc.SetPen(wxPen(BorderColor, 1, wxSOLID));
+  dc.SetBrush(wxBrush(Color, wxSOLID));
   dc.DrawRectangle(0, 0, GetSize().x, GetSize().y);
 }
 
