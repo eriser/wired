@@ -3,6 +3,8 @@
 
 #include "Polyphony.h"
 
+using namespace std;
+
 #define BUFSIZE 4096
 
 Polyphony::Polyphony()

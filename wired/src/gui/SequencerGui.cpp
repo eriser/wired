@@ -4,8 +4,6 @@
 #include <math.h>
 #include <iostream>
 #include "SequencerGui.h"
-#include "Track.h"
-#include "Sequencer.h"
 #include "Ruler.h"
 #include "Cursor.h"
 #include "ColoredLine.h"
@@ -16,17 +14,19 @@
 #include "SelectionZone.h"
 #include "MixerGui.h"
 #include "ChannelGui.h"
-#include "WaveFile.h"
 #include "WaveView.h"
 #include "Pattern.h"
 #include "AudioPattern.h"
 #include "MidiPattern.h"
 #include "SeqTrack.h"
-#include "SeqTrackPattern.h"
-#include "AudioCenter.h"
-#include "../midi/MidiDevice.h"
-#include "../engine/Settings.h"
+#include "../audio/WaveFile.h"
 #include "../audio/WriteWaveFile.h"
+#include "../engine/AudioCenter.h"
+#include "../engine/Settings.h"
+#include "../midi/MidiDevice.h"
+#include "../sequencer/SeqTrackPattern.h"
+#include "../sequencer/Sequencer.h"
+#include "../sequencer/Track.h"
 
 DEFINE_EVENT_TYPE(EVT_DROP)
 const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1] =
@@ -85,7 +85,7 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   Toolbar->AddControl(ColorBox);
 
   ColorDialogBox = new wxColourDialog(mainwindow, 0);
-  Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxScrollEventFunction) &SequencerGui::OnColoredBoxClick);
+  Connect(ID_SEQ_COLORBOX, wxEVT_SCROLL_TOP, (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction) &SequencerGui::OnColoredBoxClick);
   Toolbar->AddSeparator();
   Toolbar->AddCheckTool(ID_SEQ_MAGNET, _("Magnet"), wxBitmap(WiredSettings->DataDir + MAGN_UP, wxBITMAP_TYPE_PNG), wxBitmap(WiredSettings->DataDir + MAGN_DOWN, wxBITMAP_TYPE_PNG), _("Magnetize"), _("Magnetize"), NULL);
   for (c = 0; c < NB_COMBO_CHOICES; c++)
@@ -151,12 +151,12 @@ SequencerGui::SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &s
   PlayCursor = new Cursor('P', ID_CURSOR_PLAY, 0.0, RulerPanel, this,
 			  CL_CURSORZ_HEAD_PLAY, CL_CURSORZ_LINE_DARK);
   // evenement curseur
-  Connect(ID_SEQ_SETPOS, TYPE_SEQ_SETPOS, (wxObjectEventFunction)&SequencerGui::OnSetPosition);
+  Connect(ID_SEQ_SETPOS, TYPE_SEQ_SETPOS, (wxObjectEventFunction)(wxEventFunction)(CursorEventFunction) &SequencerGui::OnSetPosition);
   // evenement resize pattern
-  Connect(ID_SEQ_RESIZE, TYPE_SEQ_RESIZE, (wxObjectEventFunction)&SequencerGui::OnResizePattern);
+  Connect(ID_SEQ_RESIZE, TYPE_SEQ_RESIZE, (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction) &SequencerGui::OnResizePattern);
   // evenement draw evenement midi
-  Connect(ID_SEQ_DRAWMIDI, TYPE_SEQ_DRAWMIDI, (wxObjectEventFunction)&SequencerGui::OnDrawMidi);
-  // Cr?ation du popup menu
+  Connect(ID_SEQ_DRAWMIDI, TYPE_SEQ_DRAWMIDI, (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction) &SequencerGui::OnDrawMidi);
+  // Creation du popup menu
   PopMenu = new wxMenu();
   PopMenu->Append(ID_POPUP_MOVE_TO_CURSOR, _("Move to cursor"));
   PopMenu->Append(ID_POPUP_DELETE, _("Delete"));

@@ -1,7 +1,13 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#include <iostream>
 #include "WiredExternalPluginLADSPA.h"
+#ifdef WIN32
+#define strtof(a, b) ((float) strtod(a, b))
+#endif
+
+using namespace std;
 
 WiredLADSPAInstance::WiredLADSPAInstance(PlugStartInfo &info) : Plugin(info, NULL)
 {

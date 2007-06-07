@@ -11,10 +11,6 @@
 
 #include <vector>
 
-using namespace std;
-using std::vector;
-
-
 // CHUNK MIDI HEADER
 #define MIDI_HDR_1			'M'
 #define MIDI_HDR_2			'T'
@@ -170,7 +166,7 @@ class MidiTrack
 	    wxString filename, unsigned int noTrack);
   ~MidiTrack();
   unsigned long GetMaxPos() { return (MaxPos); }
-  vector<MidiFileEvent *> GetMidiEvents();
+  std::vector<MidiFileEvent *> GetMidiEvents();
   unsigned short GetPPQN() { return ppqn; }
 
   inline wxString&	GetFileName() { return (_filename); };
@@ -178,7 +174,7 @@ class MidiTrack
 
   protected:
     unsigned long GetVLQ(unsigned char *buf, unsigned long &ofs);
-    vector<Event *> Events;
+    std::vector<Event *> Events;
     unsigned long MaxPos;
     unsigned short ppqn;
 };
@@ -200,7 +196,7 @@ class MidiFile
    unsigned short Division;
    unsigned short Type;
    unsigned short NbTracks;
-   vector<MidiTrack *> Tracks;
+   std::vector<MidiTrack *> Tracks;
 };
 
 #endif

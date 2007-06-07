@@ -4,15 +4,15 @@
 #include <math.h>
 #include <vector>
 #include "SequencerGui.h"
-#include "Sequencer.h"
 #include "Colour.h"
 #include "OptionPanel.h"
 #include "ColoredBox.h"
 #include "MidiPattern.h"
 #include "HelpPanel.h"
-#include "midi.h"
-#include "MidiFile.h"
-#include "Track.h"
+#include "../midi/midi.h"
+#include "../midi/MidiFile.h"
+#include "../sequencer/Sequencer.h"
+#include "../sequencer/Track.h"
 
 BEGIN_EVENT_TABLE(MidiPattern, wxWindow)
   EVT_PAINT(MidiPattern::OnPaint)

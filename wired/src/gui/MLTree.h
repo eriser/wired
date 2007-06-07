@@ -8,12 +8,8 @@
 #include <map>
 #include <wx/treectrl.h>
 #include <wx/imaglist.h>
-#include "WiredDocument.h"
 #include "MediaLibrary.h"
-
-using std::string;
-using std::vector;
-using std::map;
+#include "../save/WiredDocument.h"
 
 extern MediaLibrary	*MediaLibraryPanel;
 
@@ -52,7 +48,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
 */
   MLTree(wxWindow *dad, wxPoint p, wxSize s, long style);
   wxTreeItemId			AddFileInProject(wxString FileToAdd, bool expand);
-  wxTreeItemId			DelFileInProject(wxString FileToAdd, bool expand);
+  void			DelFileInProject(wxString FileToAdd, bool expand);
   wxPoint                       GetPos(){return Pos;};
   wxString                      GetFile(){return Selfile;};
 /**
@@ -91,12 +87,12 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
 /**
  * A vector of wxStrings containing all the known sounds extensions
 */
-  vector<wxString>		Exts;
+  std::vector<wxString>		Exts;
 /**
  * A Map of wxTreeItemId and their corresponding struct which contains
  * various informations related to the item.
 */
-  map<wxTreeItemId, s_nodeInfo>	nodes;
+  std::map<wxTreeItemId, s_nodeInfo>	nodes;
 /**
  * A wxPoint which contains the position of the mouse when using right click
 */
@@ -271,7 +267,7 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
  * The OnAddDirectory function is called by launching the Add Directory action
  *
 */
-  void				ImportDir();
+  void				ImportDir(wxCommandEvent &WXUNUSED(event));
   void				OnAddDirectory(wxString DirToAdd);
 
   int				CheckEmptyDir(wxTreeItemId itemParent);
@@ -279,14 +275,14 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
  * The OnRemove function remove the selected nodes
  * \return void
 */
-  void				OnRemove();
+  void				OnRemove(wxCommandEvent &WXUNUSED(event));
 
 /**
  * The OnCreateDir function is called when creating a new directory. It
  * create a new directory node.
  * \return void
 */
-  void				OnCreateDir();
+  void				OnCreateDir(wxCommandEvent &WXUNUSED(event));
 
 /**
  * The OnCreateDirName function is called when importing a directory.
@@ -308,28 +304,28 @@ class				MLTree : public wxTreeCtrl, public WiredDocument
  * track
  * \return void
 */
-  void				OnInsert();
+  void				OnInsert(wxCommandEvent &WXUNUSED(event));
 
 /**
  * The OnEdit function is called when launching the Edit function. It loads
  * the file into the wired wav editor
  * \return void
 */
-  void				OnEdit();
+  void				OnEdit(wxCommandEvent &WXUNUSED(event));
 
 /**
  * The OnPreview function is called when lauching the preview action. It
  * starts playing the selected file
  * \return void
 */
-  void				OnPreview();
+  void				OnPreview(wxCommandEvent &WXUNUSED(event));
 
 /**
  * The DisplayInfos function is called when lauching the File Infos action.
  * It open a tool tip containing various informations about the selected node
  * \return void
 */
-  void				DisplayInfos();
+  void				DisplayInfos(wxCommandEvent &WXUNUSED(event));
 
 /**
  * The OnRightClick function is called when right clicking a node.

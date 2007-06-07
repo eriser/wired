@@ -1,7 +1,10 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include	"WiredMplayer.h"
+#include <iostream>
+#include "WiredMplayer.h"
+
+using namespace std;
 
 WiredMplayer::WiredMplayer()
 {
@@ -30,7 +33,7 @@ int		WiredMplayer::PauseFile()
   return SendMPlayerMessage(ACTION_PAUSE, LEN_ACTION_PAUSE);
 }
 
-int		WiredMplayer::StopFile()
+void		WiredMplayer::StopFile()
 {
   //	SeekFile(absolute, 0);
   PauseFile();

@@ -4,9 +4,6 @@
 #ifndef __MAINWINDOW_H__
 #define __MAINWINDOW_H__
 
-using namespace std;
-
-#include <iostream>
 #include <vector>
 
 #include <wx/wxprec.h>
@@ -22,23 +19,23 @@ using namespace std;
 #include <wx/filename.h>
 
 
-#include "version.h"
+#include "../engine/version.h"
 
 #define PLUG_MENU_INDEX_START		(50000)
 #define INDEX_MENUITEM_UNDO		0
 #define INDEX_MENUITEM_REDO		1
 
-#include	"Plugin.h"
+#include	"../redist/Plugin.h"
 #include	"../wiredvideo/WiredVideo.h"
 #include        "FloatingFrame.h"
-#include "WiredDocument.h"
+#include "../save/WiredDocument.h"
 
 typedef	struct s_PlugStartInfo		PlugStartInfo;
 class					PluginLoader;
 class					MainWindow;
 
 extern MainWindow		*MainWin;
-extern vector<PluginLoader *>	LoadedPluginsList;
+extern std::vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo		StartInfo;
 extern wxMutex		        AudioMutex;
 extern wxCondition*	        SeqStopped;
@@ -240,7 +237,7 @@ class					MainWindow: public wxFrame, public WiredDocument
   wxTimer				*SeqTimer;
 
   /* List of plugins that need to be updated for their gui */
-  list<Plugin *>			UpdatePlugins;
+  std::list<Plugin *>			UpdatePlugins;
 
   wxLogWindow                           *LogWin;
   wxLogStderr                           *LogTarget;
@@ -307,4 +304,3 @@ enum
 };
 
 #endif
-

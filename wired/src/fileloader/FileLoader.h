@@ -13,8 +13,8 @@
 #include <vector>
 #include <list>
 #include "TreeItemData.h"
-#include "akai.h"
-#include "Settings.h"
+#include "../libs/WiredAkai/include/akai.h"
+#include "../engine/Settings.h"
 
 using std::vector;
 

@@ -3,31 +3,33 @@
 
 /*
 ** Copyright (C) 2004-2006 by Wired Team and Robert Melby
-**  
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU Lesser General Public License as published by
 ** the Free Software Foundation; either version 2.1 of the License, or
 ** (at your option) any later version.
-** 
+**
 ** This program is distributed in the hope that it will be useful,
 ** but WITHOUT ANY WARRANTY; without even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ** GNU Lesser General Public License for more details.
-** 
+**
 ** You should have received a copy of the GNU Lesser General Public License
-** along with this program; if not, write to the Free Software 
+** along with this program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
 /*
   Some parts of this file were based on abrowse program by Robert Melby
-  (http://abrowse.sourceforge.net) 
+  (http://abrowse.sourceforge.net)
 */
 
 #ifndef _AKAI_H_
 #define _AKAI_H_
 #include <stdio.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -36,7 +38,7 @@
 #elif !defined(WIN32)
 # include <sys/endian.h>
 #endif
-#include <list.h>
+#include "list.h"
 
 #define FILE_ENTRY_SIZE      		24
 #define DIR_ENTRY_OFFSET     		0xca
@@ -47,7 +49,7 @@
 #define PART_TABLE_OFFSET    		0x4500
 #define PART_END_MARK        		0x8000
 #define FAT_OFFSET           		0x70a
-#define FAT_MARK_RESERVED    		0x4000 
+#define FAT_MARK_RESERVED    		0x4000
 #define FAT_MARK_RESERVED2   		0x8000
 #define MAX_FILE_ENTRIES_S1000  	125
 #define MAX_FILE_ENTRIES_S3000  	509
@@ -63,57 +65,57 @@ typedef struct 	s_akaiType
   char		*typeName;
 } 		t_akaiType;
 
-typedef struct	s_akaiDirent 
-{ 
-  char		*name; 
-  int		type; 
-  int		size; 
-  int		offset; 
+typedef struct	s_akaiDirent
+{
+  char		*name;
+  int		type;
+  int		size;
+  int		offset;
   t_list	*subdirs;
 }		t_akaiDirent;
 
 typedef struct	s_akaiProgram
-{ 
-  char		*name; 
-  int		num; 
+{
+  char		*name;
+  int		num;
   int		channel;
   int		highkey;
-  int		lowkey; 
+  int		lowkey;
   int		nkeygrps;
   t_list	*keygrp;
 }		t_akaiProgram;
 
 typedef struct		s_akaiSample
-{ 
-  char 			*name; 
-  unsigned short 	tune; 
+{
+  char 			*name;
+  unsigned short 	tune;
   unsigned int 		size;
   unsigned int 		start;
   unsigned int 		end;
-  unsigned int 		loop_start; 
-  unsigned int 		loop_len; 
+  unsigned int 		loop_start;
+  unsigned int 		loop_len;
   unsigned short 	loop_times;
-  unsigned short 	rate; 
+  unsigned short 	rate;
   unsigned short 	base_note;
-  int 			channels; 
-  short  		*buffer; 
+  int 			channels;
+  short  		*buffer;
 }			t_akaiSample;
 
 typedef struct	s_akaiKeygrp
 {
   int 		num;
-  int 		highkey; 
-  int 		lowkey; 
+  int 		highkey;
+  int 		lowkey;
   int 		tune;
   int 		tune_semi;
-  int 		env_A[2]; 
-  int 		env_D[2]; 
-  int 		env_S[2]; 
-  int 		env_R[2]; 
-  int 		env_A_rate[2]; 
-  int 		env_D_rate[2]; 
-  int 		env_S_rate[2]; 
-  int 		env_R_rate[2]; 
+  int 		env_A[2];
+  int 		env_D[2];
+  int 		env_S[2];
+  int 		env_R[2];
+  int 		env_A_rate[2];
+  int 		env_D_rate[2];
+  int 		env_S_rate[2];
+  int 		env_R_rate[2];
   char 		*zone[4];
   t_akaiSample	*zone_sample[4];
   int 		zone_high_vel[4];

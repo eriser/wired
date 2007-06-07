@@ -9,8 +9,8 @@
    #include <wx/wx.h>
 #endif
 
-#include "Track.h"
-#include "WiredDocument.h"
+#include "../sequencer/Track.h"
+#include "../save/WiredDocument.h"
 
 #define NONE_SELECTED_ID		(999)
 

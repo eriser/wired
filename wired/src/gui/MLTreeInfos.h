@@ -4,24 +4,14 @@
 #ifndef __MLTREEINFOS_H__
 #define __MLTREEINFOS_H__
 
-using namespace			std;
-
 #include "MLTree.h"
-
-enum
-  {
-
-  };
 
 class				MywxStaticText : public wxStaticText
 {
-
  private:
-
   wxWindow	*infoParent;
 
  public:
-
   MywxStaticText(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos, const wxSize& size, long style, const wxString& name);
   void InfoDestroy(wxMouseEvent& event);
 
@@ -30,14 +20,12 @@ class				MywxStaticText : public wxStaticText
 
 class				MLTreeInfos: public wxWindow
 {
-
- protected:
+protected:
 
  friend class			MediaLibrary;
  friend class			MLTree;
 
- public:
-
+public:
   MLTreeInfos(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style, s_nodeInfo infos);
   ~MLTreeInfos();
 };

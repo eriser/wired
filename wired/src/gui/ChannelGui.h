@@ -6,8 +6,8 @@
 
 #include <wx/wx.h>
 #include <vector>
-#include "FaderCtrl.h"
-#include "WiredDocument.h"
+#include "../libs/WiredWidgets/src/FaderCtrl.h"
+#include "../save/WiredDocument.h"
 
 #define LABEL_MAXCHAR			(20)
 #define BG				L"/ihm/mixer/mixer_bg.png"

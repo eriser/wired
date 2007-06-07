@@ -2,9 +2,9 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include "Note.h"
-#include "midi.h"
+#include "../midi/midi.h"
 #include "EditMidi.h"
-#include "Sequencer.h"
+#include "../sequencer/Sequencer.h"
 #include "../midi/MidiFile.h"
 
 Note::Note(MidiPattern *p, unsigned int num)

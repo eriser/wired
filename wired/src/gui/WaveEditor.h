@@ -11,7 +11,7 @@
 #include			<wx/combobox.h>
 #include 			<list>
 #include 			"WaveEditorDrawer.h"
-#include 			"WaveFile.h"
+#include 			"../audio/WaveFile.h"
 #include 			"PluginEffect.h"
 
 #define 			SCROLLH_THUMB_WIDTH	(80)
@@ -80,9 +80,9 @@ class WaveEditor : public wxPanel, public WaveEditorDrawer
 
 // ---------- class CutAction
 
-#include "cAction.h"
-#include "cActionManager.h"
-#include "Visitor.h"
+#include "../undo/cAction.h"
+#include "../undo/cActionManager.h"
+#include "../undo/Visitor.h"
 
 
 class cCutAction : public cAction 

@@ -1,9 +1,12 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <math.h>
+#include <iostream>
+#include <cmath>
 #include "Channel.h"
 #include "Mixer.h"
+
+using namespace std;
 
 Channel::Channel(bool stereo, bool visible, WiredDocument* docParent) :
   WiredDocument(wxT("Channel"), docParent)

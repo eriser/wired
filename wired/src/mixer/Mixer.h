@@ -5,7 +5,7 @@
 #define __MIXER_H__
 
 #include <list>
-#include "WiredDocument.h"
+#include "../save/WiredDocument.h"
 
 #define PREBUF_NUM 6
 

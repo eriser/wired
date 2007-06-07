@@ -13,8 +13,6 @@
    #include <wx/wx.h>
 #endif
 
-using namespace		std;
-
 // A FloatingFrame is linked with a menuitem
 
 class			FloatingFrame : public wxFrame

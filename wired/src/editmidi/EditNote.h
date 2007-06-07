@@ -5,9 +5,6 @@
 #define	__EDITNOTE_H__
 
 #include <wx/wx.h>
-#include <iostream>
-
-using namespace			std;
 
 class				Note;
 

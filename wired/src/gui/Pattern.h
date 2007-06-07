@@ -7,7 +7,7 @@
 #include <wx/string.h>
 #include <wx/wx.h>
 
-#include "WiredDocument.h"
+#include "../save/WiredDocument.h"
 
 #define PATTERN_DRAG_SCROLL_UNIT	(MEASURE_WIDTH + 1)
 #define PATTERN_NAME_WIDTH		(42)

@@ -5,7 +5,7 @@
 #define __WAVE_DRAWER_H__
 
 #include <wx/wx.h>
-#include "WaveFile.h"
+#include "../audio/WaveFile.h"
 
 class				WaveDrawer
 {

@@ -6,7 +6,7 @@
 
 #include "WaveView.h"
 #include "Colour.h"
-#include "Settings.h"
+#include "../engine/Settings.h"
 
 #include <math.h>
 #include <iostream>

@@ -4,7 +4,7 @@
 #ifndef __PLUGINEFFECT_H__
 #define __PLUGINEFFECT_H__
 
-#include "WaveFile.h"
+#include "../audio/WaveFile.h"
 #include <wx/wx.h>
 #include <wx/textdlg.h>
 

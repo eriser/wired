@@ -5,7 +5,7 @@
 #define __SEQTRACKPATTERN_H__
 
 #include <vector>
-#include "Pattern.h"
+#include "../gui/Pattern.h"
 
 class	Pattern;
 

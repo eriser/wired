@@ -1,12 +1,14 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include "MidiThread.h"
-#include "Sequencer.h"
-#include "Settings.h"
 #include "MidiController.h"
 #include "MidiInDevice.h"
+#include "MidiThread.h"
+#include "../engine/Settings.h"
 #include "../gui/Threads.h"
+#include "../sequencer/Sequencer.h"
+
+using namespace std;
 
 wxMutex					MidiMutex(wxMUTEX_RECURSIVE);
 wxMutex					MidiDeviceMutex(wxMUTEX_RECURSIVE);

@@ -8,7 +8,7 @@
 #include <wx/file.h>
 #include <list>
 
-#include "WiredDocument.h"
+#include "../save/WiredDocument.h"
 
 #define		UNIT_W		(200)
 #define 	UNIT_H		(100)
@@ -168,13 +168,13 @@ class		Rack: public wxScrolledWindow, WiredDocument
   // Event : Click on rack : Sets unselect rack and plugin
   void			OnClick(wxMouseEvent &event);
   // Event : onContextMenuClick("Delete") ; new methode
-  void			OnDeleteClick();
+  void			OnDeleteClick(wxMouseEvent &event);
   // Event : From contextMenu, Cuts a rack
-  void			OnCutClick();
+  void			OnCutClick(wxMouseEvent &event);
   // Event : From contextMenu, Copy a rack
-  void			OnCopyClick();
+  void			OnCopyClick(wxMouseEvent &event);
   // Event : From contextMenu, Pastes a rack
-  void			OnPasteClick();
+  void			OnPasteClick(wxMouseEvent &event);
   // Event : Calls AddChangeParamsEffectAction while a plugin's param is changed
   void			OnPluginParamChange(wxMouseEvent &event);
   bool 			DndGetDest(t_ListRackTrack::iterator &k, 

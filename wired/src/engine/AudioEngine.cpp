@@ -1,10 +1,13 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include	<sndfile.h>
-#include	"AudioEngine.h"
-#include	"MainWindow.h"
-#include	"EngineError.h"
+#include <iostream>
+#include "AudioEngine.h"
+#include "EngineError.h"
+#include "../gui/MainWindow.h"
+#include <sndfile.h>
+
+using namespace std;
 
 const unsigned long standardSampleFormats[] =
 {
