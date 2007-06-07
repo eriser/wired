@@ -34,7 +34,6 @@
 			<Add option="-Wall" />
 			<Add option="-DWXUSINGDLL" />
 			<Add option="-D__WXMSW__" />
-			<Add directory="..\..\src\engine" />
 		</Compiler>
 		<Linker>
 			<Add library="wx_msw-2.8" />

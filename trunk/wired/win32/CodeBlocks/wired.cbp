@@ -35,29 +35,7 @@
 			<Add option="-fexceptions" />
 			<Add option="-DWXUSINGDLL" />
 			<Add option="-D__WXMSW__" />
-			<Add directory="..\..\src\audio" />
-			<Add directory="..\..\src\codec" />
-			<Add directory="..\..\src\codec\wiredcodec" />
-			<Add directory="..\..\src\dssi" />
-			<Add directory="..\..\src\editmidi" />
-			<Add directory="..\..\src\engine" />
-			<Add directory="..\..\src\fileloader" />
-			<Add directory="..\..\src\gui" />
-			<Add directory="..\..\src\include" />
-			<Add directory="..\..\src\libs\WiredAkai\include" />
-			<Add directory="..\..\src\libs\WiredWidgets\src" />
-			<Add directory="..\..\src\midi" />
-			<Add directory="..\..\src\mixer" />
-			<Add directory="..\..\src\plugins" />
-			<Add directory="..\..\src\redist" />
-			<Add directory="..\..\src\samplerate" />
-			<Add directory="..\..\src\save" />
-			<Add directory="..\..\src\sequencer" />
-			<Add directory="..\..\src\undo" />
-			<Add directory="..\..\src\wiredvideo" />
-			<Add directory="..\..\src\xml" />
-			<Add directory=".." />
-			<Add directory="..\..\src" />
+			<Add directory="..\..\win32" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory=".." />
@@ -140,7 +118,6 @@
 		<Unit filename="..\..\src\fileloader\FileStat.h" />
 		<Unit filename="..\..\src\fileloader\TreeItemData.cpp" />
 		<Unit filename="..\..\src\fileloader\TreeItemData.h" />
-		<Unit filename="..\..\src\fileloader\list.h" />
 		<Unit filename="..\..\src\gui\AccelCenter.cpp" />
 		<Unit filename="..\..\src\gui\AccelCenter.h" />
 		<Unit filename="..\..\src\gui\AudioPattern.cpp" />
