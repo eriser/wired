@@ -6,8 +6,7 @@
 
 #include "Pattern.h"
 #include "WaveDrawer.h"
-
-#include "WiredDocument.h"
+#include "../save/WiredDocument.h"
 
 class					WriteWaveFile;
 class					Channel;

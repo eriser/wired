@@ -3,16 +3,16 @@
 
 #include <wx/filename.h>
 #include "Transport.h"
-#include "Sequencer.h"
 #include "SequencerGui.h"
 #include "Colour.h"
 #include "HelpPanel.h"
-#include "DownButton.h"
-#include "HoldButton.h"
 #include "StaticLabel.h"
-#include "VUMCtrl.h"
 #include "../engine/Settings.h"
 #include "../engine/AudioEngine.h"
+#include "../libs/WiredWidgets/src/DownButton.h"
+#include "../libs/WiredWidgets/src/HoldButton.h"
+#include "../libs/WiredWidgets/src/VUMCtrl.h"
+#include "../sequencer/Sequencer.h"
 
 Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, WiredDocument *docParent)
   : wxPanel(parent, -1, pos, size, style), WiredDocument(wxT("Transport"), docParent)
@@ -137,12 +137,12 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   MilliSigLabel = new wxStaticText(this, -1, wxT("000"), wxPoint(237, 34), wxSize(32, 32));
   MilliSigLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   MilliSigLabel->SetForegroundColour(*wxWHITE);
-  Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &Transport::OnIdle);
+  Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction)(wxEventFunction)(wxIdleEventFunction) &Transport::OnIdle);
 }
 
 Transport::~Transport()
 {
-    Disconnect(wxEVT_IDLE, (wxObjectEventFunction) &Transport::OnIdle);
+    Disconnect(wxEVT_IDLE, (wxObjectEventFunction)(wxEventFunction)(wxIdleEventFunction) &Transport::OnIdle);
 	//if (vum) delete vum;
 	if (PlayBtn) delete PlayBtn;
 	if (StopBtn) delete StopBtn;

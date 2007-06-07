@@ -4,9 +4,9 @@
 #ifndef __RING_H__
 #define __RING_H__
 
-#include <iostream>
-using namespace std;
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 template<class C> class RingBuffer
 {

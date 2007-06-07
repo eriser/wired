@@ -4,12 +4,10 @@
 #ifndef __PLUGINLOADER_H__
 #define __PLUGINLOADER_H__
 
-#include "Plugin.h"
+#include "../redist/Plugin.h"
 #include "../dssi/WiredExternalPluginMgr.h"
 #include <wx/wx.h>
 #include <wx/dynlib.h>
-
-using namespace std;
 
 #define COMPARE_IDS(x, y) ((x[0] == y[0]) && (x[1] == y[1]) && (x[2] == y[2]) && (x[3] == y[3]))
 

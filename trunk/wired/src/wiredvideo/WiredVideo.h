@@ -22,19 +22,19 @@ public:
 	bool	asFile;
 	bool	isDisplayed;
 	
-	int		OpenFile(const wxString& path = wxT(""));
+	void		OpenFile(const wxString& path = wxT(""));
 	int		PlayFile();
 	int		PauseFile();
-	int		StopFile();
+	void		StopFile();
 	int		CloseFile();
 	int		SeekFile(eSeekMethod seekMethod, double position);
-	int		SetSeek(bool SeekBool);
+	void		SetSeek(bool SeekBool);
 
 private:
 	wxString	videoFilePath;
 	
 	bool	DisplayVideoFrame();
-	int		InitMplayer();
+	void		InitMplayer();
 	WiredMplayer	*mplayer;
 };
 

@@ -3,12 +3,12 @@
 
 #include <math.h>
 #include "Sequencer.h"
-#include "MainWindow.h"
-#include "Rack.h"
-#include "MidiThread.h"
-#include "Mixer.h"
-#include "AudioEngine.h"
-#include "akai.h"
+#include "../gui/MainWindow.h"
+#include "../gui/Rack.h"
+#include "../midi/MidiThread.h"
+#include "../mixer/Mixer.h"
+#include "../engine/AudioEngine.h"
+#include "../libs/WiredAkai/include/akai.h"
 #include "Track.h"
 #include "../gui/SequencerGui.h"
 #include "../gui/SeqTrack.h"

@@ -8,15 +8,12 @@
 #define __WAVE_EDITOR_DRAWER_H__
 
 #include <wx/wx.h>
-#include "WaveFile.h"
+#include "../audio/WaveFile.h"
 
 
 //#define				PAINT_WIDTH	(100000)
 
 #include 			<list>
-
-
-using namespace std;
 
 typedef struct 
 {
@@ -94,7 +91,7 @@ class				WaveEditorDrawer
   WaveFile			*GetWaveFile() { return (Wave); }
   
   
-  list<tRegion> 	l;
+  std::list<tRegion> 	l;
   tCopy				clipboard;
   long				PAINT_WIDTH;
   long				zoomx;

@@ -1,24 +1,24 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <math.h>
+#include <cmath>
 #include <wx/filename.h>
-#include "SequencerGui.h"
-#include "Sequencer.h"
-#include "Colour.h"
-#include "OptionPanel.h"
-#include "Mixer.h"
-#include "AudioCenter.h"
-#include "ColoredBox.h"
 #include "AudioPattern.h"
+#include "ColoredBox.h"
+#include "Colour.h"
 #include "HelpPanel.h"
-#include "../sequencer/Track.h"
-#include "../gui/SeqTrack.h"
-#include "../engine/AudioEngine.h"
+#include "OptionPanel.h"
+#include "SequencerGui.h"
 #include "../audio/WaveFile.h"
 #include "../audio/WriteWaveFile.h"
+#include "../engine/AudioCenter.h"
+#include "../engine/AudioEngine.h"
+#include "../gui/SeqTrack.h"
 #include "../mixer/Channel.h"
-#include "SaveCenter.h"
+#include "../mixer/Mixer.h"
+#include "../save/SaveCenter.h"
+#include "../sequencer/Sequencer.h"
+#include "../sequencer/Track.h"
 
 static long				audio_pattern_count = 1;
 extern SaveCenter	*saveCenter;
@@ -82,9 +82,9 @@ void					AudioPattern::Init(WaveFile* w, WiredDocument* parent)
   // Double Click action commented FOR EPITECH FORUM PURPOSE
   //   Connect(GetId(), wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
   // 	  &AudioPattern::OnDoubleClick);
-  Connect(GetId(), wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
+  Connect(GetId(), wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)(wxPaintEventFunction)
 	  &AudioPattern::OnPaint);
-  Connect(GetId(), wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
+  Connect(GetId(), wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)(wxSizeEventFunction)
 	  &AudioPattern::OnSize);
   Connect(GetId(), wxEVT_ENTER_WINDOW, (wxObjectEventFunction)(wxEventFunction)
 	  (wxMouseEventFunction) &AudioPattern::OnHelp);
@@ -384,7 +384,7 @@ void					AudioPattern::Split(double pos)
       SeqMutex.Unlock();
     }
   else
-    std::cout << "[AudioPattern] Can't split pattern (got incorrect position)." << pos << endl;
+    cout << "[AudioPattern] Can't split pattern (got incorrect position)." << pos << endl;
 }
 
 void					AudioPattern::SetDrawColour(wxColour c)

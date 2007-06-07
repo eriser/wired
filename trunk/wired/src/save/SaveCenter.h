@@ -5,7 +5,7 @@
 #define _SAVECENTER_H_
 
 #include "WiredDocument.h"
-#include "WiredXml.h"
+#include "../xml/WiredXml.h"
 
 //For the DirDialog
 #include <wx/dirdlg.h>

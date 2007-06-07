@@ -2,7 +2,9 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include "RingError.h"
+#ifndef WIN32
 #include <unistd.h>
+#endif
 
 template<class C> inline RingBuffer<C>::RingBuffer( long num ) 
 {

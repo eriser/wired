@@ -6,7 +6,7 @@
 
 #include 	"WavePanel.h"
 #include 	"Colour.h"
-#include 	"Settings.h"
+#include 	"../engine/Settings.h"
 //#include	"OptionPanel.h"
 #include 	<math.h>
 #include 	<iostream>

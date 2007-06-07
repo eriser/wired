@@ -1,10 +1,12 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include	"WiredCodec.h"
-#include	<config.h>
-
+#include <iostream>
 #include <wx/dir.h>
+#include "WiredCodec.h"
+#include <config.h>
+
+using namespace std;
 
 WiredCodec::WiredCodec()
 {

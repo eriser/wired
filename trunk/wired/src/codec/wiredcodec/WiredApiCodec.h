@@ -4,7 +4,7 @@
 #ifndef __WiredAPICodec_H__
 #define __WiredAPICodec_H__
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <list>
 #include <wx/wx.h>
 #include <wx/string.h>
@@ -17,8 +17,6 @@
 
 #define USE_FILENAME	1
 #define USE_PCM		2
-
-using namespace std;
 
 typedef struct		s_LibInfo
 {
@@ -51,7 +49,7 @@ class   WiredApiCodec
   WiredApiCodec(){};
   ~WiredApiCodec(){};
 
-  virtual void		init(list<s_LibInfo> &Info) = 0;			/* Inits codec and fills infos */
+  virtual void		init(std::list<s_LibInfo> &Info) = 0;			/* Inits codec and fills infos */
   virtual int		encode(float** pcm) = 0;					/* Encode function */
   virtual int		decode(const char *path, t_Pcm *pcm, 
   							unsigned long lenght) = 0;			/* Decode function */
@@ -68,7 +66,7 @@ class   WiredApiCodec
 
 typedef struct			s_WLib
 {
-	list<t_LibInfo>     Info;
+	std::list<t_LibInfo>     Info;
 	WiredApiCodec       *Codec;
 	void				*handle;
 }						t_WLib;

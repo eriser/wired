@@ -4,11 +4,10 @@
 #ifndef _WIREDMPLAYER_H_
 #define _WIREDMPLAYER_H_
 
-#include	<iostream>
-#include	<string>
-#include	<vector>
 #include	<stdlib.h>
+#ifndef WIN32
 #include	<unistd.h>
+#endif
 #include	<sys/types.h>
 #include	<sys/stat.h>
 #include	<fcntl.h>
@@ -33,8 +32,6 @@
 #define		ACTION_SEEK_ABSOLUTE		wxT("seek ")
 #define		CRLF										wxT("\n")
 
-using namespace std;
-
 enum			eSeekMethod
 {
 	relative = 0, 
@@ -50,7 +47,7 @@ public:
 	
 	int		PlayFile();
 	int		PauseFile();
-	int		StopFile();
+	void		StopFile();
 	int		CloseFile();
 	int		SeekFile(eSeekMethod seekMethod, double position);
 	bool		DisplayVideoFrame(const wxString& videoFilePath);

@@ -4,8 +4,8 @@
 #include <cmath>
 #include "Clavier.h"
 #include "Key.h"
-#include "Sequencer.h"
-#include "MidiPattern.h"
+#include "../sequencer/Sequencer.h"
+#include "../gui/MidiPattern.h"
 #include "../redist/Plugin.h"
 #include "../sequencer/Track.h"
 #include "../gui/SeqTrack.h"

@@ -1,8 +1,11 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#include <iostream>
 #include "WiredSampleRate.h"
-#include "SaveCenter.h"
+#include "../save/SaveCenter.h"
+
+using namespace std;
 
 static wxMutex				SampleRateMutex;
 extern SaveCenter *saveCenter;

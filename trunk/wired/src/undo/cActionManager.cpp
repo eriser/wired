@@ -4,7 +4,7 @@
 #include "cActionManager.h"
 #include "Visitor.h"
 #include <iostream>
-#include "Settings.h"
+#include "../engine/Settings.h"
 
 
 cActionManager* cActionManager::spSingleton = 0;

@@ -10,25 +10,25 @@
 #include "MLTree.h"
 #include "MLTreeInfos.h"
 #include "MainWindow.h"
-#include "Sequencer.h"
+#include "../sequencer/Sequencer.h"
 #include "SequencerGui.h"
 #include "Colour.h"
 #include "HelpPanel.h"
-#include "DownButton.h"
-#include "HoldButton.h"
+#include "../libs/WiredWidgets/src/DownButton.h"
+#include "../libs/WiredWidgets/src/HoldButton.h"
 #include "StaticLabel.h"
-#include "VUMCtrl.h"
+#include "../libs/WiredWidgets/src/VUMCtrl.h"
 #include "../engine/Settings.h"
 #include "../engine/AudioEngine.h"
-#include "file.xpm"
-#include "audio.xpm"
-#include "folder.xpm"
-#include "folder-open.xpm"
-#include "delete.xpm"
-#include <SaveCenter.h>
+#include "../fileloader/file.xpm"
+#include "../fileloader/audio.xpm"
+#include "../fileloader/folder.xpm"
+#include "../fileloader/folder-open.xpm"
+#include "../fileloader/delete.xpm"
+#include "../save/SaveCenter.h"
 #include "MLTraverser.h"
 #include <vector>
-#include "debug.h"
+#include "../debug.h"
 
 extern SaveCenter	*saveCenter;
 extern const wxEventType EVT_DROP;
@@ -460,7 +460,7 @@ bool				MLTree::IsTreeCollapsed()
 }
 
 // When creating a directory
-void			MLTree::OnCreateDir()
+void			MLTree::OnCreateDir(wxCommandEvent &(event))
 {
   //cout << "[MEDIALIBRARY] OmCreateDir" << endl;
 
@@ -509,31 +509,25 @@ wxTreeItemId			MLTree::OnCreateDirName(wxString dirName, wxTreeItemId itemParent
 }
 
 // When inserting a file
-void				MLTree::OnInsert()
+void				MLTree::OnInsert(wxCommandEvent &(event))
 {
-  wxCommandEvent		event;
-
   MediaLibraryPanel->OnInsert(event);
 }
 
 // When editing a file
-void				MLTree::OnEdit()
+void				MLTree::OnEdit(wxCommandEvent &(event))
 {
-  wxCommandEvent		event;
-
-  MediaLibraryPanel->OnEdit(event);
+	MediaLibraryPanel->OnEdit(event);
 }
 
 // When previewing a file
-void				MLTree::OnPreview()
+void				MLTree::OnPreview(wxCommandEvent &(event))
 {
-  wxCommandEvent		event;
-
   MediaLibraryPanel->OnPreview(event);
 }
 
 // Display infos corresponding to a node
-void				MLTree::DisplayInfos()
+void				MLTree::DisplayInfos(wxCommandEvent &(event))
 {
   // cout << "[MEDIALIBRARY] DISPLAYINFOS" << endl;
   s_nodeInfo			info;
@@ -601,7 +595,7 @@ wxTreeItemId			MLTree::AddFileInProject(wxString FileToAdd, bool expand)
 
   return itemToAdd;
 }
-wxTreeItemId			MLTree::DelFileInProject(wxString FileToAdd, bool expand)
+void			MLTree::DelFileInProject(wxString FileToAdd, bool expand)
 {
  map<wxTreeItemId, s_nodeInfo>::iterator it;
  wxTreeItemId                  ParentNode;
@@ -830,7 +824,7 @@ void				MLTree::OnAddOnNode(wxString FileToAdd, wxTreeItemId selection)
   }
 }
 
-void				MLTree::ImportDir()
+void				MLTree::ImportDir(wxCommandEvent &(event))
 {
   wxDirDialog		dlg(this, _("Import directory"), wxGetCwd());
   int			res;
@@ -952,7 +946,7 @@ wxString			MLTree::getSelection(int flag)
 }
 
 // When removing an element
-void				MLTree::OnRemove()
+void				MLTree::OnRemove(wxCommandEvent &(event))
 {
   wxArrayTreeItemIds		selection;
   int				selection_length;
@@ -1189,7 +1183,7 @@ void				MLTree::EndDrag(wxTreeEvent &event)
       GetItemParent(item) != item_to_drag &&
       GetItemParent(item_to_drag) != item &&
       !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
-    OnRemove();
+    OnRemove(event);
 }
 
 
@@ -1231,7 +1225,8 @@ void				MLTree::OnSuppr(wxKeyEvent &event)
   //cout << key << endl;
   if (key == WXK_DELETE)
     {
-      OnRemove();
+		wxCommandEvent foo;
+      OnRemove(foo);
       cout << "removing" << endl;
     }
 }

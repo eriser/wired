@@ -4,18 +4,14 @@
 #ifndef __WiredCodec_H__
 #define __WiredCodec_H__
 
+#include <list>
+#include <map>
 #include <wx/thread.h>
 #include <wx/string.h>
 #ifndef WIN32
 #include <dlfcn.h>
 #endif
-#include <vector>
-#include <list>
-#include <map>
-#include <iostream>
 #include "./wiredcodec/WiredApiCodec.h"
-
-using namespace std;
 
 #define	WLIBCONSTRUCT	"WiredCodecConstruct"
 
@@ -33,24 +29,24 @@ class			WiredCodec
   int			       		Encode(float **pcm, wxString OutExtension);					/* Encode stream */
   int			       		EndDecode();												/* Close file */
 
-  list<wxString>				GetExtension(int Decode);												/* Returns a list of extensions readable by all codecs */
+  std::list<wxString>				GetExtension(int Decode);												/* Returns a list of extensions readable by all codecs */
   bool						CanConvert(const wxString &filename, int Decode);							/* Proper codec installed ? */
 
  private:
-  list<t_WLib>				_WLib;														/* Instance of codec found */
+	 std::list<t_WLib>				_WLib;														/* Instance of codec found */
   wxString       				_WiredPath;													/* path of codecs */
-  list<wxString>				_WiredSo;													/* list of codec.so */
+  std::list<wxString>				_WiredSo;													/* list of codec.so */
   std::map<wxString, int>			codecToUse;													/* Codec to use :) */
   unsigned long				_CurrentUniqueID;											/* */
   char					*path;
-  list<wxString>				_DecodeExtList;
-  list<wxString>				_EncodeExtList;
+  std::list<wxString>				_DecodeExtList;
+  std::list<wxString>				_EncodeExtList;
 
-  void					FeelExtension(list<t_LibInfo> Info);
+  void					FeelExtension(std::list<t_LibInfo> Info);
   void	       				InitWLib();													/* look for .so */
   void	       				WLoadLib();													/* load all .so */
   void	       				WLibLoader(const wxString& filename);							/* load .so */
-  int	       				CheckExtension(const wxString& str, const list<wxString>& ExtList);	/* check same occurence extensions */
+  int	       				CheckExtension(const wxString& str, const std::list<wxString>& ExtList);	/* check same occurence extensions */
   t_WLib       				FindBestCodec(wxString extension);							/* Not implemented yet */
   void	       				DumpCodec();
 };

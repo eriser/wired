@@ -4,19 +4,16 @@
 #ifndef _WIREDEXTERNALPLUGINLADSPA_H_
 #define _WIREDEXTERNALPLUGINLADSPA_H_
 
+#include <list>
+#include <sstream>
+#include <cmath>
 #include "ladspa.h"
 #include "../engine/AudioEngine.h"
-#include "Plugin.h"
+#include "../redist/Plugin.h"
 //#include <stdlib.h>
 #ifndef WIN32
 #include <dlfcn.h>
 #endif
-#include <math.h>
-
-#include <list>
-#include <iostream>
-#include <sstream>
-using namespace std;
 
 #define	TYPE_PLUGINS_DSSI 1
 #define	TYPE_PLUGINS_LADSPA 2
@@ -103,7 +100,7 @@ public:
 					      long sample_length);
   void				ProcessMono(float **input, float **output, 
 					    long sample_length);
-  unsigned long			GetPortId(list<t_ladspa_port>& PortList, 
+  unsigned long			GetPortId(std::list<t_ladspa_port>& PortList, 
 					  int index);
   void				SetDataPortDefaultValue(t_ladspa_port 
 							*PortData);
@@ -116,14 +113,14 @@ public:
   LADSPA_Handle					_Handle;
   LADSPA_Descriptor				*_Descriptor;
   LADSPA_Properties				_Properties;
-  list<t_ladspa_port>				_InputAudioPluginsPorts;
-  list<t_ladspa_port>				_OutputAudioPluginsPorts;
-  list<t_ladspa_port>				_InputDataPluginsPorts;
-  list<t_ladspa_port>				_OutputDataPluginsPorts;
+  std::list<t_ladspa_port>				_InputAudioPluginsPorts;
+  std::list<t_ladspa_port>				_OutputAudioPluginsPorts;
+  std::list<t_ladspa_port>				_InputDataPluginsPorts;
+  std::list<t_ladspa_port>				_OutputDataPluginsPorts;
   bool							_IsPlaying;
   bool							_Bypass;
- protected:
-  map<unsigned long, t_gui_control>	_GuiControls;								//Key == PortId; Value == PortData
+protected:
+	std::map<unsigned long, t_gui_control>	_GuiControls;								//Key == PortId; Value == PortData
 };
 
 //template <typename T>

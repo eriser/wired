@@ -1,11 +1,10 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include "WaveFile.h"
-#include <math.h>
-#include "../error.hh"
-
 #include <iostream>
+#include <cmath>
+#include "WaveFile.h"
+#include "../error.hh"
 
 using namespace std;
 
@@ -451,4 +450,21 @@ void		WaveFile::SetChannelToRead(long channel)
 long		WaveFile::GetChannelToRead()
 {
   return Channel_to_read;
+}
+
+WaveFile *WaveFile::Clone()
+{
+	cout << "ERROR ERROR Wired will fail miserably" << endl;
+	WaveFile *aNewWaveFile = new WaveFile(*this);
+	if (LoadedInMem)
+	{
+		aNewWaveFile->Data = new float *[sfinfo.channels];
+		for (int channelsCompt = 0; channelsCompt < sfinfo.channels; channelsCompt++)
+		{
+			aNewWaveFile->Data[channelsCompt] = new float[NumberOfFrames];
+			for (int framesCompt = 0; framesCompt < NumberOfFrames; framesCompt++)
+				aNewWaveFile->Data[channelsCompt][framesCompt] = Data[channelsCompt][framesCompt];
+		}
+		return aNewWaveFile;
+	}
 }
