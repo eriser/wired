@@ -2,20 +2,20 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include	"SeqTrack.h"
-#include	"../sequencer/Track.h"
+#include	"Track.h"
 #include	"Rack.h"
 #include	"SequencerGui.h"
 #include	"HelpPanel.h"
-#include	"../engine/AudioEngine.h"
+#include	"AudioEngine.h"
 #include	"OptionPanel.h"
 #include	"MixerGui.h"
 #include	"MainWindow.h"
-#include	"../undo/cImportMidiAction.h"
+#include	"cImportMidiAction.h"
 #include	"../sequencer/Sequencer.h"
 #include	"../mixer/Mixer.h"
 #include	"../redist/Plugin.h"
 #include	"../plugins/PluginLoader.h"
-#include	"../debug.h"
+#include	"debug.h"
 int		RackCount = 0;
 
 /********************   Class RackTrack   ********************/
@@ -256,17 +256,17 @@ void				Rack::InitContextMenu()
 #ifndef DEBUG_1561088
   Connect(ID_MENU_CUT, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)
-	  (wxMouseEventFunction)&Rack::OnCutClick);
+	  (wxCommandEventFunction)&Rack::OnCutClick);
   Connect(ID_MENU_COPY, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)
-	  (wxMouseEventFunction)&Rack::OnCopyClick);
+	  (wxCommandEventFunction)&Rack::OnCopyClick);
   Connect(ID_MENU_PASTE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)
-	  (wxMouseEventFunction)&Rack::OnPasteClick);
+	  (wxCommandEventFunction)&Rack::OnPasteClick);
 #endif
   Connect(ID_MENU_DELETE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)
-	  (wxMouseEventFunction)&Rack::OnDeleteClick);
+	  (wxCommandEventFunction)&Rack::OnDeleteClick);
   //return (result);
 }
 
@@ -595,12 +595,12 @@ void				Rack::DeleteSelectedRack()
     DeleteRack(selectedPlugin);
 }
 
-inline void			Rack::OnDeleteClick(wxMouseEvent &event)
+inline void			Rack::OnDeleteClick()
 {
   DeleteSelectedRack();
 }
 
-inline void			Rack::OnCutClick(wxMouseEvent &event)
+inline void			Rack::OnCutClick()
 {
   if(selectedPlugin == 0x0)
     return;
@@ -629,7 +629,7 @@ inline void			Rack::OnCutClick(wxMouseEvent &event)
     }
 }
 
-inline void			Rack::OnCopyClick(wxMouseEvent &event)
+inline void			Rack::OnCopyClick()
 {
   if(selectedPlugin == 0x0)
     return;
@@ -658,7 +658,7 @@ inline void			Rack::OnCopyClick(wxMouseEvent &event)
     }
 }
 
-inline void			Rack::OnPasteClick(wxMouseEvent &event)
+inline void			Rack::OnPasteClick()
 {
   vector<PluginLoader *>::iterator	k;
   Plugin				*tmp;

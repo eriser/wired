@@ -3,9 +3,7 @@
 
 #include	"WiredVideo.h"
 #include	"wx/wx.h"
-#ifndef WIN32
 #include	<unistd.h>
-#endif
 
 WiredVideo::WiredVideo()
 {
@@ -21,14 +19,14 @@ WiredVideo::~WiredVideo()
 	  delete mplayer;
 }
 
-void		WiredVideo::InitMplayer()
+int		WiredVideo::InitMplayer()
 {
 //    if (mplayer)
 //        delete mplayer;
     mplayer = new WiredMplayer();
 }
 
-void		WiredVideo::OpenFile(const wxString& path)
+int		WiredVideo::OpenFile(const wxString& path)
 {
   wxFileDialog	*dlg = new wxFileDialog(0, wxString(wxT("[WIREDVIDEO] Loading video file"), *wxConvCurrent), path, wxString(wxT(""), *wxConvCurrent), VIDEO_FILE_FILTER, wxOPEN);
 
@@ -42,7 +40,7 @@ void		WiredVideo::OpenFile(const wxString& path)
 	DisplayVideoFrame();
 }
 
-void		WiredVideo::SetSeek(bool SeekBool)
+int		WiredVideo::SetSeek(bool SeekBool)
 {
 
 }
@@ -54,12 +52,11 @@ int		WiredVideo::PlayFile()
 	return mplayer->PlayFile();
 }
 
-void		WiredVideo::StopFile()
+int		WiredVideo::StopFile()
 {
-	if (asFile == false || !mplayer)
-		return;
+	if (asFile == false || !mplayer) return 0;
 	std::cout << "[WIREDVIDEO] Video file stopped" << std::endl;
-	mplayer->StopFile();
+	return mplayer->StopFile();
 }
 
 int		WiredVideo::PauseFile()

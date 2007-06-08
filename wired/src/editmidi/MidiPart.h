@@ -5,7 +5,10 @@
 #define __MIDIPART_H__
 
 #include <wx/wx.h>
+#include <iostream>
 #include <vector>
+
+using namespace				std;
 
 #define NB_ROWS				(NB_WHITEKEY * 12 / 7)	
 #define ROW_HEIGHT			BLACKKEY_HEIGHT
@@ -48,8 +51,8 @@ class					MidiPart: public wxControl
   double				ZoomX;
   double				ZoomY;
   int					NPM; 
-  std::vector<bool>				BlackKeys;
-  std::vector<Note *>			Notes;
+  vector<bool>				BlackKeys;
+  vector<Note *>			Notes;
   EditNote				*selected;
   int					tool;
   Note					*selected2;

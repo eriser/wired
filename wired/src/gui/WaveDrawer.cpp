@@ -8,7 +8,7 @@
 #include <iostream>
 #include "WaveDrawer.h"
 #include "Colour.h"
-#include "../engine/Settings.h"
+#include "Settings.h"
 
 using namespace std;
 
@@ -90,9 +90,8 @@ void					WaveDrawer::SetDrawing(wxSize s)
   long					i, j, k, pos, coeff, inc;  
   float					cur, val;
   int					end;
-//  float					f[NumberOfChannels];
+  float					f[NumberOfChannels];
   long					channel_to_read;
-  float					*f = new float[NumberOfChannels];
 
   // printf(" [ START ] WaveDrawer::SetDrawing(size x %d y %d)\n", s.x, s.y);
   // printf(" >>> HERE : StartWavePos %d, EndWavePos %d\n", StartWavePos, EndWavePos);
@@ -238,7 +237,6 @@ void					WaveDrawer::SetDrawing(wxSize s)
       }
     }
   RedrawBitmap(s);
-  delete [] f;
   //printf(" [  END  ] WaveDrawer::SetDrawing()\n");
 }
 

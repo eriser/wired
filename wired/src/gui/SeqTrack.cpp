@@ -8,17 +8,17 @@
 #include "MainWindow.h"
 #include "SequencerGui.h"
 #include "Colour.h"
-#include "../engine/Settings.h"
+#include "Settings.h"
 #include "ChannelGui.h"
 #include "HelpPanel.h"
-#include "../libs/WiredWidgets/src/ChoiceButton.h"
+#include "ChoiceButton.h"
 #include "Rack.h"
-#include "../redist/Plugin.h"
-#include "../libs/WiredWidgets/src/DownButton.h"
-#include "../libs/WiredWidgets/src/VUMCtrl.h"
-#include "../midi/MidiInDevice.h"
-#include "../midi/MidiThread.h"
-#include "../sequencer/Sequencer.h"
+#include "Plugin.h"
+#include "DownButton.h"
+#include "VUMCtrl.h"
+#include "MidiInDevice.h"
+#include "MidiThread.h"
+#include "Sequencer.h"
 
 // Counts number of Audio and MIDI tracks created yet
 int				AudioTrackCount = 0;
@@ -539,7 +539,7 @@ void					SeqTrack::Load(SaveElementArray data)
       else if (data[i]->getKey() == wxT("Mute")) SetMute(data[i]->getValueInt());
       else if (data[i]->getKey() == wxT("Selected"))
 	{
-	  if (data[i]->getValueInt())
+	  if (data[i]->getValueInt() == true)
 	    SelectTrack();
 	}
       else if (data[i]->getKey() == wxT("PluginsNameConnected"))

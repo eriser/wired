@@ -2,7 +2,7 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include "SeqTrackPattern.h"
-#include "../gui/SequencerGui.h"
+#include "SequencerGui.h"
 
 SeqTrackPattern::SeqTrackPattern()
 {

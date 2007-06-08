@@ -4,11 +4,11 @@
 #if !defined(IMPORT_WAVE_ACTION_H)
 #define IMPORT_WAVE_ACTION_H
 
-#include "../sequencer/Track.h"
+#include "Track.h"
 #include "cAction.h"
 #include "cActionManager.h"
 #include "Visitor.h"
-#include "../plugins/PluginLoader.h"
+#include "PluginLoader.h"
 
 #define	INVALID_VALUE								-42
 #define	HISTORY_LABEL_CREATE_EFFECT_ACTION			_("creating rack effect")

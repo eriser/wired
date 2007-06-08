@@ -4,19 +4,17 @@
 #include <string>
 #include <iostream>
 #include <wx/wx.h>
-#include "../engine/Settings.h"
-#include "../fileloader/FileLoader.h"
-#include "../gui/Rack.h"
-#include "../gui/OptionPanel.h"
-#include "../gui/HelpCtrl.h"
-#include "../gui/HelpPanel.h"
-#include "../gui/MainWindow.h"
-#include "../midi/MidiThread.h"
-#include "../midi/MidiController.h"
-#include "../sequencer/Sequencer.h"
+#include "Rack.h"
+#include "Sequencer.h"
+#include "OptionPanel.h"
+#include "HelpPanel.h"
+#include "Settings.h"
+#include "FileLoader.h"
+#include "MainWindow.h"
+#include "MidiThread.h"
+#include "MidiController.h"
 #include "../redist/Plugin.h"
-
-using namespace std;
+#include "../gui/HelpCtrl.h"
 
 extern Rack				*RackPanel;
 

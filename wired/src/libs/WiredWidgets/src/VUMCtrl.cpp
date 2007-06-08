@@ -3,7 +3,7 @@
 
 
 #include "VUMCtrl.h"
-#include "../../../engine/Settings.h"
+#include "Settings.h"
 BEGIN_EVENT_TABLE(VUMCtrl, wxWindow)
   EVT_PAINT(VUMCtrl::OnPaint)
 END_EVENT_TABLE()
@@ -37,10 +37,10 @@ void VUMCtrl::OnPaint(wxPaintEvent &event)
   dc.SetPen(*wxTRANSPARENT_PEN);
   tmp = 0;
 
-  // Green part
+  // Green part  
   memDC.SelectObject(*img_g);
   if(value >= green_height)
-    {
+    {      
       x = green_height /3;
       tmp = value - green_height;
       for(int i = 0; i < x; i++)
@@ -97,8 +97,8 @@ void VUMCtrl::OnPaint(wxPaintEvent &event)
 	{
 	  dc.Blit(0,h -= 3, img_g->GetWidth(), 3, &memDC, 0, 0, wxCOPY, FALSE);
 	}
-    }
-
+    } 
+  
 }
 
 void VUMCtrl::SetValue(int val)

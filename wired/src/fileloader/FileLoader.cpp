@@ -1,14 +1,11 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifndef WIN32
 #include <unistd.h>
-#endif
 #include <wx/file.h>
 #include <wx/filename.h>
 #include <wx/dir.h>
@@ -25,8 +22,8 @@ using namespace std;
 #include "audio.xpm"
 #include "delete.xpm"
 #include "FileStat.h"
-#include "../sequencer/Sequencer.h"
-#include "../gui/FileConversion.h"
+#include "Sequencer.h"
+#include "FileConversion.h"
 
 #define F_WIDTH		640
 #define F_HEIGHT	520

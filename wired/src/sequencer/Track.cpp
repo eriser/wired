@@ -4,13 +4,13 @@
 #include <wx/colour.h>
 #include "Track.h"
 #include "Sequencer.h"
-#include "../mixer/Mixer.h"
-#include "../gui/Pattern.h"
-#include "../gui/AudioPattern.h"
-#include "../gui/MidiPattern.h"
-#include "../gui/SeqTrack.h"
+#include "Mixer.h"
+#include "Pattern.h"
+#include "AudioPattern.h"
+#include "MidiPattern.h"
+#include "SeqTrack.h"
 #include "SeqTrackPattern.h"
-#include "../gui/MixerGui.h"
+#include "MixerGui.h"
 
 wxColour				PatternColours[MAX_AUTO_COLOURS] =
   {

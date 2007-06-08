@@ -4,10 +4,12 @@
 #ifndef __OPTIONPANEL_H__
 #define __OPTIONPANEL_H__
 
+using namespace			std;
+
 #include <vector>
 #include <wx/wx.h>
 #include <wx/string.h>
-#include "../save/WiredDocument.h"
+#include "WiredDocument.h"
 
 
 #define OPT_TOOLBAR_HEIGHT	(17)
@@ -134,7 +136,7 @@ class OptionPanel : public wxPanel, public WiredDocument
   DownButton			*DetachToolBtn;
   DownButton			*CloseToolBtn;
 
-  std::vector<WiredTool *>		ToolsList;
+  vector<WiredTool *>		ToolsList;
   WiredTool			*CurrentTool;
   WiredTool			*MixerTool;
   WiredTool			*HelpTool;

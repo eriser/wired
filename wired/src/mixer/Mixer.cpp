@@ -1,15 +1,14 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <iostream>
-#include <cmath>
+#include <math.h>
 #include <wx/thread.h>
 #include <wx/utils.h>
 #include "Mixer.h"
+#include "MixerGui.h"
 #include "MixerError.h"
-#include "../engine/AudioEngine.h"
-#include "../gui/MixerGui.h"
 #include "../mixer/Channel.h"
+#include "../engine/AudioEngine.h"
 
 using namespace			std;
 
@@ -22,10 +21,14 @@ Mixer::Mixer(WiredDocument* docParent) : WiredDocument(wxT("Mixer"), docParent)
   VolumeRight = 1.f;
   MuteL = false;
   MuteR = false;
+
   OutputLeft = NULL;
   OutputRight = NULL;
   Input = NULL;
+
   InitBuffers();
+  cout << "[MIXER] Mixer initialized" << endl;
+
   cout << "[MIXER] Mixer initialized" << endl;
 }
 

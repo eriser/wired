@@ -5,6 +5,8 @@
 #define _FILECONVERSION_H_
 
 #include <wx/thread.h>
+#include <iostream>
+#include <list>
 #include <vector>
 #include <deque>
 
@@ -12,6 +14,8 @@
 #include "../codec/WiredCodec.h"
 
 #define		PROGRESS_DIALOG_UNIT	100
+
+using namespace std;
 
 typedef enum {
 	AImportWaveFile = 0,
@@ -37,7 +41,7 @@ public:
 	
 	virtual void		*Entry();
 	bool				Init(t_samplerate_info *RateInit, wxString &WorkingDir, unsigned long BufferSize, wxWindow *Parent);
-	std::vector<wxString>		*GetCodecsExtensions();
+	vector<wxString>		*GetCodecsExtensions();
 	bool				ConvertFromCodec(wxString& FileName);
 	void				ConvertToCodec(wxString& FileName);
 	bool				ConvertSamplerate(wxString& FileName);
@@ -64,11 +68,11 @@ private:
 	bool 				_ShouldRun;
 	WiredSampleRate		_SampleRateConverter;
 	WiredCodec			_CodecConverter;
-	std::vector<wxString>		_CodecsExtensions;
+	vector<wxString>		_CodecsExtensions;
 	wxString				_WorkingDir;
 	unsigned long		_BufferSize;
 	wxWindow			*_Parent;
-	std::deque<FileConversionAction *>	_ActionsList;
+	deque<FileConversionAction *>	_ActionsList;
 	
 private:
 	SNDFILE			*OpenDecodeFile(t_Pcm	&Data, const wxString &DestFileName, SF_INFO &Info, 

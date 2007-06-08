@@ -8,7 +8,7 @@
 #define __WAVEVIEW__
 
 #include <wx/wx.h>
-#include "../audio/WaveFile.h"
+#include "WaveFile.h"
 #include "WaveDrawer.h"
 
 class WaveView : public wxWindow, public WaveDrawer

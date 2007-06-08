@@ -7,18 +7,14 @@
 #include <wx/window.h>
 #include <wx/statline.h>
 #include <wx/gdicmn.h>
-#include <cmath>
+#include <math.h>
 #include "Colour.h"
-#include "../sequencer/Sequencer.h"
+#include "Sequencer.h"
 #include "Ruler.h"
 #include "ColoredLine.h"
 #include "SequencerGui.h"
 #include "AccelCenter.h"
 #include "Cursor.h"
-
-#ifdef WIN32
-#define round(a) floor(a)
-#endif
 
 /*
 ** Constructeurs d'un curseur :

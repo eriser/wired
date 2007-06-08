@@ -8,10 +8,12 @@
 #include <wx/thread.h>
 #include <wx/string.h>
 
+using namespace				std;
+
 class					MidiDeviceInfo;
 class					MidiInDevice;
 typedef int				MidiType;
-typedef std::vector<MidiDeviceInfo *>	MidiDeviceList;
+typedef vector<MidiDeviceInfo *>	MidiDeviceList;
 
 class					MidiThread : public wxThread
 {
@@ -29,11 +31,11 @@ class					MidiThread : public wxThread
   //a simple call to ListDevices... is there a better way ? implementing accessors maybe...
   void					RefreshDevices();
   
-  std::vector<int>				GetDevicesIdByName(std::vector<wxString>); 
+  vector<int>				GetDevicesIdByName(vector<wxString>); 
   int					GetDeviceIdByName(wxString); 
 
   MidiDeviceList			DeviceList;
-  std::vector<MidiInDevice *>		MidiInDev;
+  vector<MidiInDevice *>		MidiInDev;
 
  private:
   void					AnalyzeMidi(int id);

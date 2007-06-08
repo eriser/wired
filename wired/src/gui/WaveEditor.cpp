@@ -7,8 +7,8 @@
 #include 	"WaveEditor.h"
 
 #include 	"Colour.h"
-#include 	"../engine/Settings.h"
-#include 	"../audio/ClipBoard.h"
+#include 	"Settings.h"
+#include 	"ClipBoard.h"
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -18,7 +18,7 @@
 #include 	<wx/menu.h>
 #include 	<math.h>
 #include 	<iostream>
-#include 	"WavePanel.h"
+#include 	<WavePanel.h>
 #include        <wx/choicdlg.h>
 #include        "SequencerGui.h"
 

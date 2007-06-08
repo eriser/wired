@@ -3,10 +3,10 @@
 
 #include <wx/string.h>
 #include "OptionPanel.h"
-#include "../editmidi/EditMidi.h"
+#include "EditMidi.h"
 #include "WaveEditor.h"
 #include "Colour.h"
-#include "../libs/WiredWidgets/src/DownButton.h"
+#include "DownButton.h"
 #include "MixerGui.h"
 #include "HelpPanel.h"
 #include "AudioPattern.h"

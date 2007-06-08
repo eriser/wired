@@ -4,8 +4,8 @@
 #ifndef __NOTE_H__
 #define __NOTE_H__
 #include <vector>
-#include "../midi/midi.h"
-#include "../gui/MidiPattern.h"
+#include "midi.h"
+#include "MidiPattern.h"
 
 using std::vector;
 

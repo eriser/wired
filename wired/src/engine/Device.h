@@ -4,6 +4,7 @@
 #ifndef __DEVICE_H__
 #define __DEVICE_H__
 
+#include <iostream>
 #include <vector>
 #include "portaudio.h"
 #include <wx/wx.h>
@@ -12,6 +13,9 @@
 #define MAX	1
 #define MAX_SAMPLE_FORMATS 6
 
+using namespace std;
+ 
+
 class DeviceFormat
 {
  public:
@@ -19,7 +23,7 @@ class DeviceFormat
   ~DeviceFormat() {}
   
   long SampleFormat;
-  std::vector<double> SampleRates;
+  vector<double> SampleRates;
 };
 
 class AudioSystem;
@@ -44,7 +48,7 @@ class Device
   double	SuggestedOutputLatency;
   double	OutputLatencyRange[2];
   double	InputLatencyRange[2];
-  std::vector<DeviceFormat *> SupportedFormats;
+  vector<DeviceFormat *> SupportedFormats;
   bool		GetSupportedSettings(void);
  private:
 };

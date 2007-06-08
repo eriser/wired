@@ -7,25 +7,25 @@
 #include <wx/tbarbase.h>
 
 #include "SequencerGui.h"
-#include "../plugins/HostCallback.h"
-#include "../fileloader/FileLoader.h"
-#include "../audio/WaveFile.h"
+#include "HostCallback.h"
+#include "FileLoader.h"
+#include "WaveFile.h"
 #include "SettingWindow.h"
 #include "AudioPattern.h"
-#include "../engine/AudioCenter.h"
-#include "../editmidi/EditMidi.h"
-#include "../undo/cAddTrackAction.h"
-#include "../undo/cImportMidiAction.h"
+#include "AudioCenter.h"
+#include "EditMidi.h"
+#include "cAddTrackAction.h"
+#include "cImportMidiAction.h"
 #include "Transport.h"
 #include "OptionPanel.h"
 #include "Rack.h"
 #include "SeqTrack.h"
 #include "MixerGui.h"
-#include "../libs/WiredWidgets/src/DownButton.h"
-#include "../libs/WiredWidgets/src/HoldButton.h"
-#include "../libs/WiredWidgets/src/FaderCtrl.h"
+#include "DownButton.h"
+#include "HoldButton.h"
+#include "FaderCtrl.h"
 #include "StaticLabel.h"
-#include "../libs/WiredWidgets/src/VUMCtrl.h"
+#include "VUMCtrl.h"
 #include "FloatingFrame.h"
 #include "../engine/AudioEngine.h"
 #include "../engine/Settings.h"
@@ -42,11 +42,11 @@
 #include "MediaLibrary.h"
 #include "MLTree.h"
 #include "MainWindow.h"
+#include "Sequencer.h"
 #include "Colour.h"
 #include "HelpPanel.h"
-#include "../sequencer/Sequencer.h"
-#include "../save/SaveCenter.h"
-#include "../debug.h"
+#include "SaveCenter.h"
+#include "debug.h"
 
 extern SaveCenter *saveCenter;
 
@@ -264,10 +264,10 @@ void				MediaLibrary::OnAdd(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void				MediaLibrary::OnRemove(wxCommandEvent &(event))
+void				MediaLibrary::OnRemove(wxCommandEvent &WXUNUSED(event))
 {
   cout << "Removing" << endl;
-  MLTreeView->OnRemove(event);
+  MLTreeView->OnRemove();
 }
 
 void				MediaLibrary::OnCollapse(wxCommandEvent &WXUNUSED(event))

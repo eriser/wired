@@ -1,10 +1,7 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <iostream>
 #include "WiredExternalPlugin.h"
-
-using namespace std;
 
 WiredDSSIPlugin::WiredDSSIPlugin()
 {

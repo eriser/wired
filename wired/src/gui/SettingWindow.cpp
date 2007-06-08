@@ -8,8 +8,8 @@
 
 #include "MainWindow.h"
 #include "SettingWindow.h"
-#include "../engine/AudioEngine.h"
-#include "../engine/Settings.h"
+#include "AudioEngine.h"
+#include "Settings.h"
 #include "Colour.h"
 #include "../midi/MidiThread.h"
 #include "../midi/MidiDevice.h"

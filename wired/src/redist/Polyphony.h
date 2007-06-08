@@ -4,7 +4,10 @@
 #ifndef __POLYPHONY_H__
 #define __POLYPHONY_H__
 
+#include <string.h>
 #include <list>
+
+using namespace std;
 
 typedef struct
 {
@@ -32,7 +35,7 @@ class Polyphony
   long		buffer_size;
   int		PolyphonyCount;
   float		Volume;
-  std::list<Poly *> Voices;
+  list<Poly *> Voices;
 
 };
 #endif//__POLYPHONY_H__

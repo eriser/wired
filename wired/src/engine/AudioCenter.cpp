@@ -3,11 +3,9 @@
 
 #include "AudioCenter.h"
 #include <wx/wx.h>
-#include "../save/SaveCenter.h"
-#include "../gui/MLTree.h"
+#include "SaveCenter.h"
+#include "MLTree.h"
 //#include "<wx/filefn.h>"
-
-using namespace std;
 
 extern SaveCenter *saveCenter;
 

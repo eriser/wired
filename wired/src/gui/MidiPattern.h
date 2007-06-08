@@ -7,7 +7,7 @@
 #include <vector>
 #include <list>
 #include "Pattern.h"
-#include "../save/WiredDocument.h"
+#include "WiredDocument.h"
 
 class				MidiTrack;
 class				MidiEvent;

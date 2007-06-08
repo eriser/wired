@@ -2,7 +2,7 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include <math.h>
-#include "../gui/Colour.h"
+#include "Colour.h"
 #include "RulerMidi.h"
 #include "Clavier.h"
 #include "MidiPart.h"
