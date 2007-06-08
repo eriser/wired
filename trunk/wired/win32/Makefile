@@ -116,8 +116,7 @@ SOURCES_libengine            := AudioCenter.cpp               \
                                 AudioEngine.cpp               \
                                 Device.cpp                    \
                                 Settings.cpp
-SOURCES_libfileloader        := FileLoader.cpp                \
-                                TreeItemData.cpp              \
+SOURCES_libfileloader        := TreeItemData.cpp              \
                                 FileStat.cpp
 SOURCES_libmidi              := MidiDevice.cpp                \
                                 MidiFile.cpp                  \
@@ -174,7 +173,7 @@ SOURCES_libWiredLoopSampler  := LoopSampler.cpp               \
                                 SliceGui.cpp                  \
                                 BeatDialog.cpp                \
                                 LoopCursor.cpp
-SOURCES_libWiredSampler  := AkaiSampler.cpp               \
+SOURCES_libWiredSampler  :=     AkaiSampler.cpp               \
                                 ASClavier.cpp                 \
                                 ASPlugin.cpp                  \
                                 ASEnvel.cpp                   \
