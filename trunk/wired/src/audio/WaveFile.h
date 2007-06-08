@@ -4,11 +4,16 @@
 #ifndef __WAVEFILE_H__
 #define __WAVEFILE_H__
 
-#include <sndfile.h>
-#include <wx/toolbar.h>
-#include <wx/wx.h>
+#include <iostream>
 
-#define WAVE_TEMP_SIZE 4096
+using namespace std;
+
+#include        <sndfile.h>
+#include        <wx/toolbar.h>
+#include        <wx/wx.h>
+
+#define		WAVE_TEMP_SIZE		4096
+
 
 /////////////////////////////////////////////
 //  class WaveFile
@@ -107,7 +112,26 @@ class WaveFile
    * Duplicates the static WaveFile object.
    * \return returns a new instantiated WaveFile object.
    */
-  WaveFile *Clone();
+  WaveFile *Clone()
+    {
+      cout << "ERROR ERROR Wired will fail miserably" << endl;
+
+      WaveFile		*aNewWaveFile;
+
+      aNewWaveFile = new WaveFile(*this);
+      if (LoadedInMem)
+	{
+	  aNewWaveFile->Data = new float *[sfinfo.channels];
+	  for (int channelsCompt = 0; channelsCompt < sfinfo.channels; channelsCompt++)
+	    {
+	      aNewWaveFile->Data[channelsCompt] = new float[NumberOfFrames];
+
+	      for (int framesCompt = 0; framesCompt < NumberOfFrames; framesCompt++)
+		aNewWaveFile->Data[channelsCompt][framesCompt] = Data[channelsCompt][framesCompt];
+	    }
+	  return aNewWaveFile;
+	}
+    }
 
   /**
    * Gets the channels' number.

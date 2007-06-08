@@ -14,7 +14,7 @@
 #include <vector>
 #include <list>
 #include <iostream>
-#include "../save/WiredDocument.h"
+#include "WiredDocument.h"
 
 typedef struct s_SeqCreateEvent		SeqCreateEvent;
 typedef int				MidiType;

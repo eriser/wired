@@ -5,7 +5,7 @@
 //Only used for debug
 #include <iostream>
 
-#include "SaveCenter.h"
+#include <SaveCenter.h>
 
 extern SaveCenter	*saveCenter;
 
@@ -26,7 +26,7 @@ WiredDocument::WiredDocument(wxString name, WiredDocument *parent, bool noParent
     saveCenter = new SaveCenter();
     parent = saveCenter;
   }
-
+  
   _parent = parent;
   if(parent)
     _parent->Register(this);
@@ -88,14 +88,14 @@ void		WiredDocument::saveDocData(SaveElement *data, wxString file)
 void		WiredDocument::clearDocData()
 {
   SaveElementsHashMap::iterator	dataSaveIt;
-
+  
   while(!_dataSave.empty())
     {
       dataSaveIt = _dataSave.begin();
       if(dataSaveIt->second)
 	rmDocDataFile(dataSaveIt->first);
     }
-
+ 
   //to be sure...
   _dataSave.clear();
 }
@@ -103,16 +103,16 @@ void		WiredDocument::clearDocData()
 void		WiredDocument::rmDocDataFile(wxString file)
 {
    int	i;
-
+   
    if(_dataSave.find(file) != _dataSave.end())
      while(!_dataSave[file]->IsEmpty())
        {
 	 if(_dataSave[file]->Item(0))
 	   delete (_dataSave[file]->Item(0));
-
+	 
 	 _dataSave[file]->RemoveAt(0);
        }
-
+   
    _dataSave.erase(file);
 
 }

@@ -17,12 +17,12 @@ enum trackType
     eEndTrackType
   };
 
-#include "../gui/SeqTrack.h"
+#include "SeqTrack.h"
 #include "SeqTrackPattern.h"
-#include "../gui/Pattern.h"
-#include "../gui/SequencerGui.h"
-#include "../gui/ChannelGui.h"
-#include "../save/WiredDocument.h"
+#include "Pattern.h"
+#include "SequencerGui.h"
+#include "ChannelGui.h"
+#include "WiredDocument.h"
 
 #define MAX_AUTO_COLOURS		(16)		
 

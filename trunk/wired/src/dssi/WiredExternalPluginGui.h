@@ -9,11 +9,11 @@
 #ifndef WX_PRECOMP
    #include <wx/wx.h>
 #endif
-#include "../redist/Plugin.h"
+#include "Plugin.h"
 #include "WiredExternalPluginLADSPA.h"
-#include "../libs/WiredWidgets/src/FaderCtrl.h"
-#include "../libs/WiredWidgets/src/KnobCtrl.h"
-#include "../libs/WiredWidgets/src/DownButton.h"
+#include "FaderCtrl.h"
+#include "KnobCtrl.h"
+#include "DownButton.h"
 
 #define IMG_DL_SINGLE_BG	wxT("dssi/dssi_single_bg.png")
 #define IMG_DL_MID_BG		wxT("dssi/dssi_middle_bg.png")

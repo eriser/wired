@@ -2,7 +2,7 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include "Colour.h"
-#include "../engine/Settings.h"
+#include "Settings.h"
 #include "HelpCtrl.h"
 #include "HelpPanel.h"
 

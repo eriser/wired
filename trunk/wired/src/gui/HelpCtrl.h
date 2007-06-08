@@ -15,6 +15,9 @@
 
 #define HTMLDOWN L"</TD></TR></table></font></body></html>"
 
+
+using namespace std;
+
 class HelpCtrl : public wxHtmlWindow
 {
  public:

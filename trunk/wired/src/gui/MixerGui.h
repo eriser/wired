@@ -7,9 +7,11 @@
 #ifndef __MIXERGUI_H__
 #define __MIXERGUI_H__
 
+using namespace					std;
+
 #include <vector>
 #include <wx/wx.h>
-#include "../save/WiredDocument.h"
+#include "WiredDocument.h"
 
 #define ID_MIXER_REFRESH			(101020)
 #define TYPE_MIXER_REFRESH			(9876600)
@@ -156,7 +158,7 @@ class						MixerGui : public wxScrolledWindow, public WiredDocument
   /**
    * ChannelGuiVector a vector holding a list a ChannelGui*
    */
-  std::vector<ChannelGui*>				ChannelGuiVector;
+  vector<ChannelGui*>				ChannelGuiVector;
 
   DECLARE_EVENT_TABLE()
 };

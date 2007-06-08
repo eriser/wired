@@ -12,6 +12,7 @@
 #include <wx/datetime.h>
 #include <wx/file.h>
 #include <sndfile.h>
+using namespace std;
 
 typedef struct				s_file_info
 {
@@ -40,8 +41,8 @@ private:
     void            LoadMajorTypes();
 
     SF_INFO              _FileInfo;
-	std::map<int, wxString>   _SubTypes;
-	std::map<int, wxString>   _MajorTypes;
+    map<int, wxString>   _SubTypes;
+    map<int, wxString>   _MajorTypes;
 };
 
 #endif /*FILESTAT_H_*/

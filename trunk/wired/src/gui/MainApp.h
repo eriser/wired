@@ -11,7 +11,7 @@
 #include <wx/thread.h>
 #include <wx/dynarray.h>
 
-#include "../engine/version.h"
+#include "version.h"
 
 WX_DEFINE_ARRAY_PTR(wxThread *, wxArrayThread);
 

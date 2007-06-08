@@ -6,7 +6,7 @@
 
 #include <math.h>
 #include "SequencerGui.h"
-#include "../sequencer/Sequencer.h"
+#include "Sequencer.h"
 #include "Colour.h"
 #include "Cursor.h"
 #include "Ruler.h"

@@ -5,7 +5,7 @@
 // Under the GNU General Public License
 
 #include <math.h>
-#include "../libs/WiredWidgets/src/VUMCtrl.h"
+#include "VUMCtrl.h"
 #include "Colour.h"
 #include "MixerGui.h"
 #include "ChannelGui.h"
@@ -37,7 +37,7 @@ MixerGui::MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size, Wir
 
   AddMasterChannel(c);
   // evenement refresh master volume
-  Connect(ID_MIXER_REFRESH, TYPE_MIXER_REFRESH, (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction) &MixerGui::OnMasterChange);
+  Connect(ID_MIXER_REFRESH, TYPE_MIXER_REFRESH, (wxObjectEventFunction)&MixerGui::OnMasterChange);
 }
 
 MixerGui::~MixerGui()

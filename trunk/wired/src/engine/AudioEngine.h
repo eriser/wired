@@ -18,6 +18,8 @@
 #define DEFAULT_SAMPLES_PER_BUFFER	2048
 #define DEFAULT_SAMPLE_FORMAT		paFloat32
 
+using namespace std;
+
 extern const char *standardSampleFormats_str[];
 extern const unsigned long standardSampleFormats[];
 extern const double standardSampleRates[];
@@ -31,24 +33,26 @@ typedef struct
   unsigned long OutputSampleFormat;
   Settings	*Sets;
   RingBuffer<float>		*OutFIFO;
-  std::vector<RingBuffer<float>*>	OutFIFOVector;
-  std::vector<RingBuffer<float>*>	InFIFOVector;
+  vector<RingBuffer<float>*>	OutFIFOVector;
+  vector<RingBuffer<float>*>	InFIFOVector;
 }		callback_t;
 
 class AudioSystem
 {
-private:
-	int      _id;
-	wxString _name;
+ private:
+  int		_id;
+  wxString	_name;
 
-public:
-	AudioSystem(int id, const wxString &name)
-		: _id(id), _name(name)
-	{}
-	~AudioSystem();
+ public:
+  AudioSystem(int id, wxString name)
+    {
+      _id = id;
+      _name = name;
+    }
+  ~AudioSystem();
 
-	wxString GetName () const { return (_name); };
-	int      GetId   () const { return (_id); };
+  wxString	GetName() { return (_name); };
+  int		GetId() { return (_id); };
 };
 
 class AudioEngine
@@ -57,8 +61,8 @@ class AudioEngine
   AudioEngine();
   ~AudioEngine();
 
-  std::vector<Device*>	DeviceList;
-  std::vector<AudioSystem*>	SystemList;
+  vector<Device*>	DeviceList;
+  vector<AudioSystem*>	SystemList;
 
   bool			IsOk;
   bool			_paInit;
@@ -141,7 +145,7 @@ static int	AudioCallback(const void *input,
 
 
   int nchan = 0;
-  std::vector<int>::iterator chan;
+  vector<int>::iterator chan;
 
   if (data->SampleFormat & paFloat32)
     {

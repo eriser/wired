@@ -10,7 +10,7 @@
 #endif
 
 #include <list>
-#include "../audio/WaveFile.h"
+#include "WaveFile.h"
 
 class AudioCenter
 {

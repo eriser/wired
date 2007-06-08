@@ -6,7 +6,7 @@
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
-#include <wx/wx.h>
+   #include <wx/wx.h>
 #endif
 
 #include <wx/statline.h>
@@ -20,7 +20,7 @@
 #include "Cursor.h"
 #include "SelectionZone.h"
 #include "ColoredBox.h"
-#include "../sequencer/Track.h"
+#include "Track.h"
 #include "AudioPattern.h"
 #include "MidiPattern.h"
 #include "AccelCenter.h"
@@ -81,16 +81,16 @@ END_DECLARE_EVENT_TYPES()
 
 #define COLORBOX_MARGINS		(8)
 
-  enum
-{
-  ID_TOOL_MOVE_SEQUENCER = 942,
-  ID_TOOL_DRAW_SEQUENCER,
-  ID_TOOL_DELETE_SEQUENCER,
-  ID_TOOL_SPLIT_SEQUENCER,
-  ID_TOOL_MERGE_SEQUENCER,
-  ID_TOOL_PAINT_SEQUENCER,
-  ID_EVENT_DROP,
-};
+enum
+  {
+    ID_TOOL_MOVE_SEQUENCER = 942,
+    ID_TOOL_DRAW_SEQUENCER,
+    ID_TOOL_DELETE_SEQUENCER,
+    ID_TOOL_SPLIT_SEQUENCER,
+    ID_TOOL_MERGE_SEQUENCER,
+    ID_TOOL_PAINT_SEQUENCER,
+    ID_EVENT_DROP,
+  };
 
 #define NB_COMBO_CHOICES		(9)
 
@@ -103,33 +103,33 @@ typedef struct				s_combo_choice
 extern const struct s_combo_choice	ComboChoices[NB_COMBO_CHOICES + 1];
 
 enum
-{
-  ID_POPUP_CUT = 24242,
-  ID_POPUP_COPY,
-  ID_POPUP_PASTE,
-  ID_POPUP_DELETE,
-  ID_POPUP_MOVE_TO_CURSOR,
-  ID_POPUP_SELECT_ALL,
-  ID_SEQ_HSLIDER,
-  ID_SEQ_VSLIDER,
-  ID_SEQ_RULER,
-  ID_SEQ_SCROLLING,
-  ID_CURSOR_PLAY,
-  ID_CURSOR_BEGIN,
-  ID_CURSOR_REPEAT,
-  ID_CURSOR_END,
-  ID_TRACK_VIEW,
-  ID_SEQ_MOVE,
-  ID_SEQ_DRAW,
-  ID_SEQ_DEL,
-  ID_SEQ_SPLIT,
-  ID_SEQ_MERGE,
-  ID_SEQ_MAGNET,
-  ID_SEQ_COMBO_MAGNET,
-  ID_SEQ_COLOR,
-  ID_SEQ_COLORBOX,
-  ID_EVT_DROP
-};
+  {
+    ID_POPUP_CUT = 24242,
+    ID_POPUP_COPY,
+    ID_POPUP_PASTE,
+    ID_POPUP_DELETE,
+    ID_POPUP_MOVE_TO_CURSOR,
+    ID_POPUP_SELECT_ALL,
+    ID_SEQ_HSLIDER,
+    ID_SEQ_VSLIDER,
+    ID_SEQ_RULER,
+    ID_SEQ_SCROLLING,
+    ID_CURSOR_PLAY,
+    ID_CURSOR_BEGIN,
+    ID_CURSOR_REPEAT,
+    ID_CURSOR_END,
+    ID_TRACK_VIEW,
+    ID_SEQ_MOVE,
+    ID_SEQ_DRAW,
+    ID_SEQ_DEL,
+    ID_SEQ_SPLIT,
+    ID_SEQ_MERGE,
+    ID_SEQ_MAGNET,
+    ID_SEQ_COMBO_MAGNET,
+    ID_SEQ_COLOR,
+    ID_SEQ_COLORBOX,
+    ID_EVT_DROP
+  };
 
 class				Ruler;
 class				Cursor;
@@ -146,15 +146,13 @@ class				CursorEvent: public wxEvent
 {
   double			Position;
 
-  public:
+ public:
   CursorEvent(int id = 0, wxEventType eventType = wxEVT_NULL)
     : wxEvent(id, eventType) { Position = 0.0; }
   ~CursorEvent() {}
 
   virtual wxEvent*		Clone() const { return new CursorEvent(*this); }
 };
-
-typedef void (wxEvtHandler::*CursorEventFunction)(CursorEvent&);
 
 class				SequencerGui: public wxPanel, public WiredDocument
 {
@@ -204,19 +202,19 @@ class				SequencerGui: public wxPanel, public WiredDocument
   wxColour			PenColor;
   ColoredBox			*ColorBox;
 
-  public:
+ public:
   SequencerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size,
-      wxWindow *mainwindow, WiredDocument* docParent);
+	       wxWindow *mainwindow, WiredDocument* docParent);
   ~SequencerGui();
 
   void				HideAllPatterns(wxMouseEvent &e);
   Track				*AddTrack(bool is_audio = true);
   void				RemoveTrack();
-  private:
+ private:
 
   void				ReindexTrackArray();
 
-  public:
+ public:
 
   // track creation and deletion
   Track				*CreateTrack(trackType type = eAudioTrack);
@@ -301,16 +299,15 @@ class				SequencerGui: public wxPanel, public WiredDocument
 
   void				UpdateTracks();
   void				DelPattern(Pattern *p, long trackindex);
-  protected:
+ protected:
   void				SwapTracksPos(Track *t1, Track *t2);
   void				UpdateTrackList(std::vector<Track *> *track_list);
   void				UpdateMeasures();
   void				DrawMeasures();
-
+  
   DECLARE_EVENT_TABLE()
 };
 
 extern SequencerGui		*SeqPanel;
 
 #endif
-

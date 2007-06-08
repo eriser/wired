@@ -2,14 +2,14 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include "cImportMidiAction.h"
-#include "../audio/WaveFile.h"
-#include "../sequencer/Track.h"
-#include "../gui/SequencerGui.h"
-#include "../libs/WiredAkai/include/akai.h"
+#include "WaveFile.h"
+#include "Track.h"
+#include "SequencerGui.h"
+#include "akai.h"
 #include "../engine/AudioCenter.h"
 #include "../midi/MidiFile.h"
 #include "../gui/Rack.h"
-#include "../gui/AudioPattern.h"
+#include "AudioPattern.h"
 
 /********************   class cImportWaveAction   ********************/
 

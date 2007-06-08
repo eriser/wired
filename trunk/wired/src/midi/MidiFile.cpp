@@ -1,22 +1,16 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <algorithm>
-#include <iostream>
+#include "MidiFile.h"
 #include <fcntl.h>
-#ifndef WIN32
 #include <unistd.h>
-#endif
 #ifdef WIN32
-//#include <windows.h>
-//#include <winsock2.h>
+#include <winsock2.h>
 #else
 #include <netinet/in.h>
 #endif
 #include <wx/file.h>
-#include "MidiFile.h"
-
-using namespace std;
+#include <iostream>
 
 /*************************************************************************************/
 /*** Classe Event                                                                  ***/

@@ -2,7 +2,6 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include <new>
-#include <iostream>
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
@@ -14,12 +13,10 @@
 
 #include "MainApp.h"
 #include "MainWindow.h"
-#include "../engine/Settings.h"
-#include "../save/SaveCenter.h"
+#include "Settings.h"
+#include "SaveCenter.h"
 
 #include <config.h>
-
-using namespace std;
 
 void	AllocationErrorHandler(void)
 {

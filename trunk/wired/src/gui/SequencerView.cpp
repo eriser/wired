@@ -7,8 +7,8 @@
 
 // use extern of 
 #include "HelpPanel.h"
-#include "../sequencer/Sequencer.h"
-#include "../engine/AudioCenter.h"
+#include "Sequencer.h"
+#include "AudioCenter.h"
 #include "FileConversion.h"
 
 extern FileConversion		*FileConverter;

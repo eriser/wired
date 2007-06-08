@@ -7,6 +7,8 @@
 #include <wx/fileconf.h>
 #include <vector>
 
+using namespace std;
+
 #define WIRED_DIRECTORY wxT(".wired/")
 #define WIRED_CONF	wxT("wired.conf")
 #define PLUG_CONF_FILE  wxT("wired_plugins.conf")
@@ -123,19 +125,19 @@ class Settings
   /**
    * Output channels.
    */
-  std::vector<int>	OutputChannels;
+  vector<int>	OutputChannels;
 
   /**
    * Input channels.
    */
-  std::vector<int>	InputChannels;
+  vector<int>	InputChannels;
 
   /**
    * The midi devices.
    */
-  std::vector<int>	MidiIn;
+  vector<int>	MidiIn;
 
-  std::vector<wxString> MidiInStr;
+  vector<wxString> MidiInStr;
 
   /**
    * Setting a path to put a config file of plugin.
@@ -212,14 +214,14 @@ class Settings
    * \param Group a wxString,the name of title.
    * \param list a vector<int>&,the list of channels.
    */
-  void		SaveChannels(wxString Group, std::vector<int>& list);
+  void		SaveChannels(wxString Group, vector<int>& list);
 
   /**
    * Reading channels.
    * \param Group a wxString,the name of title.
    * \param list a vector<int>&,the list of channels.
    */
-  void		ReadChannels(wxString Group, std::vector<int>& list);
+  void		ReadChannels(wxString Group, vector<int>& list);
 
   /**
    * Delete deprecated entries.

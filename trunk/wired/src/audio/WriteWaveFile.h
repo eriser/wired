@@ -4,7 +4,11 @@
 #ifndef __WRITEWAVEFILE_H__
 #define __WRITEWAVEFILE_H__
 
+#include <iostream>
 #include <wx/wx.h>
+
+using namespace std;
+
 #include <sndfile.h>
 
 /**

@@ -28,6 +28,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <iostream>
+
+using namespace std;
+
 #define STR_UNKNOWN_FORMAT _("Unknown format")
 #define	NB_SAMPLERATE_QUALITY 5
 
@@ -38,7 +42,7 @@ typedef struct s_format_types
 	int				SndFileFormat;
 	PaSampleFormat	PaFormat;
 	const wxChar		*FormatName;
-} t_format_types;
+};
 
 extern struct s_format_types _FormatTypes[];
 
@@ -46,7 +50,7 @@ typedef struct s_samplerate_types
 {
 	unsigned long 	SampleRate;
 	const wxChar		*SampleRateName;
-} t_samplerate_types;
+};
 
 extern struct s_samplerate_types _SampleRateTypes[];
 

@@ -6,19 +6,23 @@
 
 #include <wx/wx.h>
 #include "Note.h"
+#include <iostream>
 #include <vector>
+
+using namespace std;
+using std::vector;
 
 class MidiAttr: public wxPanel
 {
 	public:
 	MidiAttr(wxWindow *parent, wxWindowID id, const wxPoint &pos, 
 			const wxSize &size, long style);
-	void	SetNotes(std::vector <Note *>);
+	void	SetNotes(vector <Note *>);
 	void	OnPaint(wxPaintEvent &);
 	void	SetZoomX(double ZoomX) { this->ZoomX = ZoomX; }
 	
 	private:
-		std::vector<Note *> Notes;
+	vector	<Note *> Notes;
 	double ZoomX;
 
 	DECLARE_EVENT_TABLE()

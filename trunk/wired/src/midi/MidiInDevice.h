@@ -6,6 +6,8 @@
 
 #include "MidiDevice.h"
 
+using namespace			std;
+
 typedef int			MidiType;
 
 class				MidiInDevice : public MidiDevice

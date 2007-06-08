@@ -8,13 +8,13 @@
 #include <iostream>
 #include "WaveEditorDrawer.h"
 #include "Colour.h"
-#include "../engine/Settings.h"
+#include "Settings.h"
 
 using namespace std;
 
 
 WaveEditorDrawer::WaveEditorDrawer(const wxSize& s, bool fulldraw, bool use_settings) 
-  : NumberOfChannels(0), FullDraw(fulldraw), UseSettings(use_settings)
+  : FullDraw(fulldraw), UseSettings(use_settings)
 {
   PAINT_WIDTH = 800000;
   zoomx = PAINT_WIDTH;
@@ -24,6 +24,7 @@ WaveEditorDrawer::WaveEditorDrawer(const wxSize& s, bool fulldraw, bool use_sett
   size.y = s.y;
   Data = 0;
   DrawData = 0;
+  NumberOfChannels = 0;  
   StartWavePos = 0;
   EndWavePos = 0;
   Bmp = 0;
@@ -77,8 +78,7 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
   long					i, j, k, pos, coeff, inc, n, pos_deb, pos_fin;  
   float					cur, val;
   int					len;
-//  float					f[NumberOfChannels];
-  float					*f = new float[NumberOfChannels];
+  float					f[NumberOfChannels];
 
   size_x = s.x;
   size_y = s.y;
@@ -222,7 +222,6 @@ void					WaveEditorDrawer::SetDrawing(wxSize s, long xsrc)
 	  }
       }
   RedrawBitmap(s);
-  delete [] f;
 }
 
 

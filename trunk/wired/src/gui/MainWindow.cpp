@@ -1,49 +1,50 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <algorithm>
+#include "MainWindow.h"
+
 #include <wx/splitter.h>
 #include <wx/progdlg.h>
 #include <wx/utils.h>
+#include <algorithm>
+#include "SequencerGui.h"
+#include "HostCallback.h"
+#include "FileLoader.h"
+#include "WaveFile.h"
+#include "SettingWindow.h"
 #include "AudioPattern.h"
-#include "FileConversion.h"
-#include "FloatingFrame.h"
-#include "MainWindow.h"
-#include "MediaLibrary.h"
-#include "MixerGui.h"
-#include "MLTree.h"
+#include "AudioCenter.h"
+#include "EditMidi.h"
+#include "MidiFile.h"
+#include "cAddTrackAction.h"
+#include "cImportMidiAction.h"
+#include "Transport.h"
 #include "OptionPanel.h"
 #include "Rack.h"
 #include "SeqTrack.h"
-#include "SequencerGui.h"
-#include "SettingWindow.h"
+#include "MixerGui.h"
+#include "DownButton.h"
+#include "HoldButton.h"
+#include "FaderCtrl.h"
 #include "StaticLabel.h"
-#include "Threads.h"
-#include "Transport.h"
-#include "../debug.h"
-#include "../audio/WaveFile.h"
-#include "../dssi/WiredExternalPluginMgr.h"
-#include "../engine/AudioCenter.h"
+#include "VUMCtrl.h"
+#include "FloatingFrame.h"
 #include "../engine/AudioEngine.h"
-#include "../engine/EngineError.h"
 #include "../engine/Settings.h"
-#include "../editmidi/EditMidi.h"
-#include "../fileloader/FileLoader.h"
-#include "../libs/WiredWidgets/src/DownButton.h"
-#include "../libs/WiredWidgets/src/FaderCtrl.h"
-#include "../libs/WiredWidgets/src/HoldButton.h"
-#include "../libs/WiredWidgets/src/VUMCtrl.h"
-#include "../midi/MidiFile.h"
-#include "../midi/MidiThread.h"
-#include "../mixer/Mixer.h"
-#include "../plugins/HostCallback.h"
-#include "../plugins/PluginLoader.h"
-#include "../save/SaveCenter.h"
+#include "../engine/EngineError.h"
 #include "../sequencer/Sequencer.h"
 #include "../sequencer/Track.h"
-#include "../undo/cAddTrackAction.h"
-#include "../undo/cImportMidiAction.h"
+#include "../mixer/Mixer.h"
+#include "../midi/MidiThread.h"
+#include "../plugins/PluginLoader.h"
+#include "../dssi/WiredExternalPluginMgr.h"
+#include "FileConversion.h"
 #include <config.h>
+#include "Threads.h"
+#include "MediaLibrary.h"
+#include "MLTree.h"
+#include "SaveCenter.h"
+#include "debug.h"
 
 //Isn't it bullshit to declare things here ?
 
@@ -74,6 +75,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 {
   wxFileName	path;
 
+  m_FrameTitle = wxT("wired");
   SeqTimer = NULL;
   InitLocale();
 
@@ -286,7 +288,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
     SetIcon(wiredIcon);
 
 #if wxUSE_STATUSBAR
-  Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction)(wxEventFunction)(wxIdleEventFunction) &MainWindow::OnIdle);
+  Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
 #endif
 }
 
@@ -476,7 +478,7 @@ int			MainWindow::InitAudio(bool restart)
 void                MainWindow::InitLocale()
 {
   // disable extra output of wx
-  wxLog		wxlog(wxLogNull);
+  wxLog		log(wxLogNull);
   wxString	prefix = wxT(PACKAGE_LOCALE_DIR);
 
   mLocale = new wxLocale();
@@ -577,7 +579,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   ::wxSafeYield();
 
 #if wxUSE_STATUSBAR
-  Disconnect(wxEVT_IDLE, (wxObjectEventFunction)(wxEventFunction)(wxIdleEventFunction)  &MainWindow::OnIdle);
+  Disconnect(wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
 #endif
   cout << "[MAINWIN] Stopping threads..."<< endl;
   wxThread *thread;

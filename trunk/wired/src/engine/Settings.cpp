@@ -1,15 +1,15 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <iostream>
+#include "version.h"
+#include "Settings.h"
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
-#include "version.h"
-#include "AudioEngine.h"
-#include "Settings.h"
-#include <config.h>
+#include <iostream>
 
-using namespace std;
+#include "AudioEngine.h"
+
+#include <config.h>
 
 // we can't move this global var until plugins doesn't use it anymore
 // TODO : write missing API functions to handle this

@@ -5,12 +5,15 @@
 #define __MIDIDEVICE_H__
 
 #include <vector>
+#include <iostream>
 #include <portmidi.h>
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
    #include <wx/wx.h>
 #endif
+
+using namespace				std;
 
 class MidiDeviceInfo
 {
@@ -22,7 +25,7 @@ class MidiDeviceInfo
   int	 Id;
 };
 
-typedef std::vector<MidiDeviceInfo *> MidiDeviceList;
+typedef vector<MidiDeviceInfo *> MidiDeviceList;
 
 class MidiDevice
 {

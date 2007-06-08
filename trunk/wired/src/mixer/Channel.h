@@ -5,8 +5,9 @@
 #define __CHANNEL_H__
 
 #include <vector>
-#include "../engine/AudioEngine.h"
-#include "../save/WiredDocument.h"
+#include <iostream>
+#include "AudioEngine.h"
+#include "WiredDocument.h"
 
 #define  NUM_BUFFERS  1
 
@@ -159,13 +160,13 @@ class Channel : public WiredDocument
  * Where mono buffers are stored
 */
 
-  std::vector<float*> MonoBuffers;
+  vector<float*> MonoBuffers;
 
 /**
  * Where stereo buffers are stored
 */
 
-  std::vector<float**> StereoBuffers;
+  vector<float**> StereoBuffers;
 
 /**
  * Represent a position in the MonoBuffers vector
