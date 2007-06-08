@@ -4,7 +4,7 @@
 #ifndef __WiredLibFlac_H__
 #define __WiredLibFlac_H__
 
-#include	"../WiredApiCodec.h"
+#include	"WiredApiCodec.h"
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -72,25 +72,25 @@ bool test_decoders(t_Pcm *pcmOriginalPcm);
 class   WiredLibFlac: public WiredApiCodec
 {
  public:
-  
+
   WiredLibFlac(){std::cout << "[WIRED_FLAC_CODEC] Child Flac created" << std::endl; handle = NULL;}
   ~WiredLibFlac(){if (handle) dlclose(handle);}
   WiredLibFlac(const WiredLibFlac& copy){*this = copy;};
-  
+
   /* Inits codec */
   void				init(list<s_LibInfo> &Info);
-  
+
   /* Encode and decode methodes */
   int				encode(float** pcm);
   int				decode(const char *path, t_Pcm *pcm, unsigned long length);
   int				EndDecode();
-  
+
   /* Checks format */
   bool				CanConvert(const wxString& path, int Decode);
 
   /* Operators */
   WiredLibFlac		operator=(const WiredLibFlac& right);
-  
+
  private:
   void						*handle;
   bool						LoadSymbol();

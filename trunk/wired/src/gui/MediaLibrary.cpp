@@ -5,10 +5,9 @@
 #include <wx/treectrl.h>
 #include <wx/toolbar.h>
 #include <wx/tbarbase.h>
-
+#include "AudioPattern.h"
 #include "SequencerGui.h"
 #include "HostCallback.h"
-#include "FileLoader.h"
 #include "WaveFile.h"
 #include "SettingWindow.h"
 #include "AudioPattern.h"
@@ -16,26 +15,22 @@
 #include "EditMidi.h"
 #include "cAddTrackAction.h"
 #include "cImportMidiAction.h"
-#include "Transport.h"
-#include "OptionPanel.h"
-#include "Rack.h"
-#include "SeqTrack.h"
-#include "MixerGui.h"
 #include "DownButton.h"
 #include "HoldButton.h"
 #include "FaderCtrl.h"
-#include "StaticLabel.h"
 #include "VUMCtrl.h"
-#include "FloatingFrame.h"
-#include "../engine/AudioEngine.h"
-#include "../engine/Settings.h"
-#include "../engine/EngineError.h"
-#include "../sequencer/Sequencer.h"
-#include "../sequencer/Track.h"
-#include "../mixer/Mixer.h"
-#include "../midi/MidiThread.h"
-#include "../plugins/PluginLoader.h"
-#include "../dssi/WiredExternalPluginMgr.h"
+#include "AudioCenter.h"
+#include "AudioEngine.h"
+#include "Settings.h"
+#include "EngineError.h"
+#include "SaveCenter.h"
+#include "Sequencer.h"
+#include "Track.h"
+#include "Sequencer.h"
+#include "Mixer.h"
+#include "MidiThread.h"
+#include "PluginLoader.h"
+#include "WiredExternalPluginMgr.h"
 #include "FileConversion.h"
 #include <config.h>
 #include "Threads.h"
@@ -47,6 +42,7 @@
 #include "HelpPanel.h"
 #include "SaveCenter.h"
 #include "debug.h"
+#include <config.h>
 
 extern SaveCenter *saveCenter;
 
@@ -251,18 +247,13 @@ void				MediaLibrary::SetDocked()
 }
 
 
-void				MediaLibrary::OnAdd(wxCommandEvent &WXUNUSED(event))
+void MediaLibrary::OnAdd(wxCommandEvent &WXUNUSED(event))
 {
-  FileLoader		dlg(this, MainWin_FileLoader, _("Loading sound file"), false, false, FileConverter->GetCodecsExtensions(), true);
-  int			res;
-
-  if (dlg.ShowModal() == wxID_OK)
-    {
-      wxString 	selfile = dlg.GetSelectedFile();
-
-      MLTreeView->OnAdd(selfile);
-    }
+    wxFileDialog dlg(this, _("Loading sound file"));
+    if (dlg.ShowModal() == wxID_OK)
+        MLTreeView->OnAdd(dlg.GetFilename());
 }
+
 
 void				MediaLibrary::OnRemove(wxCommandEvent &WXUNUSED(event))
 {
@@ -270,9 +261,9 @@ void				MediaLibrary::OnRemove(wxCommandEvent &WXUNUSED(event))
   MLTreeView->OnRemove();
 }
 
-void				MediaLibrary::OnCollapse(wxCommandEvent &WXUNUSED(event))
+void MediaLibrary::OnCollapse(wxCommandEvent &WXUNUSED(event))
 {
-  MLTreeView->OnCollapse();
+    MLTreeView->OnCollapse();
 }
 
 void				MediaLibrary::OnSize(wxSizeEvent &event)

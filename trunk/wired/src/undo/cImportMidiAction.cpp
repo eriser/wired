@@ -6,9 +6,9 @@
 #include "Track.h"
 #include "SequencerGui.h"
 #include "akai.h"
-#include "../engine/AudioCenter.h"
-#include "../midi/MidiFile.h"
-#include "../gui/Rack.h"
+#include "AudioCenter.h"
+#include "MidiFile.h"
+#include "Rack.h"
 #include "AudioPattern.h"
 
 /********************   class cImportWaveAction   ********************/
@@ -24,7 +24,7 @@ cImportWaveAction::cImportWaveAction (const wxString& path, trackType kind, bool
 void cImportWaveAction::Do ()
 {
   if (_ShouldAdd == true)
-    AddWaveTrack();	
+    AddWaveTrack();
   else
     RemoveWaveTrack(false);
 }
@@ -35,10 +35,10 @@ void cImportWaveAction::AddWaveTrack()
   WaveFile *w;
   long		nb_channel;
 
-  if (w_tmp) 
+  if (w_tmp)
     {
       for (nb_channel = 0; nb_channel < w_tmp->GetNumberOfChannels(); nb_channel++)
-	{ 
+	{
 	  _trackCreated = SeqPanel->CreateTrack(_TrackKindFlag);
 	  w = WaveCenter.AddWaveFile(_WavePath);
 	  w->SetChannelToRead(nb_channel);
@@ -56,7 +56,7 @@ void cImportWaveAction::AddWaveToEditor()
   WaveFile *w;
   long	   nb_channel;
 
-  if (w_tmp) 
+  if (w_tmp)
     {
       _trackCreated = SeqPanel->CreateTrack(_TrackKindFlag);
       for (nb_channel = 0; nb_channel < w_tmp->GetNumberOfChannels(); nb_channel++)
@@ -80,14 +80,14 @@ void cImportWaveAction::RemoveWaveTrack(bool selectFromIndex)
 }
 
 void cImportWaveAction::Redo ()
-{ 
+{
   Do();
 }
 
 void cImportWaveAction::Undo ()
 {
   if (_ShouldAdd == true)
-    RemoveWaveTrack(true);	
+    RemoveWaveTrack(true);
   else
     AddWaveTrack();
 }
@@ -131,15 +131,15 @@ void cImportMidiAction::Do ()
   }
   NotifyActionManager();
 }
-   
+
 void cImportMidiAction::Redo ()
-{ 
+{
   Do();
 }
 
 void cImportMidiAction::Undo ()
-{ 
-  SeqPanel->DeleteTrack(trackCreated); 
+{
+  SeqPanel->DeleteTrack(trackCreated);
 }
 
 cImportMidiAction			cImportMidiAction::operator=(const cImportMidiAction& right)
@@ -169,7 +169,7 @@ cImportAkaiAction::cImportAkaiAction (wxString& path, trackType kind)
 
   mName = mPath.substr(opos, mPath.size() - opos);
   mPath = mPath.substr(1, opos - 2);
-  cout << "device: " << mDevice.mb_str() << "; part: " << mPart 
+  cout << "device: " << mDevice.mb_str() << "; part: " << mPart
        << "; name: " << mName.mb_str() << "; path: " << mPath.mb_str() << endl;
   trackCreated = NULL;
 }
@@ -188,22 +188,22 @@ void cImportAkaiAction::Do ()
 	trackCreated->CreateAudioPattern(w);
       }
     catch (...)
-      {	
+      {
 	; // FIXME we want to do something here ..
       }
     delete sample;
   }
   NotifyActionManager();
 }
-   
+
 void cImportAkaiAction::Redo ()
-{ 
+{
   Do();
 }
 
 void cImportAkaiAction::Undo ()
-{ 
-  SeqPanel->DeleteTrack(trackCreated); 
+{
+  SeqPanel->DeleteTrack(trackCreated);
 }
 
 cImportAkaiAction			cImportAkaiAction::operator=(const cImportAkaiAction& right)
@@ -228,15 +228,15 @@ cChangeParamsEffectAction::cChangeParamsEffectAction (Plugin* plugin, bool shoul
 }
 
 void cChangeParamsEffectAction::Do ()
-{ 
+{
 	if (mShouldSave)
 		SaveDatas();
 	else
 		LoadDatas();
 }
-   
+
 void cChangeParamsEffectAction::Redo ()
-{ 
+{
 	Do();
 }
 
@@ -291,7 +291,7 @@ cChangeParamsEffectAction			cChangeParamsEffectAction::operator=(const cChangePa
 
 /********************   class cCreateEffectAction   ********************/
 
-cCreateEffectAction::cCreateEffectAction (PlugStartInfo* startInfo, PluginLoader* plugLoader, 
+cCreateEffectAction::cCreateEffectAction (PlugStartInfo* startInfo, PluginLoader* plugLoader,
 											bool shouldAdd)
 {
   mPluginLoader = plugLoader;
@@ -301,15 +301,15 @@ cCreateEffectAction::cCreateEffectAction (PlugStartInfo* startInfo, PluginLoader
 }
 
 void cCreateEffectAction::Do ()
-{ 
+{
 	if (mShouldAdd == true)
-		AddRackEffect();	
+		AddRackEffect();
 	else
 		RemoveRackEffect();
 }
-   
+
 void cCreateEffectAction::Redo ()
-{ 
+{
 	Do();
 }
 
@@ -322,7 +322,7 @@ void cCreateEffectAction::Undo ()
 }
 
 void cCreateEffectAction::AddRackEffect ()
-{ 
+{
 	if (mPluginLoader)
     {
     	if (mRackIndex < 0)
@@ -333,18 +333,18 @@ void cCreateEffectAction::AddRackEffect ()
     }
 }
 
-const wxString		cCreateEffectAction::getHistoryLabel()		
+const wxString		cCreateEffectAction::getHistoryLabel()
 {
 	wxString			result;
-	
+
 	result = HISTORY_LABEL_CREATE_EFFECT_ACTION;
 	result += wxT(" ");
-	result += mPluginLoader->InitInfo.Name; 
+	result += mPluginLoader->InitInfo.Name;
 	return result;
 }
 
 void cCreateEffectAction::RemoveRackEffect ()
-{ 
+{
 	if (mRackIndex < 0)
 	  RackPanel->RemoveSelectedRackTrack();
 	else
@@ -392,14 +392,14 @@ void cCreateRackAction::Do ()
 	NotifyActionManager();
   }
 }
-   
+
 void cCreateRackAction::Redo ()
-{ 
+{
   Do();
 }
 
 void cCreateRackAction::Undo ()
-{ 
+{
   RackPanel->RemoveLastRackTrack();
 }
 

@@ -11,10 +11,10 @@
 #include	"MixerGui.h"
 #include	"MainWindow.h"
 #include	"cImportMidiAction.h"
-#include	"../sequencer/Sequencer.h"
-#include	"../mixer/Mixer.h"
-#include	"../redist/Plugin.h"
-#include	"../plugins/PluginLoader.h"
+#include	"Sequencer.h"
+#include	"Mixer.h"
+#include	"Plugin.h"
+#include	"PluginLoader.h"
 #include	"debug.h"
 int		RackCount = 0;
 
@@ -242,7 +242,7 @@ void				Rack::InitContextMenu()
   t = new RackTrack(this, RackTracks.size());
   tmp = t->AddRack(startinfo, p);
   ConnectPluginChangeParamEventHandler(t);
-  SeqMutex.Lock(); 
+  SeqMutex.Lock();
   RackTracks.push_back(t);
   SeqMutex.Unlock();
   result->rackTrack = t;

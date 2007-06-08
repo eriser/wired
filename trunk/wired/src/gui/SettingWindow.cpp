@@ -11,10 +11,10 @@
 #include "AudioEngine.h"
 #include "Settings.h"
 #include "Colour.h"
-#include "../midi/MidiThread.h"
-#include "../midi/MidiDevice.h"
+#include "MidiThread.h"
+#include "MidiDevice.h"
 
-#include "../samplerate/WiredSampleRate.h"
+#include "WiredSampleRate.h"
 
 #include "general.xpm"
 #include "audio.xpm"
@@ -57,7 +57,7 @@ SettingWindow::SettingWindow()
   AudioLoaded = false;
   Center();
 
-  SettingsTree = new wxTreeCtrl(this, CATEGORY_ID, wxPoint(WIN_MARGIN, WIN_MARGIN), 
+  SettingsTree = new wxTreeCtrl(this, CATEGORY_ID, wxPoint(WIN_MARGIN, WIN_MARGIN),
 				wxSize(206, 400), wxSUNKEN_BORDER | wxTR_NO_LINES |
 				wxTR_HAS_BUTTONS | wxTR_SINGLE | wxTR_HIDE_ROOT |
 				wxTR_FULL_ROW_HIGHLIGHT);
@@ -82,7 +82,7 @@ SettingWindow::SettingWindow()
   AudioInputPanelView();
   AudioOutputPanelView();
   MidiPanelView();
-  
+
   SettingsTree->AddRoot(wxT(""), -1, -1);
   root = SettingsTree->GetRootItem();
   SettingsTree->AppendItem(root, _("General"), 0, -1, (wxTreeItemData*)GeneralPanel);
@@ -104,7 +104,7 @@ SettingWindow::SettingWindow()
   OkBtn = new wxButton(this, wxID_OK, _("OK"), BTN_OK_POS, BTN_SIZE);
   ApplyBtn = new wxButton(this, wxID_APPLY, _("Apply"), BTN_APPLY_POS, BTN_SIZE);
   CancelBtn = new wxButton(this, wxID_CANCEL, _("Cancel"), BTN_CANCEL_POS, BTN_SIZE);
-  
+
   Load();
 }
 
@@ -191,7 +191,7 @@ void				SettingWindow::AudioOutputPanelView()
   LatencySlider->SetRange(0, 8);
   LatencySlider->SetPageSize(1);
   Latencies = new int [9];
-  
+
   for (int t = 0; t < 9; t++)
     Latencies[t] = 16 << t;
 
@@ -223,15 +223,15 @@ void				SettingWindow::AudioOutputPanelView()
   wxBoxSizer *BitRateBox =  new wxBoxSizer(wxHORIZONTAL);
   BitRateBox->Add(BitRateText, BoxFlags);
   BitRateBox->Add(BitsChoice, BoxFlags);
- 
+
   OutputBox->Add(BitRateBox, BoxFlags);
 
   wxBoxSizer *SampleRateBox =  new wxBoxSizer(wxHORIZONTAL);
   SampleRateBox->Add(SampleRateText, BoxFlags);
   SampleRateBox->Add(RateChoice, BoxFlags);
   OutputBox->Add(SampleRateBox, BoxFlags);
- 
-  OutputBox->Add(Latency, BoxFlags);    
+
+  OutputBox->Add(Latency, BoxFlags);
   OutputBox->Add(LatencySlider, BoxFlags);
 
   AudioOutputPanel->SetSizer(OutputBox);
@@ -243,7 +243,7 @@ void				SettingWindow::AudioOutputPanelView()
 void				SettingWindow::MidiPanelView()
 {
   MidiPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
-  new wxStaticText(MidiPanel, -1, _("Select MIDI In devices to use:"), 
+  new wxStaticText(MidiPanel, -1, _("Select MIDI In devices to use:"),
 		   wxPoint(8, 8));
   MidiInList = new wxCheckListBox(MidiPanel, Setting_MidiIn, wxPoint(8, 30), wxSize(368, 200), 0);
   PopulateMidiIn(MidiInList);
@@ -272,8 +272,8 @@ void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
 {
   wxTreeItemId		item = e.GetItem();
   wxPanel		*tmp = (wxPanel *)SettingsTree->GetItemData(item);
-  
-  
+
+
   //Hide old panel
   if (tmp)
     {
@@ -300,7 +300,7 @@ void SettingWindow::OnMidiInClick(wxCommandEvent &event)
   vector<int>::iterator	i;
 
   MidiLoaded = true;
-  
+
   for (i = WiredSettings->MidiIn.begin(); i != WiredSettings->MidiIn.end(); i++)
     if (*i < MidiInList->GetCount())
       MidiInList->Check(*i);
@@ -321,7 +321,7 @@ void SettingWindow::OnCancelClick(wxCommandEvent &event)
 void SettingWindow::OnApplyClick(wxCommandEvent &event)
 {
   if (MainWin->InitAudio(true) < 0)
-    MainWin->AlertDialog(_("audio engine"), 
+    MainWin->AlertDialog(_("audio engine"),
 			 _("Could not open audio device : check that the device is not busy (used by another application) and that your audio settings are correct."));
   AudioLoaded = false;
   MidiLoaded = false;
@@ -404,8 +404,8 @@ void SettingWindow::RefreshChannels(wxCheckListBox* list, int system_selected,
   // device is "None"
   if (!dev)
     return;
-  
-  for (i = 1; (input) ? (i <= dev->MaxInputChannels) : 
+
+  for (i = 1; (input) ? (i <= dev->MaxInputChannels) :
 	 (i <= dev->MaxOutputChannels); i++)
     {
       str.Clear();
@@ -419,7 +419,7 @@ void SettingWindow::RefreshChannels(wxCheckListBox* list, int system_selected,
 	list->Check(i - 1);
     }
 
-  // load only if it's Output 
+  // load only if it's Output
   if (!input)
     {
       LoadSampleFormat();
@@ -440,7 +440,7 @@ void SettingWindow::OnOutputChanClick(wxCommandEvent &event)
   if (j > 2)
     {
       OutputChannelList->Check(event.GetInt(), false);
-      wxMessageDialog msg(this, _("No more than 2 output channels can be selected"), wxT("Wired"), 
+      wxMessageDialog msg(this, _("No more than 2 output channels can be selected"), wxT("Wired"),
 			  wxOK | wxICON_EXCLAMATION);
       msg.ShowModal();
     }
@@ -626,7 +626,7 @@ void SettingWindow::Save()
 
       // save output channels
       SaveChannels(OutputChannelList, WiredSettings->OutputChannels);
-      
+
       // save input channels
       SaveChannels(InputChannelList, WiredSettings->InputChannels);
 
@@ -643,13 +643,13 @@ void SettingWindow::Save()
 
       // MidiInStr things
       int	i;
-      
+
       WiredSettings->MidiInStr.clear();
       for (i = 0; i < MidiInList->GetCount(); i++)
 	if (MidiInList->IsChecked(i))
 	  WiredSettings->MidiInStr.push_back(MidiInList->GetString(i));
 
-    }    
+    }
   if (AudioLoaded || MidiLoaded)
     WiredSettings->Save();
 }
@@ -662,7 +662,7 @@ void SettingWindow::LoadSampleFormat()
 				 OutputSystemChoice->GetSelection());
 
   BitsChoice->Clear();
-  
+
   if (dev)
     for (i = dev->SupportedFormats.begin(); i != dev->SupportedFormats.end(); i++)
       if ((*i)->SampleRates.size() > 0)
@@ -675,7 +675,7 @@ void SettingWindow::LoadSampleFormat()
 	    else
 	      BitsChoice->Append(wxString(_FormatTypes[n].FormatName) +
 				 _("[currently unsupported]"));
-  
+
  if (BitsChoice->GetCount() == 0)
     {
       BitRateText->Hide();
@@ -768,7 +768,7 @@ void SettingWindow::OnLatencyChange(wxCommandEvent &event)
 
 void SettingWindow::UpdateLatency()
 {
-  wxString	s; 
+  wxString	s;
   unsigned int	k = BitsChoice->GetSelection();
   unsigned int	l = RateChoice->GetSelection();
   double	res = 0;
@@ -781,7 +781,7 @@ void SettingWindow::UpdateLatency()
       if (l < f->SampleRates.size())
 	res = f->SampleRates[l];
     }
-  
+
   // FIXME : sth really weird delete all things after %.2f
   s.Printf(_("Latency: %d samples per buffer, %.2f msec"),
 	   Latencies[LatencySlider->GetValue()],

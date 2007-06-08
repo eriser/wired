@@ -12,12 +12,12 @@
 #include "ColoredBox.h"
 #include "AudioPattern.h"
 #include "HelpPanel.h"
-#include "../sequencer/Track.h"
-#include "../gui/SeqTrack.h"
-#include "../engine/AudioEngine.h"
-#include "../audio/WaveFile.h"
-#include "../audio/WriteWaveFile.h"
-#include "../mixer/Channel.h"
+#include "Track.h"
+#include "SeqTrack.h"
+#include "AudioEngine.h"
+#include "WaveFile.h"
+#include "WriteWaveFile.h"
+#include "Channel.h"
 #include "SaveCenter.h"
 
 static long				audio_pattern_count = 1;

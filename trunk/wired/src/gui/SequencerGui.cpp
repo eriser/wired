@@ -1,7 +1,7 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
 #include "SequencerGui.h"
 #include "Track.h"
@@ -24,9 +24,9 @@
 #include "SeqTrack.h"
 #include "SeqTrackPattern.h"
 #include "AudioCenter.h"
-#include "../midi/MidiDevice.h"
-#include "../engine/Settings.h"
-#include "../audio/WriteWaveFile.h"
+#include "MidiDevice.h"
+#include "Settings.h"
+#include "WriteWaveFile.h"
 
 DEFINE_EVENT_TYPE(EVT_DROP)
 const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1] =

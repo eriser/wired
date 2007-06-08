@@ -18,8 +18,8 @@
 #include "HoldButton.h"
 #include "StaticLabel.h"
 #include "VUMCtrl.h"
-#include "../engine/Settings.h"
-#include "../engine/AudioEngine.h"
+#include "Settings.h"
+#include "AudioEngine.h"
 #include "file.xpm"
 #include "audio.xpm"
 #include "folder.xpm"
@@ -240,55 +240,46 @@ void				MLTree::LoadPatch(wxString filename)
 
 }
 
-void				MLTree::LoadItem(wxTreeItemId parent,
-						 SaveElement *parentData)
+void MLTree::LoadItem(wxTreeItemId parent, SaveElement *parentData)
 {
-  SaveElementArray	saveElemChildren;
-  int			i;
-  SaveElement		*currSaveElem;
-  s_nodeInfo		infos;
-  bool			expand;
-  wxTreeItemId		next;
-  wxFileName		path;
-
-  saveElemChildren = parentData->getChildren();
-
-  for(i = 0; i < saveElemChildren.GetCount(); i++)
+    SaveElementArray    saveElemChildren;
+    SaveElement         *currSaveElem;
+    s_nodeInfo          infos;
+    bool                expand;
+    wxTreeItemId        next;
+    wxFileName          path;
+    saveElemChildren = parentData->getChildren();
+    for (unsigned int i = 0; i < saveElemChildren.GetCount(); i++)
     {
-      currSaveElem = saveElemChildren.Item(i);
-      if(currSaveElem->getKey() == wxT("folder"))
-	{
-	  infos = SetStructInfos(infos,
-				 currSaveElem->getAttribute(wxT("name")),
-				 wxT(""), wxT(""));
-	  if(currSaveElem->getAttribute(wxT("is_expanded")) == wxT("true"))
-	    expand = true;
-	  else
-	    expand = false;
-
-	  next = AddFile(parent, infos.label, infos, expand);
-	  if(expand)
-	    SetItemImage(next, 1);
-	  else
-	    SetItemImage(next, 0);
-
-	  LoadItem(next, currSaveElem);
-	}
-      else if(currSaveElem->getKey() == wxT("file"))
-	{
-	  path = currSaveElem->getAttribute(wxT("infos_label"));
-	  if(path.IsRelative())
-	     path.MakeAbsolute(saveCenter->getAudioDir());
-	  infos = SetStructInfos(infos,
-				 path.GetFullPath(),
-				 currSaveElem->getAttribute(wxT("infos_ext")),
-				 currSaveElem->getAttribute(wxT("infos_length")));
-	  AddFile(parent, currSaveElem->getAttribute(wxT("name")), infos, false);
-	}
-      if(parentData->getAttribute(wxT("is_expanded")) == wxT("true"))
-	 Expand(parent);
+        currSaveElem = saveElemChildren.Item(i);
+        if(currSaveElem->getKey() == wxT("folder"))
+        {
+            infos = SetStructInfos(infos, currSaveElem->getAttribute(wxT("name")), wxT(""), wxT(""));
+            if(currSaveElem->getAttribute(wxT("is_expanded")) == wxT("true"))
+                expand = true;
+            else
+                expand = false;
+            next = AddFile(parent, infos.label, infos, expand);
+            if (expand)
+                SetItemImage(next, 1);
+            else
+                SetItemImage(next, 0);
+            LoadItem(next, currSaveElem);
+        }
+        else if (currSaveElem->getKey() == wxT("file"))
+        {
+            path = currSaveElem->getAttribute(wxT("infos_label"));
+            if (path.IsRelative())
+                path.MakeAbsolute(saveCenter->getAudioDir());
+            infos = SetStructInfos(infos,
+            path.GetFullPath(),
+            currSaveElem->getAttribute(wxT("infos_ext")),
+            currSaveElem->getAttribute(wxT("infos_length")));
+            AddFile(parent, currSaveElem->getAttribute(wxT("name")), infos, false);
+        }
+        if (parentData->getAttribute(wxT("is_expanded")) == wxT("true"))
+            Expand(parent);
     }
-
 }
 
 void				MLTree::Load(SaveElementArray data)
@@ -830,20 +821,18 @@ void				MLTree::OnAddOnNode(wxString FileToAdd, wxTreeItemId selection)
   }
 }
 
+
 void				MLTree::ImportDir()
 {
-  wxDirDialog		dlg(this, _("Import directory"), wxGetCwd());
-  int			res;
-
-  if (dlg.ShowModal() == wxID_OK)
+    wxDirDialog   dlg(this, _("Import directory"), wxGetCwd());
+    if (dlg.ShowModal() == wxID_OK)
     {
-      wxString 	seldir = dlg.GetPath();
-      this->OnAddDirectory(seldir);
+        wxString seldir = dlg.GetPath();
+        this->OnAddDirectory(seldir);
 		if (CheckEmptyDir(GetTreeItemIdFromLabel(LOCAL_NODE)) == 0)
-			wxMessageBox(wxT("This folder does not contain any allowed file."));
+            wxMessageBox(wxT("This folder does not contain any allowed file."));
     }
 }
-
 
 int				MLTree::CheckEmptyDir(wxTreeItemId itemParent)
 {
@@ -1114,8 +1103,8 @@ wxTreeItemId                    MLTree::Copy(wxTreeItemId item)
 	  return itemAdded;
 	}
     }
-
 }
+
 void                          MLTree::DragAndDrop(wxTreeItemId item)
 {
  wxTreeItemIdValue cookie = &Tree;

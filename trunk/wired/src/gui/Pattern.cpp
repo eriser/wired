@@ -9,8 +9,8 @@
 #include "Cursor.h"
 #include "Pattern.h"
 #include "AudioPattern.h"
-#include "../sequencer/Sequencer.h"
-#include "../sequencer/Track.h"
+#include "Sequencer.h"
+#include "Track.h"
 #include "Ruler.h"
 #include "AccelCenter.h"
 
@@ -26,7 +26,7 @@ Pattern::Pattern(WiredDocument *parent, wxString name, double pos, double endpos
   Length = endpos - pos;
   TrackIndex = trackindex;
   StateMask = 0;
-  m_pos = wxPoint((int) floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * pos), 
+  m_pos = wxPoint((int) floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * pos),
 		  (int) floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * trackindex));
   m_size = wxSize((int) ceil(Length * MEASURE_WIDTH * SeqPanel->HoriZoomFactor),
 		  (int) ceil(TRACK_HEIGHT * SeqPanel->VertZoomFactor));
@@ -57,7 +57,7 @@ Pattern::~Pattern()
     Seq->Tracks[TrackIndex]->DelPattern(this);
 }
 
-void					Pattern::Modify(double newpos, double newendpos, 
+void					Pattern::Modify(double newpos, double newendpos,
 							long newtrackindex,  double newlength)
 {
 #ifdef __DEBUG__
@@ -97,7 +97,7 @@ void					Pattern::Update()
 {
   //  printf("UPDATING PATTERN : BeginPosition = %f, Position = %f, EndPosition = %f, Length = %f\n",
   //  BeginPosition, Position, EndPosition, Length);
-  m_pos = wxPoint((int) floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * Position), 
+  m_pos = wxPoint((int) floor(MEASURE_WIDTH * SeqPanel->HoriZoomFactor * Position),
 		  (int) floor(TRACK_HEIGHT * SeqPanel->VertZoomFactor * TrackIndex));
   m_size = wxSize((int) ceil(Length * MEASURE_WIDTH * SeqPanel->HoriZoomFactor),
 		  (int) ceil(TRACK_HEIGHT * SeqPanel->VertZoomFactor));
@@ -155,7 +155,7 @@ void					Pattern::OnClick(wxMouseEvent &e)
     }
   else
     if (SeqPanel->Tool == ID_TOOL_DELETE_SEQUENCER)
-      SeqPanel->DeletePattern(this); 
+      SeqPanel->DeletePattern(this);
   /*    else
       if (SeqPanel->Tool == ID_TOOL_SPLIT_SEQUENCER)
 	{
@@ -207,8 +207,8 @@ void					Pattern::OnMotion(wxMouseEvent &e)
   double				z;
   int					trackto;
   double				mes;
-  
- 
+
+
   if (IsSelected() && (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->GetAudioPattern() != this))
     {
       if (m_click.x != -1)

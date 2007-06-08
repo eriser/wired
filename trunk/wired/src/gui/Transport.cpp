@@ -11,8 +11,8 @@
 #include "HoldButton.h"
 #include "StaticLabel.h"
 #include "VUMCtrl.h"
-#include "../engine/Settings.h"
-#include "../engine/AudioEngine.h"
+#include "Settings.h"
+#include "AudioEngine.h"
 
 Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, WiredDocument *docParent)
   : wxPanel(parent, -1, pos, size, style), WiredDocument(wxT("Transport"), docParent)
@@ -27,65 +27,65 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   wxImage tr_bg_loop(wxString(WiredSettings->DataDir + wxString(TRANSPORT_BACKGR_LOOP_IMG)), wxBITMAP_TYPE_PNG);
   TrLoopBmp = new wxBitmap(tr_bg_loop);
 
-  wxImage *play_up = 
+  wxImage *play_up =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_PLAYUP_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *play_down = 
+  wxImage *play_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_PLAYDO_IMG)), wxBITMAP_TYPE_PNG);
   wxImage *stop_up =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_STOPUP_IMG)), wxBITMAP_TYPE_PNG);
   wxImage *stop_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_STOPDO_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *rec_up = 
+  wxImage *rec_up =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_REC_UP_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *rec_down = 
+  wxImage *rec_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_REC_DO_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *backward_down = 
+  wxImage *backward_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_BAC_DO_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *backward_up = 
+  wxImage *backward_up =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_BAC_UP_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *forward_down = 
+  wxImage *forward_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_FOR_DO_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *forward_up = 
+  wxImage *forward_up =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_FOR_UP_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *loop_down = 
+  wxImage *loop_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_LOOPDO_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *loop_up = 
+  wxImage *loop_up =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_LOOPUP_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *up_up = 
+  wxImage *up_up =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_UPUP_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *up_down = 
+  wxImage *up_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_UPDO_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *down_up = 
+  wxImage *down_up =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_DOWNUP_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *down_down = 
+  wxImage *down_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_DOWNDO_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *click_up = 
+  wxImage *click_up =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_METRO_UP_IMG)), wxBITMAP_TYPE_PNG);
-  wxImage *click_down = 
+  wxImage *click_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(TRANSPORT_METRO_DO_IMG)), wxBITMAP_TYPE_PNG);
-  
-  PlayBtn = 
+
+  PlayBtn =
     new DownButton(this, Transport_Play, wxPoint(138, 95), wxSize(41, 42), play_up, play_down);
-  StopBtn = 
+  StopBtn =
     new DownButton(this, Transport_Stop, wxPoint(89, 98), wxSize(35, 40), stop_up, stop_down, true);
-  RecordBtn = 
+  RecordBtn =
     new DownButton(this, Transport_Record, wxPoint(189, 95), wxSize(41, 43), rec_up, rec_down);
   BackwardBtn = new HoldButton(this, Transport_Backward, wxPoint(17, 98), wxSize(35, 39), backward_up, backward_down);
   ForwardBtn = new HoldButton(this, Transport_Forward, wxPoint(53, 98), wxSize(35, 39), forward_up, forward_down);
   LoopBtn = new DownButton(this, Transport_Loop, wxPoint(277, 119), wxSize(11, 11), loop_up, loop_down);
-  ClickBtn = new DownButton(this, Transport_Click, wxPoint(250, 102), wxSize(19, 30), 
+  ClickBtn = new DownButton(this, Transport_Click, wxPoint(250, 102), wxSize(19, 30),
 			    click_up, click_down);
 
-  LoopBtn->Connect(Transport_Loop, wxEVT_ENTER_WINDOW, 
-		   (wxObjectEventFunction)(wxEventFunction) 
+  LoopBtn->Connect(Transport_Loop, wxEVT_ENTER_WINDOW,
+		   (wxObjectEventFunction)(wxEventFunction)
 		   (wxMouseEventFunction)&Transport::OnLoopHelp);
-  ClickBtn->Connect(Transport_Click, wxEVT_ENTER_WINDOW, 
-		   (wxObjectEventFunction)(wxEventFunction) 
+  ClickBtn->Connect(Transport_Click, wxEVT_ENTER_WINDOW,
+		   (wxObjectEventFunction)(wxEventFunction)
 		   (wxMouseEventFunction)&Transport::OnClickHelp);
-  
-  BpmUpBtn = new HoldButton(this, Transport_BpmUp, wxPoint(112, 21), wxSize(11, 8), 
+
+  BpmUpBtn = new HoldButton(this, Transport_BpmUp, wxPoint(112, 21), wxSize(11, 8),
 			    up_up, up_down);
-  BpmUpBtn = new HoldButton(this, Transport_BpmDown, wxPoint(112, 30), wxSize(11, 8), 
+  BpmUpBtn = new HoldButton(this, Transport_BpmDown, wxPoint(112, 30), wxSize(11, 8),
 			    down_up, down_down);
   wxString s;
 
@@ -93,18 +93,18 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 
   BpmLabel = new StaticLabel(this, Transport_BpmClick, s, wxPoint(49, 20), wxSize(-1, 12));
   BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));
-  
+
   s.Printf(wxT("%.0f"), Seq->BPM);
   BpmLabel->SetLabel(s);
   s.Printf(wxT("%.0f"), Seq->BPM);
   BpmLabel->SetLabel(s);
-  SigNumUpBtn = new HoldButton(this, Transport_SigNumUp, wxPoint(42, 48), wxSize(11, 8), 
+  SigNumUpBtn = new HoldButton(this, Transport_SigNumUp, wxPoint(42, 48), wxSize(11, 8),
 			       up_up, up_down);
-  SigNumDownBtn = new HoldButton(this, Transport_SigNumDown, wxPoint(42, 57), wxSize(11, 8), 
+  SigNumDownBtn = new HoldButton(this, Transport_SigNumDown, wxPoint(42, 57), wxSize(11, 8),
 				 down_up, down_down);
-  SigDenUpBtn = new HoldButton(this, Transport_SigDenUp, wxPoint(95, 48), wxSize(11, 8), 
+  SigDenUpBtn = new HoldButton(this, Transport_SigDenUp, wxPoint(95, 48), wxSize(11, 8),
 			       up_up, up_down);
-  SigDenDownBtn = new HoldButton(this, Transport_SigDenDown, wxPoint(95, 57), wxSize(11, 8), 
+  SigDenDownBtn = new HoldButton(this, Transport_SigDenDown, wxPoint(95, 57), wxSize(11, 8),
 				 down_up, down_down);
 
   SigNumLabel = new wxStaticText(this, -1, wxT("4"), wxPoint(59, 48), wxSize(-1, 12));
@@ -121,7 +121,7 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   wxImage *red = new wxImage(wxString(WiredSettings->DataDir + wxString(VUM_RED)), wxBITMAP_TYPE_PNG);
   //vum = new VUMCtrl((wxWindow*)this, -1, 100, green, orange, red, wxPoint(70,78), wxSize(195,5), wxNO_BORDER);
   vum = new wxGauge((wxWindow*)this, -1, 100, wxPoint(70,78), wxSize(195,5));
-  
+
   PlayBtn->SetBackgroundColour(wxColour(204, 199, 219));
   StopBtn->SetBackgroundColour(wxColour(204, 199, 219));
   RecordBtn->SetBackgroundColour(wxColour(204, 199, 219));
@@ -156,7 +156,7 @@ Transport::~Transport()
 	if (SigNumUpBtn) delete SigNumUpBtn;
 	if (SigNumDownBtn) delete SigNumDownBtn;
 	if (SigDenUpBtn) delete SigDenUpBtn;
-	if (SigDenDownBtn) delete SigDenDownBtn;  
+	if (SigDenDownBtn) delete SigDenDownBtn;
 	if (TrBmp) delete TrBmp;
 	if (TrLoopBmp) delete TrLoopBmp;
 	if (BpmText) delete BpmText;
@@ -208,7 +208,7 @@ void				Transport::OnRecord(wxCommandEvent &WXUNUSED(event))
 //       wxFileName f(CurrentSession->AudioDir.c_str());
 //       if (CurrentSession->AudioDir.empty() || (!f.DirExists()))
 // 	{
-// 	  wxDirDialog dir(this, _("Choose the Audio file directory"), 
+// 	  wxDirDialog dir(this, _("Choose the Audio file directory"),
 // 			  wxFileName::GetCwd());
 // 	  if (dir.ShowModal() == wxID_OK)
 // 	    {
@@ -232,7 +232,7 @@ void				Transport::OnLoop(wxCommandEvent &WXUNUSED(event))
 
   Seq->Loop = LoopBtn->GetOn();
   Refresh();
-  
+
 }
 
 void				Transport::OnMetronome(wxCommandEvent &WXUNUSED(event))
@@ -265,18 +265,18 @@ void				Transport::OnPaint(wxPaintEvent &WXUNUSED(event))
 {
   wxMemoryDC			memDC;
   wxPaintDC			dc(this);
-  
+
   if (LoopBtn->GetOn())
-	  memDC.SelectObject(*TrLoopBmp);    
+	  memDC.SelectObject(*TrLoopBmp);
   else
 	  memDC.SelectObject(*TrBmp);
-  wxRegionIterator upd(GetUpdateRegion()); // get the update rect list   
+  wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
   while (upd)
-    {    
-      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(), 
-	      wxCOPY, FALSE);      
+    {
+      dc.Blit(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH(), &memDC, upd.GetX(), upd.GetY(),
+	      wxCOPY, FALSE);
       upd++;
-    }  
+    }
 }
 
 void				Transport::SetPlayPosition(double pos)
@@ -310,7 +310,7 @@ void				Transport::OnBpmUp(wxCommandEvent &WXUNUSED(event))
       wxString s;
       s.Printf(wxT("%.0f"), Seq->BPM);
       BpmLabel->SetLabel(s);
-    }      
+    }
 }
 
 void				Transport::OnBpmDown(wxCommandEvent &WXUNUSED(event))
@@ -323,7 +323,7 @@ void				Transport::OnBpmDown(wxCommandEvent &WXUNUSED(event))
 
       wxString s;
       s.Printf(wxT("%.0f"), Seq->BPM);
-      BpmLabel->SetLabel(s);   
+      BpmLabel->SetLabel(s);
     }
 }
 
@@ -335,11 +335,11 @@ void				Transport::OnSigNumUp(wxCommandEvent &WXUNUSED(event))
       wxString s;
 
       Seq->SetSigNumerator(Seq->SigNumerator + 1);
-      
+
       s.Printf(wxT("%d"), Seq->SigNumerator);
-      SigNumLabel->SetLabel(s); 
+      SigNumLabel->SetLabel(s);
       SeqPanel->AdjustHScrolling();
-    }    
+    }
 }
 
 void				Transport::OnSigNumDown(wxCommandEvent &WXUNUSED(event))
@@ -350,11 +350,11 @@ void				Transport::OnSigNumDown(wxCommandEvent &WXUNUSED(event))
       wxString s;
 
       Seq->SetSigNumerator(Seq->SigNumerator - 1);
-     
+
       s.Printf(wxT("%d"), Seq->SigNumerator);
-      SigNumLabel->SetLabel(s); 
+      SigNumLabel->SetLabel(s);
       SeqPanel->AdjustHScrolling();
-    }    
+    }
 }
 
 void				Transport::OnSigDenUp(wxCommandEvent &WXUNUSED(event))
@@ -367,9 +367,9 @@ void				Transport::OnSigDenUp(wxCommandEvent &WXUNUSED(event))
       Seq->SetSigDenominator(Seq->SigDenominator + 1);
 
       s.Printf(wxT("%d"), Seq->SigDenominator);
-      SigDenLabel->SetLabel(s); 
+      SigDenLabel->SetLabel(s);
       SeqPanel->AdjustHScrolling();
-    }    
+    }
 }
 
 void				Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
@@ -380,20 +380,20 @@ void				Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
       wxString s;
 
       Seq->SetSigDenominator(Seq->SigDenominator - 1);
-    
+
       s.Printf(wxT("%d"), Seq->SigDenominator);
-      SigDenLabel->SetLabel(s); 
+      SigDenLabel->SetLabel(s);
       SeqPanel->AdjustHScrolling();
-    }    
+    }
 }
 
 void				Transport::OnBpmClick(wxCommandEvent &WXUNUSED(event))
 {
-  if (BpmText) BpmText->Destroy();	
-  BpmText = new wxTextCtrl(this, Transport_BpmEnter, BpmLabel->GetLabel(), 
-			   BpmLabel->GetPosition(), wxSize(50, BpmLabel->GetSize().y), 
+  if (BpmText) BpmText->Destroy();
+  BpmText = new wxTextCtrl(this, Transport_BpmEnter, BpmLabel->GetLabel(),
+			   BpmLabel->GetPosition(), wxSize(50, BpmLabel->GetSize().y),
 			   wxTE_PROCESS_ENTER);
-  Connect(Transport_BpmEnter, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)(wxEventFunction) 
+  Connect(Transport_BpmEnter, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&Transport::OnBpmEnter);
 }
 
@@ -411,7 +411,7 @@ void				Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
 	  SeqMutex.Unlock();
 	  SetBpm(d);
 	}
-      Disconnect(Transport_BpmEnter, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)(wxEventFunction) 
+      Disconnect(Transport_BpmEnter, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)(wxEventFunction)
 		 (wxCommandEventFunction)&Transport::OnBpmEnter);
       BpmText->Destroy();
       BpmText = NULL;

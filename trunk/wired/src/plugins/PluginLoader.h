@@ -5,7 +5,7 @@
 #define __PLUGINLOADER_H__
 
 #include "Plugin.h"
-#include "../dssi/WiredExternalPluginMgr.h"
+#include "WiredExternalPluginMgr.h"
 #include <wx/wx.h>
 #include <wx/dynlib.h>
 

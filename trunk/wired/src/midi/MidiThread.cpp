@@ -6,7 +6,7 @@
 #include "Settings.h"
 #include "MidiController.h"
 #include "MidiInDevice.h"
-#include "../gui/Threads.h"
+#include "Threads.h"
 
 wxMutex					MidiMutex(wxMUTEX_RECURSIVE);
 wxMutex					MidiDeviceMutex(wxMUTEX_RECURSIVE);
@@ -56,12 +56,12 @@ void					MidiThread::OpenDefaultDevices()
   MidiDeviceList::iterator		i;
   vector<int>:: iterator		j;
   long					k;
-  
+
   for (j = WiredSettings->MidiIn.begin(); j != WiredSettings->MidiIn.end(); j++)
     for (k = 0, i = DeviceList.begin(); i != DeviceList.end(); i++, k++)
       if (k == (long)*j)
 	  {
-	    OpenDevice((*i)->Id);       
+	    OpenDevice((*i)->Id);
 	    break;
 	  }
 }
@@ -99,9 +99,9 @@ MidiDeviceList				*MidiThread::ListDevices()
   const PmDeviceInfo			*pdi;
   MidiDeviceInfo			*d;
   int					numdev = Pm_CountDevices();
-  
+
   DeviceList.clear();
-  
+
   std::cerr << "[MIDITHREAD] ListDevices : numdev = " << numdev << std::endl;
 
   for (unsigned int i = 0; i < numdev; i++)
@@ -120,7 +120,7 @@ void					*MidiThread::Entry()
 {
   vector<MidiInDevice *>:: iterator	i;
 
-  cout << "[MIDITHREAD] Thread started !" << endl;    
+  cout << "[MIDITHREAD] Thread started !" << endl;
   while (!TestDestroy())
     {
       MidiDeviceMutex.Lock();
@@ -135,7 +135,7 @@ void					*MidiThread::Entry()
       MidiDeviceMutex.Unlock();
       Sleep(1);
     }
-  cout << "[MIDITHREAD] Thread finished !" << endl;    
+  cout << "[MIDITHREAD] Thread finished !" << endl;
   return (0x0);
 }
 
@@ -184,7 +184,7 @@ int			MidiThread::GetDeviceIdByName(wxString name)
        midiDeviceIt++)
     if ((*midiDeviceIt)->Name == name)
       return (*midiDeviceIt)->Id;
-    
+
   return -1;
 }
 
@@ -194,7 +194,7 @@ vector<int>		MidiThread::GetDevicesIdByName(vector<wxString> names)
   int				id;
   vector<wxString>::iterator	namesIt;
 
-  for (namesIt = names.begin(); 
+  for (namesIt = names.begin();
        namesIt != names.end();
        namesIt++)
     {
@@ -216,5 +216,5 @@ void                    MidiThread::OnExit()
   threads.Remove(this);
   if (threads.IsEmpty())
     wxGetApp().m_condAllDone->Signal();
-  cout << "[MIDITHREAD] Thread terminated !" << endl;    
+  cout << "[MIDITHREAD] Thread terminated !" << endl;
 }

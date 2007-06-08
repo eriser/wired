@@ -2,7 +2,7 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include "WriteWaveFile.h"
-#include "../error.hh"
+#include "error.hh"
 
 WriteWaveFile::WriteWaveFile(wxString filename, int sample_rate, int channels,
 			     unsigned long format, int type)

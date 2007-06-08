@@ -6,9 +6,9 @@
 #include "Key.h"
 #include "Sequencer.h"
 #include "MidiPattern.h"
-#include "../redist/Plugin.h"
-#include "../sequencer/Track.h"
-#include "../gui/SeqTrack.h"
+#include "Plugin.h"
+#include "Track.h"
+#include "SeqTrack.h"
 
 Clavier::Clavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
 		 const wxSize& size, long style, EditMidi *editmidi)
@@ -34,7 +34,7 @@ Clavier::Clavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
       wxString notestr = wxT("");
       notestr += gamme.GetChar(note);
       notestr = notestr << oct;
-      keys.push_back(new Key(this, -1, wxPoint(size.GetWidth() - WHITEKEY_WIDTH, 
+      keys.push_back(new Key(this, -1, wxPoint(size.GetWidth() - WHITEKEY_WIDTH,
 					       size.GetHeight() - posYW), wxSize(WHITEKEY_WIDTH, wkeyh),
 			     FALSE, notestr, code));
       code += whprog[note++];
@@ -70,7 +70,7 @@ Clavier::Clavier(wxWindow *parent, wxWindowID id, const wxPoint& pos,
       posYW += wkeyh;
       j++;
     }
- 
+
   // creation des touches noires
   j = 0;
   inter_2 = true;
@@ -104,7 +104,7 @@ int arf = 0;
 	    }
 	  else
 	    {
-	      keys.push_back(new Key (this, -1, wxPoint(size.GetWidth() - WHITEKEY_WIDTH, 
+	      keys.push_back(new Key (this, -1, wxPoint(size.GetWidth() - WHITEKEY_WIDTH,
 							size.GetHeight() - posY), wxSize(BLACKKEY_WIDTH, static_cast<int>(ceil(BLACKKEY_HEIGHT * ZoomY))), TRUE, notestr, code));
 
 code += blprog[(arf++) % 5];
@@ -116,7 +116,7 @@ code += blprog[(arf++) % 5];
 	      posY += static_cast<int>(ceil(ZoomY * BLACKKEY_HEIGHT * fact));
 	      j++;
 	    }
-	} 
+	}
     }
 }
 
@@ -133,7 +133,7 @@ void				Clavier::RecalcKeyPos()
   // deplacement des touches blanches
   for (int i = NB_WHITEKEY; i > 0; i--)
     {
-      keys[curkey++]->SetSize(size.GetWidth() - WHITEKEY_WIDTH, 
+      keys[curkey++]->SetSize(size.GetWidth() - WHITEKEY_WIDTH,
 			      size.GetHeight() - posYW,
 			      WHITEKEY_WIDTH, wkeyh);
       if (inter_2)
@@ -163,7 +163,7 @@ void				Clavier::RecalcKeyPos()
       posYW += wkeyh;
       j++;
     }
- 
+
   // creation des touches noires
   j = 0;
   inter_2 = true;
@@ -194,7 +194,7 @@ void				Clavier::RecalcKeyPos()
 	      posY += (int) ceil(ZoomY * BLACKKEY_HEIGHT * fact);
 	      j++;
 	    }
-	} 
+	}
     }
 }
 
@@ -223,11 +223,11 @@ void				Clavier::OnPaint(wxPaintEvent &event)
     {
       wxString str = wxT("C");
       str = str << j;
-      dc.DrawText(str, s.GetWidth() - WHITEKEY_WIDTH - 20, 
+      dc.DrawText(str, s.GetWidth() - WHITEKEY_WIDTH - 20,
 		  s.GetHeight() - posY + 4);
       j++;
       posY += (int) ceil(12 * BLACKKEY_HEIGHT * ZoomY);
-    } 
+    }
 }
 
 void				Clavier::OnKeyDown(wxMouseEvent &event)

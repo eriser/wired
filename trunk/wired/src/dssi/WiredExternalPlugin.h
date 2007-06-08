@@ -5,7 +5,7 @@
 #define _WIREDEXTERNALPLUGIN_H_
 
 #include "dssi.h"
-#include "../engine/AudioEngine.h"
+#include "AudioEngine.h"
 #include "WiredExternalPluginLADSPA.h"
 
 #include <wx/dynlib.h>

@@ -21,16 +21,15 @@ using namespace std;
 #include <wx/log.h>
 #include <wx/filename.h>
 
-
 #include "version.h"
 
 #define PLUG_MENU_INDEX_START		(50000)
 #define INDEX_MENUITEM_UNDO		0
 #define INDEX_MENUITEM_REDO		1
 
-#include	"Plugin.h"
-#include	"../wiredvideo/WiredVideo.h"
-#include        "FloatingFrame.h"
+#include "Plugin.h"
+#include "WiredVideo.h"
+#include "FloatingFrame.h"
 #include "WiredDocument.h"
 
 typedef	struct s_PlugStartInfo		PlugStartInfo;

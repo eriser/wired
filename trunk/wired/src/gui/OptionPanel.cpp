@@ -12,9 +12,9 @@
 #include "AudioPattern.h"
 #include "MidiPattern.h"
 #include "WavePanel.h"
-#include "../editmidi/MidiPart.h"
-#include "../redist/Plugin.h"
-#include "../engine/Settings.h"
+#include "MidiPart.h"
+#include "Plugin.h"
+#include "Settings.h"
 
 OptionPanel			*OptPanel;
 

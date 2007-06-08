@@ -8,9 +8,9 @@
 #include <sndfile.h>
 
 #include "FileConversion.h"
-#include "../undo/cAddTrackAction.h"
-#include "../undo/cImportMidiAction.h"
-#include "../sequencer/Sequencer.h"
+#include "cAddTrackAction.h"
+#include "cImportMidiAction.h"
+#include "Sequencer.h"
 
 FileConversion::FileConversion()// : wxThread()
 {
