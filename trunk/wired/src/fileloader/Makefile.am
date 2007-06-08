@@ -9,8 +9,6 @@ endif
 noinst_LIBRARIES = libfileloader.a
 
 libfileloader_a_SOURCES =		\
-		FileLoader.cpp		\
-		FileLoader.h		\
 		TreeItemData.cpp	\
 		TreeItemData.h		\
 		akai.h			\

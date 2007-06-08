@@ -38,6 +38,8 @@
 			<Add directory="..\..\src\gui" />
 			<Add directory="..\..\src\audio" />
 			<Add directory="..\..\src" />
+			<Add directory="..\..\win32" />
+			<Add directory="..\..\src\engine" />
 		</Compiler>
 		<Linker>
 			<Add library="wx_msw-2.8" />
