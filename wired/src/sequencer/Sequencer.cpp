@@ -10,19 +10,19 @@
 #include "AudioEngine.h"
 #include "akai.h"
 #include "Track.h"
-#include "../gui/SequencerGui.h"
-#include "../gui/SeqTrack.h"
+#include "SequencerGui.h"
+#include "SeqTrack.h"
 #include "SeqTrackPattern.h"
-#include "../gui/Pattern.h"
-#include "../gui/AudioPattern.h"
-#include "../gui/MidiPattern.h"
-#include "../mixer/Channel.h"
-#include "../midi/midi.h"
-#include "../audio/WaveFile.h"
-#include "../redist/Plugin.h"
-#include "../audio/WriteWaveFile.h"
-#include "../samplerate/WiredSampleRate.h"
-#include "../gui/Threads.h"
+#include "Pattern.h"
+#include "AudioPattern.h"
+#include "MidiPattern.h"
+#include "Channel.h"
+#include "midi.h"
+#include "WaveFile.h"
+#include "Plugin.h"
+#include "WriteWaveFile.h"
+#include "WiredSampleRate.h"
+#include "Threads.h"
 
 using namespace	std;
 
@@ -512,7 +512,7 @@ void					Sequencer::PrepareTrackForRecording(Track *T)
 /*<<<<<<< .working
       if (T->Wave)
 	delete T->Wave;
-      T->Wave = new AudioPattern(CurrentPos, CurrentPos + 0.1, T->GetIndex()); 
+      T->Wave = new AudioPattern(CurrentPos, CurrentPos + 0.1, T->GetIndex());
       if (!T->Wave->PrepareRecord(type))
 =======
 */

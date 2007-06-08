@@ -9,9 +9,9 @@
 #include "Colour.h"
 #include "MixerGui.h"
 #include "ChannelGui.h"
-#include "../mixer/Channel.h"
-#include "../mixer/Mixer.h"
-#include "../engine/Settings.h"
+#include "Channel.h"
+#include "Mixer.h"
+#include "Settings.h"
 
 
 MixerGui				*MixerPanel = NULL;

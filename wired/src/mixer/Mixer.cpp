@@ -7,8 +7,8 @@
 #include "Mixer.h"
 #include "MixerGui.h"
 #include "MixerError.h"
-#include "../mixer/Channel.h"
-#include "../engine/AudioEngine.h"
+#include "Channel.h"
+#include "AudioEngine.h"
 
 using namespace			std;
 

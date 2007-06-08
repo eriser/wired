@@ -5,13 +5,13 @@
 #define _WIREDEXTERNALPLUGINLADSPA_H_
 
 #include "ladspa.h"
-#include "../engine/AudioEngine.h"
+#include "AudioEngine.h"
 #include "Plugin.h"
 //#include <stdlib.h>
 #ifndef WIN32
 #include <dlfcn.h>
 #endif
-#include <math.h>
+#include <cmath>
 
 #include <list>
 #include <iostream>
@@ -38,7 +38,7 @@ typedef struct			s_ladspa_port
 {
 	LADSPA_PortDescriptor	Descriptor;
 	LADSPA_PortRangeHint	RangeHint;
-	unsigned long		Id;	
+	unsigned long		Id;
 	wxString			Name;
 }				t_ladspa_port;
 
@@ -64,9 +64,9 @@ public:
   bool				ChangeActivateState(bool Activate = true);
   void				Bypass();
   unsigned long			GetUniqueId();
-  
+
   //<Wired Plugin Implementation>
-  void	 			Process(float **input, float **output, 
+  void	 			Process(float **input, float **output,
 					long sample_length);
   void				Init();
   void				Play();
@@ -88,30 +88,30 @@ public:
   wxString			DefaultName();
   wxBitmap* 			GetBitmap(){return NULL;}
   //</Wired Plugin Implementation>
-  
+
  private:
   void				UnLoad();
   void				LoadPorts();
   void				UnLoadPorts();
   void				DumpPorts();
   bool				IsLoaded();
-  void				ConnectMonoInput(float *input, 
+  void				ConnectMonoInput(float *input,
 						 unsigned long PortId);
-  void				ConnectMonoOutput(float *output, 
+  void				ConnectMonoOutput(float *output,
 						  unsigned long PortId);
-  void				ProcessStereo(float **input, float **output, 
+  void				ProcessStereo(float **input, float **output,
 					      long sample_length);
-  void				ProcessMono(float **input, float **output, 
+  void				ProcessMono(float **input, float **output,
 					    long sample_length);
-  unsigned long			GetPortId(list<t_ladspa_port>& PortList, 
+  unsigned long			GetPortId(list<t_ladspa_port>& PortList,
 					  int index);
-  void				SetDataPortDefaultValue(t_ladspa_port 
+  void				SetDataPortDefaultValue(t_ladspa_port
 							*PortData);
-  LADSPA_Data			GetDefaultValue(t_gui_port *GuiPort, 
+  LADSPA_Data			GetDefaultValue(t_gui_port *GuiPort,
 						LADSPA_PortRangeHintDescriptor Descriptor);
   void				AddGuiControl(t_ladspa_port *PortData);
   void				UnloadGUIPorts();
-  
+
   int								_Type;
   LADSPA_Handle					_Handle;
   LADSPA_Descriptor				*_Descriptor;
@@ -131,17 +131,17 @@ public:
 //	{
 //		bool operator()(T const * x, T const * y) const
 //        {
-//        	return std::less<T>()(*x, *y); 
+//        	return std::less<T>()(*x, *y);
 //		}
 //	};
 
 //struct SortPluginsByName
-//{ 
-//	bool operator ()(const WiredLADSPAInstance *p1, const WiredLADSPAInstance *p2) const 
-//	{ 
+//{
+//	bool operator ()(const WiredLADSPAInstance *p1, const WiredLADSPAInstance *p2) const
+//	{
 //		return (p1->Name.compare(p2->Name)) <= 0;
-//	} 
-//}; 
+//	}
+//};
 
 
 #endif //_WIREDEXTERNALPLUGINLADSPA_H_

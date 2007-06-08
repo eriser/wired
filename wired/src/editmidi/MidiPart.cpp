@@ -8,9 +8,9 @@
 #include "MidiAttr.h"
 #include "Note.h"
 #include "EditNote.h"
-#include "../gui/MidiPattern.h"
-#include "../midi/MidiFile.h"
-#include "../gui/SequencerGui.h"
+#include "MidiPattern.h"
+#include "MidiFile.h"
+#include "SequencerGui.h"
 
 MidiPart::MidiPart(wxWindow *parent, wxWindowID id, const wxPoint& pos,
 		   const wxSize& size, long style, EditMidi *editmidi) :
@@ -45,7 +45,7 @@ void					MidiPart::SetZoomX(double pZoomX)
   ZoomX = pZoomX;
   em->rm->SetZoomX(pZoomX);
   em->ma->SetZoomX(pZoomX);
-  em->ResizeMidiPart((int)ceil(ZoomX * NbMesures * 4 * ROW_WIDTH), 
+  em->ResizeMidiPart((int)ceil(ZoomX * NbMesures * 4 * ROW_WIDTH),
                      GetSize().GetHeight());
   if (selected != NULL)
     {
@@ -61,7 +61,7 @@ void					MidiPart::SetZoomY(double pZoomY)
 void					MidiPart::SetNPM(int pNPM)
 {
   NPM = pNPM;
-  em->ResizeMidiPart((int)ceil(ZoomX * NbMesures * 4 * ROW_WIDTH), 
+  em->ResizeMidiPart((int)ceil(ZoomX * NbMesures * 4 * ROW_WIDTH),
                      GetSize().GetHeight());
 }
 
@@ -74,7 +74,7 @@ void					MidiPart::ChangeMesureCount(int NbMes)
 {
   cout << "[MIDIPART] Changed Mesure Count to " << NbMes << endl;
   NbMesures = NbMes;
-  em->ResizeMidiPart((int)ceil(ZoomX * NbMesures * 4 * ROW_WIDTH), 
+  em->ResizeMidiPart((int)ceil(ZoomX * NbMesures * 4 * ROW_WIDTH),
                      GetSize().GetHeight());
 }
 
@@ -96,10 +96,10 @@ void					MidiPart::OnPaint(wxPaintEvent &e)
 {
   static wxPen				greyPen(wxColor(0x80, 0x80, 0x80), 1);
   static wxPen				whitePen(wxColor(0x00, 0x00, 0x00), 3);
-  static wxPen				purplePen(wxColor(0xD6, 0xD6, 0xD6)); 
-  static wxPen				LightPurplePen(wxColor(0xE6, 0xE6, 0xE6)); 
-  static wxBrush			purpleBrush(wxColor(0xD6, 0xD6, 0xD6)); 
-  static wxBrush			LightPurpleBrush(wxColor(0xE6, 0xE6, 0xE6)); 
+  static wxPen				purplePen(wxColor(0xD6, 0xD6, 0xD6));
+  static wxPen				LightPurplePen(wxColor(0xE6, 0xE6, 0xE6));
+  static wxBrush			purpleBrush(wxColor(0xD6, 0xD6, 0xD6));
+  static wxBrush			LightPurpleBrush(wxColor(0xE6, 0xE6, 0xE6));
   static wxColor			noteColors[12] =
     {
       wxColor(0x00, 0x00, 0xEF),
@@ -180,11 +180,11 @@ void					MidiPart::OnPaint(wxPaintEvent &e)
 	      dc.DrawRectangle(rect->x, rect->y, rect->width, rect->height);
 	      delete rect;
 	    }
-	  
+
 	}
       int incx = (int)ceil(ZoomX * ROW_WIDTH);
       if (fc == 0)
-	fc++; 
+	fc++;
       int mesx = (int)ceil(fc * ZoomX * ROW_WIDTH);
       for (int i = mesx, j = (fc % 4); i < upd.GetX() + upd.GetW() + 10; i += incx, j++)
 	{
@@ -192,7 +192,7 @@ void					MidiPart::OnPaint(wxPaintEvent &e)
 	    dc.SetPen(greyPen);
 	  else
 	    dc.SetPen(whitePen);
-	  dc.DrawLine(i, (int)floor(ZoomY * fr * ROW_HEIGHT), 
+	  dc.DrawLine(i, (int)floor(ZoomY * fr * ROW_HEIGHT),
 		      i, (int)ceil(ZoomY * (fr + nr) * ROW_HEIGHT));
 	}
       upd++;
@@ -201,14 +201,14 @@ void					MidiPart::OnPaint(wxPaintEvent &e)
 
 wxRect					*CalcIntersection(wxRect &a, wxRect &b)
 {
-  int					x = (a.x < b.x) ? b.x : a.x;  
-  int					y = (a.y < b.y) ? b.y : a.y;  
-  int					width = ((a.x + a.width) < (b.x + b.width)) ? 
-    (a.x + a.width - x) : (b.x + b.width - x);  
-  int					height = ((a.y + a.height) < (b.y + b.height)) ? 
-    (a.y + a.height - y) : (b.y + b.height - y);  
-  return (((width < 0) || (height < 0)) ? 
-	  NULL : new wxRect(x, y, width, height));  
+  int					x = (a.x < b.x) ? b.x : a.x;
+  int					y = (a.y < b.y) ? b.y : a.y;
+  int					width = ((a.x + a.width) < (b.x + b.width)) ?
+    (a.x + a.width - x) : (b.x + b.width - x);
+  int					height = ((a.y + a.height) < (b.y + b.height)) ?
+    (a.y + a.height - y) : (b.y + b.height - y);
+  return (((width < 0) || (height < 0)) ?
+	  NULL : new wxRect(x, y, width, height));
 }
 
 void					MidiPart::OnMouseMove(wxMouseEvent &e)
@@ -246,7 +246,7 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 	       (int)floor((127 - (*i)->GetNote()) * ROW_HEIGHT * ZoomY),
 	       (int)ceil((*i)->GetDuration() * 4 * ROW_WIDTH * ZoomX),
 	       (int)ceil(ROW_HEIGHT * ZoomY));
-      if ((e.GetX() >= b.x) && (e.GetX() <= (b.x + b.width)) && 
+      if ((e.GetX() >= b.x) && (e.GetX() <= (b.x + b.width)) &&
 	  (e.GetY() >= b.y) && (e.GetY() <= (b.y + b.height)))
 	{
 	  switch (tool)
@@ -257,10 +257,10 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 		  delete selected;
 		  Refresh(true);
 		}
-	      selected = new EditNote(this, -1, wxPoint(b.x, b.y), 
+	      selected = new EditNote(this, -1, wxPoint(b.x, b.y),
 				      wxSize(b.width, b.height), *i);
 	      selected->SetZoomX(ZoomX);
-	      
+
 	      return ;
 	      break;
 	    case ID_TOOL_EDIT_MIDIPART:
@@ -269,7 +269,7 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 		  selected2 = (*i);
 		}
 	      if (selected2 == *i)
-		{	
+		{
 		  if (e.GetX() - b.x > 0)
 		    {
 		      selected2->SetDuration((e.GetX() - b.x) / (ROW_WIDTH * 4 * ZoomX));
@@ -279,7 +279,7 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 
 		      SeqPanel->UpdateMidiPattern(em->midi_pattern);
 		    }
-		}	
+		}
 	      return ;
 	      break;
 	    case ID_TOOL_DEL_MIDIPART:
@@ -332,7 +332,7 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 
 void					MidiPart::SetTool(int numtool)
 {
-  tool = numtool;	
+  tool = numtool;
   if (selected != NULL)
     delete selected;
   selected = NULL;
@@ -348,7 +348,7 @@ void					MidiPart::SetTool(int numtool)
       SetCursor(wxCURSOR_BULLSEYE);
       break;
     }
-}	
+}
 
 BEGIN_EVENT_TABLE(MidiPart, wxControl)
   EVT_PAINT(MidiPart::OnPaint)
@@ -356,4 +356,4 @@ BEGIN_EVENT_TABLE(MidiPart, wxControl)
   EVT_LEFT_UP(MidiPart::OnReleaseClick)
   EVT_MOTION(MidiPart::OnMouseMove)
 END_EVENT_TABLE()
-  
+

@@ -13,9 +13,9 @@
 #include "FaderCtrl.h"
 #include "StaticLabel.h"
 #include "VUMCtrl.h"
-#include "../engine/Settings.h"
-#include "../mixer/Channel.h"
-#include "../mixer/Mixer.h"
+#include "Settings.h"
+#include "Channel.h"
+#include "Mixer.h"
 
 ChannelGui::ChannelGui(Channel* channel, wxImage* img_bg, wxImage* img_fg,
 		       wxWindow* parent, wxWindowID id,

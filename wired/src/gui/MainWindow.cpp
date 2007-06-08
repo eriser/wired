@@ -9,7 +9,6 @@
 #include <algorithm>
 #include "SequencerGui.h"
 #include "HostCallback.h"
-#include "FileLoader.h"
 #include "WaveFile.h"
 #include "SettingWindow.h"
 #include "AudioPattern.h"
@@ -29,15 +28,15 @@
 #include "StaticLabel.h"
 #include "VUMCtrl.h"
 #include "FloatingFrame.h"
-#include "../engine/AudioEngine.h"
-#include "../engine/Settings.h"
-#include "../engine/EngineError.h"
-#include "../sequencer/Sequencer.h"
-#include "../sequencer/Track.h"
-#include "../mixer/Mixer.h"
-#include "../midi/MidiThread.h"
-#include "../plugins/PluginLoader.h"
-#include "../dssi/WiredExternalPluginMgr.h"
+#include "AudioEngine.h"
+#include "Settings.h"
+#include "EngineError.h"
+#include "Sequencer.h"
+#include "Track.h"
+#include "Mixer.h"
+#include "MidiThread.h"
+#include "PluginLoader.h"
+#include "WiredExternalPluginMgr.h"
 #include "FileConversion.h"
 #include <config.h>
 #include "Threads.h"
@@ -722,46 +721,42 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 
 }
 
-void					MainWindow::OnImportWave(wxCommandEvent &event)
+void MainWindow::OnImportWave(wxCommandEvent &event)
 {
-  FileLoader	dlg(this, MainWin_FileLoader, _("Loading sound file"),
-		    false, false, FileConverter->GetCodecsExtensions(), true);
-  int		res;
-
-  if (dlg.ShowModal() == wxID_OK)
+    int res;
+    wxFileDialog dlg(this, _("Loading sound file"), "", "", "", wxMULTIPLE);
+    if (dlg.ShowModal() == wxID_OK)
     {
-      wxString 	selfile = dlg.GetSelectedFile();
+        wxArrayString files;
+        dlg.GetFilenames(files);
 
-      MidiMutex.Lock();
-      MidiDeviceMutex.Lock();
-      SeqMutex.Unlock();
+        MidiMutex.Lock();
+        MidiDeviceMutex.Lock();
+        SeqMutex.Unlock();
 
-      // convert and import file
-      FileConverter->ImportFile(selfile);
+        for (wxArrayString::iterator i = files.begin(); i != files.end(); i++)
+            FileConverter->ImportFile((*i));
 
-      MidiMutex.Unlock();
-      MidiDeviceMutex.Unlock();
+        MidiMutex.Unlock();
+        MidiDeviceMutex.Unlock();
     }
 }
 
-void					MainWindow::OnImportMIDI(wxCommandEvent &event)
+void MainWindow::OnImportMIDI(wxCommandEvent &event)
 {
-  vector<wxString>			exts;
-
-  exts.insert(exts.begin(), _("mid\tMidi file (*.mid)"));
-  FileLoader				dlg(this, MainWin_FileLoader, _("Import MIDI file"), false, false, &exts);
-  if (dlg.ShowModal() == wxID_OK)
+    wxFileDialog dlg(this, _("Import MIDI file"), "", "", _("Midi file (*.mid)|*.mid"));
+    if (dlg.ShowModal() == wxID_OK)
     {
-      wxString selfile = dlg.GetSelectedFile();
+        wxString selfile = dlg.GetFilename();
 
-      cout << "[MAINWIN] Users imports MIDI file : " << selfile.mb_str() << endl;
-      wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
+        cout << "[MAINWIN] Users imports MIDI file : " << selfile.mb_str() << endl;
+        wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
 				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 				| wxPD_REMAINING_TIME);
-      Progress.Update(1);
-      cImportMidiAction* action = new cImportMidiAction(selfile, eMidiTrack);
-      action->Do();
-      Progress.Update(99);
+        Progress.Update(1);
+        cImportMidiAction* action = new cImportMidiAction(selfile, eMidiTrack);
+        action->Do();
+        Progress.Update(99);
       //delete Progress;
       /*
 	MidiFile *m;
@@ -790,19 +785,17 @@ void					MainWindow::OnImportMIDI(wxCommandEvent &event)
 void					MainWindow::OnImportAKAI(wxCommandEvent &event)
 {
   //TransportPanel->OnStop(event);
-  FileLoader				dlg(this, MainWin_FileLoader, _("Import AKAI samples"), true, false, NULL);
-
-  if (dlg.ShowModal() == wxID_OK)
+    wxFileDialog dlg(this, _("Import AKAI samples"));
+    if (dlg.ShowModal() == wxID_OK)
     {
-      wxString selfile = dlg.GetSelectedFile();
-
-      wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
+        wxString selfile = dlg.GetFilename();
+        wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
 				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
 				| wxPD_REMAINING_TIME);
-      Progress.Update(1);
-      cImportAkaiAction* action = new cImportAkaiAction(selfile, eAudioTrack);
-      action->Do();
-      Progress.Update(99);
+        Progress.Update(1);
+        cImportAkaiAction* action = new cImportAkaiAction(selfile, eAudioTrack);
+        action->Do();
+        Progress.Update(99);
       //delete Progress;
 // 	cout << "[MAINWIN] Users imports AKAI sample : " << selfile << endl;
 // 	wstring dev = selfile.substr(0, selfile.find(":", 0));
@@ -841,70 +834,60 @@ void					MainWindow::OnImportAKAI(wxCommandEvent &event)
     }
 }
 
-void					MainWindow::OnExportWave(wxCommandEvent &event)
+void MainWindow::OnExportWave(wxCommandEvent &event)
 {
   //  TransportPanel->OnStop(event);
-  double total = Seq->EndLoopPos - Seq->BeginLoopPos;
+    double total = Seq->EndLoopPos - Seq->BeginLoopPos;
 
-  if (total <= 0)
+    if (total <= 0)
     {
-      wxMessageDialog msg(this, _("Please correctly place the Left and Right markers"), wxT("Wired"),
+        wxMessageDialog msg(this, _("Please correctly place the Left and Right markers"), wxT("Wired"),
 			  wxOK | wxICON_EXCLAMATION | wxCENTRE);
-      msg.ShowModal();
-      return;
+        msg.ShowModal();
+        return;
     }
-  FileLoader				dlg(this, MainWin_FileLoader, _("Exporting sound file"), false, true, NULL);
-
-  if (dlg.ShowModal() == wxID_OK)
+    wxFileDialog dlg(this, _("Exporting sound file"), "", "", "", wxSAVE);
+    if (dlg.ShowModal() == wxID_OK)
     {
-      wxString          selfile = dlg.GetSelectedFile();
-      wxFileName	f(selfile);
-
-      if (f.GetExt().IsEmpty())
-	{
-	  f.SetExt(wxT("wav"));
-	  selfile = f.GetFullPath();
-	}
-      cout << "[MAINWIN] User exports " << selfile.mb_str() << endl;
-      if (Seq->ExportToWave(selfile) == false)
-	{
-	  cout << "[MAINWIN] Export canceled by user " << endl;
-	  return;
-	}
-
-      wxProgressDialog Progress(_("Exporting mix"), _("Please wait..."),
+        wxString selfile = dlg.GetFilename();
+        wxFileName f(selfile);
+        if (f.GetExt().IsEmpty())
+        {
+            f.SetExt(wxT("wav"));
+            selfile = f.GetFullPath();
+        }
+        cout << "[MAINWIN] User exports " << selfile.mb_str() << endl;
+        if (Seq->ExportToWave(selfile) == false)
+        {
+            cout << "[MAINWIN] Export canceled by user " << endl;
+            return;
+        }
+        wxProgressDialog Progress(_("Exporting mix"), _("Please wait..."),
 				(int)Seq->EndLoopPos * 1000, this,
 				wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_AUTO_HIDE |
 				wxPD_APP_MODAL | wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME);
-      bool done = false;
-
-      while (!done)
-	{
-	  if (Progress.Update((int) Seq->CurrentPos * 1000) == false)
-	    break;
-	  wxMilliSleep(50);
-	  if (Seq->CurrentPos >= Seq->EndLoopPos)
-	    done = true;
-	}
+        bool done = false;
+        while (!done)
+        {
+            if (Progress.Update((int) Seq->CurrentPos * 1000) == false)
+                break;
+            wxMilliSleep(50);
+            if (Seq->CurrentPos >= Seq->EndLoopPos)
+                done = true;
+        }
     }
 }
 
-void					MainWindow::OnExportMIDI(wxCommandEvent &event)
+void MainWindow::OnExportMIDI(wxCommandEvent &event)
 {
-  vector<wxString>			exts;
-
-  exts.insert(exts.begin(), _("mid\tMidi file (*.mid)"));
-  FileLoader				dlg(this, MainWin_FileLoader,
-					    _("Export MIDI file"), false, true, &exts);
-
-  if (dlg.ShowModal() == wxID_OK)
+    wxFileDialog dlg(this, _("Export MIDI file"), "", "", _("Midi file (*.mid)|*.mid"), wxSAVE);
+     if (dlg.ShowModal() == wxID_OK)
     {
-      wxString selfile = dlg.GetSelectedFile();
-      cout << "[MAINWIN] Users exports MIDI file : " << selfile.mb_str() << endl;
+        wxString selfile = dlg.GetFilename();
+        cout << "[MAINWIN] Users exports MIDI file : " << selfile.mb_str() << endl;
     }
-  else
-    cout << "[MAINWIN] User cancels open dialog" << endl;
-  //dlg->Destroy();
+    else
+        cout << "[MAINWIN] User cancels open dialog" << endl;
 }
 
 void					MainWindow::LoadPlugins()
@@ -1770,7 +1753,7 @@ void					MainWindow::AddUpdatePlugin(Plugin *p)
       return;
   UpdatePlugins.push_back(p);
 }
-
+/*
 void					MainWindow::OnFileLoaderStart(wxCommandEvent &event)
 {
   FileLoader				*f = (FileLoader *)event.GetEventObject();
@@ -1788,7 +1771,7 @@ void					MainWindow::OnFileLoaderStop(wxCommandEvent &event)
 {
   Seq->StopFile();
 }
-
+*/
 void					MainWindow::OnIntegratedHelp(wxCommandEvent &event)
 {
   OptPanel->ShowHelp();
@@ -1831,7 +1814,7 @@ void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
 */
       wxGetDiskSpace(saveCenter->getAudioDir(), &Total, &Free);
 
-      LeftSpace += FileLoader::FormatSize((off_t) Free.GetValue()) + wxT("/") + FileLoader::FormatSize((off_t)Total.GetValue());
+//      LeftSpace += FileLoader::FormatSize((off_t) Free.GetValue()) + wxT("/") + FileLoader::FormatSize((off_t)Total.GetValue());
       SetStatusText(LeftSpace, 0);
       //SetStatusText(LeftMemory, 1);
     }
@@ -2073,30 +2056,18 @@ void		MainWindow::Load(SaveElementArray data)
      }
 }
 
-void		MainWindow::OnLoadML(wxCommandEvent &WXUNUSED(event))
+void MainWindow::OnLoadML(wxCommandEvent &WXUNUSED(event))
 {
-  vector<wxString> exts;
-  exts.push_back(_("xml\tMedia Library file (*.xml)"));
-
-  FileLoader	dlg(this, MainWin_FileLoader, _("Load Media Library"), false, false, &exts);
-  if (dlg.ShowModal() == wxID_OK)
-    {
-      wxString filename = dlg.GetSelectedFile();
-      MediaLibraryPanel->MLTreeView->LoadPatch(filename);
-    }
+    wxFileDialog dlg(this, _("Load Media Library"), "", "", _("Media Library file (*.xml)|*.xml"));
+    if (dlg.ShowModal() == wxID_OK)
+        MediaLibraryPanel->MLTreeView->LoadPatch(dlg.GetFilename());
 }
 
-void		MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
+void MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
 {
-  vector<wxString> exts;
-  exts.push_back(_("xml\tMedia Library file (*.xml)"));
-
-  FileLoader	dlg(this, MainWin_FileLoader, _("Save Media Library"), false, true, &exts);
-  if (dlg.ShowModal() == wxID_OK)
-    {
-      wxString filename = dlg.GetSelectedFile();
-      MediaLibraryPanel->MLTreeView->OnSave(filename);
-    }
+    wxFileDialog dlg(this, _("Save Media Library"), "", "", _("Media Library file (*.xml)|*.xml"), wxSAVE);
+    if (dlg.ShowModal() == wxID_OK)
+        MediaLibraryPanel->MLTreeView->OnSave(dlg.GetFilename());
 }
 
 void		MainWindow::OpenWizard()
@@ -2171,10 +2142,11 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_CLOSE(MainWindow::OnClose)
   EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
   EVT_TIMER(MainWin_KillTimer, MainWindow::OnKillTimer)
-
+/*
   // button
   EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
   EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
+*/
   //  EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)
   //  EVT_MENU(MainWin_CloseVideo, MainWindow::OnCloseVideo)
   //  EVT_MENU(MainWin_SeekVideo, MainWindow::OnSeekVideo)

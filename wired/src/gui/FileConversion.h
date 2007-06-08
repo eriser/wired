@@ -10,8 +10,8 @@
 #include <vector>
 #include <deque>
 
-#include "../samplerate/WiredSampleRate.h"
-#include "../codec/WiredCodec.h"
+#include "WiredSampleRate.h"
+#include "WiredCodec.h"
 
 #define		PROGRESS_DIALOG_UNIT	100
 

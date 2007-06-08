@@ -2,8 +2,8 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include "WaveFile.h"
-#include <math.h>
-#include "../error.hh"
+#include <cmath>
+#include "error.hh"
 
 #include <iostream>
 
@@ -118,8 +118,8 @@ void           WaveFile::InitBuffers()
   if (LoadedInMem)
     {
       float		*tmp;
-      unsigned long	channelsCompt;
-      unsigned long	framesCompt;
+      int	channelsCompt;
+      long	framesCompt;
       unsigned long	tmpCompt;
       long		readedFrames;
 
@@ -451,4 +451,22 @@ void		WaveFile::SetChannelToRead(long channel)
 long		WaveFile::GetChannelToRead()
 {
   return Channel_to_read;
+}
+
+WaveFile *WaveFile::Clone()
+{
+	cout << "ERROR ERROR Wired will fail miserably" << endl;
+	if (LoadedInMem)
+	{
+        WaveFile *aNewWaveFile = new WaveFile(*this);
+		aNewWaveFile->Data = new float *[sfinfo.channels];
+		for (int channelsCompt = 0; channelsCompt < sfinfo.channels; channelsCompt++)
+		{
+			aNewWaveFile->Data[channelsCompt] = new float[NumberOfFrames];
+			for (int framesCompt = 0; framesCompt < NumberOfFrames; framesCompt++)
+				aNewWaveFile->Data[channelsCompt][framesCompt] = Data[channelsCompt][framesCompt];
+		}
+		return (aNewWaveFile);
+	}
+    return (NULL);
 }

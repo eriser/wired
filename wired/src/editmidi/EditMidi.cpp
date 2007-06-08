@@ -6,97 +6,97 @@
 #include "MidiAttr.h"
 #include "RulerMidi.h"
 #include "MidiPart.h"
-#include "../gui/OptionPanel.h"
-#include "../engine/Settings.h"
+#include "OptionPanel.h"
+#include "Settings.h"
 
-EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) 
+EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
   :  wxPanel(parent, id, pos, size, style)
 {
   toolbar = NULL;
   // barre pour couper en deux la fenetre
   splitter = new wxSplitterWindow(this, ID_SPLITTER_EDITMIDI, wxPoint(0, 0), wxSize(size.GetWidth(), size.GetHeight() - SBS), wxSP_3DBORDER | wxSP_3DSASH | wxSP_3D);
-  
+
   detached = 0;
   // fenetre du haut
   top = new wxWindow(splitter, -1, wxPoint(0, 0), wxSize(size.GetWidth(), size.GetHeight() - SBS - 128), wxTHICK_FRAME);
   // fenetre du bas
   bottom = new wxWindow(splitter, -1, wxPoint(0, 0), wxSize(size.GetWidth(), 128), wxTHICK_FRAME);
-  
+
   // coupe la fenetre en 2 dans le sens horizontal
   splitter->SplitHorizontally(top, bottom, size.GetHeight() - SBS);
   //splitter->SetMinimumPaneSize(MIDI_RULER_HEIGHT * 3);
-  
+
   // fenetre en bas à gauche (sous le clavier)
   swbg = new wxScrolledWindow(bottom, -1, wxPoint(0, 0), wxSize(CLAVIER_WIDTH, 128), wxSIMPLE_BORDER);
   swbg->SetScrollRate(SBPASH, SBPASV);
-  
+
   // fenetre en bas à droite (midiattr)
-  swbd = new wxScrolledWindow(bottom, -1, wxPoint(CLAVIER_WIDTH, 0), 
-			      wxSize(size.GetWidth() - SBS - CLAVIER_WIDTH, 128), wxTHICK_FRAME); 
+  swbd = new wxScrolledWindow(bottom, -1, wxPoint(CLAVIER_WIDTH, 0),
+			      wxSize(size.GetWidth() - SBS - CLAVIER_WIDTH, 128), wxTHICK_FRAME);
   swbd->SetScrollRate(SBPASH, SBPASV);
-  
+
   // MidiAttr
   ma = new MidiAttr(swbd, ID_MIDIATTR_EDITMIDI, wxPoint(0, 0), wxSize(MIDIPART_WIDTH, 128), wxSIMPLE_BORDER);
-  
+
   // scrollbar horizontale (en bas)
-  sbh = new wxScrollBar(this, ID_SCROLLH_EDITMIDI, wxPoint(CLAVIER_WIDTH, 
-							  size.GetHeight() - SBS), 
-			wxSize(size.GetWidth() - SBS - CLAVIER_WIDTH, SBS), 
+  sbh = new wxScrollBar(this, ID_SCROLLH_EDITMIDI, wxPoint(CLAVIER_WIDTH,
+							  size.GetHeight() - SBS),
+			wxSize(size.GetWidth() - SBS - CLAVIER_WIDTH, SBS),
 			wxSB_HORIZONTAL);
   sbh->SetScrollbar(0, 1, 100, 1);
-  
+
   // scrollbar verticale (a droite)
-  sbv = new wxScrollBar(top, ID_SCROLLV_EDITMIDI, wxPoint(size.GetWidth() - SBS, 
-							 MIDI_RULER_HEIGHT), wxSize(SBS, size.GetHeight() 
+  sbv = new wxScrollBar(top, ID_SCROLLV_EDITMIDI, wxPoint(size.GetWidth() - SBS,
+							 MIDI_RULER_HEIGHT), wxSize(SBS, size.GetHeight()
 										    - SBS - MIDI_RULER_HEIGHT - 128), wxSB_VERTICAL);
   sbv->SetScrollbar(0, 1, 100, 1);
-  
+
   // fenetre en haut à gauche (clavier)
   swg = new wxScrolledWindow(top, -1, wxPoint(0, MIDI_RULER_HEIGHT),
-			     wxSize(CLAVIER_WIDTH, 
-				    size.GetHeight() - SBS - MIDI_RULER_HEIGHT), 
-			     wxTHICK_FRAME); 
+			     wxSize(CLAVIER_WIDTH,
+				    size.GetHeight() - SBS - MIDI_RULER_HEIGHT),
+			     wxTHICK_FRAME);
   swg->SetScrollRate(SBPASH, SBPASV);
-  
+
   // clavier
-  clavier = new Clavier(swg, ID_CLAVIER_EDITMIDI, wxPoint(0, 0), 
-			wxSize(CLAVIER_WIDTH, CLAVIER_HEIGHT), 
+  clavier = new Clavier(swg, ID_CLAVIER_EDITMIDI, wxPoint(0, 0),
+			wxSize(CLAVIER_WIDTH, CLAVIER_HEIGHT),
 			wxSIMPLE_BORDER, this);
-  
+
   // fenetre en haut à droite (midipart)
-  swd = new wxScrolledWindow(top, -1, wxPoint(CLAVIER_WIDTH, MIDI_RULER_HEIGHT), 
-			     wxSize(size.GetWidth() - CLAVIER_WIDTH - SBS, 
-				    size.GetHeight() - SBS - MIDI_RULER_HEIGHT), wxTHICK_FRAME); 
+  swd = new wxScrolledWindow(top, -1, wxPoint(CLAVIER_WIDTH, MIDI_RULER_HEIGHT),
+			     wxSize(size.GetWidth() - CLAVIER_WIDTH - SBS,
+				    size.GetHeight() - SBS - MIDI_RULER_HEIGHT), wxTHICK_FRAME);
   swd->SetScrollRate(SBPASH, SBPASV);
-  
+
   // fenetre tt en haut (ruler midi)
   swr = new wxScrolledWindow(top, -1, wxPoint(CLAVIER_WIDTH, 0),
-			     wxSize(size.GetWidth() - CLAVIER_WIDTH - SBS, 
+			     wxSize(size.GetWidth() - CLAVIER_WIDTH - SBS,
 				    MIDI_RULER_HEIGHT), wxSIMPLE_BORDER);
   swr->SetScrollRate(SBPASH, SBPASV);
-  
+
   // ruler midi
   rm = new RulerMidi(swr, -1, wxPoint(0, 0),
 		     wxSize(MIDIPART_WIDTH, MIDI_RULER_HEIGHT),
 		     this);
-  
+
   // MidiPart
   mp = new MidiPart(swd, ID_MIDIPART_EDITMIDI, wxPoint(0, 0),
 		    wxSize(MIDIPART_WIDTH, CLAVIER_HEIGHT),
-		    wxSIMPLE_BORDER, this); 
+		    wxSIMPLE_BORDER, this);
   mp->SetNPM(8);
-  
+
   /*
    *      // barre de zoom en Y
-   ZoomY = new wxSlider(this, ID_ZOOMY_EDITMIDI, 100, 100, 200, wxPoint(0, 0), 
-   wxSize(CLAVIER_WIDTH, MIDI_RULER_HEIGHT), 
+   ZoomY = new wxSlider(this, ID_ZOOMY_EDITMIDI, 100, 100, 200, wxPoint(0, 0),
+   wxSize(CLAVIER_WIDTH, MIDI_RULER_HEIGHT),
    wxSL_HORIZONTAL);
   */
-  
+
   // barre de zoom en X
-  ZoomX = new wxSlider(this, ID_ZOOMX_EDITMIDI, 100, 100, 1600, 
-		       wxPoint(0, size.GetHeight() - SBS), 
-		       wxSize(CLAVIER_WIDTH, SBS), 
+  ZoomX = new wxSlider(this, ID_ZOOMX_EDITMIDI, 100, 100, 1600,
+		       wxPoint(0, size.GetHeight() - SBS),
+		       wxSize(CLAVIER_WIDTH, SBS),
 		       wxSL_HORIZONTAL);
 }
 
@@ -109,7 +109,7 @@ void					EditMidi::SetMidiPattern(MidiPattern *mpattern)
 void					EditMidi::Resize(long w, long h)
 {
   long					sashp;
-  
+
   if (detached)
     sashp = h - SBS - bottom->GetSize().GetHeight();
   else

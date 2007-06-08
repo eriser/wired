@@ -7,7 +7,7 @@
 #include	<iostream>
 #include	<dlfcn.h>
 #include	"libmpeg3.h"
-#include	"../WiredApiCodec.h"
+#include	"WiredApiCodec.h"
 
 #define		MPEG3_EXTENTION			"mp3\tMPEG-1 layer III (*.mp3)"
 #define		MPEG2_EXTENTION			"mp2\tMPEG-1 layer II (*.mp2)"
@@ -34,9 +34,9 @@ typedef int			(*t_mpeg3_total_astreams)	(mpeg3_t *file);
 typedef int			(*t_mpeg3_audio_channels)	(mpeg3_t *file, int stream);
 typedef long		(*t_mpeg3_audio_samples)	(mpeg3_t *file, int stream);
 typedef int			(*t_mpeg3_sample_rate)		(mpeg3_t *file, int stream);
-typedef int			(*t_mpeg3_read_audio)		(mpeg3_t *file, float *output_f, short *output_i, 
+typedef int			(*t_mpeg3_read_audio)		(mpeg3_t *file, float *output_f, short *output_i,
   												int channel, long samples, int stream);
-typedef int			(*t_mpeg3_reread_audio)		(mpeg3_t *file, float *output_f, short *output_i, 
+typedef int			(*t_mpeg3_reread_audio)		(mpeg3_t *file, float *output_f, short *output_i,
   												int channel, long samples, int stream);
 typedef int			(*t_mpeg3_seek_byte)		(mpeg3_t *file, int64_t byte);
 typedef int			(*t_mpeg3_close)			(mpeg3_t *file);
@@ -54,13 +54,13 @@ class   WiredLibMpeg: public WiredApiCodec
 
   void				init(list<t_LibInfo> &Info);				/* Inits codec */
   int				encode(float** pcm);						/* Encode methodes */
-  int				decode(const char *path, t_Pcm *pcm, 
+  int				decode(const char *path, t_Pcm *pcm,
   							unsigned long length);				/* Decode methodes */
   bool				CanConvert(const wxString& path, int Decode);				/* Checks format */
   int				EndDecode();
 
   WiredLibMpeg		operator=(const WiredLibMpeg& right);
-  
+
  private:
   void						*handle;
   mpeg3_t					*file;
@@ -77,7 +77,7 @@ class   WiredLibMpeg: public WiredApiCodec
   t_mpeg3_tell_byte			mpeg3_tell_byte_func;
   t_mpeg3_set_sample		mpeg3_set_sample_func;
   t_mpeg3_get_sample		mpeg3_get_sample_func;
-  
+
   void				InitAccesLib();
   void				fillLibInfo(t_LibInfo& info, char *extension);
   void				mergeChannels(float* leftChan, float* rightChan, float* dst, int totalLen, unsigned int NbChannels);

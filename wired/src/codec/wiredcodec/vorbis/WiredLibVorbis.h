@@ -4,7 +4,7 @@
 #ifndef __WiredLibVorbis_H__
 #define __WiredLibVorbis_H__
 
-#include	"../WiredApiCodec.h"
+#include	"WiredApiCodec.h"
 
 #include	<iostream>
 #include	<dlfcn.h>
@@ -32,14 +32,14 @@ typedef ogg_int64_t (*WiredOvPcmTotal)(OggVorbis_File *, int);
 class   WiredLibVorbis: public WiredApiCodec
 {
  public:
-  
+
   WiredLibVorbis(){std::cout << "[WIRED_OGG_CODEC] Vorbis ogg child created" << std::endl;Pass = 0; handle = NULL;}
   ~WiredLibVorbis(){if (handle) dlclose(handle);}
   WiredLibVorbis(const WiredLibVorbis& copy){*this = copy;};
-  
+
   /* Inits codec */
   void				init(list<s_LibInfo> &Info);
-  
+
   /* Encode and decode methodes */
   int				encode(float** pcm);
   // int				decode(const char *path, t_Pcm *pcm);
@@ -51,7 +51,7 @@ class   WiredLibVorbis: public WiredApiCodec
 
   /* Operators */
   WiredLibVorbis		operator=(const WiredLibVorbis& right);
-  
+
  private:
   void			*handle;
   OggVorbis_File	vf;
