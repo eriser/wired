@@ -6,6 +6,7 @@
 
 #include <wx/wx.h>
 #include <vector>
+#include "SeqTrack.h"
 #include "FaderCtrl.h"
 #include "WiredDocument.h"
 

@@ -31,7 +31,7 @@ void VUMCtrl::OnPaint(wxPaintEvent &event)
 {
   wxPaintDC	dc(this);
   wxMemoryDC	memDC;
-  int x,y;
+  int x;
 
   dc.GetSize(&w, &h);
   dc.SetPen(*wxTRANSPARENT_PEN);

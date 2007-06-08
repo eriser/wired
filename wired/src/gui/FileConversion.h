@@ -35,10 +35,10 @@ class	FileConversion //: public wxThread
 {
 public:
 	FileConversion();
-	~FileConversion();
+	virtual ~FileConversion();
 	FileConversion(const FileConversion& copy){*this = copy;}
 	FileConversion operator=(const FileConversion& right);
-	
+
 	virtual void		*Entry();
 	bool				Init(t_samplerate_info *RateInit, wxString &WorkingDir, unsigned long BufferSize, wxWindow *Parent);
 	vector<wxString>		*GetCodecsExtensions();
@@ -73,9 +73,9 @@ private:
 	unsigned long		_BufferSize;
 	wxWindow			*_Parent;
 	deque<FileConversionAction *>	_ActionsList;
-	
+
 private:
-	SNDFILE			*OpenDecodeFile(t_Pcm	&Data, const wxString &DestFileName, SF_INFO &Info, 
+	SNDFILE			*OpenDecodeFile(t_Pcm	&Data, const wxString &DestFileName, SF_INFO &Info,
 															unsigned long *TotalReaden, int *sf_write_result);
 };
 
@@ -86,7 +86,7 @@ class	AskQuestion
 public:
 	AskQuestion(wxWindow *Parent){_Parent = Parent;}
 	~AskQuestion(){};
-	
+
 	int					Ask(const wxString &Question, const wxString &Title)
 	{
 		wxMessageDialog	msg(_Parent, Question, Title, wxYES_NO | wxCANCEL  | wxICON_QUESTION | wxCENTRE);

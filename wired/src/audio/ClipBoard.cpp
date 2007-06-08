@@ -143,8 +143,6 @@ void cClipBoard::Paste (WaveFile& wave, int to)
   size_paste = sizec;
   // cout << "[cClipBoard] - Paste : " << GetNumberOfFrames() << " frames to paste" << endl;
 
-  int		size_of_paste = GetNumberOfFrames();
-
   // Buffer which receives datas to copy
   float		*rw_buffer = new float [wave.GetNumberOfChannels() * WAVE_TEMP_SIZE];
 

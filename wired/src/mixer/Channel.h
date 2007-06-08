@@ -160,13 +160,13 @@ class Channel : public WiredDocument
  * Where mono buffers are stored
 */
 
-  vector<float*> MonoBuffers;
+  std::vector<float*> MonoBuffers;
 
 /**
  * Where stereo buffers are stored
 */
 
-  vector<float**> StereoBuffers;
+  std::vector<float**> StereoBuffers;
 
 /**
  * Represent a position in the MonoBuffers vector

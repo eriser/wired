@@ -34,10 +34,10 @@
 			<Add option="-Wall" />
 			<Add option="-DWXUSINGDLL" />
 			<Add option="-D__WXMSW__" />
-			<Add directory="..\..\src\fileloader" />
 			<Add directory="..\..\src\libs\WiredAkai\include" />
 		</Compiler>
 		<Unit filename="..\..\src\libs\WiredAkai\include\akai.h" />
+		<Unit filename="..\..\src\libs\WiredAkai\include\list.h" />
 		<Unit filename="..\..\src\libs\WiredAkai\src\akai.cpp" />
 		<Unit filename="..\..\src\libs\WiredAkai\src\list.cpp" />
 		<Extensions>

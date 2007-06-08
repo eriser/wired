@@ -47,13 +47,13 @@ typedef struct  s_Pcm
 
 class   WiredApiCodec
 {
- public:
-  WiredApiCodec(){};
-  ~WiredApiCodec(){};
+public:
+    WiredApiCodec(){};
+    virtual ~WiredApiCodec(){};
 
   virtual void		init(list<s_LibInfo> &Info) = 0;			/* Inits codec and fills infos */
   virtual int		encode(float** pcm) = 0;					/* Encode function */
-  virtual int		decode(const char *path, t_Pcm *pcm, 
+  virtual int		decode(const char *path, t_Pcm *pcm,
   							unsigned long lenght) = 0;			/* Decode function */
   virtual int		EndDecode() = 0;							/* Closes file */
   virtual bool		CanConvert(const wxString& path, int Decode) = 0;			/* True if codec can decode file */
@@ -61,7 +61,7 @@ class   WiredApiCodec
   					{_UniqueId = Id;}
   unsigned long		GetUniqueId()								/* Returns unique Id */
   					{return _UniqueId;}
-  					
+
  private:
    unsigned long		_UniqueId;								/* Used to identify codec */
 };

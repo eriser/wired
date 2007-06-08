@@ -7,7 +7,6 @@
 #include <wx/wx.h>
 #include <wx/file.h>
 #include <list>
-
 #include "WiredDocument.h"
 
 #define		UNIT_W		(200)
@@ -24,21 +23,20 @@ class		ChannelGui;
 class		Channel;
 #endif
 
-
 typedef struct s_PlugStartInfo			PlugStartInfo;
 typedef	std::list<RackTrack *>			t_ListRackTrack;
 typedef	std::list<Plugin *>::const_iterator	t_ListPluginIterator;
 
-class		RackTrack : public WiredDocument
+class RackTrack : public WiredDocument
 {
  private:
   void				RemoveChannel();
   void				DeleteAllRacks();
 
- public:
-  RackTrack(Rack *parent, int index);
-  ~RackTrack();
-  
+public:
+    RackTrack(Rack *parent, int index);
+    virtual ~RackTrack();
+
   // WiredDocument implementation
   void				Save();
   void				Load(SaveElementArray data);
@@ -54,7 +52,7 @@ class		RackTrack : public WiredDocument
 	//void				SetSelected(Plugin *plugin);
 	//int				NbRacks(){return Racks.size();};
   // Debug - Shows member variables
-  // Pas du tout objet, mais plus simple pour l'instant (ca permet de ne pas changer 
+  // Pas du tout objet, mais plus simple pour l'instant (ca permet de ne pas changer
   // l'API du plugin qui va de tte maniere l'etre pour les DSSI)
   void				Dump();
   void				DumpPlugins();
@@ -71,11 +69,11 @@ class		RackTrack : public WiredDocument
 class		Rack: public wxScrolledWindow, WiredDocument
 {
  public:
-  Rack(wxWindow* parent, wxWindowID id = -1, 
-       const wxPoint& pos = wxDefaultPosition, 
+  Rack(wxWindow* parent, wxWindowID id = -1,
+       const wxPoint& pos = wxDefaultPosition,
        const wxSize& size = wxDefaultSize);
   ~Rack();
-  
+
   // WiredDocument implementation
   void			Save();
   void			Load(SaveElementArray data);
@@ -85,11 +83,11 @@ class		Rack: public wxScrolledWindow, WiredDocument
   void			AddLoadedRack(Plugin *p);
   Plugin*		AddToSelectedTrack(PlugStartInfo &startinfo,
 					   PluginLoader *p);
-  
+
   void			DeleteRack(Plugin *plug, bool eraseit = true);
   void			DeleteSelectedRack();
   void			DeleteAllTracks();
-  
+
   // Find a plugin from its name
   Plugin*		FindPlugin(wxString name);
 
@@ -100,10 +98,10 @@ class		Rack: public wxScrolledWindow, WiredDocument
 
   // Applies scrolling on all racks
   void			SetScrolling();
-  
+
   // Resizes racks positions from index with scrolling
   void			ResizeTracks();
-  
+
   // Seems to select a rack
   void			SetSelected(Plugin *p);
 
@@ -118,7 +116,7 @@ class		Rack: public wxScrolledWindow, WiredDocument
 
   // Removes a rack from its index
   bool			RemoveRackTrack(int index);
- 
+
   // Removes a rack from its ptr
   bool			RemoveRackTrack(const RackTrack* rackTrack);
 
@@ -128,7 +126,7 @@ class		Rack: public wxScrolledWindow, WiredDocument
   // Adds subMenuItems (Instruments or effects in Add menuItem)
   void			AddPlugToMenu();
 
-  //  bool ProcessEvent(wxEvent& event);  
+  //  bool ProcessEvent(wxEvent& event);
 
   // Handles all mouse events
   void			HandleMouseEvent(Plugin *plug, wxMouseEvent *event);
@@ -144,13 +142,13 @@ class		Rack: public wxScrolledWindow, WiredDocument
 
   RackTrack*		selectedTrack;
   Plugin*		selectedPlugin;
-  
- protected:  
-  
+
+ protected:
+
   int			OldX;
   int			OldY;
   int			new_x;
-  int			new_y;		
+  int			new_y;
   int			fd_size;
 
   bool			is_cut;
@@ -162,7 +160,7 @@ class		Rack: public wxScrolledWindow, WiredDocument
   wxMenu*		effects_menu;
   wxString		filePath;
   bool			WasDragging;
-	
+
   // Event : Help handling
   void			OnHelp(wxMouseEvent &event);
   // Event : Click on rack : Sets unselect rack and plugin
@@ -177,22 +175,22 @@ class		Rack: public wxScrolledWindow, WiredDocument
   void			OnPasteClick();
   // Event : Calls AddChangeParamsEffectAction while a plugin's param is changed
   void			OnPluginParamChange(wxMouseEvent &event);
-  bool 			DndGetDest(t_ListRackTrack::iterator &k, 
-				   std::list<Plugin *>::iterator &l, int &new_x, 
+  bool 			DndGetDest(t_ListRackTrack::iterator &k,
+				   std::list<Plugin *>::iterator &l, int &new_x,
 				   int &new_y , Plugin *plug);
-  void			DndInsert(t_ListRackTrack::iterator &k, 
+  void			DndInsert(t_ListRackTrack::iterator &k,
 				  std::list<Plugin *>::iterator &l, Plugin *plug);
   void			UpdateUnitXSize();
-  
+
  private:
 
   // Create a empty track and a channel
   RackTrack*		CreateRackTrack();
-  
+
   // Removes a rack and a channel
   void			RemoveRackAndChannel(t_ListRackTrack::const_iterator
 						     iter);
-  
+
   // Be careful : Freezes if delete rack from contextMenu
   // Initializes contextMenu
   void			InitContextMenu();

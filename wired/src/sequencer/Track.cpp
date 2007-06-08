@@ -279,7 +279,7 @@ void						Track::Save()
 
 void						Track::Load(SaveElementArray data)
 {
-  int						i;
+  unsigned int						i;
 
   for (i = 0; i < data.GetCount(); i++)
     if (data[i]->getKey() == wxT("Index"))

@@ -16,29 +16,28 @@ WX_DEFINE_ARRAY_PTR(WiredDocument *, WiredDocumentArray);
 
 class WiredDocument
 {
- public:
+public:
   /** Constructor.
    * \param docName The name of the document. It should be unique for an object
    * (not for an instance of course...).
-   * \param parent The parent WiredDocument. If left to NULL, it will be defaulted 
+   * \param parent The parent WiredDocument. If left to NULL, it will be defaulted
    * to the SaveCenter.
    * \param noParent For specific use only and should usually not be set to true. Else,
    * the WiredDocument will not be saved with the session. Is used by the SaveCenter
    * and could be used for the settings for example.
    */
-  WiredDocument(wxString docName, WiredDocument *parent = NULL,
-		bool noParent = false);
+  WiredDocument(wxString docName, WiredDocument *parent = NULL, bool noParent = false);
 
-  /** Destructor.
-   * Removes this from the parent children.
-   */
-  ~WiredDocument();
+    /** Destructor.
+    * Removes this from the parent children.
+    */
+    virtual ~WiredDocument();
 
   /** Main save function.
    * This function will be called by the SaveCenter when a save of the document
    * is asked.
    * It will only fill the _dataSave array, which will be caught later by getDocData.
-   * When implementing a new WiredDocument, you just have to worry about filling the 
+   * When implementing a new WiredDocument, you just have to worry about filling the
    * _dataSave structure.
    * \see Load
    */
@@ -46,7 +45,7 @@ class WiredDocument
 
   /** Main Load function.
    * It will be called by the SaveCenter when a load is asked.<br>
-   * You only get with this method the data stored in the project file and 
+   * You only get with this method the data stored in the project file and
    * SaveElements containing references to the other xml files.
    * \param data The data stored in the project file.
    */
@@ -82,12 +81,12 @@ class WiredDocument
   void				Unregister(WiredDocument *child);
 
   void				ChangeParent(WiredDocument *newdad);
-  
+
   /** Returns the data stored in _dataSave.
    * \return The data stored in _dataSave.
    */
   SaveElementsHashMap		getDocData();
-  
+
   /** Returns the data corresponding to a specific entry of the _dataSave hash map.
    * \param the key of the hash map.
    * \return the data stored for this file.
@@ -107,7 +106,7 @@ class WiredDocument
 
   /** The unique id of the WiredDocument. This id is
    * incremented on each new WiredDocument, therefore
-   * permitting during the load to recreate the whole 
+   * permitting during the load to recreate the whole
    * tree in the same order it was created by the user.
    */
   static int		id;
@@ -127,7 +126,7 @@ class WiredDocument
    * to write an external file without saving the whole project.<br>
    * In this state of mind, it also allows to choose an arbitrary filename.
    * \param file The key in the HashMap of the file to save.
-   * \param path The path to use when writing the file. If none is specified, 
+   * \param path The path to use when writing the file. If none is specified,
    * it will be written in the project folder.
    */
 
@@ -151,11 +150,11 @@ class WiredDocument
    * \param data The SaveElement to write.
   */
   void				saveDocData(SaveElement *data, wxString file = WIRED_PROJECT_FILE);
-  
+
   /** Removes all the data previously stored. */
   void				clearDocData();
 
-  /** Removes one element of the HashMap. 
+  /** Removes one element of the HashMap.
    * \param file The key of the element to erase.
    */
   void				rmDocDataFile(wxString file);
@@ -170,8 +169,8 @@ class WiredDocument
 
   /** The name of the WiredDocument. */
   wxString			_name;
-  
-  /** The data to be written by the SaveCenter. */ 
+
+  /** The data to be written by the SaveCenter. */
   SaveElementsHashMap		_dataSave;
 
   /** The WiredDocument's instance of its id. */

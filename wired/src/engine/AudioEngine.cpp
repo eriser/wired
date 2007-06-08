@@ -8,8 +8,8 @@
 
 const unsigned long standardSampleFormats[] =
 {
-  paFloat32, paInt32, 
-  paInt24, paInt16, 
+  paFloat32, paInt32,
+  paInt24, paInt16,
   paUInt8, paInt8
 };
 
@@ -23,11 +23,11 @@ const char *standardSampleFormats_str[] =
 const double standardSampleRates[] =
 {
   8000.0, 9600.0, 11025.0, 12000.0, 16000.0, 22050.0, 24000.0, 32000.0,
-  44100.0, 48000.0, 88200.0, 96000.0, 192000.0, -1 
-  /* negative terminated  list */ 
+  44100.0, 48000.0, 88200.0, 96000.0, 192000.0, -1
+  /* negative terminated  list */
 };
 
-AudioEngine::AudioEngine() 
+AudioEngine::AudioEngine()
 {
   IsOk = false;
   StreamIsOpened = false;
@@ -36,18 +36,18 @@ AudioEngine::AudioEngine()
 
   _paInit = false;
   PaError err = Pa_Initialize();
-  if ( err != paNoError ) 
+  if ( err != paNoError )
     throw Error::InitFailure(wxString(Pa_GetErrorText (err), *wxConvCurrent));
   _paInit = true;
 
-  cout << "[AUDIO] Portaudio initialized" << endl; 
+  cout << "[AUDIO] Portaudio initialized" << endl;
   UserData = new callback_t;
 
   GetAudioSystems();
   GetDevices();
   SetDefaultSettings();
 
-  cout << "[AUDIO] AudioEngine initialized" << endl; 
+  cout << "[AUDIO] AudioEngine initialized" << endl;
 }
 
 AudioEngine::~AudioEngine()
@@ -59,7 +59,7 @@ AudioEngine::~AudioEngine()
       CloseStream();
       err = Pa_Terminate();
       if (err != paNoError)
-	cout << "[AUDIO] Error Terminate(): " << Pa_GetErrorText (err) << endl; 
+	cout << "[AUDIO] Error Terminate(): " << Pa_GetErrorText (err) << endl;
       else
 	cout << "[AUDIO] Portaudio unloaded" << endl;
       ResetChannels();
@@ -75,7 +75,7 @@ void AudioEngine::SetDefaultSettings(void)
 {
   SelectedOutputDevice = NULL;
   SelectedInputDevice = NULL;
-  
+
   SamplesPerBuffer = DEFAULT_SAMPLES_PER_BUFFER;
   SampleRate = DEFAULT_SAMPLE_RATE;
   UserData->SampleFormat = DEFAULT_SAMPLE_FORMAT;
@@ -91,14 +91,11 @@ void AudioEngine::SetOutputDevice(void)
 	throw Error::InvalidDeviceSettings();
       }
 
-  if ( SelectedOutputDevice->SupportedFormats.size() > 
-       WiredSettings->SampleFormat )
+    if ((long) SelectedOutputDevice->SupportedFormats.size() > WiredSettings->SampleFormat)
     {
       UserData->SampleFormat = SelectedOutputDevice->
 	SupportedFormats[WiredSettings->SampleFormat]->SampleFormat;
-      if ( SelectedOutputDevice->
-	   SupportedFormats[WiredSettings->SampleFormat]->SampleRates.size() 
-	   > WiredSettings->SampleRate )
+      if ((long) SelectedOutputDevice->SupportedFormats[WiredSettings->SampleFormat]->SampleRates.size() > WiredSettings->SampleRate)
 	SampleRate = SelectedOutputDevice->
 	  SupportedFormats[WiredSettings->SampleFormat]->
 	  SampleRates[WiredSettings->SampleRate];
@@ -113,31 +110,31 @@ void AudioEngine::SetOutputDevice(void)
       cout << "output sample format"  << endl;
       throw Error::InvalidDeviceSettings();
     }
-  
-  
-  
-  cout << "[AUDIO] OUTPUT MIN LATENCY " 
-       << SelectedOutputDevice->OutputLatencyRange[MIN] * 1000 << " msec" << endl; 
-  cout << "[AUDIO] OUTPUT MAX LATENCY " 
-       << SelectedOutputDevice->OutputLatencyRange[MAX] * 1000 << " msec" << endl; 
-  cout << "[AUDIO] SUGGESTED LATENCY: " 
+
+
+
+  cout << "[AUDIO] OUTPUT MIN LATENCY "
+       << SelectedOutputDevice->OutputLatencyRange[MIN] * 1000 << " msec" << endl;
+  cout << "[AUDIO] OUTPUT MAX LATENCY "
+       << SelectedOutputDevice->OutputLatencyRange[MAX] * 1000 << " msec" << endl;
+  cout << "[AUDIO] SUGGESTED LATENCY: "
        << (double)((double)SamplesPerBuffer / (double)SampleRate) * 1000 << " msec"
        << endl;
-  if ( (WiredSettings->OutputLatency > 
+  if ( (WiredSettings->OutputLatency >
 	SelectedOutputDevice->OutputLatencyRange[MAX]) ||
-       (WiredSettings->OutputLatency < 
+       (WiredSettings->OutputLatency <
 	SelectedOutputDevice->OutputLatencyRange[MIN]) )
     {
       //TO FIX, calculer la latence par rapport au SamplesPerBuffer
-      //TO FIX, utiliser eventuellement la variable 
-      
+      //TO FIX, utiliser eventuellement la variable
+
       OutputLatency =  SelectedOutputDevice->OutputLatencyRange[MIN];
     }
   else
     {
       OutputLatency = WiredSettings->OutputLatency;
     }
-  
+
   if (WiredSettings->OutputChannels.size() <= 0)
     throw Error::InvalidDeviceSettings();
     //UserData->OutputChannels = 2;//SelectedOutputDevice->MaxOutputChannels;
@@ -165,7 +162,7 @@ void AudioEngine::SetInputDevice(void)
     {
       SelectedInputDevice = NULL;
       UserData->InputChannels = 0;
-    }  
+    }
 }
 
 void AudioEngine::GetDeviceSettings()
@@ -196,7 +193,7 @@ void AudioEngine::GetAudioSystems()
   if (deviceNumber < 0)
     cout << "[AUDIO] Portaudio ERROR : " << Pa_GetErrorText(deviceNumber) << endl;
   else if (!deviceNumber)
-    cout << "[AUDIO] No audio system found" << endl;    
+    cout << "[AUDIO] No audio system found" << endl;
   else
     for (deviceIndex = 0; deviceIndex < deviceNumber; deviceIndex++)
       {
@@ -221,7 +218,7 @@ void AudioEngine::GetDevices()
   int			deviceNumber = Pa_GetDeviceCount();
   const PaDeviceInfo	*info;
   Device		*dev;
-  
+
   if (deviceNumber < 0)
     cout << "[AUDIO] Portaudio ERROR: " << Pa_GetErrorText(deviceNumber) << endl;
   else if (!deviceNumber)
@@ -243,14 +240,14 @@ void AudioEngine::GetDevices()
 			     info->maxOutputChannels, GetAudioSystemById(info->hostApi));
 	    dev->GetSupportedSettings();
 
-	    // insert device node in our list 
+	    // insert device node in our list
 	    DeviceList.push_back(dev);
 
 	    // print device informations
 	    cout << "[AUDIO] New device found #" << dev->Id << " for host " << dev->Host->GetId()
 		 << " : " << dev->Name.mb_str() << endl;
 #ifdef __DEBUG__
-	    cout << "[AUDIO] Max Input/Output Channels: " << dev->MaxInputChannels 
+	    cout << "[AUDIO] Max Input/Output Channels: " << dev->MaxInputChannels
 		 << " / " << dev->MaxOutputChannels << endl;
 #endif
 	  }
@@ -261,13 +258,13 @@ void AudioEngine::OpenStream()
 {
   if (StreamIsOpened)
     return ;
-  if (!SelectedOutputDevice || 
+  if (!SelectedOutputDevice ||
       (UserData->InputChannels > 0 && !SelectedInputDevice))
     {
-      cout << "[AUDIO] No default device was found (Unreachable error)" << endl; 
+      cout << "[AUDIO] No default device was found (Unreachable error)" << endl;
       throw Error::StreamNotOpen();
     }
-  
+
   PaStreamParameters	OutputParameters, InputParameters;
   PaError err;
 
@@ -279,7 +276,7 @@ void AudioEngine::OpenStream()
       OutputParameters.suggestedLatency = Latency;
       OutputParameters.hostApiSpecificStreamInfo = NULL;
     }
-  
+
   if (UserData->InputChannels)
     {
       InputParameters.device = SelectedInputDevice->Id;
@@ -289,7 +286,7 @@ void AudioEngine::OpenStream()
       InputParameters.hostApiSpecificStreamInfo = NULL;
     }
 
-  /* 
+  /*
      InputChannels * FramesPerBuffer
      OutputChannels * FramesPerBuffer
      is the number of bytes to be processed by the callback
@@ -298,29 +295,29 @@ void AudioEngine::OpenStream()
 
   err = Pa_OpenStream((PaStream **)&Stream,
 		      (const PaStreamParameters*)
-		      ( UserData->InputChannels > 0 ? 
+		      ( UserData->InputChannels > 0 ?
 			&InputParameters : NULL ),
 		      (const PaStreamParameters*)
 		      ( UserData->OutputChannels > 0 ?
 			&OutputParameters : NULL ),
 		      (double)SampleRate,
 		      (unsigned long)SamplesPerBuffer,
-		      (PaStreamFlags)paClipOff, 
+		      (PaStreamFlags)paClipOff,
   /* we won't output out of range samples so don't bother clipping them */
 		      AudioCallback,
 		      (void*)UserData);
-  
+
   if( err != paNoError)
     {
-      cout << "[AUDIO] Error using portaudio OpenStream(): " 
+      cout << "[AUDIO] Error using portaudio OpenStream(): "
 	   << Pa_GetErrorText(err) << endl;
-      cout << "[AUDIO] Sample rate is: " << SampleRate 
-	   << " Samples per buffer is: " << SamplesPerBuffer 
+      cout << "[AUDIO] Sample rate is: " << SampleRate
+	   << " Samples per buffer is: " << SamplesPerBuffer
 	   << endl;
       throw Error::StreamNotOpen();
     }
-  cout << "[AUDIO] Stream opened:" 
-       << " Sample rate is " << SampleRate 
+  cout << "[AUDIO] Stream opened:"
+       << " Sample rate is " << SampleRate
        << " Samples/sec, Samples per buffer is: " << SamplesPerBuffer
        << endl << "[AUDIO] Sample format is: ";
   for (int i = 0; i < MAX_SAMPLE_FORMATS; i++)
@@ -338,18 +335,18 @@ bool AudioEngine::CloseStream()
 {
   if (!StreamIsOpened)
     return true;
-  
+
   PaError err = Pa_IsStreamActive(Stream);
   if (err == 1)
     StopStream();
   else if (err < 0)
-    cout << "[AUDIO] Error using portaudio IsStreamActive(): " 
+    cout << "[AUDIO] Error using portaudio IsStreamActive(): "
 	 << Pa_GetErrorText(err) << endl;
-  
+
   err = Pa_CloseStream(Stream);
   if( err != paNoError )
     {
-      cout << "[AUDIO] Error using portaudio CloseStream(): " 
+      cout << "[AUDIO] Error using portaudio CloseStream(): "
 	   << Pa_GetErrorText(err) << endl;
       return (false);
     }
@@ -372,11 +369,11 @@ bool AudioEngine::StartStream()
       if (err == 1)
 	return (true);
       if (err < 0)
-	cout << "[AUDIO] Error using portaudio IsStreamActive(): " 
+	cout << "[AUDIO] Error using portaudio IsStreamActive(): "
 	     << Pa_GetErrorText(err) << endl;
       return (false);
     }
-  
+
   err = Pa_StartStream( Stream );
   if( err != paNoError )
     {
@@ -386,12 +383,12 @@ bool AudioEngine::StartStream()
 	  // FIXME this does not depend on the objet but on the stream
 	  StartStream();
 	}
-      cout << "[AUDIO] Error using portaudio StartStream(): [" 
+      cout << "[AUDIO] Error using portaudio StartStream(): ["
 	   << err << "] " << Pa_GetErrorText(err) << endl;
       return (false);
     }
   cout << "[AUDIO] Stream started" << endl;
-  
+
   return (StreamIsStarted = true);
 }
 
@@ -401,16 +398,16 @@ bool AudioEngine::StopStream()
     return true;
   PaError err = Pa_IsStreamActive( Stream );
   if (err != 1) {
-    cout << "[AUDIO] Pa_IsStreamActive(): " <<  Pa_GetErrorText(err) 
+    cout << "[AUDIO] Pa_IsStreamActive(): " <<  Pa_GetErrorText(err)
 	 << endl;
     return (false);
   }
-  
+
   //PaError err = Pa_StopStream( Stream );
   err = Pa_AbortStream( Stream );
   if ( err != paNoError )
-    {    
-      cout << "[AUDIO] Error using portaudio StopStream(): " 
+    {
+      cout << "[AUDIO] Error using portaudio StopStream(): "
 	   << Pa_GetErrorText(err) << endl;
       //Terminate();
       return (false);
@@ -422,11 +419,11 @@ bool AudioEngine::StopStream()
 
 void AudioEngine::AlertDialog(const wxString& from, const wxString& msg)
 {
-  
-  //wxMutexGuiEnter();    
+
+  //wxMutexGuiEnter();
   MainWin->AlertDialog(from, msg);
   //wxMutexGuiLeave();
-  
+
 }
 
 void AudioEngine::SetChannels(int in, int out)
@@ -438,13 +435,13 @@ void AudioEngine::SetChannels(int in, int out)
       throw Error::ChannelsNotSet();
     }
   if (StreamIsOpened)
-    { 
-      cout << "[AUDIO] Stream is opened: couldn't SetChannels" << endl; 
+    {
+      cout << "[AUDIO] Stream is opened: couldn't SetChannels" << endl;
       throw Error::ChannelsNotSet();
     }
-  
+
   ResetChannels();
-  
+
   if ( !SetOutputChannels(out) )
     {
       cout << "[AUDIO] Error Setting " << out << " Output Channels" << endl;
@@ -462,17 +459,17 @@ void AudioEngine::SetChannels(int in, int out)
 
 void AudioEngine::ResetChannels(void)
 {
-  for (vector<RingBuffer<float>*>::iterator 
-	 r = UserData->InFIFOVector.begin(); 
-       r != UserData->InFIFOVector.end(); 
+  for (vector<RingBuffer<float>*>::iterator
+	 r = UserData->InFIFOVector.begin();
+       r != UserData->InFIFOVector.end();
        r++)
     delete (*r);
   UserData->InFIFOVector.clear();
   UserData->InputChannels = 0;
 
-  for (vector<RingBuffer<float>*>::iterator 
-	 r = UserData->OutFIFOVector.begin(); 
-       r != UserData->OutFIFOVector.end(); 
+  for (vector<RingBuffer<float>*>::iterator
+	 r = UserData->OutFIFOVector.begin();
+       r != UserData->OutFIFOVector.end();
        r++)
     delete (*r);
   UserData->OutFIFOVector.clear();
@@ -482,9 +479,9 @@ void AudioEngine::ResetChannels(void)
 bool AudioEngine::SetOutputChannels(int num)
 {
   long numB = SamplesPerBuffer * 2;
-  
+
   RingBuffer<float> *rbuf;
-  
+
   while (num)
     {
       try
@@ -492,13 +489,13 @@ bool AudioEngine::SetOutputChannels(int num)
 	  rbuf = new RingBuffer<float>(numB);
 	}
       catch (std::bad_alloc)
-      	{ 
+      	{
 	  cout << "[AUDIO] Could not allocate memory" << endl;
 	  return false;
 	}
       catch (RingBufferError::NumBytesError)
 	{
-	  cout << "[AUDIO] Couldn't Intialise FIFO: " 
+	  cout << "[AUDIO] Couldn't Intialise FIFO: "
 	       << numB << " is not power of 2" << endl;
 	  delete rbuf;
 	  return false;
@@ -507,7 +504,7 @@ bool AudioEngine::SetOutputChannels(int num)
       num--;
       UserData->OutFIFOVector.push_back(rbuf);
     }
-  
+
   UserData->OutputChannels = UserData->OutFIFOVector.size();
   return true;
 }
@@ -515,7 +512,7 @@ bool AudioEngine::SetOutputChannels(int num)
 bool AudioEngine::SetInputChannels(int num)
 {
   long numB = SamplesPerBuffer * 8;
-  
+
   RingBuffer<float> *rbuf;
   while (num)
     {
@@ -524,13 +521,13 @@ bool AudioEngine::SetInputChannels(int num)
 	  rbuf = new RingBuffer<float>(numB);
 	}
       catch (std::bad_alloc)
-	{ 
+	{
 	  cout << "[AUDIO] Could not allocate memory" << endl;
 	  return false;
 	}
       catch (RingBufferError::NumBytesError)
 	{
-	  cout << "[AUDIO] Couldn't Intialise FIFO: " 
+	  cout << "[AUDIO] Couldn't Intialise FIFO: "
 	       << numB<< " is not power of 2" << endl;
 	  delete rbuf;
 	  return false;
@@ -539,7 +536,7 @@ bool AudioEngine::SetInputChannels(int num)
       num--;
       UserData->InFIFOVector.push_back(rbuf);
     }
-  
+
   UserData->InputChannels = UserData->InFIFOVector.size();
   return true;
 }
@@ -549,7 +546,7 @@ double AudioEngine::GetTime(void)
 {
   return ((double)Pa_GetStreamTime(Stream));
 }
-  
+
 double AudioEngine::GetCpuLoad(void)
 {
   return (Pa_GetStreamCpuLoad(Stream));
@@ -573,21 +570,21 @@ static int AudioCallback(const void *input,
 		  void *output,
 		  unsigned long frameCount,
 		  const PaStreamCallbackTimeInfo* timeInfo,
-		  PaStreamCallbackFlags statusFlags, 
+		  PaStreamCallbackFlags statusFlags,
 		  void *userData)
 {
   callback_t *data = (callback_t*)userData;
   unsigned long bytes = frameCount, processed = 0;
   float **outputs = (float**)output;
   float **inputs  =(float**)input;
-  
-  
+
+
   int nchan = 0;
   vector<long>::iterator chan;
-  
+
   if (data->SampleFormat & paFloat32)
-    {  
-      for (processed = 0, chan = data->Sets->OutputChannels.begin(); 
+    {
+      for (processed = 0, chan = data->Sets->OutputChannels.begin();
 	   chan != data->Sets->OutputChannels.end();
 	   chan++, nchan++)
 	{
@@ -604,7 +601,7 @@ static int AudioCallback(const void *input,
 	  processed = data->InFIFOVector[nchan]->Write(inputs[*chan], bytes);
 	  //if (processed != bytes)
 	  //cout << "[AUDIO] Frame drop while recording" << endl;
-	  
+
 	}
     }
   else if ( data->SampleFormat & paInt32 )
@@ -622,29 +619,29 @@ static int AudioCallback(const void *input,
   return (0);
 }
 */
-  
+
 int AudioEngine::GetLibSndFileFormat()
 {
   int type;
 
   switch (SampleFormat)
     {
-    case paInt8 : 
-      type = SF_FORMAT_PCM_S8; 
+    case paInt8 :
+      type = SF_FORMAT_PCM_S8;
       break;
-    case paUInt8 : 
+    case paUInt8 :
       type = SF_FORMAT_PCM_U8;
       break;
-    case paInt16 : 
+    case paInt16 :
       type = SF_FORMAT_PCM_16;
       break;
-    case paInt24 : 
+    case paInt24 :
       type = SF_FORMAT_PCM_24;
       break;
-    case paInt32 : 
+    case paInt32 :
       type = SF_FORMAT_PCM_32;
       break;
-    case paFloat32 : 
+    case paFloat32 :
       type = SF_FORMAT_FLOAT;
       break;
     default:
