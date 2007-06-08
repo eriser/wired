@@ -110,7 +110,7 @@ long HostCallback(Plugin *plug, long param, void *value)
                 wxString result;
             } *w;
             w = (s_wired_l *)value;
-            wxFileDialog dlg(MainWin, w->t, "", "", "", wxSAVE);
+            wxFileDialog dlg(MainWin, w->t, wxT(""), wxT(""), wxT(""), wxSAVE);
             if (dlg.ShowModal() == wxID_OK)
                 w->result = dlg.GetFilename();
             /*

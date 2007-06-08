@@ -724,7 +724,7 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 void MainWindow::OnImportWave(wxCommandEvent &event)
 {
     int res;
-    wxFileDialog dlg(this, _("Loading sound file"), "", "", "", wxMULTIPLE);
+    wxFileDialog dlg(this, _("Loading sound file"), wxT(""), wxT(""), wxT(""), wxMULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {
         wxArrayString files;
@@ -744,7 +744,7 @@ void MainWindow::OnImportWave(wxCommandEvent &event)
 
 void MainWindow::OnImportMIDI(wxCommandEvent &event)
 {
-    wxFileDialog dlg(this, _("Import MIDI file"), "", "", _("Midi file (*.mid)|*.mid"));
+    wxFileDialog dlg(this, _("Import MIDI file"), wxT(""), wxT(""), _("Midi file (*.mid)|*.mid"));
     if (dlg.ShowModal() == wxID_OK)
     {
         wxString selfile = dlg.GetFilename();
@@ -846,7 +846,7 @@ void MainWindow::OnExportWave(wxCommandEvent &event)
         msg.ShowModal();
         return;
     }
-    wxFileDialog dlg(this, _("Exporting sound file"), "", "", "", wxSAVE);
+    wxFileDialog dlg(this, _("Exporting sound file"), wxT(""), wxT(""), wxT(""), wxSAVE);
     if (dlg.ShowModal() == wxID_OK)
     {
         wxString selfile = dlg.GetFilename();
@@ -880,7 +880,7 @@ void MainWindow::OnExportWave(wxCommandEvent &event)
 
 void MainWindow::OnExportMIDI(wxCommandEvent &event)
 {
-    wxFileDialog dlg(this, _("Export MIDI file"), "", "", _("Midi file (*.mid)|*.mid"), wxSAVE);
+    wxFileDialog dlg(this, _("Export MIDI file"), wxT(""), wxT(""), _("Midi file (*.mid)|*.mid"), wxSAVE);
      if (dlg.ShowModal() == wxID_OK)
     {
         wxString selfile = dlg.GetFilename();
@@ -2058,14 +2058,14 @@ void		MainWindow::Load(SaveElementArray data)
 
 void MainWindow::OnLoadML(wxCommandEvent &WXUNUSED(event))
 {
-    wxFileDialog dlg(this, _("Load Media Library"), "", "", _("Media Library file (*.xml)|*.xml"));
+    wxFileDialog dlg(this, _("Load Media Library"), wxT(""), wxT(""), _("Media Library file (*.xml)|*.xml"));
     if (dlg.ShowModal() == wxID_OK)
         MediaLibraryPanel->MLTreeView->LoadPatch(dlg.GetFilename());
 }
 
 void MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
 {
-    wxFileDialog dlg(this, _("Save Media Library"), "", "", _("Media Library file (*.xml)|*.xml"), wxSAVE);
+    wxFileDialog dlg(this, _("Save Media Library"), wxT(""), wxT(""), _("Media Library file (*.xml)|*.xml"), wxSAVE);
     if (dlg.ShowModal() == wxID_OK)
         MediaLibraryPanel->MLTreeView->OnSave(dlg.GetFilename());
 }
