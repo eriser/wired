@@ -36,20 +36,20 @@ class SaveElement
   inline SaveElement(wxString key, double value)
     { setPair(key, value); }
 
-  /** Copy constructor.
-   * Duplicates the copy SaveElement into the new one.
-   * \param copy The SaveElement to be copied.
-   */
-  inline SaveElement(SaveElement &copy):
-    _attributes(copy.getAttributes()), _key(copy.getKey()), _value(copy.getValue())
-    { 
-      SaveElementArray	children = copy.getChildren();
-      for(int i; i < children.GetCount(); i ++)
-	addChildren(new SaveElement(*(children.Item(i))));
+    /** Copy constructor.
+    * Duplicates the copy SaveElement into the new one.
+    * \param copy The SaveElement to be copied.
+    */
+    inline SaveElement(SaveElement &copy)
+        : _key(copy.getKey()), _value(copy.getValue()), _attributes(copy.getAttributes())
+    {
+        SaveElementArray children = copy.getChildren();
+        for(unsigned int i = 0; i < children.GetCount(); i++)
+            addChildren(new SaveElement(*(children.Item(i))));
     }
 
-  /** Destructor. */
-  inline ~SaveElement(){};
+    /** Destructor. */
+    inline ~SaveElement(){};
 
   //accessors
   /** Key setter.
@@ -60,7 +60,7 @@ class SaveElement
   /** Value setter.
    * \param value The new value.
    */
-  inline void		setValue(wxString value) 
+  inline void		setValue(wxString value)
     { _value = value; }
 
   inline void		setValue(int value)
@@ -76,34 +76,34 @@ class SaveElement
    * \param key The new key.
    * \param value The new value.
    */
-  inline void		setPair(wxString key, wxString value) 
+  inline void		setPair(wxString key, wxString value)
     { setKey(key); setValue(value); }
 
-  inline void		setPair(wxString key, int  value) 
+  inline void		setPair(wxString key, int  value)
     { setKey(key); setValue(value); }
 
-  inline void		setPair(wxString key, float value) 
+  inline void		setPair(wxString key, float value)
     { setKey(key); setValue(value); }
 
-  inline void		setPair(wxString key, double value) 
+  inline void		setPair(wxString key, double value)
     { setKey(key); setValue(value); }
 
   /** Adds an attribute.
    * \param key the key of the attribute.
    * \param value the value of the attribute.
    */
-  inline void		addAttribute(wxString key, wxString value) 
+  inline void		addAttribute(wxString key, wxString value)
     { _attributes[key] = value; }
 
-  inline void		addAttribute(wxString key, int value) 
+  inline void		addAttribute(wxString key, int value)
     { wxString s; s << value; _attributes[key] = s; }
 
-  inline void		addAttribute(wxString key, float value) 
+  inline void		addAttribute(wxString key, float value)
     { wxString s; s << value; _attributes[key] = s; }
 
-  inline void		addAttribute(wxString key, double value) 
+  inline void		addAttribute(wxString key, double value)
     { wxString s; s << value; _attributes[key] = s; }
-  
+
   /** Adds a child.
    * \param children The SaveElement to be added as a child.
    */
@@ -112,7 +112,7 @@ class SaveElement
 
   /** Returns if the SaveElement has children
    * \return true if there are any, else false.
-   */ 
+   */
   inline bool		hasChildren()
     { return ( _children.GetCount() > 0 ); }
 
@@ -126,20 +126,20 @@ class SaveElement
    */
   inline wxString	getValue() { return _value; }
 
-  inline int		getValueInt() 
+  inline int		getValueInt()
     { long ret; _value.ToLong(&ret); return (int)ret; }
 
-  inline float		getValueFloat() 
+  inline float		getValueFloat()
     { double ret; _value.ToDouble(&ret); return (float)ret; }
 
-  inline double		getValueDouble() 
+  inline double		getValueDouble()
     { double ret; _value.ToDouble(&ret); return ret; }
 
   /** Children getter.
    * \return The clhildren of the SaveElement.
    */
   inline SaveElementArray	getChildren() { return _children; }
-  
+
   /** Attribute getter.
    * \param key The key of the attribute to get.
    * \return The value of the attribute designated by key.
@@ -151,7 +151,7 @@ class SaveElement
       else
 	return wxT("");
     }
-  
+
   inline int		getAttributeInt(wxString key)
     {
       if (_attributes.find(key) != _attributes.end())
@@ -159,7 +159,7 @@ class SaveElement
       else
 	return 0;
     }
-  
+
   inline float		getAttributeFloat(wxString key)
     {
       if (_attributes.find(key) != _attributes.end())
@@ -175,18 +175,18 @@ class SaveElement
       else
 	return 0.f;
     }
-  
+
   /** Returns if an attribute with such key exists.
    * \param The key to test.
    * \return true if it exists, else false.
    */
-  inline bool		attributeExists(wxString key) 
+  inline bool		attributeExists(wxString key)
     {  return ( _attributes.find(key) != _attributes.end() ); }
 
   /** Erase all attributes. */
   inline void		clearAttributes() { _attributes.clear(); }
   /** Clears the whole SaveElement. */
-  inline void		clear() 
+  inline void		clear()
     { _key.Clear(); _value.Clear(); clearAttributes(); _children.clear(); }
 
   /** Attributes getter.

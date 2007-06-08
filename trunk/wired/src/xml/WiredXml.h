@@ -21,16 +21,17 @@
 #endif
 #include <wx/filename.h>
 #include <wx/file.h>
-
+/*
 #ifdef WIN32
 #include <io.h>
 #include <direct.h>
-#pragma comment(lib, "libxml2.lib")
+//#pragma comment(lib, "libxml2.lib")
 #define FLAGS_OPEN_RDONLY _O_RDONLY
 #else
+*/
 #include <unistd.h>
 #define FLAGS_OPEN_RDONLY O_RDONLY
-#endif
+//#endif
 
 #define INVALID_FD -1
 #define DTD_FILENAME wxT("WiredSession.dtd")
@@ -40,11 +41,11 @@
 
 /**
  * Interface with the libxml.
- * It can read and write XML files, based on the 
+ * It can read and write XML files, based on the
  * <a href=" http://xmlsoft.org/">libxml</a>.<br>
- * Most of the methods are just interfacing the methods of the 
- * <a href=" http://xmlsoft.org/html/libxml-xmlwriter.html">xmlwriter</a> 
- * and <a href=" http://xmlsoft.org/html/libxml-xmlreader.html">xmlreader</a> 
+ * Most of the methods are just interfacing the methods of the
+ * <a href=" http://xmlsoft.org/html/libxml-xmlwriter.html">xmlwriter</a>
+ * and <a href=" http://xmlsoft.org/html/libxml-xmlreader.html">xmlreader</a>
  * objects of the library. <br>
  * For further informations, you'd better have a look to this lib doc. <br>
  */
@@ -61,7 +62,7 @@ class WiredXml
 	/** Default destructor */
 	~WiredXml();
 
-	/** operator= overload. 
+	/** operator= overload.
 	 * Duplicates the object on the right operand into this one
 	 * \param right the WiredXml object to be copied.
 	 * \return the current object.
@@ -88,7 +89,7 @@ class WiredXml
 	bool				OpenDtd(const wxString& FileName);
 
 	/** Validates the opened document against the opened DTD.
-	 * 
+	 *
 	 * /!\ THIS METHOD IS PARTIALLY IMPLEMENTED /!\
 	 * it will only return true.
 	 * \return true on successful validation, else false.
@@ -128,7 +129,7 @@ class WiredXml
 	 * This is mainly a call to xmlTextWriterStartAttribute.
 	 * \param Name The nane of the attribute
 	 * \return true on success, else false
-	 */ 
+	 */
 	bool				StartAttribute(const wxString& Name);
 
 	/** Writes an attribute.
@@ -216,7 +217,7 @@ class WiredXml
 	 * \return true on success, else false.
 	 */
 	bool				CloseDocumentWriter();
-	
+
 	/** Destroys the DocumentReader.
 	 * \return true on success, else false.
 
@@ -256,16 +257,16 @@ class WiredXml
 	wxString			GetAttribute(wxString Name);
 
 	int				GetAttributeCount();
-	
+
 	wxString			GetAttributeName(int no);
 	wxString			GetAttributeValue(int no);
-	
+
 	bool				HasChildren();
 	int				GetDepth();
 
 	/** Gets the node type of the current node.
 	 * This is mainly a call to xmlTextReaderNodeType. <br>
-	 * The different node types are discussed 
+	 * The different node types are discussed
 	 * <a href="http://dotgnu.org/pnetlib-doc/System/Xml/XmlNodeType.html">there</a>
 	 * return The node type on success, else 0.
 	 */
@@ -276,7 +277,7 @@ class WiredXml
 
 	/** The path to the opened DTD file. DTD are currently unsupported... */
 	wxString			_DtdFileName;
-	
+
 	/** The path to the file to be written. */
 	wxString			_DocumentWriterName;
 

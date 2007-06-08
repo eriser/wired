@@ -28,14 +28,14 @@ public:
     FileStat();
 	FileStat(const FileStat& copy){;}
 	~FileStat(){;}
-	
+
     bool            StatFile(wxString& FileName);
     wxLongLong      GetSampleRate();
     wxLongLong      GetNbChannels();
     wxString        GetBitNess();
     wxString        GetFormat();
     wxTimeSpan      GetLenght();
-    
+
 private:
     void            LoadSubTypes();
     void            LoadMajorTypes();

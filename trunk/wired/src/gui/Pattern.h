@@ -28,17 +28,17 @@ class					MidiEvent;
  */
 class					Pattern : public wxWindow, public WiredDocument
 {
-  
+
   /**
    * Still unused,it'll to be avoid wrong way scroll during a pattern dragging.
-   * The default value is 0. 
-   */    
-  double							xdrag;		
-  
+   * The default value is 0.
+   */
+  double							xdrag;
+
   /**
    * The default value is 0.
    */
-  double							ydrag;		
+  double							ydrag;
 
  protected:
 
@@ -97,7 +97,7 @@ class					Pattern : public wxWindow, public WiredDocument
    */
   wxSize							m_size;
 
-  /** 
+  /**
    * To measure the position which clicked.
    */
   wxPoint							m_click;
@@ -109,9 +109,9 @@ class					Pattern : public wxWindow, public WiredDocument
 
   /**
    * Setting a color of a pattern.
-   */ 
+   */
   wxColour							PenColor;
- 
+
   /**
    * The background of pattern.
    */
@@ -152,7 +152,7 @@ class					Pattern : public wxWindow, public WiredDocument
    * \param newtrackindex a long,the new index of track.
    * \param newlength a double,the new length of pattern.
    */
-  void								Modify(double newpos = -1, double newendpos = -1, 
+  void								Modify(double newpos = -1, double newendpos = -1,
 								       long newtrackindex = -1, double newlength = -1);
 
   /**
@@ -164,7 +164,7 @@ class					Pattern : public wxWindow, public WiredDocument
    * To update a position of pattern and its size of pattern.
    */
   virtual void							Update();
-  
+
   /**
    * Setting the selected of pattern.
    * \param sel a bool,If it selected or not.
@@ -215,7 +215,7 @@ class					Pattern : public wxWindow, public WiredDocument
    * Getting a width of pattern.
    * \param a double,a beginning of position.
    * \return returns a int.
-   */ 
+   */
   int									GetXPos(double pos);
 
   /**
@@ -228,18 +228,18 @@ class					Pattern : public wxWindow, public WiredDocument
    * Setting a position of pattern.
    * \param a double,Setting the positon.
    */
-  double							SetPosition(double p) { Position = p; };
+  void  							SetPosition(double p) { Position = p; };
 
   /**
    * Getting the beginning position.
    * \return returns a double,the posion.
-   */  
+   */
   double							GetPosition() { return (Position); };
 
   /**
    * Getting the end of position.
    * \return returns a double,the end of position.
-   */ 
+   */
   double							GetEndPosition() { return (EndPosition); };
 
   /**
@@ -247,7 +247,7 @@ class					Pattern : public wxWindow, public WiredDocument
    * \return returns a wxString,the name of pattern.
    */
   wxString						GetName() { return (Name); };
-  
+
   /**
    * Setting the name of pattern.
    * \param a wxString,the name of pattern.
@@ -257,7 +257,7 @@ class					Pattern : public wxWindow, public WiredDocument
   /**
    * Getting a index of track.
    * \return returns a long,the index of track.
-   */ 
+   */
   long								GetTrackIndex() { return (TrackIndex); };
 
   /**
@@ -289,7 +289,7 @@ class					Pattern : public wxWindow, public WiredDocument
    * \return returns pointer to the previous merged pattern.
    */
   Pattern							*GetPrevMergedPattern() { return PrevMergedPattern; };
-  
+
   /**
    * Getting the end of position.
    * \return returns a double,the end of position.

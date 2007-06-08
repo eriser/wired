@@ -27,6 +27,7 @@ wxLongLong      FileStat::GetSampleRate()
         Result.Assign((double)_FileInfo.samplerate);
         return Result;
     }
+    return (0);
 }
 
 wxLongLong      FileStat::GetNbChannels()
@@ -36,7 +37,8 @@ wxLongLong      FileStat::GetNbChannels()
         wxLongLong  Result;
         Result.Assign((double)_FileInfo.channels);
         return Result;
-    }  
+    }
+    return (0);
 }
 
 void            FileStat::LoadSubTypes()
@@ -98,7 +100,7 @@ wxString        FileStat::GetFormat()
 wxTimeSpan      FileStat::GetLenght()
 {
     wxTimeSpan  Result;
-    
+
     if (_FileInfo.frames > 0)
     {
         Result = wxTimeSpan::Seconds(_FileInfo.frames / _FileInfo.samplerate);

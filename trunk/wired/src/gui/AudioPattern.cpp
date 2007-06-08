@@ -51,9 +51,8 @@ void					AudioPattern::Init(WaveFile* w, WiredDocument* parent)
   cout << " ### NEW AUDIO PATTERN ###\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
        << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
 #endif
-
   wavefile = new WaveFile();
-  Name = wxString::Format(wxT("T%d A%d"), TrackIndex + 1, audio_pattern_count++);
+  Name = wxString::Format(wxT("T%d A%d"), (int) TrackIndex + 1, (int) audio_pattern_count++);
   wxSize s = GetSize();
   SetSize(s);
   WaveDrawer::SetWave(w, s);
@@ -125,7 +124,7 @@ void					AudioPattern::OnBpmChange()
   wxMutexLocker				m(SeqMutex);
 
 #ifdef __DEBUG__
-  printf("\tAudioPattern : MeasurePerSample %f , Frames %d\n", 
+  printf("\tAudioPattern : MeasurePerSample %f , Frames %d\n",
 	 Seq->MeasurePerSample, Wave->GetNumberOfFrames());
 #endif
   Length = Seq->MeasurePerSample * (EndWavePos - StartWavePos);
@@ -160,27 +159,27 @@ void					AudioPattern::SetDrawing()
 
 float					**AudioPattern::GetBlock(long block)
 {
-  float					**buf;
-  long					size;
-  long					pos;
+    float					**buf;
+    long					size;
+    long					pos;
 
-  if (!Wave)
-    return (0x0);
-  pos = (block * Audio->SamplesPerBuffer) + StartWavePos;
-  size = EndWavePos - pos;
-  if (size > 0)
+    if (!Wave)
+        return (0x0);
+    pos = (block * Audio->SamplesPerBuffer) + StartWavePos;
+    size = EndWavePos - pos;
+    if (size > 0)
     {
-      buf = new float *[2];
-      if (size > Audio->SamplesPerBuffer)
-	size = Audio->SamplesPerBuffer;
-      buf[0] = new float[Audio->SamplesPerBuffer];
-      buf[1] = new float[Audio->SamplesPerBuffer];
-      memset(buf[0], 0, sizeof(float) * sizeof(Audio->SamplesPerBuffer));
-      memset(buf[1], 0, sizeof(float) * sizeof(Audio->SamplesPerBuffer));
-      Wave->Read(buf, pos, size);
-      return (buf);
+        buf = new float *[2];
+        if (size > Audio->SamplesPerBuffer)
+            size = Audio->SamplesPerBuffer;
+        buf[0] = new float[Audio->SamplesPerBuffer];
+        buf[1] = new float[Audio->SamplesPerBuffer];
+        memset(buf[0], 0, sizeof(float) * Audio->SamplesPerBuffer);
+        memset(buf[1], 0, sizeof(float) * Audio->SamplesPerBuffer);
+        Wave->Read(buf, pos, size);
+        return (buf);
     }
-  return (0x0);
+    return (0x0);
 }
 
 void					AudioPattern::SetSelected(bool sel)
@@ -351,7 +350,7 @@ void					AudioPattern::OnLeftUp(wxMouseEvent &e)
 void					AudioPattern::Split(double pos)
 {
   AudioPattern				*p;
-  
+
 
 
   if ((Position < pos) && (pos < EndPosition))
@@ -368,7 +367,7 @@ void					AudioPattern::Split(double pos)
       SeqMutex.Lock();
       p->StartWavePos = StartWavePos + (long) floor((pos - Position) * Seq->SamplesPerMeasure);
       p->EndWavePos = p->StartWavePos + (long) floor(p->Length * Seq->SamplesPerMeasure);
-      
+
       p->SetWave(Wave);
       p->FileName = FileName;
       p->SetDrawColour(WaveDrawer::PenColor);

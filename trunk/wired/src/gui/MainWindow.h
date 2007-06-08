@@ -62,7 +62,6 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					OnDeleteRack(wxCommandEvent &event);
   void					OnAddTrackAudio(wxCommandEvent &event);
   void					OnAddTrackMidi(wxCommandEvent &event);
-  // Added by Julien Eres
   void					OnAddTrackAutomation(wxCommandEvent &event);
   void					OnDeleteTrack(wxCommandEvent &event);
   void					SetSelectedSolo(wxCommandEvent &event);
@@ -83,8 +82,7 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					OnIntegratedHelp(wxCommandEvent &event);
   void					OnTimer(wxTimerEvent &event);
   void					OnKillTimer(wxTimerEvent &event);
-  void					OnFileLoaderStart(wxCommandEvent &event);
-  void					OnFileLoaderStop(wxCommandEvent &event);
+
   bool					NewSession();
   void					LoadPlugins();
   void					AlertDialog(const wxString& from, const wxString& msg);
