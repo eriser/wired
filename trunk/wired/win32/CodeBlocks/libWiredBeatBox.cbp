@@ -38,6 +38,7 @@
 			<Add directory="..\..\src\midi" />
 			<Add directory="..\..\src\save" />
 			<Add directory="..\..\src\xml" />
+			<Add directory="..\..\src" />
 		</Compiler>
 		<Linker>
 			<Add library="wx_msw-2.8" />

@@ -53,6 +53,9 @@
 			<Add directory="..\..\src" />
 			<Add directory="..\..\src\editmidi" />
 			<Add directory="..\..\src\undo" />
+			<Add directory="..\..\src\wiredvideo" />
+			<Add directory="..\..\src\samplerate" />
+			<Add directory="..\..\src\dssi" />
 		</Compiler>
 		<ResourceCompiler>
 			<Add directory=".." />
@@ -129,8 +132,6 @@
 		<Unit filename="..\..\src\engine\Settings.h" />
 		<Unit filename="..\..\src\engine\version.h" />
 		<Unit filename="..\..\src\error.hh" />
-		<Unit filename="..\..\src\fileloader\FileLoader.cpp" />
-		<Unit filename="..\..\src\fileloader\FileLoader.h" />
 		<Unit filename="..\..\src\fileloader\FileStat.cpp" />
 		<Unit filename="..\..\src\fileloader\FileStat.h" />
 		<Unit filename="..\..\src\fileloader\TreeItemData.cpp" />
