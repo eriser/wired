@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
-		<Project filename="libWiredWidgets.cbp" />
-		<Project filename="wired.cbp" active="1">
-			<Depends filename="libWiredWidgets.cbp" />
-			<Depends filename="libWiredAkai.cbp" />
-		</Project>
-		<Project filename="libWiredAkai.cbp" />
-		<Project filename="libWiredBeatBox.cbp">
-			<Depends filename="libWiredWidgets.cbp" />
-		</Project>
-		<Project filename="libWiredCrusher.cbp">
-			<Depends filename="libWiredWidgets.cbp" />
-		</Project>
+		<Project filename="libWiredBeatBox.cbp" />
+		<Project filename="libWiredCrusher.cbp" />
 		<Project filename="libWiredDelay.cbp" />
 		<Project filename="libWiredLoopSampler.cbp" />
 		<Project filename="libWiredChorus.cbp" />
 		<Project filename="libWiredReverb.cbp" />
 		<Project filename="libWiredSampler.cbp" />
 		<Project filename="libWiredWahwah.cbp" />
+		<Project filename="libWiredWidgets.cbp" />
+		<Project filename="wired.cbp" />
+		<Project filename="libWiredAkai.cbp" active="1" />
 	</Workspace>
 </CodeBlocks_workspace_file>

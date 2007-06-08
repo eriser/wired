@@ -79,7 +79,7 @@ class WaveFile
   /**
    * Initializes every attribute of this class.
    */
- 
+
   void	InitVars();
 
   /**
@@ -112,26 +112,7 @@ class WaveFile
    * Duplicates the static WaveFile object.
    * \return returns a new instantiated WaveFile object.
    */
-  WaveFile *Clone()
-    {
-      cout << "ERROR ERROR Wired will fail miserably" << endl;
-
-      WaveFile		*aNewWaveFile;
-
-      aNewWaveFile = new WaveFile(*this);
-      if (LoadedInMem)
-	{
-	  aNewWaveFile->Data = new float *[sfinfo.channels];
-	  for (int channelsCompt = 0; channelsCompt < sfinfo.channels; channelsCompt++)
-	    {
-	      aNewWaveFile->Data[channelsCompt] = new float[NumberOfFrames];
-
-	      for (int framesCompt = 0; framesCompt < NumberOfFrames; framesCompt++)
-		aNewWaveFile->Data[channelsCompt][framesCompt] = Data[channelsCompt][framesCompt];
-	    }
-	  return aNewWaveFile;
-	}
-    }
+  WaveFile *Clone();
 
   /**
    * Gets the channels' number.
@@ -159,7 +140,7 @@ class WaveFile
    * \param channel a long, the channel wired should read in wavefile
    */
   void		SetChannelToRead(long channel);
-  
+
   /**
    *Get the variable Channel_to_read
    * \return a long, the channel wired should read in wavefile
