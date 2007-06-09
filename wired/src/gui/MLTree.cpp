@@ -1,13 +1,14 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#include <vector>
 #include <wx/filename.h>
 #include <wx/wx.h>
 #include <wx/file.h>
 #include <wx/treectrl.h>
 #include <wx/defs.h>
-#include "MediaLibrary.h"
 #include "MLTree.h"
+#include "MediaLibrary.h"
 #include "MLTreeInfos.h"
 #include "MainWindow.h"
 #include "Sequencer.h"
@@ -25,23 +26,20 @@
 #include "folder.xpm"
 #include "folder-open.xpm"
 #include "delete.xpm"
-#include <SaveCenter.h>
+#include "SaveCenter.h"
 #include "MLTraverser.h"
-#include <vector>
 #include "debug.h"
+
+using namespace std;
 
 extern SaveCenter	*saveCenter;
 extern const wxEventType EVT_DROP;
 
-//quite strange to have the s_nodeInfo as a return value and a parameter....
-//even stranger because the parameter is not a pointer... conception mistake ?
-s_nodeInfo		SetStructInfos(s_nodeInfo infos, wxString label, wxString extension, wxString length)
+void SetStructInfos(s_nodeInfo &infos, wxString label, wxString extension, wxString length)
 {
   infos.label = label;
   infos.extension = extension;
   infos.length = length;
-  /* add more... */
-  return(infos);
 }
 
 MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
@@ -64,13 +62,13 @@ MLTree::MLTree(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long style)
   s_nodeInfo		infos;
   wxTreeItemId		itemTemp;
 
-  infos = SetStructInfos(infos, LOCAL_NODE, wxT(""), wxT(""));
+  SetStructInfos(infos, LOCAL_NODE, wxT(""), wxT(""));
   itemTemp = AppendItem(root, LOCAL_NODE_NAME);
   SetItemImage(itemTemp, 0);
   nodes[itemTemp] = infos;
 
   s_nodeInfo	infos1;
-  infos1 = SetStructInfos(infos1, PROJECT_NODE, wxT(""), wxT(""));
+  SetStructInfos(infos1, PROJECT_NODE, wxT(""), wxT(""));
   itemTemp = AppendItem(root, PROJECT_NODE_NAME);
   SetItemImage(itemTemp, 0);
   nodes[itemTemp] = infos1;
@@ -254,7 +252,7 @@ void MLTree::LoadItem(wxTreeItemId parent, SaveElement *parentData)
         currSaveElem = saveElemChildren.Item(i);
         if(currSaveElem->getKey() == wxT("folder"))
         {
-            infos = SetStructInfos(infos, currSaveElem->getAttribute(wxT("name")), wxT(""), wxT(""));
+            SetStructInfos(infos, currSaveElem->getAttribute(wxT("name")), wxT(""), wxT(""));
             if(currSaveElem->getAttribute(wxT("is_expanded")) == wxT("true"))
                 expand = true;
             else
@@ -271,10 +269,7 @@ void MLTree::LoadItem(wxTreeItemId parent, SaveElement *parentData)
             path = currSaveElem->getAttribute(wxT("infos_label"));
             if (path.IsRelative())
                 path.MakeAbsolute(saveCenter->getAudioDir());
-            infos = SetStructInfos(infos,
-            path.GetFullPath(),
-            currSaveElem->getAttribute(wxT("infos_ext")),
-            currSaveElem->getAttribute(wxT("infos_length")));
+            SetStructInfos(infos, path.GetFullPath(), currSaveElem->getAttribute(wxT("infos_ext")), currSaveElem->getAttribute(wxT("infos_length")));
             AddFile(parent, currSaveElem->getAttribute(wxT("name")), infos, false);
         }
         if (parentData->getAttribute(wxT("is_expanded")) == wxT("true"))
@@ -462,7 +457,7 @@ void			MLTree::OnCreateDir()
 
   itemParent = GetSelection();
 
-  infos = SetStructInfos(infos, _("New Directory"), wxT(""), wxT(""));
+  SetStructInfos(infos, _("New Directory"), wxT(""), wxT(""));
   itemAdded = AppendItem(itemParent, _("New Directory"));
   SetItemImage(itemAdded, 0);
   nodes[itemAdded] = infos;
@@ -483,7 +478,7 @@ wxTreeItemId			MLTree::OnCreateDirName(wxString dirName, wxTreeItemId itemParent
 
   //itemParent = GetSelection();
 
-  infos = SetStructInfos(infos, dirName, wxT(""), wxT(""));
+  SetStructInfos(infos, dirName, wxT(""), wxT(""));
   itemSearch = GetFirstChild(itemParent, cookie);
   while (itemSearch.IsOk())
   {
@@ -536,241 +531,197 @@ void				MLTree::DisplayInfos()
 }
 
 // When adding a file
-wxTreeItemId			MLTree::AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo infos, bool expand)
+wxTreeItemId MLTree::AddFile(wxTreeItemId ParentNode, wxString FileToAdd, s_nodeInfo infos, bool expand)
 {
-  wxTreeItemId			itemToAdd;
+    wxTreeItemId itemToAdd;
+    if (!ParentNode.IsOk())
+        ParentNode = root;
+    for (nodeInfoMap::iterator it = nodes.begin(); it != nodes.end(); it++)
+        if ((*it).second.label == infos.label && GetItemParent((*it).first) == ParentNode)
+            return (itemToAdd);
+    itemToAdd = AppendItem(ParentNode, FileToAdd);
+    if (expand == true)
+        Expand(ParentNode);
+    SetItemImage(itemToAdd, 3);
+    nodes[itemToAdd] = infos;
+    return (itemToAdd);
+}
 
-  if (!ParentNode.IsOk())
-    ParentNode = root;
- map<wxTreeItemId, s_nodeInfo>::iterator it;
- for (it = nodes.begin(); it != nodes.end(); it++)
+wxTreeItemId MLTree::AddFileInProject(wxString FileToAdd, bool expand)
+{
+    wxTreeItemId itemToAdd;
+    wxFileName   File(FileToAdd);
+    wxFile       FileInfos(FileToAdd);
+    s_nodeInfo   infos;
+    wxString     length_str;
+
+    length_str << FileInfos.Length();
+    SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
+    wxTreeItemId ParentNode = GetTreeItemIdFromLabel(PROJECT_NODE);
+    for (nodeInfoMap::iterator it = nodes.begin(); it != nodes.end(); it++)
+        if ((*it).second.label == infos.label && GetItemParent((*it).first) == ParentNode)
+            return (itemToAdd); // BAD Return an unitialized value ???
+    itemToAdd = AppendItem(ParentNode, File.GetFullName());
+    if (expand == true)
+        Expand(ParentNode);
+    SetItemImage(itemToAdd, 3);
+    nodes[itemToAdd] = infos;
+    return (itemToAdd);
+}
+
+wxTreeItemId MLTree::DelFileInProject(wxString FileToDel, bool expand)
+{
+    wxFileName fileName(FileToDel);
+    wxTreeItemId ParentNode = GetTreeItemIdFromLabel(PROJECT_NODE);
+    for (nodeInfoMap::iterator it = nodes.begin(); it != nodes.end(); it++)
     {
-      if ((*it).second.label == infos.label && GetItemParent((*it).first) == ParentNode)
-	{
-	  return itemToAdd;
-	  }
+        wxFileName curFileName((*it).second.label);
+        if (curFileName.GetFullName() == fileName.GetFullName() && GetItemParent((*it).first) == ParentNode)
+        {
+            nodes.erase((*it).first);
+            DeleteChildren((*it).first);
+            Delete((*it).first);
+        }
     }
-  itemToAdd = AppendItem(ParentNode, FileToAdd);
-  if (expand == true)
-    Expand(ParentNode);
-  SetItemImage(itemToAdd, 3);
-  nodes[itemToAdd] = infos;
-
-  return itemToAdd;
+    DisplayNodes();
 }
 
-wxTreeItemId			MLTree::AddFileInProject(wxString FileToAdd, bool expand)
-{
-  wxTreeItemId			itemToAdd;
-  wxTreeItemId                  ParentNode;
-  wxFileName	File(FileToAdd);
-  wxFile *FileInfos = new wxFile(FileToAdd);
-  wxString length_str;
-  int fileInfosLength = FileInfos->Length();
-
-  length_str << fileInfosLength;
-
-  s_nodeInfo		infos;
-
-  infos = SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
-  map<wxTreeItemId, s_nodeInfo>::iterator it;
-
-
-  ParentNode = GetTreeItemIdFromLabel(PROJECT_NODE);
-  for (it = nodes.begin(); it != nodes.end(); it++)
-    {
-      if ((*it).second.label == infos.label && GetItemParent((*it).first) == ParentNode)
-	{
-	  return itemToAdd;
-	  }
-    }
-  itemToAdd = AppendItem(ParentNode, FileToAdd.AfterLast('/'));
-  if (expand == true)
-    Expand(ParentNode);
-  SetItemImage(itemToAdd, 3);
-  nodes[itemToAdd] = infos;
-
-  return itemToAdd;
-}
-wxTreeItemId			MLTree::DelFileInProject(wxString FileToAdd, bool expand)
-{
- map<wxTreeItemId, s_nodeInfo>::iterator it;
- wxTreeItemId                  ParentNode;
-
- ParentNode = GetTreeItemIdFromLabel(PROJECT_NODE);
- for (it = nodes.begin(); it != nodes.end(); it++)
-   {
-     if ((*it).second.label.AfterLast('/') == FileToAdd.AfterLast('/') && GetItemParent((*it).first) == ParentNode)
-       {
-	 nodes.erase((*it).first);
-	  DeleteChildren((*it).first);
-	  Delete((*it).first);
-       }
-    }
-  DisplayNodes();
-}
 // Return an item Id from a label node
-wxTreeItemId			MLTree::GetTreeItemIdFromLabel(wxString label)
+wxTreeItemId MLTree::GetTreeItemIdFromLabel(wxString label)
 {
-  wxTreeItemId			ItemToReturn;
-  map<wxTreeItemId, s_nodeInfo>::iterator theIterator;
-
-  for (theIterator = nodes.begin(); theIterator != nodes.end(); theIterator++ )
+    wxTreeItemId ItemToReturn;
+    for (nodeInfoMap::iterator i = nodes.begin(); i != nodes.end(); i++ )
     {
-      s_nodeInfo temp;
-      temp = (*theIterator).second;
-      if (temp.label.Cmp(label) == 0)
-	{
-	  ItemToReturn = (*theIterator).first;
-	}
+        s_nodeInfo temp;
+        temp = (*i).second;
+        if (temp.label.Cmp(label) == 0)
+            ItemToReturn = (*i).first;
     }
-  return (ItemToReturn);
+    return (ItemToReturn);
 }
 
 // DEBUG display nodes names
-void				MLTree::DisplayNodes()
+void MLTree::DisplayNodes()
 {
-  map<wxTreeItemId, s_nodeInfo>::iterator it;
-
-  int cnt = 0;
-  for (it = nodes.begin(); it != nodes.end(); it++)
+    cout << "MLTree::DisplayNodes() : Why am i called ?" << endl;
+    int cnt = 0;
+    for (nodeInfoMap::iterator it = nodes.begin(); it != nodes.end(); it++)
     {
-      s_nodeInfo temp;
-      temp = (*it).second;
-      //      cout << "value : [" << temp.label << "]" << endl;
-      cnt++;
+        s_nodeInfo temp;
+        temp = (*it).second;
+        //      cout << "value : [" << temp.label << "]" << endl;
+        cnt++;
     }
-  //  cout << "  total : " << cnt << endl;
+    //  cout << "  total : " << cnt << endl;
 }
 
 // Compare two existing items
-int				MLTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
+int MLTree::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
 {
-  map<wxTreeItemId, s_nodeInfo>::iterator it;
-  wxString	text1;
-  wxString	text2;
-  int		slashPos;
+    nodeInfoMap::iterator it;
+    wxString	text1;
+    wxString	text2;
+    int		slashPos;
 
-  //  cout << "selected : " << selected.mb_str() << endl;
-  for (it = nodes.begin(); it != nodes.end(); it++)
+    //  cout << "selected : " << selected.mb_str() << endl;
+    for (it = nodes.begin(); it != nodes.end(); it++)
     {
-      if ((*it).first == item1)
-	{
-	  s_nodeInfo temp;
-	  temp = (*it).second;
-	  if (!selected.Cmp(wxT("filesize")))
-	    text1 = temp.length;
-	  else if (!selected.Cmp(wxT("filename")))
-	    {
-	      text1 = temp.label;
-	      slashPos = text1.Find('/', true);
-	      text1 = text1.Mid(slashPos + 1);
-	    }
-	  else if (!selected.Cmp(wxT("filetype")))
-	    text1 = temp.extension;
-	  else
-	    text1 = temp.label;
-	}
+        if ((*it).first == item1)
+        {
+            s_nodeInfo temp;
+            temp = (*it).second;
+            if (!selected.Cmp(wxT("filesize")))
+                text1 = temp.length;
+            else if (!selected.Cmp(wxT("filename")))
+            {
+                text1 = temp.label;
+                slashPos = text1.Find('/', true);
+                text1 = text1.Mid(slashPos + 1);
+            }
+            else if (!selected.Cmp(wxT("filetype")))
+                text1 = temp.extension;
+            else
+                text1 = temp.label;
+        }
     }
-  for (it = nodes.begin(); it != nodes.end(); it++)
+    for (it = nodes.begin(); it != nodes.end(); it++)
     {
-      if ((*it).first == item2)
-	{
-	  s_nodeInfo temp;
-	  temp = (*it).second;
-	  if (!selected.Cmp(wxT("filesize")))
-	    text2 = temp.length;
-	  else if (!selected.Cmp(wxT("filename")))
-	    {
-	      text2 = temp.label;
-	      slashPos = text2.Find('/', true);
-	      text2 = text2.Mid(slashPos + 1);
-	    }
-	  else if (!selected.Cmp(wxT("filetype")))
-	    text2 = temp.extension;
-	  else
-	    text2 = temp.label;
-	}
+        if ((*it).first == item2)
+        {
+            s_nodeInfo temp;
+            temp = (*it).second;
+            if (!selected.Cmp(wxT("filesize")))
+                text2 = temp.length;
+            else if (!selected.Cmp(wxT("filename")))
+            {
+                text2 = temp.label;
+                slashPos = text2.Find('/', true);
+                text2 = text2.Mid(slashPos + 1);
+            }
+            else if (!selected.Cmp(wxT("filetype")))
+                text2 = temp.extension;
+            else
+                text2 = temp.label;
+        }
     }
-  // cout << "text1: " << text1.mb_str() << " | text2: " << text2.mb_str() << "comp: " << text1.Cmp(text2) << endl;
-
-  return text1.Cmp(text2);
-
+    // cout << "text1: " << text1.mb_str() << " | text2: " << text2.mb_str() << "comp: " << text1.Cmp(text2) << endl;
+    return (text1.Cmp(text2));
 }
 
 // Sort existing nodes
-void				MLTree::SortNodes(wxString MLselected)
+void MLTree::SortNodes(wxString MLselected)
 {
-  map<wxTreeItemId, s_nodeInfo>::iterator it;
-  wxTreeItemId temp;
-
-  selected = MLselected;
+    wxTreeItemId temp;
+    selected = MLselected;
   /*if (m_reverseSort == 1)
     m_reverseSort = -1;
   else
   m_reverseSort = 1;*/
-  for (it = nodes.begin(); it != nodes.end(); it++)
+    for (nodeInfoMap::iterator it = nodes.begin(); it != nodes.end(); it++)
     {
-      temp = (*it).first;
-      SortChildren(temp);
+        temp = (*it).first;
+        SortChildren(temp);
     }
-  saveCenter->SaveFile(this, SAVE_TREE_FILE);
+    saveCenter->SaveFile(this, SAVE_TREE_FILE);
 }
 
 // Return the struct associated to a node, from an ID
-s_nodeInfo			MLTree::GetTreeItemStructFromId(wxTreeItemId ItemToFind)
+// BAD Return an uninitialized struct
+s_nodeInfo MLTree::GetTreeItemStructFromId(wxTreeItemId ItemToFind)
 {
-  s_nodeInfo			structToReturn;
-  map<wxTreeItemId, s_nodeInfo>::iterator theIterator;
-
-  for (theIterator = nodes.begin(); theIterator != nodes.end(); theIterator++)
-    {
-      if ((*theIterator).first == ItemToFind)
-	{
-	  s_nodeInfo		temp;
-
-	  temp = (*theIterator).second;
-	  return (temp);
-	}
-    }
-  return (structToReturn);
+    s_nodeInfo structToReturn;
+    for (nodeInfoMap::iterator i = nodes.begin(); i != nodes.end(); i++)
+        if ((*i).first == ItemToFind)
+            return ((*i).second);
+    return (structToReturn);
 }
 
 // When adding a file/directory
-void				MLTree::OnAdd(wxString FileToAdd)
+void MLTree::OnAdd(wxString FileToAdd)
 {
-  if (!FileToAdd.empty())
-  {
-    wxFileName	File(FileToAdd);
-
-    if (File.FileExists() == true)
+    if (!FileToAdd.empty())
     {
-      //	  cout << "[MEDIALIBRARY] File added : " << FileToAdd <<  " Extension is : " << File.GetExt() << endl;
-      wxFile *FileInfos = new wxFile(FileToAdd);
-      wxString length_str;
-      int fileInfosLength = FileInfos->Length();
-      length_str << fileInfosLength;
-
-      for (vector<wxString>::iterator iter = Exts.begin(); iter != Exts.end(); iter++)
-	if (iter->Contains(File.GetExt().Lower()) == true)
-	{
-	  s_nodeInfo		infos;
-	  int			slashPos;
-	  wxTreeItemId		selection;
-
-	  infos = SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
-	  slashPos = FileToAdd.Find('/', true);
-	  selection = GetSelection();
-	  if (selection.IsOk() == true && selection != GetRootItem())
-	    this->AddFile(selection, FileToAdd.Mid(slashPos + 1), infos, true);
-	  else
-	    this->AddFile(GetTreeItemIdFromLabel(LOCAL_NODE), FileToAdd.Mid(slashPos + 1), infos, true);
-	}
-      // we need to delete FileInfos so that the file doesn't stay open
-      delete FileInfos;
-      DisplayNodes();
+        wxFileName File(FileToAdd);
+        if (File.FileExists() == true)
+        {
+            wxFile FileInfos(FileToAdd);
+            wxString length_str;
+            length_str << FileInfos.Length();
+            for (wxStringVector::iterator iter = Exts.begin(); iter != Exts.end(); iter++)
+                if (iter->Contains(File.GetExt().Lower()) == true)
+                {
+                    s_nodeInfo infos;
+                    wxTreeItemId selection;
+                    SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
+                    selection = GetSelection();
+                    if (selection.IsOk() == true && selection != GetRootItem())
+                        this->AddFile(selection, File.GetFullName(), infos, true);
+                    else
+                        this->AddFile(GetTreeItemIdFromLabel(LOCAL_NODE), File.GetFullName(), infos, true);
+                }
+            DisplayNodes();
+        }
     }
-  }
 }
 
 void				MLTree::OnAddOnNode(wxString FileToAdd, wxTreeItemId selection)
@@ -787,7 +738,7 @@ void				MLTree::OnAddOnNode(wxString FileToAdd, wxTreeItemId selection)
       int fileInfosLength = FileInfos->Length();
       length_str << fileInfosLength;
 
-      for (vector<wxString>::iterator iter = Exts.begin(); iter != Exts.end(); iter++)
+      for (wxStringVector::iterator iter = Exts.begin(); iter != Exts.end(); iter++)
 		{
 			wxString ExtToCheck;
 			wxString ExtList = (*iter);
@@ -803,7 +754,7 @@ void				MLTree::OnAddOnNode(wxString FileToAdd, wxTreeItemId selection)
 			  		int			slashPos;
 			  		//wxTreeItemId		selection;
 
-					infos = SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
+					SetStructInfos(infos, FileToAdd, File.GetExt(), length_str);
 					slashPos = FileToAdd.Find('/', true);
 					//selection = GetSelection();
 					if (selection.IsOk() == true && selection != GetRootItem())
@@ -914,30 +865,22 @@ void				MLTree::OnAddDirectory(wxString DirToAdd)
 }
 
 // Return selection label
-wxString			MLTree::getSelection(int flag)
+wxString MLTree::getSelection(int flag)
 {
-  wxArrayTreeItemIds		selection;
-  int				selection_length;
-  int				i;
-  wxTreeItemId			ItemToReturn;
-  map<wxTreeItemId, s_nodeInfo>::iterator it;
-
-
-  selection_length = GetSelections(selection);
-  for (i = 0; i < selection_length; i++)
-    if (GetItemParent(selection[i]) != GetRootItem() && selection[i] != GetRootItem())
-      if (!flag)
-	{
-	  return (GetItemText(selection[i]));
-	}
-      else
-	{
-	  s_nodeInfo		temp;
-
-	  temp = GetTreeItemStructFromId(selection[i]);
-	  return (temp.label);
-	}
-  return (wxT(""));
+    int selection_length = GetSelections(selection);
+    for (int i = 0; i < selection_length; i++)
+        if (GetItemParent(selection[i]) != GetRootItem() && selection[i] != GetRootItem())
+            if (!flag)
+            {
+                return (GetItemText(selection[i]));
+            }
+            else
+            {
+                s_nodeInfo		temp;
+                temp = GetTreeItemStructFromId(selection[i]);
+                return (temp.label);
+            }
+    return (wxT(""));
 }
 
 // When removing an element
@@ -962,19 +905,19 @@ void				MLTree::OnRemove()
 }
 
 // Expand all existing nodes
-void				MLTree::ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldExpand, int toLevel)
+void MLTree::ExpandAll(wxTreeCtrl *Tree, const wxTreeItemId& id, bool shouldExpand, int toLevel)
 {
-
-  if (toLevel == 0 || !ItemHasChildren(id))
-    return;
-  bool isExpanded = IsExpanded(id);
-  if (shouldExpand && !isExpanded)
-    Expand(id);
-  else if (!shouldExpand && isExpanded)
-    Collapse(id);
-  wxTreeItemIdValue cookie = &Tree;
-  for (wxTreeItemId child = GetFirstChild(id, cookie); child.IsOk(); child = GetNextChild(id, cookie))
-    ExpandAll(Tree, child, shouldExpand, toLevel - 1);
+    if (toLevel == 0 || !ItemHasChildren(id))
+        return;
+    bool isExpanded = IsExpanded(id);
+    if (shouldExpand && !isExpanded)
+        Expand(id);
+    else if (!shouldExpand && isExpanded)
+        Collapse(id);
+    // Tree or _Tree ??? (see rev. 1439)
+    wxTreeItemIdValue cookie = &Tree;
+    for (wxTreeItemId child = GetFirstChild(id, cookie); child.IsOk(); child = GetNextChild(id, cookie))
+        ExpandAll(Tree, child, shouldExpand, toLevel - 1);
   //LoadML();
 }
 
@@ -986,13 +929,13 @@ void				MLTree::OnCollapse()
   // Currently using 100 as an arbitrary max depth
   if (IsTreeCollapsed() == true)
     {
-      ExpandAll(Tree, GetRootItem(), true, 100);
+      ExpandAll(_Tree, GetRootItem(), true, 100);
       SetTreeExpanded();
     }
   else
     {
-      wxTreeItemIdValue cookie = &Tree;
-      ExpandAll(Tree, GetRootItem(), false, 100);
+      wxTreeItemIdValue cookie = &_Tree;
+      ExpandAll(_Tree, GetRootItem(), false, 100);
       EnsureVisible(GetFirstChild(GetRootItem(), cookie));
       SetTreeCollapsed();
     }
@@ -1105,106 +1048,91 @@ wxTreeItemId                    MLTree::Copy(wxTreeItemId item)
     }
 }
 
-void                          MLTree::DragAndDrop(wxTreeItemId item)
+void MLTree::DragAndDrop(wxTreeItemId item)
 {
- wxTreeItemIdValue cookie = &Tree;
- wxTreeItemId		item_to_drag_save;
- wxTreeItemId		item_save;
+    // Assign a wxTreeCtrl to a wxTreeItemIdValue ???
+    wxTreeItemIdValue cookie = &_Tree;
+    wxTreeItemId item_to_drag_save;
+    wxTreeItemId item_save;
 
-
- item = Copy(item);
- if (item_to_drag == item_begin)
-   return;
-
-for (item_to_drag = GetFirstChild(item_to_drag, cookie); item_to_drag.IsOk(); item_to_drag = GetFirstChild(item_to_drag, cookie))
-   {
-     if (item_to_drag == item_begin)
-       return;
-     item_save = item;
-     item = Copy(item);
-     item_to_drag_save = item_to_drag;
-     for (item_to_drag = GetNextSibling(item_to_drag); item_to_drag.IsOk(); item_to_drag = GetNextSibling(item_to_drag))
-       {
-	 if (item_to_drag == item_begin)
-	    return;
-	 DragAndDrop(item_save);
-       }
-
-     item_to_drag = item_to_drag_save;
-   }
-}
-
-
-
-void				MLTree::EndDrag(wxTreeEvent &event)
-{
-  wxTreeItemId		item;
-  int			i;
-
-  item = event.GetItem();
-  item_begin = item;
-
-  map<wxTreeItemId, s_nodeInfo>::iterator it;
-  s_nodeInfo		infos;
-
-  for (i = 0; i < selection_length; i++)
-  {
-    if (GetItemParent(selection[i]) != GetRootItem() && selection[i] != GetRootItem())
+    item = Copy(item);
+    if (item_to_drag == item_begin)
+        return;
+    for (item_to_drag = GetFirstChild(item_to_drag, cookie); item_to_drag.IsOk(); item_to_drag = GetFirstChild(item_to_drag, cookie))
     {
-      item_to_drag = selection[i];
-      for (it = nodes.begin(); it != nodes.end(); it++)
-      {
-	if ((*it).first == item_to_drag)
-	{
-	  infos = (*it).second;
-	  break;
-	}
-      }
-      if (item.IsOk() &&
-	  item != item_to_drag &&
-	  item != GetRootItem() &&
-	  GetItemParent(item) != item_to_drag &&
-	  GetItemParent(item_to_drag) != item &&
-	  !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
-      {
-	DragAndDrop(item);
-	Expand(item_begin);
-      }
+        if (item_to_drag == item_begin)
+            return;
+        item_save = item;
+        item = Copy(item);
+        item_to_drag_save = item_to_drag;
+        for (item_to_drag = GetNextSibling(item_to_drag); item_to_drag.IsOk(); item_to_drag = GetNextSibling(item_to_drag))
+        {
+            if (item_to_drag == item_begin)
+                return;
+            DragAndDrop(item_save);
+        }
+        item_to_drag = item_to_drag_save;
     }
-  }
-  if (item.IsOk() &&
-      item != item_to_drag &&
-      item != GetRootItem() &&
-      GetItemParent(item) != item_to_drag &&
-      GetItemParent(item_to_drag) != item &&
-      !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
-    OnRemove();
+}
+
+void MLTree::EndDrag(wxTreeEvent &event)
+{
+    wxTreeItemId item = event.GetItem();
+    item_begin = item;
+    s_nodeInfo infos;
+    for (int i = 0; i < selection_length; i++)
+    {
+        if (GetItemParent(selection[i]) != GetRootItem() && selection[i] != GetRootItem())
+        {
+            item_to_drag = selection[i];
+            for (nodeInfoMap::iterator it = nodes.begin(); it != nodes.end(); it++)
+            {
+                if ((*it).first == item_to_drag)
+                {
+                    infos = (*it).second;
+                    break;
+                }
+            }
+            if (item.IsOk() &&
+                item != item_to_drag &&
+                item != GetRootItem() &&
+                GetItemParent(item) != item_to_drag &&
+                GetItemParent(item_to_drag) != item &&
+                !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
+                {
+                    DragAndDrop(item);
+                    Expand(item_begin);
+                }
+        }
+    }
+    if (item.IsOk() &&
+        item != item_to_drag &&
+        item != GetRootItem() &&
+        GetItemParent(item) != item_to_drag &&
+        GetItemParent(item_to_drag) != item &&
+        !GetTreeItemStructFromId(item).extension.Cmp(wxT("")))
+            OnRemove();
 }
 
 
 
-void				MLTree::OnLeftClick(wxMouseEvent &event)
+void MLTree::OnLeftClick(wxMouseEvent &event)
 {
-  int		x;
-  int		y;
-  s_nodeInfo   	infos;
-
-
-  infos = GetTreeItemStructFromId(item_to_drag);
-  if (infos.label != wxT(""))
+    s_nodeInfo infos = GetTreeItemStructFromId(item_to_drag);
+    if (infos.label != wxT(""))
     {
-      if (infos.extension.Cmp(wxT("")))
-	{
-	  Selfile = infos.label;
-	  x = event.GetPosition().x;
-	  y = event.GetPosition().y;
-	  ClientToScreen(&x, &y);
-	  wxCommandEvent event( EVT_DROP, ID_EVT_DROP );
-	  Pos.x = x;
-	  Pos.y = y;
-	  wxPostEvent(SeqPanel->GetEventHandler(), event);
-	}
-      SeqPanel->HideAllPatterns(event);
+        if (infos.extension.Cmp(wxT("")))
+        {
+            _Selfile = infos.label;
+            int x = event.GetPosition().x;
+            int y = event.GetPosition().y;
+            ClientToScreen(&x, &y);
+            wxCommandEvent event(EVT_DROP, ID_EVT_DROP);
+            _Pos.x = x;
+            _Pos.y = y;
+            wxPostEvent(SeqPanel->GetEventHandler(), event);
+        }
+        SeqPanel->HideAllPatterns(event);
     }
     event.Skip();
 }
