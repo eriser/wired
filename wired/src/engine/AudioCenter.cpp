@@ -20,40 +20,34 @@ AudioCenter::~AudioCenter()
 
 WaveFile *AudioCenter::AddWaveFile(wxString filename)
 {
-  WaveFile *w;
-  list<WaveFile *>::iterator i;
-  wxString path;
-  wxString to;
-  try
+    WaveFile *w;
+    try
     {
-      path = saveCenter->getAudioDir();
-      to = path + filename.AfterLast('/');
-      for (i = WaveFiles.begin(); i != WaveFiles.end(); i++)
-	{
-	if ((*i)->Filename == to)
-	  {
-	    w = new WaveFile((*i)->Filename, false, WaveFile::rwrite);
-	    WaveFiles.push_back(w);
-	    return (w);
-	  }
-	}
-      if (!wxFileExists(to))
-	wxCopyFile(filename, to, false);
-      MediaLibraryPanel->MLTreeView->AddFileInProject(to, true);
-      w = new WaveFile(to, false, WaveFile::rwrite);
-      WaveFiles.push_back(w);
+        wxFileName onlyfile(filename);
+        wxString to = saveCenter->getAudioDir() + onlyfile.GetFullName();
+        for (list<WaveFile *>::iterator i = WaveFiles.begin(); i != WaveFiles.end(); i++)
+            if ((*i)->Filename == to)
+            {
+                w = new WaveFile((*i)->Filename, false, WaveFile::rwrite);
+                WaveFiles.push_back(w);
+                return (w);
+            }
+        if (!wxFileExists(to))
+            wxCopyFile(filename, to, false);
+        MediaLibraryPanel->MLTreeView->AddFileInProject(to, true);
+        w = new WaveFile(to, false, WaveFile::rwrite);
+        WaveFiles.push_back(w);
     }
-  catch (...)
+    catch (...)
     {
-    	cout << "Could not open file  !" << endl;
-//      wxMessageDialog msg(0x0, 
-//			  "Could not open file", "Wired", 
+        cout << "Could not open file  !" << endl;
+//      wxMessageDialog msg(0x0,
+//			  "Could not open file", "Wired",
 //			  wxOK | wxICON_EXCLAMATION |wxCENTRE);
 //      msg.ShowModal();
-
-      w = 0;
+        w = 0;
     }
-  return (w);
+    return (w);
 }
 
 void		AudioCenter::RemoveWaveFile(WaveFile *file)

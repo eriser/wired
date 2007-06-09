@@ -249,9 +249,14 @@ void				MediaLibrary::SetDocked()
 
 void MediaLibrary::OnAdd(wxCommandEvent &WXUNUSED(event))
 {
-    wxFileDialog dlg(this, _("Loading sound file"));
+    wxFileDialog dlg(this, _("Loading sound file"), "", "", "", wxMULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
-        MLTreeView->OnAdd(dlg.GetFilename());
+    {
+        wxArrayString paths;
+        dlg.GetPaths(paths);
+        for (wxArrayString::iterator i = paths.begin(); i != paths.end(); i++)
+            MLTreeView->OnAdd((*i));
+    }
 }
 
 
