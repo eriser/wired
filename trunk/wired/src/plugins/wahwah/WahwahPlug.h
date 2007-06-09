@@ -7,7 +7,7 @@
 #ifndef		__WWHAWHA_H__
 #define		__WWHAWHA_H__
 
-#include	"../redist/Plugin.h"
+#include	"Plugin.h"
 
 #include	<math.h>
 #include	<wx/wxprec.h>
@@ -76,7 +76,7 @@ typedef struct s_plugParams
 #define IMG_BYPASS_ON	wxT("plugins/reverb/bypass_button_down.png")
 #define IMG_BYPASS_OFF	wxT("plugins/reverb/bypass_button_up.png")
 
- 
+
 class Wahwah
 {
   public :
@@ -116,7 +116,7 @@ class EffectWahwah : public Plugin
 
   void	 Process(float **input, float **output, long sample_length);
   void	 CreateGui(wxWindow *rack, wxPoint &pos, wxSize &size);
-  
+
   bool	 IsAudio();
   bool	 IsMidi();
 
@@ -144,7 +144,7 @@ class EffectWahwah : public Plugin
 
  protected:
 
-  wxBitmap	*bmp;   
+  wxBitmap	*bmp;
 
   bool		Bypass;
 
@@ -161,13 +161,13 @@ class EffectWahwah : public Plugin
   wxImage	*bypass_off;
   wxImage	*liquid_on;
   wxImage	*liquid_off;
-  
+
   StaticBitmap	*Liquid;
   wxBitmap	*TpBmp;
 
   wxMutex	WahwahMutex;
 
-  DECLARE_EVENT_TABLE()  
+  DECLARE_EVENT_TABLE()
 
 };
 
