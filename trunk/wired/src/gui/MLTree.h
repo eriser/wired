@@ -11,10 +11,6 @@
 #include "WiredDocument.h"
 #include "MediaLibrary.h"
 
-using std::string;
-using std::vector;
-using std::map;
-
 extern MediaLibrary	*MediaLibraryPanel;
 
 #define EXT_FILE		wxT("wired_exts.conf")
@@ -41,86 +37,94 @@ struct				s_nodeInfo
   wxString			length;
 };
 
+typedef std::map<wxTreeItemId, s_nodeInfo> nodeInfoMap;
+// TODO: Replace by wxArrayString
+typedef std::vector<wxString> wxStringVector;
+
 /**
  * The MLTree class handle the tree of the MediaLibrary. It is derived from wxTreeCtrl
  */
-class				MLTree : public wxTreeCtrl, public WiredDocument
+class MLTree : public wxTreeCtrl, public WiredDocument
 {
- public:
+public:
 /**
  * Main constructor for class MLTree
 */
-  MLTree(wxWindow *dad, wxPoint p, wxSize s, long style);
-  wxTreeItemId			AddFileInProject(wxString FileToAdd, bool expand);
-  wxTreeItemId			DelFileInProject(wxString FileToAdd, bool expand);
-  wxPoint                       GetPos(){return Pos;};
-  wxString                      GetFile(){return Selfile;};
+    MLTree (wxWindow *dad, wxPoint p, wxSize s, long style);
 /**
  * Main destructor for class MLTree
 */
-  ~MLTree();
+    ~MLTree();
 
-  void			LoadPatch(wxString filename);
+    wxPoint      GetPos           () { return (_Pos); }
+    wxString     GetFile          () { return (_Selfile); }
 
-  void			OnSave(wxString filename);
+    wxTreeItemId AddFileInProject (wxString FileToAdd, bool expand);
+    wxTreeItemId DelFileInProject (wxString FileToAdd, bool expand);
 
- protected:
-  wxPoint                       Pos;
-  wxString     	                Selfile;
-  friend class			MediaLibrary;
-  // friend class			WiredSessionXml;
-  friend class			MLTreeInfos;
+    void         LoadPatch        (wxString filename);
+    void         OnSave           (wxString filename);
 
+protected:
+    friend class MediaLibrary;
+    friend class MLTreeInfos;
+//    friend class WiredSessionXml;
+/**
+ * Protected data members
+*/
+    wxPoint            _Pos; // Assigned but never used
+    wxString           _Selfile; // Assigned but never used
 /**
  * wxTreeCtrl to display the tree and the nodes
 */
-  wxTreeCtrl			*Tree;
+// BAD ? Why ? MLTree already derivate from wxTreeCtrl
+    wxTreeCtrl         *_Tree;
 /**
  * Boolean used to know if the media library nodes are collapsed or not
 */
-  bool				collapsed;
+    bool               collapsed;
 /**
  * wxTreeItemId root is the first node of the Tree. It contains the project
  * name.
 */
-  wxTreeItemId			root;
+    wxTreeItemId       root;
 /**
  * a wxString used by filters
 */
-  wxString			filters;
+    wxString           filters;
 /**
  * A vector of wxStrings containing all the known sounds extensions
 */
-  vector<wxString>		Exts;
+    wxStringVector     Exts;
 /**
  * A Map of wxTreeItemId and their corresponding struct which contains
  * various informations related to the item.
 */
-  map<wxTreeItemId, s_nodeInfo>	nodes;
+    nodeInfoMap        nodes;
 /**
  * A wxPoint which contains the position of the mouse when using right click
 */
-  wxPoint			mouse_pos;
+    wxPoint            mouse_pos;
 /**
  * A wxString that holds the name of the selected node
 */
-  wxString			selected;
+    wxString           selected;
 /**
  * A wxTreeItemId used for the drag and drop feature
 */
-  wxTreeItemId		        item_begin;
+    wxTreeItemId       item_begin;
 /**
  * A wxTreeItemId used for the drag and drop feature
 */
-  wxTreeItemId		        item_to_drag;
+    wxTreeItemId       item_to_drag;
 /**
  * A wxArrayTreeItemsIds which contains multiple selection items ids
 */
-  wxArrayTreeItemIds		selection;
+    wxArrayTreeItemIds selection;
 /**
  * An int holding the lenght number of the current selection
 */
-  int				selection_length;
+    int                selection_length;
 /**
  * Parse the tree and write xml file
  * \param XmlSession a WiredSessionXml*
