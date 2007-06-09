@@ -92,7 +92,7 @@ long HostCallback(Plugin *plug, long param, void *value)
             w = (s_wired_l *)value;
             wxFileDialog dlg(MainWin, w->t);
             if (dlg.ShowModal() == wxID_OK)
-                w->result = dlg.GetFilename();
+                w->result = dlg.GetPath();
             /*
             FileLoader *dlg = new FileLoader(MainWin, MainWin_FileLoader, w->t, w->ak, false, w->e);
             if (dlg->ShowModal() == wxID_OK)
@@ -112,7 +112,7 @@ long HostCallback(Plugin *plug, long param, void *value)
             w = (s_wired_l *)value;
             wxFileDialog dlg(MainWin, w->t, wxT(""), wxT(""), wxT(""), wxSAVE);
             if (dlg.ShowModal() == wxID_OK)
-                w->result = dlg.GetFilename();
+                w->result = dlg.GetPath();
             /*
             FileLoader *dlg = new FileLoader(MainWin, MainWin_FileLoader, w->t, false, true, w->e);
             if (dlg->ShowModal() == wxID_OK)

@@ -723,18 +723,17 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 
 void MainWindow::OnImportWave(wxCommandEvent &event)
 {
-    int res;
     wxFileDialog dlg(this, _("Loading sound file"), wxT(""), wxT(""), wxT(""), wxMULTIPLE);
     if (dlg.ShowModal() == wxID_OK)
     {
-        wxArrayString files;
-        dlg.GetFilenames(files);
+        wxArrayString paths;
+        dlg.GetPaths(paths);
 
         MidiMutex.Lock();
         MidiDeviceMutex.Lock();
         SeqMutex.Unlock();
 
-        for (wxArrayString::iterator i = files.begin(); i != files.end(); i++)
+        for (wxArrayString::iterator i = paths.begin(); i != paths.end(); i++)
             FileConverter->ImportFile((*i));
 
         MidiMutex.Unlock();
@@ -747,12 +746,11 @@ void MainWindow::OnImportMIDI(wxCommandEvent &event)
     wxFileDialog dlg(this, _("Import MIDI file"), wxT(""), wxT(""), _("Midi file (*.mid)|*.mid"));
     if (dlg.ShowModal() == wxID_OK)
     {
-        wxString selfile = dlg.GetFilename();
+        wxString selfile = dlg.GetPath();
 
         cout << "[MAINWIN] Users imports MIDI file : " << selfile.mb_str() << endl;
         wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
-				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
-				| wxPD_REMAINING_TIME);
+				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
         Progress.Update(1);
         cImportMidiAction* action = new cImportMidiAction(selfile, eMidiTrack);
         action->Do();
@@ -788,10 +786,9 @@ void					MainWindow::OnImportAKAI(wxCommandEvent &event)
     wxFileDialog dlg(this, _("Import AKAI samples"));
     if (dlg.ShowModal() == wxID_OK)
     {
-        wxString selfile = dlg.GetFilename();
+        wxString selfile = dlg.GetPath();
         wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
-				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT
-				| wxPD_REMAINING_TIME);
+				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
         Progress.Update(1);
         cImportAkaiAction* action = new cImportAkaiAction(selfile, eAudioTrack);
         action->Do();
@@ -841,15 +838,14 @@ void MainWindow::OnExportWave(wxCommandEvent &event)
 
     if (total <= 0)
     {
-        wxMessageDialog msg(this, _("Please correctly place the Left and Right markers"), wxT("Wired"),
-			  wxOK | wxICON_EXCLAMATION | wxCENTRE);
+        wxMessageDialog msg(this, _("Please correctly place the Left and Right markers"), wxT("Wired"), wxOK | wxICON_EXCLAMATION | wxCENTRE);
         msg.ShowModal();
         return;
     }
     wxFileDialog dlg(this, _("Exporting sound file"), wxT(""), wxT(""), wxT(""), wxSAVE);
     if (dlg.ShowModal() == wxID_OK)
     {
-        wxString selfile = dlg.GetFilename();
+        wxString selfile = dlg.GetPath();
         wxFileName f(selfile);
         if (f.GetExt().IsEmpty())
         {
@@ -883,7 +879,7 @@ void MainWindow::OnExportMIDI(wxCommandEvent &event)
     wxFileDialog dlg(this, _("Export MIDI file"), wxT(""), wxT(""), _("Midi file (*.mid)|*.mid"), wxSAVE);
      if (dlg.ShowModal() == wxID_OK)
     {
-        wxString selfile = dlg.GetFilename();
+        wxString selfile = dlg.GetPath();
         cout << "[MAINWIN] Users exports MIDI file : " << selfile.mb_str() << endl;
     }
     else
@@ -2060,14 +2056,14 @@ void MainWindow::OnLoadML(wxCommandEvent &WXUNUSED(event))
 {
     wxFileDialog dlg(this, _("Load Media Library"), wxT(""), wxT(""), _("Media Library file (*.xml)|*.xml"));
     if (dlg.ShowModal() == wxID_OK)
-        MediaLibraryPanel->MLTreeView->LoadPatch(dlg.GetFilename());
+        MediaLibraryPanel->MLTreeView->LoadPatch(dlg.GetPath());
 }
 
 void MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
 {
     wxFileDialog dlg(this, _("Save Media Library"), wxT(""), wxT(""), _("Media Library file (*.xml)|*.xml"), wxSAVE);
     if (dlg.ShowModal() == wxID_OK)
-        MediaLibraryPanel->MLTreeView->OnSave(dlg.GetFilename());
+        MediaLibraryPanel->MLTreeView->OnSave(dlg.GetPath());
 }
 
 void		MainWindow::OpenWizard()
