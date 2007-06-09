@@ -8,9 +8,9 @@
 		<Project filename="libWiredChorus.cbp" />
 		<Project filename="libWiredReverb.cbp" />
 		<Project filename="libWiredSampler.cbp" />
-		<Project filename="libWiredWahwah.cbp" active="1" />
+		<Project filename="libWiredWahwah.cbp" />
 		<Project filename="libWiredWidgets.cbp" />
-		<Project filename="wired.cbp" />
+		<Project filename="wired.cbp" active="1" />
 		<Project filename="libWiredAkai.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

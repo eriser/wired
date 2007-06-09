@@ -16,7 +16,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include "../include/list.h"
+#include "list.h"
 #include <stdlib.h>
 
 #define CREATE_NODE(node, e, n) node = (t_list *)malloc(sizeof(t_list));\
