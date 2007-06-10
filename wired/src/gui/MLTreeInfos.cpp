@@ -13,11 +13,11 @@ MLTreeInfos::MLTreeInfos(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long 
 
   this->SetBackgroundColour(wxColour(206, 200, 200));
   new wxString(textContent);
-  textContent.Append(infos.label);
+  textContent.Append(infos._label);
   textContent.Append(_("\nExtension : "));
-  textContent.Append(infos.extension);
+  textContent.Append(infos._extension);
   textContent.Append(_("\nLength : "));
-  textContent.Append(infos.length);
+  textContent.Append(infos._length);
   textContent.Append(_("\nBitrate"));
   textContent.Append(_("\nSize : "));
   textContent.Append(_("\nCodec : "));
@@ -29,11 +29,11 @@ MLTreeInfos::MLTreeInfos(wxWindow *MediaLibraryPanel, wxPoint p, wxSize s, long 
 
 MLTreeInfos::~MLTreeInfos()
 {
-  
+
 }
 
 
-MywxStaticText::MywxStaticText(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = _("staticText")) 
+MywxStaticText::MywxStaticText(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = _("staticText"))
   : wxStaticText(parent, id, label, pos, size, style, name)
 {
   this->infoParent = parent;

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include "SequencerGui.h"
+#include "MLTree.h"
 #include "Track.h"
 #include "Sequencer.h"
 #include "Ruler.h"

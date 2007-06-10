@@ -3,7 +3,6 @@
 
 #include <cmath>
 #include "Clavier.h"
-#include "Key.h"
 #include "Sequencer.h"
 #include "MidiPattern.h"
 #include "Plugin.h"

@@ -7,12 +7,12 @@
 #include "MLTree.h"
 //#include "<wx/filefn.h>"
 
-extern SaveCenter *saveCenter;
+extern SaveCenter   *saveCenter;
 
 AudioCenter::AudioCenter()
 {
-
 }
+
 AudioCenter::~AudioCenter()
 {
   Clear();

@@ -7,35 +7,33 @@
 #include <wx/app.h>
 #include <wx/snglinst.h>
 #include <wx/debugrpt.h>
-
 #include <wx/thread.h>
 #include <wx/dynarray.h>
-
 #include "version.h"
 
 WX_DEFINE_ARRAY_PTR(wxThread *, wxArrayThread);
-
 
 class MainWindow;
 
 class MainApp : public wxApp
 {
- public:
-  virtual bool			OnInit();
-  virtual int			OnExit();
-  wxArrayThread			m_threads;
-  wxMutex			m_mutex;
-  wxCondition*			m_condAllDone;
+public:
+  virtual bool OnInit ();
+  virtual int  OnExit ();
 
- private:
-  MainWindow			*Frame;
-  wxSingleInstanceChecker	*Checker;
+  wxArrayThread m_threads;
+  wxMutex       m_mutex;
+  wxCondition*  m_condAllDone;
+
+private:
+  MainWindow              *Frame;
+  wxSingleInstanceChecker *Checker;
+
 #if wxUSE_ON_FATAL_EXCEPTION
-  void			        OnFatalException();
+  void OnFatalException     ();
 #endif
-  void				OnUnhandledException();
-  void				ShowWelcome();
-
+  void OnUnhandledException ();
+  void ShowWelcome          ();
 };
 
 DECLARE_APP(MainApp)

@@ -24,7 +24,6 @@
 #include "AudioPattern.h"
 #include "MidiPattern.h"
 #include "AccelCenter.h"
-#include "MLTree.h"
 #include "SequencerView.h"
 
 BEGIN_DECLARE_EVENT_TYPES()
@@ -304,7 +303,7 @@ class				SequencerGui: public wxPanel, public WiredDocument
   void				UpdateTrackList(std::vector<Track *> *track_list);
   void				UpdateMeasures();
   void				DrawMeasures();
-  
+
   DECLARE_EVENT_TABLE()
 };
 

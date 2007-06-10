@@ -45,6 +45,12 @@
 #include "SaveCenter.h"
 #include "debug.h"
 
+#ifdef DEBUG_MAINWINDOW
+#define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : "  << __LINE__ << " : " << __FUNCTION__  << endl; }
+#else
+#define LOG
+#endif
+
 //Isn't it bullshit to declare things here ?
 
 Rack			*RackPanel = NULL;
@@ -72,6 +78,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 	    wxDEFAULT_FRAME_STYLE | wxWS_EX_PROCESS_IDLE | wxMAXIMIZE),
     WiredDocument(wxT("MainWindow"), parent)
 {
+  LOG;
   wxFileName	path;
 
   m_FrameTitle = wxT("wired");
@@ -294,6 +301,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 // basicaly launch actions which are non-graphical related
 int			MainWindow::Init()
 {
+  LOG;
   wxThreadError		err;
 
   // start midi thread
@@ -361,6 +369,7 @@ int			MainWindow::Init()
 
 int			MainWindow::InitAudio(bool restart)
 {
+  LOG;
   wxMutexLocker audioLock(AudioMutex);
   if (Audio->IsOk)
     {
@@ -476,6 +485,7 @@ int			MainWindow::InitAudio(bool restart)
 
 void                MainWindow::InitLocale()
 {
+  LOG;
   // disable extra output of wx
   wxLog		log(wxLogNull);
   wxString	prefix = wxT(PACKAGE_LOCALE_DIR);
@@ -498,6 +508,7 @@ void                MainWindow::InitLocale()
 
 void					MainWindow::InitFileConverter()
 {
+  LOG;
   //USES WIRESESSION
   FileConverter = new FileConversion();
   t_samplerate_info info;
@@ -530,6 +541,7 @@ void					MainWindow::InitFileConverter()
 
 void					MainWindow::InitUndoRedoMenuItems()
 {
+  LOG;
   EditMenu->Insert(INDEX_MENUITEM_UNDO, MainWin_Undo, _("U&ndo"), UndoMenu);
   EditMenu->Insert(INDEX_MENUITEM_REDO, MainWin_Redo, _("&Redo"), RedoMenu);
   EditMenu->Enable(MainWin_Undo, false);
@@ -538,6 +550,7 @@ void					MainWindow::InitUndoRedoMenuItems()
 
 void					MainWindow::InitVideoMenuItems()
 {
+  LOG;
   VideoMenu->Append(MainWin_OpenVideo, _("&Open video"));
   VideoMenu->Append(MainWin_CloseVideo, _("&Close video"));
   VideoMenu->AppendCheckItem(MainWin_SeekVideo, _("&Seek with video playing"));
@@ -549,6 +562,7 @@ void					MainWindow::InitVideoMenuItems()
 
 void					MainWindow::OnClose(wxCloseEvent &event)
 {
+  LOG;
   vector<RackTrack *>::iterator		i;
   vector<Plugin *>::iterator		j;
   vector<PluginLoader *>::iterator	k;
@@ -587,7 +601,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   const wxArrayThread& threads = wxGetApp().m_threads;
   size_t count = threads.GetCount();
 
-  for (int i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++)
     threads.Item(i)->Delete();
 
   if (count > 0)
@@ -646,16 +660,19 @@ void					MainWindow::OnClose(wxCloseEvent &event)
 
 void					MainWindow::OnQuit(wxCommandEvent &WXUNUSED(event))
 {
+  LOG;
   Close(false);
 }
 
 void					MainWindow::OnNew(wxCommandEvent &event)
 {
+  LOG;
   NewSession();
 }
 
 bool					MainWindow::NewSession()
 {
+  LOG;
   // an existing session is opened, we'll ask for confirmation
   wxMessageDialog			msg(this, _("Save current session ?"), wxT("Wired"),
 					    wxYES_NO | wxCANCEL | wxICON_QUESTION);
@@ -681,6 +698,7 @@ bool					MainWindow::NewSession()
 
 void					MainWindow::CleanChildren()
 {
+  LOG;
   UpdatePlugins.clear();
 
   // AudioCenter
@@ -689,6 +707,7 @@ void					MainWindow::CleanChildren()
 
 void					MainWindow::OnOpen(wxCommandEvent &event)
 {
+  LOG;
   wxDirDialog	dirDialog(NULL, _("Select a project folder"),
 			  saveCenter->getProjectPath().GetPath());
 
@@ -704,11 +723,13 @@ void					MainWindow::OnOpen(wxCommandEvent &event)
 
 void					MainWindow::OnSave(wxCommandEvent &event)
 {
+  LOG;
   saveCenter->SaveProject();
 }
 
 void					MainWindow::OnSaveAs(wxCommandEvent &event)
 {
+  LOG;
   wxDirDialog	dirDialog(NULL, _("Select a project folder"),
 			  saveCenter->getProjectPath().GetPath());
 
@@ -723,40 +744,42 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 
 void MainWindow::OnImportWave(wxCommandEvent &event)
 {
-    wxFileDialog dlg(this, _("Loading sound file"), wxT(""), wxT(""), wxT(""), wxMULTIPLE);
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        wxArrayString paths;
-        dlg.GetPaths(paths);
+  LOG;
+  wxFileDialog dlg(this, _("Loading sound file"), wxT(""), wxT(""), wxT(""), wxMULTIPLE);
+  if (dlg.ShowModal() == wxID_OK)
+  {
+    wxArrayString paths;
+    dlg.GetPaths(paths);
 
-        MidiMutex.Lock();
-        MidiDeviceMutex.Lock();
-        SeqMutex.Unlock();
+    MidiMutex.Lock();
+    MidiDeviceMutex.Lock();
+    SeqMutex.Unlock();
 
-        for (wxArrayString::iterator i = paths.begin(); i != paths.end(); i++)
-            FileConverter->ImportFile((*i));
+    for (wxArrayString::iterator i = paths.begin(); i != paths.end(); i++)
+      FileConverter->ImportFile((*i));
 
-        MidiMutex.Unlock();
-        MidiDeviceMutex.Unlock();
-    }
+    MidiMutex.Unlock();
+    MidiDeviceMutex.Unlock();
+  }
 }
 
 void MainWindow::OnImportMIDI(wxCommandEvent &event)
 {
-    wxFileDialog dlg(this, _("Import MIDI file"), wxT(""), wxT(""), _("Midi file (*.mid)|*.mid"));
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        wxString selfile = dlg.GetPath();
+  LOG;
+  wxFileDialog dlg(this, _("Import MIDI file"), wxT(""), wxT(""), _("Midi file (*.mid)|*.mid"));
+  if (dlg.ShowModal() == wxID_OK)
+  {
+    wxString selfile = dlg.GetPath();
 
-        cout << "[MAINWIN] Users imports MIDI file : " << selfile.mb_str() << endl;
-        wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
-				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
-        Progress.Update(1);
-        cImportMidiAction* action = new cImportMidiAction(selfile, eMidiTrack);
-        action->Do();
-        Progress.Update(99);
-      //delete Progress;
-      /*
+    cout << "[MAINWIN] Users imports MIDI file : " << selfile.mb_str() << endl;
+    wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
+      this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
+    Progress.Update(1);
+    cImportMidiAction* action = new cImportMidiAction(selfile, eMidiTrack);
+    action->Do();
+    Progress.Update(99);
+    //delete Progress;
+    /*
 	MidiFile *m;
 	m = new MidiFile(selfile);
 
@@ -777,23 +800,23 @@ void MainWindow::OnImportMIDI(wxCommandEvent &event)
 	cout << "[MAINWIN] Cannot import midi file !" << endl;
 	delete Progress;
       */
-    }
+  }
 }
 
 void					MainWindow::OnImportAKAI(wxCommandEvent &event)
 {
+  LOG;
   //TransportPanel->OnStop(event);
-    wxFileDialog dlg(this, _("Import AKAI samples"));
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        wxString selfile = dlg.GetPath();
-        wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
-				this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
-        Progress.Update(1);
-        cImportAkaiAction* action = new cImportAkaiAction(selfile, eAudioTrack);
-        action->Do();
-        Progress.Update(99);
-      //delete Progress;
+  wxFileDialog dlg(this, _("Import AKAI samples"));
+  if (dlg.ShowModal() == wxID_OK)
+  {
+    wxString selfile = dlg.GetPath();
+    wxProgressDialog Progress(_("Loading midi file"), _("Please wait..."), 100,
+      this, wxPD_AUTO_HIDE | wxPD_CAN_ABORT | wxPD_REMAINING_TIME);
+    Progress.Update(1);
+    cImportAkaiAction* action = new cImportAkaiAction(selfile, eAudioTrack);
+    action->Do();
+    Progress.Update(99);
 // 	cout << "[MAINWIN] Users imports AKAI sample : " << selfile << endl;
 // 	wstring dev = selfile.substr(0, selfile.find(":", 0));
 // 	selfile = selfile.substr(selfile.find(":", 0) + 1, selfile.size() - selfile.find(":", 0));
@@ -828,66 +851,68 @@ void					MainWindow::OnImportAKAI(wxCommandEvent &event)
 // 	cout << "[MAINWIN] Cannot import AKAI wave file !" << endl;
 // 	delete Progress;
 // 	}
-    }
+  }
 }
 
 void MainWindow::OnExportWave(wxCommandEvent &event)
 {
+  LOG;
   //  TransportPanel->OnStop(event);
-    double total = Seq->EndLoopPos - Seq->BeginLoopPos;
+  double total = Seq->EndLoopPos - Seq->BeginLoopPos;
 
-    if (total <= 0)
+  if (total <= 0)
+  {
+    wxMessageDialog msg(this, _("Please correctly place the Left and Right markers"), wxT("Wired"), wxOK | wxICON_EXCLAMATION | wxCENTRE);
+    msg.ShowModal();
+    return;
+  }
+  wxFileDialog dlg(this, _("Exporting sound file"), wxT(""), wxT(""), wxT(""), wxSAVE);
+  if (dlg.ShowModal() == wxID_OK)
+  {
+    wxString selfile = dlg.GetPath();
+    wxFileName f(selfile);
+    if (f.GetExt().IsEmpty())
     {
-        wxMessageDialog msg(this, _("Please correctly place the Left and Right markers"), wxT("Wired"), wxOK | wxICON_EXCLAMATION | wxCENTRE);
-        msg.ShowModal();
-        return;
+      f.SetExt(wxT("wav"));
+      selfile = f.GetFullPath();
     }
-    wxFileDialog dlg(this, _("Exporting sound file"), wxT(""), wxT(""), wxT(""), wxSAVE);
-    if (dlg.ShowModal() == wxID_OK)
+    cout << "[MAINWIN] User exports " << selfile.mb_str() << endl;
+    if (Seq->ExportToWave(selfile) == false)
     {
-        wxString selfile = dlg.GetPath();
-        wxFileName f(selfile);
-        if (f.GetExt().IsEmpty())
-        {
-            f.SetExt(wxT("wav"));
-            selfile = f.GetFullPath();
-        }
-        cout << "[MAINWIN] User exports " << selfile.mb_str() << endl;
-        if (Seq->ExportToWave(selfile) == false)
-        {
-            cout << "[MAINWIN] Export canceled by user " << endl;
-            return;
-        }
-        wxProgressDialog Progress(_("Exporting mix"), _("Please wait..."),
-				(int)Seq->EndLoopPos * 1000, this,
-				wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_AUTO_HIDE |
-				wxPD_APP_MODAL | wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME);
-        bool done = false;
-        while (!done)
-        {
-            if (Progress.Update((int) Seq->CurrentPos * 1000) == false)
-                break;
-            wxMilliSleep(50);
-            if (Seq->CurrentPos >= Seq->EndLoopPos)
-                done = true;
-        }
+      cout << "[MAINWIN] Export canceled by user " << endl;
+      return;
     }
+    wxProgressDialog Progress(_("Exporting mix"), _("Please wait..."), (int)Seq->EndLoopPos * 1000, this,
+      wxPD_CAN_ABORT | wxPD_REMAINING_TIME | wxPD_AUTO_HIDE |
+      wxPD_APP_MODAL | wxPD_ELAPSED_TIME | wxPD_ESTIMATED_TIME);
+    bool done = false;
+    while (!done)
+    {
+      if (Progress.Update((int) Seq->CurrentPos * 1000) == false)
+          break;
+      wxMilliSleep(50);
+      if (Seq->CurrentPos >= Seq->EndLoopPos)
+        done = true;
+    }
+  }
 }
 
 void MainWindow::OnExportMIDI(wxCommandEvent &event)
 {
-    wxFileDialog dlg(this, _("Export MIDI file"), wxT(""), wxT(""), _("Midi file (*.mid)|*.mid"), wxSAVE);
-     if (dlg.ShowModal() == wxID_OK)
-    {
-        wxString selfile = dlg.GetPath();
-        cout << "[MAINWIN] Users exports MIDI file : " << selfile.mb_str() << endl;
-    }
-    else
-        cout << "[MAINWIN] User cancels open dialog" << endl;
+  LOG;
+  wxFileDialog dlg(this, _("Export MIDI file"), wxT(""), wxT(""), _("Midi file (*.mid)|*.mid"), wxSAVE);
+  if (dlg.ShowModal() == wxID_OK)
+  {
+    wxString selfile = dlg.GetPath();
+    cout << "[MAINWIN] Users exports MIDI file : " << selfile.mb_str() << endl;
+  }
+  else
+    cout << "[MAINWIN] User cancels open dialog" << endl;
 }
 
 void					MainWindow::LoadPlugins()
 {
+  LOG;
   wxString				str;
   PluginLoader				*p;
 
@@ -937,6 +962,7 @@ void					MainWindow::LoadPlugins()
 
 void					MainWindow::LoadExternalPlugins()
 {
+  LOG;
   //  map<int, wstring>				PluginsList;
   list<wxString>					PluginsList;
   //  map<int, wstring>::iterator	IterPluginsList;
@@ -972,6 +998,7 @@ void					MainWindow::LoadExternalPlugins()
 
 int						MainWindow::AddPluginMenuItem(int Type, bool IsEffect, const wxString& MenuName)
 {
+  LOG;
   int					Id = PluginMenuIndexCount++;
   wxMenuItem			*NewItem;
 
@@ -1031,6 +1058,7 @@ int						MainWindow::AddPluginMenuItem(int Type, bool IsEffect, const wxString& 
 void					MainWindow::CreatePluginFromUniqueId(wxString UniqueId,
 									     wxString name)
 {
+  LOG;
   char					Uniq[4];
   vector<PluginLoader *>::iterator	it;
 
@@ -1073,6 +1101,7 @@ void					MainWindow::CreatePluginFromUniqueId(wxString UniqueId,
 
 void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
 {
+  LOG;
   if (LoadedExternalPlugins)
     {
       cout << "[MAINWIN] Creating rack for plugin id :" << event.GetId() << endl;
@@ -1085,6 +1114,7 @@ void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
 
 void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
 {
+  LOG;
   int					id = event.GetId();
   vector<PluginLoader *>::iterator	i;
   PluginLoader				*p = 0x0;
@@ -1105,6 +1135,7 @@ void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
 
 void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
 {
+  LOG;
   int					id = event.GetId();
   vector<PluginLoader *>::iterator	i;
   PluginLoader				*p = 0x0;
@@ -1125,16 +1156,19 @@ void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
 
 void					MainWindow::OnDeleteRack(wxCommandEvent &event)
 {
+  LOG;
   RackPanel->DeleteSelectedRack();
 }
 
 void					MainWindow::OnAddTrackAudio(wxCommandEvent &event)
 {
+  LOG;
   SeqPanel->CreateTrack(eAudioTrack);
 }
 
 void					MainWindow::OnAddTrackMidi(wxCommandEvent &event)
 {
+  LOG;
   Track *newTrack = SeqPanel->CreateTrack(eMidiTrack);
   newTrack->CreateMidiPattern(new MidiTrack(0, NULL, 96, wxT("new"), 1));
 }
@@ -1142,16 +1176,19 @@ void					MainWindow::OnAddTrackMidi(wxCommandEvent &event)
 // Added by Julien Eres
 void					MainWindow::OnAddTrackAutomation(wxCommandEvent &event)
 {
+  LOG;
   cout << __FUNCTION__ << '@' << __LINE__ << ": Not implemented." << endl;
 }
 
 void					MainWindow::OnFloatTransport(wxCommandEvent &event)
 {
+  LOG;
   FloatTransport();
 }
 
 wxFrame					*MainWindow::FloatTransport()
 {
+  LOG;
   if (WindowMenu->IsChecked(MainWin_FloatTransport))
     {
       TransportPanel->Hide();
@@ -1180,11 +1217,13 @@ wxFrame					*MainWindow::FloatTransport()
 
 void					MainWindow::OnFloatSequencer(wxCommandEvent &event)
 {
+  LOG;
   FloatSequencer();
 }
 
 wxFrame					*MainWindow::FloatSequencer()
 {
+  LOG;
   if (WindowMenu->IsChecked(MainWin_FloatSequencer))
     {
       if (SeqModeView)
@@ -1229,11 +1268,13 @@ wxFrame					*MainWindow::FloatSequencer()
 
 void					MainWindow::OnFloatRack(wxCommandEvent &event)
 {
+  LOG;
   FloatRack();
 }
 
 wxFrame					*MainWindow::FloatRack()
 {
+  LOG;
   if (WindowMenu->IsChecked(MainWin_FloatRacks))
     {
       if (RackModeView)
@@ -1278,6 +1319,7 @@ wxFrame					*MainWindow::FloatRack()
 
 void					MainWindow::ShowMediaLibrary(panelState show)
 {
+  LOG;
   if (show == panelShowInWindow || show == panelHide)
     {
       if (show == panelShowInWindow)
@@ -1344,6 +1386,7 @@ void					MainWindow::ShowMediaLibrary(panelState show)
 
 void					MainWindow::OnFloatMediaLibrary(wxCommandEvent &event)
 {
+  LOG;
   //  if (MediaLibraryMenu->IsChecked(MainWin_FloatMediaLibrary))
   if (!MediaLibraryPanel->IsFloating())
     {
@@ -1358,6 +1401,7 @@ void					MainWindow::OnFloatMediaLibrary(wxCommandEvent &event)
 // must be called only when medialibrary is docked
 void					MainWindow::MediaLibraryShow(wxCommandEvent &event)
 {
+  LOG;
   //  if (MediaLibraryMenu->IsChecked(MainWin_MediaLibraryShow))
   if (!MediaLibraryPanel->IsVisible())
     ShowMediaLibrary(panelShow);
@@ -1373,16 +1417,19 @@ void					MainWindow::MediaLibraryShow(wxCommandEvent &event)
 
 void					MainWindow::OnSwitchRackOptViewEvent(wxCommandEvent &event)
 {
+  LOG;
   SwitchRackOptView();
 }
 
 void					MainWindow::OnSwitchSeqOptViewEvent(wxCommandEvent &event)
 {
+  LOG;
   SwitchSeqOptView();
 }
 
 void					MainWindow::SwitchRackOptView()
 {
+  LOG;
   // if optview is already switched with sequencer, reswitch
   if (!SeqModeView)
     SwitchSeqOptView();
@@ -1430,6 +1477,7 @@ void					MainWindow::SwitchRackOptView()
 
 void					MainWindow::SwitchSeqOptView()
 {
+  LOG;
   // if optview is already switched with rack, reswitch
   if (!RackModeView)
     SwitchRackOptView();
@@ -1487,6 +1535,7 @@ void					MainWindow::SwitchSeqOptView()
 
 void					MainWindow::OnSettings(wxCommandEvent &event)
 {
+  LOG;
   vector<Track *>::iterator		i;
 
   // settings window can't be on top of fullscreen application
@@ -1511,6 +1560,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 
 void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
 {
+  LOG;
   wxMessageDialog			mdialog(MainWin, msg, from, wxICON_INFORMATION, wxDefaultPosition);
 
   mdialog.ShowModal();
@@ -1518,6 +1568,7 @@ void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
 
 void					MainWindow::OnOpenVideo(wxCommandEvent &event)
 {
+  LOG;
   WiredVideoObject->OpenFile();
   if (WiredVideoObject->asFile)
     {
@@ -1528,6 +1579,7 @@ void					MainWindow::OnOpenVideo(wxCommandEvent &event)
 
 void					MainWindow::OnCloseVideo(wxCommandEvent &event)
 {
+  LOG;
   WiredVideoObject->CloseFile();
   VideoMenu->Enable(MainWin_OpenVideo, true);
   VideoMenu->Enable(MainWin_CloseVideo, false);
@@ -1535,16 +1587,19 @@ void					MainWindow::OnCloseVideo(wxCommandEvent &event)
 
 void					MainWindow::OnSeekVideo(wxCommandEvent &event)
 {
+  LOG;
   //  WiredVideoObject->SetSeek(VideoMenu->IsChecked(MainWin_SeekVideo));
 }
 
 void					MainWindow::SetSelectedSolo(wxCommandEvent &event)
 {
+  LOG;
   SeqPanel->SetSelectedSolo();
 }
 
 void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
 {
+  LOG;
   SeqPanel->DeleteSelectedTrack();
   /* Needs path in AudioPattern */
   //cActionManager::Global().AddImportWaveAction(selfile, true, false);
@@ -1552,6 +1607,7 @@ void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
 
 void					MainWindow::OnUndo(wxCommandEvent &event)
 {
+  LOG;
   wxMenuItemList					listItems;
   wxMenuItemList::const_iterator	iter;
 
@@ -1568,6 +1624,7 @@ void					MainWindow::OnUndo(wxCommandEvent &event)
 
 void					MainWindow::OnRedo(wxCommandEvent &event)
 {
+  LOG;
   wxMenuItemList					listItems;
   wxMenuItemList::const_iterator	iter;
 
@@ -1583,6 +1640,7 @@ void					MainWindow::OnRedo(wxCommandEvent &event)
 
 void					MainWindow::removeAllMenuItems(wxMenu *menu)
 {
+  LOG;
   wxMenuItemList			menuItemList;
   wxMenuItemList::const_iterator	itermenuItems;
 
@@ -1596,6 +1654,7 @@ void					MainWindow::removeAllMenuItems(wxMenu *menu)
 
 void					MainWindow::CreateUndoRedoMenus(wxMenu *callingMenu)
 {
+  LOG;
   std::list<t_menuInfo*>					historyList;
   std::list<t_menuInfo*>::const_iterator	iter;
   wxMenu									*undoMenu;
@@ -1641,31 +1700,37 @@ void					MainWindow::CreateUndoRedoMenus(wxMenu *callingMenu)
 
 void					MainWindow::OnCut(wxCommandEvent &event)
 {
+  LOG;
   SeqPanel->OnCut(event);
 }
 
 void					MainWindow::OnCopy(wxCommandEvent &event)
 {
+  LOG;
   SeqPanel->OnCopy(event);
 }
 
 void					MainWindow::OnPaste(wxCommandEvent &event)
 {
+  LOG;
   SeqPanel->OnPaste(event);
 }
 
 void					MainWindow::OnDelete(wxCommandEvent &event)
 {
+  LOG;
   SeqPanel->OnDeleteClick(event);
 }
 
 void					MainWindow::OnSelectAll(wxCommandEvent &event)
 {
+  LOG;
   SeqPanel->OnSelectAll(event);
 }
 
 void					MainWindow::OnFullScreen(wxCommandEvent &event)
 {
+  LOG;
   WindowSize = MainWin->GetSize();
   WindowPos = MainWin->GetPosition();
   ShowFullScreen(!IsFullScreen(), wxFULLSCREEN_NOBORDER|wxFULLSCREEN_NOCAPTION );
@@ -1673,6 +1738,7 @@ void					MainWindow::OnFullScreen(wxCommandEvent &event)
 
 void					MainWindow::OnAbout(wxCommandEvent &event)
 {
+  LOG;
   wxBitmap aboutbtm;
   if (aboutbtm.LoadFile(wxString(WiredSettings->DataDir +
 				 wxString(wxT("ihm/splash/about.png"))),
@@ -1688,6 +1754,7 @@ void					MainWindow::OnAbout(wxCommandEvent &event)
 
 void					MainWindow::OnSpaceKey()
 {
+  LOG;
   wxCommandEvent			e(-1, -1);
 
   if (Seq->Playing)
@@ -1703,6 +1770,7 @@ void					MainWindow::OnSpaceKey()
 
 void					MainWindow::OnTimer(wxTimerEvent &event)
 {
+//  LOG;
   wxCommandEvent			commandEvt;
   CursorEvent				cursorEvt;
   list<Pattern *>::iterator		patternIt;
@@ -1742,6 +1810,7 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
 
 void					MainWindow::AddUpdatePlugin(Plugin *p)
 {
+  LOG;
   list<Plugin *>::iterator		i;
 
   for (i = UpdatePlugins.begin(); i != UpdatePlugins.end(); i++)
@@ -1770,11 +1839,13 @@ void					MainWindow::OnFileLoaderStop(wxCommandEvent &event)
 */
 void					MainWindow::OnIntegratedHelp(wxCommandEvent &event)
 {
+  LOG;
   OptPanel->ShowHelp();
 }
 
 void                  MainWindow::OnShowDebug(wxCommandEvent &event)
 {
+  LOG;
   if(WindowMenu->IsChecked(MainWin_ShowLog))
     {
       LogWin->Show(true);
@@ -1787,12 +1858,14 @@ void                  MainWindow::OnShowDebug(wxCommandEvent &event)
 
 void					MainWindow::OnKillTimer(wxTimerEvent &WXUNUSED(event))
 {
+  LOG;
   cout << "[MAINWIN] Killing Threads" << endl;
   exit (0);
 }
 
 void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
 {
+//  LOG;
 #if wxUSE_STATUSBAR
   wxLogNull NoLog;
   if (SeqTimer)
@@ -1819,6 +1892,7 @@ void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
 
 void		MainWindow::OnKey(wxKeyEvent& event)
 {
+  LOG;
   if (event.GetKeyCode() == WXK_SPACE)
     OnSpaceKey();
   else if (event.GetKeyCode() == WXK_TAB)
@@ -1834,6 +1908,7 @@ void		MainWindow::OnKey(wxKeyEvent& event)
 
 void		MainWindow::Save()
 {
+  LOG;
   SaveElement	*saveElem;
   wxSize	size;
   wxPoint	pos;
@@ -1920,6 +1995,7 @@ void		MainWindow::SwitchDockedFloat(bool isCurrentlyFloating, int mustBeFloating
 					      wxCommandEvent evt, wxPoint pos, wxSize size,
 					      int checkBox, wxFrame *frame, floatfunc function)
 {
+  LOG;
   if (mustBeFloating)
     {
       if (!isCurrentlyFloating)
@@ -1942,6 +2018,7 @@ void		MainWindow::SwitchDockedFloat(bool isCurrentlyFloating, int mustBeFloating
 
 void		MainWindow::Load(SaveElementArray data)
 {
+  LOG;
    int			i;
    wxSize		size;
    wxPoint		pos;
@@ -2054,6 +2131,7 @@ void		MainWindow::Load(SaveElementArray data)
 
 void MainWindow::OnLoadML(wxCommandEvent &WXUNUSED(event))
 {
+  LOG;
     wxFileDialog dlg(this, _("Load Media Library"), wxT(""), wxT(""), _("Media Library file (*.xml)|*.xml"));
     if (dlg.ShowModal() == wxID_OK)
         MediaLibraryPanel->MLTreeView->LoadPatch(dlg.GetPath());
@@ -2061,6 +2139,7 @@ void MainWindow::OnLoadML(wxCommandEvent &WXUNUSED(event))
 
 void MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
 {
+  LOG;
     wxFileDialog dlg(this, _("Save Media Library"), wxT(""), wxT(""), _("Media Library file (*.xml)|*.xml"), wxSAVE);
     if (dlg.ShowModal() == wxID_OK)
         MediaLibraryPanel->MLTreeView->OnSave(dlg.GetPath());
@@ -2068,6 +2147,7 @@ void MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
 
 void		MainWindow::OpenWizard()
 {
+  LOG;
   wxFileName	path;
 
   wxDirDialog	dirDialog(NULL, _("Select a project folder"), wxGetCwd());
