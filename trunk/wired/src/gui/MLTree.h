@@ -13,28 +13,37 @@
 
 extern MediaLibrary	*MediaLibraryPanel;
 
-#define EXT_FILE		wxT("wired_exts.conf")
-#define SAVE_TREE_FILE		wxT("MediaLibrary/MLTree")
-#define LOCAL_TREE_FILE		wxT("LocalTree.xml")
-#define PROJECT_NODE            _("Project")
-#define LOCAL_NODE		_("Local")
-#define PROJECT_NODE_NAME       _("Project Files")
-#define LOCAL_NODE_NAME		_("Local Files")
+#define EXT_FILE          wxT("wired_exts.conf")
+#define SAVE_TREE_FILE    wxT("MediaLibrary/MLTree")
+#define LOCAL_TREE_FILE   wxT("LocalTree.xml")
+#define PROJECT_NODE      _("Project")
+#define LOCAL_NODE        _("Local")
+#define PROJECT_NODE_NAME _("Project Files")
+#define LOCAL_NODE_NAME   _("Local Files")
 //#define NEW_DIRECTORY_NAME	_("New Directory")
 /**
  * The size of ML icon (square)
  */
-
 #define ICON_SIZE		(16)
 
 /**
  * The s_nodeInfo struct contains various informations about files
 */
-struct				s_nodeInfo
+struct s_nodeInfo
 {
-  wxString			label;
-  wxString			extension;
-  wxString			length;
+    wxString _label;
+    wxString _extension;
+    wxString _length;
+
+    s_nodeInfo(const wxString &label = wxT(""), const wxString &extension = wxT(""), const wxString &length = wxT(""))
+        : _label(label), _extension(extension), _length(length) {}
+
+    s_nodeInfo(const wxString &label, const wxString &extension, const wxFileOffset &length)
+        : _label(label), _extension(extension)
+    { _length << length; }
+
+    void Set (const wxString &label, const wxString &extension, const wxString &length);
+    void Set (const wxString &label, const wxString &extension, const wxFileOffset &length);
 };
 
 typedef std::map<wxTreeItemId, s_nodeInfo> nodeInfoMap;
@@ -77,34 +86,33 @@ protected:
 /**
  * wxTreeCtrl to display the tree and the nodes
 */
-// BAD ? Why ? MLTree already derivate from wxTreeCtrl
-    wxTreeCtrl         *_Tree;
+    wxTreeCtrl         *_Tree; // BAD ? Why ? MLTree already derivate from wxTreeCtrl
 /**
  * Boolean used to know if the media library nodes are collapsed or not
 */
-    bool               collapsed;
+    bool               _collapsed;
 /**
  * wxTreeItemId root is the first node of the Tree. It contains the project
  * name.
 */
-    wxTreeItemId       root;
+    wxTreeItemId       _root;
 /**
  * a wxString used by filters
 */
-    wxString           filters;
+    wxString           _filters; // Assigned but never used
 /**
  * A vector of wxStrings containing all the known sounds extensions
 */
-    wxStringVector     Exts;
+    wxStringVector     _Exts;
 /**
  * A Map of wxTreeItemId and their corresponding struct which contains
  * various informations related to the item.
 */
-    nodeInfoMap        nodes;
+    nodeInfoMap        _nodes;
 /**
  * A wxPoint which contains the position of the mouse when using right click
 */
-    wxPoint            mouse_pos;
+    wxPoint            _mouse_pos;
 /**
  * A wxString that holds the name of the selected node
 */

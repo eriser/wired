@@ -298,7 +298,7 @@ void				MediaLibrary::OnEdit(wxCommandEvent &WXUNUSED(event))
   item = MLTreeView->GetSelection();
   infos = MLTreeView->GetTreeItemStructFromId(item);
   // Test the selfile content HERE
-  if (item == MLTreeView->GetRootItem() || selfile == wxT("")  || infos.extension == wxT(""))
+  if (item == MLTreeView->GetRootItem() || selfile == wxT("")  || infos._extension == wxT(""))
     return ;
   MidiMutex.Lock();
   MidiDeviceMutex.Lock();
@@ -321,7 +321,7 @@ void				MediaLibrary::OnInsert(wxCommandEvent &WXUNUSED(event))
   selfile = MLTreeView->getSelection(1);
   item = MLTreeView->GetSelection();
   infos = MLTreeView->GetTreeItemStructFromId(item);
-  if (item == MLTreeView->GetRootItem() || selfile == wxT("")  || infos.extension == wxT(""))
+  if (item == MLTreeView->GetRootItem() || selfile == wxT("")  || infos._extension == wxT(""))
     return ;
   // Test the selfile content HERE
   //  cout << "[MEDIALIBRARY] Insert File (OnInsert)" << selfile << endl;
