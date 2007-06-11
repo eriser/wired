@@ -23,6 +23,7 @@
 static long				audio_pattern_count = 1;
 extern SaveCenter	*saveCenter;
 
+// basically called when we add an empty audio track
 AudioPattern::AudioPattern(WiredDocument *parent, double pos, double endpos, long trackindex)
   : Pattern(parent, wxT("AudioPattern"), pos, endpos, trackindex),
     WaveDrawer(Pattern::GetSize())
@@ -30,6 +31,7 @@ AudioPattern::AudioPattern(WiredDocument *parent, double pos, double endpos, lon
   Init(NULL, parent);
 }
 
+// basically called when we import a wave file
 AudioPattern::AudioPattern(WiredDocument *parent, double pos, WaveFile *w, long trackindex)
   : Pattern(parent,wxT("AudioPattern"), pos, pos + Seq->MeasurePerSample * w->GetNumberOfFrames(), trackindex),
     WaveDrawer(Pattern::GetSize())
@@ -51,18 +53,14 @@ void					AudioPattern::Init(WaveFile* w, WiredDocument* parent)
   cout << " ### NEW AUDIO PATTERN ###\n\t Position: "<< Position << "; EndPosition: " << EndPosition << "; Length: " << Length
        << "; StartWavePos: " << StartWavePos << "; EndWavePos: " << EndWavePos << endl;
 #endif
-  wavefile = new WaveFile();
+  // init graphics things (must be prior)
   Name = wxString::Format(wxT("T%d A%d"), (int) TrackIndex + 1, (int) audio_pattern_count++);
   wxSize s = GetSize();
   SetSize(s);
-  WaveDrawer::SetWave(w, s);
+  WaveDrawer::SetWave(w, s); // the WaveDrawer has WaveFile instance.
 
-  if (w)
-    {
-      SetWave(w);
-      FileName= w->Filename;
-      OnBpmChange();
-    }
+  // init audio things
+  SetWave(w);
   LastBlock = -1;
   RecordWave = 0;
   InputChan = NULL;
@@ -137,16 +135,14 @@ void					AudioPattern::SetWave(WaveFile *w)
 #ifdef __DEBUG__
   cout << "WaveDrawer::StartWavePos = " << WaveDrawer::StartWavePos<< " WaveDrawer::EndWavePos = " << WaveDrawer::EndWavePos << endl;
 #endif
-//  if (w)
-//    {
-//      *Wave = *w;
-//      FileName = wavefile->Filename;
-//      wxMutexLocker  m(SeqMutex);
-//
-//       OnBpmChange();
-//    }
-//  else
-    WaveDrawer::SetWave(w, GetSize(), StartWavePos, EndWavePos);
+  WaveDrawer::SetWave(w, GetSize(), StartWavePos, EndWavePos);
+  if (w)
+    {
+      FileName = w->Filename;
+      wxMutexLocker  m(SeqMutex);
+
+      OnBpmChange();
+    }
 }
 
 void					AudioPattern::SetDrawing()
@@ -267,11 +263,6 @@ void					AudioPattern::StopRecord()
       SetWave(w);
       Refresh();
     }
-  /*
-  SeqMutex.Lock();
-  Wave = w;
-  SeqMutex.Unlock();
-  */
 }
 
 void					AudioPattern::GetRecordBuffer()
