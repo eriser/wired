@@ -3,8 +3,16 @@
 # -----------------------------------------------------------------------------------
 
 SRCPATH    := ../src
+
+ifeq ($(PREFIX),)
+BINPATH := ./bin
+else
+BINPATH := $(PREFIX)
+endif
+BINPLUG := $(BINPATH)/plugins
+
 ifeq ($(findstring MINGW32,$(shell uname)),MINGW32)
-BINPATH    := ./.obj-win32
+OBJPATH    := .obj-win32
 DLL        := dll
 EXE        := .exe
 WXLIBS     := -lwx_msw-2.8 -mthreads
@@ -12,11 +20,11 @@ WXCFLAGS   := -DWXUSINGDLL -D__WXMSW__ -mthreads
 XMLLIBS    := -lxml2
 XMLCFLAGS  :=
 PLATLIBS   := -mconsole -lwinmm -lwsock32 -Wl,-u,_WinMain@16
-RESFILE    := $(BINPATH)/resource.o
+RESFILE    := $(OBJPATH)/resource.o
 PLUGINSDEP := $(BINPATH)/libWiredWidgets.a
 CONFPATH   := .
 else
-BINPATH    := ./.obj-linux
+OBJPATH    := .obj-linux
 DLL        := so
 EXE        :=
 WXLIBS     := $(shell wx-config --libs)
@@ -25,41 +33,37 @@ XMLLIBS    := $(shell xml2-config --libs)
 XMLCFLAGS  := $(shell xml2-config --cflags)
 PLATLIBS   :=
 RESFILE    :=
-PLUGINSDEP := $(BINPATH)/libWiredWidgets.so
+PLUGINSDEP := $(OBJPATH)/libWiredWidgets.so
 CONFPATH   := $(SRCPATH)/conf
 endif
 
-ifeq ($(PREFIX),)
-PREFIX := ./bin
-endif
-
-WIREDLIBS                    := libgui.a                      \
-                                libwireddssi.a                \
-                                libsave.a                     \
-                                libsequencer.a                \
-                                libaudio.a                    \
-                                libeditmidi.a                 \
-                                libengine.a                   \
-                                libfileloader.a               \
-                                libmidi.a                     \
-                                libmixer.a                    \
-                                libplugins.a                  \
-                                libredist.a                   \
-                                libundo.a                     \
-                                libwiredxml.a                 \
-                                libwiredsamplerate.a          \
-                                libwiredcodec.a               \
-                                libwiredvideo.a               \
-                                libWiredAkai.$(DLL)           \
-                                libWiredWidgets.$(DLL)
-WIREDPLUG                    := libWiredBeatBox.$(DLL)        \
-                                libWiredCrusher.$(DLL)        \
-                                libWiredDelay.$(DLL)          \
-                                libWiredLoopSampler.$(DLL)    \
-                                libWiredSampler.$(DLL)    \
-                                libWiredReverb.$(DLL)         \
-                                libWiredChorus.$(DLL)         \
-                                libWiredWahwah.$(DLL)
+WIREDLIBS                    := $(OBJPATH)/libgui.a                   \
+                                $(OBJPATH)/libwireddssi.a             \
+                                $(OBJPATH)/libsave.a                  \
+                                $(OBJPATH)/libsequencer.a             \
+                                $(OBJPATH)/libaudio.a                 \
+                                $(OBJPATH)/libeditmidi.a              \
+                                $(OBJPATH)/libengine.a                \
+                                $(OBJPATH)/libfileloader.a            \
+                                $(OBJPATH)/libmidi.a                  \
+                                $(OBJPATH)/libmixer.a                 \
+                                $(OBJPATH)/libplugins.a               \
+                                $(OBJPATH)/libredist.a                \
+                                $(OBJPATH)/libundo.a                  \
+                                $(OBJPATH)/libwiredxml.a              \
+                                $(OBJPATH)/libwiredsamplerate.a       \
+                                $(OBJPATH)/libwiredcodec.a            \
+                                $(OBJPATH)/libwiredvideo.a            \
+                                $(BINPATH)/libWiredAkai.$(DLL)        \
+                                $(BINPATH)/libWiredWidgets.$(DLL)
+WIREDPLUG                    := $(BINPLUG)/libWiredBeatBox.$(DLL)     \
+                                $(BINPLUG)/libWiredCrusher.$(DLL)     \
+                                $(BINPLUG)/libWiredDelay.$(DLL)       \
+                                $(BINPLUG)/libWiredLoopSampler.$(DLL) \
+                                $(BINPLUG)/libWiredSampler.$(DLL)     \
+                                $(BINPLUG)/libWiredReverb.$(DLL)      \
+                                $(BINPLUG)/libWiredChorus.$(DLL)      \
+                                $(BINPLUG)/libWiredWahwah.$(DLL)
 SOURCES_libsave              := SaveCenter.cpp                \
                                 WiredDocument.cpp
 SOURCES_libgui               := AccelCenter.cpp               \
@@ -244,15 +248,13 @@ INCPATHS   := .                                        \
               $(SRCPATH)/libs/WiredAkai/src            \
               $(SRCPATH)/libs/WiredWidgets/src
 
-LIBSBIN    := $(addprefix $(BINPATH)/, $(WIREDLIBS))
-PLUGBIN    := $(addprefix $(BINPATH)/, $(WIREDPLUG))
 VPATH      := $(BINPATH) $(INCPATHS)
 
-.PHONY: all plugins install clean
+.PHONY: all plugins clean
 
-all: $(BINPATH) $(BINPATH)/wired$(EXE) plugins
+all: $(BINPATH) $(OBJPATH) $(BINPATH)/wired$(EXE) plugins
 
-$(BINPATH)/wired$(EXE): $(LIBSBIN) $(RESFILE)
+$(BINPATH)/wired$(EXE): $(WIREDLIBS) $(RESFILE)
 	@echo "Linking $@"
 ifeq ($(DLL),dll)
 	@gcc -s -o $@ $(+:.$(DLL)=.a) -lstdc++ -lsamplerate -lSoundTouch -lsndfile -lportaudio -lportmidi            $(PLATLIBS) $(XMLLIBS) $(WXLIBS)
@@ -260,153 +262,149 @@ else
 	@gcc -s -o $@ $+              -lstdc++ -lsamplerate -lSoundTouch -lsndfile -lportaudio -lportmidi -lporttime $(PLATLIBS) $(XMLLIBS) $(WXLIBS)
 endif
 
-plugins: $(BINPATH) $(PLUGBIN)
+plugins: $(OBJPATH) $(WIREDPLUG)
+
+$(OBJPATH):
+	@mkdir --parents $(OBJPATH)
 
 $(BINPATH):
 	@mkdir --parents $(BINPATH)
+	@mkdir --parents $(BINPATH)/plugins
+	@mkdir --parents $(BINPATH)/data/wired
+	@mkdir --parents $(BINPATH)/conf
+	@cp -r $(SRCPATH)/data/*              $(BINPATH)/data/wired
+	@find $(BINPATH)/data/wired -name Makefile.am | xargs rm
+	@find $(BINPATH)/data/wired -name .svn | xargs rm -rf
+	@cp -r $(CONFPATH)/*.conf             $(BINPATH)/conf
 
 $(RESFILE): resource.rc
 	@windres -o $@ $<
 
-$(BINPATH)/%.o $(BINPATH)/%.d: %.cpp
+$(OBJPATH)/%.o $(OBJPATH)/%.d: %.cpp
 	@echo " ... compiling $<"
 	@gcc $(addprefix -I,$(INCPATHS)) $(XMLCFLAGS) $(WXCFLAGS) -MMD -O2 -c -o $(@:.d=.o) $< #-Wall
 
-install:
-	@mkdir --parents $(PREFIX)
-	@mkdir --parents $(PREFIX)/plugins
-	@mkdir --parents $(PREFIX)/data/wired
-	@mkdir --parents $(PREFIX)/conf
-	@cp $(BINPATH)/wired$(EXE)            $(PREFIX)
-	@cp $(BINPATH)/libWiredAkai.$(DLL)    $(PREFIX)
-	@cp $(BINPATH)/libWiredWidgets.$(DLL) $(PREFIX)
-	@cp $(PLUGBIN)                        $(PREFIX)/plugins
-	@cp -r $(SRCPATH)/data/*              $(PREFIX)/data/wired
-	@find $(PREFIX)/data/wired -name Makefile.am | xargs rm
-	@find $(PREFIX)/data/wired -name .svn | xargs rm -rf
-	@cp -r $(CONFPATH)/*.conf             $(PREFIX)/conf
-
 clean:
-	@rm    --force $(BINPATH)/*
+	@rm -rf $(OBJPATH)
 	@echo " ... cleaned!"
 
 ###############################################################################
 # It does not work (*** target pattern contains no `%'.  Stop.)
 # For that reason, I had to replicate the libraries targets. :-(
 # .SECONDEXPANSION:
-# $(BINPATH)/%.a: $$(SOURCES_$$(*F):.cpp=.o)
+# $(OBJPATH)/%.a: $$(SOURCES_$$(*F):.cpp=.o)
 # 	@echo " ... archiving $@"
 # 	@ar cru $@ $+
 # 	@ranlib $@
 ###############################################################################
-$(BINPATH)/libsave.a: $(addprefix $(BINPATH)/,$(SOURCES_libsave:.cpp=.o))
+$(OBJPATH)/libsave.a: $(addprefix $(OBJPATH)/,$(SOURCES_libsave:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libgui.a: $(addprefix $(BINPATH)/,$(SOURCES_libgui:.cpp=.o))
+$(OBJPATH)/libgui.a: $(addprefix $(OBJPATH)/,$(SOURCES_libgui:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libsequencer.a: $(addprefix $(BINPATH)/,$(SOURCES_libsequencer:.cpp=.o))
+$(OBJPATH)/libsequencer.a: $(addprefix $(OBJPATH)/,$(SOURCES_libsequencer:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libaudio.a: $(addprefix $(BINPATH)/,$(SOURCES_libaudio:.cpp=.o))
+$(OBJPATH)/libaudio.a: $(addprefix $(OBJPATH)/,$(SOURCES_libaudio:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libeditmidi.a: $(addprefix $(BINPATH)/,$(SOURCES_libeditmidi:.cpp=.o))
+$(OBJPATH)/libeditmidi.a: $(addprefix $(OBJPATH)/,$(SOURCES_libeditmidi:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libengine.a: $(addprefix $(BINPATH)/,$(SOURCES_libengine:.cpp=.o))
+$(OBJPATH)/libengine.a: $(addprefix $(OBJPATH)/,$(SOURCES_libengine:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libfileloader.a: $(addprefix $(BINPATH)/,$(SOURCES_libfileloader:.cpp=.o))
+$(OBJPATH)/libfileloader.a: $(addprefix $(OBJPATH)/,$(SOURCES_libfileloader:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libmidi.a: $(addprefix $(BINPATH)/,$(SOURCES_libmidi:.cpp=.o))
+$(OBJPATH)/libmidi.a: $(addprefix $(OBJPATH)/,$(SOURCES_libmidi:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libmixer.a: $(addprefix $(BINPATH)/,$(SOURCES_libmixer:.cpp=.o))
+$(OBJPATH)/libmixer.a: $(addprefix $(OBJPATH)/,$(SOURCES_libmixer:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libplugins.a: $(addprefix $(BINPATH)/,$(SOURCES_libplugins:.cpp=.o))
+$(OBJPATH)/libplugins.a: $(addprefix $(OBJPATH)/,$(SOURCES_libplugins:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libredist.a: $(addprefix $(BINPATH)/,$(SOURCES_libredist:.cpp=.o))
+$(OBJPATH)/libredist.a: $(addprefix $(OBJPATH)/,$(SOURCES_libredist:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libundo.a: $(addprefix $(BINPATH)/,$(SOURCES_libundo:.cpp=.o))
+$(OBJPATH)/libundo.a: $(addprefix $(OBJPATH)/,$(SOURCES_libundo:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libwiredxml.a: $(addprefix $(BINPATH)/,$(SOURCES_libwiredxml:.cpp=.o))
+$(OBJPATH)/libwiredxml.a: $(addprefix $(OBJPATH)/,$(SOURCES_libwiredxml:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libwiredsamplerate.a: $(addprefix $(BINPATH)/,$(SOURCES_libwiredsamplerate:.cpp=.o))
+$(OBJPATH)/libwiredsamplerate.a: $(addprefix $(OBJPATH)/,$(SOURCES_libwiredsamplerate:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libwiredcodec.a: $(addprefix $(BINPATH)/,$(SOURCES_libwiredcodec:.cpp=.o))
+$(OBJPATH)/libwiredcodec.a: $(addprefix $(OBJPATH)/,$(SOURCES_libwiredcodec:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libwiredvideo.a: $(addprefix $(BINPATH)/,$(SOURCES_libwiredvideo:.cpp=.o))
+$(OBJPATH)/libwiredvideo.a: $(addprefix $(OBJPATH)/,$(SOURCES_libwiredvideo:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libwireddssi.a: $(addprefix $(BINPATH)/,$(SOURCES_libwireddssi:.cpp=.o))
+$(OBJPATH)/libwireddssi.a: $(addprefix $(OBJPATH)/,$(SOURCES_libwireddssi:.cpp=.o))
 	@echo " ... archiving $@"
 	@ar cru $@ $+
 	@ranlib $@
-$(BINPATH)/libWiredAkai.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredAkai:.cpp=.o))
+$(BINPATH)/libWiredAkai.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredAkai:.cpp=.o))
 	@echo " ... linking $@"
 ifeq ($(DLL),dll)
 	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS) -Wl,--out-implib=$(@:.$(DLL)=.a)
 else
 	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS) -Wl,-soname=$(@F)
 endif
-$(BINPATH)/libWiredWidgets.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredWidgets:.cpp=.o))
+$(BINPATH)/libWiredWidgets.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredWidgets:.cpp=.o))
 	@echo " ... linking $@"
 ifeq ($(DLL),dll)
 	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS) -Wl,--out-implib=$(@:.$(DLL)=.a)
 else
 	@gcc -shared -s -o $@ $+ -lstdc++ $(WXLIBS) -Wl,-soname=$(@F)
 endif
-$(BINPATH)/libWiredBeatBox.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredBeatBox:.cpp=.o))
+$(BINPLUG)/libWiredBeatBox.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredBeatBox:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libWiredCrusher.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredCrusher:.cpp=.o))
+	@gcc -shared -s -o $@ $+ $(OBJPATH)/libsave.a $(OBJPATH)/libaudio.a $(OBJPATH)/libgui.a $(OBJPATH)/libengine.a $(PLUGINSDEP) $(OBJPATH)/libredist.a $(OBJPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+$(BINPLUG)/libWiredCrusher.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredCrusher:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libWiredDelay.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredDelay:.cpp=.o))
+	@gcc -shared -s -o $@ $+ $(OBJPATH)/libsave.a $(OBJPATH)/libaudio.a $(OBJPATH)/libgui.a $(OBJPATH)/libengine.a $(PLUGINSDEP) $(OBJPATH)/libredist.a $(OBJPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+$(BINPLUG)/libWiredDelay.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredDelay:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libWiredLoopSampler.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredLoopSampler:.cpp=.o))
+	@gcc -shared -s -o $@ $+ $(OBJPATH)/libsave.a $(OBJPATH)/libaudio.a $(OBJPATH)/libgui.a $(OBJPATH)/libengine.a $(PLUGINSDEP) $(OBJPATH)/libredist.a $(OBJPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+$(BINPLUG)/libWiredLoopSampler.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredLoopSampler:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libWiredSampler.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredSampler:.cpp=.o))
+	@gcc -shared -s -o $@ $+ $(OBJPATH)/libsave.a $(OBJPATH)/libaudio.a $(OBJPATH)/libgui.a $(OBJPATH)/libengine.a $(PLUGINSDEP) $(OBJPATH)/libredist.a $(OBJPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+$(BINPLUG)/libWiredSampler.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredSampler:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libWiredReverb.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredReverb:.cpp=.o))
+	@gcc -shared -s -o $@ $+ $(OBJPATH)/libsave.a $(OBJPATH)/libaudio.a $(OBJPATH)/libgui.a $(OBJPATH)/libengine.a $(PLUGINSDEP) $(OBJPATH)/libredist.a $(OBJPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+$(BINPLUG)/libWiredReverb.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredReverb:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libWiredChorus.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredChorus:.cpp=.o))
+	@gcc -shared -s -o $@ $+ $(OBJPATH)/libsave.a $(OBJPATH)/libaudio.a $(OBJPATH)/libgui.a $(OBJPATH)/libengine.a $(PLUGINSDEP) $(OBJPATH)/libredist.a $(OBJPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+$(BINPLUG)/libWiredChorus.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredChorus:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
-$(BINPATH)/libWiredWahwah.$(DLL): $(addprefix $(BINPATH)/,$(SOURCES_libWiredWahwah:.cpp=.o))
+	@gcc -shared -s -o $@ $+ $(OBJPATH)/libsave.a $(OBJPATH)/libaudio.a $(OBJPATH)/libgui.a $(OBJPATH)/libengine.a $(PLUGINSDEP) $(OBJPATH)/libredist.a $(OBJPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+$(BINPLUG)/libWiredWahwah.$(DLL): $(addprefix $(OBJPATH)/,$(SOURCES_libWiredWahwah:.cpp=.o))
 	@echo " ... linking $@"
-	@gcc -shared -s -o $@ $+ $(BINPATH)/libsave.a $(BINPATH)/libaudio.a $(BINPATH)/libgui.a $(BINPATH)/libengine.a $(PLUGINSDEP) $(BINPATH)/libredist.a $(BINPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
+	@gcc -shared -s -o $@ $+ $(OBJPATH)/libsave.a $(OBJPATH)/libaudio.a $(OBJPATH)/libgui.a $(OBJPATH)/libengine.a $(PLUGINSDEP) $(OBJPATH)/libredist.a $(OBJPATH)/libwiredxml.a -lstdc++ -lsndfile $(XMLLIBS) -lSoundTouch $(WXLIBS)
 ###############################################################################
 
 ifneq "$(MAKECMDGOALS)" "clean"
--include $(BINPATH)/*.d
+-include $(OBJPATH)/*.d
 endif
