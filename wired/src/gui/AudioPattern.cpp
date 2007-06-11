@@ -137,15 +137,15 @@ void					AudioPattern::SetWave(WaveFile *w)
 #ifdef __DEBUG__
   cout << "WaveDrawer::StartWavePos = " << WaveDrawer::StartWavePos<< " WaveDrawer::EndWavePos = " << WaveDrawer::EndWavePos << endl;
 #endif
-  if (w)
-    {
-      *Wave = *w;
-      FileName = wavefile->Filename;
-      wxMutexLocker  m(SeqMutex);
-
-       OnBpmChange();
-    }
-  else
+//  if (w)
+//    {
+//      *Wave = *w;
+//      FileName = wavefile->Filename;
+//      wxMutexLocker  m(SeqMutex);
+//
+//       OnBpmChange();
+//    }
+//  else
     WaveDrawer::SetWave(w, GetSize(), StartWavePos, EndWavePos);
 }
 
