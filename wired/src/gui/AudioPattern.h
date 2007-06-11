@@ -21,7 +21,7 @@ class					AudioPattern: public Pattern, public WaveDrawer
   Channel*				InputChan;
   long					LastBlock;
   wxString				FileName;
-  WaveFile				*wavefile;
+
  public:
   AudioPattern(WiredDocument *parent, double pos, double endpos, long trackindex);
   AudioPattern(WiredDocument *parent, double pos, WaveFile *w, long trackindex);
