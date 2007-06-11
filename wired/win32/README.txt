@@ -17,11 +17,10 @@ You need to:
 
 Using MSYS:
 Inside MSYS prompt, change the direcory to "win32" and type "make".
-If everything is OK, type "make install" and a "win32/bin" directory will be created.
-Optionally, you can inform a directory for installation typing "make install PREFIX=target_dir"
-If the DLLs needed are not in you system PATH, copy all to the root of binary wired directory.
 
 Using Code::Blocks IDE:
 Open the file "Wired.workspace" and run "Build > Build workspace" to compile everything.
 More details at http://www.codeblocks.org/
 Run "copydata.bat" to copy src/data content to bin directory.
+
+For both cases the required DLLs need to be on PATH or at the same directory where wired.exe is.
