@@ -95,6 +95,8 @@ void					AudioPattern::Init(WaveFile* w, WiredDocument* parent)
 
 void					AudioPattern::OnHelp(wxMouseEvent &event)
 {
+  if (HelpWin == NULL)
+      return;
   if (HelpWin->IsShown())
     {
       wxString s(_("This is an Audio pattern. Double-click on it to open the Audio editor."));

@@ -24,8 +24,8 @@
 int				AudioTrackCount = 0;
 int				MidiTrackCount = 0;
 
-SeqTrack::SeqTrack(long index, wxWindow *winParent, 
-		   const wxPoint& pos = wxDefaultPosition, 
+SeqTrack::SeqTrack(long index, wxWindow *winParent,
+		   const wxPoint& pos = wxDefaultPosition,
 		   const wxSize& size = wxDefaultSize,
 		   trackType type = eAudioTrack,
 		   WiredDocument* docParent = NULL)
@@ -47,13 +47,13 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
   SetBackgroundColour(CL_RULER_BACKGROUND);
   // only impact on GTK+ implementation (see wx Doc)
   wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-  
+
   // name of track
   if (type == eAudioTrack)
     str.Printf(_("Audio %d"), ++AudioTrackCount);
   else
     str.Printf(wxT("MIDI %d"), ++MidiTrackCount);
-  Text = new wxTextCtrl(this, SeqTrack_OnNameChange, str, wxPoint(6, 8), 
+  Text = new wxTextCtrl(this, SeqTrack_OnNameChange, str, wxPoint(6, 8),
 			wxSize(TRACK_WIDTH - 68, 18), wxTE_PROCESS_ENTER);
   Text->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
 
@@ -72,17 +72,17 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
 
   // record and mute button
   wxImage *rec_up = new wxImage(wxString(WiredSettings->DataDir + wxString(REC_UP)), wxBITMAP_TYPE_PNG);
-  wxImage *rec_down = 
+  wxImage *rec_down =
     new wxImage(wxString(WiredSettings->DataDir + wxString(REC_DOWN)), wxBITMAP_TYPE_PNG);
   wxImage *mute_up = new wxImage(wxString(WiredSettings->DataDir + wxString(MUTE_UP)), wxBITMAP_TYPE_PNG);
   wxImage *mute_down = new wxImage(wxString(WiredSettings->DataDir + wxString(MUTE_DOWN)), wxBITMAP_TYPE_PNG);
 
-  RecBtn = new DownButton(this, SeqTrack_Record, wxPoint(6, 30), wxSize(25, 16), 
+  RecBtn = new DownButton(this, SeqTrack_Record, wxPoint(6, 30), wxSize(25, 16),
 			  rec_up, rec_down);
   MuteBtn = new DownButton(this, SeqTrack_Mute, wxPoint(34, 30), wxSize(25, 16),
 			   mute_up, mute_down);
   Image = new ChoiceButton(this, SeqTrack_ConnectTo, wxPoint(62, 30), wxSize(25, 16), wxT(""));
-  
+
   // add pixmap for unassigned track and for "can assign track"
   wxImage*		assign;
 
@@ -92,21 +92,21 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
   CanAssignBmp = new wxBitmap(*assign);
   delete assign;
 
-  Image->Connect(SeqTrack_ConnectTo, wxEVT_ENTER_WINDOW, 
-		 (wxObjectEventFunction)(wxEventFunction) 
+  Image->Connect(SeqTrack_ConnectTo, wxEVT_ENTER_WINDOW,
+		 (wxObjectEventFunction)(wxEventFunction)
 		 (wxMouseEventFunction)&SeqTrack::OnConnectToHelp);
   Image->SetImage(UnassignedBmp);
   Image->Refresh();
 
   // device input list
-  DeviceBox = new wxChoice(this, SeqTrack_DeviceChoice, wxPoint(5, 50), wxSize(TRACK_WIDTH - 38, 22), 
+  DeviceBox = new wxChoice(this, SeqTrack_DeviceChoice, wxPoint(5, 50), wxSize(TRACK_WIDTH - 38, 22),
 			   0, 0x0);
   DeviceBox->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
   FillChoices();
   DeviceBox->SetSelection(0);
 
-  DeviceBox->Connect(SeqTrack_DeviceChoice, wxEVT_ENTER_WINDOW, 
-		     (wxObjectEventFunction)(wxEventFunction) 
+  DeviceBox->Connect(SeqTrack_DeviceChoice, wxEVT_ENTER_WINDOW,
+		     (wxObjectEventFunction)(wxEventFunction)
 		     (wxMouseEventFunction)&SeqTrack::OnDeviceHelp);
 
   // VU meter
@@ -129,7 +129,7 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
   trackTypeStatic->Connect(wxEVT_LEFT_DOWN, wxObjectEventFunction(&SeqTrack::PropagateEvent));
   Vu->Connect(wxEVT_LEFT_DOWN, wxObjectEventFunction(&SeqTrack::PropagateEvent));
 
-  // 
+  //
 }
 
 SeqTrack::~SeqTrack()
@@ -143,12 +143,14 @@ void					SeqTrack::PropagateEvent(wxEvent &event)
   // set events propagationlevel to run down through the parents
   event.ResumePropagation(wxEVENT_PROPAGATE_MAX);
 
-  // continue the event 
+  // continue the event
   event.Skip();
 }
 
 void					SeqTrack::OnConnectToHelp(wxMouseEvent &event)
 {
+  if (HelpWin == NULL)
+      return;
   if (HelpWin->IsShown())
     {
       wxString s(_("Click on this button to show the list of instruments and effects you can connect your track to."));
@@ -158,6 +160,8 @@ void					SeqTrack::OnConnectToHelp(wxMouseEvent &event)
 
 void					SeqTrack::OnDeviceHelp(wxMouseEvent &event)
 {
+  if (HelpWin == NULL)
+      return;
   if (HelpWin->IsShown())
     {
       wxString s(_("Click on this box to select the device you would like to record from."));
@@ -171,7 +175,7 @@ void					SeqTrack::FillChoices()
   wxString				s;
   vector<int>::iterator		i;
   vector<wxString>::iterator		strIt;
-  
+
   DeviceBox->Clear();
   DeviceBox->Append(wxString(_("None")));
   DeviceBox->SetSelection(0);
@@ -213,7 +217,7 @@ void					SeqTrack::RebuildConnectList()
 
   // always put "None" selection
   menu->Append(NONE_SELECTED_ID, _("None"));
-  Connect(NONE_SELECTED_ID, wxEVT_COMMAND_MENU_SELECTED, 
+  Connect(NONE_SELECTED_ID, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&SeqTrack::OnConnectSelected);
   for (itRackTrack = RackPanel->RackTracks.begin(); itRackTrack != RackPanel->RackTracks.end();
@@ -226,7 +230,7 @@ void					SeqTrack::RebuildConnectList()
 	  {
 	    // append valid rack, and connect the menu entry to OnConnectSelected()
 	    menu->Append(id, (*itPlugin)->Name);
-	    Connect(id, wxEVT_COMMAND_MENU_SELECTED, 
+	    Connect(id, wxEVT_COMMAND_MENU_SELECTED,
 		    (wxObjectEventFunction)(wxEventFunction)
 		    (wxCommandEventFunction)&SeqTrack::OnConnectSelected);
 	  }
@@ -319,20 +323,20 @@ void					SeqTrack::RemoveReferenceTo(Plugin *plug)
 void					SeqTrack::OnPaint(wxPaintEvent &WXUNUSED(event))
 {
   wxPaintDC				dc(this);
-  wxSize s;	
+  wxSize s;
 #define BORDER				(3)
 
   PrepareDC(dc);
   s = GetSize();
-  dc.SetPen(*wxMEDIUM_GREY_PEN); 
-  dc.SetBrush(wxBrush(CL_RULER_BACKGROUND, wxTRANSPARENT));//*wxLIGHT_GREY_BRUSH); 
+  dc.SetPen(*wxMEDIUM_GREY_PEN);
+  dc.SetBrush(wxBrush(CL_RULER_BACKGROUND, wxTRANSPARENT));//*wxLIGHT_GREY_BRUSH);
   dc.DrawRoundedRectangle(0, 0, s.x - BORDER, s.y, 3);
-  
+
   if (Selected)
-    dc.SetPen(wxPen(CL_WAVE_DRAW, 3, wxSOLID)); 
+    dc.SetPen(wxPen(CL_WAVE_DRAW, 3, wxSOLID));
   else
-    dc.SetPen(wxPen(wxColor(141, 153, 170), 2, wxSOLID)); 
-  dc.SetBrush(CL_RULER_BACKGROUND);//*wxLIGHT_GREY_BRUSH); 
+    dc.SetPen(wxPen(wxColor(141, 153, 170), 2, wxSOLID));
+  dc.SetBrush(CL_RULER_BACKGROUND);//*wxLIGHT_GREY_BRUSH);
   dc.DrawRoundedRectangle(1, 1, s.x - 3 - BORDER, s.y - 2, 3);
 }
 
@@ -407,7 +411,7 @@ void					SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
     {
       vector<int>::iterator		i;
 
-      for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end(); 
+      for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end();
 	   i++, k++)
 	if (k == DeviceBox->GetSelection() - 1)
 	  {
@@ -451,7 +455,7 @@ void					SeqTrack::OnMuteClick(wxCommandEvent &WXUNUSED(event))
   else
     Mute = false;
 }
- 
+
 void					SeqTrack::SetVuValue(long value)
 {
   Vu->SetValue(value);
@@ -489,12 +493,12 @@ void					SeqTrack::SetDeviceId(long devid)
 {
   int					k = 1; // + 1 for the "None" parameter
 
-  DeviceId = devid; 
+  DeviceId = devid;
   if (Type == eAudioTrack)
     {
       vector<int>::iterator		i;
 
-      for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end(); 
+      for (i = WiredSettings->InputChannels.begin(); i != WiredSettings->InputChannels.end();
 	   i++, k++)
 	if (*i == devid)
 	  {
