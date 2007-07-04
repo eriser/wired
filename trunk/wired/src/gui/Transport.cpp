@@ -164,6 +164,8 @@ Transport::~Transport()
 
 void				Transport::OnLoopHelp(wxMouseEvent &event)
 {
+  if (HelpWin == NULL)
+      return;
   if (HelpWin->IsShown())
     {
       wxString s(_("Turns On or Off Loop mode. If On, the sequencer will loop between the L and R marker in the sequencer."));
@@ -173,6 +175,8 @@ void				Transport::OnLoopHelp(wxMouseEvent &event)
 
 void				Transport::OnClickHelp(wxMouseEvent &event)
 {
+  if (HelpWin == NULL)
+      return;
   if (HelpWin->IsShown())
     {
       wxString s(_("Turns On or Off Click mode. If On, a click will be played over each beat per bar."));

@@ -753,6 +753,8 @@ void				Rack::OnPluginParamChange(wxMouseEvent &event)
 
 void				Rack::OnHelp(wxMouseEvent &event)
 {
+  if (HelpWin == NULL)
+      return;
   if (HelpWin->IsShown())
     {
       //cout << "In OnHelp" << endl;

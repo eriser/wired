@@ -22,6 +22,8 @@ END_EVENT_TABLE()
 MixerGui::MixerGui(wxWindow *parent, const wxPoint &pos, const wxSize &size, WiredDocument* docParent)
 : wxScrolledWindow(parent, -1, pos, size, wxNO_BORDER)/*SUNKEN_BORDER)*/, WiredDocument(wxT("MixerGui"), docParent)
 {
+  MasterLeft  = 0;
+  MasterRight = 0;
   SetScrollRate(10, 0);
   SetVirtualSize(300, 131);
   SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);

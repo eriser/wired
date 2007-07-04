@@ -289,8 +289,11 @@ void				Mixer::MixOutput(bool soundcard, wxThread* caller)
   Lrms /=  Audio->SamplesPerBuffer;
   Rrms /=  Audio->SamplesPerBuffer;
   MixMutex.Lock();
-  MixerPanel->MasterLeft = Lrms; // used by MixerGui
-  MixerPanel->MasterRight = Rrms;
+  if (MixerPanel != NULL)
+  {
+      MixerPanel->MasterLeft = Lrms; // used by MixerGui
+      MixerPanel->MasterRight = Rrms;
+  }
   MixMutex.Unlock();
   if (soundcard && Audio->UserData)
     {

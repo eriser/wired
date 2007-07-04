@@ -1779,7 +1779,8 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
   list<Track *>::iterator		trackIt;
   wxMutexLocker				locker(SeqMutex);
 
-  MixerPanel->OnMasterChange(commandEvt);
+  if (MixerPanel != NULL)
+      MixerPanel->OnMasterChange(commandEvt);
   if (Seq->Playing)
     {
       SeqPanel->OnSetPosition(cursorEvt);

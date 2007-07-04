@@ -29,7 +29,7 @@ MidiPattern::MidiPattern(WiredDocument *parent, double pos, double endpos, long 
 MidiPattern::MidiPattern(WiredDocument *parent, double pos,
 			 MidiTrack *midiTrack, long trackindex)
   : Pattern(parent, wxT("MidiPattern"), pos,
-	    ((double) midiTrack->GetMaxPos()) / 
+	    ((double) midiTrack->GetMaxPos()) /
 	    (Seq->SigNumerator * midiTrack->GetPPQN()),
 	    trackindex)
 {
@@ -83,6 +83,8 @@ void					MidiPattern::SetMidiTrack(MidiTrack* midiTrack)
 
 void					MidiPattern::OnHelp(wxMouseEvent &event)
 {
+  if (HelpWin == NULL)
+      return;
   if (HelpWin->IsShown())
     {
       wxString s(_("This is a MIDI pattern. Double-click on it to open the MIDI editor."));
@@ -274,7 +276,7 @@ void                    MidiPattern::AddEvent(MidiEvent *event)
 {
   list<MidiEvent *>::iterator        j;
   MidiEvent                *e;
- 
+
   cout << "msg : " << hex << event->Msg[0];
   if ((event->EndPosition == 0.0) &&
       ((event->Msg[0] == M_NOTEON1) || (event->Msg[0] == M_NOTEON2)))
@@ -289,7 +291,7 @@ void                    MidiPattern::AddEvent(MidiEvent *event)
                 (*j)->EndPosition = event->Position;
                 delete event;
                 Events.push_back(*j);
-        // adds the note off           
+        // adds the note off
 		e = new MidiEvent(0, (*j)->EndPosition, (*j)->Msg);
         e->EndPosition = e->Position;
         e->Msg[2] = 0;
@@ -315,7 +317,7 @@ void					MidiPattern::DrawMidi()
   long					size_x, size_y;
   double				inc;
   vector<MidiEvent *>::iterator		j;
-  
+
   if (Bmp)
     delete Bmp;
   Bmp = new wxBitmap(size_x = GetSize().x, size_y = GetSize().y);
@@ -338,14 +340,14 @@ void					MidiPattern::OnPaint(wxPaintEvent &e)
   wxPaintDC				dc(this);
   wxSize				s = wxWindow::GetSize();
   wxRegionIterator			region;
- 
+
   dc.SetPen(PenColor);
   dc.SetBrush(BrushColor);
   if (Bmp)
     for(region = GetUpdateRegion(); region; region++)
       dc.Blit(region.GetX(), region.GetY(),
 	      region.GetW(), region.GetH(),
-	      &memDC, region.GetX(), region.GetY(), 
+	      &memDC, region.GetX(), region.GetY(),
 	      wxCOPY, FALSE);
   else
     dc.DrawRectangle(0, 0, s.x, s.y);

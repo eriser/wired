@@ -90,6 +90,11 @@ void				WiredTool::Detach()
 OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style, WiredDocument* docParent)
   : wxPanel(parent, -1, pos, size, style), WiredDocument(wxT("OptionPanel"), docParent)
 {
+  Title      = NULL;
+  MixerPanel = NULL;
+  MixerTool  = NULL;
+  HelpWin    = NULL;
+  HelpTool   = NULL;
   SetBackgroundColour(CL_RULER_BACKGROUND);//wxColour(204, 199, 219));//*wxLIGHT_GREY);
   ToolbarPanel = new wxPanel(this, -1, wxPoint(0, 0), wxSize(GetSize().x, OPT_TOOLBAR_HEIGHT),
 			     wxSIMPLE_BORDER);
@@ -104,11 +109,11 @@ OptionPanel::OptionPanel(wxWindow *parent, const wxPoint &pos, const wxSize &siz
   wxImage *detach_down = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_DETACH_TOOL_DOWN)), wxBITMAP_TYPE_PNG);
   wxImage *close_up = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_CLOSE_TOOL_UP)), wxBITMAP_TYPE_PNG);
   wxImage *close_down = new wxImage(wxString(WiredSettings->DataDir + wxString(OPT_CLOSE_TOOL_DOWN)), wxBITMAP_TYPE_PNG);
-  ListToolBtn = new DownButton(this, ID_TOOL_LIST_OPTIONPANEL, wxPoint(GetSize().x - 34, 2), wxSize(14, 12),
+  ListToolBtn = new DownButton(ToolbarPanel, ID_TOOL_LIST_OPTIONPANEL, wxPoint(GetSize().x - 34, 2), wxSize(14, 12),
 			       list_up, list_down, true);
-  DetachToolBtn = new DownButton(this, ID_TOOL_DETACH_OPTIONPANEL, wxPoint(GetSize().x - 18, 2), wxSize(14, 12),
+  DetachToolBtn = new DownButton(ToolbarPanel, ID_TOOL_DETACH_OPTIONPANEL, wxPoint(GetSize().x - 18, 2), wxSize(14, 12),
 				 detach_up, detach_down, true);
-  CloseToolBtn = new DownButton(this, ID_TOOL_CLOSE_OPTIONPANEL, wxPoint(GetSize().x - 2, 2), wxSize(14, 12),
+  CloseToolBtn = new DownButton(ToolbarPanel, ID_TOOL_CLOSE_OPTIONPANEL, wxPoint(GetSize().x - 2, 2), wxSize(14, 12),
 				 close_up, close_down, true);
   wxBoxSizer *right_sizer;
   right_sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -199,6 +204,8 @@ void				OptionPanel::ShowTool(WiredTool *t)
 {
   vector<WiredTool *>::iterator	i;
 
+  if (t == NULL)
+      return;
   CurrentTool = t;
   if (!CurrentTool->IsDetached)
     {
@@ -209,7 +216,7 @@ void				OptionPanel::ShowTool(WiredTool *t)
       TopSizer->Add(ToolbarPanel, 0, wxEXPAND | wxALL, 0);
       TopSizer->Add(t->Panel, 1, wxEXPAND | wxALL, 0);
       SetSizer(TopSizer);
-      Title->SetLabel(t->Name.c_str());
+      SetTitle(t->Name.c_str());
       t->Panel->SetSize(wxSize(GetSize().x, GetSize().y - OPT_TOOLBAR_HEIGHT));
       t->Panel->Show(true);
     }
@@ -345,7 +352,7 @@ void				OptionPanel::ShowLastTool()
 	ShowTool(*i);
 	return;
       }
-  Title->SetLabel(_("No Tool"));
+  SetTitle(_("No Tool"));
   CurrentTool = 0x0;
 }
 
@@ -456,7 +463,8 @@ void				OptionPanel::Load(SaveElementArray data)
 //Setters
 void		OptionPanel::SetTitle(const wxString& title)
 {
-  this->Title->SetLabel(title);
+  if (this->Title != NULL)
+      this->Title->SetLabel(title);
 }
 
 void		OptionPanel::SetListToolBtn(bool isDown)

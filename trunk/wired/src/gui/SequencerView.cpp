@@ -5,7 +5,7 @@
 
 #include "Colour.h"
 
-// use extern of 
+// use extern of
 #include "HelpPanel.h"
 #include "Sequencer.h"
 #include "AudioCenter.h"
@@ -253,6 +253,8 @@ void					SequencerView::SetTotalHeight(unsigned long h)
 
 void					SequencerView::OnHelp(wxMouseEvent &event)
 {
+  if (HelpWin == NULL)
+      return;
   if (HelpWin->IsShown())
     {
       wxString s(_("This is the Wired sequencer. You can add here Audio or MIDI tracks, which can be output to plugins. Use the toolbar above to choose one of the sequencer editing tools."));

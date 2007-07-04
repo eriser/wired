@@ -46,6 +46,8 @@ long HostCallback(Plugin *plug, long param, void *value)
                     }
         case wiredSendHelp :
         {
+            if (HelpWin == NULL)
+                break;
             if (HelpWin->IsShown())
                 HelpWin->Help->Load_Text((*(wxString *)value));
             break;

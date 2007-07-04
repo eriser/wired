@@ -65,9 +65,12 @@ Track::Track(WiredDocument* parentDoc, trackType type,
   // mixer output GUI
   if (type == eAudioTrack)
     {
-      ChanGui = MixerPanel->AddChannel(Output, TrackOpt->Text->GetValue());
-      ChanGui->SetOpt(TrackOpt);
-      TrackOpt->SetChannelGui(ChanGui);
+      if (MixerPanel != NULL)
+      {
+          ChanGui = MixerPanel->AddChannel(Output, TrackOpt->Text->GetValue());
+          ChanGui->SetOpt(TrackOpt);
+          TrackOpt->SetChannelGui(ChanGui);
+      }
     }
   else
     ChanGui = NULL;
