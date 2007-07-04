@@ -160,7 +160,8 @@ SOURCES_libWiredWidgets      := ChoiceButton.cpp              \
                                 Hint.cpp                      \
                                 HintedKnob.cpp                \
                                 StaticPosKnob.cpp             \
-                                CycleKnob.cpp
+                                CycleKnob.cpp                 \
+                                TransparentStaticText.cpp
 SOURCES_libWiredBeatBox      := Polyphony.cpp                 \
                                 BeatBox.cpp                   \
                                 BeatButton.cpp                \

@@ -9,7 +9,6 @@
 #include "HelpPanel.h"
 #include "DownButton.h"
 #include "HoldButton.h"
-#include "StaticLabel.h"
 #include "VUMCtrl.h"
 #include "Settings.h"
 #include "AudioEngine.h"
@@ -91,7 +90,7 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 
   s.Printf(wxT("%d"), Seq->BPM);
 
-  BpmLabel = new StaticLabel(this, Transport_BpmClick, s, wxPoint(49, 20), wxSize(-1, 12));
+  BpmLabel = new TransparentStaticText(this, Transport_BpmClick, s, wxPoint(49, 20), wxSize(-1, 12));
   BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));
 
   s.Printf(wxT("%.0f"), Seq->BPM);
@@ -107,11 +106,11 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   SigDenDownBtn = new HoldButton(this, Transport_SigDenDown, wxPoint(95, 57), wxSize(11, 8),
 				 down_up, down_down);
 
-  SigNumLabel = new wxStaticText(this, -1, wxT("4"), wxPoint(59, 48), wxSize(-1, 12));
+  SigNumLabel = new TransparentStaticText(this, -1, wxT("4"), wxPoint(59, 48), wxSize(-1, 12));
   SigNumLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigNumLabel->SetLabel(wxT("4"));
 
-  SigDenLabel = new wxStaticText(this, -1, wxT("4"), wxPoint(81, 48), wxSize(-1, 12));
+  SigDenLabel = new TransparentStaticText(this, -1, wxT("4"), wxPoint(81, 48), wxSize(-1, 12));
   SigDenLabel->SetFont(wxFont(10, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigDenLabel->SetLabel(wxT("4"));
 
@@ -126,15 +125,15 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   StopBtn->SetBackgroundColour(wxColour(204, 199, 219));
   RecordBtn->SetBackgroundColour(wxColour(204, 199, 219));
 
-  MesLabel = new wxStaticText(this, -1, wxT("1"), wxPoint(182, 34), wxSize(32, 32));
+  MesLabel = new TransparentStaticText(this, -1, wxT("1"), wxPoint(182, 34), wxSize(32, 32));
   MesLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   MesLabel->SetForegroundColour(*wxWHITE);
 
-  SigLabel = new wxStaticText(this, -1, wxT("1"), wxPoint(215, 34), wxSize(30, 32));
+  SigLabel = new TransparentStaticText(this, -1, wxT("1"), wxPoint(215, 34), wxSize(30, 32));
   SigLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   SigLabel->SetForegroundColour(*wxWHITE);
 
-  MilliSigLabel = new wxStaticText(this, -1, wxT("000"), wxPoint(237, 34), wxSize(32, 32));
+  MilliSigLabel = new TransparentStaticText(this, -1, wxT("000"), wxPoint(237, 34), wxSize(32, 32));
   MilliSigLabel->SetFont(wxFont(12, wxDEFAULT, wxNORMAL, wxNORMAL));
   MilliSigLabel->SetForegroundColour(*wxWHITE);
   Connect(wxID_ANY, wxEVT_IDLE, (wxObjectEventFunction) &Transport::OnIdle);
