@@ -59,7 +59,7 @@ bool MainApp::OnInit()
   {
     // we keep time-out very high for low cpu
     splash = new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
-      120000, NULL, -1, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER | wxSTAY_ON_TOP);
+      120000, NULL, -1, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER);
     splash->Update();
     splash->Refresh();
     // alert dialog can use it before frame loading
