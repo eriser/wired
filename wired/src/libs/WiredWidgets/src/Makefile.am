@@ -29,4 +29,6 @@ libWiredWidgets_la_SOURCES = 			\
 		StaticPosKnob.cpp	\
 		StaticPosKnob.h		\
 		CycleKnob.cpp		\
-		CycleKnob.h
+		CycleKnob.h		\
+		TransparentStaticText.cpp	\
+		TransparentStaticText.h

@@ -7,6 +7,7 @@
 #include <wx/wx.h>
 #include <wx/gauge.h>
 #include "WiredDocument.h"
+#include "TransparentStaticText.h"
 
 #define TRANSPORT_BACKGR_IMG	L"/ihm/player/tr_window_bg.png"
 #define TRANSPORT_BACKGR_LOOP_IMG	L"/ihm/player/tr_window_bg_loop.png"
@@ -105,7 +106,7 @@ class				Transport : public wxPanel, WiredDocument
   wxStaticText			*MesLabel;
   wxStaticText			*SigLabel;
   wxStaticText			*MilliSigLabel;
-  StaticLabel			*BpmLabel;
+  TransparentStaticText	*BpmLabel;
   wxStaticText			*SigNumLabel;
   wxStaticText			*SigDenLabel;
 

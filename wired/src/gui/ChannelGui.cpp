@@ -11,7 +11,7 @@
 #include "DownButton.h"
 #include "HoldButton.h"
 #include "FaderCtrl.h"
-#include "StaticLabel.h"
+#include "TransparentStaticText.h"
 #include "VUMCtrl.h"
 #include "Settings.h"
 #include "Channel.h"
@@ -24,6 +24,7 @@ ChannelGui::ChannelGui(Channel* channel, wxImage* img_bg, wxImage* img_fg,
   : wxPanel(parent, id, pos, size), WiredDocument(wxT("ChannelGui"), docParent)
 {
   ConnectedSeqTrack = 0x0;
+  Label = NULL;
   SetBackgroundColour(*wxBLACK);//CL_RULER_BACKGROUND);
 
   wxImage	bg(wxString(WiredSettings->DataDir + wxString(BG)), wxBITMAP_TYPE_PNG);
@@ -49,8 +50,7 @@ ChannelGui::ChannelGui(Channel* channel, wxImage* img_bg, wxImage* img_fg,
       VolumeLeft->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));
       VolumeRight = new wxStaticText(this, -1, "100", wxPoint(75, 90));
       VolumeRight->SetFont(wxFont(7, wxBOLD, wxBOLD, wxBOLD));*/
-      Label = new wxStaticText(this, -1, label, wxPoint(25, 0));
-      Label->SetForegroundColour(*wxWHITE);
+      Label = new TransparentStaticText(this, -1, label, wxPoint(25, 0));
       Label->SetForegroundColour(*wxBLACK);
       Label->SetFont(wxFont(8, wxFONTFAMILY_DEFAULT,
 			    wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
@@ -152,6 +152,9 @@ void				ChannelGui::OnFaderRight(wxScrollEvent& WXUNUSED(e))
 void				ChannelGui::SetLabel(const wxString& label)
 {
   int				len = label.length();
+
+  if (Label == NULL)
+      return;
 
   if (len && len > LABEL_MAXCHAR)
     {
@@ -335,7 +338,7 @@ void				ChannelGui::Load(SaveElementArray data)
 	}
       else if (data[dataCompt]->getKey() == wxT("label"))
 	{
-	  Label->SetLabel(data[dataCompt]->getValue());
+	  this->SetLabel(data[dataCompt]->getValue());
 	}
 
     }

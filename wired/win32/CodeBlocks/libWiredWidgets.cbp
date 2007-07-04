@@ -63,6 +63,8 @@
 		<Unit filename="..\..\src\libs\WiredWidgets\src\StaticBitmap.h" />
 		<Unit filename="..\..\src\libs\WiredWidgets\src\StaticPosKnob.cpp" />
 		<Unit filename="..\..\src\libs\WiredWidgets\src\StaticPosKnob.h" />
+		<Unit filename="..\..\src\libs\WiredWidgets\src\TransparentStaticText.cpp" />
+		<Unit filename="..\..\src\libs\WiredWidgets\src\TransparentStaticText.h" />
 		<Unit filename="..\..\src\libs\WiredWidgets\src\VUMCtrl.cpp" />
 		<Unit filename="..\..\src\libs\WiredWidgets\src\VUMCtrl.h" />
 		<Extensions>
