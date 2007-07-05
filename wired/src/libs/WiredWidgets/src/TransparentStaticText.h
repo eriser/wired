@@ -1,3 +1,6 @@
+// Copyright (C) 2004-2007 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 #include <wx/stattext.h>
 #include <wx/dcclient.h>
 
@@ -30,6 +33,8 @@ public:
     virtual bool HasTransparentBackground() { return true; };
 
     virtual void OnPaint(wxPaintEvent& event);
+    virtual void OnMouseEvent(wxMouseEvent& event);
+    virtual void SetLabel(const wxString&  label);
 
     DECLARE_EVENT_TABLE()
 };
