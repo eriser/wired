@@ -19,8 +19,18 @@ Using MSYS:
 Inside MSYS prompt, change the direcory to "win32" and type "make".
 
 Using Code::Blocks IDE:
-Open the file "Wired.workspace" and run "Build > Build workspace" to compile everything.
+Open the file "win32/CodeBlocks/Wired.workspace" and run "Build > Build workspace" to compile everything.
 More details at http://www.codeblocks.org/
 Run "copydata.bat" to copy src/data content to bin directory.
 
 For both cases the required DLLs need to be on PATH or at the same directory where wired.exe is.
+
+--------------------------------------------------------------------------------
+
+How to generate a installer
+
+You need to:
+- install Inno Setup Compiler          http://www.jrsoftware.org/isdl.php
+
+Open the file "win32/installer.iss" using Inno Setup and press Ctrl+F9.
+Take a look at "win32/Output" and enjoy!
