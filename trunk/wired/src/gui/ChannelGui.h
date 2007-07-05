@@ -9,6 +9,7 @@
 #include "SeqTrack.h"
 #include "FaderCtrl.h"
 #include "WiredDocument.h"
+#include "TransparentStaticText.h"
 
 #define LABEL_MAXCHAR			(20)
 #define BG				L"/ihm/mixer/mixer_bg.png"
@@ -80,7 +81,7 @@ class					ChannelGui : public wxPanel, public WiredDocument
   DownButton				*MuteLeftButton;
   DownButton				*MuteRightButton;
   DownButton				*LockButton;
-  wxStaticText				*Label;
+  TransparentStaticText		*Label;
   //  wxStaticText				*VolumeLeft;
   //  wxStaticText				*VolumeRight;
 

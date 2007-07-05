@@ -1,6 +1,9 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#ifndef __TRANSPARENTSTATICTEXT_H__
+#define __TRANSPARENTSTATICTEXT_H__
+
 #include <wx/stattext.h>
 #include <wx/dcclient.h>
 
@@ -38,3 +41,5 @@ public:
 
     DECLARE_EVENT_TABLE()
 };
+
+#endif
