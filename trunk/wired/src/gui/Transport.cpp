@@ -386,11 +386,14 @@ void				Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
 void				Transport::OnBpmClick(wxCommandEvent &WXUNUSED(event))
 {
   if (BpmText) BpmText->Destroy();
+  BpmLabel->Hide();
   BpmText = new wxTextCtrl(this, Transport_BpmEnter, BpmLabel->GetLabel(),
 			   BpmLabel->GetPosition(), wxSize(50, BpmLabel->GetSize().y),
 			   wxTE_PROCESS_ENTER);
   Connect(Transport_BpmEnter, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)(wxEventFunction)
 	  (wxCommandEventFunction)&Transport::OnBpmEnter);
+  BpmText->SetFocus();
+  BpmText->SetSelection(-1, -1);
 }
 
 void				Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
@@ -412,6 +415,7 @@ void				Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
       BpmText->Destroy();
       BpmText = NULL;
     }
+    BpmLabel->Show();
 }
 
 void				Transport::SetBpm(float bpm)
