@@ -76,9 +76,8 @@ void					AudioPattern::Init(WaveFile* w, WiredDocument* parent)
 	  &AudioPattern::OnLeftUp);
   Connect(GetId(), wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &AudioPattern::OnRightClick);
-  // Double Click action commented FOR EPITECH FORUM PURPOSE
-  //   Connect(GetId(), wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
-  // 	  &AudioPattern::OnDoubleClick);
+  Connect(GetId(), wxEVT_LEFT_DCLICK, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
+      &AudioPattern::OnDoubleClick);
   Connect(GetId(), wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &AudioPattern::OnPaint);
   Connect(GetId(), wxEVT_SIZE, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)

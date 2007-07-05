@@ -26,8 +26,8 @@ const struct s_choice		Choice[NB_CHOICE + 1] =
 
 
 
-WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, 
-					  long style) 
+WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+					  long style)
 					: wxPanel(parent, id, pos, size, style)
 {
   wxBoxSizer			*row;
@@ -35,48 +35,48 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
   long					c;
   wxSize 				s = GetSize();
 
-  
-  
-  sbh = new wxScrollBar(this, ID_HSCROLL, wxPoint(0, size.GetHeight() - SCROLLH), 
+
+
+  sbh = new wxScrollBar(this, ID_HSCROLL, wxPoint(0, size.GetHeight() - SCROLLH),
 			wxSize(size.GetWidth(), SCROLLH), wxSB_HORIZONTAL);
-  
-  w = new WaveEditor(this, -1, wxPoint(0, WAVE_TOOLBAR_HEIGHT), 
+
+  w = new WaveEditor(this, -1, wxPoint(0, WAVE_TOOLBAR_HEIGHT),
 		     wxSize(GetSize().GetWidth(), GetSize().GetHeight() - WAVE_TOOLBAR_HEIGHT), true);
-  
+
   Toolbar = new wxToolBar(this, ID_TOOLBAR_WAVE, wxPoint(0, 0), wxSize(size.GetWidth(),WAVE_TOOLBAR_HEIGHT ), wxTB_FLAT);
- 
-  Toolbar->AddTool(ID_TOOL_COPY_WAVE, _("Copy"), wxBitmap(wxT("data/toolbar/copy_up.bmp"), wxBITMAP_TYPE_BMP), 
-		   wxBitmap(wxT("data/toolbar/copy_down.bmp"),wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Copy"), _("Copy wave"), NULL);
-  Toolbar->AddTool(ID_TOOL_PASTE_WAVE, _("Paste"), wxBitmap(wxT("data/toolbar/paste_up.bmp"), wxBITMAP_TYPE_BMP), 
-		   wxBitmap(wxT("data/toolbar/paste_down.bmp"),wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Paste"), _("Paste wave"), NULL);
-  Toolbar->AddTool(ID_TOOL_CUT_WAVE, _("Cut"), wxBitmap(wxT("data/toolbar/cut_up.bmp"), wxBITMAP_TYPE_BMP), 
-		   wxBitmap(wxT("data/toolbar/cut_down.bmp"), wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Cut"), _("Cut wave"), NULL);
-  Toolbar->AddTool(ID_TOOL_DEL_WAVE, _("Delete"), wxBitmap(wxT("data/toolbar/delete.png"), wxBITMAP_TYPE_PNG), 
-		   wxBitmap(wxT("data/toolbar/delete.png"), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Delete"), _("Delete"), NULL);
+
+  Toolbar->AddTool(ID_TOOL_COPY_WAVE, _("Copy"), wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/copy_up.bmp")), wxBITMAP_TYPE_BMP),
+		   wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/copy_down.bmp")),wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Copy"), _("Copy wave"), NULL);
+  Toolbar->AddTool(ID_TOOL_PASTE_WAVE, _("Paste"), wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/paste_up.bmp")), wxBITMAP_TYPE_BMP),
+		   wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/paste_down.bmp")),wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Paste"), _("Paste wave"), NULL);
+  Toolbar->AddTool(ID_TOOL_CUT_WAVE, _("Cut"), wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/cut_up.bmp")), wxBITMAP_TYPE_BMP),
+		   wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/cut_down.bmp")), wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Cut"), _("Cut wave"), NULL);
+  Toolbar->AddTool(ID_TOOL_DEL_WAVE, _("Delete"), wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/delete.png")), wxBITMAP_TYPE_PNG),
+		   wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/delete.png")), wxBITMAP_TYPE_PNG), wxITEM_NORMAL, _("Delete"), _("Delete"), NULL);
   Toolbar->AddSeparator();
-  Toolbar->AddTool(ID_TOOL_UNDO_WAVE, _("Undo"), wxBitmap(wxT("data/toolbar/undo.bmp"), wxBITMAP_TYPE_BMP), 
-		   wxBitmap(wxT("data/toolbar/undo.bmp"),wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Undo"), _("Undo last action"), NULL);
-  Toolbar->AddTool(ID_TOOL_REDO_WAVE, _("Redo"), wxBitmap(wxT("data/toolbar/redo.bmp"), wxBITMAP_TYPE_BMP), 
-		   wxBitmap(wxT("data/toolbar/redo.bmp"), wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Redo"), _("Redo"), NULL);
+  Toolbar->AddTool(ID_TOOL_UNDO_WAVE, _("Undo"), wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/undo.bmp")), wxBITMAP_TYPE_BMP),
+		   wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/undo.bmp")),wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Undo"), _("Undo last action"), NULL);
+  Toolbar->AddTool(ID_TOOL_REDO_WAVE, _("Redo"), wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/redo.bmp")), wxBITMAP_TYPE_BMP),
+		   wxBitmap(wxString(WiredSettings->DataDir + wxT("toolbar/redo.bmp")), wxBITMAP_TYPE_BMP), wxITEM_NORMAL, _("Redo"), _("Redo"), NULL);
   Toolbar->AddSeparator();
-  
+
   for (c = 0; c < NB_CHOICE; c++)
     combochoice[c] = Choice[c].s;
-  combobox = new wxComboBox(Toolbar, ID_TOOL_COMBO_WAVE, _("ZOOM"), 
+  combobox = new wxComboBox(Toolbar, ID_TOOL_COMBO_WAVE, _("ZOOM"),
 			    wxPoint(-1, -1), wxSize(68, -1), 5, combochoice, wxCB_DROPDOWN);
-  
+
   Toolbar->AddControl(combobox);
   Toolbar->AddSeparator();
-  
+
   Toolbar->Realize();
-  
+
   row = new wxBoxSizer(wxVERTICAL);
   row->Add(Toolbar, 0, wxALL | wxEXPAND, 0);
   row->Add(w, 1, wxALL | wxEXPAND , 0);
   row->Add(sbh, 0, wxALL | wxEXPAND | wxFIXED_MINSIZE, 0);
-  
+
   SetSizer(row);
-  
+
   Connect(ID_TOOL_COPY_WAVE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	  &WavePanel::OnCopy);
@@ -92,12 +92,12 @@ WavePanel::WavePanel(wxWindow *parent, wxWindowID id, const wxPoint& pos, const 
   Connect(ID_TOOL_SELECT_WAVE, wxEVT_COMMAND_MENU_SELECTED,
 	  (wxObjectEventFunction)(wxEventFunction)(wxCommandEventFunction)
 	  &WavePanel::OnSelect);
-  
+
   //	Toolbar->ToggleTool(ID_TOOL_UNDO_WAVEEDITOR, NULL);
   //	Toolbar->ToggleTool(ID_TOOL_REDO_WAVEEDITOR, NULL);
 
   Refresh();
-  
+
 }
 
 
