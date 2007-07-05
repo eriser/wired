@@ -103,12 +103,12 @@ class				Transport : public wxPanel, WiredDocument
   wxBitmap			*TrBmp;
   wxBitmap			*TrLoopBmp;
 
-  wxStaticText			*MesLabel;
-  wxStaticText			*SigLabel;
-  wxStaticText			*MilliSigLabel;
+  TransparentStaticText	*MesLabel;
+  TransparentStaticText	*SigLabel;
+  TransparentStaticText	*MilliSigLabel;
   TransparentStaticText	*BpmLabel;
-  wxStaticText			*SigNumLabel;
-  wxStaticText			*SigDenLabel;
+  TransparentStaticText	*SigNumLabel;
+  TransparentStaticText	*SigDenLabel;
 
   wxTextCtrl			*BpmText;
 
