@@ -1,9 +1,13 @@
+// Copyright (C) 2004-2007 by Wired Team
+// Under the GNU General Public License Version 2, June 1991
+
 #include "TransparentStaticText.h"
 
 IMPLEMENT_DYNAMIC_CLASS (TransparentStaticText, wxStaticText)
 
 BEGIN_EVENT_TABLE(TransparentStaticText, wxStaticText)
     EVT_PAINT(TransparentStaticText::OnPaint)
+    EVT_LEFT_DOWN(TransparentStaticText::OnMouseEvent)
 END_EVENT_TABLE()
 
 
@@ -29,8 +33,23 @@ bool TransparentStaticText::Create(wxWindow* parent, wxWindowID id, const wxStri
 
 void TransparentStaticText::OnPaint(wxPaintEvent& /*event*/) {
     wxPaintDC dc(this);
+
     dc.SetFont(GetFont());
+    dc.SetTextForeground(GetForegroundColour());
     dc.DrawText(GetLabel(), 0, 0);
 }
 
+
+void TransparentStaticText::SetLabel(const wxString&  label)
+{
+    wxStaticText::SetLabel(label);
+    GetParent()->RefreshRect(this->GetRect());
+}
+
+
+void TransparentStaticText::OnMouseEvent(wxMouseEvent& /*event*/)
+{
+  wxCommandEvent _event(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+  wxPostEvent(GetParent(), _event);
+}
 

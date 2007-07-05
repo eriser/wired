@@ -93,10 +93,7 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
   BpmLabel = new TransparentStaticText(this, Transport_BpmClick, s, wxPoint(49, 20), wxSize(-1, 12));
   BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));
 
-  s.Printf(wxT("%.0f"), Seq->BPM);
-  BpmLabel->SetLabel(s);
-  s.Printf(wxT("%.0f"), Seq->BPM);
-  BpmLabel->SetLabel(s);
+  SetBpm(Seq->BPM);
   SigNumUpBtn = new HoldButton(this, Transport_SigNumUp, wxPoint(42, 48), wxSize(11, 8),
 			       up_up, up_down);
   SigNumDownBtn = new HoldButton(this, Transport_SigNumDown, wxPoint(42, 57), wxSize(11, 8),
@@ -310,9 +307,7 @@ void				Transport::OnBpmUp(wxCommandEvent &WXUNUSED(event))
     {
       Seq->SetBPM(Seq->BPM + 1);
 
-      wxString s;
-      s.Printf(wxT("%.0f"), Seq->BPM);
-      BpmLabel->SetLabel(s);
+      SetBpm(Seq->BPM);
     }
 }
 
@@ -324,9 +319,7 @@ void				Transport::OnBpmDown(wxCommandEvent &WXUNUSED(event))
     {
       Seq->SetBPM(Seq->BPM - 1);
 
-      wxString s;
-      s.Printf(wxT("%.0f"), Seq->BPM);
-      BpmLabel->SetLabel(s);
+      SetBpm(Seq->BPM);
     }
 }
 
