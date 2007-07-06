@@ -33,6 +33,7 @@ Source: "bin\libxml2.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\portmidi.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\SoundTouch.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\wxmsw28_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "bin\mingwm10.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 Source: "bin\conf\*"; DestDir: "{app}\conf"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "bin\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
