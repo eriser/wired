@@ -41,7 +41,7 @@ Source: "bin\plugins\*"; DestDir: "{app}\plugins"; Flags: ignoreversion recurses
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\Wired"; Filename: "{app}\wired.exe"
+Name: "{group}\Wired"; Filename: "{app}\wired.exe"; WorkingDir: "{app}"
 Name: "{commondesktop}\Wired"; Filename: "{app}\wired.exe"; Tasks: desktopicon
 
 [Run]
