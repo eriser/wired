@@ -177,7 +177,7 @@ class					Pattern : public wxWindow, public WiredDocument
    * \param c a wxcolour,a color.
    */
   virtual void							SetDrawColour(wxColour c) { PenColor = c; };
-  virtual Pattern						*CreateCopy(double pos) = 0x0;
+  virtual Pattern						*CreateCopy(double pos) = 0;
 
   /**
    * Getting a measure of a position of pattern.
