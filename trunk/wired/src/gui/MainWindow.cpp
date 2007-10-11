@@ -745,7 +745,7 @@ void					MainWindow::OnSaveAs(wxCommandEvent &event)
 void MainWindow::OnImportWave(wxCommandEvent &event)
 {
   LOG;
-  wxFileDialog dlg(this, _("Loading sound file"), wxT(""), wxT(""), wxT(""), wxMULTIPLE);
+  wxFileDialog dlg(this, _("Loading sound file"), wxT(""), wxT(""), WIRED_SUPPORTED_SNDFILES, wxMULTIPLE);
   if (dlg.ShowModal() == wxID_OK)
   {
     wxArrayString paths;
