@@ -17,22 +17,22 @@ typedef vector<MidiDeviceInfo *>	MidiDeviceList;
 
 class					MidiThread : public wxThread
 {
- public: 
+ public:
   MidiThread();
   ~MidiThread();
 
-  virtual void				*Entry();
-  void          				OnExit();
-  
+  virtual void			*Entry();
+  void          		OnExit();
+
   void					OpenDevice(int id);
   void					OpenDefaultDevices();
   void					CloseDevice(int id);
   void					RemoveDevice(int id);
   //a simple call to ListDevices... is there a better way ? implementing accessors maybe...
   void					RefreshDevices();
-  
-  vector<int>				GetDevicesIdByName(vector<wxString>); 
-  int					GetDeviceIdByName(wxString); 
+
+  vector<int>				GetDevicesIdByName(vector<wxString>);
+  int					GetDeviceIdByName(wxString);
 
   MidiDeviceList			DeviceList;
   vector<MidiInDevice *>		MidiInDev;

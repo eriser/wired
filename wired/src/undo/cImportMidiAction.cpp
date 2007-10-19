@@ -11,6 +11,16 @@
 #include "Rack.h"
 #include "AudioPattern.h"
 
+#ifdef DEBUG_UNDO
+#include <wx/filename.h>
+#endif
+
+#ifdef DEBUG_UNDO
+#define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : "  << __LINE__ << " : " << __FUNCTION__  << endl; }
+#else
+#define LOG
+#endif
+
 /********************   class cImportWaveAction   ********************/
 
 cImportWaveAction::cImportWaveAction (const wxString& path, trackType kind, bool shouldAdd)
@@ -116,18 +126,15 @@ cImportMidiAction::cImportMidiAction (wxString& path, trackType kind)
 
 void cImportMidiAction::Do ()
 {
-  MidiFile *m = new MidiFile(mMidiPath);
-
-  if (m)
+  LOG;
+  MidiFile m(mMidiPath);
+  for (int i = 0; i < m.GetNumberOfTracks(); i++)
   {
-	for (int i = 0; i < m->GetNumberOfTracks(); i++)
-	{
-	  if (m->GetTrack(i)->GetMaxPos() > 0)
-	  {
-		trackCreated = SeqPanel->CreateTrack(mTrackKindFlag);
-		trackCreated->CreateMidiPattern(m->GetTrack(i));
-	  }
-	}
+    if (m.GetTrack(i)->GetMaxPos() > 0)
+    {
+      trackCreated = SeqPanel->CreateTrack(mTrackKindFlag);
+      trackCreated->CreateMidiPattern(m.GetTrack(i));
+    }
   }
   NotifyActionManager();
 }

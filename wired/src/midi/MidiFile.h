@@ -100,7 +100,7 @@ typedef struct	s_chunk
 }		t_chunk;
 
 // Base class for Midi event handling
-class Event 
+class Event
 {
  public:
   Event(unsigned long pos, unsigned char ID);
@@ -119,7 +119,7 @@ class Event
 class MidiFileEvent : public Event
 {
   public:
-  MidiFileEvent(unsigned long pos, unsigned char ID, unsigned char channel, 
+  MidiFileEvent(unsigned long pos, unsigned char ID, unsigned char channel,
 		  unsigned char p1, unsigned char p2);
     unsigned char GetChannel() { return (Channel); }
     unsigned char GetParam(int num) { return (num == 0) ? p1 : p2; }
@@ -134,7 +134,7 @@ class MidiFileEvent : public Event
 class SysExEvent : public Event
 {
   public:
-    SysExEvent(unsigned long pos, unsigned char ID, unsigned long len, 
+    SysExEvent(unsigned long pos, unsigned char ID, unsigned long len,
                unsigned char *data);
     ~SysExEvent();
 
@@ -147,7 +147,7 @@ class SysExEvent : public Event
 class NonMidiEvent : public Event
 {
   public:
-    NonMidiEvent(unsigned long pos, unsigned char ID, unsigned long len, 
+    NonMidiEvent(unsigned long pos, unsigned char ID, unsigned long len,
                  unsigned char *data);
     ~NonMidiEvent();
     wxString GetBufferAsString() { return wxString(wxString((const char *)data, *wxConvCurrent), 0, len); }

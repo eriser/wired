@@ -12,6 +12,16 @@
 #include "SeqTrackPattern.h"
 #include "MixerGui.h"
 
+#ifdef DEBUG_TRACK
+#include <wx/filename.h>
+#endif
+
+#ifdef DEBUG_TRACK
+#define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : "  << __LINE__ << " : " << __FUNCTION__  << endl; }
+#else
+#define LOG
+#endif
+
 wxColour				PatternColours[MAX_AUTO_COLOURS] =
   {
     // blue
@@ -41,13 +51,14 @@ Track::Track(WiredDocument* parentDoc, trackType type,
 	     wxPoint& pos, wxSize& size, wxWindow* TrackView) :
   WiredDocument(wxT("Track"), parentDoc)
 {
+  LOG;
   // basic initialization
   Wave = 0x0;
   Midi = 0x0;
   Index = 0;
   Type = type;
 
-  ColourIndex = (AudioTrackCount + MidiTrackCount) % MAX_AUTO_COLOURS;
+  ColourIndex = (AudioTrackCount + MidiTrackCount + AutomationTrackCount) % MAX_AUTO_COLOURS;
 
   // relative to the header of track (mostly GUI)
   TrackOpt = new SeqTrack(Seq->Tracks.size() + 1, TrackView,
@@ -74,7 +85,6 @@ Track::Track(WiredDocument* parentDoc, trackType type,
     }
   else
     ChanGui = NULL;
-
 
   // add itself to sequencer management, Track need it to get an Index
   Seq->RegisterTrack(this);

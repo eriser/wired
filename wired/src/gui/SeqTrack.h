@@ -35,7 +35,7 @@ class					SeqTrack: public wxControl,
 						  public WiredDocument
 {
  public:
-  SeqTrack(long index, wxWindow *winParent, const wxPoint& pos, 
+  SeqTrack(long index, wxWindow *winParent, const wxPoint& pos,
 	   const wxSize& size, trackType type, WiredDocument* docParent);
   ~SeqTrack();
 
@@ -87,7 +87,7 @@ class					SeqTrack: public wxControl,
 
  protected:
   void					OnMotion(wxMouseEvent &e);
-  
+
   ChoiceButton				*Image;
   wxMenu				*menu;
   DownButton				*RecBtn;
@@ -118,5 +118,6 @@ enum
 
 extern int				AudioTrackCount;
 extern int				MidiTrackCount;
+extern int				AutomationTrackCount;
 
 #endif

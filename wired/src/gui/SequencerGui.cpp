@@ -29,6 +29,12 @@
 #include "Settings.h"
 #include "WriteWaveFile.h"
 
+#ifdef DEBUG_SEQUENCERGUI
+#define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : "  << __LINE__ << " : " << __FUNCTION__  << endl; }
+#else
+#define LOG
+#endif
+
 DEFINE_EVENT_TYPE(EVT_DROP)
 const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1] =
 {
@@ -212,6 +218,7 @@ int					SequencerGui::GetCurrentXScrollPos()
 
 Track					*SequencerGui::CreateTrack(trackType type)
 {
+  LOG;
   // create a new track
   long		height = (long) floor(TRACK_HEIGHT * VertZoomFactor);
   Track*	newTrack;

@@ -14,6 +14,7 @@ enum trackType
     eUnknownTrack = 0,
     eMidiTrack,
     eAudioTrack,
+    eAutomationTrack,
     eEndTrackType
   };
 
@@ -24,7 +25,7 @@ enum trackType
 #include "ChannelGui.h"
 #include "WiredDocument.h"
 
-#define MAX_AUTO_COLOURS		(16)		
+#define MAX_AUTO_COLOURS		(16)
 
 class					WaveFile;
 class					MidiTrack;
@@ -51,11 +52,12 @@ class					Track : public WiredDocument
   // These pointers are used when we record on this Track.
   AudioPattern*				Wave;
   MidiPattern*				Midi;
+//  AutomationPattern*		Automation;
 
  public:
   Track(WiredDocument* parentDoc, trackType type, wxPoint& pos, wxSize& size,
-	wxWindow* trackview); 
-  ~Track(); 
+	wxWindow* trackview);
+  ~Track();
   Track	operator=(const Track& right);
 
   //super degueu
@@ -66,18 +68,20 @@ class					Track : public WiredDocument
 
   AudioPattern				*CreateAudioPattern(WaveFile *w, double pos = 0);
   MidiPattern				*CreateMidiPattern(MidiTrack *t);
+//  AutomationPattern			*CreateAutomationPattern(AutomationTrack *t);
 
   // this function should be used ONLY in Pattern constructor/destructor
   void					AddPattern(Pattern *p);
-  AudioPattern*				AddPattern(WaveFile *w, double pos);
+  AudioPattern*			AddPattern(WaveFile *w, double pos);
   void					DelPattern(Pattern *p);
 
 
   void					UpdateIndex(long trackindex);
   void					RefreshFullTrack();
   void					ChangeTrackColour(wxColour &c);
-  bool					IsAudioTrack() { return ((Type == eAudioTrack) ? (true) : (false)); }
-  bool					IsMidiTrack() { return ((Type == eMidiTrack) ? (true) : (false)); }
+  bool					IsAudioTrack      () { return ((Type == eAudioTrack) ? (true) : (false)); }
+  bool					IsMidiTrack       () { return ((Type == eMidiTrack) ? (true) : (false)); }
+  bool					IsAutomationTrack () { return (Type == eAutomationTrack); }
   trackType				GetType() { return (Type); }
 
   inline long				GetIndex() { return (Index); };

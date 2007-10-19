@@ -17,6 +17,10 @@
 					<Add option="-DDEBUG_MAINAPP" />
 					<Add option="-DDEBUG_MLTREE" />
 					<Add option="-DDEBUG_MAINWINDOW" />
+					<Add option="-DDEBUG_UNDO" />
+					<Add option="-DDEBUG_SEQUENCER" />
+					<Add option="-DDEBUG_SEQUENCERGUI" />
+					<Add option="-DDEBUG_TRACK" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
