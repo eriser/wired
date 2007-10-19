@@ -41,6 +41,9 @@
 			<Add directory="..\..\src\fileloader" />
 			<Add directory="..\..\src\gui" />
 			<Add directory="..\..\src\engine" />
+			<Add directory="..\..\src" />
+			<Add directory="..\..\src\include" />
+			<Add directory="..\..\src\xml" />
 		</Compiler>
 		<Linker>
 			<Add library="wx_msw-2.8" />

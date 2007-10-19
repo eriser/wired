@@ -24,6 +24,16 @@
 #include "WiredSampleRate.h"
 #include "Threads.h"
 
+#ifdef DEBUG_SEQUENCER
+#include <wx/filename.h>
+#endif
+
+#ifdef DEBUG_SEQUENCER
+#define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : "  << __LINE__ << " : " << __FUNCTION__  << endl; }
+#else
+#define LOG
+#endif
+
 using namespace	std;
 
 Sequencer::Sequencer(WiredDocument* docParent)
@@ -457,7 +467,9 @@ void					Sequencer::Record(bool bRecording)
 
 void					Sequencer::RegisterTrack(Track *t)
 {
-  wxMutexLocker				locker(SeqMutex);
+  LOG;
+  // BUG: Infinite waiting (under Windows)
+//  wxMutexLocker				locker(SeqMutex);
 
   t->SetIndex(Tracks.size());
   Tracks.push_back(t);

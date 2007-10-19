@@ -778,28 +778,6 @@ void MainWindow::OnImportMIDI(wxCommandEvent &event)
     cImportMidiAction* action = new cImportMidiAction(selfile, eMidiTrack);
     action->Do();
     Progress.Update(99);
-    //delete Progress;
-    /*
-	MidiFile *m;
-	m = new MidiFile(selfile);
-
-	if (m)
-	{
-	Progress->Update(90);
-	for (int i = 0; i < m->GetNumberOfTracks(); i++)
-	{
-	if (m->GetTrack(i)->GetMaxPos() > 0)
-	{
-	Track *t = SeqPanel->CreateTrack(false);
-	t->CreateMidiPattern(m->GetTrack(i));
-	}
-	}
-	Progress->Update(99);
-	}
-	else
-	cout << "[MAINWIN] Cannot import midi file !" << endl;
-	delete Progress;
-      */
   }
 }
 
@@ -1177,7 +1155,9 @@ void					MainWindow::OnAddTrackMidi(wxCommandEvent &event)
 void					MainWindow::OnAddTrackAutomation(wxCommandEvent &event)
 {
   LOG;
-  cout << __FUNCTION__ << '@' << __LINE__ << ": Not implemented." << endl;
+  Track *newTrack = SeqPanel->CreateTrack(eAutomationTrack);
+  newTrack->CreateMidiPattern(new MidiTrack(0, NULL, 96, wxT("new"), 1));
+  cout << __FUNCTION__ << '@' << __LINE__ << ": TODO In progress." << endl;
 }
 
 void					MainWindow::OnFloatTransport(wxCommandEvent &event)

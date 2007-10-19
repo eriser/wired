@@ -23,6 +23,7 @@
 // Counts number of Audio and MIDI tracks created yet
 int				AudioTrackCount = 0;
 int				MidiTrackCount = 0;
+int				AutomationTrackCount = 0;
 
 SeqTrack::SeqTrack(long index, wxWindow *winParent,
 		   const wxPoint& pos = wxDefaultPosition,
@@ -49,21 +50,37 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
   wxWindow::SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
   // name of track
-  if (type == eAudioTrack)
-    str.Printf(_("Audio %d"), ++AudioTrackCount);
-  else
-    str.Printf(wxT("MIDI %d"), ++MidiTrackCount);
+  switch (Type)
+  {
+    case eAudioTrack:
+        str.Printf(_("Audio %d"), ++AudioTrackCount);
+        break;
+    case eMidiTrack:
+        str.Printf(wxT("MIDI %d"), ++MidiTrackCount);
+        break;
+    case eAutomationTrack:
+        str.Printf(wxT("Automation %d"), ++AutomationTrackCount);
+        break;
+  }
   Text = new wxTextCtrl(this, SeqTrack_OnNameChange, str, wxPoint(6, 8),
 			wxSize(TRACK_WIDTH - 68, 18), wxTE_PROCESS_ENTER);
   Text->SetFont(wxFont(8, wxDEFAULT, wxNORMAL, wxNORMAL));
 
   // add pixmap to see what sort of track it is (audio or midi).
   wxImage*		trackTypeImage;
-
-  if (Type != eAudioTrack)
-    trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-midi.png")), wxBITMAP_TYPE_PNG);
-  else
-    trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-wave.png")), wxBITMAP_TYPE_PNG);
+  // Move into previous switch !?
+  switch (Type)
+  {
+    case eAudioTrack:
+        trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-wave.png")), wxBITMAP_TYPE_PNG);
+        break;
+    case eMidiTrack:
+        trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-midi.png")), wxBITMAP_TYPE_PNG);
+        break;
+    case eAutomationTrack:
+        trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-auto.png")), wxBITMAP_TYPE_PNG);
+        break;
+  }
 
   wxBitmap*		trackTypeBitmap = new wxBitmap(*trackTypeImage);
   delete trackTypeImage;
@@ -226,7 +243,7 @@ void					SeqTrack::RebuildConnectList()
 	 itPlugin++, id++)
       {
 	if ((Type == eAudioTrack && (*itPlugin)->IsAudio()) ||
-	    (Type == eMidiTrack && (*itPlugin)->IsMidi()))
+	    (((Type == eMidiTrack) || (Type == eAutomationTrack)) && (*itPlugin)->IsMidi()))
 	  {
 	    // append valid rack, and connect the menu entry to OnConnectSelected()
 	    menu->Append(id, (*itPlugin)->Name);
@@ -419,7 +436,7 @@ void					SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
 	    return;
 	  }
     }
-  else if (Type == eMidiTrack)
+  else if ((Type == eMidiTrack) || (Type == eAutomationTrack))
     {
       vector<MidiInDevice *>::iterator	i;
 
@@ -506,7 +523,7 @@ void					SeqTrack::SetDeviceId(long devid)
 	    return;
 	  }
     }
-  else if (Type == eMidiTrack)
+  else if ((Type == eMidiTrack) || (Type == eAutomationTrack))
     {
       vector<MidiInDevice *>::iterator	i;
 
