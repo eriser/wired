@@ -252,6 +252,16 @@ void				WiredExternalPluginMgr::DestroyPlugin(WiredDSSIGui *Plug)
 {
 	list<WiredDSSIGui*>::iterator	Iter;
 	
+	if (!Plug)
+	{
+	  cerr << "[DSSI] DestroyPlugin called for no reason" << endl;
+	  return;
+	}
+	if (_LoadedPlugins.empty())
+	{
+	  cerr << "[DSSI] DestroyPlugin : no plugins !!" << endl;
+	  return;
+	}
 	for (Iter = _LoadedPlugins.begin(); Iter != _LoadedPlugins.end(); Iter++)
 	{
 		if (*Iter == Plug)

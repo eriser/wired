@@ -34,6 +34,25 @@ IMPLEMENT_APP(MainApp)
 
 MainWindow *MainWin;
 
+void	MainApp::OnInitCmdLine(wxCmdLineParser& parser)
+{
+  parser.SetDesc (g_cmdLineDesc);
+  parser.SetSwitchChars(wxT("-"));
+}
+
+bool	MainApp::OnCmdLineParsed(wxCmdLineParser& parser)
+{
+  wxString	arg;
+
+  // silent_mode = parser.Found(wxT("s"));
+  std::cout << "parser.GetParamCount() == " << parser.GetParamCount() << std::endl;
+  if (MainApp::argc == 2)
+    SessionDir = MainApp::argv[1];
+  else
+    SessionDir = wxT("");
+  return (true);
+}
+  
 bool MainApp::OnInit()
 {
   LOG;
@@ -99,7 +118,11 @@ bool MainApp::OnInit()
     // returning false segfault.. so we exit instead
     exit(-1);
   }
-  MainWin->OpenWizard();
+
+  if (wxFileName::DirExists(SessionDir))
+    MainWin->WiredStartSession(SessionDir);
+  else
+    MainWin->OpenWizard();
   return (true);
 }
 

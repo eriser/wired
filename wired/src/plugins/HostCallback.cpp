@@ -16,8 +16,36 @@
 
 extern Rack *RackPanel;
 
+using namespace std;
+
+wxString	MakeExtFromVector(vector<wxString> *e)
+{
+  wxString extensions_chosen = wxT("");
+  wxString desc;
+  wxString ext;
+  wxString extFilters;
+
+  for (unsigned int i = 0; i < e->size(); i++)
+  {
+    ext = (*e)[i];
+    extFilters = ext.BeforeFirst('\t');
+    extFilters = wxT("*.") + extFilters;
+    extFilters.Replace(wxT(";"), wxT(";*."));
+    extensions_chosen += ext.AfterLast('\t') + wxT("|") +
+      extFilters + wxT("|");
+  }
+  extensions_chosen = extensions_chosen.Mid(0, extensions_chosen.Len() - 1);
+  return (extensions_chosen);
+}
+
 long HostCallback(Plugin *plug, long param, void *value)
 {
+  static wxString	lastSaveDir;
+  static wxString	lastOpenDir;
+  wxString			extensions_chosen;
+  bool				wtodel = false;
+  wxFileDialog		*dlg = 0x0;
+
     switch (param)
     {
         case wiredSendMouseEvent :
@@ -29,11 +57,13 @@ long HostCallback(Plugin *plug, long param, void *value)
         case wiredAskUpdateGui :
             MainWin->AddUpdatePlugin(plug);
             break;
-        case wiredHostProductName :
-            value = (void *)WIRED_NAME;
+		case wiredHostProductName :
+			if (value)
+			  ((wxString *)value)->Append(WIRED_NAME);
             break;
         case wiredHostProductVersion :
-            value = (void *)WIRED_VERSION;
+			if (value)
+			  ((wxString *)value)->Append(WIRED_VERSION);
             break;
         case wiredHostVendorName :
             value = (void *)_("P31");
@@ -87,20 +117,44 @@ long HostCallback(Plugin *plug, long param, void *value)
             struct s_wired_l
             {
                 wxString t;
-                std::vector<wxString> *e;
+                vector<wxString> *e;
                 bool ak;
                 wxString result;
             } *w;
             w = (s_wired_l *)value;
-            wxFileDialog dlg(MainWin, w->t);
-            if (dlg.ShowModal() == wxID_OK)
-                w->result = dlg.GetPath();
-            /*
-            FileLoader *dlg = new FileLoader(MainWin, MainWin_FileLoader, w->t, w->ak, false, w->e);
+			bool wtodel = false;
+			if (!w)
+			{
+			  wtodel = true;
+			  w = new s_wired_l;
+			  w->t = wxT("");
+			  w->e = NULL;
+			}
+			extensions_chosen = wxT("");
+			if (!w->e)
+			  extensions_chosen.Append(WIRED_SUPPORTED_SNDFILES);
+			else
+			  extensions_chosen += MakeExtFromVector(w->e);
+			//just in case...
+			//extensions_chosen.Append(wxT("|"));
+			//extensions_chosen.Append(WIRED_SUPPORTED_CONFFILE);
+			extensions_chosen.Append(wxT("|All Files (*.*)|*.*"));
+#ifdef __DEBUG__
+			cout << "HostCallback() : extensions_chosen == " << extensions_chosen.mb_str() << endl;
+#endif
+
+
+			if (lastOpenDir && wxFileName::DirExists(lastOpenDir))
+			  dlg = new wxFileDialog(MainWin, w->t, lastOpenDir, wxT(""), extensions_chosen);
+			else
+			  dlg = new wxFileDialog(MainWin, w->t, wxT(""), wxT(""), extensions_chosen);
             if (dlg->ShowModal() == wxID_OK)
-                w->result = dlg->GetSelectedFile();
-            dlg->Destroy();
-            */
+			{
+				w->result = dlg->GetPath();
+				lastOpenDir = dlg->GetDirectory();
+			}
+			if (wtodel)
+			  delete w;
             break;
         }
         case wiredSaveFileLoader :
@@ -112,9 +166,34 @@ long HostCallback(Plugin *plug, long param, void *value)
                 wxString result;
             } *w;
             w = (s_wired_l *)value;
-            wxFileDialog dlg(MainWin, w->t, wxT(""), wxT(""), wxT(""), wxSAVE);
-            if (dlg.ShowModal() == wxID_OK)
-                w->result = dlg.GetPath();
+			if (!w)
+			{
+			  wtodel = true;
+			  w = new s_wired_l;
+			  w->t = wxT("");
+			  w->e = NULL;
+			}
+			extensions_chosen = wxT("");
+			if (!w->e)
+			  extensions_chosen.Append(WIRED_SUPPORTED_SNDFILES);
+			else
+			  extensions_chosen += MakeExtFromVector(w->e);
+			//just in case...
+			//extensions_chosen.Append(wxT("|"));
+			//extensions_chosen.Append(WIRED_SUPPORTED_CONFFILE);
+			extensions_chosen.Append(wxT("|All Files (*.*)|*.*"));
+#ifdef __DEBUG__
+			cout << "HostCallback() : extensions_chosen == " << extensions_chosen.mb_str() << endl;
+#endif
+			if (lastSaveDir && wxFileName::DirExists(lastSaveDir))
+			  dlg = new wxFileDialog(MainWin, w->t, lastSaveDir, wxT(""), extensions_chosen, wxSAVE);
+			else
+			  dlg = new wxFileDialog(MainWin, w->t, wxT(""), wxT(""), extensions_chosen, wxSAVE);
+            if (dlg->ShowModal() == wxID_OK)
+			{
+			  w->result = dlg->GetPath();
+			  lastSaveDir = dlg->GetDirectory();
+			}
             /*
             FileLoader *dlg = new FileLoader(MainWin, MainWin_FileLoader, w->t, false, true, w->e);
             if (dlg->ShowModal() == wxID_OK)
@@ -145,5 +224,6 @@ long HostCallback(Plugin *plug, long param, void *value)
         default:
             return (-1);
     }
+	delete dlg;
     return (1);
 }

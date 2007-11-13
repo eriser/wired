@@ -553,19 +553,19 @@ void					SeqTrack::Load(SaveElementArray data)
   int					i;
 
   for (i = 0; i < data.GetCount(); i++)
-    {
-      if (data[i]->getKey() == wxT("TrackName")) SetName(data[i]->getValue());
-      else if (data[i]->getKey() == wxT("VuValue")) SetVuValue(data[i]->getValueInt());
-      else if (data[i]->getKey() == wxT("Record")) SetRecording(data[i]->getValueInt());
-      else if (data[i]->getKey() == wxT("Mute")) SetMute(data[i]->getValueInt());
-      else if (data[i]->getKey() == wxT("Selected"))
+  {
+	if (data[i]->getKey() == wxT("TrackName")) SetName(data[i]->getValue());
+	else if (data[i]->getKey() == wxT("VuValue")) SetVuValue(data[i]->getValueInt());
+	else if (data[i]->getKey() == wxT("Record")) SetRecording(data[i]->getValueInt());
+	else if (data[i]->getKey() == wxT("Mute")) SetMute(data[i]->getValueInt());
+	else if (data[i]->getKey() == wxT("Selected"))
 	{
 	  if (data[i]->getValueInt() == true)
-	    SelectTrack();
+		SelectTrack();
 	}
-      else if (data[i]->getKey() == wxT("PluginsNameConnected"))
- 	ConnectTo(RackPanel->FindPlugin(data[i]->getValue()));
-    }
+	else if (data[i]->getKey() == wxT("PluginsNameConnected"))
+	  ConnectTo(RackPanel->FindPlugin(data[i]->getValue()));
+  }
 }
 
 BEGIN_EVENT_TABLE(SeqTrack, wxControl)

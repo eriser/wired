@@ -30,6 +30,9 @@ using namespace std;
 
 #define PLUGIN_NAME		wxT("DRUM-31")
 
+// a number will be added so that multiple beatbox don't overwritte eachother
+#define BEATBOX_SAVE_PATCH	wxT("beatbox/patch.xml")
+
 #define BEATBOX_BG		wxT("plugins/beatbox/beatbox_bg.png")
 #define BEATBOX_MINI_BG		wxT("plugins/beatbox/drm31.bmp")
 #define BEATBTN_UNCLICKED	wxT("plugins/beatbox/beatbtn_unclicked.png")
@@ -138,8 +141,11 @@ class WiredBeatBox : public Plugin, public WiredDocument
   
   void		Save();
   void		Load(SaveElementArray data);
+  void		Load(int fd, long size);
 
-  void		LoadPatch(wxString filename);
+  void		LoadPatch(wxString filename = BEATBOX_SAVE_PATCH);
+  void		LoadXmlPatch(wxString filename = BEATBOX_SAVE_PATCH);
+  void		SaveXmlPatch(wxString filename = BEATBOX_SAVE_PATCH);
   void		LoadChannel(SaveElement *channelData);
   void		LoadBank(SaveElement *bankData);
   void		LoadPattern(SaveElement *patternData, int bank);
@@ -172,6 +178,9 @@ class WiredBeatBox : public Plugin, public WiredDocument
   void		OnLoadKit(wxCommandEvent &event) {}
   void		OnToggleChannel(wxCommandEvent &event);
   void		OnPlay(wxCommandEvent& event);
+  void		TogglePlay();
+  void		DoPlay();
+  void		DoStop();
   void		OnSigChoice(wxCommandEvent& event);
   void		OnPositionChoice(wxCommandEvent& event);
   void		OnLoadPatch(wxCommandEvent& event);
@@ -221,6 +230,7 @@ class WiredBeatBox : public Plugin, public WiredDocument
   int			MidiSteps[3];
   
  protected:
+  wxString		_customFileName;
   bool			OnLoading;
   wxMutex		PatternMutex;
   wxMutex		MidiMutex;

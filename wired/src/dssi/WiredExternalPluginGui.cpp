@@ -31,6 +31,8 @@ END_EVENT_TABLE()
 
 WiredDSSIGui::~WiredDSSIGui()
 {
+  if (!Disconnect(4242, wxEVT_RIGHT_DOWN))
+    cerr << "[DSSI] error disconnecting right click from interface" << endl;
   delete[] Faders;
 }
 

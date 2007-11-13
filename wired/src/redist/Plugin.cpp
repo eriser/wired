@@ -33,6 +33,8 @@ Plugin::Plugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
 
 Plugin::~Plugin() 
 { 
+  if (!Disconnect())
+    cerr << "[PLUGIN] error disconnecting interface" << endl;
   CloseOptionalView();
 }
 

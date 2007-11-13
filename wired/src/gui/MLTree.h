@@ -14,7 +14,7 @@
 extern MediaLibrary	*MediaLibraryPanel;
 
 #define EXT_FILE          wxT("wired_exts.conf")
-#define SAVE_TREE_FILE    wxT("MediaLibrary/MLTree")
+#define SAVE_TREE_FILE    wxT("MediaLibrary/MLTree.xml")
 #define LOCAL_TREE_FILE   wxT("LocalTree.xml")
 #define PROJECT_NODE      _("Project")
 #define LOCAL_NODE        _("Local")

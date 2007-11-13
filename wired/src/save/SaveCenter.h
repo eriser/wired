@@ -53,6 +53,7 @@ class SaveCenter : public WiredDocument
    */
   void		Load(SaveElementArray data);
   
+  long		RegisterId(long id = 0);
   /** Cleans the WiredDocument tree.
    * This method is used to restore the initial state of the tree before a load.
    * It calls the DeleteChildren() method of every WiredDocument.
@@ -118,7 +119,9 @@ class SaveCenter : public WiredDocument
    * \param filename the path to the external file.
    * \return The data contained in the external file.
    */
-  SaveElementArray	LoadFile(wxString filename);
+  SaveElementArray	LoadFile(wxString filename, bool fullpath = false, wxString rootTag = wxT(""));
+  SaveElementArray	LoadProjectFile(wxString filename);
+  SaveElementArray	LoadLocalFile(wxString filename);
 
   /** Dumps the whole WiredDocument objects tree. */
   void			DumpWiredDocumentTree();
@@ -137,6 +140,11 @@ class SaveCenter : public WiredDocument
    * \param path The path to the folder to check.
    */
   bool			IsProject(wxFileName path);
+
+  /** Saves one WiredDocument
+   * This function can be called from a plugin to force the writing of a patch
+   */
+  void		SaveOneDocument(WiredDocument *doc, wxString file);
 
  private:
    /** Writes an element in the xmlfile.
@@ -236,6 +244,7 @@ class SaveCenter : public WiredDocument
   /** Stores if the project has been saved at least once. */
   bool			_saved;
 
+  long			_id_mark;
 };
 
 extern SaveCenter*	saveCenter;

@@ -21,6 +21,7 @@
 #include <vector>
 #include <map>
 #include "Plugin.h"
+#include "SaveCenter.h"
 
 // methods are mainly in this class
 class Plugin;
@@ -77,6 +78,8 @@ typedef struct  s_PlugStartInfo
   wxWindow	*Rack;
   wxPoint	Pos;
   wxSize	Size;
+  SaveCenter	*saveCenter;
+  WiredDocument	*parent;
 }		PlugStartInfo;
 
 #define WIRED_MIDI_EVENT	1

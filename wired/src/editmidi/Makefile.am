@@ -1,6 +1,6 @@
-LDFLAGS = $(shell wx-config --libs)
+LDFLAGS = $(shell wx-config --libs) `xml2-config --libs`
 
-CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I../sequencer -I../redist -I../audio -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../undo -I../libs/WiredWidgets/src -I../save -I../wiredvideo -I../samplerate -I../codec
+CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader -I../sequencer -I../redist -I../audio -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../undo -I../libs/WiredWidgets/src -I../save -I../wiredvideo -I../samplerate -I../codec -I../xml `xml2-config --cflags`
 
 if PORTMIDI
 CPPFLAGS += -I../midi/portmidi/pm_common -I../midi/portmidi/porttime 

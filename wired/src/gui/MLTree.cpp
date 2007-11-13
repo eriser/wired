@@ -38,6 +38,7 @@
 using namespace std;
 
 extern SaveCenter	*saveCenter;
+
 extern const wxEventType EVT_DROP;
 
 void s_nodeInfo::Set(const wxString &label, const wxString &extension, const wxString &length)
@@ -171,7 +172,9 @@ void MLTree::SaveTreeSC(wxTreeItemId parent, SaveElement *parentElem, bool relat
 void MLTree::OnSave(wxString filename)
 {
   LOG;
-  SavePatch(wxT("MediaLibrary/MLTree"), filename);
+  wxString	mlpath = wxString(saveCenter->getProjectPath().GetFullPath() + wxT("MediaLibrary/MLTree"));
+  cout << "le path de la ml : '" << mlpath.mb_str() << "'" << endl;
+  SavePatch(mlpath, filename);
 }
 
 void MLTree::Save()
@@ -206,7 +209,7 @@ void MLTree::LoadLocalTree()
 
   DeleteChildren(localNode);
 
-  treeData = AskData(LOCAL_TREE_FILE);
+  treeData = AskData(LOCAL_TREE_FILE, true);
 
   if(treeData.GetCount() > 0)
     {
@@ -308,7 +311,9 @@ void				MLTree::Load(SaveElementArray data)
     {
       rootSaveElem = treeData.Item(0);
       while(rootSaveElem->getKey() != PROJECT_NODE && rootSaveElem->hasChildren())
+      {
 	rootSaveElem = rootSaveElem->getChildren().Item(0);
+      }
 
       if(rootSaveElem->getKey() == PROJECT_NODE)
 	LoadItem(GetTreeItemIdFromLabel(PROJECT_NODE), rootSaveElem);
@@ -606,7 +611,7 @@ wxTreeItemId MLTree::GetTreeItemIdFromLabel(wxString label)
 void MLTree::DisplayNodes()
 {
   LOG;
-  cout << "MLTree::DisplayNodes() : Why am i called ?" << endl;
+  //cout << "MLTree::DisplayNodes() : Why am i called ?" << endl;
   int cnt = 0;
   for (nodeInfoMap::iterator it = _nodes.begin(); it != _nodes.end(); it++)
   {
@@ -687,6 +692,7 @@ void MLTree::SortNodes(wxString MLselected)
     temp = (*it).first;
     SortChildren(temp);
   }
+
   saveCenter->SaveFile(this, SAVE_TREE_FILE);
 }
 
@@ -1122,23 +1128,25 @@ void MLTree::EndDrag(wxTreeEvent &event)
 void MLTree::OnLeftClick(wxMouseEvent &event)
 {
   LOG;
-    s_nodeInfo infos = GetTreeItemStructFromId(item_to_drag);
-    if (infos._label != wxT(""))
-    {
-        if (infos._extension.Cmp(wxT("")))
-        {
-            _Selfile = infos._label;
-            int x = event.GetPosition().x;
-            int y = event.GetPosition().y;
-            ClientToScreen(&x, &y);
-            wxCommandEvent event(EVT_DROP, ID_EVT_DROP);
-            _Pos.x = x;
-            _Pos.y = y;
-            wxPostEvent(SeqPanel->GetEventHandler(), event);
-        }
-        SeqPanel->HideAllPatterns(event);
-    }
-    event.Skip();
+  int x, y;
+  s_nodeInfo infos = GetTreeItemStructFromId(item_to_drag);
+
+  if (infos._label != wxT(""))
+  {
+	if (infos._extension.Cmp(wxT("")))
+	{
+	  _Selfile = infos._label;
+	  x = event.GetPosition().x;
+	  y = event.GetPosition().y;
+	  ClientToScreen(&x, &y);
+	  wxCommandEvent event(EVT_DROP, ID_EVT_DROP);
+	  _Pos.x = x;
+	  _Pos.y = y;
+	  wxPostEvent(SeqPanel->GetEventHandler(), event);
+	}
+	SeqPanel->HideAllPatterns(event);
+  }
+  event.Skip();
 }
 
 void				MLTree::OnSuppr(wxKeyEvent &event)

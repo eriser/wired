@@ -5,6 +5,7 @@
 #define __SETTINGS_H__
 
 #include <wx/fileconf.h>
+#include <wx/filename.h>
 #include <vector>
 
 using namespace std;
@@ -16,6 +17,10 @@ using namespace std;
 #define DEFAULT_MAXUNDOREDODEPTH (20)
 
 #define WIRED_CONF_VERSION	wxT("1")
+
+// TODO: add it in settings window
+// it can be in the conf file (max_recent in /Recent)
+#define MAX_RECENT	20
 
 /**
  * Setting for wired.
@@ -188,6 +193,24 @@ class Settings
    * else it returns FALSE.
    */
   inline bool	ConfIsDeprecated() { return(ConfDeprecated); };
+
+  /**
+   * Adds the directory the recent session list
+   * \return returns a bool, whether it succeeds or not
+   */
+  bool			AddDirToRecent(wxString path);
+
+  /**
+   * Returns a vector of recent sessions dirs from conf file
+   * \return vector<wxFileName> of recent session dirs
+   */
+  vector<wxFileName>	GetRecentDirs();
+
+  /**
+   * Removes a recent dir from conf file
+   * \return nothing
+   */
+  void					RemoveRecentDir(int idx);
 
  protected:
   wxFileConfig	*conf;
