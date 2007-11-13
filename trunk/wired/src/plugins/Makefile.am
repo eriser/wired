@@ -5,9 +5,9 @@ SUBDIRS = beatbox crusher delay loop_sampler akai_sampler reverb chorus wahwah
 #SUBDIRS += synth compressor filter test
 endif
 
-LDFLAGS = $(shell wx-config --libs)
+LDFLAGS = $(shell wx-config --libs) `xml2-config --libs`
 
-CPPFLAGS = $(shell wx-config --cflags) -I../libs/WiredAkai/include -I../gui -I../audio -I../fileloader -I../sequencer -I../redist -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../editmidi -I../undo -I../libs/WiredWidgets/src -I../save -I../wiredvideo -I../dssi
+CPPFLAGS = $(shell wx-config --cflags) -I../libs/WiredAkai/include -I../gui -I../audio -I../fileloader -I../sequencer -I../redist -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../editmidi -I../undo -I../libs/WiredWidgets/src -I../wiredvideo -I../dssi -I../xml `xml2-config --cflags` -I../save
 
 if PORTAUDIO
 CPPFLAGS += -I../portaudio/include

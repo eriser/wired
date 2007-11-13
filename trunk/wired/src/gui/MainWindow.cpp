@@ -44,6 +44,7 @@
 #include "MLTree.h"
 #include "SaveCenter.h"
 #include "debug.h"
+#include "Wizard.h"
 
 #ifdef DEBUG_MAINWINDOW
 #define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : "  << __LINE__ << " : " << __FUNCTION__  << endl; }
@@ -51,8 +52,11 @@
 #define LOG
 #endif
 
-//Isn't it bullshit to declare things here ?
+#define WIZ_WIDTH 200
+#define WIZ_HEIGHT 200
+#define WIZ_WIN_SIZE wxSize(WIZ_WIDTH, WIZ_HEIGHT)
 
+//Isn't it bullshit to declare things here ?
 Rack			*RackPanel = NULL;
 SequencerGui		*SeqPanel = NULL;
 Sequencer		*Seq = NULL;
@@ -75,7 +79,7 @@ wxCondition		*SeqStopped = NULL;
 
 MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &size, WiredDocument *parent)
   : wxFrame((wxFrame *) NULL, wxID_ANY, title, pos, size,
-	    wxDEFAULT_FRAME_STYLE | wxWS_EX_PROCESS_IDLE | wxMAXIMIZE),
+	    wxDEFAULT_FRAME_STYLE | wxWS_EX_PROCESS_IDLE | wxMAXIMIZE, wxT("wired")),
     WiredDocument(wxT("MainWindow"), parent)
 {
   LOG;
@@ -655,7 +659,7 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   cout << "[MAINWIN] Closing..." << endl;
   // all gui windows (and this one) are destroyed in MainApp::OnExit
   // but exit prevent wired to segfault... :(
-  exit(1);
+  exit(0);
 }
 
 void					MainWindow::OnQuit(wxCommandEvent &WXUNUSED(event))
@@ -691,7 +695,7 @@ bool					MainWindow::NewSession()
 
   saveCenter->CleanTree();
 
-  OpenWizard();
+  ChooseSessionDir();
 
   return (true);
 }
@@ -906,7 +910,7 @@ void					MainWindow::LoadPlugins()
       if ((str.length() > 0) && (str.at(0) != '#'))
 	{
 	  p = new PluginLoader(str);
-	  if (p->IsLoaded())
+	  if (p && p->IsLoaded())
 	    {
 	      LoadedPluginsList.push_back(p);
 
@@ -1058,7 +1062,7 @@ void					MainWindow::CreatePluginFromUniqueId(wxString UniqueId,
   list<wxString>			PluginsList;
   wxString				Sep(wxT("#"));
   wxString				PluginName;
-  int					PluginId;
+  long					PluginId;
 
   PluginsList = LoadedExternalPlugins->GetSortedPluginsList(Sep);
   for (IterPluginsList = PluginsList.begin(); IterPluginsList != PluginsList.end(); IterPluginsList++)
@@ -2129,7 +2133,20 @@ void MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
 void		MainWindow::OpenWizard()
 {
   LOG;
-  wxFileName	path;
+
+
+  Wizard	wiz;
+
+  wiz.ShowModal();
+  if (wxFileName::DirExists(wiz.GetDir()))
+	WiredStartSession(wiz.GetDir());
+  else
+	WiredStartSession(ChooseSessionDir());
+}
+
+wxString		MainWindow::ChooseSessionDir()
+{
+  LOG;
 
   wxDirDialog	dirDialog(NULL, _("Select a project folder"), wxGetCwd());
 
@@ -2137,8 +2154,17 @@ void		MainWindow::OpenWizard()
     AlertDialog(_("Warning"),
 			 _("You have to select a project folder."));
 
-  path.AssignDir(dirDialog.GetPath());
+  return (dirDialog.GetPath());
+}
 
+void		MainWindow::WiredStartSession(wxString sessionDir)
+{
+  wxFileName	path;
+
+  WiredSettings->AddDirToRecent(sessionDir);
+  path.AssignDir(sessionDir);
+  path.MakeAbsolute();
+  wxFileName::SetCwd(path.GetPath());
   saveCenter->setProjectPath(path);
 
   if (saveCenter->IsProject(path))

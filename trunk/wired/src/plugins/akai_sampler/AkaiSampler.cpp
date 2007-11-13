@@ -36,8 +36,14 @@ END_EVENT_TABLE()
 
   AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
     : Plugin(startinfo, initinfo), PolyphonyCount(8), Volume(100.f), AkaiProgram(0x0),
-      WiredDocument(wxT("AkaySampler"))
+      WiredDocument(wxT("AkaySampler"), startinfo.saveCenter)
 {
+
+  if (startinfo.saveCenter)
+    saveCenter = startinfo.saveCenter;
+  else
+    cerr << "[AKAISAMPLER] could not get access to save center for some reason..." << endl << "[AKAISAMPLER] Saving might be difficult" << endl;
+  setId(saveCenter->RegisterId());
 
   sampleid = 0;
   keygroupid = 0;

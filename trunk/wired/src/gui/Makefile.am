@@ -83,6 +83,7 @@ libgui_a_SOURCES = 			\
 		FloatingFrame.h		\
 		FloatingFrame.cpp	\
 		../save/WiredDocument.cpp	\
-		../save/SaveCenter.cpp
+		../save/SaveCenter.cpp	\
+		Wizard.cpp
 
 libgui_a_LIBADD = ../save/libsave.la

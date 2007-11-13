@@ -41,10 +41,10 @@ WaveFile *AudioCenter::AddWaveFile(wxString filename)
     catch (...)
     {
         cout << "Could not open file  !" << endl;
-//      wxMessageDialog msg(0x0,
-//			  "Could not open file", "Wired",
-//			  wxOK | wxICON_EXCLAMATION |wxCENTRE);
-//      msg.ShowModal();
+	  wxMessageDialog msg(0x0,
+			  wxT("Could not open file :\n") + filename, wxT("Wired"),
+			  wxOK | wxICON_EXCLAMATION |wxCENTRE);
+	  msg.ShowModal();
         w = 0;
     }
     return (w);

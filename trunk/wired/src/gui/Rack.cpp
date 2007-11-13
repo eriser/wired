@@ -17,6 +17,10 @@
 #include	"PluginLoader.h"
 #include	"debug.h"
 int		RackCount = 0;
+#ifdef __DEBUG__
+Plugin*		gl_lastDeletedPlug = 0;
+#endif
+
 
 /********************   Class RackTrack   ********************/
 
@@ -58,6 +62,8 @@ Plugin*				RackTrack::CreateRack(PlugStartInfo &startinfo, PluginLoader *p)
   Parent->CalcScrolledPosition(xpos, ypos, &xx, &yy);
   startinfo.Pos = wxPoint(xx, yy);
   startinfo.Size = wxSize(p->InitInfo.UnitsX * UNIT_W, p->InitInfo.UnitsY * UNIT_H);
+  startinfo.saveCenter = saveCenter;
+  startinfo.parent = this;
   plug = p->CreateRack(startinfo);
 
   if (!plug)
@@ -190,7 +196,6 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
   InitContextMenu();
   copy_plug = NULL;
   filePath.Printf(wxT("/tmp/.tmpccp"));
-
   CleanChildren();
 }
 
@@ -372,10 +377,7 @@ void				Rack::DeleteRack(Plugin *plug, bool eraseit)
 	  OptPanel->ClosePlug(plug);
 	  (*i)->Racks.erase(j);
 	  if (eraseit)
-	    {
-	      plug->Hide();
-	      delete plug;
-	    }
+	    plug->Hide();
 	  (*i)->Units = 0;
 	  for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
 	    {
@@ -391,8 +393,27 @@ void				Rack::DeleteRack(Plugin *plug, bool eraseit)
 	  selectedPlugin = 0x0;
 	  ResizeTracks();
 	  SeqPanel->RemoveReferenceTo(plug);
+#ifdef __DEBUG__
+	  cout << "[RACK] plugin to be erased = " << plug << endl;
+#endif
+           //toto TODO XXX *will* cause segfault at exit (for ladspa and dssi)
+	   //is it deleted somewhere else ? where is that pointer ??
+	   //and why "awatch gl_lastDeletedPlug" or "awatch (Plugin*)0x......" don't work in gdb ? :(
+	   //am i doing it wrong... ?
+	   //do we really need to delete it btw ?
+          /*
+	   *if (eraseit)
+	   *{
+	   *  delete plug;
+	   *  plug = 0x0;
+	   *}
+           */
+#ifdef __DEBUG__
+	  gl_lastDeletedPlug = plug;
+#endif
 	  return;
 	}
+  cerr << "[RACK] did not find plugin to delete" << endl;
 }
 
 void				Rack::SetSelected(Plugin *p)
@@ -432,65 +453,66 @@ void				Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
   int x , y = 0;
   int xx, yy = 0;
 
-  if (event->GetEventType() == wxEVT_MOUSEWHEEL)
-    {
-      int x, y, y1, y2, y3;
 
-      GetVirtualSize(0x0, &y1);
-      GetSize(0x0, &y2);
-      GetViewStart(&x, &y3);
-      if (y1 > y2)
+  if (event->GetEventType() == wxEVT_MOUSEWHEEL)
+  {
+	int x, y, y1, y2, y3;
+
+	GetVirtualSize(0x0, &y1);
+	GetSize(0x0, &y2);
+	GetViewStart(&x, &y3);
+	if (y1 > y2)
 	{
 	  if (event->GetWheelRotation() > 0)
-	    y = -1;
+		y = -1;
 	  else
-	    y = 1;
+		y = 1;
 	  Scroll(x, y3 + y);
 	}
-    }
+  }
   else if (event->Dragging() && event->LeftIsDown())
-    {
-      tmp_x = event->GetPosition().x + plug->GetPosition().x - OldX;
-      tmp_y = event->GetPosition().y + plug->GetPosition().y - OldY;
-      if(tmp_x < 0)
-	tmp_x = 0;
-      if(tmp_y < 0)
-	tmp_y = 0;
-      plug->Move(wxPoint(tmp_x, tmp_y));
-      WasDragging = true;
-    }
+  {
+	tmp_x = event->GetPosition().x + plug->GetPosition().x - OldX;
+	tmp_y = event->GetPosition().y + plug->GetPosition().y - OldY;
+	if(tmp_x < 0)
+	  tmp_x = 0;
+	if(tmp_y < 0)
+	  tmp_y = 0;
+	plug->Move(wxPoint(tmp_x, tmp_y));
+	WasDragging = true;
+  }
 
   if(event->LeftDown())
-    {
-      OldX = event->GetPosition().x;
-      OldY = event->GetPosition().y;
+  {
+	OldX = event->GetPosition().x;
+	OldY = event->GetPosition().y;
 
-      Plugin *oldplug = selectedPlugin;
-      SetSelected(plug);
-      if (oldplug)
-	oldplug->Refresh();
+	Plugin *oldplug = selectedPlugin;
+	SetSelected(plug);
+	if (oldplug)
+	  oldplug->Refresh();
 
-      new_x = (event->GetPosition().x + plug->GetPosition().x);
-      new_y = (event->GetPosition().y + plug->GetPosition().y);
-    }
+	new_x = (event->GetPosition().x + plug->GetPosition().x);
+	new_y = (event->GetPosition().y + plug->GetPosition().y);
+  }
   if(event->RightDown())
-    {
-      SetSelected(plug);
-      wxPoint p(event->GetPosition().x + plug->GetPosition().x, event->GetPosition().y + plug->GetPosition().y);
-      PopupMenu(menu, p.x, p.y);
-    }
+  {
+	SetSelected(plug);
+	wxPoint p(event->GetPosition().x + plug->GetPosition().x, event->GetPosition().y + plug->GetPosition().y);
+	PopupMenu(menu, p.x, p.y);
+  }
   else if(event->LeftUp() && WasDragging)
-    {
-      new_x = (event->GetPosition().x + plug->GetPosition().x);
-      new_y = (event->GetPosition().y + plug->GetPosition().y);
-      if(plug->IsAudio() && !DndGetDest(k, l, new_x, new_y, plug))
+  {
+	new_x = (event->GetPosition().x + plug->GetPosition().x);
+	new_y = (event->GetPosition().y + plug->GetPosition().y);
+	if(plug->IsAudio() && !DndGetDest(k, l, new_x, new_y, plug))
 	{
 	  DeleteRack(plug, false);
 	  AddLoadedRack(plug);
 	}
-      ResizeTracks();
-      WasDragging = false;
-    }
+	ResizeTracks();
+	WasDragging = false;
+  }
 }
 
 void				Rack::AddPlugToMenu()
@@ -876,6 +898,8 @@ void				Rack::Save()
 	  saved->addAttribute(wxT("Name"), (*it)->Name);
 	  saved->addAttribute(wxT("PlugName"), (*it)->InitInfo->Name);
 	  saved->addAttribute(wxT("UniqueId"), wxString((*it)->InitInfo->UniqueId,*wxConvCurrent));
+	  // toto : on pourrait ecrire qqchose la
+	  // saved->setValue(wxT("beatbox"));
 	  saveDocData(saved);
 	}
       no++;
@@ -893,6 +917,7 @@ void				Rack::Load(SaveElementArray data)
       for (; i > 0; i--)
 	CreateRackTrack();
   for (i = 0; i < data.GetCount(); i++)
+  {
     if (data[i]->getKey() == wxT("RackPlugin"))
       {
 #ifdef __DEBUG__
@@ -906,6 +931,7 @@ void				Rack::Load(SaveElementArray data)
 	MainWin->CreatePluginFromUniqueId(data[i]->getAttribute(wxT("UniqueId")),
 					  data[i]->getAttribute(wxT("PlugName")));
       }
+  }
 }
 
 void				Rack::SelectTrackFromNumber(int no)

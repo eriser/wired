@@ -159,7 +159,9 @@ map<int, unsigned long>		WiredDSSIPlugin::GetPluginsListUniqueId()
 void				WiredDSSIPlugin::UnLoad()
 {
   if (_Handle.IsLoaded())
+  {
     _Handle.Unload();
+  }
 }
 
 int					WiredDSSIPlugin::GetPluginType(int PluginId)

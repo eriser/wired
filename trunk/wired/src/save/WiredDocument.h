@@ -101,7 +101,7 @@ public:
   /** Returns the id of the WiredDocument.
    * \return the id of the WiredDocument.
    */
-  inline int			getId() { return _id; }
+  inline int			getId() { return (int)_id; }
 
 
   /** The unique id of the WiredDocument. This id is
@@ -109,15 +109,16 @@ public:
    * permitting during the load to recreate the whole
    * tree in the same order it was created by the user.
    */
-  static int		id;
+  static long		id;
 
   /** Returns the total number of WiredDocument.
    * \return the total number of WiredDocument.
    */
-  static int		getTotalId(){ return id; }
+  static int		getTotalId(){ return (int)id; }
 
   /** Increases the id. */
   static void		increaseId() { id++; }
+  inline void		setId(int newId) { _id = newId; }
 
  protected:
 
@@ -139,7 +140,7 @@ public:
    * \param filename the path to the external file.
    * \return The data contained in the external file.
    */
-  SaveElementArray		AskData(wxString filename);
+  SaveElementArray		AskData(wxString filename, bool local = false);
 
   /** Adds data that will be saved.
    * When implementing a WiredDocument, one has to instanciate on SaveElement per call
@@ -149,7 +150,7 @@ public:
    * WIRED_PROJECT_FILE, the data will be written in an external file.
    * \param data The SaveElement to write.
   */
-  void				saveDocData(SaveElement *data, wxString file = WIRED_PROJECT_FILE);
+  bool				saveDocData(SaveElement *data, wxString file = WIRED_PROJECT_FILE);
 
   /** Removes all the data previously stored. */
   void				clearDocData();

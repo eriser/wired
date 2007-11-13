@@ -6,15 +6,23 @@
 #include <iostream>
 
 #include <SaveCenter.h>
+#include "Settings.h"
 
 extern SaveCenter	*saveCenter;
+extern Settings		*WiredSettings;
 
-int WiredDocument::id = 0;
+using namespace std;
+long WiredDocument::id = 0;
 
 WiredDocument::WiredDocument(wxString name, WiredDocument *parent, bool noParent)
 {
+  // making a unique id for each document
   increaseId();
   _id = id;
+  // registering this id to avoid duplicates
+  // if we aren't in a plugin, id == _id
+  // but still, this way we keep track of the growing id
+  _id = saveCenter->RegisterId(id);
 
   if (!parent && !noParent)
     parent = saveCenter;
@@ -73,27 +81,32 @@ void		WiredDocument::SaveMe()
   Save();
 }
 
-void		WiredDocument::saveDocData(SaveElement *data, wxString file)
+bool		WiredDocument::saveDocData(SaveElement *data, wxString file)
 {
   SaveElementsHashMap::iterator	it;
 
+#ifdef __DEBUG__
+  if(file.Cmp(WIRED_PROJECT_FILE))
+      cout << ">>> writing file :'" << file.mb_str() << "'" << endl;
+#endif
   if(!_dataSave.count(file))
-      _dataSave[file] = new SaveElementArray();
+    _dataSave[file] = new SaveElementArray();
 
   //Should check if key already exists and delete it before overwriting it.
   _dataSave[file]->Add(data);
-
+  return true;
 }
 
 void		WiredDocument::clearDocData()
 {
   SaveElementsHashMap::iterator	dataSaveIt;
   
+  dataSaveIt = _dataSave.begin();
   while(!_dataSave.empty())
     {
-      dataSaveIt = _dataSave.begin();
       if(dataSaveIt->second)
 	rmDocDataFile(dataSaveIt->first);
+      dataSaveIt++;
     }
  
   //to be sure...
@@ -127,9 +140,12 @@ SaveElementArray	*WiredDocument::getDocFile(wxString file)
   return _dataSave[file];
 }
 
-SaveElementArray	WiredDocument::AskData(wxString filename)
+SaveElementArray	WiredDocument::AskData(wxString filename, bool local)
 {
-  return saveCenter->LoadFile(filename);
+  if (local)
+    return saveCenter->LoadLocalFile(filename);
+  else
+    return saveCenter->LoadProjectFile(filename);
 }
 
 void			WiredDocument::SavePatch(wxString file, wxString path)

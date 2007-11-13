@@ -296,7 +296,7 @@ void					SequencerView::DrawMeasures(wxDC &dc)
 
 void					SequencerView::Drop(int x, int y, wxString file)
 {
-  int					track;
+  long					track;
   vector<Track *>::iterator		i;
   vector<Pattern *>::iterator		pattern_iterator;
   int					cpt;
@@ -317,7 +317,7 @@ void					SequencerView::Drop(int x, int y, wxString file)
       x += SeqPanel->GetCurrentXScrollPos();
       x_seq = (x == 0 ? 0 : (double)x / (double)SeqPanel->HoriZoomFactor / HORIZ_SEQ_RATIO);
       convertme << floor((y  * SeqPanel->VertZoomFactor) / TRACK_HEIGHT);
-      convertme.ToLong((long*)&track);
+      convertme.ToLong(&track);
       for (i = Seq->Tracks.begin(), cpt = 0; i != Seq->Tracks.end() && cpt != track; i++, cpt++)
 	;
       if (Seq->Tracks.size() != 0 && track < Seq->Tracks.size() && (*i)->IsAudioTrack())
@@ -351,6 +351,11 @@ void					SequencerView::Drop(int x, int y, wxString file)
       else
 	{
 	  wave_tmp = WaveCenter.AddWaveFile(file);
+	  if (!wave_tmp)
+	  {
+		cerr << "Problem adding '" << file.mb_str() << "'" << endl;
+		return;
+	  }
 	  for (nb_channel = 0; nb_channel < wave_tmp->GetNumberOfChannels(); nb_channel++)
 	  {
  	    track_to_add = SeqPanel->CreateTrack(eAudioTrack);

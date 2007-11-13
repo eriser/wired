@@ -43,7 +43,9 @@
 #define PAN_POS		wxPoint(222, WIN_MARGIN)
 
 #define MENUICON_SIZE   (20)
-#define RESIZE_ICON(ico, w, h)	(wxBitmap(ico).ConvertToImage().Rescale(w, h))
+#ifndef RESIZE_ICON
+# define RESIZE_ICON(ico, w, h)	(wxBitmap(ico).ConvertToImage().Rescale(w, h))
+#endif
 
 using namespace std;
 
