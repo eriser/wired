@@ -3,6 +3,9 @@
 
 #include "MainWindow.h"
 
+#ifdef __LINUX__
+# include  <unistd.h>
+#endif
 #include <wx/splitter.h>
 #include <wx/progdlg.h>
 #include <wx/utils.h>
@@ -140,6 +143,11 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   HelpMenu = new wxMenu;
   WindowMenu = new wxMenu;
 
+  //calls exec... will *not* work on windows
+#ifdef __LINUX__
+  FileMenu->Append(MainWin_New, _("&Open Wizard\tCtrl-N"));
+  FileMenu->AppendSeparator();
+#endif
 #ifndef DEBUG_DISABLE_CLEAN_MENUS
   FileMenu->Append(MainWin_New, _("&New\tCtrl-N"));
   FileMenu->Append(MainWin_Open, _("&Open...\tCtrl-O"));
@@ -692,11 +700,23 @@ bool					MainWindow::NewSession()
     return (false);
 
   Seq->Stop();
-
-  saveCenter->CleanTree();
-
-  ChooseSessionDir();
-
+  //OpenWizard();
+#ifdef __LINUX__
+  //haha
+  //will *not* work on windows
+  // write down the settings
+  if (Audio)
+	Audio->CloseStream();
+  delete WiredSettings;
+  execlp("wired", "wired-nosplash", (char*)NULL);
+  exit(0);
+#else
+  // this needs serious debugging...
+  /*
+   *saveCenter->CleanTree();
+   *delete saveCenter;
+   */
+#endif
   return (true);
 }
 

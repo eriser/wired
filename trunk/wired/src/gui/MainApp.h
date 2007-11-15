@@ -30,6 +30,7 @@ public:
 
 private:
   wxString				SessionDir;
+  bool					nosplash;
   MainWindow              *Frame;
   wxSingleInstanceChecker *Checker;
 
