@@ -41,7 +41,8 @@ Wizard::Wizard()
 
   tc_NewPath		= new wxTextCtrl(this, Wizard_Enter, wxGetCwd(),
 	  wxPoint(WIZ_MARGIN * 2 + WIZ_NEW_BTN_WIDTH, WIZ_MARGIN + WIZ_TOP_MARGIN),
-	  wxSize(WIZ_TC_PATH_WIDTH, WIZ_TC_PATH_HEIGHT));
+	  wxSize(WIZ_TC_PATH_WIDTH, WIZ_TC_PATH_HEIGHT),
+	  wxTE_PROCESS_ENTER);
 
   b_BrowseNew		= new wxButton(this, Wizard_Browse, _("&Browse"),
 	  WIZ_BROWSE_POS, WIZ_BTN_SIZE);

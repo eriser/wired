@@ -198,7 +198,7 @@ SequencerGui::~SequencerGui()
 
 void					SequencerGui::CleanChildren()
 {
-  DeleteAllTracks();
+  //DeleteAllTracks();
 }
 
 int					SequencerGui::GetSeqHeaderHeight()

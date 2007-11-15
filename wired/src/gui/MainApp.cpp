@@ -43,6 +43,7 @@ void	MainApp::OnInitCmdLine(wxCmdLineParser& parser)
 bool	MainApp::OnCmdLineParsed(wxCmdLineParser& parser)
 {
   wxString	arg;
+  wxString	nosplash_str = wxT("wired-nosplash");
 
   // silent_mode = parser.Found(wxT("s"));
   std::cout << "parser.GetParamCount() == " << parser.GetParamCount() << std::endl;
@@ -50,6 +51,10 @@ bool	MainApp::OnCmdLineParsed(wxCmdLineParser& parser)
     SessionDir = MainApp::argv[1];
   else
     SessionDir = wxT("");
+  if (!nosplash_str.CompareTo(MainApp::argv[0]))
+	nosplash = true;
+  else
+	nosplash = false;
   return (true);
 }
   
@@ -74,15 +79,18 @@ bool MainApp::OnInit()
   // init some conditions variables
   m_condAllDone = new wxCondition(m_mutex);
   // splash screen
-  if (bitmap.LoadFile(wxString(DATA_DIR, *wxConvCurrent) + wxString(wxT("/wired/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
+  if (!nosplash)
   {
-    // we keep time-out very high for low cpu
-    splash = new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
-      120000, NULL, -1, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER);
-    splash->Update();
-    splash->Refresh();
-    // alert dialog can use it before frame loading
-    wxYield();
+	if (bitmap.LoadFile(wxString(DATA_DIR, *wxConvCurrent) + wxString(wxT("/wired/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
+	{
+	  // we keep time-out very high for low cpu
+	  splash = new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
+		  120000, NULL, -1, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER);
+	  splash->Update();
+	  splash->Refresh();
+	  // alert dialog can use it before frame loading
+	  wxYield();
+	}
   }
 #if 0
   const wxString name = wxString::Format(wxT("wired-%s"), wxGetUserId().c_str());
@@ -102,7 +110,7 @@ bool MainApp::OnInit()
   Frame->Show(true);
   SetTopWindow(Frame);
   // Wired crash if loading main frame is more than splash timeout
-  if (splash)
+  if (!nosplash && splash)
     splash->Hide();
   // now error dialog are based on mainframe
   MainWin = Frame;
