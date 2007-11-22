@@ -87,15 +87,11 @@ ASamplerSample	*ASSampleList::GetSampleById(unsigned long askedId)
 
   samples = List->GetEntries();
 
-  for(i = samples.begin(); 
-      i != samples.end(); 
-      i++)
-    {
-      ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
-      if (ass->GetID() == askedId)
-	return ass;
-    }
+  for(i = samples.begin(); i != samples.end(); i++)
+  {
+	ASamplerSample *ass = (ASamplerSample *)(*i)->GetEntry();
+	if (ass->GetID() == askedId)
+	  return ass;
+  }
   return NULL;
-
-
 }

@@ -188,38 +188,45 @@ void	SaveCenter::AddReferences(SaveElementsHashMap &saveElements,
 {
   SaveElementsHashMap::iterator	saveElementsIt;
   SaveElement			*ref = new SaveElement();
-  wxFileName			relativePath, absolutePath;
+  wxFileName			absolutePath;
+  //wxFileName			relativePath;
 
-  wxArrayString			dirs;
+  //wxArrayString			dirs;
 
   //for each entry of the hash map....
   for (saveElementsIt = saveElements.begin();
-       saveElementsIt != saveElements.end();
-       saveElementsIt++)
-    //if it is not the one to write in the project file
-    if(saveElementsIt->first != WIRED_PROJECT_FILE)
-      {
-	//fill a SaveElement
-	ref->clear();
+	  saveElementsIt != saveElements.end();
+	  saveElementsIt++)
+	//if it is not the one to write in the project file
+	if(saveElementsIt->first != WIRED_PROJECT_FILE)
+	{
+	  //fill a SaveElement
+	  ref->clear();
 
-	//get the path to the file we will create later...
-	absolutePath.Assign(getProjectPath());
+/*
+ *	// crap follows...
+ *      //get the path to the file we will create later...
+ *      absolutePath.Assign(getProjectPath());
+ *
+ *      relativePath.Assign(getPathFromRelativeTag(saveElementsIt->first));
+ *      dirs = relativePath.GetDirs();
+ *
+ *      for(int j = 0; j < dirs.GetCount(); j++)
+ *        absolutePath.AppendDir(dirs[j]);
+ *
+ *      //absolutePath.SetName(relativePath.GetName());
+ *      //absolutePath.SetExt(relativePath.GetExt());
+ *      absolutePath.Assign(relativePath.GetFullPath());
+ */
 
-	relativePath.Assign(getPathFromRelativeTag(saveElementsIt->first));
-	dirs = relativePath.GetDirs();
+	  absolutePath.Assign(getPathFromRelativeTag(saveElementsIt->first));
+	  absolutePath.MakeRelativeTo(getProjectPath().GetPath());
 
-	for(int j = 0; j < dirs.GetCount(); j++)
-	  absolutePath.AppendDir(dirs[j]);
-
-	absolutePath.SetName(relativePath.GetName());
-	absolutePath.SetExt(relativePath.GetExt());
-
-	absolutePath.MakeRelativeTo(getProjectPath().GetPath());
-
-	ref->setPair(wxT("reference"), absolutePath.GetFullPath());
-	//and write it.
-	WriteElement(ref, xmlFile);
-      }
+	  cout << "[SAVECENTER] AddReferences() : adding reference to '" << absolutePath.GetFullPath().mb_str() << "'" << endl;
+	  ref->setPair(wxT("reference"), absolutePath.GetFullPath());
+	  //and write it.
+	  WriteElement(ref, xmlFile);
+	}
 
   delete ref;
 }
@@ -255,15 +262,24 @@ wxFileName	SaveCenter::getPathFromRelativeTag(wxString tag)
 {
   wxFileName	ret;
 
-  while(tag.Find('/') != -1)
-    {
-      ret.AppendDir(tag.BeforeFirst('/'));
-      tag = tag.AfterFirst('/');
-    }
-  tag = tag.BeforeFirst('.');
-  ret.SetName(tag);
-  ret.SetExt(wxT("xml"));
+  /*
+   *while(tag.Find('/') != -1)
+   *  {
+   *    ret.AppendDir(tag.BeforeFirst('/'));
+   *    tag = tag.AfterFirst('/');
+   *  }
+   *tag = tag.BeforeFirst('.');
+   *ret.SetName(tag);
+   *ret.SetExt(wxT("xml"));
+   */
 
+  if (tag.Right(4) != wxString(wxT(".xml")))
+  {
+	tag += wxT(".xml");
+  }
+  ret.Assign(tag);
+  if (!ret.IsOk())
+	cerr << "Problem saving '" << tag.mb_str() << "'" << endl;
   return ret;
 }
 

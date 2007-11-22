@@ -67,8 +67,6 @@ WiredBeatBox::WiredBeatBox(PlugStartInfo &startinfo, PlugInitInfo *initinfo,
   cout << "[DRM31] Host is " << GetHostProductName().mb_str()
        << " version " << GetHostProductVersion().mb_str() << endl;
   
-  // toto TODO : ce setId est tres moche : l'id est censé represente l'ordre chronologique des WiredDocuments, mais par defaut pour les plugins tels que celui ci il est à 1, comme le WiredDocument racine !! comment faire ? ecrire tout les id dans un fichier temporaire ? ou en passant par le savecenter... ?
-  //setId(123);
   if (startinfo.saveCenter)
     saveCenter = startinfo.saveCenter;
   else
@@ -1797,9 +1795,11 @@ void WiredBeatBox::OnLoadPatch(wxCommandEvent& WXUNUSED(e))
 
   wxString selfile = OpenFileLoader(_("Load Patch"), &exts);
 
-  wxFileName wxFN = wxFileName(selfile);
-  wxFN.MakeRelativeTo(saveCenter->getProjectPath().GetFullPath());
-  selfile = wxFN.GetFullPath();
+  /*
+   *wxFileName wxFN = wxFileName(selfile);
+   *wxFN.MakeRelativeTo(saveCenter->getProjectPath().GetFullPath());
+   *selfile = wxFN.GetFullPath();
+   */
 
   if (!selfile.empty())
   {

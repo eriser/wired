@@ -21,6 +21,8 @@ static wxString EFFECTSNAMES[NB_EFFECTS] = {
 };
 // FIN DES EFFETS
 
+static int			gl_WSId;
+
 static PlugInitInfo info;
 
 BEGIN_EVENT_TABLE(AkaiSampler, wxWindow)
@@ -36,7 +38,7 @@ END_EVENT_TABLE()
 
   AkaiSampler::AkaiSampler(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
     : Plugin(startinfo, initinfo), PolyphonyCount(8), Volume(100.f), AkaiProgram(0x0),
-      WiredDocument(wxT("AkaySampler"), startinfo.saveCenter)
+      WiredDocument(wxT("AkaySampler"), startinfo.parent)
 {
 
   if (startinfo.saveCenter)
@@ -140,6 +142,21 @@ END_EVENT_TABLE()
 
   UpdateMidi = false;
   UpdateVolume = false;
+
+  // let's build a _customFileName for autosaving patch :
+  wxString customFN_orig = WIRED_SAMPLER_SAVE_PATCH;
+  wxString ext;
+
+  gl_WSId++; //WiredSampler counter
+  _customFileName = customFN_orig.BeforeLast('.');
+  ext = customFN_orig.AfterLast('.');
+  _customFileName << gl_WSId << wxT(".") << ext;
+  while (wxFileName::FileExists(_customFileName))
+  {
+	gl_WSId++;
+	_customFileName = customFN_orig.BeforeLast('.');
+	_customFileName << gl_WSId << wxT(".") << ext;
+  } 
 }
 
 AkaiSampler::~AkaiSampler()
@@ -154,6 +171,11 @@ AkaiSampler::~AkaiSampler()
   delete fader_bg;
   delete fader_fg;
 
+}
+
+wxString	AkaiSampler::GetName()
+{
+  return (PLUGIN_NAME);
 }
 
 void AkaiSampler::Stop()
@@ -456,6 +478,7 @@ void AkaiSampler::OnOpenFile(wxCommandEvent &event)
   if (!selfile.empty())
     {
       LoadPatch(selfile);
+	  _customFileName = selfile;
     }
   else
     cout << "[WiredSampler] could not open patch file" << endl;
@@ -474,12 +497,12 @@ void	AkaiSampler::LoadPatch(wxString filename)
   //nettoyer le patch
 
   for(dataIt = 0; dataIt < data.GetCount(); dataIt++)
-    {
-      if(data[dataIt]->getKey() == wxT("samples"))
-	LoadSamples(data[dataIt]);
-      else if(data[dataIt]->getKey() == wxT("keygroups"))
-	LoadKeygroups(data[dataIt]);
-    }
+  {
+	if(data[dataIt]->getKey() == wxT("samples"))
+	  LoadSamples(data[dataIt]);
+	else if(data[dataIt]->getKey() == wxT("keygroups"))
+	  LoadKeygroups(data[dataIt]);
+  }
 }
 
 void	AkaiSampler::LoadSamples(SaveElement *data)
@@ -503,33 +526,35 @@ void	AkaiSampler::LoadSamples(SaveElement *data)
   samplesData = data->getChildren();
 
   for(dataIt = 0; dataIt < samplesData.GetCount(); dataIt++)
-    {
-      filename = samplesData[dataIt]->getValue();
-      name = samplesData[dataIt]->getAttribute(wxT("name"));
-      loop_count = samplesData[dataIt]->getAttributeInt(wxT("loop_count"));
-      s.clear();
-      s = samplesData[dataIt]->getAttribute(wxT("loop_start"));
-      s.ToLong(&loop_start);
-      s.clear();
-      s = samplesData[dataIt]->getAttribute(wxT("loop_end"));
-      s.ToLong(&loop_end);
-      s.clear();
-      s = samplesData[dataIt]->getAttribute(wxT("id"));
-      s.ToULong(&id);
+  {
+	filename = samplesData[dataIt]->getValue();
+	name = samplesData[dataIt]->getAttribute(wxT("name"));
+	loop_count = samplesData[dataIt]->getAttributeInt(wxT("loop_count"));
+	s.clear();
+	s = samplesData[dataIt]->getAttribute(wxT("loop_start"));
+	s.ToLong(&loop_start);
+	s.clear();
+	s = samplesData[dataIt]->getAttribute(wxT("loop_end"));
+	s.ToLong(&loop_end);
+	s.clear();
+	s = samplesData[dataIt]->getAttribute(wxT("id"));
+	s.ToULong(&id);
+	std::cerr << "data loaded : id " << id << " name " << name.mb_str() << std::endl;
+	std::cerr << "loop_start " << loop_start << " loop_end " << loop_end << std::endl;
+	std::cerr << "loop_count " << loop_count << std::endl;
 
-      std::cerr << "data loaded : id " << id << " name " << name.mb_str() << std::endl;
-      std::cerr << "loop_start " << loop_start << " loop_end " << loop_end << std::endl;
-      std::cerr << "loop_count " << loop_count << std::endl;
 
+	w = new WaveFile(filename, true);
+	sample = new ASamplerSample(this, w, id); 
 
-      w = new WaveFile(filename, true);
-      sample = new ASamplerSample(this, w, id); 
+	Samples->List->AddEntry(name, sample);
+	sample->SetLoopCount(loop_count);
+	sample->SetLoopStart(loop_start);
+	sample->SetLoopEnd(loop_end);
 
-      Samples->List->AddEntry(name, sample);
-      sample->SetLoopCount(loop_count);
-      sample->SetLoopStart(loop_start);
-      sample->SetLoopEnd(loop_end);
-    }
+	if (id >= sampleid)
+	  sampleid = id + 1;
+  }
 }
 
 void	AkaiSampler::LoadKeygroups(SaveElement *data)
@@ -586,30 +611,54 @@ void	AkaiSampler::LoadKeygroups(SaveElement *data)
 
 void	AkaiSampler::Load(SaveElementArray data)
 {
+  int	i;
 
+  for( i = 0 ; i < data.GetCount() ; i++ )
+	if (data[i]->getKey() == wxT("reference"))
+	  _customFileName = data[i]->getValue();
+  if(wxFileName::FileExists(_customFileName))
+	LoadPatch(_customFileName);
+  else
+	cerr << "[WiredSampler] patch not found : '" << _customFileName.mb_str() << "'" << endl;
 }
 
 void AkaiSampler::OnSaveFile(wxCommandEvent &event)
 {
-  vector<wxString> exts;
-  exts.push_back(_("xml\tWiredSampler xml patch file (*.xml)"));
+  vector<wxString>	exts;
+  wxFileName		filename;
+  wxString			str_filename;
   
+  exts.push_back(_("xml\tWiredSampler xml patch file (*.xml)"));
   wxString selfile = SaveFileLoader(_("Save Patch"), &exts);
-  if (!selfile.empty())
-      SavePatch(wxString(GetName()) << wxT("/patch"), selfile);      
+  if (selfile.Right(4) != wxString(wxT(".xml")) || selfile.Right(4) != wxString(wxT(".XML")))
+	selfile += wxT(".xml");
+  filename.Assign(selfile);
+  if (filename.IsOk())
+  {
+	cout << "[WIREDSAMPLER] will try to write this file : '" << selfile.mb_str() << "'" <<endl;
+	SaveXmlPatch(selfile);
+	_customFileName = selfile;
+	cout << "[WIREDSAMPLER] Calling savecenter to write the file" << endl;
+	saveCenter->SaveOneDocument(this, _customFileName);
+	//SavePatch(wxString(GetName()) << wxT("/patch"), selfile);      
+  }
   else
     cout << "[WiredSampler] could not open save file" << endl;
   cout << "OnSavePatch(): end" << endl;
-  //delete dlg;
 }
 
 void	AkaiSampler::Save()
 {  
-  SaveSamples();
-  SaveKeygroups();
+  SaveXmlPatch(_customFileName);
 }
 
-void	AkaiSampler::SaveSamples()
+void	AkaiSampler::SaveXmlPatch(wxString filename)
+{
+  SaveSamples(filename);
+  SaveKeygroups(filename);
+}
+
+void	AkaiSampler::SaveSamples(wxString filename)
 {
   SaveElement		*samplesData = new SaveElement();
   SaveElement		*sampleData;
@@ -676,10 +725,10 @@ void	AkaiSampler::SaveSamples()
     }
     samplesData->addChildren(sampleData);
   }
-  saveDocData(samplesData, wxString(GetName()) << wxT("/patch"));
+  saveDocData(samplesData, filename);
 }
 
-void	AkaiSampler::SaveKeygroups()
+void	AkaiSampler::SaveKeygroups(wxString filename)
 {
   SaveElement	*keygroupsData;
   SaveElement	*keygroupData;
@@ -718,7 +767,7 @@ void	AkaiSampler::SaveKeygroups()
       }
     keygroupsData->addChildren(keygroupData);
   }
-  saveDocData(keygroupsData, wxString(GetName()) << wxT("/patch"));
+  saveDocData(keygroupsData, filename);
 
 }
 
