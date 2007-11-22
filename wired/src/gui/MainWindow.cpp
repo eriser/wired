@@ -700,14 +700,22 @@ bool					MainWindow::NewSession()
     return (false);
 
   Seq->Stop();
-  //OpenWizard();
 #ifdef __LINUX__
-  //haha
-  //will *not* work on windows
-  // write down the settings
+  //haha //will *not* work on windows
+  cout << "[MAINWIN] Closing sound stream..." << endl;
   if (Audio)
 	Audio->CloseStream();
-  delete WiredSettings;
+  cout << "[MAINWIN] Closing Media Library" << endl;
+  if(MediaLibraryPanel)
+    delete MediaLibraryPanel;
+
+  cout << "[MAINWIN] Unloading session manager..." << endl;
+  delete saveCenter;
+
+  cout << "[MAINWIN] Unloading user settings manager..." << endl;
+  if (WiredSettings)
+    delete WiredSettings;
+
   execlp("wired", "wired-nosplash", (char*)NULL);
   exit(0);
 #else
@@ -716,6 +724,7 @@ bool					MainWindow::NewSession()
    *saveCenter->CleanTree();
    *delete saveCenter;
    */
+  //OpenWizard();
 #endif
   return (true);
 }

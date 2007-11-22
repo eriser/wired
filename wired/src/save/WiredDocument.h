@@ -5,6 +5,7 @@
 #define _WIREDDOCUMENT_H_
 
 #include <wx/dynarray.h>
+#include  <wx/filename.h>
 
 #include "SaveElement.h"
 
@@ -132,6 +133,7 @@ public:
    */
 
   void				SavePatch(wxString file, wxString path);
+  void				SavePatch(wxFileName filename);
 
 
   /** Gets data from an external xml file.

@@ -46,7 +46,7 @@ bool	MainApp::OnCmdLineParsed(wxCmdLineParser& parser)
   wxString	nosplash_str = wxT("wired-nosplash");
 
   // silent_mode = parser.Found(wxT("s"));
-  std::cout << "parser.GetParamCount() == " << parser.GetParamCount() << std::endl;
+  //std::cout << "parser.GetParamCount() == " << parser.GetParamCount() << std::endl;
   if (MainApp::argc == 2)
     SessionDir = MainApp::argv[1];
   else

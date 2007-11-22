@@ -152,3 +152,8 @@ void			WiredDocument::SavePatch(wxString file, wxString path)
 {
   saveCenter->SaveFile(this, file, path);
 }
+
+void			WiredDocument::SavePatch(wxFileName filename)
+{
+  SavePatch(filename.GetName(), filename.GetPath());
+}

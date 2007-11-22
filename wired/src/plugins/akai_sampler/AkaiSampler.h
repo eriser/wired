@@ -44,6 +44,8 @@
 using namespace std;
 
 #define PLUGIN_NAME wxT("WiredSampler")
+#define WIRED_SAMPLER_SAVE_PATCH	wxT("WiredSampler/patch.xml")
+#define  WIRED_SAMPLER_PATCH_EXT	wxT(".xml")
 
 class ASamplerNote
 {     
@@ -80,8 +82,9 @@ class AkaiSampler : public Plugin, public WiredDocument
     void	LoadPatch(wxString filename);
 
     void	Save();
-    void	SaveSamples();
-    void	SaveKeygroups();
+    void	SaveSamples(wxString filename = WIRED_SAMPLER_SAVE_PATCH);
+    void	SaveKeygroups(wxString filename = WIRED_SAMPLER_SAVE_PATCH);
+	void	SaveXmlPatch(wxString filename = WIRED_SAMPLER_SAVE_PATCH);
     //SavePatch declared in WiredDocument.h
 
 
@@ -187,6 +190,8 @@ class AkaiSampler : public Plugin, public WiredDocument
     //void LoadProgram();
    // void DeleteProgram();
 
+	wxString	GetName();
+	wxString	_customFileName;
 
     DECLARE_EVENT_TABLE()
 };
