@@ -256,10 +256,19 @@ void				SettingWindow::MidiPanelView()
 void SettingWindow::PopulateMidiIn(wxCheckListBox* list)
 {
   MidiDeviceList::iterator	deviceIt;
+  vector<wxString>::iterator	strIt;
+  int				i;
 
   list->Clear();
-  for (deviceIt = MidiEngine->DeviceList.begin(); deviceIt != MidiEngine->DeviceList.end(); deviceIt++)
+  for (i = 0, deviceIt = MidiEngine->DeviceList.begin();
+      deviceIt != MidiEngine->DeviceList.end(); deviceIt++, i++)
+  {
     MidiInList->Append((*deviceIt)->Name);
+    for (strIt = WiredSettings->MidiInStr.begin();
+	strIt != WiredSettings->MidiInStr.end(); strIt++)
+      if ((*strIt).Cmp((*deviceIt)->Name) == 0)
+	MidiInList->Check(i);
+  }
 
   std::cerr << "[Setting Window] Midi In list populated" << std::endl;
 
@@ -558,6 +567,24 @@ void SettingWindow::Load()
 	  LatencySlider->SetValue(i);
       UpdateLatency();
     }
+
+  
+  LoadMidiIn(MidiInList, WiredSettings->MidiIn);
+}
+
+void	SettingWindow::LoadMidiIn(wxCheckListBox *to, vector<int>&from)
+{
+  int	i, j;
+  MidiDeviceList::iterator	deviceIt;
+
+  for (i = 0, deviceIt = MidiEngine->DeviceList.begin();
+      deviceIt != MidiEngine->DeviceList.end(); deviceIt++, i++)
+    for (j = 0 ; j < from.size() ; j++)
+      if (i == j)
+      {
+	to->Check(i);
+	WiredSettings->MidiInStr.push_back((*deviceIt)->Name);
+      }
 }
 
 void SettingWindow::LoadChannels(wxCheckListBox* to, vector<int>& from)

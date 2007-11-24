@@ -177,6 +177,8 @@ class					SettingWindow : public wxDialog
    */ 
   void					LoadChannels(wxCheckListBox* to, 
 						     std::vector<int>& from);
+  void					LoadMidiIn(wxCheckListBox* to, 
+						     std::vector<int>& from);
 
 
   DECLARE_EVENT_TABLE()

@@ -382,6 +382,19 @@ int			MainWindow::Init()
 int			MainWindow::InitAudio(bool restart)
 {
   LOG;
+  // midi stuff
+    list<RackTrack*>::iterator	rtit;
+    RackTrack			*rt;
+    list<Plugin*>::iterator	pit;
+    Plugin			*p;
+    int				i;
+    int				j;
+    vector<RackTrack*>		vrt;
+    vector<Plugin*>		vp;
+    vrt.clear();
+    vp.clear();
+  // midi stuff end
+
   wxMutexLocker audioLock(AudioMutex);
   if (Audio->IsOk)
     {
@@ -398,6 +411,52 @@ int			MainWindow::InitAudio(bool restart)
   // save settings
   if (restart)
     SettingsWin->Save();
+
+  // stop all racks that have something to do with midi
+  if (RackPanel)
+  {
+    i = 0;
+    for (rtit = RackPanel->RackTracks.begin(); rtit != RackPanel->RackTracks.end(); rtit++)
+    {
+      rt = *rtit;
+      pit = rt->Racks.begin();
+      for (pit = rt->Racks.begin() ; pit != rt->Racks.end(); pit++)
+      {
+	p = *pit;
+	if (p)
+	{
+	  cout << "Plugin uniq id = '";
+	  for (i = 0; i < 4 ; i++)
+	    cout << p->InitInfo->UniqueId[i];
+	  cout << "'" << endl;
+	  if (p->IsMidi())
+	  {
+
+	    cout << " ...added to the 'do something' list" << endl;
+	    vrt.push_back(rt);
+	    vp.push_back(p);
+	  }
+	}
+      }
+    }
+
+    for (i = 0 ; i < vp.size() ; i++)
+    {
+      /*
+       *cout << "saving number '" << i << "'" << endl;
+       *vp[i]->StartInfo.parent->Save();
+       * //will not write the file :
+       * //we need to call saveCenter->SaveOneDocument
+       * //but for this we need a filename...
+       * //the best way to do this would be NOT to apply changes
+       * //but SAVE them and warn that it won't apply until next exec
+       */
+      cout << "deleting number '" << i << "'" << endl;
+      vrt[i]->Parent->DeleteRack(vp[i]);
+    }
+
+  }
+
   // change settings
   if (!Audio->CloseStream())
     {
