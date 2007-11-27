@@ -376,6 +376,7 @@ void				MidiPattern::Load(SaveElementArray data)
 	  int		noTrack;
 
 	  midiFile = new MidiFile(data[i]->getValue());
+	  midiFile->ReadMidiFile();
 	  noTrack = data[i]->getAttributeInt(wxT("NoTrack"));
 	  if (noTrack < midiFile->GetNumberOfTracks())
 	    SetMidiTrack(midiFile->GetTrack(noTrack));

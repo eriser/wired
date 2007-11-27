@@ -6,14 +6,20 @@
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
-   #include <wx/wx.h>
+#include <wx/wx.h>
 #endif
+#include <wx/file.h>
 
 #include <vector>
 
 using namespace std;
 using std::vector;
 
+// the name of the default midi filename (without extension)
+// NOTE: a number will be added to avoid colision
+// no . allowed !
+#define  DEFAULT_MIDI_NAME	wxT("track")
+#define  DEFAULT_MIDI_PATH	wxT("audio")
 
 // CHUNK MIDI HEADER
 #define MIDI_HDR_1			'M'
@@ -32,14 +38,24 @@ using std::vector;
 #define EVENT_NONMIDI			0xFF
 
 #define	IS_MIDI_HEADER(hdr)		((hdr[0] == MIDI_HDR_1) &&\
-					 (hdr[1] == MIDI_HDR_2) &&\
-					 (hdr[2] == MIDI_HDR_3) &&\
-					 (hdr[3] == MIDI_HDR_4))
+	(hdr[1] == MIDI_HDR_2) &&\
+	(hdr[2] == MIDI_HDR_3) &&\
+	(hdr[3] == MIDI_HDR_4))
 
 #define IS_MIDI_TRK(hdr)		((hdr[0] == MIDI_TRK_1) &&\
-					 (hdr[1] == MIDI_TRK_2) &&\
-					 (hdr[2] == MIDI_TRK_3) &&\
-					 (hdr[3] == MIDI_TRK_4))
+	(hdr[1] == MIDI_TRK_2) &&\
+	(hdr[2] == MIDI_TRK_3) &&\
+	(hdr[3] == MIDI_TRK_4))
+
+#define MK_MIDI_HEADER(hdr)		(hdr[0] = MIDI_HDR_1) ;\
+								(hdr[1] = MIDI_HDR_2) ;\
+								(hdr[2] = MIDI_HDR_3) ;\
+								(hdr[3] = MIDI_HDR_4)
+
+#define MK_MIDI_TRK_HDR(hdr)		(hdr[0] = MIDI_TRK_1) ;\
+									(hdr[1] = MIDI_TRK_2) ;\
+									(hdr[2] = MIDI_TRK_3) ;\
+									(hdr[3] = MIDI_TRK_4)
 
 #define IS_SYSEX(evt)			((evt & 0xFF) == EVENT_SYSEX)
 #define IS_NONMIDI(evt)			((evt & 0xFF) == EVENT_NONMIDI)
@@ -102,105 +118,118 @@ typedef struct	s_chunk
 // Base class for Midi event handling
 class Event
 {
- public:
-  Event(unsigned long pos, unsigned char ID);
-    virtual ~Event();
-    unsigned char GetID() { return ID; }
-    unsigned long GetPos() { return Pos; }
-    unsigned char GetType() { return Type; }
+  public:
+	Event(unsigned long pos, unsigned char ID);
+	virtual ~Event();
+	unsigned char GetID() { return ID; }
+	unsigned long GetPos() { return Pos; }
+	unsigned char GetType() { return Type; }
 
   protected:
-    unsigned char ID;
-    unsigned long Pos;
-    unsigned char Type;
+	unsigned char ID;
+	unsigned long Pos;
+	unsigned char Type;
 };
 
 // Describes a midi event
 class MidiFileEvent : public Event
 {
   public:
-  MidiFileEvent(unsigned long pos, unsigned char ID, unsigned char channel,
-		  unsigned char p1, unsigned char p2);
-    unsigned char GetChannel() { return (Channel); }
-    unsigned char GetParam(int num) { return (num == 0) ? p1 : p2; }
+	MidiFileEvent(unsigned long pos, unsigned char ID, unsigned char channel,
+		unsigned char p1, unsigned char p2);
+	unsigned char GetChannel() { return (Channel); }
+	unsigned char GetParam(int num) { return (num == 0) ? p1 : p2; }
 
   private:
-    unsigned char Channel;
-    unsigned char p1;
-    unsigned char p2;
+	unsigned char Channel;
+	unsigned char p1;
+	unsigned char p2;
 };
 
 // Describes a sysex event
 class SysExEvent : public Event
 {
   public:
-    SysExEvent(unsigned long pos, unsigned char ID, unsigned long len,
-               unsigned char *data);
-    ~SysExEvent();
+	SysExEvent(unsigned long pos, unsigned char ID, unsigned long len,
+		unsigned char *data);
+	~SysExEvent();
 
+	size_t			WriteData(wxFile &midiFileHandle);
+	unsigned long	GetLen();
+	unsigned long	GetPos();
   private:
-    unsigned char *data;
-    unsigned long len;
+	unsigned char	*data;
+	unsigned long	len;
 };
 
 // Describes a Non Midi Event (ex: TrackName)
 class NonMidiEvent : public Event
 {
   public:
-    NonMidiEvent(unsigned long pos, unsigned char ID, unsigned long len,
-                 unsigned char *data);
-    ~NonMidiEvent();
-    wxString GetBufferAsString() { return wxString(wxString((const char *)data, *wxConvCurrent), 0, len); }
-    unsigned char GetBufferAt(unsigned long pos) { return (pos < len) ? data[pos] : 0; }
+	NonMidiEvent(unsigned long pos, unsigned char ID, unsigned long len,
+		unsigned char *data);
+	~NonMidiEvent();
+
+	wxString		GetBufferAsString() { return wxString(wxString((const char *)data, *wxConvCurrent), 0, len); }
+	unsigned char	GetBufferAt(unsigned long pos) { return (pos < len) ? data[pos] : 0; }
+	unsigned long	GetLen() { return (len); }
+	size_t			WriteData(wxFile &midiFileHandle);
 
   private:
-    unsigned char *data;
-    unsigned long len;
+	unsigned char *data;
+	unsigned long len;
 };
 
 // All the events together is a track
 class MidiTrack
 {
- private:
-  wxString	_filename;
-  unsigned int	_noTrack;
+  private:
+	wxString	_filename;
+	unsigned int	_noTrack;
 
- public:
-  MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN,
-	    wxString filename, unsigned int noTrack);
-  ~MidiTrack();
-  unsigned long GetMaxPos() { return (MaxPos); }
-  vector<MidiFileEvent *> GetMidiEvents();
-  unsigned short GetPPQN() { return ppqn; }
+  public:
+	MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN,
+		wxString filename, unsigned int noTrack);
+	~MidiTrack();
 
-  inline wxString&	GetFileName() { return (_filename); };
-  inline unsigned int	GetNoTrack() { return (_noTrack); };
+	size_t	WriteChunk(wxFile &midiFileHandle);
+	size_t	WriteDelta(wxFile &midiFileHandle, unsigned long value);
+
+	unsigned long GetMaxPos() { return (MaxPos); }
+	vector<MidiFileEvent *> GetMidiEvents();
+	unsigned short GetPPQN() { return ppqn; }
+
+	inline wxString&	GetFileName() { return (_filename); };
+	inline unsigned int	GetNoTrack() { return (_noTrack); };
 
   protected:
-    unsigned long GetVLQ(unsigned char *buf, unsigned long &ofs);
-    vector<Event *> Events;
-    unsigned long MaxPos;
-    unsigned short ppqn;
+	unsigned long GetVLQ(unsigned char *buf, unsigned long &ofs);
+	vector<Event *> Events;
+	unsigned long MaxPos;
+	unsigned short ppqn;
 };
 
 // The midifile containing 1 or several tracks
 class MidiFile
 {
- public:
-  MidiFile(wxString filename);
-  ~MidiFile();
+  public:
+	MidiFile(wxString filename, bool newMidiFile = false);
+	~MidiFile();
 
-  long GetNumberOfTracks() { return NbTracks; }
-  long GetDivision()   { return Division; }
-  MidiTrack *GetTrack(int num) { if ((num >= 0) && (num < NbTracks))
-                                   return Tracks[num]; else return NULL; }
+	void		ReadMidiFile();
+	size_t		WriteMidiFile();
+	bool		AppendMidiTrack(MidiTrack *track);
+	long		GetNumberOfTracks() { return NbTracks; }
+	long		GetDivision()   { return Division; }
+	MidiTrack	*GetTrack(int num) { if ((num >= 0) && (num < NbTracks))
+	  return Tracks[num]; else return NULL; }
 
- protected:
-   wxString filename;
-   unsigned short Division;
-   unsigned short Type;
-   unsigned short NbTracks;
-   vector<MidiTrack *> Tracks;
+  protected:
+	wxString filename;
+	unsigned short Division;
+	unsigned short Type;
+	unsigned short NbTracks;
+	vector<MidiTrack *> Tracks;
 };
 
 #endif

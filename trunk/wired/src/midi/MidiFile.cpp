@@ -9,7 +9,7 @@
 #else
 #include <netinet/in.h>
 #endif
-#include <wx/file.h>
+#include <wx/filename.h>
 #include <iostream>
 
 /*************************************************************************************/
@@ -62,6 +62,24 @@ SysExEvent::~SysExEvent()
 	if (data)
 	  free(data);
 }
+
+unsigned long	SysExEvent::GetLen()
+{
+  return (len);
+}
+
+unsigned long	SysExEvent::GetPos()
+{
+  return (Pos);
+}
+
+size_t	SysExEvent::WriteData(wxFile &midiFileHandle)
+{
+  size_t	bytesWritten = 0;
+
+  bytesWritten += midiFileHandle.Write(data, len);
+  return (bytesWritten);
+}
  
 
 /*************************************************************************************/
@@ -85,6 +103,14 @@ NonMidiEvent::~NonMidiEvent()
 	  free(data);
 }
 
+size_t	NonMidiEvent::WriteData(wxFile &midiFileHandle)
+{
+  size_t	bytesWritten = 0;
+
+  bytesWritten += midiFileHandle.Write(data, len);
+  return (bytesWritten);
+}
+ 
 
 /*************************************************************************************/
 /*** Classe MidiTrack                                                              ***/
@@ -153,6 +179,120 @@ MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PP
   MaxPos = abs;
 }
 
+size_t	MidiTrack::WriteChunk(wxFile &midiFileHandle)
+{
+  size_t					bytesWritten = 0;
+  SysExEvent				*sysExEvent;
+  NonMidiEvent				*nonMidiEvent;
+  MidiFileEvent				*midiFileEvent;
+  unsigned long				abs_pos;
+  unsigned long				delta_pos;
+  unsigned long				last_pos = 0;
+  unsigned long				len;
+  unsigned char				evt_type;
+  unsigned char				uc;
+  unsigned char				subtype;
+
+  for (unsigned int i = 0; i < Events.size(); i++)
+  {
+	switch (Events[i]->GetType())
+	{
+	  case MIDI_EVENT_TYPE:
+		midiFileEvent = (MidiFileEvent *)Events[i];
+
+		// calculating delta position from absolute
+		abs_pos = midiFileEvent->GetPos();
+		delta_pos = abs_pos - last_pos;
+		last_pos = abs_pos;
+
+		// writing delta
+		bytesWritten += WriteDelta(midiFileHandle, delta_pos);
+
+		// type toto see IS_RUNNING()
+		evt_type = midiFileEvent->GetID() | midiFileEvent->GetChannel();
+		bytesWritten += midiFileHandle.Write(&evt_type, sizeof(evt_type));
+
+        switch (ME_CODE(evt_type))
+        {
+          case ME_NOTEOFF:
+          case ME_NOTEON:
+          case ME_POLYPRESSURE:
+          case ME_PITCHBEND:
+          case ME_CTRLCHANGE:
+			uc = midiFileEvent->GetParam(1);
+			bytesWritten += midiFileHandle.Write(&uc, sizeof(uc));
+            break;
+          /*
+           *case ME_PRGMCHANGE:
+           *case ME_KEYPRESSURE:
+           *  break;
+           */
+		  default:
+			break;
+        }
+		break;
+	  case SYSEX_EVENT_TYPE:
+		sysExEvent = (SysExEvent *)Events[i];
+		// calculating delta position from absolute
+		abs_pos = sysExEvent->GetPos();
+		delta_pos = abs_pos - last_pos;
+		last_pos = abs_pos;
+
+		// writing delta
+		bytesWritten += WriteDelta(midiFileHandle, delta_pos);
+
+		// writing event type
+		uc = EVENT_SYSEX;
+		bytesWritten += midiFileHandle.Write(&uc, sizeof(uc));
+
+		// writing lenght and data
+		len = sysExEvent->GetLen();
+		bytesWritten += WriteDelta(midiFileHandle, len);
+		bytesWritten += sysExEvent->WriteData(midiFileHandle);
+		break;
+	  case NONMIDI_EVENT_TYPE:
+		nonMidiEvent = (NonMidiEvent *)Events[i];
+		subtype = nonMidiEvent->GetID();
+		bytesWritten += midiFileHandle.Write(&subtype, sizeof(subtype));
+		len = nonMidiEvent->GetLen();
+		bytesWritten += WriteDelta(midiFileHandle, len);
+		bytesWritten += nonMidiEvent->WriteData(midiFileHandle);
+		break;
+	  default:
+		cerr << "Unknown event number : " <<  (int)(Events[i]->GetType()) << endl;
+		cerr << " after writing : " << (int)bytesWritten << " bytes" << endl;
+		break;
+	}
+  }
+
+
+  return (bytesWritten);
+}
+
+// from http://www.borg.com/~jglatt/tech/midifile.htm
+size_t	MidiTrack::WriteDelta(wxFile &midiFileHandle, unsigned long value)
+{
+   unsigned long	buffer = value & 0x7F;
+   unsigned char	c;
+   size_t			bytesWritten = 0;
+
+   while ((value >>= 7))
+   {
+     buffer <<= 8;
+     buffer |= ((value & 0x7F) | 0x80);
+   }
+   while (true)
+   {
+	 c = (unsigned char)buffer;
+	 bytesWritten += midiFileHandle.Write(&c,sizeof(c));
+	 if (buffer & 0x80)
+	   buffer >>= 8;
+	 else
+	   break;
+   }
+   return (bytesWritten);
+}
+
 inline bool sort_by_pos(MidiFileEvent *a, MidiFileEvent *b)
 {
 	return (a->GetPos() <= b->GetPos());
@@ -196,13 +336,126 @@ MidiTrack::~MidiTrack()
 /*** Classe MidiFile                                                               ***/
 /*************************************************************************************/
 
-MidiFile::MidiFile(wxString filename)
+static int		gl_MidiFileCounter;
+
+MidiFile::MidiFile(wxString filename, bool newMidiFile)
 {
-  this->filename = filename;
+  gl_MidiFileCounter++;
   NbTracks = 0;
   Division = 0;
   Type = 0;
 
+  if (newMidiFile)
+  {
+	wxString ext = wxT("mid");
+	wxString customFN_orig;
+
+	customFN_orig.Clear();
+	customFN_orig << DEFAULT_MIDI_PATH << wxFileName::GetPathSeparator() << DEFAULT_MIDI_NAME;
+	filename = customFN_orig.BeforeLast('.');
+	filename << gl_MidiFileCounter << wxT(".") << ext;
+	while (wxFileName::FileExists(filename))
+	{
+	  gl_MidiFileCounter++;
+	  filename = customFN_orig.BeforeLast('.');
+	  filename << gl_MidiFileCounter << wxT(".") << ext;
+	} 
+  }
+  this->filename = filename;
+}
+
+size_t	MidiFile::WriteMidiFile()
+{
+  wxFileName	wxFN(filename);
+  size_t		bytesWritten = (size_t)0;
+
+  if (wxFN.IsOk())
+  {
+	wxFile			midiFileHandle;
+	t_chunk			tc_chunk;
+	unsigned short	be_division, be_type, be_nbtracks;
+	MidiTrack		*midiTrack;
+	unsigned short	i;
+	unsigned long	len;
+	wxFileOffset	header_offset, after_chunk_offset;
+
+	// create directory ?
+	// check continualy for write return ? (running out of space stuff...)
+	// or check at the end ?
+	// create the file, destroy it if it exists
+	midiFileHandle.Create(filename, true);
+
+	// midi header
+	MK_MIDI_HEADER(tc_chunk.ID);
+	tc_chunk.Size = ntohl(6);
+	bytesWritten += midiFileHandle.Write(&tc_chunk, sizeof(tc_chunk));
+	be_type = ntohl(Type);
+	bytesWritten += midiFileHandle.Write(&be_type, 2);
+	be_nbtracks = ntohl(NbTracks);
+	bytesWritten += midiFileHandle.Write(&be_nbtracks, 2);
+	be_division = ntohl(Division);
+	bytesWritten += midiFileHandle.Write(&be_division, 2);
+
+	// cycle through all tracks
+	MK_MIDI_TRK_HDR(tc_chunk.ID);
+	for (i = 0; i < NbTracks; i++)
+	{
+	  midiTrack = Tracks[i]; //->GetMidiEvents();
+
+	  // saving header offset to write it later
+	  header_offset = midiFileHandle.Tell();
+
+	  // skipping header (will be written later)
+	  len = 0;
+	  midiFileHandle.Seek(sizeof(tc_chunk), wxFromCurrent);
+
+	  // writing chunk
+	  len = midiTrack->WriteChunk(midiFileHandle);
+	  bytesWritten += len;
+
+	  // saving position
+	  after_chunk_offset = midiFileHandle.Tell();
+
+	  // back to current header position
+	  midiFileHandle.Seek(header_offset);
+
+	  // writing header
+	  tc_chunk.Size = ntohl(len);
+	  bytesWritten += midiFileHandle.Write(&tc_chunk, sizeof(tc_chunk));
+
+	  // back to end of current chunk (end of file)
+	  midiFileHandle.Seek(after_chunk_offset);
+	}
+  }
+  else
+	cerr << "[MidiFile::WriteMidiFile() Filename is not ok : " << filename.mb_str() << endl;
+  return (bytesWritten);
+}
+
+bool	MidiFile::AppendMidiTrack(MidiTrack *track)
+{
+  //if pas trop de track
+  //quelle est la limite ??
+  //16 ?
+  //unsigned short ?
+  Tracks.push_back(track);
+  NbTracks++;
+  if (Division != track->GetPPQN())
+  {
+	if (NbTracks > 1)
+	{
+	  cout << "[MidiFile] AppendMidiTrack() New division, apparently... : from " << (int)Division
+		<< " to " << (int) track->GetPPQN() << endl;
+	}
+	Division = track->GetPPQN();
+  }
+  if (NbTracks > 1)
+	Type = 1;
+}
+
+void	MidiFile::ReadMidiFile()
+{
+  //this->filename = filename;
   cout << "[MidiFile] Loading " << filename.mb_str() << "..." << endl;
   wxFile MIDIFile;
   MIDIFile.Open(filename);
