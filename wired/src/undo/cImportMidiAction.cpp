@@ -128,6 +128,7 @@ void cImportMidiAction::Do ()
 {
   LOG;
   MidiFile m(mMidiPath);
+  m.ReadMidiFile();
   for (int i = 0; i < m.GetNumberOfTracks(); i++)
   {
     if (m.GetTrack(i)->GetMaxPos() > 0)
