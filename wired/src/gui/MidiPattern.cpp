@@ -37,6 +37,7 @@ MidiPattern::MidiPattern(WiredDocument *parent, double pos,
   Init(parent);
   SetMidiTrack(midiTrack);
   _midiTrack = midiTrack;
+  _filename = midiTrack->GetFileName();
 }
 
 MidiPattern::~MidiPattern()
@@ -379,53 +380,23 @@ void					MidiPattern::OnPaint(wxPaintEvent &e)
 void				MidiPattern::Save()
 {
   SaveElement*			saved;
-  static wxFileName		wxFN;
   static bool			wasOk = false;
 
-  /** One file with two tracks ?
-   *if (_midiTrack && _midiTrack->GetFileName())
-   *  _filename = _midiTrack->GetFileName();
-   *wxFN.Assign(_filename);
-   *cout << "is '" << _filename.mb_str() << "' ok ?" << endl;
-   *if(wxFN.IsOk())
-   *{
-   *  midiFile = new MidiFile(_filename);
-   *  midiFile->AppendMidiTrack(GetMidiTrack());
-   *  saved_file_name = _filename;
-   *}
-   *else
-   *{
-   *  if (midiFile)
-   *  {
-   *    _filename = saved_file_name;
-   *    midiFile->AppendMidiTrack(GetMidiTrack());
-   *    cout << "written " << (int)midiFile->WriteMidiFile(_filename) << " bytes" << endl;
-   *    delete midiFile;
-   *  }
-   *  else
-   *    cout << "c'est quoi cette merde ?" << endl;
-   *}
-   */
-  cout << "debut de fonction" << endl;
-  if (_midiTrack && _midiTrack->GetFileName())
-    _filename = _midiTrack->GetFileName();
-  wxFN.Assign(_filename);
-  cout << "is '" << _filename.mb_str() << "' ok ?" << endl;
-  if(1) //wxFN.IsOk())
-  {
-    MidiFile *midiFile = new MidiFile(_filename);
-    midiFile->AppendMidiTrack(GetMidiTrack());
-    cout << "written " << (int)midiFile->WriteMidiFile(_filename) << " bytes" << endl;
+  cout << "[MidiPattern] Save() : writing '" << _filename.mb_str() << "'" << endl;
 
-    saved = new SaveElement(wxT("FileName"), _filename);
-    saved->addAttribute(wxT("NoTrack"), (int)_noTrack);
-    saveDocData(saved);
+  MidiFile *midiFile = new MidiFile(_filename);
+  midiFile->AppendMidiTrack(GetMidiTrack());
+#ifdef __DEBUG__
+  cout << "written " << (int)midiFile->WriteMidiFile(_filename) << " bytes" << endl;
+#endif
 
-    //delete midiFile;
-  }
+  saved = new SaveElement(wxT("FileName"), _filename);
+  saved->addAttribute(wxT("NoTrack"), (int)_noTrack);
+  saveDocData(saved);
+
+  delete midiFile;
 
   Pattern::Save();
-  cout << "fin de fonction" << endl;
 }
 
 void				MidiPattern::Load(SaveElementArray data)

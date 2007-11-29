@@ -142,27 +142,34 @@ MidiTrack::MidiTrack(vector<MidiEvent *> &evts, unsigned short PPQN, wxString fi
     unsigned int noTrack)
 {
   int			i;
-  unsigned long	position;
-  double		ratio = (double)Seq->SigNumerator * (double)PPQN;
+  unsigned long		position;
+  double		ratio;
+
   _noTrack = noTrack;
   _filename = filename;
   ppqn = PPQN;
+  if (ppqn == 1)
+    ppqn = DEFAULT_MIDI_PPQN;
+  ratio = (double)Seq->SigNumerator * (double)ppqn;
 
-  cout << "creating MidiTrack" << endl;
-  cout << "position ratio " << ratio << endl;
+
+  cout << "[MidiTrack] MidiTrack() creating MidiTrack from list of midi events" << endl;
+  cout << " ppqn " << (int)ppqn << endl;
+  cout << " position ratio " << ratio << endl;
+  cout << " " << evts.size() << " events" << endl;
   Events.clear();
   for (i = 0; i < evts.size() ; i++)
   {
+    position = (unsigned long)(evts[i]->Position * ratio);
+#ifdef __DEBUG__
     cout << " adding event " << i << endl;
-	cout << " wired position " << evts[i]->Position << endl;
-	//Position = (double )event->GetPos()) / (Seq->SigNumerator * GetPPQN()
-	position = (unsigned long)(evts[i]->Position * ratio);
-	cout << " midi position " << position << endl;
+    cout << " wired position " << evts[i]->Position << endl;
+    cout << " midi position " << position << endl;
+#endif
     Events.push_back(
-		new MidiFileEvent(position, evts[i]->Msg[0], 0, evts[i]->Msg[1], evts[i]->Msg[2])
+	new MidiFileEvent(position, evts[i]->Msg[0], 0, evts[i]->Msg[1], evts[i]->Msg[2])
 	);
   }
-  cout << "end of create MidiTrack" << endl;
 }
 
 MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN,
@@ -171,10 +178,14 @@ MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PP
   // save parent's reference
   _noTrack = noTrack;
 
-  MakeMidiFileName(filename);
+  wxFileName	wxFN(filename);
+  if (!wxFN.IsOk())
+    MakeMidiFileName(filename);
   _filename = filename;
 
+#ifdef __DEBUG__
   cout << " noTrack " << _noTrack << endl;
+#endif
 
   unsigned int abs = 0;
   unsigned char runningst = 0;
@@ -182,7 +193,9 @@ MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PP
   for (wxUint32 ofs = 0; ofs < len; )
   {
     wxUint32 dt = GetVLQ(buffer, ofs);
+#ifdef __DEBUG__
     cout << " delta " << dt << endl;
+#endif
     abs += dt;
     unsigned char evttype = buffer[ofs++];
     if (IS_SYSEX(evttype))
@@ -219,13 +232,17 @@ MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PP
           case ME_POLYPRESSURE:
           case ME_PITCHBEND:
           case ME_CTRLCHANGE:
+#ifdef __DEBUG__
 	    cout << " is midi 1" << endl;
+#endif
 	    Events.push_back(new MidiFileEvent(abs, ME_CODE(evttype), ME_CHANNEL(evttype), 
                                            p1, buffer[ofs++]));
             break;
           case ME_PRGMCHANGE:
           case ME_KEYPRESSURE:
+#ifdef __DEBUG__
 	    cout << " is midi 2" << endl;
+#endif
 	    Events.push_back(new MidiFileEvent(abs, ME_CODE(evttype), ME_CHANNEL(evttype), 
                                            p1, 0));
             break;
@@ -250,11 +267,12 @@ size_t	MidiTrack::WriteChunk(wxFile &midiFileHandle)
   unsigned char				subtype;
   bool					is_running = false;
 
-  cout << "[MidiTrack] WriteChunk() start" << endl;
-  cout << "nb of events : '" << Events.size() << "'" << endl;
+  cout << "[MidiTrack] WriteChunk() nb of events : '" << Events.size() << "'" << endl;
   for (unsigned int i = 0; i < Events.size(); i++)
   {
+#ifdef __DEBUG__
     cout << " writing event " << i << endl;
+#endif
     switch (Events[i]->GetType())
     {
       case MIDI_EVENT_TYPE:
@@ -263,9 +281,11 @@ size_t	MidiTrack::WriteChunk(wxFile &midiFileHandle)
 	// calculating delta position from absolute
 	abs_pos = midiFileEvent->GetPos();
 	delta_pos = abs_pos - last_pos;
+#ifdef __DEBUG__
 	cout << " delta " << delta_pos << endl;
 	cout << " for abs " << abs_pos << endl;
 	cout << " and last " << last_pos << endl;
+#endif
 	last_pos = abs_pos;
 
 	// writing delta
@@ -333,7 +353,9 @@ size_t	MidiTrack::WriteChunk(wxFile &midiFileHandle)
     }
   }
 
+#ifdef __DEBUG__
   cout << "[MidiTrack] WriteChunk() end" << endl;
+#endif
 
   return (bytesWritten);
 }
@@ -454,7 +476,7 @@ size_t	MidiFile::WriteMidiFile(wxString &fname)
     wxUint32			len;
     wxFileOffset		header_offset, after_chunk_offset;
 
-    cout << "[MidiFile]WriteMidiFile() writing to file '" << filename.mb_str() << "'" << endl;
+    cout << "[MidiFile] WriteMidiFile() writing to file '" << filename.mb_str() << "'" << endl;
     // create directory ?
     // check continualy for write return ? (running out of space stuff...)
     // or check at the end ?
@@ -476,7 +498,7 @@ size_t	MidiFile::WriteMidiFile(wxString &fname)
     MK_MIDI_TRK_HDR(tc_chunk.ID);
     for (i = 0; i < NbTracks; i++)
     {
-      cout << "[MidiFile]WriteMidiFile() writing track '" << i << "'" << endl;
+      cout << "[MidiFile] WriteMidiFile() writing track '" << i << "'" << endl;
       midiTrack = Tracks[i]; //->GetMidiEvents();
 
       // saving header offset to write it later
@@ -496,7 +518,7 @@ size_t	MidiFile::WriteMidiFile(wxString &fname)
 
       // back to current header position
       if (midiFileHandle.Seek(header_offset) == -1)
-	cout << "seek header failed" << endl;
+	cout << "[MidiFile] WriteMidiFile() seek header failed" << endl;
 
       // writing header
       //tc_chunk.Size = ntohl(len);
@@ -505,19 +527,19 @@ size_t	MidiFile::WriteMidiFile(wxString &fname)
 
       // back to end of current chunk (end of file)
       if (midiFileHandle.Seek(after_chunk_offset) == -1)
-	cout << "seek after chunk failed" << endl;
+	cout << "[MidiFile] WriteMidiFile() seek after chunk failed" << endl;
     }
     fname = filename;
   }
   else
-	cerr << "[MidiFile::WriteMidiFile() Filename is not ok : " << filename.mb_str() << endl;
+	cerr << "[MidiFile] WriteMidiFile() Filename is not ok : " << filename.mb_str() << endl;
   return (bytesWritten);
 }
 
 bool	MidiFile::AppendMidiTrack(MidiTrack *track)
 {
-  //if pas trop de track
-  //quelle est la limite ??
+  //if not too many tracks
+  //what's max ??
   //16 ?
   //unsigned short ?
   this->filename = track->GetFileName();
@@ -538,7 +560,6 @@ bool	MidiFile::AppendMidiTrack(MidiTrack *track)
 
 void	MidiFile::ReadMidiFile()
 {
-  //this->filename = filename;
   cout << "[MidiFile] Loading " << filename.mb_str() << "..." << endl;
   wxFile MIDIFile;
   MIDIFile.Open(filename);
@@ -547,10 +568,8 @@ void	MidiFile::ReadMidiFile()
     t_chunk ch;
     ch.Size = 0;
     unsigned long len = 0;
-    cout << "Skipping";
     do
     {
-      cout << ".";
       MIDIFile.Seek(ch.Size, wxFromCurrent);
       len = MIDIFile.Read(&ch, sizeof(ch));
       //ch.Size = htonl(ch.Size);
@@ -559,7 +578,9 @@ void	MidiFile::ReadMidiFile()
     cout << endl;
     if (IS_MIDI_HEADER(ch.ID))
     {
+#ifdef __DEBUG__
       cout << "is midi header" << endl;
+#endif
       if ((MIDIFile.Read(&Type, 2) != 2) ||
           (MIDIFile.Read(&NbTracks, 2) != 2) ||
           (MIDIFile.Read(&Division, 2) != 2))
@@ -571,16 +592,18 @@ void	MidiFile::ReadMidiFile()
       Type = htons(Type);
       NbTracks = htons(NbTracks);
       Division = htons(Division);
+#ifdef __DEBUG__
       cout << NbTracks << " tracks" << endl;
       cout << "Division " << Division << endl;
+#endif
       for (unsigned short noTrack = 0; noTrack < NbTracks; noTrack++)
       {
+#ifdef __DEBUG__
 	cout << "reading track " << noTrack << endl;
+#endif
         ch.Size = 0;
-	cout << "skipping again";
         do
         {
-	  cout << ".";
           MIDIFile.Seek(ch.Size, wxFromCurrent);
           len = MIDIFile.Read(&ch, sizeof(ch));
           //ch.Size = htonl(ch.Size);
@@ -589,15 +612,16 @@ void	MidiFile::ReadMidiFile()
 	cout << endl;
         if (IS_MIDI_TRK(ch.ID))
         {
+#ifdef __DEBUG__
 	  cout << "midi track" << endl;
+#endif
           unsigned char *track = (unsigned char *)malloc(ch.Size);
           len = MIDIFile.Read(track, ch.Size);
-	  cout << "read " << len << " bytes" << endl;
           if (len == ch.Size)
             Tracks.push_back(new MidiTrack(ch.Size, track, Division,
 					   filename, noTrack));
 	  else
-	    cout << " not added becouse len = " << len << " and ch.Size = " << (int)ch.Size << endl;
+	    cout << "[MidiFile] ReadMidiFile() track " << noTrack << " not added becouse len = " << len << " and ch.Size = " << (int)ch.Size << endl;
           free(track);
         }
         else
