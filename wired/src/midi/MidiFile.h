@@ -9,8 +9,11 @@
 #include <wx/wx.h>
 #endif
 #include <wx/file.h>
+#include <wx/defs.h>
 
 #include <vector>
+
+#include "midi.h"
 
 using namespace std;
 using std::vector;
@@ -20,6 +23,8 @@ using std::vector;
 // no . allowed !
 #define  DEFAULT_MIDI_NAME	wxT("track")
 #define  DEFAULT_MIDI_PATH	wxT("audio")
+
+void	MakeMidiFileName(wxString &filename);
 
 // CHUNK MIDI HEADER
 #define MIDI_HDR_1			'M'
@@ -112,7 +117,8 @@ using std::vector;
 typedef struct	s_chunk
 {
   unsigned char	ID[4];
-  unsigned long Size;
+  //unsigned long Size;
+  wxUint32		Size;
 }		t_chunk;
 
 // Base class for Midi event handling
@@ -190,10 +196,12 @@ class MidiTrack
   public:
 	MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN,
 		wxString filename, unsigned int noTrack);
+	MidiTrack(vector<MidiEvent *> &evts, unsigned short PPQN,
+		wxString filename, unsigned int noTrack);
 	~MidiTrack();
 
 	size_t	WriteChunk(wxFile &midiFileHandle);
-	size_t	WriteDelta(wxFile &midiFileHandle, unsigned long value);
+	size_t	WriteDelta(wxFile &midiFileHandle, wxUint32 value);
 
 	unsigned long GetMaxPos() { return (MaxPos); }
 	vector<MidiFileEvent *> GetMidiEvents();
@@ -203,7 +211,7 @@ class MidiTrack
 	inline unsigned int	GetNoTrack() { return (_noTrack); };
 
   protected:
-	unsigned long GetVLQ(unsigned char *buf, unsigned long &ofs);
+	wxUint32 GetVLQ(unsigned char *buf, wxUint32 &ofs);
 	vector<Event *> Events;
 	unsigned long MaxPos;
 	unsigned short ppqn;
@@ -217,11 +225,11 @@ class MidiFile
 	~MidiFile();
 
 	void		ReadMidiFile();
-	size_t		WriteMidiFile();
+	size_t		WriteMidiFile(wxString &filename);
 	bool		AppendMidiTrack(MidiTrack *track);
 	long		GetNumberOfTracks() { return NbTracks; }
 	long		GetDivision()   { return Division; }
-	MidiTrack	*GetTrack(int num) { if ((num >= 0) && (num < NbTracks))
+	MidiTrack	*GetTrack(int num) { if ((num >= 0) && (num < NbTracks) && num < Tracks.size())
 	  return Tracks[num]; else return NULL; }
 
   protected:
