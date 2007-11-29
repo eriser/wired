@@ -434,24 +434,23 @@ MidiFile::MidiFile(wxString filename, bool newMidiFile)
   Division = 0;
   Type = 0;
 
-/*
- *  if (newMidiFile)
- *  {
- *        wxString ext = wxT("mid");
- *        wxString customFN_orig;
- *
- *        customFN_orig.Clear();
- *        customFN_orig << DEFAULT_MIDI_PATH << wxFileName::GetPathSeparator() << DEFAULT_MIDI_NAME;
- *        filename = customFN_orig.BeforeLast('.');
- *        filename << gl_MidiFileCounter << wxT(".") << ext;
- *        while (wxFileName::FileExists(filename))
- *        {
- *          gl_MidiFileCounter++;
- *          filename = customFN_orig.BeforeLast('.');
- *          filename << gl_MidiFileCounter << wxT(".") << ext;
- *        } 
- *  }
- */
+  if (newMidiFile)
+  {
+	wxString ext = wxT("mid");
+	wxString customFN_orig;
+
+	customFN_orig.Clear();
+	customFN_orig << DEFAULT_MIDI_PATH << wxFileName::GetPathSeparator() << DEFAULT_MIDI_NAME <<
+	  wxT(".") << ext;
+	filename = customFN_orig.BeforeLast('.');
+	filename << gl_MidiFileCounter << wxT(".") << ext;
+	while (wxFileName::FileExists(filename))
+	{
+	  gl_MidiFileCounter++;
+	  filename = customFN_orig.BeforeLast('.');
+	  filename << gl_MidiFileCounter << wxT(".") << ext;
+	} 
+  }
   this->filename = filename;
 }
 
@@ -460,6 +459,11 @@ size_t	MidiFile::WriteMidiFile(wxString &fname)
   wxFileName	wxFN(filename);
   size_t		bytesWritten = (size_t)0;
 
+  wxFileName	path(DEFAULT_MIDI_PATH);
+
+  if (!path.DirExists())
+    if (!path.Mkdir())
+      cerr << "[MidiFile] WriteMidiFile() problem creating directory " << path.GetFullPath().mb_str() << endl;
   if (!wxFN.IsOk())
   {
     MakeMidiFileName(filename);
