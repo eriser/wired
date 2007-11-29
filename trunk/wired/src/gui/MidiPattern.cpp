@@ -381,13 +381,16 @@ void				MidiPattern::Save()
 {
   SaveElement*			saved;
   static bool			wasOk = false;
+  size_t				len;
 
+
+  MidiFile *midiFile = new MidiFile(_filename, (_filename.Cmp(wxT("")) == 0));
+  _filename = midiFile->GetFileName();
   cout << "[MidiPattern] Save() : writing '" << _filename.mb_str() << "'" << endl;
-
-  MidiFile *midiFile = new MidiFile(_filename);
   midiFile->AppendMidiTrack(GetMidiTrack());
+  len = midiFile->WriteMidiFile(_filename);
 #ifdef __DEBUG__
-  cout << "written " << (int)midiFile->WriteMidiFile(_filename) << " bytes" << endl;
+  cout << "written " << (int)len << " bytes" << endl;
 #endif
 
   saved = new SaveElement(wxT("FileName"), _filename);

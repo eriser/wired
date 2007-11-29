@@ -1240,7 +1240,7 @@ void					MainWindow::OnAddTrackMidi(wxCommandEvent &event)
 {
   LOG;
   Track *newTrack = SeqPanel->CreateTrack(eMidiTrack);
-  newTrack->CreateMidiPattern(new MidiTrack(0, NULL, 96, wxT("new"), 1));
+  newTrack->CreateMidiPattern(new MidiTrack(0, NULL, 96, wxT(""), 1));
 }
 
 // Added by Julien Eres
@@ -1248,7 +1248,7 @@ void					MainWindow::OnAddTrackAutomation(wxCommandEvent &event)
 {
   LOG;
   Track *newTrack = SeqPanel->CreateTrack(eAutomationTrack);
-  newTrack->CreateMidiPattern(new MidiTrack(0, NULL, 96, wxT("new"), 1));
+  newTrack->CreateMidiPattern(new MidiTrack(0, NULL, 96, wxT(""), 1));
   cout << __FUNCTION__ << '@' << __LINE__ << ": TODO In progress." << endl;
 }
 
