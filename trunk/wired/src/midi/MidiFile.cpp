@@ -252,6 +252,11 @@ MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PP
   MaxPos = abs;
 }
 
+inline bool sort_event_by_pos(Event *a, Event *b)
+{
+	return (a->GetPos() <= b->GetPos());
+}
+
 size_t	MidiTrack::WriteChunk(wxFile &midiFileHandle)
 {
   size_t					bytesWritten = 0;
@@ -268,6 +273,7 @@ size_t	MidiTrack::WriteChunk(wxFile &midiFileHandle)
   bool					is_running = false;
 
   cout << "[MidiTrack] WriteChunk() nb of events : '" << Events.size() << "'" << endl;
+  stable_sort(Events.begin(), Events.end(), sort_event_by_pos);
   for (unsigned int i = 0; i < Events.size(); i++)
   {
 #ifdef __DEBUG__
@@ -385,7 +391,7 @@ size_t	MidiTrack::WriteDelta(wxFile &midiFileHandle, wxUint32 value)
    return (bytesWritten);
 }
 
-inline bool sort_by_pos(MidiFileEvent *a, MidiFileEvent *b)
+inline bool sort_fileevent_by_pos(MidiFileEvent *a, MidiFileEvent *b)
 {
 	return (a->GetPos() <= b->GetPos());
 }
@@ -396,7 +402,7 @@ vector<MidiFileEvent *> MidiTrack::GetMidiEvents()
   for (unsigned int i = 0; i < Events.size(); i++)
     if (Events[i]->GetType() == MIDI_EVENT_TYPE)
       e.push_back((MidiFileEvent *)Events[i]);
-  stable_sort(e.begin(), e.end(), sort_by_pos);
+  stable_sort(e.begin(), e.end(), sort_fileevent_by_pos);
   return (e);
 }
 
