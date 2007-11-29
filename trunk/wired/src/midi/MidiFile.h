@@ -24,6 +24,8 @@ using std::vector;
 #define  DEFAULT_MIDI_NAME	wxT("track")
 #define  DEFAULT_MIDI_PATH	wxT("audio")
 
+// default ppqn (when =1)
+#define  DEFAULT_MIDI_PPQN 5000 
 void	MakeMidiFileName(wxString &filename);
 
 // CHUNK MIDI HEADER
@@ -233,6 +235,7 @@ class MidiFile
 	  return Tracks[num]; else return NULL; }
 
   protected:
+	bool	_read;	// if the files was read or not
 	wxString filename;
 	unsigned short Division;
 	unsigned short Type;
