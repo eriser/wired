@@ -21,6 +21,7 @@ class				MidiPattern : public Pattern
   // only set when we add a pattern from MidiTrack class
   wxString			_filename;
   unsigned short		_noTrack;
+  MidiTrack			*_midiTrack;
 
  public:
   MidiPattern(WiredDocument *parent, double pos, double endpos, long trackindex);
@@ -31,12 +32,14 @@ class				MidiPattern : public Pattern
   void				SetMidiTrack(MidiTrack* midiTrack);
 
  public:
+  MidiTrack*			GetMidiTrack();
   void				AddEvent(MidiEvent *event);
   void				AddEvent(MidiFileEvent *event);
   void				Update();
   void				SetSelected(bool sel);
   unsigned short		GetPPQN() { return (ppqn); }
   void				SetPPQN(unsigned short p) { ppqn = p; }
+  //MidiTrack*			GetMidiTrack() { return (_midiTrack); }
   void				SetDrawColour(wxColour c);
   Pattern			*CreateCopy(double pos);
   void				DrawMidi();
