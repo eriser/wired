@@ -434,29 +434,11 @@ MidiTrack::~MidiTrack()
 /*** Classe MidiFile                                                               ***/
 /*************************************************************************************/
 
-MidiFile::MidiFile(wxString filename, bool newMidiFile)
+MidiFile::MidiFile(wxString filename)
 {
   NbTracks = 0;
   Division = 0;
   Type = 0;
-
-  if (newMidiFile)
-  {
-	wxString ext = wxT("mid");
-	wxString customFN_orig;
-
-	customFN_orig.Clear();
-	customFN_orig << DEFAULT_MIDI_PATH << wxFileName::GetPathSeparator() << DEFAULT_MIDI_NAME <<
-	  wxT(".") << ext;
-	filename = customFN_orig.BeforeLast('.');
-	filename << gl_MidiFileCounter << wxT(".") << ext;
-	while (wxFileName::FileExists(filename))
-	{
-	  gl_MidiFileCounter++;
-	  filename = customFN_orig.BeforeLast('.');
-	  filename << gl_MidiFileCounter << wxT(".") << ext;
-	} 
-  }
   this->filename = filename;
 }
 
@@ -467,9 +449,17 @@ size_t	MidiFile::WriteMidiFile(wxString &fname)
 
   wxFileName	path(DEFAULT_MIDI_PATH);
 
+  if (fname.Cmp(wxT("")))
+  {
+	filename = fname;
+	wxFN.Assign(filename);
+  }
+  else
+	fname = filename;
   if (!path.DirExists())
     if (!path.Mkdir())
-      cerr << "[MidiFile] WriteMidiFile() problem creating directory " << path.GetFullPath().mb_str() << endl;
+      cerr << "[MidiFile] WriteMidiFile() problem creating directory "
+		<< path.GetFullPath().mb_str() << endl;
   if (!wxFN.IsOk())
   {
     MakeMidiFileName(filename);
@@ -487,7 +477,6 @@ size_t	MidiFile::WriteMidiFile(wxString &fname)
     wxFileOffset		header_offset, after_chunk_offset;
 
     cout << "[MidiFile] WriteMidiFile() writing to file '" << filename.mb_str() << "'" << endl;
-    // create directory ?
     // check continualy for write return ? (running out of space stuff...)
     // or check at the end ?
     // create the file, destroy it if it exists
@@ -546,20 +535,30 @@ size_t	MidiFile::WriteMidiFile(wxString &fname)
   return (bytesWritten);
 }
 
-bool	MidiFile::AppendMidiTrack(MidiTrack *track)
+bool	MidiFile::InsertMidiTrack(MidiTrack *track, unsigned short noTrack)
 {
   //if not too many tracks
   //what's max ??
   //16 ?
   //unsigned short ?
-  this->filename = track->GetFileName();
-  Tracks.push_back(track);
+  this->filename = (track->GetFileName().Cmp(wxT("")) == 0 ? this->filename : track->GetFileName());
+  //Tracks.push_back(track);
+
+  vector<MidiTrack *>::iterator vMTi = Tracks.begin();
+  int							i = 0;
+  while (i < noTrack && vMTi != Tracks.end())
+  {
+	i++;
+	vMTi++;
+  }
+  Tracks.insert(vMTi, track);
+
   NbTracks++;
   if (Division != track->GetPPQN())
   {
 	if (NbTracks > 1)
 	{
-	  cout << "[MidiFile] AppendMidiTrack() New division, apparently... : from " << (int)Division
+	  cout << "[MidiFile] InsertMidiTrack() New division, apparently... : from " << (int)Division
 		<< " to " << (int) track->GetPPQN() << endl;
 	}
 	Division = track->GetPPQN();
@@ -585,7 +584,6 @@ void	MidiFile::ReadMidiFile()
       //ch.Size = htonl(ch.Size);
       ch.Size = wxUINT32_SWAP_ALWAYS(ch.Size);
     } while ((len == sizeof(ch)) && (!IS_MIDI_HEADER(ch.ID)));
-    cout << endl;
     if (IS_MIDI_HEADER(ch.ID))
     {
 #ifdef __DEBUG__
@@ -619,7 +617,6 @@ void	MidiFile::ReadMidiFile()
           //ch.Size = htonl(ch.Size);
           ch.Size = wxUINT32_SWAP_ALWAYS(ch.Size);
         } while ((len == sizeof(ch)) && (!IS_MIDI_TRK(ch.ID)));
-	cout << endl;
         if (IS_MIDI_TRK(ch.ID))
         {
 #ifdef __DEBUG__
