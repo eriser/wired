@@ -27,7 +27,7 @@ using std::vector;
 // default ppqn (when =1)
 #define  DEFAULT_MIDI_PPQN 1234 
 
-void	MakeMidiFileName(wxString &filename);
+void	MakeMidiFileName(wxString &filename, unsigned long seqTrackIndex);
 
 // CHUNK MIDI HEADER
 #define MIDI_HDR_1			'M'
@@ -224,11 +224,11 @@ class MidiTrack
 class MidiFile
 {
   public:
-	MidiFile(wxString filename);
+	MidiFile(wxString filename, unsigned long long wiredTrackIndex = -1);
 	~MidiFile();
 
 	void		ReadMidiFile();
-	size_t		WriteMidiFile(wxString &filename);
+	size_t		WriteMidiFile();
 	bool		InsertMidiTrack(MidiTrack *track, unsigned short noTrack = 0);
 	long		GetNumberOfTracks() { return NbTracks; }
 	long		GetDivision()   { return Division; }
