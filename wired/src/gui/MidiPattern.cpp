@@ -24,6 +24,7 @@ MidiPattern::MidiPattern(WiredDocument *parent, double pos, double endpos, long 
   : Pattern(parent, wxT("MidiPattern"), pos, endpos, trackindex)
 {
   Init(parent);
+  _to_write = false;
 }
 
 MidiPattern::MidiPattern(WiredDocument *parent, double pos,
@@ -36,6 +37,7 @@ MidiPattern::MidiPattern(WiredDocument *parent, double pos,
   Init(parent);
   SetMidiTrack(midiTrack);
   _filename = midiTrack->GetFileName();
+  _to_write = false;
 }
 
 MidiPattern::~MidiPattern()
@@ -296,6 +298,7 @@ void                    MidiPattern::AddEvent(MidiEvent *event)
   list<MidiEvent *>::iterator        j;
   MidiEvent                *e;
 
+  _to_write = true;
   cout << "msg : " << hex << event->Msg[0];
   if ((event->EndPosition == 0.0) &&
       ((event->Msg[0] == M_NOTEON1) || (event->Msg[0] == M_NOTEON2)))
@@ -383,23 +386,29 @@ void				MidiPattern::Save()
   // we can't rely on filename
   static long long		last_TrackIndex = -1;
 
-  // is this the first run ? or is this a different track ?
-  if (!midiFile || last_TrackIndex != TrackIndex)
+  // _to_write : event (not fileevents) where added
+  // or cmp "" : wierd midipattern created, goes with next (or previous) one
+  // or is this the same track i just wrote ?
+  if (_to_write || _filename.Cmp(wxT("")) == 0 || last_TrackIndex == TrackIndex)
   {
-	// the last midiFile will not be deleted...
-	if (midiFile)
-	  delete midiFile;
-	midiFile = new MidiFile(_filename);
-	last_TrackIndex = TrackIndex;
-  }
-  midiFile->InsertMidiTrack(GetMidiTrack(), _noTrack);
-  len = midiFile->WriteMidiFile(_filename);
-  _filename = midiFile->GetFileName();
-  cout << "[MidiPattern] Save() : writing track '" << _noTrack
-								  << "' in '" << _filename.mb_str() << "'" << endl;
+    // is this the first run ? or is this a different track ?
+    if (!midiFile || last_TrackIndex != TrackIndex)
+    {
+      // the last midiFile will not be deleted...
+      if (midiFile)
+	delete midiFile;
+      midiFile = new MidiFile(_filename, TrackIndex);
+      last_TrackIndex = TrackIndex;
+    }
+    midiFile->InsertMidiTrack(GetMidiTrack(), _noTrack);
+    len = midiFile->WriteMidiFile();
+    _filename = midiFile->GetFileName();
+    cout << "[MidiPattern] Save() : writing track '" << _noTrack
+				    << "' in '" << _filename.mb_str() << "'" << endl;
 #ifdef __DEBUG__
-  cout << "written " << (int)len << " bytes" << endl;
+    cout << "written " << (int)len << " bytes" << endl;
 #endif
+  }
 
   saved = new SaveElement(wxT("FileName"), _filename);
   saved->addAttribute(wxT("NoTrack"), (int)_noTrack);

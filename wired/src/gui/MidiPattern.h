@@ -21,6 +21,7 @@ class				MidiPattern : public Pattern
   // only set when we add a pattern from MidiTrack class
   wxString			_filename;
   unsigned short		_noTrack;
+  bool				_to_write;
 
  public:
   MidiPattern(WiredDocument *parent, double pos, double endpos, long trackindex);

@@ -13,25 +13,14 @@
 #include <wx/filename.h>
 #include <iostream>
 
-static int		gl_MidiFileCounter;
 
-void	MakeMidiFileName(wxString &filename)
+void	MakeMidiFileName(wxString &filename, unsigned long seqTrackIndex)
 {
-  gl_MidiFileCounter++;
   wxString ext = wxT("mid");
-  wxString customFN_orig;
 
-  customFN_orig.Clear();
-  customFN_orig << DEFAULT_MIDI_PATH << wxFileName::GetPathSeparator()
-    << DEFAULT_MIDI_NAME << wxT(".") << ext;
-  filename = customFN_orig.BeforeLast('.');
-  filename << gl_MidiFileCounter << wxT(".") << ext;
-  while (wxFileName::FileExists(filename))
-  {
-    gl_MidiFileCounter++;
-    filename = customFN_orig.BeforeLast('.');
-    filename << gl_MidiFileCounter << wxT(".") << ext;
-  } 
+  filename.Clear();
+  filename << DEFAULT_MIDI_PATH << wxFileName::GetPathSeparator()
+    << DEFAULT_MIDI_NAME << seqTrackIndex << wxT(".") << ext;
 }
 
 /*************************************************************************************/
@@ -178,9 +167,6 @@ MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PP
   // save parent's reference
   _noTrack = noTrack;
 
-  wxFileName	wxFN(filename);
-  if (!wxFN.IsOk())
-    MakeMidiFileName(filename);
   _filename = filename;
 
 #ifdef __DEBUG__
@@ -434,37 +420,28 @@ MidiTrack::~MidiTrack()
 /*** Classe MidiFile                                                               ***/
 /*************************************************************************************/
 
-MidiFile::MidiFile(wxString filename)
+MidiFile::MidiFile(wxString filename, unsigned long long seqTrackIndex)
 {
   NbTracks = 0;
   Division = 0;
   Type = 0;
+  if (seqTrackIndex != -1)
+    MakeMidiFileName(filename, seqTrackIndex);
   this->filename = filename;
 }
 
-size_t	MidiFile::WriteMidiFile(wxString &fname)
+size_t	MidiFile::WriteMidiFile()
 {
   wxFileName	wxFN(filename);
   size_t		bytesWritten = (size_t)0;
 
   wxFileName	path(DEFAULT_MIDI_PATH);
 
-  if (fname.Cmp(wxT("")))
-  {
-	filename = fname;
-	wxFN.Assign(filename);
-  }
-  else
-	fname = filename;
+  // just in case
   if (!path.DirExists())
     if (!path.Mkdir())
       cerr << "[MidiFile] WriteMidiFile() problem creating directory "
 		<< path.GetFullPath().mb_str() << endl;
-  if (!wxFN.IsOk())
-  {
-    MakeMidiFileName(filename);
-    wxFN.Assign(filename);
-  }
   if (wxFN.IsOk())
   {
     wxFile			midiFileHandle;
@@ -528,7 +505,6 @@ size_t	MidiFile::WriteMidiFile(wxString &fname)
       if (midiFileHandle.Seek(after_chunk_offset) == -1)
 	cout << "[MidiFile] WriteMidiFile() seek after chunk failed" << endl;
     }
-    fname = filename;
   }
   else
 	cerr << "[MidiFile] WriteMidiFile() Filename is not ok : " << filename.mb_str() << endl;
