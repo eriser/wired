@@ -224,12 +224,12 @@ class MidiTrack
 class MidiFile
 {
   public:
-	MidiFile(wxString filename, bool newMidiFile = false);
+	MidiFile(wxString filename);
 	~MidiFile();
 
 	void		ReadMidiFile();
 	size_t		WriteMidiFile(wxString &filename);
-	bool		AppendMidiTrack(MidiTrack *track);
+	bool		InsertMidiTrack(MidiTrack *track, unsigned short noTrack = 0);
 	long		GetNumberOfTracks() { return NbTracks; }
 	long		GetDivision()   { return Division; }
 	MidiTrack	*GetTrack(int num) { if ((num >= 0) && (num < NbTracks) && num < Tracks.size())
