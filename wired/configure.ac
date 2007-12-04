@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([Wired], [0.5alpha], [wired@bloodshed.net])
+AC_INIT([Wired], [0.6], [wired@bloodshed.net])
 
 
 # Auxiliary files.
