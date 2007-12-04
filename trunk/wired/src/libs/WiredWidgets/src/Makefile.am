@@ -1,4 +1,4 @@
-LDFLAGS = $(shell wx-config --libs)
+LDFLAGS = $(shell wx-config --libs) -Wl,-soname=libWiredWidgets.so
 
 CPPFLAGS = $(shell wx-config --cflags) -I../../../gui -I../../../plugins -I../../../fileloader -I../../../sequencer -I../../../redist -I../../../engine -I../../../mixer -I../../../midi -I../../../midi/portmidi/pm_common -I../../../midi/portmidi/porttime -I../../../editmidi -I../../../undo
 
