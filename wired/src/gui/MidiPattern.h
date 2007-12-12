@@ -43,6 +43,7 @@ class				MidiPattern : public Pattern
   Pattern			*CreateCopy(double pos);
   void				DrawMidi();
   void				Split(double pos);
+  void				SetToWrite(bool to_write = true) { _to_write = to_write; }
 
   // WiredDocument implementation
   void				Save();

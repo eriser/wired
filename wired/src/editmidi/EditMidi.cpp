@@ -104,6 +104,7 @@ void					EditMidi::SetMidiPattern(MidiPattern *mpattern)
 {
   midi_pattern = mpattern;
   mp->SetMidiPattern(mpattern);
+  cout << "[EditMidi] SetMidiPattern() midi pattern is set to be saved..." << endl;
 }
 
 void					EditMidi::Resize(long w, long h)
@@ -276,16 +277,19 @@ void					EditMidi::OnDetach(wxFrame *f)
 
 void					EditMidi::OnToolMove(wxCommandEvent &e)
 {
+  midi_pattern->SetToWrite();
   mp->SetTool(ID_TOOL_MOVE_MIDIPART);
 }
 
 void					EditMidi::OnToolEdit(wxCommandEvent &e)
 {
+  midi_pattern->SetToWrite();
   mp->SetTool(ID_TOOL_EDIT_MIDIPART);
 }
 
 void					EditMidi::OnToolDel(wxCommandEvent &e)
 {
+  midi_pattern->SetToWrite();
   mp->SetTool(ID_TOOL_DEL_MIDIPART);
 }
 
