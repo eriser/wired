@@ -57,6 +57,7 @@ class					MidiPart: public wxControl
   int					tool;
   Note					*selected2;
   MidiPattern				*pattern;
+  int					lastOne;
 
   DECLARE_EVENT_TABLE()
 };

@@ -45,6 +45,19 @@ void				EditNote::OnLeftUp(wxMouseEvent &e)
   ((MidiPart *)GetParent())->em->ma->Refresh(true);
 }
 
+void				EditNote::SetDuration(double duration)
+{
+  if (n)
+  {
+    n->SetDuration(duration);
+    Refresh(true);
+    GetParent()->Refresh(true);
+    ((MidiPart *)GetParent())->em->ma->Refresh(true);
+  }
+  else
+    cout << "[EditNote] SetDuration() : pas de note" << endl;
+}
+
 void				EditNote::OnLeftDown(wxMouseEvent &e)
 {
   dx = e.GetPosition().x;
