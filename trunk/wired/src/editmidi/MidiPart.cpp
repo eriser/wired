@@ -214,120 +214,161 @@ wxRect					*CalcIntersection(wxRect &a, wxRect &b)
 void					MidiPart::OnMouseMove(wxMouseEvent &e)
 {
   if (e.LeftIsDown())
-    {
-      OnClick(e);
-    }
-}
-
-void					MidiPart::OnReleaseClick(wxMouseEvent &e)
-{
-  selected2 = NULL;
-}
-
-void					MidiPart::OnClick(wxMouseEvent &e)
-{
-  if (selected2)
+  {
+    if (selected2)
     {
       double nx = (selected2->GetPos() * 4 * ROW_WIDTH * ZoomX);
       if (e.GetX() - nx > 0)
-	{
-	  selected2->SetDuration((e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX));
-	  Refresh(true);
-	  em->ma->SetNotes(Notes);
-	  em->ma->Refresh(true);
-
-	  SeqPanel->UpdateMidiPattern(em->midi_pattern);
-	}
-      return;
-    }
-  for (vector<Note *>::iterator i = Notes.begin(); i < Notes.end(); i++)
-    {
-      wxRect b((int)floor((*i)->GetPos() * 4 * ROW_WIDTH * ZoomX),
-	       (int)floor((127 - (*i)->GetNote()) * ROW_HEIGHT * ZoomY),
-	       (int)ceil((*i)->GetDuration() * 4 * ROW_WIDTH * ZoomX),
-	       (int)ceil(ROW_HEIGHT * ZoomY));
-      if ((e.GetX() >= b.x) && (e.GetX() <= (b.x + b.width)) &&
-	  (e.GetY() >= b.y) && (e.GetY() <= (b.y + b.height)))
-	{
-	  switch (tool)
-	    {
-	    case ID_TOOL_MOVE_MIDIPART:
-	      if (selected != NULL)
-		{
-		  delete selected;
-		  Refresh(true);
-		}
-	      selected = new EditNote(this, -1, wxPoint(b.x, b.y),
-				      wxSize(b.width, b.height), *i);
-	      selected->SetZoomX(ZoomX);
-
-	      return ;
-	      break;
-	    case ID_TOOL_EDIT_MIDIPART:
-	      if (!selected2)
-		{
-		  selected2 = (*i);
-		}
-	      if (selected2 == *i)
-		{
-		  if (e.GetX() - b.x > 0)
-		    {
-		      selected2->SetDuration((e.GetX() - b.x) / (ROW_WIDTH * 4 * ZoomX));
-		      Refresh(true);
-		      em->ma->SetNotes(Notes);
-		      em->ma->Refresh(true);
-
-		      SeqPanel->UpdateMidiPattern(em->midi_pattern);
-		    }
-		}
-	      return ;
-	      break;
-	    case ID_TOOL_DEL_MIDIPART:
-	      (*i)->Erase();
-	      Notes.erase(i);
-	      Refresh(true);
-	      em->ma->SetNotes(Notes);
-	      em->ma->Refresh(true);
-
-	      SeqPanel->UpdateMidiPattern(em->midi_pattern);
-	      return ;
-	      break;
-	    }
-	}
-    }
-  if (tool == ID_TOOL_MOVE_MIDIPART)
-    {
-      if (selected != NULL)
-	{
-	  delete selected;
-	  Refresh(true);
-	}
-      selected = NULL;
-      SeqPanel->UpdateMidiPattern(em->midi_pattern);
-    }
-  else
-    if (tool == ID_TOOL_EDIT_MIDIPART)
       {
-	int msg[3];
-	msg[0] = ME_NOTEON;
-	msg[1] = 127 - e.GetY() / ROW_HEIGHT;
-	msg[2] = 64;
-	MidiEvent *evt = new MidiEvent(0, e.GetX() / (ROW_WIDTH * 4 * ZoomX), msg);
-	evt->EndPosition = evt->Position + .25 / 4;
-	pattern->Events.push_back(evt);
-	Note *note = new Note(pattern, pattern->Events.size() - 1);
-	Notes.push_back(note);
-	selected2 = note;
-	msg[0] = ME_NOTEOFF;
-	msg[2] = 0;
-	evt = new MidiEvent(0, evt->EndPosition, msg);
-	pattern->Events.push_back(evt);
+	selected2->SetDuration((e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX));
 	Refresh(true);
 	em->ma->SetNotes(Notes);
 	em->ma->Refresh(true);
 
 	SeqPanel->UpdateMidiPattern(em->midi_pattern);
       }
+
+      // mouse still on the same note ?
+      if (lastOne != 127 - e.GetY() / ROW_HEIGHT)
+      {
+	OnReleaseClick(e);
+	OnClick(e);
+      }
+    }
+  }
+}
+
+void					MidiPart::OnReleaseClick(wxMouseEvent &e)
+{
+    switch (tool)
+    {
+      case ID_TOOL_MOVE_MIDIPART:
+	break;
+      case ID_TOOL_EDIT_MIDIPART:
+	if (selected2)
+	{
+	  double nx = (selected2->GetPos() * 4 * ROW_WIDTH * ZoomX);
+	  if (e.GetX() - nx > 0)
+	  {
+	    selected2->SetDuration((e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX));
+	    // assuming Events.end() is the last ME_NOTEOFF set by OnClick()
+	    pattern->Events.pop_back();
+
+	    int msg[3];
+	    msg[0] = ME_NOTEOFF;
+	    // getting the original note from e.GetY() at OnClick()
+	    msg[1] = (*(pattern->Events.end()))->Msg[1]; // = 127 - e.GetY() / ROW_HEIGHT;
+	    msg[2] = 0;
+	    MidiEvent *evt;
+	    evt = new MidiEvent(0, e.GetX() / (ROW_WIDTH * 4 * ZoomX) + .25 / 4, msg);
+	    pattern->Events.push_back(evt);
+	    Refresh(true);
+	    em->ma->SetNotes(Notes);
+	    em->ma->Refresh(true);
+
+	    SeqPanel->UpdateMidiPattern(em->midi_pattern);
+	  }
+	}
+	break;
+      case ID_TOOL_DEL_MIDIPART:
+	break;
+    }
+  selected2 = NULL;
+  
+}
+
+void					MidiPart::OnClick(wxMouseEvent &e)
+{
+  pattern->SetToWrite();
+  for (vector<Note *>::iterator i = Notes.begin(); i < Notes.end(); i++)
+  {
+    wxRect b((int)floor((*i)->GetPos() * 4 * ROW_WIDTH * ZoomX),
+	(int)floor((127 - (*i)->GetNote()) * ROW_HEIGHT * ZoomY),
+	(int)ceil((*i)->GetDuration() * 4 * ROW_WIDTH * ZoomX),
+	(int)ceil(ROW_HEIGHT * ZoomY));
+    if ((e.GetX() >= b.x) && (e.GetX() <= (b.x + b.width)) &&
+	(e.GetY() >= b.y) && (e.GetY() <= (b.y + b.height)))
+    {
+      switch (tool)
+      {
+	case ID_TOOL_MOVE_MIDIPART:
+	  if (selected != NULL)
+	  {
+	    delete selected;
+	    Refresh(true);
+	  }
+	  selected = new EditNote(this, -1, wxPoint(b.x, b.y),
+	      wxSize(b.width, b.height), *i);
+	  selected->SetZoomX(ZoomX);
+
+	  return ;
+	  break;
+	case ID_TOOL_EDIT_MIDIPART:
+	  if (!selected2)
+	  {
+	    selected2 = (*i);
+	  }
+	  if (selected2 == *i)
+	  {
+	    if (e.GetX() - b.x > 0)
+	    {
+	      selected2->SetDuration((e.GetX() - b.x) / (ROW_WIDTH * 4 * ZoomX));
+	      Refresh(true);
+	      em->ma->SetNotes(Notes);
+	      em->ma->Refresh(true);
+
+	      SeqPanel->UpdateMidiPattern(em->midi_pattern);
+	    }
+	  }
+	  return ;
+	  break;
+	case ID_TOOL_DEL_MIDIPART:
+	  (*i)->Erase();
+	  Notes.erase(i);
+	  Refresh(true);
+	  em->ma->SetNotes(Notes);
+	  em->ma->Refresh(true);
+
+	  SeqPanel->UpdateMidiPattern(em->midi_pattern);
+	  return ;
+	  break;
+      }
+    }
+  }
+  if (tool == ID_TOOL_MOVE_MIDIPART)
+  {
+    if (selected != NULL)
+    {
+      delete selected;
+      Refresh(true);
+    }
+    selected = NULL;
+    SeqPanel->UpdateMidiPattern(em->midi_pattern);
+  }
+  else
+    if (tool == ID_TOOL_EDIT_MIDIPART)
+    {
+      int msg[3];
+      msg[0] = ME_NOTEON;
+      msg[1] = 127 - e.GetY() / ROW_HEIGHT;
+      lastOne = msg[1];
+      msg[2] = 64;
+      MidiEvent *evt = new MidiEvent(0, e.GetX() / (ROW_WIDTH * 4 * ZoomX), msg);
+      evt->EndPosition = evt->Position + .25 / 4;
+      pattern->Events.push_back(evt);
+      Note *note = new Note(pattern, pattern->Events.size() - 1);
+      Notes.push_back(note);
+      selected2 = note;
+      msg[0] = ME_NOTEOFF;
+      msg[2] = 0;
+      evt = new MidiEvent(0, evt->EndPosition, msg);
+      pattern->Events.push_back(evt);
+      Refresh(true);
+      em->ma->SetNotes(Notes);
+      em->ma->Refresh(true);
+
+      SeqPanel->UpdateMidiPattern(em->midi_pattern);
+    }
 }
 
 void					MidiPart::SetTool(int numtool)

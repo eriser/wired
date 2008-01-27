@@ -22,6 +22,7 @@ class				EditNote: public wxPanel
   void				OnLeftUp(wxMouseEvent &);
   void				OnLeftDown(wxMouseEvent &);
   void				SetZoomX(double);
+  void				SetDuration(double);
   
   bool				dragging;
   long				mx;
