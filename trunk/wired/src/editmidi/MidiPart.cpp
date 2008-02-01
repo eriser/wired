@@ -226,7 +226,10 @@ void					MidiPart::OnMouseMove(wxMouseEvent &e)
       double nx = (selected2->GetPos() * 4 * ROW_WIDTH * ZoomX);
       if (e.GetX() - nx > 0)
       {
-	selected2->SetDuration((e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX));
+	double duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
+	if (SeqPanel->GetMagnetisme())
+	  duration = floor(duration * SeqPanel->GetMagnetismeValue()) / SeqPanel->GetMagnetismeValue();
+	selected2->SetDuration(duration);
 	Refresh(true);
 	em->ma->SetNotes(Notes);
 	em->ma->Refresh(true);
@@ -235,6 +238,7 @@ void					MidiPart::OnMouseMove(wxMouseEvent &e)
       }
 
       // mouse still on the same note ?
+      // do we want to draw stupid lines ?
       /*
        *if (lastOne != 127 - e.GetY() / ROW_HEIGHT)
        *{
@@ -258,7 +262,10 @@ void					MidiPart::OnReleaseClick(wxMouseEvent &e)
 	  double nx = (selected2->GetPos() * 4 * ROW_WIDTH * ZoomX);
 	  if (e.GetX() - nx > 0)
 	  {
-	    selected2->SetDuration((e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX));
+	    double duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
+	    if (SeqPanel->GetMagnetisme())
+	      duration = floor(duration * SeqPanel->GetMagnetismeValue()) / SeqPanel->GetMagnetismeValue();
+	    selected2->SetDuration(duration);
 	    // assuming Events.end() is the last ME_NOTEOFF set by OnClick()
 	    pattern->Events.pop_back();
 
@@ -276,12 +283,12 @@ void					MidiPart::OnReleaseClick(wxMouseEvent &e)
 
 	    SeqPanel->UpdateMidiPattern(em->midi_pattern);
 	  }
+	  selected2 = NULL;
 	}
 	break;
       case ID_TOOL_DEL_MIDIPART:
 	break;
     }
-  selected2 = NULL;
   
 }
 
@@ -320,7 +327,8 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 	  {
 	    if (e.GetX() - b.x > 0)
 	    {
-	      selected2->SetDuration((e.GetX() - b.x) / (ROW_WIDTH * 4 * ZoomX));
+	      long duration = (e.GetX() - b.x) / (ROW_WIDTH * 4 * ZoomX);
+	      selected2->SetDuration(duration);
 	      Refresh(true);
 	      em->ma->SetNotes(Notes);
 	      em->ma->Refresh(true);
@@ -361,7 +369,10 @@ void					MidiPart::OnClick(wxMouseEvent &e)
       msg[1] = 127 - e.GetY() / ROW_HEIGHT;
       lastOne = msg[1];
       msg[2] = 64;
-      MidiEvent *evt = new MidiEvent(0, e.GetX() / (ROW_WIDTH * 4 * ZoomX), msg);
+      double start_position = e.GetX() / (ROW_WIDTH * 4 * ZoomX);
+      if (SeqPanel->GetMagnetisme())
+	start_position = floor(start_position * SeqPanel->GetMagnetismeValue()) / SeqPanel->GetMagnetismeValue();
+      MidiEvent *evt = new MidiEvent(0, start_position, msg);
       evt->EndPosition = evt->Position + .25 / 4;
       pattern->Events.push_back(evt);
       Note *note = new Note(pattern, pattern->Events.size() - 1);

@@ -225,6 +225,8 @@ class				SequencerGui: public wxPanel, public WiredDocument
   int				GetCurrentYScrollPos();
   int				GetCurrentXScrollPos();
   int				GetSeqHeaderHeight();
+  bool				GetMagnetisme() { return (Toolbar->GetToolEnabled(ID_SEQ_MAGNET)); }
+  unsigned short		GetMagnetismeValue() { return (PatternMagnetism); }
 
   void				UnselectTracks();
   void				SelectTrack(long trackindex);
