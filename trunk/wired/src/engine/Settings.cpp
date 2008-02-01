@@ -229,8 +229,7 @@ vector<wxFileName>	Settings::GetRecentDirs()
   if(conf)
   {
 	conf->SetPath(Group);
-	conf->Read(wxT("max_recent"), &tmpstr, wxT(""));
-	if (tmpstr != wxT(""))
+	if (conf->Read(wxT("max_recent"), &tmpstr))
 	  tmpstr.ToLong(&l);
 	else
 	  l = MAX_RECENT;
@@ -239,10 +238,12 @@ vector<wxFileName>	Settings::GetRecentDirs()
 	{
 	  recent.Clear();
 	  recent << wxT("Recent") << i;
-	  conf->Read(recent, &tmpstr, wxT(""));
-	  path.Assign(tmpstr);
-	  if (path.DirExists())
-		pathList.push_back(path);
+	  if (conf->Read(recent, &tmpstr))
+	  {
+	    path.Assign(tmpstr);
+	    if (path.DirExists())
+		    pathList.push_back(path);
+	  }
 	}
   }
   else
@@ -326,6 +327,7 @@ bool Settings::AddDirToRecent(wxString pathstr)
 		  pathList.push_back(path);
 	}
 	conf->DeleteGroup(Group);
+	conf->SetPath(Group);
 	for (i = 0; i < pathList.size() && i < max_recent; i++)
 	{
 	  recent.Clear();

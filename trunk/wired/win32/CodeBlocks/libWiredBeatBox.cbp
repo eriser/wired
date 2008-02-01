@@ -49,6 +49,7 @@
 		</Linker>
 		<Unit filename="..\..\src\audio\WaveFile.cpp" />
 		<Unit filename="..\..\src\audio\WaveFile.h" />
+		<Unit filename="..\..\src\engine\Settings.cpp" />
 		<Unit filename="..\..\src\plugins\beatbox\BeatBox.cpp" />
 		<Unit filename="..\..\src\plugins\beatbox\BeatBox.h" />
 		<Unit filename="..\..\src\plugins\beatbox\BeatBoxChannel.cpp" />

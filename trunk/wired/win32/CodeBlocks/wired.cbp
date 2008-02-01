@@ -21,6 +21,7 @@
 					<Add option="-DDEBUG_SEQUENCER" />
 					<Add option="-DDEBUG_SEQUENCERGUI" />
 					<Add option="-DDEBUG_TRACK" />
+					<Add option="-DDEBUG_WIZARD" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -218,6 +219,8 @@
 		<Unit filename="..\..\src\gui\WavePanel.h" />
 		<Unit filename="..\..\src\gui\WaveView.cpp" />
 		<Unit filename="..\..\src\gui\WaveView.h" />
+		<Unit filename="..\..\src\gui\Wizard.cpp" />
+		<Unit filename="..\..\src\gui\Wizard.h" />
 		<Unit filename="..\..\src\libs\WiredAkai\include\akai.h" />
 		<Unit filename="..\..\src\midi\MidiController.cpp" />
 		<Unit filename="..\..\src\midi\MidiController.h" />

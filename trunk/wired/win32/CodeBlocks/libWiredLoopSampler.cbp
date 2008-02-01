@@ -40,6 +40,8 @@
 			<Add directory="..\..\src" />
 			<Add directory="..\..\win32" />
 			<Add directory="..\..\src\engine" />
+			<Add directory="..\..\src\save" />
+			<Add directory="..\..\src\xml" />
 		</Compiler>
 		<Linker>
 			<Add library="wx_msw-2.8" />

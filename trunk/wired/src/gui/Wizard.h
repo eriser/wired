@@ -89,11 +89,11 @@ class	Wizard : public wxDialog
 	void				UpdateText();
 
 	/**
-	 * creates the directory(s) needed recursivly
+	 * DEPRECATED creates the directory(s) needed recursivly
 	 * \return true on success
 	 * false otherwise
 	 */
-	bool				MakeMyDirs(wxString dir);
+//	bool				MakeMyDirs(wxString dir);
 
 	wxString			chosenDir;
 	bool				newSession;
