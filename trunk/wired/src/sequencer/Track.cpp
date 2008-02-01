@@ -11,6 +11,7 @@
 #include "SeqTrack.h"
 #include "SeqTrackPattern.h"
 #include "MixerGui.h"
+#include  "MidiFile.h"
 
 #ifdef DEBUG_TRACK
 #include <wx/filename.h>

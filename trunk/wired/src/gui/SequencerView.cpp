@@ -10,6 +10,7 @@
 #include "Sequencer.h"
 #include "AudioCenter.h"
 #include "FileConversion.h"
+#include  "MidiFile.h"
 
 extern FileConversion		*FileConverter;
 extern SequencerGui			*SeqPanel;
@@ -23,6 +24,7 @@ SequencerView::SequencerView(SequencerGui *parent, const wxPoint &pos,
   YScroll = 0;
   TotalWidth = 0;
   TotalHeight = 0;
+  newMidiPattern = NULL;
 
   TheZone = new SelectionZone(this);
   HAxl = new AccelCenter(ACCEL_TYPE_DEFAULT);
@@ -40,7 +42,27 @@ SequencerView::~SequencerView()
 void					SequencerView::OnClick(wxMouseEvent &e)
 {
   if (SeqPanel->Tool == ID_TOOL_DRAW_SEQUENCER)
-	cout << "begin mattern" << endl;
+  {
+	long					h;
+
+	h = (long) floor(SeqPanel->VertZoomFactor * TRACK_HEIGHT);
+	long trackNo = ((e.m_y + GetYScroll()) * SeqPanel->VertZoomFactor) / h;
+	double mouse_pos = (double)(e.m_x + GetXScroll()) / (double) (MEASURE_WIDTH * SeqPanel->HoriZoomFactor);
+
+	if (trackNo < Seq->Tracks.size())
+	{
+	  Track			*selectedTrack;
+	  selectedTrack = Seq->Tracks[trackNo];
+	  if (selectedTrack->IsMidiTrack())
+	  {
+	    newMidiPattern = new MidiPattern(selectedTrack, mouse_pos, 0.5, selectedTrack->GetIndex());
+	    newMidiPatternStart = mouse_pos;
+	    SeqPanel->UpdateMidiPattern(newMidiPattern);
+	    SeqPanel->Refresh();
+	  }
+	}
+
+  }
   else
   {
 	SeqPanel->SelectItem(0x0, e.ShiftDown());
@@ -67,9 +89,18 @@ void					SequencerView::OnMotion(wxMouseEvent &e)
 	  SelectZonePatterns(e.ShiftDown());
 	}
       if (SeqPanel->Tool == ID_TOOL_DRAW_SEQUENCER)
+      {
 	cout << "update midi pattern size" << endl;
+	if (newMidiPattern)// && SeqPanel->Tool == ID_TOOL_DRAW_SEQUENCER)
+	{
+	  double mouse_pos = (double)(e.m_x + GetXScroll()) / (double) (MEASURE_WIDTH * SeqPanel->HoriZoomFactor);
+	  newMidiPattern->SetEndPosition(mouse_pos);
+	  newMidiPattern->SetLength(mouse_pos - newMidiPatternStart);
+	  SeqPanel->UpdateMidiPattern(newMidiPattern);
+	  SeqPanel->Refresh();
+	}
+      }
     }
-
 }
 
 void					SequencerView::SelectZonePatterns(bool shift)
@@ -128,7 +159,7 @@ void					SequencerView::OnLeftUp(wxMouseEvent &e)
   if (SeqPanel->Tool == ID_TOOL_DRAW_SEQUENCER)
   {
 	cout << "finalize midi pattern" << endl;
-	//SeqPanel->UpdateMidiPattern();
+	newMidiPattern = NULL;
   }
   else
 	TheZone->Hide();

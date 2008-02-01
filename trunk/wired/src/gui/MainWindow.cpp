@@ -1240,7 +1240,6 @@ void					MainWindow::OnAddTrackMidi(wxCommandEvent &event)
 {
   LOG;
   Track *newTrack = SeqPanel->CreateTrack(eMidiTrack);
-  newTrack->CreateMidiPattern(new MidiTrack(4, 96));
 }
 
 // Added by Julien Eres

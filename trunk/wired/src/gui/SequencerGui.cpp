@@ -942,6 +942,7 @@ void					SequencerGui::OnDrawMidi(wxCommandEvent &event)
 {
   MidiPattern				*p;
 
+  cout << "[SequencerGui] OnDrawMidi()" << endl;
   p = (MidiPattern *)event.GetEventObject();
   if (p)
   {
