@@ -88,7 +88,9 @@ void	SaveCenter::CleanTree()
 void	SaveCenter::SaveProject()
 {
   wxString	fileName;
+#ifdef _WIN32
   wxFileName::SetCwd(getProjectPath().GetPath());
+#endif
   WiredXml	*xmlFile = new WiredXml();
 
   if(!_projectPath.DirExists())
@@ -105,7 +107,9 @@ void	SaveCenter::SaveProject()
 
   //the current project is now a saved one
   setSaved();
+#ifdef _WIN32
   wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
+#endif
 }
 
 void	SaveCenter::SaveOneDocument(WiredDocument *doc, wxString file)
@@ -674,7 +678,9 @@ void		SaveCenter::RedistributeHash(LoadedDocumentArray dataLoaded)
 
 	  //load the WiredDocument with data from the dataLoaded
 	  currentDoc->Load(currentLoadedDoc->data);
+#ifdef _WIN32
     wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
+#endif
 
 #ifdef __DEBUG__
 	  std::cout << "[SaveCenter] loaded" << std::endl;

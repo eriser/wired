@@ -52,7 +52,7 @@ void					MidiPattern::Init(WiredDocument* parent)
   Name.Printf(wxT("T%d M%d"), TrackIndex + 1, midi_pattern_count++);
   PenColor = CL_MIDI_DRAW;
   BrushColor = CL_MIDIDRAWER_BRUSH;
-  ppqn = 1;
+  ppqn = 768;
   Bmp = 0x0;
   Connect(GetId(), wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)
 	  &MidiPattern::OnMotion);
