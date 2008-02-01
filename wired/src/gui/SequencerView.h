@@ -75,6 +75,8 @@ class				SequencerView: public wxWindow, public WiredDocument
  protected:
   void				DrawMeasures(wxDC &dc);
   void				DrawTrackLines(wxDC &dc);
+  MidiPattern			*newMidiPattern;
+  double			newMidiPatternStart;
 
   DECLARE_EVENT_TABLE()
 };
