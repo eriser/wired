@@ -35,6 +35,8 @@
 			<Add directory="..\..\src\redist" />
 			<Add directory="..\..\src\libs\WiredWidgets\src" />
 			<Add directory="..\..\src\midi" />
+			<Add directory="..\..\src\save" />
+			<Add directory="..\..\src\xml" />
 		</Compiler>
 		<Linker>
 			<Add library="wx_msw-2.8" />

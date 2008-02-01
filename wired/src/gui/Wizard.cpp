@@ -1,6 +1,7 @@
 #include  <wx/wx.h>
 #include  <wx/dialog.h>
 #include  <wx/filename.h>
+#include  <wx/stdpaths.h>
 #include  <wx/string.h>
 #include  <vector>
 #include  "Wizard.h"
@@ -14,7 +15,7 @@ extern	AudioEngine			*Audio;
 extern	MediaLibrary		*MediaLibraryPanel;
 
 #define  WIZ_WIN_WIDTH		600
-#define  WIZ_WIN_HEIGHT		400	
+#define  WIZ_WIN_HEIGHT		400
 #define  WIZ_WIN_SIZE		wxSize(WIZ_WIN_WIDTH, WIZ_WIN_HEIGHT)
 #define  WIZ_BTN_HEIGHT		22
 #define  WIZ_BTN_WIDTH		80
@@ -47,10 +48,20 @@ extern	MediaLibrary		*MediaLibraryPanel;
 # define RESIZE_ICON(ico, w, h)	(wxBitmap(ico).ConvertToImage().Rescale(w, h))
 #endif
 
+#ifdef DEBUG_WIZARD
+#define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : "  << __LINE__ << " : " << __FUNCTION__  << endl; }
+#else
+#define LOG
+#endif
+
 Wizard::Wizard()
   : wxDialog(0x0, -1, _("Wired Wizard"), wxDefaultPosition, WIZ_WIN_SIZE,
-	  wxDEFAULT_DIALOG_STYLE, _("Wired Wizard"))
+	  wxDEFAULT_DIALOG_STYLE, _("Wired Wizard")),
+	  b_NewProject(NULL),
+	  tc_ProjectName(NULL),
+	  tc_NewPath(NULL)
 {
+  LOG;
   chosenDir = wxT("");
 
   st_ProjectName	= new wxStaticText(this, -1, _("Project name :"),
@@ -92,11 +103,9 @@ Wizard::Wizard()
   vector<wxFileName>	pathList = WiredSettings->GetRecentDirs();
   if (pathList.size())
   {
-	tc_NewPath->SetValue(pathList[0].GetPath());
-	tc_ProjectName->SetValue(pathList[0].GetName());
+	tc_NewPath->ChangeValue(pathList[0].GetPath());
+	tc_ProjectName->ChangeValue(pathList[0].GetName());
   }
-  else
-	UpdateText();
   UpdateList();
   tc_ProjectName->SetFocus();
 }
@@ -121,7 +130,7 @@ void	Wizard::UpdateList()
 	imagelist->Add(RESIZE_ICON(wxIcon(wired_session_folder_xpm),WIZ_ICON_SIZE, WIZ_ICON_SIZE));
 	lc_Recent->AssignImageList(imagelist, wxIMAGE_LIST_NORMAL);
 	lc_Recent->SetColumnWidth(-1, 92);
-	for (int i = 0; i < pathList.size(); i++)
+	for (unsigned int i = 0; i < pathList.size(); i++)
 	{
 	  thispath = pathList[i].GetName();
 	  lc_Recent->InsertItem(i, thispath, 0);
@@ -146,8 +155,10 @@ wxString	Wizard::GetDir()
   return (chosenDir);
 }
 
+/*
 bool	Wizard::MakeMyDirs(wxString fullDir)
 {
+  LOG;
   wxFileName	dir(fullDir);
 
   if (dir.DirExists())
@@ -157,10 +168,11 @@ bool	Wizard::MakeMyDirs(wxString fullDir)
   if (MakeMyDirs(dir.GetPath()))
   {
 	dir.Mkdir();
-	return true;
+  return true;
   }
   return false;
 }
+*/
 
 void	Wizard::OnNewClick(wxCommandEvent &event)
 {
@@ -180,9 +192,9 @@ void	Wizard::OnNewClick(wxCommandEvent &event)
 		  _("No such directory"), wxYES_NO | wxYES_DEFAULT);
 	  if (dlg->ShowModal() == wxID_YES)
 	  {
-		if (MakeMyDirs(dir.GetFullPath()))
+		if (wxFileName::Mkdir(dir.GetFullPath(), 0777, wxPATH_MKDIR_FULL))
 		{
-		  dir.SetCwd();
+//		  dir.SetCwd();
 		  EndModal(0);
 		}
 		else
@@ -203,7 +215,11 @@ void	Wizard::OnNewClick(wxCommandEvent &event)
 	}
   }
   else
+  {
+	chosenDir = dir.GetFullPath();
 	EndModal(0);
+  }
+	wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
 }
 
 void	Wizard::OnTextChange(wxCommandEvent &event)
@@ -213,7 +229,11 @@ void	Wizard::OnTextChange(wxCommandEvent &event)
 
 void	Wizard::UpdateText()
 {
+  LOG;
   wxString	wired_xml;
+
+  if ((tc_NewPath == NULL) || (tc_ProjectName == NULL) || (b_NewProject == NULL))
+    return;
   wired_xml.Clear();
   wired_xml << tc_NewPath->GetValue() << wxFileName::GetPathSeparator() \
 	<< tc_ProjectName->GetValue() << wxFileName::GetPathSeparator() \
@@ -236,11 +256,11 @@ void	Wizard::OnBrowseClick(wxCommandEvent &event)
   {
 	wxFileName	dir(selected_dir);
 
-	tc_ProjectName->SetValue(dir.GetName());
-	tc_NewPath->SetValue(dir.GetPath());
+	tc_ProjectName->ChangeValue(dir.GetName());
+	tc_NewPath->ChangeValue(dir.GetPath());
   }
   else
-	tc_NewPath->SetValue(selected_dir);
+	tc_NewPath->ChangeValue(selected_dir);
 }
 
 wxString		Wizard::ChooseSessionDir()
@@ -275,8 +295,8 @@ void	Wizard::OnListClick(wxListEvent &event)
   item = lc_Recent->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
   if (item >= 0 && item < pathList.size())
   {
-	tc_ProjectName->SetValue(pathList[item].GetName());
-	tc_NewPath->SetValue(pathList[item].GetPath());
+	tc_ProjectName->ChangeValue(pathList[item].GetName());
+	tc_NewPath->ChangeValue(pathList[item].GetPath());
 	b_Remove->Enable(true);
   }
 }

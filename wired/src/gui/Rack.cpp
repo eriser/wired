@@ -1,6 +1,7 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#include <wx/stdpaths.h>
 #include	"SeqTrack.h"
 #include	"Track.h"
 #include	"Rack.h"
@@ -912,6 +913,7 @@ void				Rack::Load(SaveElementArray data)
   vector<PluginLoader*>::iterator	it;
   int					i;
 
+  wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
   for (i = 0; i < data.GetCount(); i++)
     if (data[i]->getKey() == wxT("RackTrackNumber"))
       for (; i > 0; i--)

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "SaveCenter.h"
 #include <wx/dir.h>
+#include <wx/stdpaths.h>
 #include "Settings.h"
 
 SaveCenter		*saveCenter = NULL;
@@ -87,6 +88,7 @@ void	SaveCenter::CleanTree()
 void	SaveCenter::SaveProject()
 {
   wxString	fileName;
+  wxFileName::SetCwd(getProjectPath().GetPath());
   WiredXml	*xmlFile = new WiredXml();
 
   if(!_projectPath.DirExists())
@@ -103,6 +105,7 @@ void	SaveCenter::SaveProject()
 
   //the current project is now a saved one
   setSaved();
+  wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
 }
 
 void	SaveCenter::SaveOneDocument(WiredDocument *doc, wxString file)
@@ -671,6 +674,7 @@ void		SaveCenter::RedistributeHash(LoadedDocumentArray dataLoaded)
 
 	  //load the WiredDocument with data from the dataLoaded
 	  currentDoc->Load(currentLoadedDoc->data);
+    wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
 
 #ifdef __DEBUG__
 	  std::cout << "[SaveCenter] loaded" << std::endl;
