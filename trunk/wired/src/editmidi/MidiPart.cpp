@@ -238,14 +238,12 @@ void					MidiPart::OnMouseMove(wxMouseEvent &e)
       }
 
       // mouse still on the same note ?
-      /*
-       *if (SeqPanel->GetCrossNotes())
-       *  if (lastOne != 127 - e.GetY() / ROW_HEIGHT)
-       *  {
-       *    OnReleaseClick(e);
-       *    OnClick(e);
-       *  }
-       */
+      if (SeqPanel->GetCrossNotes())
+	if (lastOne != 127 - e.GetY() / ROW_HEIGHT)
+	{
+	  OnReleaseClick(e);
+	  OnClick(e);
+	}
     }
   }
 }
