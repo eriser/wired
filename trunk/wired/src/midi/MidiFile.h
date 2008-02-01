@@ -197,6 +197,7 @@ class MidiTrack
 	unsigned int	_noTrack;
 
   public:
+	MidiTrack(unsigned long len = 768, unsigned short PPQN = 96);
 	MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN,
 		wxString filename, unsigned int noTrack);
 	MidiTrack(vector<MidiEvent *> &evts, unsigned short PPQN,
