@@ -64,7 +64,7 @@ Wizard::Wizard()
 	  WIZ_ST_PATH_POS, WIZ_ST_PATH_SIZE,
 	  wxALIGN_RIGHT);
 
-  tc_NewPath		= new wxTextCtrl(this, Wizard_Path, wxGetCwd(),
+  tc_NewPath		= new wxTextCtrl(this, Wizard_Path, wxGetCwd() + wxT("/my_wired_projects"),
 	  WIZ_TC_PATH_POS, WIZ_TC_PATH_SIZE, wxTE_PROCESS_ENTER);
 
   b_NewProject		= new wxButton(this, Wizard_NewBtn, _("New &Project"),

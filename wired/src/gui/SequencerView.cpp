@@ -12,6 +12,8 @@
 #include "FileConversion.h"
 
 extern FileConversion		*FileConverter;
+extern SequencerGui			*SeqPanel;
+
 SequencerView::SequencerView(SequencerGui *parent, const wxPoint &pos,
 			     const wxSize &size)
   : wxWindow(parent, -1, pos, size, wxSUNKEN_BORDER),
@@ -37,9 +39,14 @@ SequencerView::~SequencerView()
 
 void					SequencerView::OnClick(wxMouseEvent &e)
 {
-  SeqPanel->SelectItem(0x0, e.ShiftDown());
-  if (!TheZone->IsVisible())
-    TheZone->SetZone(e.m_x, e.m_y, 2, 2);
+  if (SeqPanel->Tool == ID_TOOL_DRAW_SEQUENCER)
+	cout << "begin mattern" << endl;
+  else
+  {
+	SeqPanel->SelectItem(0x0, e.ShiftDown());
+	if (!TheZone->IsVisible())
+	  TheZone->SetZone(e.m_x, e.m_y, 2, 2);
+  }
 }
 
 void					SequencerView::OnMotion(wxMouseEvent &e)
@@ -59,7 +66,10 @@ void					SequencerView::OnMotion(wxMouseEvent &e)
 	  TheZone->UpdateZone(e.m_x, e.m_y);
 	  SelectZonePatterns(e.ShiftDown());
 	}
+      if (SeqPanel->Tool == ID_TOOL_DRAW_SEQUENCER)
+	cout << "update midi pattern size" << endl;
     }
+
 }
 
 void					SequencerView::SelectZonePatterns(bool shift)
@@ -115,7 +125,13 @@ void					SequencerView::SelectZonePatterns(bool shift)
 
 void					SequencerView::OnLeftUp(wxMouseEvent &e)
 {
-  TheZone->Hide();
+  if (SeqPanel->Tool == ID_TOOL_DRAW_SEQUENCER)
+  {
+	cout << "finalize midi pattern" << endl;
+	//SeqPanel->UpdateMidiPattern();
+  }
+  else
+	TheZone->Hide();
 }
 
 void					SequencerView::OnRightClick(wxMouseEvent &event)
