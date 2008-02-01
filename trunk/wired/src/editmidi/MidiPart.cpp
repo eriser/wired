@@ -228,7 +228,7 @@ void					MidiPart::OnMouseMove(wxMouseEvent &e)
       {
 	double duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
 	if (SeqPanel->GetMagnetisme())
-	  duration = floor(duration * SeqPanel->GetMagnetismeValue()) / SeqPanel->GetMagnetismeValue();
+	  duration = floor(duration * SeqPanel->GetMagnetismeValue() + 0.5) / SeqPanel->GetMagnetismeValue();
 	selected2->SetDuration(duration);
 	Refresh(true);
 	em->ma->SetNotes(Notes);
@@ -264,7 +264,7 @@ void					MidiPart::OnReleaseClick(wxMouseEvent &e)
 	  {
 	    double duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
 	    if (SeqPanel->GetMagnetisme())
-	      duration = floor(duration * SeqPanel->GetMagnetismeValue()) / SeqPanel->GetMagnetismeValue();
+	      duration = floor(duration * SeqPanel->GetMagnetismeValue() + 0.5) / SeqPanel->GetMagnetismeValue();
 	    selected2->SetDuration(duration);
 	    // assuming Events.end() is the last ME_NOTEOFF set by OnClick()
 	    pattern->Events.pop_back();
