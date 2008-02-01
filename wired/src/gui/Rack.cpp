@@ -913,7 +913,9 @@ void				Rack::Load(SaveElementArray data)
   vector<PluginLoader*>::iterator	it;
   int					i;
 
+#ifdef _WIN32
   wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
+#endif
   for (i = 0; i < data.GetCount(); i++)
     if (data[i]->getKey() == wxT("RackTrackNumber"))
       for (; i > 0; i--)

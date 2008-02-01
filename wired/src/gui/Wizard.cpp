@@ -103,8 +103,13 @@ Wizard::Wizard()
   vector<wxFileName>	pathList = WiredSettings->GetRecentDirs();
   if (pathList.size())
   {
+#if wxCHECK_VERSION (2,8,0)
 	tc_NewPath->ChangeValue(pathList[0].GetPath());
 	tc_ProjectName->ChangeValue(pathList[0].GetName());
+#else
+	tc_NewPath->SetValue(pathList[0].GetPath());
+	tc_ProjectName->SetValue(pathList[0].GetName());
+#endif
   }
   UpdateList();
   tc_ProjectName->SetFocus();
@@ -219,7 +224,9 @@ void	Wizard::OnNewClick(wxCommandEvent &event)
 	chosenDir = dir.GetFullPath();
 	EndModal(0);
   }
-	wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
+#ifdef _WIN32
+  wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
+#endif
 }
 
 void	Wizard::OnTextChange(wxCommandEvent &event)
@@ -256,11 +263,20 @@ void	Wizard::OnBrowseClick(wxCommandEvent &event)
   {
 	wxFileName	dir(selected_dir);
 
+#if wxCHECK_VERSION (2,8,0)
 	tc_ProjectName->ChangeValue(dir.GetName());
 	tc_NewPath->ChangeValue(dir.GetPath());
+#else
+	tc_ProjectName->SetValue(dir.GetName());
+	tc_NewPath->SetValue(dir.GetPath());
+#endif
   }
   else
+#if wxCHECK_VERSION (2,8,0)
 	tc_NewPath->ChangeValue(selected_dir);
+#else
+	tc_NewPath->SetValue(selected_dir);
+#endif
 }
 
 wxString		Wizard::ChooseSessionDir()
@@ -295,8 +311,13 @@ void	Wizard::OnListClick(wxListEvent &event)
   item = lc_Recent->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
   if (item >= 0 && item < pathList.size())
   {
+#if wxCHECK_VERSION (2,8,0)
 	tc_ProjectName->ChangeValue(pathList[item].GetName());
 	tc_NewPath->ChangeValue(pathList[item].GetPath());
+#else
+	tc_ProjectName->SetValue(pathList[item].GetName());
+	tc_NewPath->SetValue(pathList[item].GetPath());
+#endif
 	b_Remove->Enable(true);
   }
 }
