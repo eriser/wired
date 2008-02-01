@@ -13,7 +13,6 @@
 #include <wx/filename.h>
 #include <iostream>
 
-
 void	MakeMidiFileName(wxString &filename, unsigned long seqTrackIndex)
 {
   wxString ext = wxT("mid");
@@ -133,6 +132,7 @@ MidiTrack::MidiTrack(vector<MidiEvent *> &evts, unsigned short PPQN, wxString fi
   int			i;
   unsigned long		position;
   double		ratio;
+  unsigned long max_position = 0;
 
   _noTrack = noTrack;
   _filename = filename;
@@ -158,7 +158,19 @@ MidiTrack::MidiTrack(vector<MidiEvent *> &evts, unsigned short PPQN, wxString fi
     Events.push_back(
 	new MidiFileEvent(position, evts[i]->Msg[0], 0, evts[i]->Msg[1], evts[i]->Msg[2])
 	);
+	if (evts[i]->Position > max_position)
+	  max_position = evts[i]->Position;
   }
+  MaxPos = max_position;
+}
+
+MidiTrack::MidiTrack(unsigned long len, unsigned short PPQN)
+{
+  _filename = wxT("");
+  vector<MidiEvent *> evts;
+  MaxPos = len;
+  
+  MidiTrack(evts, PPQN, _filename, Seq->Tracks.size());
 }
 
 MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PPQN,

@@ -47,6 +47,12 @@ void					MidiPart::SetZoomX(double pZoomX)
   em->ma->SetZoomX(pZoomX);
   em->ResizeMidiPart((int)ceil(ZoomX * NbMesures * 4 * ROW_WIDTH),
                      GetSize().GetHeight());
+
+  //em->ma->SetNotes(Notes);
+  em->ma->Refresh(true);
+  em->Refresh();
+  SeqPanel->UpdateMidiPattern(em->midi_pattern);
+
   if (selected != NULL)
     {
       selected->SetZoomX(pZoomX);
@@ -229,11 +235,13 @@ void					MidiPart::OnMouseMove(wxMouseEvent &e)
       }
 
       // mouse still on the same note ?
-      if (lastOne != 127 - e.GetY() / ROW_HEIGHT)
-      {
-	OnReleaseClick(e);
-	OnClick(e);
-      }
+      /*
+       *if (lastOne != 127 - e.GetY() / ROW_HEIGHT)
+       *{
+       *  OnReleaseClick(e);
+       *  OnClick(e);
+       *}
+       */
     }
   }
 }
