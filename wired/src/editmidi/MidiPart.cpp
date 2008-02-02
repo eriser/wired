@@ -16,6 +16,9 @@ MidiPart::MidiPart(wxWindow *parent, wxWindowID id, const wxPoint& pos,
 		   const wxSize& size, long style, EditMidi *editmidi) :
   wxControl(parent, id, pos, size, style)
 {
+  _vertMagnet = true;
+  _magnetH = SeqPanel->GetMagnetismeValue();
+  _magnetV = SeqPanel->GetMagnetisme();
   em = editmidi;
   ZoomX = 1;
   ZoomY = 1;
@@ -227,8 +230,8 @@ void					MidiPart::OnMouseMove(wxMouseEvent &e)
       if (e.GetX() - nx > 0)
       {
 	double duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
-	if (SeqPanel->GetMagnetisme())
-	  duration = floor(duration * SeqPanel->GetMagnetismeValue() + 0.5) / SeqPanel->GetMagnetismeValue();
+	if (_magnetV)
+	  duration = floor(duration * _magnetH + 0.5) / _magnetH;
 	selected2->SetDuration(duration);
 	Refresh(true);
 	em->ma->SetNotes(Notes);
@@ -238,7 +241,7 @@ void					MidiPart::OnMouseMove(wxMouseEvent &e)
       }
 
       // mouse still on the same note ?
-      if (SeqPanel->GetCrossNotes())
+      if (_vertMagnet)
 	if (lastOne != 127 - e.GetY() / ROW_HEIGHT)
 	{
 	  OnReleaseClick(e);
@@ -261,8 +264,8 @@ void					MidiPart::OnReleaseClick(wxMouseEvent &e)
 	  if (e.GetX() - nx > 0)
 	  {
 	    double duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
-	    if (SeqPanel->GetMagnetisme())
-	      duration = floor(duration * SeqPanel->GetMagnetismeValue() + 0.5) / SeqPanel->GetMagnetismeValue();
+	    if (_magnetV)
+	      duration = floor(duration * _magnetH + 0.5) / _magnetH;
 	    selected2->SetDuration(duration);
 	    // assuming Events.end() is the last ME_NOTEOFF set by OnClick()
 	    pattern->Events.pop_back();
@@ -368,8 +371,8 @@ void					MidiPart::OnClick(wxMouseEvent &e)
       lastOne = msg[1];
       msg[2] = 64;
       double start_position = e.GetX() / (ROW_WIDTH * 4 * ZoomX);
-      if (SeqPanel->GetMagnetisme())
-	start_position = floor(start_position * SeqPanel->GetMagnetismeValue()) / SeqPanel->GetMagnetismeValue();
+      if (_magnetV)
+	start_position = floor(start_position * _magnetH) / _magnetH;
       MidiEvent *evt = new MidiEvent(0, start_position, msg);
       evt->EndPosition = evt->Position + .25 / 4;
       pattern->Events.push_back(evt);

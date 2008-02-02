@@ -20,16 +20,17 @@ enum
     ID_ZOOMY_EDITMIDI,
     ID_SPLITTER_EDITMIDI,
     ID_MIDIATTR_EDITMIDI,
-    ID_TOOLBAR_EDITMIDI,
-    ID_TOOL_MOVE_EDITMIDI,
-    ID_TOOL_EDIT_EDITMIDI,
-    ID_TOOL_DEL_EDITMIDI
+    ID_TOOLBAR_EDITMIDI
   };
 
 #define	MIDIPART_WIDTH			(500)
 #define	SBS				(20)
 #define	SBPASH				(10)
 #define	SBPASV				(10)
+
+#define MAGNETISM_EDITMIDI			(3)
+#define NB_COMBO_CHOICES		(9)
+#define DEFAULT_MAGNETISM_COMBO_VALUE	wxT("1/4")
 
 /**
  * The MidiPattern class is used for something.
@@ -62,6 +63,9 @@ class					EditMidi: public wxPanel
   void					OnToolMove(wxCommandEvent &e);
   void					OnToolEdit(wxCommandEvent &e);
   void					OnToolDel(wxCommandEvent &e);
+  void					OnToolMagnetH(wxCommandEvent &event);
+  void					OnToolMagnetV(wxCommandEvent &event);
+  void					OnMagnetismChange(wxCommandEvent &event);
 
   wxScrolledWindow			*swg;
   wxScrolledWindow			*swd;
@@ -74,14 +78,18 @@ class					EditMidi: public wxPanel
   class MidiPart			*mp;
   class RulerMidi			*rm;
   class MidiAttr			*ma;
-  wxSlider				*ZoomX;
-  wxSlider				*ZoomY;
-  wxWindow				*top;
-  wxWindow				*bottom;
+  wxSlider					*ZoomX;
+  wxSlider					*ZoomY;
+  wxWindow					*top;
+  wxWindow					*bottom;
   wxSplitterWindow			*splitter;
-  wxToolBar				*toolbar;
+  wxToolBar					*toolbar;
   MidiPattern				*midi_pattern;
-  int					detached;
+  int						detached;
+  bool						Magnetism;
+  wxComboBox				*MagnetQuant;
+  unsigned short		CursorMagnetism;
+  unsigned short		PatternMagnetism;
   DECLARE_EVENT_TABLE()
 };
 

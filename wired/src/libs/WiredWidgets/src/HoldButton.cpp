@@ -70,6 +70,7 @@ void HoldButton::OnLeftUp(wxMouseEvent &event)
   Timer->Stop();
   isdown = false;
   this->Refresh(false);
+  
 }
 
 void HoldButton::OnLeaveWindow(wxMouseEvent &event)

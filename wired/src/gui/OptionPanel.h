@@ -36,7 +36,10 @@ enum
     ID_TOOL_CLOSE_OPTIONPANEL,
     ID_TOOL_MOVE_OPTIONPANEL,
     ID_TOOL_EDIT_OPTIONPANEL,
-    ID_TOOL_DEL_OPTIONPANEL
+    ID_TOOL_DEL_OPTIONPANEL,
+	ID_TOOL_MAGNET_H,
+	ID_TOOL_MAGNET_V,
+	ID_TOOL_MAGNET_COMBO
   };
 
 class				WiredTool;
@@ -55,6 +58,9 @@ class				WiredFrame: public wxFrame
   void				OnToolMove(wxCommandEvent &);
   void				OnToolDel(wxCommandEvent &);
   void				OnToolEdit(wxCommandEvent &);
+  void				OnToolMagnetH(wxCommandEvent &e);
+  void				OnToolMagnetV(wxCommandEvent &e);
+  void				OnMagnetismChange(wxCommandEvent &e);
 
  public:
   WiredFrame(WiredTool *t, wxString s) :

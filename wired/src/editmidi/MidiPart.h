@@ -19,7 +19,10 @@ enum
   {
     ID_TOOL_MOVE_MIDIPART = 1342,
     ID_TOOL_EDIT_MIDIPART,
-    ID_TOOL_DEL_MIDIPART
+    ID_TOOL_DEL_MIDIPART,
+    ID_SEQ_MAGNET_H_MIDIPART,
+    ID_SEQ_COMBO_MAGNET_MIDIPART,
+    ID_SEQ_MAGNET_V_MIDIPART
   };
 
 class					Note;
@@ -44,8 +47,14 @@ class					MidiPart: public wxControl
   int					GetNPM();
   void					SetTool(int numtool);
   EditMidi				*em;
+  void					ToggleVerticalMagnetism(bool state) { _vertMagnet = state; }
+  void					SetMagntismH(long value) { _magnetH = value; }
+  void					SetMagntismV(long value) { _magnetV = value; }
 
  private:
+  bool					_vertMagnet;
+  long					_magnetH;
+  bool					_magnetV;
   int					NbMesures;
   int					NbRows;
   double				ZoomX;

@@ -74,6 +74,8 @@ public:
     void         LoadPatch        (wxString filename);
     void         OnSave           (wxString filename);
 
+	void				ImportDir();
+
 protected:
     friend class MediaLibrary;
     friend class MLTreeInfos;
@@ -283,7 +285,6 @@ protected:
  * The OnAddDirectory function is called by launching the Add Directory action
  *
 */
-  void				ImportDir();
   void				OnAddDirectory(wxString DirToAdd);
 
   int				CheckEmptyDir(wxTreeItemId itemParent);
