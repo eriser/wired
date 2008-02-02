@@ -8,13 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wired 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-19 12:08+0100\n"
+"POT-Creation-Date: 2007-01-19 12:35+0100\n"
 "PO-Revision-Date: 2007-09-08 14:39+0200\n"
 "Last-Translator: Pierre-Jean Leger <pj-leger@users.sourceforge.net>\n"
 "Language-Team: French <FR@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso8859-1\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: src/dssi/WiredExternalPluginLADSPA.cpp:478
 #: ../src/dssi/WiredExternalPluginLADSPA.cpp:481
@@ -458,6 +458,11 @@ msgstr "Enregistrer &sous...\tF12"
 
 #: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
 #: ../src/gui/MainWindow.cpp:135
+msgid "&Import directory..."
+msgstr "&Importer un dossier..."
+
+#: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
+#: ../src/gui/MainWindow.cpp:135
 msgid "&Import Wave file..."
 msgstr "&Importer un fichier son..."
 
@@ -522,8 +527,9 @@ msgstr "&Ajouter une piste MIDI"
 
 #: src/gui/MainWindow.cpp:233 ../src/gui/MainWindow.cpp:160
 #: ../src/gui/MainWindow.cpp:156
-msgid "&Delete Track (Backspace)"
-msgstr "&Supprimer la piste (Backspace)"
+#, fuzzy
+msgid "&Delete Track"
+msgstr "&Supprimer le rack"
 
 #: src/gui/MainWindow.cpp:235 ../src/gui/MainWindow.cpp:162
 #: ../src/gui/MainWindow.cpp:158
@@ -2268,9 +2274,7 @@ msgstr "Module son disponible: "
 msgid ""
 "Could not open audio device : check that the device is not busy (used by "
 "another application) and that your audio settings are correct."
-msgstr ""
-"Impossible d'acéder au péripherique : vérifiez que le peripherique n'est pas "
-"utilisé par une autre application et que votre configuration est correcte."
+msgstr "Impossible d'acéder au péripherique : vérifiez que le peripherique n'est pas utilisé par une autre application et que votre configuration est correcte."
 
 #: ../src/gui/SequencerGui.cpp:371 ../src/gui/SequencerGui.cpp:444
 #, fuzzy
@@ -2446,3 +2450,5 @@ msgstr ""
 "vous souhaitez pour le mixage final.\n"
 "(Par défaut : configuration du projet)"
 
+#~ msgid "&Delete Track (Backspace)"
+#~ msgstr "&Supprimer la piste (Backspace)"

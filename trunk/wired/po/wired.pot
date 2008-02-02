@@ -458,6 +458,11 @@ msgstr	""
 
 #: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
 #: ../src/gui/MainWindow.cpp:135
+msgid	"&Import directory..."
+msgstr	""
+
+#: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
+#: ../src/gui/MainWindow.cpp:135
 msgid	"&Import Wave file..."
 msgstr	""
 

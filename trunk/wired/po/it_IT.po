@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wired 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-19 12:29+0100\n"
+"POT-Creation-Date: 2007-01-19 12:35+0100\n"
 "PO-Revision-Date: 2006-09-22 16:37+0200\n"
 "Last-Translator: Nicola Mattei <nicola.solutiong@gmail.com>\n"
 "Language-Team: Italian <nicola.solutiong@gmail.org>\n"
@@ -457,6 +457,12 @@ msgstr "&Salva\tCtrl-S"
 #: ../src/gui/MainWindow.cpp:133
 msgid "Save &as...\tF12"
 msgstr "Salva &con nome...\tF12"
+
+#: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
+#: ../src/gui/MainWindow.cpp:135
+#, fuzzy
+msgid "&Import directory..."
+msgstr "&Cambia la cartella di lavoro..."
 
 #: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
 #: ../src/gui/MainWindow.cpp:135

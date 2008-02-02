@@ -1035,12 +1035,11 @@ void					SequencerGui::OnMagnetismToggle(wxCommandEvent &event)
 {
   Magnetism = Toolbar->GetToolState(ID_SEQ_MAGNET) ? CURSOR_MASK | PATTERN_MASK : 0;
   /*
-  if(Magnetism)
-    cout << "Magnetism [ OK ]" << endl;
-  else
-    cout << "Magnetism [ NO ]" << endl;
-  */
-
+   *if(Magnetism)
+   *  cout << "Magnetism [ OK ]" << endl;
+   *else
+   *  cout << "Magnetism [ NO ]" << endl;
+   */
 }
 
 void					SequencerGui::OnMagnetismChange(wxCommandEvent &event)
@@ -1052,7 +1051,7 @@ void					SequencerGui::OnMagnetismChange(wxCommandEvent &event)
   for (c = 0; (c < NB_COMBO_CHOICES) && (s != ComboChoices[c].s); c++);
   CursorMagnetism = (long) floor(ComboChoices[c].value);
   PatternMagnetism = (long) floor(ComboChoices[c].value);
-  /*cout << "Magnetism change " << MagnetQuant->GetValue() << " and " << ComboChoices[c].value << " " << endl;*/
+  //cout << "Magnetism change " << MagnetQuant->GetValue() << " and " << ComboChoices[c].value << " " << endl;
 }
 
 void					SequencerGui::OnColorButtonClick(wxCommandEvent &event)

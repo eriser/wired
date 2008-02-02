@@ -245,11 +245,7 @@ void				Transport::OnMetronome(wxCommandEvent &WXUNUSED(event))
 void				Transport::OnBackward(wxCommandEvent &WXUNUSED(event))
 {
   wxMutexLocker m(SeqMutex);
-  double newpos = Seq->CurrentPos - 0.1;
-
-  if (newpos < 0.0)
-    newpos = 0.0;
-  Seq->SetCurrentPos(newpos);
+  Seq->SetCurrentPos(0.0);
   SeqPanel->SetCurrentPos(Seq->CurrentPos);
 }
 

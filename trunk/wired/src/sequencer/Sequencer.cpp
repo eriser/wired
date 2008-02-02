@@ -864,8 +864,7 @@ void					Sequencer::AllocBuffer(float** &Buffer, unsigned int NbChannels)
   }
 }
 
-void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l,
-								  Plugin *plug)
+void					Sequencer::AddMidiPattern(list<SeqCreateEvent *> *l, Plugin *plug)
 {
   vector<Track *>::iterator		i;
   list<SeqCreateEvent *>::iterator	j;

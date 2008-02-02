@@ -64,6 +64,24 @@ void				WiredFrame::OnToolDel(wxCommandEvent &e)
     em->OnToolDel(e);
 }
 
+void				WiredFrame::OnToolMagnetH(wxCommandEvent &e)
+{
+  if (em)
+	em->OnToolMagnetH(e);
+}
+
+void				WiredFrame::OnToolMagnetV(wxCommandEvent &e)
+{
+  if (em)
+	em->OnToolMagnetV(e);
+}
+
+void				WiredFrame::OnMagnetismChange(wxCommandEvent &e)
+{
+  if (em)
+	em->OnMagnetismChange(e);
+}
+
 void				WiredTool::Attach()
 {
   IsDetached = false;
@@ -497,6 +515,9 @@ BEGIN_EVENT_TABLE(WiredFrame, wxFrame)
   EVT_MENU(ID_TOOL_MOVE_MIDIPART, WiredFrame::OnToolMove)
   EVT_MENU(ID_TOOL_EDIT_MIDIPART, WiredFrame::OnToolEdit)
   EVT_MENU(ID_TOOL_DEL_MIDIPART, WiredFrame::OnToolDel)
+  EVT_MENU(ID_TOOL_MAGNET_H, WiredFrame::OnToolMagnetH)
+  EVT_MENU(ID_TOOL_MAGNET_V, WiredFrame::OnToolMagnetV)
+  EVT_COMBOBOX(ID_TOOL_MAGNET_COMBO, WiredFrame::OnMagnetismChange)
 END_EVENT_TABLE();
 
 BEGIN_EVENT_TABLE(OptionPanel, wxPanel)

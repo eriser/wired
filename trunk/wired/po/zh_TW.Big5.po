@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-19 12:29+0100\n"
+"POT-Creation-Date: 2007-01-19 12:35+0100\n"
 "PO-Revision-Date: 2006-06-19 15:51+0200\n"
 "Last-Translator: Lin Yu-Hua <lin_y@epitech.net>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
@@ -462,6 +462,12 @@ msgstr "另存新檔...\tF12"
 #: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
 #: ../src/gui/MainWindow.cpp:135
 #, fuzzy
+msgid "&Import directory..."
+msgstr "改變音頻的資料夾位置..."
+
+#: src/gui/MainWindow.cpp:210 ../src/gui/MainWindow.cpp:139
+#: ../src/gui/MainWindow.cpp:135
+#, fuzzy
 msgid "&Import Wave file..."
 msgstr "匯出 Wave檔..."
 
@@ -896,8 +902,7 @@ msgstr "音頻 %d"
 msgid ""
 "Click on this button to show the list of instruments and effects you can "
 "connect your track to."
-msgstr ""
-"點擊此按鈕能顯示你能連接的音軌其所屬的樂器選單和效果"
+msgstr "點擊此按鈕能顯示你能連接的音軌其所屬的樂器選單和效果"
 
 #: src/gui/SeqTrack.cpp:116 ../src/gui/SeqTrack.cpp:119
 #: ../src/gui/SeqTrack.cpp:162
@@ -1128,8 +1133,7 @@ msgstr "等待時間： %d 個取樣，%.2f 微秒"
 msgid ""
 "Turns On or Off Loop mode. If On, the sequencer will loop between the L and "
 "R marker in the sequencer."
-msgstr ""
-"開啟或關閉反覆模式。如開啟，編曲機會在左(L)和右(R)的標記之間反覆。"
+msgstr "開啟或關閉反覆模式。如開啟，編曲機會在左(L)和右(R)的標記之間反覆。"
 
 #: src/gui/Transport.cpp:177 ../src/gui/Transport.cpp:180
 msgid ""
@@ -1372,8 +1376,7 @@ msgstr "載入wave檔中"
 #: ../src/plugins/beatbox/BeatBoxChannel.cpp:981
 msgid ""
 "Use this button to display and edit the tracker associated to this channel"
-msgstr ""
-"使用此按鍵可顯示和編輯與此頻道相關的追縱器"
+msgstr "使用此按鍵可顯示和編輯與此頻道相關的追縱器"
 
 #: src/plugins/beatbox/BeatBoxChannel.cpp:984
 #: ../src/plugins/beatbox/BeatBoxChannel.cpp:987
@@ -1455,8 +1458,7 @@ msgstr ""
 msgid ""
 "This is the auto play button, when enabled, DRM31 will play selected pattern "
 "synchronously with Wired's Sequencer"
-msgstr ""
-"這是自動播放按鈕,當運作時,DRM31和編曲機會同步播放所選擇的樂段。"
+msgstr "這是自動播放按鈕,當運作時,DRM31和編曲機會同步播放所選擇的樂段。"
 
 #: src/plugins/beatbox/BeatBox.cpp:559 ../src/plugins/beatbox/BeatBox.cpp:562
 msgid ""
@@ -1487,8 +1489,7 @@ msgstr "這些按鈕控制下面十六個代表的位置"
 msgid ""
 "These buttons control the signature of the current rythm, note that the "
 "greater the denominator is, the faster the rythm will play"
-msgstr ""
-"這些按鈕控制此節奏的拍號。請注意:當分母愈大時,節奏會播放的愈快。"
+msgstr "這些按鈕控制此節奏的拍號。請注意:當分母愈大時,節奏會播放的愈快。"
 
 #: src/plugins/beatbox/BeatBox.cpp:589 ../src/plugins/beatbox/BeatBox.cpp:592
 msgid "Set the number of steps for the current rythm"
@@ -1498,8 +1499,7 @@ msgstr "設定此節奏的順序"
 msgid ""
 "The bank control allows you to choose one of the 5 banks proposed, each bank "
 "contains 8 rythms"
-msgstr ""
-"組控制。選取五組中其中一個,每組包含八個節奏。"
+msgstr "組控制。選取五組中其中一個,每組包含八個節奏。"
 
 #: src/plugins/beatbox/BeatBox.cpp:599 ../src/plugins/beatbox/BeatBox.cpp:602
 msgid ""
@@ -1516,8 +1516,7 @@ msgstr "這些按鈕代表八種不同的節奏"
 msgid ""
 "These buttons are used if you want to import or export a patch apart from "
 "the session"
-msgstr ""
-"這些按鈕使用於匯入或匯出此區段以外的音色"
+msgstr "這些按鈕使用於匯入或匯出此區段以外的音色"
 
 #: src/plugins/beatbox/BeatBox.cpp:1700 src/plugins/beatbox/BeatBox.cpp:1737
 #: ../src/plugins/beatbox/BeatBox.cpp:1703
@@ -1622,24 +1621,21 @@ msgstr ""
 msgid ""
 "Changes the pitch (speed) of the whole loaded sample. Right click on it to "
 "set the MIDI automation controller."
-msgstr ""
-"改變整個載入取樣的音高(速度)。按右鍵以設定MIDI自動控制器。"
+msgstr "改變整個載入取樣的音高(速度)。按右鍵以設定MIDI自動控制器。"
 
 #: src/plugins/loop_sampler/LoopSampler.cpp:364
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:369
 msgid ""
 "Stretch the whole sample that it synchronizes with the sequencer BPM Right "
 "click on it to set the MIDI automation controller."
-msgstr ""
-"與BPM編曲機同步延伸整個取樣,按右鍵以設定MIDI自動控制器。"
+msgstr "與BPM編曲機同步延伸整個取樣,按右鍵以設定MIDI自動控制器。"
 
 #: src/plugins/loop_sampler/LoopSampler.cpp:370
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:375
 msgid ""
 "Inverts the sample audio data. Right click on it to set the MIDI automation "
 "controller."
-msgstr ""
-"轉位此取樣音頻資料。按右鍵以設定MIDI自動控制器。"
+msgstr "轉位此取樣音頻資料。按右鍵以設定MIDI自動控制器。"
 
 #: src/plugins/loop_sampler/LoopSampler.cpp:377
 #: ../src/plugins/loop_sampler/LoopSampler.cpp:382
@@ -1749,8 +1745,7 @@ msgid ""
 "Please select the options that\n"
 "you want for the downmix.\n"
 "(Defaults are current project's configuration)"
-msgstr ""
-"請選擇你要的混音功能。(此專案的配置為預設值)"
+msgstr "請選擇你要的混音功能。(此專案的配置為預設值)"
 
 #: src/samplerate/WiredSampleRateTypes.cpp:5
 #: ../src/samplerate/WiredSampleRateTypes.cpp:8
@@ -2319,8 +2314,8 @@ msgstr "有效的聲音系統："
 msgid ""
 "Could not open audio device : check that the device is not busy (used by "
 "another application) and that your audio settings are correct."
-msgstr ""
-"無法打開音頻設置 : 請確認你的音頻設定值是否正確。"
+msgstr "無法打開音頻設置 : 請確認你的音頻設定值是否正確。"
+
 #: ../src/gui/SequencerGui.cpp:371 ../src/gui/SequencerGui.cpp:444
 #, fuzzy
 msgid "Color Pattern"
@@ -2461,6 +2456,7 @@ msgid ""
 msgstr ""
 "\n"
 "副檔名 : "
+
 #: ../src/gui/MLTreeInfos.cpp:19
 #, fuzzy
 msgid ""
@@ -2509,8 +2505,7 @@ msgid ""
 "Please select the options that\n"
 "you want for the downmix.\n"
 "(Defaults are current project values)"
-msgstr ""
-"請選擇你要的混音功能。(此專案的配置為預設值)"
+msgstr "請選擇你要的混音功能。(此專案的配置為預設值)"
 
 #~ msgid "& Wave file..."
 #~ msgstr "& Wave檔..."

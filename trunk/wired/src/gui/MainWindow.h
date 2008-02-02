@@ -57,6 +57,7 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					OnNew(wxCommandEvent &event);
   void					OnSave(wxCommandEvent &event);
   void					OnSaveAs(wxCommandEvent &event);
+  void					OnImportDir(wxCommandEvent &event);
   void					OnImportWave(wxCommandEvent &event);
   void					OnImportMIDI(wxCommandEvent &event);
   void					OnImportAKAI(wxCommandEvent &event);
@@ -262,6 +263,7 @@ enum
   MainWin_Open,
   MainWin_Save,
   MainWin_SaveAs,
+  MainWin_ImportDir,
   MainWin_ImportWave,
   MainWin_ImportMIDI,
   MainWin_ImportAKAI,

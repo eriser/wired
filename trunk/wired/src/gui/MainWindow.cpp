@@ -153,6 +153,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->Append(MainWin_Open, _("&Open...\tCtrl-O"));
   FileMenu->AppendSeparator();
 #endif
+  FileMenu->Append(MainWin_ImportDir, _("&Import directory..."));
   FileMenu->Append(MainWin_ImportWave, _("&Import Wave file..."));
   FileMenu->Append(MainWin_ImportMIDI, _("Import &MIDI file..."));
   FileMenu->Append(MainWin_ImportAKAI, _("Import A&KAI sample..."));
@@ -872,6 +873,12 @@ void MainWindow::OnImportMIDI(wxCommandEvent &event)
     Progress.Update(99);
   }
 }
+
+void MainWindow::OnImportDir(wxCommandEvent &event)
+{
+	MediaLibraryPanel->MLTreeView->ImportDir();
+}
+
 
 void					MainWindow::OnImportAKAI(wxCommandEvent &event)
 {
@@ -2274,6 +2281,7 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_MENU(MainWin_Save, MainWindow::OnSave)
   EVT_MENU(MainWin_SaveAs, MainWindow::OnSaveAs)
   //EVT_MENU(MainWin_ImportWave, MainWindow::OnImportWave)
+  EVT_MENU(MainWin_ImportDir, MainWindow::OnImportDir)
   EVT_MENU(MainWin_ImportMIDI, MainWindow::OnImportMIDI)
   EVT_MENU(MainWin_ImportAKAI, MainWindow::OnImportAKAI)
   EVT_MENU(MainWin_ExportWave, MainWindow::OnExportWave)

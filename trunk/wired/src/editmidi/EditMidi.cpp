@@ -8,6 +8,10 @@
 #include "MidiPart.h"
 #include "OptionPanel.h"
 #include "Settings.h"
+#include "SequencerGui.h"
+
+
+extern const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1];
 
 EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
   :  wxPanel(parent, id, pos, size, style)
@@ -262,14 +266,32 @@ void					EditMidi::OnAttach()
 
 void					EditMidi::OnDetach(wxFrame *f)
 {
+  wxString				combo_choices[NB_COMBO_CHOICES];
+
   toolbar = new wxToolBar(f, ID_TOOLBAR_EDITMIDI, wxPoint(-1, -1), wxSize(-1, -1), wxTB_FLAT | wxTB_DOCKABLE);
   toolbar->SetToolBitmapSize(wxSize(37,37));
   toolbar->AddRadioTool(ID_TOOL_MOVE_MIDIPART, _("Move"), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/hand_up.png"))), wxBITMAP_TYPE_PNG), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/hand_down.png"))), wxBITMAP_TYPE_PNG), _("Move"), _("Moves notes"), NULL);
   toolbar->AddRadioTool(ID_TOOL_EDIT_MIDIPART, _("Edit"), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/draw_up.png"))), wxBITMAP_TYPE_PNG), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/draw_down.png"))), wxBITMAP_TYPE_PNG), _("Edit"), _("Resizes notes"), NULL);
   toolbar->AddRadioTool(ID_TOOL_DEL_MIDIPART, _("Del"), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/erase_up.png"))), wxBITMAP_TYPE_PNG), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/erase_down.png"))), wxBITMAP_TYPE_PNG), _("Del"), _("Deletes notes"), NULL);
+  toolbar->AddSeparator();
+  toolbar->AddCheckTool(ID_TOOL_MAGNET_H, _("MagnetH"), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/magn_up.png"))), wxBITMAP_TYPE_PNG), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/magn_down.png"))), wxBITMAP_TYPE_PNG), _("Magnetize"), _("Magnetize"), NULL);
+  for (long c = 0; c < NB_COMBO_CHOICES; c++)
+    combo_choices[c] = ComboChoices[c].s;
+  MagnetQuant = new wxComboBox(toolbar, ID_TOOL_MAGNET_COMBO, DEFAULT_MAGNETISM_COMBO_VALUE,
+			       wxPoint(-1, -1), wxSize(72, -1), 9, combo_choices, wxCB_READONLY);
+  toolbar->AddControl(MagnetQuant);
+  toolbar->AddSeparator();
+  toolbar->AddCheckTool(ID_TOOL_MAGNET_V, _("MagnetV"), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/magnv_up.png"))), wxBITMAP_TYPE_PNG), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/magnv_down.png"))), wxBITMAP_TYPE_PNG), _("MagnetizeV"), _("MagnetizeV"), NULL);
+  toolbar->AddSeparator();
   toolbar->Realize();
+  toolbar->ToggleTool(ID_TOOL_MAGNET_H, MAGNETISM_EDITMIDI);
+
   ((WiredFrame *)f)->em = this;
   f->SetToolBar(toolbar);
+
+  Magnetism = MAGNETISM;
+  CursorMagnetism = CURSOR_MAGNETISM ? CURSOR_DEFAULT_MAGNETISM : 0;
+  PatternMagnetism = PATTERN_MAGNETISM ? PATTERN_DEFAULT_MAGNETISM : 0;
 
   detached = 1;
   MoveSash((GetSize().GetHeight() - SBS) / 2);
@@ -291,6 +313,43 @@ void					EditMidi::OnToolDel(wxCommandEvent &e)
 {
   midi_pattern->SetToWrite();
   mp->SetTool(ID_TOOL_DEL_MIDIPART);
+}
+void					EditMidi::OnToolMagnetH(wxCommandEvent &event)
+{
+  static bool			magnet = SeqPanel->GetMagnetisme();
+  cout << "Toggle Magnetism" << endl;
+  /*
+   *Magnetism = toolbar->GetToolEnabled(ID_SEQ_MAGNET_H_MIDIPART);
+   *if(Magnetism) {
+   *  cout << "Magnetism [ NO ]" << endl;
+   *}
+   *else {
+   *  cout << "Magnetism [ OK ]" << endl;
+   *}
+   */
+  mp->SetMagntismV(!magnet);
+  magnet = !magnet;
+}
+
+void					EditMidi::OnToolMagnetV(wxCommandEvent &event)
+{
+  static bool			magnet = false;
+  cout << "OnToolMagnetV" << endl;
+  mp->ToggleVerticalMagnetism(magnet);
+  magnet = !magnet;
+}
+
+void					EditMidi::OnMagnetismChange(wxCommandEvent &event)
+{
+  long					c;
+  wxString				s;
+
+  s =  MagnetQuant->GetValue();
+  for (c = 0; (c < NB_COMBO_CHOICES) && (s != ComboChoices[c].s); c++);
+  CursorMagnetism = (long) floor(ComboChoices[c].value);
+  PatternMagnetism = (long) floor(ComboChoices[c].value);
+  cout << "Magnetism change " << MagnetQuant->GetValue() << " and " << ComboChoices[c].value << " " << endl;
+  mp->SetMagntismH(ComboChoices[c].value);
 }
 
 BEGIN_EVENT_TABLE(EditMidi, wxPanel)

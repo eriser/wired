@@ -227,7 +227,6 @@ class				SequencerGui: public wxPanel, public WiredDocument
   int				GetSeqHeaderHeight();
   bool				GetMagnetisme() { return (Toolbar->GetToolEnabled(ID_SEQ_MAGNET)); }
   unsigned short		GetMagnetismeValue() { return (PatternMagnetism); }
-  bool				GetCrossNotes() { return (Toolbar->GetToolEnabled(ID_SEQ_MAGNET_EDITMIDI)); }
 
   void				UnselectTracks();
   void				SelectTrack(long trackindex);
