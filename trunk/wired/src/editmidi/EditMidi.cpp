@@ -282,6 +282,7 @@ void					EditMidi::OnDetach(wxFrame *f)
   toolbar->AddControl(MagnetQuant);
   toolbar->AddSeparator();
   toolbar->AddCheckTool(ID_TOOL_MAGNET_V, _("MagnetV"), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/magnv_up.png"))), wxBITMAP_TYPE_PNG), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/magnv_down.png"))), wxBITMAP_TYPE_PNG), _("MagnetizeV"), _("MagnetizeV"), NULL);
+  toolbar->ToggleTool(ID_TOOL_MAGNET_V, true);
   toolbar->AddSeparator();
   toolbar->Realize();
   toolbar->ToggleTool(ID_TOOL_MAGNET_H, MAGNETISM_EDITMIDI);
