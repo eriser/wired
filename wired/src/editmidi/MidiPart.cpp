@@ -16,7 +16,7 @@ MidiPart::MidiPart(wxWindow *parent, wxWindowID id, const wxPoint& pos,
 		   const wxSize& size, long style, EditMidi *editmidi) :
   wxControl(parent, id, pos, size, style)
 {
-  _vertMagnet = true;
+  _vertMagnet = false;
   _magnetH = SeqPanel->GetMagnetismeValue();
   _magnetV = SeqPanel->GetMagnetisme();
   em = editmidi;
@@ -263,9 +263,13 @@ void					MidiPart::OnReleaseClick(wxMouseEvent &e)
 	  double nx = (selected2->GetPos() * 4 * ROW_WIDTH * ZoomX);
 	  if (e.GetX() - nx > 0)
 	  {
-	    double duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
+	    double mouse_duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
+	    double duration = mouse_duration;
 	    if (_magnetV)
-	      duration = floor(duration * _magnetH + 0.5) / _magnetH;
+	      duration = floor(mouse_duration * _magnetH + 0.5) / _magnetH;
+	    if (_magnetV && duration == 0);
+	      duration = floor(mouse_duration * _magnetH + 1) / _magnetH;
+
 	    selected2->SetDuration(duration);
 	    // assuming Events.end() is the last ME_NOTEOFF set by OnClick()
 	    pattern->Events.pop_back();
@@ -373,14 +377,18 @@ void					MidiPart::OnClick(wxMouseEvent &e)
       double start_position = e.GetX() / (ROW_WIDTH * 4 * ZoomX);
       if (_magnetV)
 	start_position = floor(start_position * _magnetH) / _magnetH;
+      double duration = .25 / 4;;
+      if (_magnetV)
+	duration = floor(duration * _magnetH + 1) / _magnetH;
       MidiEvent *evt = new MidiEvent(0, start_position, msg);
-      evt->EndPosition = evt->Position + .25 / 4;
+      evt->EndPosition = evt->Position + duration;
       pattern->Events.push_back(evt);
       Note *note = new Note(pattern, pattern->Events.size() - 1);
       Notes.push_back(note);
       selected2 = note;
       msg[0] = ME_NOTEOFF;
       msg[2] = 0;
+      selected2->SetDuration(duration);
       evt = new MidiEvent(0, evt->EndPosition, msg);
       pattern->Events.push_back(evt);
       Refresh(true);
