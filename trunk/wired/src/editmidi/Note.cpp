@@ -18,6 +18,7 @@ void				Note::SetDuration(double duration)
 {
   SeqMutex.Lock();
 
+  p->SetToWrite();
   e->EndPosition = duration + e->Position;
   SeqMutex.Unlock();
 }
@@ -31,6 +32,7 @@ void				Note::SetNote(int note)
 {
   SeqMutex.Lock();
 
+  p->SetToWrite();
   e->Msg[1] = note;
   SeqMutex.Unlock();
 }
@@ -44,6 +46,7 @@ void				Note::SetPos(double pos)
 {
   SeqMutex.Lock();
 
+  p->SetToWrite();
   e->EndPosition = e->EndPosition - e->Position + pos;
   e->Position = pos;
   SeqMutex.Unlock();
@@ -63,6 +66,7 @@ void				Note::SetChannel(int channel)
 {
   SeqMutex.Lock();
 
+  p->SetToWrite();
   e->Msg[0] = ME_CODE(e->Msg[0]) | channel;
   SeqMutex.Unlock();
 }
@@ -71,6 +75,7 @@ void				Note::SetVelocity(int velocity)
 {
   SeqMutex.Lock();
 
+  p->SetToWrite();
   e->Msg[2] = velocity;
   SeqMutex.Unlock();
 }
@@ -84,6 +89,7 @@ void				Note::Erase()
 {
   SeqMutex.Lock();
 
+  p->SetToWrite();
   for (vector<MidiEvent *>::iterator i = p->Events.begin(); i != p->Events.end(); i++)
     {
       if (*i == e)
