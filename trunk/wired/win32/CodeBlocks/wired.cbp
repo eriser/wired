@@ -22,6 +22,7 @@
 					<Add option="-DDEBUG_SEQUENCERGUI" />
 					<Add option="-DDEBUG_TRACK" />
 					<Add option="-DDEBUG_WIZARD" />
+					<Add option="-DDEBUG_MIDIATTR" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
