@@ -239,15 +239,15 @@ void					MidiPart::OnMouseMove(wxMouseEvent &e)
 
 	SeqPanel->UpdateMidiPattern(em->midi_pattern);
       }
-
-      // mouse still on the same note ?
-      if (_vertMagnet)
-	if (lastOne != 127 - e.GetY() / ROW_HEIGHT)
-	{
-	  OnReleaseClick(e);
-	  OnClick(e);
-	}
     }
+
+    // mouse still on the same note ?
+    if (_vertMagnet)
+      if (lastOne != 127 - e.GetY() / ROW_HEIGHT)
+      {
+	OnReleaseClick(e);
+	OnClick(e);
+      }
   }
 }
 
