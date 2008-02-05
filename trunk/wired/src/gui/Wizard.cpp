@@ -224,9 +224,6 @@ void	Wizard::OnNewClick(wxCommandEvent &event)
 	chosenDir = dir.GetFullPath();
 	EndModal(0);
   }
-#ifdef _WIN32
-  wxFileName::SetCwd(wxStandardPaths::Get().GetDataDir());
-#endif
 }
 
 void	Wizard::OnTextChange(wxCommandEvent &event)

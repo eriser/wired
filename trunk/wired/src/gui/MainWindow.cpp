@@ -2258,9 +2258,7 @@ void		MainWindow::WiredStartSession(wxString sessionDir)
   WiredSettings->AddDirToRecent(sessionDir);
   path.AssignDir(sessionDir);
   path.MakeAbsolute();
-#ifndef _WIN32
   wxFileName::SetCwd(path.GetPath());
-#endif
   saveCenter->setProjectPath(path);
 
   if (saveCenter->IsProject(path))
