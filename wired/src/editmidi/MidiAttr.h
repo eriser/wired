@@ -14,23 +14,23 @@ using std::vector;
 
 class MidiAttr: public wxPanel
 {
-	public:
-	MidiAttr(wxWindow *parent, wxWindowID id, const wxPoint &pos,
-			const wxSize &size, long style);
-	void	SetNotes(vector <Note *>);
-	void	OnPaint    (wxPaintEvent &);
-  void  OnMouseMove(wxMouseEvent &);
-  void	OnLeftUp   (wxMouseEvent &);
-  void	OnLeftDown (wxMouseEvent &);
-	void	SetZoomX(double ZoomX) { this->ZoomX = ZoomX; }
+  public:
+    MidiAttr(wxWindow *parent, wxWindowID id, const wxPoint &pos,
+	const wxSize &size, long style);
+    void	SetNotes(vector <Note *>);
+    void	OnPaint    (wxPaintEvent &);
+    void  OnMouseMove(wxMouseEvent &);
+    void	OnLeftUp   (wxMouseEvent &);
+    void	OnLeftDown (wxMouseEvent &);
+    void	SetZoomX(double ZoomX) { this->ZoomX = ZoomX; }
 
-	private:
-	vector	<Note *> Notes;
-	double ZoomX;
+  private:
+    vector	<Note *> Notes;
+    double ZoomX;
 
-  void UpdateVelocity(wxMouseEvent &);
+    void UpdateVelocity(wxMouseEvent &);
 
-	DECLARE_EVENT_TABLE()
+    DECLARE_EVENT_TABLE()
 };
 
 #endif
