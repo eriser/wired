@@ -5,6 +5,7 @@
 #include "Settings.h"
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
+#include <wx/stdpaths.h>
 #include <iostream>
 
 #include "AudioEngine.h"
@@ -31,8 +32,11 @@ Settings::Settings()
       ConfDir = wxT("./");
       PlugConfFile = ConfDir + PLUG_CONF_FILE;
     }
-
+#ifdef _WIN32
+  DataDir = wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator() + wxT(DATA_DIR) + wxT("\\wired\\");
+#else
   DataDir = wxString(wxT(DATA_DIR)) + wxT("/wired/");
+#endif
   f.Assign(DataDir);
 
   if (!f.DirExists())
