@@ -18,7 +18,7 @@ class				MidiEvent
     }  	   
   ~MidiEvent() {}
 
-  int				Id;		// Id du controlleur MIDI
+  int				Id;		// Id du controleur MIDI
   // Les positions sont relatives a celles du MidiPattern
   double			Position;	// position dans la mesure de l'evenement
   double			EndPosition;	// position de fin

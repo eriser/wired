@@ -47,7 +47,7 @@ class					MidiPart: public wxControl
   int					GetNPM();
   void					SetTool(int numtool);
   EditMidi				*em;
-  void					ToggleVerticalMagnetism(bool state) { _vertMagnet = !state; }
+  void					ToggleVerticalMagnetism(bool state) { _vertMagnet = state; }
   void					SetMagntismH(long value) { _magnetH = value; }
   void					SetMagntismV(long value) { _magnetV = value; }
 
