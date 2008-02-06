@@ -403,8 +403,8 @@ void					MidiPart::OnClick(wxMouseEvent &e)
       msg[2] = 64;
       double start_position = e.GetX() / (ROW_WIDTH * 4 * ZoomX);
       if (_magnetV)
-	start_position = floor(start_position * _magnetH) / _magnetH;
-      double duration = .25 / 4;;
+	start_position = floor(start_position * _magnetH + 0.5) / _magnetH;
+      double duration = .25 / 4;
       if (_magnetV)
 	duration = 1 / _magnetH;
       MidiEvent *evt = new MidiEvent(0, start_position, msg);

@@ -29,9 +29,13 @@ class MidiAttr: public wxPanel
     void	OnResize   (wxSizeEvent &);
     void	ReDraw     ();
     void	SetZoomX(double ZoomX) { this->ZoomX = ZoomX; }
-    void  SetController(int controller);
+    void	SetController(int controller);
+    void	SetMagntismH(long value) { _magnetH = value; }
+    void	SetMagntismV(bool value) { _magnetV = value; }
 
   private:
+    long					_magnetH;
+    bool					_magnetV;
     vector	<Note *> Notes;
     vector	<ControlChange *> ControlChanges;
     double ZoomX;
