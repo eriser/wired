@@ -32,6 +32,10 @@ void				Note::SetNote(int note)
 {
   SeqMutex.Lock();
 
+  if (note > 127)
+	note = 127;
+  if (note < 0)
+	note = 0;
   p->SetToWrite();
   e->Msg[1] = note;
   SeqMutex.Unlock();
@@ -66,6 +70,10 @@ void				Note::SetChannel(int channel)
 {
   SeqMutex.Lock();
 
+  if (channel > 15)
+	channel = 15;
+  if (channel < 0)
+	channel = 0;
   p->SetToWrite();
   e->Msg[0] = ME_CODE(e->Msg[0]) | channel;
   SeqMutex.Unlock();
@@ -75,6 +83,10 @@ void				Note::SetVelocity(int velocity)
 {
   SeqMutex.Lock();
 
+  if (velocity > 127)
+	velocity = 127;
+  if (velocity < 0)
+	velocity = 0;
   p->SetToWrite();
   e->Msg[2] = velocity;
   SeqMutex.Unlock();
