@@ -16,7 +16,6 @@
 #include "SettingWindow.h"
 #include "AudioPattern.h"
 #include "AudioCenter.h"
-#include "EditMidi.h"
 #include "MidiFile.h"
 #include "cAddTrackAction.h"
 #include "cImportMidiAction.h"

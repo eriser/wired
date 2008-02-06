@@ -24,7 +24,7 @@ EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
   // barre pour couper en deux la fenetre
   splitter = new wxSplitterWindow(this, ID_SPLITTER_EDITMIDI, wxPoint(0, 0), wxSize(size.GetWidth(), size.GetHeight() - SBS), wxSP_3DBORDER | wxSP_3DSASH | wxSP_3D);
 
-  detached = 0;
+  detached = false;
   // fenetre du haut
   top = new wxWindow(splitter, -1, wxPoint(0, 0), wxSize(size.GetWidth(), size.GetHeight() - SBS - BOTTOM_HEIGHT), wxTHICK_FRAME);
   // fenetre du bas
@@ -108,6 +108,8 @@ EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 		       wxPoint(0, size.GetHeight() - SBS),
 		       wxSize(CLAVIER_WIDTH, SBS),
 		       wxSL_HORIZONTAL);
+
+  previousSize = size;
 }
 
 void					EditMidi::SetMidiPattern(MidiPattern *mpattern)
@@ -122,7 +124,7 @@ void					EditMidi::Resize(long w, long h)
   long					sashp;
 
   if (detached)
-    sashp = h - SBS - bottom->GetSize().GetHeight();
+    sashp = (long) ((float) h * (float) splitter->GetSashPosition() / (float) previousSize.GetHeight());
   else
     sashp = h - SBS;
   splitter->SetSize(w, h - SBS);
@@ -153,6 +155,8 @@ void					EditMidi::Resize(long w, long h)
   swbg->SetSize(CLAVIER_WIDTH, bottom->GetSize().GetHeight());
   ma->SetSize(ma->GetSize().GetWidth(), bottom->GetSize().GetHeight());
   ZoomX->SetSize(0, h - SBS, CLAVIER_WIDTH, SBS);
+  previousSize.SetWidth(w);
+  previousSize.SetHeight(h);
 }
 
 void					EditMidi::ResizeClavier(long w, long h)
@@ -267,7 +271,7 @@ void					EditMidi::OnSplitterChanged(wxSplitterEvent &e)
 void					EditMidi::OnAttach()
 {
   toolbar = NULL;
-  detached = 0;
+  detached = false;
   MoveSash(GetSize().GetHeight() - SBS);
 }
 
@@ -302,7 +306,7 @@ void					EditMidi::OnDetach(wxFrame *f)
   CursorMagnetism = CURSOR_MAGNETISM ? CURSOR_DEFAULT_MAGNETISM : 0;
   PatternMagnetism = PATTERN_MAGNETISM ? PATTERN_DEFAULT_MAGNETISM : 0;
 
-  detached = 1;
+  detached = true;
   MoveSash((GetSize().GetHeight() - SBS) / 2);
 }
 
