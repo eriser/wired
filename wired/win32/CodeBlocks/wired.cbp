@@ -113,6 +113,8 @@
 		<Unit filename="..\..\src\dssi\ladspa.h" />
 		<Unit filename="..\..\src\editmidi\Clavier.cpp" />
 		<Unit filename="..\..\src\editmidi\Clavier.h" />
+		<Unit filename="..\..\src\editmidi\ControlChange.cpp" />
+		<Unit filename="..\..\src\editmidi\ControlChange.h" />
 		<Unit filename="..\..\src\editmidi\EditMidi.cpp" />
 		<Unit filename="..\..\src\editmidi\EditMidi.h" />
 		<Unit filename="..\..\src\editmidi\EditNote.cpp" />
