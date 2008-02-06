@@ -293,7 +293,7 @@ void					EditMidi::OnDetach(wxFrame *f)
   toolbar->AddControl(MagnetQuant);
   toolbar->AddSeparator();
   toolbar->AddCheckTool(ID_TOOL_MAGNET_V, _("MagnetV"), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/magnv_up.png"))), wxBITMAP_TYPE_PNG), wxBitmap(wxString(wxString(WiredSettings->DataDir + wxT("ihm/toolbar/magnv_down.png"))), wxBITMAP_TYPE_PNG), _("MagnetizeV"), _("MagnetizeV"), NULL);
-  mp->ToggleVerticalMagnetism(toolbar->GetToolEnabled(ID_TOOL_MAGNET_V));
+  mp->ToggleVerticalMagnetism(!toolbar->GetToolEnabled(ID_TOOL_MAGNET_V));
   toolbar->ToggleTool(ID_TOOL_MAGNET_V, true);
   toolbar->AddSeparator();
   toolbar->Realize();
@@ -336,8 +336,9 @@ void					EditMidi::OnToolMagnetH(wxCommandEvent &event)
 
 void					EditMidi::OnToolMagnetV(wxCommandEvent &event)
 {
-  cout << "OnToolMagnetV" << endl;
-  mp->ToggleVerticalMagnetism(!toolbar->GetToolEnabled(ID_TOOL_MAGNET_V));
+  static bool magnet = toolbar->GetToolEnabled(ID_TOOL_MAGNET_V);
+  mp->ToggleVerticalMagnetism(magnet);
+  magnet = !magnet;
 }
 
 void					EditMidi::OnMagnetismChange(wxCommandEvent &event)

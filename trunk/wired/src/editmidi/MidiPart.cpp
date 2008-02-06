@@ -16,7 +16,7 @@ MidiPart::MidiPart(wxWindow *parent, wxWindowID id, const wxPoint& pos,
 		   const wxSize& size, long style, EditMidi *editmidi) :
   wxControl(parent, id, pos, size, style)
 {
-  _vertMagnet = false;
+  _vertMagnet = true;
   _magnetH = SeqPanel->GetMagnetismeValue();
   _magnetV = SeqPanel->GetMagnetisme();
   em = editmidi;
@@ -191,18 +191,21 @@ void					MidiPart::OnPaint(wxPaintEvent &e)
 	    }
 
 	}
-      int incx = (int)ceil(ZoomX * ROW_WIDTH);
+      //int incx = (int)ceil(ZoomX * ROW_WIDTH);
+      double incx = (ZoomX * ROW_WIDTH);
       if (fc == 0)
 	fc++;
       int mesx = (int)ceil(fc * ZoomX * ROW_WIDTH);
-      for (int i = mesx, j = (fc % 4); i < upd.GetX() + upd.GetW() + 10; i += incx, j++)
+      int j;
+      double i;
+      for (i = mesx, j = (fc % 4); (int)i < upd.GetX() + upd.GetW() + 10; i += incx, j++)
 	{
 	  if (j % 4)
 	    dc.SetPen(greyPen);
 	  else
 	    dc.SetPen(whitePen);
-	  dc.DrawLine(i, (int)floor(ZoomY * fr * ROW_HEIGHT),
-		      i, (int)ceil(ZoomY * (fr + nr) * ROW_HEIGHT));
+	  dc.DrawLine((int)i, (int)floor(ZoomY * fr * ROW_HEIGHT),
+		      (int)i, (int)ceil(ZoomY * (fr + nr) * ROW_HEIGHT));
 	}
       upd++;
     }
@@ -231,7 +234,7 @@ void					MidiPart::OnMouseMove(wxMouseEvent &e)
       {
 	double duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
 	if (_magnetV)
-	  duration = floor(duration * _magnetH + 0.5) / _magnetH;
+	  duration = ceil(duration * _magnetH) / _magnetH;
 	selected2->SetDuration(duration);
 	Refresh(true);
 	em->ma->SetNotes(Notes);
@@ -266,21 +269,45 @@ void					MidiPart::OnReleaseClick(wxMouseEvent &e)
 	    double mouse_duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
 	    double duration = mouse_duration;
 	    if (_magnetV)
-	      duration = floor(mouse_duration * _magnetH + 0.5) / _magnetH;
-	    if (_magnetV && duration == 0);
-	      duration = floor(mouse_duration * _magnetH + 1) / _magnetH;
+	    {
+	      duration = ceil(mouse_duration * _magnetH) / _magnetH;
+	      if (duration <= 0)
+		duration = floor(mouse_duration * _magnetH + 1) / _magnetH;
+	    }
 
 	    selected2->SetDuration(duration);
 	    // assuming Events.end() is the last ME_NOTEOFF set by OnClick()
+	    pattern->Events.pop_back();
+	    // getting the corresponding ME_NOTEON
+	    MidiEvent *evt_save = pattern->Events[pattern->Events.size() - 1];
 	    pattern->Events.pop_back();
 
 	    int msg[3];
 	    msg[0] = ME_NOTEOFF;
 	    // getting the original note from e.GetY() at OnClick()
-	    msg[1] = (*(pattern->Events.end()))->Msg[1]; // = 127 - e.GetY() / ROW_HEIGHT;
+	    msg[1] = lastOne; // = 127 - e.GetY() / ROW_HEIGHT;
 	    msg[2] = 0;
 	    MidiEvent *evt;
-	    evt = new MidiEvent(0, e.GetX() / (ROW_WIDTH * 4 * ZoomX) + .25 / 4, msg);
+	    double mouse_end_pos = e.GetX() / (ROW_WIDTH * 4 * ZoomX);
+	    double end_pos = mouse_end_pos;
+	    if (_magnetV)
+	    {
+	      end_pos = ceil(mouse_end_pos * _magnetH) / _magnetH;
+	      if (end_pos == 0)
+		end_pos = floor(mouse_end_pos * _magnetH + 1) / _magnetH;
+	    }
+	    else
+	      if (end_pos == 0)
+	      {
+		// assuming Events.end() is now the last ME_NOTEON set by OnClick()
+		cout << "[MidiPart] OnReleaseClick() : note with null duration not added" << endl;
+		pattern->Events.pop_back();
+		selected2 = NULL;
+		return;
+	      }
+	    evt = new MidiEvent(0, end_pos, msg);
+	    evt_save->EndPosition = end_pos;
+	    pattern->Events.push_back(evt_save);
 	    pattern->Events.push_back(evt);
 	    Refresh(true);
 	    em->ma->SetNotes(Notes);
@@ -379,7 +406,7 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 	start_position = floor(start_position * _magnetH) / _magnetH;
       double duration = .25 / 4;;
       if (_magnetV)
-	duration = floor(duration * _magnetH + 1) / _magnetH;
+	duration = 1 / _magnetH;
       MidiEvent *evt = new MidiEvent(0, start_position, msg);
       evt->EndPosition = evt->Position + duration;
       pattern->Events.push_back(evt);
@@ -391,11 +418,13 @@ void					MidiPart::OnClick(wxMouseEvent &e)
       selected2->SetDuration(duration);
       evt = new MidiEvent(0, evt->EndPosition, msg);
       pattern->Events.push_back(evt);
-      Refresh(true);
-      em->ma->SetNotes(Notes);
-      em->ma->Refresh(true);
-
-      SeqPanel->UpdateMidiPattern(em->midi_pattern);
+/*
+ *      Refresh(true);
+ *      em->ma->SetNotes(Notes);
+ *      em->ma->Refresh(true);
+ *
+ *      SeqPanel->UpdateMidiPattern(em->midi_pattern);
+ */
     }
 }
 
