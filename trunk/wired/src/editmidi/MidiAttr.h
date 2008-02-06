@@ -23,10 +23,12 @@ class MidiAttr: public wxPanel
     void	OnLeftUp   (wxMouseEvent &);
     void	OnLeftDown (wxMouseEvent &);
     void	SetZoomX(double ZoomX) { this->ZoomX = ZoomX; }
+    void  SetControler(int controler);
 
   private:
     vector	<Note *> Notes;
     double ZoomX;
+    int    m_controler;
 
     void UpdateVelocity(wxMouseEvent &);
 

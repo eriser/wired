@@ -20,7 +20,8 @@ enum
     ID_ZOOMY_EDITMIDI,
     ID_SPLITTER_EDITMIDI,
     ID_MIDIATTR_EDITMIDI,
-    ID_TOOLBAR_EDITMIDI
+    ID_TOOLBAR_EDITMIDI,
+    ID_CB_CONTROLCHANGE
   };
 
 #define	MIDIPART_WIDTH			(500)
@@ -45,10 +46,10 @@ class					MidiPattern;
 class					EditMidi: public wxPanel
 {
  public:
-  EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, 
+  EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size,
 	   long style = wxSIMPLE_BORDER);
- 
-  void					SetMidiPattern(MidiPattern *mpattern); 
+
+  void					SetMidiPattern(MidiPattern *mpattern);
   void					OnScroll(wxScrollEvent &e);
   void					OnResize(wxSizeEvent &e);
   void					Resize(long w, long h);
@@ -66,11 +67,13 @@ class					EditMidi: public wxPanel
   void					OnToolMagnetH(wxCommandEvent &event);
   void					OnToolMagnetV(wxCommandEvent &event);
   void					OnMagnetismChange(wxCommandEvent &event);
+  void          OnControlChange(wxCommandEvent &event);
 
   wxScrolledWindow			*swg;
   wxScrolledWindow			*swd;
   wxScrolledWindow			*swr;
   wxScrolledWindow			*swbg;
+  wxComboBox            *cbControlChange;
   wxScrolledWindow			*swbd;
   wxScrollBar				*sbv;
   wxScrollBar				*sbh;
@@ -90,6 +93,10 @@ class					EditMidi: public wxPanel
   wxComboBox				*MagnetQuant;
   unsigned short		CursorMagnetism;
   unsigned short		PatternMagnetism;
+
+  private:
+    wxString cbControlChangeChoices[129];
+
   DECLARE_EVENT_TABLE()
 };
 
