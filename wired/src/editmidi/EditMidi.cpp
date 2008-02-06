@@ -332,6 +332,7 @@ void					EditMidi::OnToolMagnetH(wxCommandEvent &event)
 {
   static bool			magnet = SeqPanel->GetMagnetisme();
   mp->SetMagntismV(!magnet);
+  ma->SetMagntismV(!magnet);
   magnet = !magnet;
 }
 
@@ -352,6 +353,7 @@ void					EditMidi::OnMagnetismChange(wxCommandEvent &event)
   CursorMagnetism = (long) floor(ComboChoices[c].value);
   PatternMagnetism = (long) floor(ComboChoices[c].value);
   mp->SetMagntismH(ComboChoices[c].value);
+  ma->SetMagntismH(ComboChoices[c].value);
 }
 
 void          EditMidi::OnControlChange(wxCommandEvent &event)

@@ -6,6 +6,7 @@
 #include "MidiAttr.h"
 #include "MidiPart.h"
 #include "Clavier.h"
+#include  "SequencerGui.h"
 
 #ifdef DEBUG_MIDIATTR
 #define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : " << __LINE__ << " : " << __FUNCTION__ << endl; }
@@ -16,7 +17,10 @@
 MidiAttr::MidiAttr(wxWindow *parent, wxWindowID id, const wxPoint &pos,
                    const wxSize& size, long style):
         wxPanel(parent, id, pos, size, style), m_controller(-1)
-{}
+{
+  _magnetH = SeqPanel->GetMagnetismeValue();
+  _magnetV = true;
+}
 
 void				MidiAttr::SetNotes(vector <Note *> recnote)
 {
@@ -36,28 +40,44 @@ void				MidiAttr::OnPaint(wxPaintEvent &e)
   ReDraw();
 }
 
+inline bool sort_event_by_pos(ControlChange *a, ControlChange *b)
+{
+  	return (a->GetPos() <= b->GetPos());
+}
+
 void				MidiAttr::ReDraw()
 {
     LOG;
     wxPaintDC			dc(this);
+    int oldx = 0;
+    int oldy = -1;
 
     if (m_controller >= 0) // Control Change edit mode
     {
         dc.Clear();
+	stable_sort(ControlChanges.begin(), ControlChanges.end(), sort_event_by_pos);
         for (vector<ControlChange *>::iterator cc_it = ControlChanges.begin(); cc_it != ControlChanges.end(); cc_it++)
         {
             ControlChange* cc = (*cc_it);
             if (cc && (cc->GetController() == m_controller))
             {
+                dc.SetPen(wxPen(wxColor(0x00, cc->GetValue() + 75, 0x00)));
+                dc.SetBrush(wxBrush(wxColor(0x00, cc->GetValue() + 128, 0x00)));
                 int x = (int)floor(cc->GetPos() * 4 * ROW_WIDTH * ZoomX);
                 int perc_height = (cc->GetValue() * GetSize().GetHeight()) / 128;
                 int y = GetSize().GetHeight() - perc_height;
-
-                dc.SetPen(wxPen(wxColor(0x00, cc->GetValue() + 75, 0x00)));
-                dc.SetBrush(wxBrush(wxColor(0x00, cc->GetValue() + 128, 0x00)));
-                dc.DrawRectangle(x, y, 1, perc_height);
+		if (oldy == -1)
+		  oldy = y;
+                //dc.DrawRectangle(x, y, 1, perc_height);
+		dc.DrawLine(oldx, oldy, x, oldy);
+		dc.DrawLine(x, oldy, x, y);
+		oldx = x;
+		oldy = y;
             }
         }
+	//dc.SetPen(wxPen(wxColor(0x00, cc->GetValue() + 75, 0x00)));
+	//dc.SetBrush(wxBrush(wxColor(0x00, cc->GetValue() + 128, 0x00)));
+	dc.DrawLine(oldx, oldy, GetSize().GetWidth(), oldy);
     }
     else // Velocity edit mode
     {
@@ -105,17 +125,36 @@ void MidiAttr::UpdateController(wxMouseEvent &e)
       msg[1] = m_controller;
       msg[2] = ((GetSize().GetHeight() - e.GetY()) * 128) / GetSize().GetHeight() - 1;
       double start_position = e.GetX() / (ROW_WIDTH * 4 * ZoomX);
-      /*
+      //double start_position_before = (e.GetX() - 1) / (ROW_WIDTH * 4 * ZoomX);
+      double start_position_after = (e.GetX() + 1) / (ROW_WIDTH * 4 * ZoomX);
+      start_position = floor(start_position * (double)pattern->GetPPQN()) / ((double)pattern->GetPPQN());
       if (_magnetV)
-        start_position = floor(start_position * _magnetH) / _magnetH;
-      */
-      MidiEvent *evt = new MidiEvent(0, start_position, msg);
-      evt->EndPosition = evt->Position;
-      pattern->Events.push_back(evt);
+      {
+	double padding = start_position_after - start_position;
+	start_position = floor(start_position * _magnetH) / _magnetH;
+	start_position_after = start_position + padding;
+      }
+      MidiEvent *evt = NULL;
+
+      for (vector<MidiEvent*>::iterator event_ite = pattern->Events.begin(); event_ite != pattern->Events.end() ; event_ite++)
+	if ((*event_ite)->Position >= start_position && (*event_ite)->Position < start_position_after)// && (*event_ite)->Position > start_position_before)
+	{
+	  evt = (*event_ite);
+	  for (int i = 0; i < 3; i++)
+	    evt->Msg[i] = msg[i];
+	  evt->EndPosition = evt->Position;
+	}
+      if (!evt)
+      {
+	evt = new MidiEvent(0, start_position, msg);
+	evt->EndPosition = evt->Position;
+	pattern->Events.push_back(evt);
+      }
       ControlChange *controlChange = new ControlChange(pattern, pattern->Events.size() - 1);
       ControlChanges.push_back(controlChange);
       Refresh(true);
       this->Refresh(true);
+      pattern->SetToWrite();
     }
     else // Velocity edit mode
     {
