@@ -14,7 +14,7 @@
 
 MidiAttr::MidiAttr(wxWindow *parent, wxWindowID id, const wxPoint &pos,
                    const wxSize& size, long style):
-        wxPanel(parent, id, pos, size, style)
+        wxPanel(parent, id, pos, size, style), m_controler(-1)
 {}
 
 void				MidiAttr::SetNotes(vector <Note *> recnote)
@@ -23,35 +23,37 @@ void				MidiAttr::SetNotes(vector <Note *> recnote)
     this->ZoomX = 1;
 }
 
+void MidiAttr::SetControler(int controler)
+{
+    LOG;
+    m_controler = controler;
+    this->Refresh(true);
+}
+
 void				MidiAttr::OnPaint(wxPaintEvent &e)
 {
     LOG;
     wxPaintDC			dc(this);
 
-    wxRegionIterator upd(GetUpdateRegion());
-    while (upd)
+    if (m_controler >= 0)
+        dc.Clear();
+    else
     {
-        for (unsigned int i = 0; i < Notes.size(); i++)
+        dc.Clear();
+        for (vector<Note *>::iterator note_it = Notes.begin(); note_it != Notes.end(); note_it++)
         {
-            if (Notes[i])
+            Note* note = (*note_it);
+            if (note)
             {
-                int x = (int)floor(Notes[i]->GetPos() * 4 * ROW_WIDTH * ZoomX);
-                int perc_height = (Notes[i]->GetVelocity() * GetSize().GetHeight()) / 128;
+                int x = (int)floor(note->GetPos() * 4 * ROW_WIDTH * ZoomX);
+                int perc_height = (note->GetVelocity() * GetSize().GetHeight()) / 128;
                 int y = GetSize().GetHeight() - perc_height;
 
-                dc.SetPen(wxPen(wxColor(Notes[i]->GetVelocity() + 75, 0x00, 0x00)));
-                dc.SetBrush(wxBrush(wxColor(Notes[i]->GetVelocity() + 128, 0x00, 0x00)));
-                wxRect a(upd.GetX(), upd.GetY(), upd.GetW(), upd.GetH());
-                wxRect b(x, y, 5, perc_height);
-                wxRect *rect = CalcIntersection(a, b);
-                if (rect != NULL)
-                {
-                    dc.DrawRectangle(rect->x, rect->y, rect->width, rect->height);
-                    delete rect;
-                }
+                dc.SetPen(wxPen(wxColor(note->GetVelocity() + 75, 0x00, 0x00)));
+                dc.SetBrush(wxBrush(wxColor(note->GetVelocity() + 128, 0x00, 0x00)));
+                dc.DrawRectangle(x, y, 5, perc_height);
             }
         }
-        upd++;
     }
 }
 

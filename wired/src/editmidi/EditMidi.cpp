@@ -16,6 +16,10 @@ extern const struct s_combo_choice		ComboChoices[NB_COMBO_CHOICES + 1];
 EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style)
   :  wxPanel(parent, id, pos, size, style)
 {
+  cbControlChangeChoices[0] = wxT("Velocity");
+  for (unsigned int i = 1; i < 129; i++)
+    cbControlChangeChoices[i] = wxString(wxT("CC ")) << i;
+
   toolbar = NULL;
   // barre pour couper en deux la fenetre
   splitter = new wxSplitterWindow(this, ID_SPLITTER_EDITMIDI, wxPoint(0, 0), wxSize(size.GetWidth(), size.GetHeight() - SBS), wxSP_3DBORDER | wxSP_3DSASH | wxSP_3D);
@@ -33,6 +37,8 @@ EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
   // fenetre en bas à gauche (sous le clavier)
   swbg = new wxScrolledWindow(bottom, -1, wxPoint(0, 0), wxSize(CLAVIER_WIDTH, 128), wxSIMPLE_BORDER);
   swbg->SetScrollRate(SBPASH, SBPASV);
+
+  cbControlChange = new wxComboBox(swbg, ID_CB_CONTROLCHANGE, wxT("Velocity"), wxDefaultPosition, wxDefaultSize, 129, cbControlChangeChoices, wxCB_READONLY);
 
   // fenetre en bas à droite (midiattr)
   swbd = new wxScrolledWindow(bottom, -1, wxPoint(CLAVIER_WIDTH, 0),
@@ -353,6 +359,11 @@ void					EditMidi::OnMagnetismChange(wxCommandEvent &event)
   mp->SetMagntismH(ComboChoices[c].value);
 }
 
+void          EditMidi::OnControlChange(wxCommandEvent &event)
+{
+  ma->SetControler(cbControlChange->GetCurrentSelection() - 1);
+}
+
 BEGIN_EVENT_TABLE(EditMidi, wxPanel)
   EVT_COMMAND_SCROLL(ID_SCROLLH_EDITMIDI, EditMidi::OnScroll)
   EVT_COMMAND_SCROLL(ID_SCROLLV_EDITMIDI, EditMidi::OnScroll)
@@ -360,4 +371,5 @@ BEGIN_EVENT_TABLE(EditMidi, wxPanel)
   EVT_SLIDER(ID_ZOOMX_EDITMIDI, EditMidi::OnZoomX)
   EVT_SLIDER(ID_ZOOMY_EDITMIDI, EditMidi::OnZoomY)
   EVT_SPLITTER_SASH_POS_CHANGED(ID_SPLITTER_EDITMIDI, EditMidi::OnSplitterChanged)
+  EVT_COMBOBOX(ID_CB_CONTROLCHANGE, EditMidi::OnControlChange)
 END_EVENT_TABLE()
