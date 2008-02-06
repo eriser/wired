@@ -297,8 +297,8 @@ class					Pattern : public wxWindow, public WiredDocument
    */
   double							GetEndPos();
 
-  double				SetEndPosition(double pos) { EndPosition = pos; }
-  double				SetLength(double len) { Length = len; }
+  void				SetEndPosition(double pos) { EndPosition = pos; }
+  void				SetLength(double len) { Length = len; }
 
   void								Dump();
 //  virtual Pattern			operator=(const Pattern& right) = 0;

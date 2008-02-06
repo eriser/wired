@@ -90,14 +90,18 @@ class					EditMidi: public wxPanel
   wxSplitterWindow			*splitter;
   wxToolBar					*toolbar;
   MidiPattern				*midi_pattern;
-  int						detached;
   bool						Magnetism;
   wxComboBox				*MagnetQuant;
   unsigned short		CursorMagnetism;
   unsigned short		PatternMagnetism;
 
   private:
+    // Strings used in the bottom left control box (control change)
     wxString cbControlChangeChoices[129];
+    // Size of this window before resizing
+    wxSize   previousSize;
+    // Boolean to know if this is a free window or this is docked in option panel
+    bool     detached;
 
   DECLARE_EVENT_TABLE()
 };

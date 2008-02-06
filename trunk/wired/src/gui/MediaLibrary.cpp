@@ -12,7 +12,6 @@
 #include "SettingWindow.h"
 #include "AudioPattern.h"
 #include "AudioCenter.h"
-#include "EditMidi.h"
 #include "cAddTrackAction.h"
 #include "cImportMidiAction.h"
 #include "DownButton.h"
