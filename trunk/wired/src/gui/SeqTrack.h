@@ -118,6 +118,5 @@ enum
 
 extern int				AudioTrackCount;
 extern int				MidiTrackCount;
-extern int				AutomationTrackCount;
 
 #endif

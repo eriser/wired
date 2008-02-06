@@ -151,8 +151,6 @@
 		<Unit filename="..\..\src\gui\AccelCenter.h" />
 		<Unit filename="..\..\src\gui\AudioPattern.cpp" />
 		<Unit filename="..\..\src\gui\AudioPattern.h" />
-		<Unit filename="..\..\src\gui\AutomationTrack.cpp" />
-		<Unit filename="..\..\src\gui\AutomationTrack.h" />
 		<Unit filename="..\..\src\gui\ChannelGui.cpp" />
 		<Unit filename="..\..\src\gui\ChannelGui.h" />
 		<Unit filename="..\..\src\gui\ColoredBox.cpp" />

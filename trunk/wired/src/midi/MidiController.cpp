@@ -12,20 +12,20 @@ END_EVENT_TABLE()
 
 #define MIDIWIDTH 206
 
-MidiController::MidiController(wxWindow *parent) : 
+MidiController::MidiController(wxWindow *parent) :
   wxDialog(parent, -1, _("Assign Midi Controller"), wxDefaultPosition, wxSize(206, MIDIWIDTH))
 {
   Centre();
   sb = new wxStaticBox(this, -1, _("Assign to controller number :"), wxPoint(6, 4), wxSize(192, 160));
   OkBtn = new wxButton(this, ID_OK, _("OK"), wxPoint(20, 170));
   CancelBtn = new wxButton(this, ID_CANCEL, _("Cancel"), wxPoint(110, 170));
-  
+
   ChannelText = new wxStaticText(this, -1, _("Channel:"), wxPoint(52, 26));
   ChannelCtrl = new wxSpinCtrl(this, -1, wxT("1"), wxPoint(52, 44));
 
   ControllerText = new wxStaticText(this, -1, _("Control:"), wxPoint(52, 70));
   ControllerCtrl = new wxSpinCtrl(this, -1, wxT("0"), wxPoint(52, 88));
-  
+
   ValueText = new wxStaticText(this, -1, _("Value:"), wxPoint(52, 114));
   ValueCtrl = new wxSpinCtrl(this, -1, wxT("0"), wxPoint(52, 130));
 
@@ -69,6 +69,9 @@ void MidiController::ProcessMidi(int midi_msg[3])
 
 void MidiController::OnOkBtnClick(wxCommandEvent &event)
 {
+  Note = false;
+  Type = M_CONTROL;
+  Controller = ControllerCtrl->GetValue();
   EndModal(1);
 }
 

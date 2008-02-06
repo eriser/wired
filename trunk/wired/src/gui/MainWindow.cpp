@@ -183,8 +183,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   SequencerMenu->Append(MainWin_AddTrackAudio, _("&Add Audio Track"));
   SequencerMenu->Append(MainWin_AddTrackMidi, _("Add &MIDI Track"));
-  // Added by Julien Eres
-  SequencerMenu->Append(MainWin_AddTrackAutomation, _("Add A&utomation Track"));
   SequencerMenu->Append(MainWin_SoloTrack, _("&Toggle solo (Enter)"));
   SequencerMenu->Append(MainWin_DeleteTrack, _("&Delete Track (Backspace)"));
 
@@ -1248,15 +1246,6 @@ void					MainWindow::OnAddTrackMidi(wxCommandEvent &event)
   Track *newTrack = SeqPanel->CreateTrack(eMidiTrack);
 }
 
-// Added by Julien Eres
-void					MainWindow::OnAddTrackAutomation(wxCommandEvent &event)
-{
-  LOG;
-  Track *newTrack = SeqPanel->CreateTrack(eAutomationTrack);
-  newTrack->CreateMidiPattern(new MidiTrack(0, NULL, 96, wxT(""), 1));
-  cout << __FUNCTION__ << '@' << __LINE__ << ": TODO In progress." << endl;
-}
-
 void					MainWindow::OnFloatTransport(wxCommandEvent &event)
 {
   LOG;
@@ -2287,8 +2276,6 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_MENU(MainWin_DeleteRack, MainWindow::OnDeleteRack)
   EVT_MENU(MainWin_AddTrackAudio, MainWindow::OnAddTrackAudio)
   EVT_MENU(MainWin_AddTrackMidi, MainWindow::OnAddTrackMidi)
-  // Added by Julien Eres
-  EVT_MENU(MainWin_AddTrackAutomation, MainWindow::OnAddTrackAutomation)
   EVT_MENU(MainWin_DeleteTrack, MainWindow::OnDeleteTrack)
   EVT_MENU(MainWin_SoloTrack, MainWindow::SetSelectedSolo)
   EVT_MENU(MainWin_FloatTransport, MainWindow::OnFloatTransport)

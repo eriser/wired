@@ -59,7 +59,7 @@ Track::Track(WiredDocument* parentDoc, trackType type,
   Index = 0;
   Type = type;
 
-  ColourIndex = (AudioTrackCount + MidiTrackCount + AutomationTrackCount) % MAX_AUTO_COLOURS;
+  ColourIndex = (AudioTrackCount + MidiTrackCount) % MAX_AUTO_COLOURS;
 
   // relative to the header of track (mostly GUI)
   TrackOpt = new SeqTrack(Seq->Tracks.size() + 1, TrackView,
