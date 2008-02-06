@@ -33,6 +33,8 @@ enum
 #define NB_COMBO_CHOICES		(9)
 #define DEFAULT_MAGNETISM_COMBO_VALUE	wxT("1/4")
 
+#define  BOTTOM_HEIGHT			128
+
 /**
  * The MidiPattern class is used for something.
  */

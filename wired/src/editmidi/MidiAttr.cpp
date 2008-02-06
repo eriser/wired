@@ -32,6 +32,11 @@ void MidiAttr::SetControler(int controler)
 
 void				MidiAttr::OnPaint(wxPaintEvent &e)
 {
+  ReDraw();
+}
+
+void				MidiAttr::ReDraw()
+{
     LOG;
     wxPaintDC			dc(this);
 
@@ -92,10 +97,18 @@ void MidiAttr::UpdateVelocity(wxMouseEvent &e)
     }
 }
 
+void				MidiAttr::OnResize(wxSizeEvent &e)
+{
+  //wxPaintDC			dc(this);
+  //dc.Clear();
+  ReDraw();
+}
+
 BEGIN_EVENT_TABLE(MidiAttr, wxPanel)
     EVT_PAINT(MidiAttr::OnPaint)
     EVT_MOTION(MidiAttr::OnMouseMove)
     EVT_LEFT_UP(MidiAttr::OnLeftUp)
     EVT_LEFT_DOWN(MidiAttr::OnLeftDown)
+    EVT_SIZE(MidiAttr::OnResize)
 END_EVENT_TABLE()
 

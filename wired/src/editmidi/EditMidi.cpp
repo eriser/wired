@@ -26,27 +26,27 @@ EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 
   detached = 0;
   // fenetre du haut
-  top = new wxWindow(splitter, -1, wxPoint(0, 0), wxSize(size.GetWidth(), size.GetHeight() - SBS - 128), wxTHICK_FRAME);
+  top = new wxWindow(splitter, -1, wxPoint(0, 0), wxSize(size.GetWidth(), size.GetHeight() - SBS - BOTTOM_HEIGHT), wxTHICK_FRAME);
   // fenetre du bas
-  bottom = new wxWindow(splitter, -1, wxPoint(0, 0), wxSize(size.GetWidth(), 128), wxTHICK_FRAME);
+  bottom = new wxWindow(splitter, -1, wxPoint(0, 0), wxSize(size.GetWidth(), BOTTOM_HEIGHT), wxTHICK_FRAME);
 
   // coupe la fenetre en 2 dans le sens horizontal
   splitter->SplitHorizontally(top, bottom, size.GetHeight() - SBS);
   //splitter->SetMinimumPaneSize(MIDI_RULER_HEIGHT * 3);
 
   // fenetre en bas à gauche (sous le clavier)
-  swbg = new wxScrolledWindow(bottom, -1, wxPoint(0, 0), wxSize(CLAVIER_WIDTH, 128), wxSIMPLE_BORDER);
+  swbg = new wxScrolledWindow(bottom, -1, wxPoint(0, 0), wxSize(CLAVIER_WIDTH, BOTTOM_HEIGHT), wxSIMPLE_BORDER);
   swbg->SetScrollRate(SBPASH, SBPASV);
 
   cbControlChange = new wxComboBox(swbg, ID_CB_CONTROLCHANGE, wxT("Velocity"), wxDefaultPosition, wxDefaultSize, 129, cbControlChangeChoices, wxCB_READONLY);
 
   // fenetre en bas à droite (midiattr)
   swbd = new wxScrolledWindow(bottom, -1, wxPoint(CLAVIER_WIDTH, 0),
-			      wxSize(size.GetWidth() - SBS - CLAVIER_WIDTH, 128), wxTHICK_FRAME);
+			      wxSize(size.GetWidth() - SBS - CLAVIER_WIDTH, BOTTOM_HEIGHT), wxTHICK_FRAME);
   swbd->SetScrollRate(SBPASH, SBPASV);
 
   // MidiAttr
-  ma = new MidiAttr(swbd, ID_MIDIATTR_EDITMIDI, wxPoint(0, 0), wxSize(MIDIPART_WIDTH, 128), wxSIMPLE_BORDER);
+  ma = new MidiAttr(swbd, ID_MIDIATTR_EDITMIDI, wxPoint(0, 0), wxSize(MIDIPART_WIDTH, BOTTOM_HEIGHT), wxSIMPLE_BORDER);
 
   // scrollbar horizontale (en bas)
   sbh = new wxScrollBar(this, ID_SCROLLH_EDITMIDI, wxPoint(CLAVIER_WIDTH,
@@ -58,7 +58,7 @@ EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
   // scrollbar verticale (a droite)
   sbv = new wxScrollBar(top, ID_SCROLLV_EDITMIDI, wxPoint(size.GetWidth() - SBS,
 							 MIDI_RULER_HEIGHT), wxSize(SBS, size.GetHeight()
-										    - SBS - MIDI_RULER_HEIGHT - 128), wxSB_VERTICAL);
+										    - SBS - MIDI_RULER_HEIGHT - BOTTOM_HEIGHT), wxSB_VERTICAL);
   sbv->SetScrollbar(0, 1, 100, 1);
 
   // fenetre en haut à gauche (clavier)
