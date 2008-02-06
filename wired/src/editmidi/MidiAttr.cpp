@@ -102,6 +102,7 @@ void				MidiAttr::OnResize(wxSizeEvent &e)
   //wxPaintDC			dc(this);
   //dc.Clear();
   ReDraw();
+  this->Refresh(true);
 }
 
 BEGIN_EVENT_TABLE(MidiAttr, wxPanel)

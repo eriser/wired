@@ -252,9 +252,10 @@ void					EditMidi::MoveSash(long newsashpos)
   swg->SetSize(CLAVIER_WIDTH, fenh);
   swd->SetSize(w - CLAVIER_WIDTH - SBS, fenh);
   swr->SetSize(w - CLAVIER_WIDTH - SBS, MIDI_RULER_HEIGHT);
-  swbd->SetSize(w - CLAVIER_WIDTH, bottom->GetSize().GetHeight());
-  swbg->SetSize(CLAVIER_WIDTH, bottom->GetSize().GetHeight());
-  ma->SetSize(ma->GetSize().GetWidth(), bottom->GetSize().GetHeight());
+  int bottom_height = h - newsashpos - SBS;
+  swbd->SetSize(w - CLAVIER_WIDTH, bottom_height);
+  swbg->SetSize(CLAVIER_WIDTH, bottom_height);
+  ma->SetSize(ma->GetSize().GetWidth(), bottom_height);
   ZoomX->SetSize(0, h - SBS, CLAVIER_WIDTH, SBS);
 }
 
