@@ -6,11 +6,14 @@
 
 #include <wx/wx.h>
 #include "Note.h"
+#include "ControlChange.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
 using std::vector;
+
+class MidiPattern;
 
 class MidiAttr: public wxPanel
 {
@@ -18,6 +21,7 @@ class MidiAttr: public wxPanel
     MidiAttr(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 	const wxSize &size, long style);
     void	SetNotes(vector <Note *>);
+    void  SetMidiPattern(MidiPattern *p);
     void	OnPaint    (wxPaintEvent &);
     void  OnMouseMove(wxMouseEvent &);
     void	OnLeftUp   (wxMouseEvent &);
@@ -25,14 +29,16 @@ class MidiAttr: public wxPanel
     void	OnResize   (wxSizeEvent &);
     void	ReDraw     ();
     void	SetZoomX(double ZoomX) { this->ZoomX = ZoomX; }
-    void  SetControler(int controler);
+    void  SetController(int controller);
 
   private:
     vector	<Note *> Notes;
+    vector	<ControlChange *> ControlChanges;
     double ZoomX;
-    int    m_controler;
+    int    m_controller;
+    MidiPattern *pattern;
 
-    void UpdateVelocity(wxMouseEvent &);
+    void UpdateController(wxMouseEvent &);
 
     DECLARE_EVENT_TABLE()
 };

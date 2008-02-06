@@ -18,7 +18,7 @@ EditMidi::EditMidi(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wx
 {
   cbControlChangeChoices[0] = wxT("Velocity");
   for (unsigned int i = 1; i < 129; i++)
-    cbControlChangeChoices[i] = wxString(wxT("CC ")) << i;
+    cbControlChangeChoices[i] = wxString(wxT("CC ")) << (i - 1);
 
   toolbar = NULL;
   // barre pour couper en deux la fenetre
@@ -116,6 +116,7 @@ void					EditMidi::SetMidiPattern(MidiPattern *mpattern)
 {
   midi_pattern = mpattern;
   mp->SetMidiPattern(mpattern);
+  ma->SetMidiPattern(mpattern);
   cout << "[EditMidi] SetMidiPattern() midi pattern is set to be saved..." << endl;
 }
 
@@ -355,7 +356,7 @@ void					EditMidi::OnMagnetismChange(wxCommandEvent &event)
 
 void          EditMidi::OnControlChange(wxCommandEvent &event)
 {
-  ma->SetControler(cbControlChange->GetCurrentSelection() - 1);
+  ma->SetController(cbControlChange->GetCurrentSelection() - 1);
 }
 
 BEGIN_EVENT_TABLE(EditMidi, wxPanel)

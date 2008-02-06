@@ -25,7 +25,7 @@ using std::vector;
 #define  DEFAULT_MIDI_PATH	wxT("audio")
 
 // default ppqn (when =1)
-#define  DEFAULT_MIDI_PPQN 1234 
+#define  DEFAULT_MIDI_PPQN 1234
 
 void	MakeMidiFileName(wxString &filename, unsigned long seqTrackIndex);
 
@@ -105,6 +105,7 @@ void	MakeMidiFileName(wxString &filename, unsigned long seqTrackIndex);
 
 #define IS_ME_NOTEON(id)		(ME_CODE(id) == ME_NOTEON)
 #define IS_ME_NOTEOFF(id)		(ME_CODE(id) == ME_NOTEOFF)
+#define IS_ME_CTRLCHANGE(id)		(ME_CODE(id) == ME_CTRLCHANGE)
 
 // Obselete events
 #define NME_MIDICHANNEL			0x20
