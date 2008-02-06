@@ -28,4 +28,6 @@ libeditmidi_a_SOURCES =			\
 		Note.cpp		\
 		Note.h			\
 		RulerMidi.cpp		\
-		RulerMidi.h
+		RulerMidi.h		\
+		ControlChange.cpp	\
+		ControlChange.h
