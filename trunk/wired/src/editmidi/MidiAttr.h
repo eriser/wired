@@ -22,6 +22,8 @@ class MidiAttr: public wxPanel
     void  OnMouseMove(wxMouseEvent &);
     void	OnLeftUp   (wxMouseEvent &);
     void	OnLeftDown (wxMouseEvent &);
+    void	OnResize   (wxSizeEvent &);
+    void	ReDraw     ();
     void	SetZoomX(double ZoomX) { this->ZoomX = ZoomX; }
     void  SetControler(int controler);
 
