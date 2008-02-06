@@ -23,7 +23,6 @@
 // Counts number of Audio and MIDI tracks created yet
 int				AudioTrackCount = 0;
 int				MidiTrackCount = 0;
-int				AutomationTrackCount = 0;
 
 SeqTrack::SeqTrack(long index, wxWindow *winParent,
 		   const wxPoint& pos = wxDefaultPosition,
@@ -58,9 +57,6 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
     case eMidiTrack:
         str.Printf(wxT("MIDI %d"), ++MidiTrackCount);
         break;
-    case eAutomationTrack:
-        str.Printf(wxT("Automation %d"), ++AutomationTrackCount);
-        break;
   }
   Text = new wxTextCtrl(this, SeqTrack_OnNameChange, str, wxPoint(6, 8),
 			wxSize(TRACK_WIDTH - 68, 18), wxTE_PROCESS_ENTER);
@@ -76,9 +72,6 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
         break;
     case eMidiTrack:
         trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-midi.png")), wxBITMAP_TYPE_PNG);
-        break;
-    case eAutomationTrack:
-        trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-auto.png")), wxBITMAP_TYPE_PNG);
         break;
   }
 
@@ -243,7 +236,7 @@ void					SeqTrack::RebuildConnectList()
 	 itPlugin++, id++)
       {
 	if ((Type == eAudioTrack && (*itPlugin)->IsAudio()) ||
-	    (((Type == eMidiTrack) || (Type == eAutomationTrack)) && (*itPlugin)->IsMidi()))
+	    ((Type == eMidiTrack) && (*itPlugin)->IsMidi()))
 	  {
 	    // append valid rack, and connect the menu entry to OnConnectSelected()
 	    menu->Append(id, (*itPlugin)->Name);
@@ -436,7 +429,7 @@ void					SeqTrack::OnDeviceChoice(wxCommandEvent &WXUNUSED(event))
 	    return;
 	  }
     }
-  else if ((Type == eMidiTrack) || (Type == eAutomationTrack))
+  else if (Type == eMidiTrack)
     {
       vector<MidiInDevice *>::iterator	i;
 
@@ -523,7 +516,7 @@ void					SeqTrack::SetDeviceId(long devid)
 	    return;
 	  }
     }
-  else if ((Type == eMidiTrack) || (Type == eAutomationTrack))
+  else if (Type == eMidiTrack)
     {
       vector<MidiInDevice *>::iterator	i;
 

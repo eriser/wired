@@ -14,7 +14,6 @@ enum trackType
     eUnknownTrack = 0,
     eMidiTrack,
     eAudioTrack,
-    eAutomationTrack,
     eEndTrackType
   };
 
@@ -52,7 +51,6 @@ class					Track : public WiredDocument
   // These pointers are used when we record on this Track.
   AudioPattern*				Wave;
   MidiPattern*				Midi;
-//  AutomationPattern*		Automation;
 
  public:
   Track(WiredDocument* parentDoc, trackType type, wxPoint& pos, wxSize& size,
@@ -68,7 +66,6 @@ class					Track : public WiredDocument
 
   AudioPattern				*CreateAudioPattern(WaveFile *w, double pos = 0);
   MidiPattern				*CreateMidiPattern(MidiTrack *t);
-//  AutomationPattern			*CreateAutomationPattern(AutomationTrack *t);
 
   // this function should be used ONLY in Pattern constructor/destructor
   void					AddPattern(Pattern *p);
@@ -81,7 +78,6 @@ class					Track : public WiredDocument
   void					ChangeTrackColour(wxColour &c);
   bool					IsAudioTrack      () { return ((Type == eAudioTrack) ? (true) : (false)); }
   bool					IsMidiTrack       () { return ((Type == eMidiTrack) ? (true) : (false)); }
-  bool					IsAutomationTrack () { return (Type == eAutomationTrack); }
   trackType				GetType() { return (Type); }
 
   inline long				GetIndex() { return (Index); };

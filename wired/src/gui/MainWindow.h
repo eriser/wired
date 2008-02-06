@@ -67,7 +67,6 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					OnDeleteRack(wxCommandEvent &event);
   void					OnAddTrackAudio(wxCommandEvent &event);
   void					OnAddTrackMidi(wxCommandEvent &event);
-  void					OnAddTrackAutomation(wxCommandEvent &event);
   void					OnDeleteTrack(wxCommandEvent &event);
   void					SetSelectedSolo(wxCommandEvent &event);
   void					OnCreateRackClick(wxCommandEvent &event);
@@ -272,8 +271,6 @@ enum
   MainWin_DeleteRack,
   MainWin_AddTrackAudio,
   MainWin_AddTrackMidi,
-  // Added by Julien Eres
-  MainWin_AddTrackAutomation,
   MainWin_DeleteTrack,
   MainWin_SoloTrack,
   MainWin_Copy,
