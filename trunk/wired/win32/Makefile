@@ -68,7 +68,6 @@ SOURCES_libsave              := SaveCenter.cpp                \
                                 WiredDocument.cpp
 SOURCES_libgui               := AccelCenter.cpp               \
                                 AudioPattern.cpp              \
-                                AutomationTrack.cpp           \
                                 ChannelGui.cpp                \
                                 ColoredLine.cpp               \
                                 ColoredBox.cpp                \
@@ -99,6 +98,7 @@ SOURCES_libgui               := AccelCenter.cpp               \
                                 WaveDrawer.cpp                \
                                 WaveEditorDrawer.cpp          \
                                 WavePanel.cpp                 \
+                                Wizard.cpp                    \
                                 PluginEffect.cpp              \
                                 FileConversion.cpp            \
                                 FloatingFrame.cpp
@@ -108,7 +108,8 @@ SOURCES_libsequencer         := Sequencer.cpp                 \
 SOURCES_libaudio             := ClipBoard.cpp                 \
                                 WaveFile.cpp                  \
                                 WriteWaveFile.cpp
-SOURCES_libeditmidi          := Clavier.cpp                   \
+SOURCES_libeditmidi          := ControlChange.cpp             \
+                                Clavier.cpp                   \
                                 EditMidi.cpp                  \
                                 EditNote.cpp                  \
                                 Key.cpp                       \

@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Wired
-AppVerName=Wired 0.5.1
+AppVerName=Wired 0.6
 AppPublisher=Wired Team
 AppPublisherURL=http://wired.epitech.net/
 AppSupportURL=http://wired.epitech.net/
@@ -11,7 +11,7 @@ AppUpdatesURL=http://wired.epitech.net/
 DefaultDirName={pf}\Wired
 DefaultGroupName=Wired
 LicenseFile=..\LICENSE
-OutputBaseFilename=wired-0.5.1
+OutputBaseFilename=wired-0.6
 SetupIconFile=wired.ico
 Compression=lzma
 SolidCompression=yes
