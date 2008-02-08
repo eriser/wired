@@ -264,7 +264,7 @@ void					MidiPart::OnReleaseClick(wxMouseEvent &e)
 	if (selected2)
 	{
 	  double nx = (selected2->GetPos() * 4 * ROW_WIDTH * ZoomX);
-	  if (e.GetX() - nx > 0)
+	  if (e.GetX() - nx >= 0)
 	  {
 	    double mouse_duration = (e.GetX() - nx) / (ROW_WIDTH * 4 * ZoomX);
 	    double duration = mouse_duration;
@@ -403,7 +403,7 @@ void					MidiPart::OnClick(wxMouseEvent &e)
       msg[2] = 64;
       double start_position = e.GetX() / (ROW_WIDTH * 4 * ZoomX);
       if (_magnetV)
-	start_position = floor(start_position * _magnetH + 0.5) / _magnetH;
+	start_position = floor(start_position * _magnetH) / _magnetH;
       double duration = .25 / 4;
       if (_magnetV)
 	duration = 1 / _magnetH;
