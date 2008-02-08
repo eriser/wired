@@ -32,6 +32,7 @@ class MidiAttr: public wxPanel
     void	SetController(int controller);
     void	SetMagntismH(long value) { _magnetH = value; }
     void	SetMagntismV(bool value) { _magnetV = value; }
+    void	SetTool(int numtool);
 
   private:
     long					_magnetH;
@@ -40,6 +41,7 @@ class MidiAttr: public wxPanel
     vector	<ControlChange *> ControlChanges;
     double ZoomX;
     int    m_controller;
+    int    tool;
     MidiPattern *pattern;
 
     void UpdateController(wxMouseEvent &);
