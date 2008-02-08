@@ -315,18 +315,21 @@ void					EditMidi::OnToolMove(wxCommandEvent &e)
 {
   midi_pattern->SetToWrite();
   mp->SetTool(ID_TOOL_MOVE_MIDIPART);
+  ma->SetTool(ID_TOOL_MOVE_MIDIPART);
 }
 
 void					EditMidi::OnToolEdit(wxCommandEvent &e)
 {
   midi_pattern->SetToWrite();
   mp->SetTool(ID_TOOL_EDIT_MIDIPART);
+  ma->SetTool(ID_TOOL_EDIT_MIDIPART);
 }
 
 void					EditMidi::OnToolDel(wxCommandEvent &e)
 {
   midi_pattern->SetToWrite();
   mp->SetTool(ID_TOOL_DEL_MIDIPART);
+  ma->SetTool(ID_TOOL_DEL_MIDIPART);
 }
 void					EditMidi::OnToolMagnetH(wxCommandEvent &event)
 {
@@ -352,8 +355,8 @@ void					EditMidi::OnMagnetismChange(wxCommandEvent &event)
   for (c = 0; (c < NB_COMBO_CHOICES) && (s != ComboChoices[c].s); c++);
   CursorMagnetism = (long) floor(ComboChoices[c].value);
   PatternMagnetism = (long) floor(ComboChoices[c].value);
-  mp->SetMagntismH(ComboChoices[c].value);
-  ma->SetMagntismH(ComboChoices[c].value);
+  mp->SetMagntismH((long int)ComboChoices[c].value);
+  ma->SetMagntismH((long int)ComboChoices[c].value);
 }
 
 void          EditMidi::OnControlChange(wxCommandEvent &event)

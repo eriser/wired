@@ -359,7 +359,7 @@ void					MidiPart::OnClick(wxMouseEvent &e)
 	  {
 	    if (e.GetX() - b.x > 0)
 	    {
-	      long duration = (e.GetX() - b.x) / (ROW_WIDTH * 4 * ZoomX);
+	      long duration = (long)((e.GetX() - b.x) / (ROW_WIDTH * 4 * ZoomX));
 	      selected2->SetDuration(duration);
 	      Refresh(true);
 	      em->ma->SetNotes(Notes);

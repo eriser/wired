@@ -9,7 +9,7 @@
 #include  "SequencerGui.h"
 
 #ifdef DEBUG_MIDIATTR
-#define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : " << __LINE__ << " : " << __FUNCTION__ << endl; }
+#define LOG { wxFileName __filename__(wxT(__FILE__)); cout << __filename__.GetFullName() << " : " << __LINE__ << " : " << __FUNCTION__ << endl; }
 #else
 #define LOG
 #endif
@@ -20,6 +20,7 @@ MidiAttr::MidiAttr(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 {
   _magnetH = SeqPanel->GetMagnetismeValue();
   _magnetV = true;
+  tool = ID_TOOL_MOVE_MIDIPART;
 }
 
 void				MidiAttr::SetNotes(vector <Note *> recnote)
@@ -137,21 +138,50 @@ void MidiAttr::UpdateController(wxMouseEvent &e)
       MidiEvent *evt = NULL;
 
       for (vector<MidiEvent*>::iterator event_ite = pattern->Events.begin(); event_ite != pattern->Events.end() ; event_ite++)
-	if ((*event_ite)->Position >= start_position && (*event_ite)->Position < start_position_after)// && (*event_ite)->Position > start_position_before)
-	{
-	  evt = (*event_ite);
-	  for (int i = 0; i < 3; i++)
-	    evt->Msg[i] = msg[i];
-	  evt->EndPosition = evt->Position;
-	}
-      if (!evt)
+      {
+	if ((*event_ite)->Msg[0] == ME_CTRLCHANGE && (*event_ite)->Msg[1] == m_controller &&
+	    (*event_ite)->Position >= start_position && (*event_ite)->Position < start_position_after)// && (*event_ite)->Position > start_position_before)
+	    {
+	      evt = (*event_ite);
+	    }
+      }
+      // we have no events and we're not drawing
+      if (evt == NULL && tool != ID_TOOL_EDIT_MIDIPART)
+	return;
+      // we have no events but we're drawing
+      if (evt == NULL)
       {
 	evt = new MidiEvent(0, start_position, msg);
 	evt->EndPosition = evt->Position;
 	pattern->Events.push_back(evt);
       }
-      ControlChange *controlChange = new ControlChange(pattern, pattern->Events.size() - 1);
-      ControlChanges.push_back(controlChange);
+      else
+      {
+	// we have an event
+	if (tool != ID_TOOL_DEL_MIDIPART)
+	{
+	  // updating it
+	  for (int i = 0; i < 3; i++)
+	    evt->Msg[i] = msg[i];
+	  evt->EndPosition = evt->Position;
+	}
+      }
+      vector<ControlChange*>::iterator cc_ite;
+      for (cc_ite = ControlChanges.begin(); cc_ite != ControlChanges.end(); cc_ite++)
+	if ((*cc_ite)->GetController() == m_controller && (*cc_ite)->GetPos() >= start_position && (*cc_ite)->GetPos() < start_position_after)
+	  break;
+      if (cc_ite != ControlChanges.end() && tool == ID_TOOL_DEL_MIDIPART)
+      {
+	ControlChange *cc = (*cc_ite);
+	cc->Erase();
+	ControlChanges.erase(cc_ite);
+	delete cc;
+      }
+      else if (cc_ite == ControlChanges.end())
+      {
+	ControlChange *controlChange = new ControlChange(pattern, pattern->Events.size() - 1);
+	ControlChanges.push_back(controlChange);
+      }
       Refresh(true);
       this->Refresh(true);
       pattern->SetToWrite();
@@ -189,6 +219,23 @@ void					MidiAttr::SetMidiPattern(MidiPattern *p)
 	    ControlChanges.push_back(new ControlChange(p, i));
 //  ChangeMesureCount((int)ceil(p->GetEndPosition()));
   pattern = p;
+}
+
+void				MidiAttr::SetTool(int numtool)
+{
+  tool = numtool;
+  switch (tool)
+  {
+    case ID_TOOL_EDIT_MIDIPART:
+      SetCursor(wxCURSOR_PENCIL);
+      break;
+    case ID_TOOL_MOVE_MIDIPART:
+      SetCursor(wxNullCursor);
+      break;
+    case ID_TOOL_DEL_MIDIPART:
+      SetCursor(wxCURSOR_BULLSEYE);
+      break;
+  }
 }
 
 BEGIN_EVENT_TABLE(MidiAttr, wxPanel)
