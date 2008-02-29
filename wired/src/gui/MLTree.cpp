@@ -207,6 +207,9 @@ void MLTree::LoadLocalTree()
 
   localNode = GetTreeItemIdFromLabel(LOCAL_NODE);
 
+  if (!localNode.IsOk())
+    return;
+
   DeleteChildren(localNode);
 
   treeData = AskData(LOCAL_TREE_FILE, true);
