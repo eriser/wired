@@ -18,13 +18,13 @@ those dependancies problems.
       http://www.gnu.org/software/gettext/gettext.html    
         * or you can install it with 1 package: gettext
 
-  - cvs
+  - cvs (in order to use 'autopoint')
       http://www.cvshome.org/
 	* or you can install it with 1 package: cvs
 
-  - autotools (autoconf and automake)
+  - autotools,libtool (autoconf and automake)
       http://www.gnu.org/
-	* or you can install it with 1 package: autotools-dev
+	* or you can install it with 2 packages: autotools-dev,libtool
 
   - libxml2
     http://xmlsoft.org/
