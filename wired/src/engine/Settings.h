@@ -233,6 +233,11 @@ class Settings
   void		SetDefault();
 
   /**
+   * Check configuration values
+   */
+  void		AssertConfig();
+
+  /**
    * Saving channels.
    * \param Group a wxString,the name of title.
    * \param list a vector<int>&,the list of channels.

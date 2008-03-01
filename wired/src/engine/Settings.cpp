@@ -168,6 +168,21 @@ void Settings::Load()
   ReadChannels(wxT("/OutputChannels"), OutputChannels);
   ReadChannels(wxT("/InputChannels"), InputChannels);
   ReadChannels(wxT("/MidiDevices"), MidiIn);
+
+  // avoid bad config file
+  AssertConfig();
+}
+
+void Settings::AssertConfig()
+{
+#define ASSERT_NEGATIVE(x, y) if (x < 0) { x = y; }
+
+  // suppress fatal values, and replace into defaults.
+  ASSERT_NEGATIVE(SampleRate, (int)DEFAULT_SAMPLE_RATE)
+  ASSERT_NEGATIVE(SampleFormat, 0)
+  ASSERT_NEGATIVE(SamplesPerBuffer, DEFAULT_SAMPLES_PER_BUFFER)
+
+  // others values should be added here, if occurs
 }
 
 void Settings::Save()
