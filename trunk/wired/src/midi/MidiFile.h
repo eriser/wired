@@ -11,6 +11,7 @@
 #include <wx/file.h>
 #include <wx/defs.h>
 
+#include <algorithm>
 #include <vector>
 
 #include "midi.h"
