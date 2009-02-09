@@ -1,9 +1,13 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#include <string.h>
+
 #include "Polyphony.h"
 
 #define BUFSIZE 4096
+
+using namespace	std;
 
 Polyphony::Polyphony()
 {
@@ -35,7 +39,6 @@ void Polyphony::SetPolyphony(int p)
   Poly *voice;
 
   //std::cout << "[POLYPHONY] Setting polyphony to: " << p << std::endl;
-  fflush(stdout);  
   PolyphonyCount = p;
   for (j = 0; j < count; j++)
     {
@@ -50,13 +53,10 @@ void Polyphony::SetPolyphony(int p)
     }
 }
 
-#include <stdio.h>
-
 void Polyphony::SetBufferSize(int size)
 {
   buffer_size = size;
   //std::cout << "[POLYPHONY] Buffer size: " << buffer_size << std::endl;
-  fflush(stdout);
   //  OnChangeSettings();
 }
 
@@ -70,8 +70,7 @@ float **Polyphony::GetFreeBuffer()
 	return (*i)->Buffer;
       }
   //std::cout << "[POLYPHONY] Returning No Buffer !!!" << std::endl;
-  fflush(stdout);  
-  return (0x0);
+  return (NULL);
 }
 
 void Polyphony::SetFreeBuffer(float **f)

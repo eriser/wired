@@ -45,10 +45,16 @@
 */
 /***************************************************/
 
-#include "WvIn.h"
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <cstdio>
+#include <string>
 #include <math.h>
+
+#include "WvIn.h"
+
 
 WvIn :: WvIn()
 {

@@ -1,6 +1,8 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#include <algorithm>
+
 #include "MidiFile.h"
 #include  "Sequencer.h"
 #include <fcntl.h>
@@ -12,6 +14,8 @@
 #endif
 #include <wx/filename.h>
 #include <iostream>
+
+using namespace	std;
 
 void	MakeMidiFileName(wxString &filename, unsigned long seqTrackIndex)
 {
@@ -140,7 +144,6 @@ MidiTrack::MidiTrack(vector<MidiEvent *> &evts, unsigned short PPQN, wxString fi
   if (ppqn == 1)
     ppqn = DEFAULT_MIDI_PPQN;
   ratio = (double)Seq->SigNumerator * (double)ppqn;
-
 
   cout << "[MidiTrack] MidiTrack() creating MidiTrack from list of midi events" << endl;
   cout << " ppqn " << (int)ppqn << endl;

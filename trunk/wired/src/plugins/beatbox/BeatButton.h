@@ -50,7 +50,7 @@
 class BeatButton : public wxWindow
 {
  public:
-  BeatButton(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
+  BeatButton(wxWindow* parent, wxWindowID id, const wxPoint& pospoint, 
 	     const wxSize& size, wxBitmap** bitmaps, unsigned int pos);
   ~BeatButton();
   unsigned int* GetData() { return Data; }

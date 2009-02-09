@@ -11,12 +11,10 @@
 #include <wx/file.h>
 #include <wx/defs.h>
 
-#include <algorithm>
 #include <vector>
 
 #include "midi.h"
 
-using namespace std;
 using std::vector;
 
 // the name of the default midi filename (without extension)
