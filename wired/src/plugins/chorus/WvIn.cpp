@@ -50,6 +50,7 @@
 #include <unistd.h>
 
 #include <cstdio>
+#include <string.h>
 #include <string>
 #include <math.h>
 

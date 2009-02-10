@@ -9,11 +9,6 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../xml -I../../save	   \
 	-I../../undo -I../../libs/WiredWidgets/src -I../..         \
 	`xml2-config --cflags`
 
-if PORTAUDIO
-CPPFLAGS += -I../../portaudio/include
-endif
-
-
 pkglib_LTLIBRARIES = libWiredSampler.la
 
 libWiredSampler_la_LDFLAGS = -avoid-version

@@ -4,10 +4,6 @@ LDFLAGS = $(shell wx-config --libs) `xml2-config --libs`
 # XXX merge conflict...
 CPPFLAGS = $(shell wx-config --cflags) -I../samplerate -I../xml -I../save -I../audio -I../libs/WiredAkai/include -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../asm -I../editmidi -I../undo -I../libs/WiredWidgets/src -I../wiredvideo -I../codec -I../dssi `xml2-config --cflags ` -I../
 
-if PORTAUDIO
-CPPFLAGS += -I../portaudio/include
-endif
-
 noinst_LIBRARIES = libgui.a
 
 libgui_a_SOURCES = 			\

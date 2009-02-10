@@ -5,11 +5,6 @@ CPPFLAGS = $(shell wx-config --cflags) -I../gui -I../plugins -I../fileloader  \
 	-I../../libs/WiredWidgets/src -I../engine \
 	-I../xml `xml2-config --cflags` -I../save
 
-if PORTAUDIO
-CPPFLAGS += -I../portaudio/include
-endif
-
-
 LDFLAGS = $(shell wx-config --libs) -lm `xml2-config --libs`
 
 noinst_LIBRARIES = libwireddssi.a

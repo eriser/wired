@@ -37,7 +37,7 @@ using namespace std;
 
 
 
-typedef struct s_format_types
+struct s_format_types
 {
 	int				SndFileFormat;
 	PaSampleFormat	PaFormat;
@@ -46,7 +46,7 @@ typedef struct s_format_types
 
 extern struct s_format_types _FormatTypes[];
 
-typedef struct s_samplerate_types
+struct s_samplerate_types
 {
 	unsigned long 	SampleRate;
 	const wxChar		*SampleRateName;

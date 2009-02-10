@@ -24,19 +24,26 @@ SUBDIRS =				\
 
 DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so libs/WiredAkai/src/.libs/libWiredAkai.so
 
-wired_LDFLAGS = $(shell wx-config --libs) -lsndfile -lasound -Lmidi/portmidi $(DEPS_LIBS) -Lfileloader -lfileloader `xml2-config --libs` @SAMPLERATE_LIBS@ -lportaudio
+wired_LDFLAGS = $(shell wx-config --libs) \
+		$(shell pkg-config portaudio-2.0 --libs) \
+		$(shell xml2-config --libs) \
+		@SAMPLERATE_LIBS@ \
+		-lsndfile \
+		-Lfileloader -lfileloader \
+		$(DEPS_LIBS)
 
-wired_CPPFLAGS = $(shell wx-config --cflags) -Igui -Iplugins -Ifileloader -Isequencer -Iredist -Iaudio -Iengine -Imixer -Imidi -Imidi/portmidi/pm_common -Imidi/portmidi/porttime -I. -Ieditmidi -Iundo `xml2-config --cflags` @SAMPLERATE_CFLAGS@
+wired_CPPFLAGS = $(shell wx-config --cflags) \
+		 $(shell xml2-config --cflags) \
+		@SAMPLERATE_CFLAGS@ \
+		-Igui -Iplugins -Ifileloader -Isequencer -Iredist -Iaudio -Iengine -Imixer -Iundo \
+		-Imidi -Ieditmidi
+
 
 if PORTMIDI
 wired_CPPFLAGS += -Imidi/portmidi/pm_common -Imidi/portmidi/porttime
 wired_LDFLAGS += -lasound -Lmidi/portmidi
 else
 wired_LDFLAGS += -lportmidi -lporttime
-endif
-
-if PORTAUDIO
-wired_LDFLAGS += -Lportaudio/lib/.libs/
 endif
 
 bin_PROGRAMS = wired

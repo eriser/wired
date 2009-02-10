@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([Wired], [0.6], [wired@bloodshed.net])
+AC_INIT([Wired], [0.6.1], [wired@bloodshed.net])
 
 
 # Auxiliary files.
@@ -19,13 +19,15 @@ AM_INIT_AUTOMAKE([1.8.2 foreign check-news dist-bzip2 no-dist-gzip])
 # Look for a gnu compiler
 if test $ac_cv_c_compiler_gnu = yes ; then
 	AC_DEFINE([COMPILER_IS_GCC],1, [Set to 1 if the compile is GNU GCC.])
-	GCC_MAJOR_VERSION=`$CC -dumpversion | sed "s/\..*//"`
+	GCC_MAJOR_VERSION=`gcc -dumpversion 2>/dev/null | awk -F. '{print $1}'`
+	GCC_MINOR_VERSION=`gcc -dumpversion 2>/dev/null | awk -F. '{print $2}'`
 	AC_DEFINE_UNQUOTED([GCC_MAJOR_VERSION],${GCC_MAJOR_VERSION}, [Major version of GCC or 3 otherwise.])
 fi
 
 #Get some libs versions
 SAMPLERATE_VERSION=`pkg-config samplerate --modversion`
 SNDFILE_VERSION=`pkg-config sndfile --modversion`
+PORTAUDIO_VERSION=`pkg-config portaudio-2.0 --modversion`
 
 # for autoheader .. investigate this further :)
 AC_CONFIG_HEADERS(src/include/config.h)
@@ -68,36 +70,12 @@ AC_ARG_ENABLE(optimize,
 	[enable_optimize="$enableval"],
 	[enable_optimize="yes"])
 
-# can enable or disable portaudio integration
-# Portaudio options
-AC_ARG_ENABLE(portaudio,
-	[  --disable-portaudio Enable or disable portaudio v19 built-in (default enabled)],
-	[enable_portaudio="$enableval"],
-	[enable_portaudio="yes"])
-AM_CONDITIONAL(PORTAUDIO, test x$enable_portaudio = xyes)
-
+# can enable or disable portmidi integration
 AC_ARG_ENABLE(portmidi,
 	[  --disable-portmidi Enable or disable portmidi built-in (default enabled)],
 	[enable_portmidi="$enableval"],
 	[enable_portmidi="yes"])
 AM_CONDITIONAL(PORTMIDI, test x$enable_portmidi = xyes)
-
-AC_ARG_WITH(alsa, 
-            [  --with-alsa (default=auto)],
-            with_alsa=$withval, with_alsa="yes")
-
-AC_ARG_WITH(jack, 
-            [  --with-jack (default=auto)],
-            with_jack=$withval, with_jack="yes")
-
-AC_ARG_WITH(oss, 
-            [  --with-oss (default=yes)],
-            with_oss=$withval, with_oss="yes")
-
-# Portaudio configuration
-if test "$enable_portaudio" = yes; then
-   AC_CONFIG_SUBDIRS([src/portaudio])
-fi
 
 ######################
 # Checks for libraries.
@@ -105,6 +83,7 @@ AC_CHECK_LIB([pthread], [pthread_create], [PTHREAD='yes'], AC_MSG_ERROR([Couldn'
 AC_CHECK_LIB([sndfile], [sf_open], [LIBSNDFILE='yes'], AC_MSG_ERROR([Couldn't find libsndfile]))
 AC_CHECK_LIB([xml2], [xmlParseMemory], [ XML2F='yes' ], AC_MSG_ERROR([Couldn't find libxml2]))
 AC_CHECK_LIB([samplerate], [src_new], [SRC='yes' ], AC_MSG_ERROR([Couldn't find libsamplerate]))
+AC_CHECK_LIB([portaudio], [Pa_GetDeviceInfo], [SRC='yes' ], AC_MSG_ERROR([Couldn't find libportaudio]))
 
 # If we don't use our portmidi built-in
 if test "$enable_portmidi" = no; then
@@ -142,12 +121,18 @@ else
 	AC_PATH_PROG(WX_CONFIG, wx-config, no)
 fi
 
+if test "$PORTAUDIO_VERSION" != 19; then
+	AC_MSG_ERROR([
+                Portaudio v19 must be installed on your system.
+		])
+fi   
+
 CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
 CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
 CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
 LIBS="$LIBS $WX_LIBS"
 
-#Checks for libsamplerate
+#Checks with pkg-config MACRO :
 PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.15,
             ac_cv_samplerate=1, ac_cv_samplerate=0)
 
@@ -202,6 +187,7 @@ AC_FUNC_SELECT_ARGTYPES
 AC_CHECK_FUNCS([floor ftime getcwd memmove memset pow select sqrt strdup memset open])
 
 
+# check prefix var
 AC_PREFIX_DEFAULT(/usr/local)
 if [[ $prefix = "NONE" ]] ; then
 	prefix="/usr/local"
@@ -253,7 +239,7 @@ else
 fi
 AC_MSG_RESULT([$CFGDEBUG])
 
-
+# debugging
 AC_MSG_CHECKING([for enable-debug])
 if test x"$enable_debug" = xyes;
 then
@@ -369,44 +355,15 @@ AC_MSG_RESULT([
 
      Compiler is GCC : ............. ${ac_cv_c_compiler_gnu}
      GCC major version : ........... ${GCC_MAJOR_VERSION}
+     GCC minor version : ........... ${GCC_MINOR_VERSION}
 ])
 fi
 
-# these vars are only used for output
-if test x"$with_jack" = xyes; then
-   with_jack=yes
-else
-   with_jack=no
-fi
-
-if test x"$with_oss" = xyes; then
-   with_oss=yes
-else
-   with_oss=no
-fi
-
-if test x"$with_alsa" = xyes; then
-   with_alsa=yes
-else
-   with_alsa=no
-fi
-
-if test x"$enable_portaudio" = xyes; then
 AC_MSG_RESULT([
-   Portaudio options :
-
-    Jack : ........................ ${with_jack}
-    OSS : ......................... ${with_oss}
-    ALSA : ........................ ${with_alsa}
-
-WARNING: If you already have Portaudio in your System, it may be replaced by this one !
- ])
-fi
-
-AC_MSG_RESULT([
-  Extra tools required :
+  Dependencies required :
 
     wxWidgets : ................... ${WXWIDGET_VERSION}
+    libportaudio : ................ ${PORTAUDIO_VERSION}
     libsamplerate : ............... ${SAMPLERATE_VERSION}
     libsndfile : .................. ${SNDFILE_VERSION}
  ])
@@ -417,3 +374,11 @@ AC_MSG_RESULT([  Installation directories :
     Wired data directory   : .............. ${DATA_DIR}
     Wired conf directory   : .............. ${SYSCONF_DIR}
 ])
+
+if test "$enable_codecs" = yes; then
+AC_MSG_RESULT([
+    Wired codecs : MPEG, FLAC, Vorbis
+        WARNING : Codecs support are in a TESTING stage.
+		  Wired could be UNSTABLE.
+])
+fi
