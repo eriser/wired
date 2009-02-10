@@ -116,14 +116,19 @@ bool MainApp::OnInit()
   MainWin = Frame;
   // its obvious that user can't have deprecated conf with a fresh install
   if (WiredSettings->ConfIsDeprecated() && !WiredSettings->IsFirstLaunch())
-    MainWin->AlertDialog(_("Warning"), _("Your configuration file is deprecated, settings need to be set"));
-  if (WiredSettings->IsFirstLaunch())
+    {
+      wxCommandEvent evt;
+
+      MainWin->AlertDialog(_("Warning"), _("Your configuration file is deprecated or empty, settings need to be set."));
+    }
+  else if (WiredSettings->IsFirstLaunch())
     ShowWelcome();
+
   // open stream, start fileconverter and co
   if (Frame->Init() != 0)
   {
     cerr << "[WIRED] Critical error, initialisation failed" << endl;
-    // returning false segfault.. so we exit instead
+    // returning false segfault.. so we exit !
     exit(-1);
   }
 

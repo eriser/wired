@@ -141,7 +141,7 @@ void Settings::Load()
   conf->Read(wxT("confVersion"), &version, wxT("0"));
   if (version != WIRED_CONF_VERSION)
     {
-      cout << "[SETTINGS] Your configuration file is deprecated" << version.mb_str() << endl;
+      cout << "[SETTINGS] Your configuration file is deprecated or empty:" << version.mb_str() << endl;
       ConfDeprecated = true;
       return;
     }

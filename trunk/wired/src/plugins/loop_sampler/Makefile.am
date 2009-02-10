@@ -2,11 +2,6 @@ LDFLAGS = $(shell wx-config --libs) `xml2-config --libs`
 
 CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../fileloader -I../../audio -I../../redist -I../../engine -I../../mixer -I../../midi -I../../midi/portmidi/pm_common -I../../midi/portmidi/porttime -I../../asm -I../../editmidi -I../../undo -I../../libs/WiredWidgets/src -I../.. -I../../xml `xml2-config --cflags` -I../../save
 
-if PORTAUDIO
-CPPFLAGS += -I../../portaudio/include
-endif
-
-
 pkglib_LTLIBRARIES = libWiredLoopSampler.la
 
 libWiredLoopSampler_la_LDFLAGS = -avoid-version

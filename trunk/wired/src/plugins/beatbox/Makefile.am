@@ -7,11 +7,6 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../xml -I../../save -I../../gui   \
 	-I../../editmidi -I../../undo -I../../libs/WiredWidgets/src -I../..   \
 	`xml2-config --cflags`
 
-if PORTAUDIO
-CPPFLAGS += -I../../portaudio/include
-endif
-
-
 pkglib_LTLIBRARIES = libWiredBeatBox.la
 
 libWiredBeatBox_la_LDFLAGS = -avoid-version

@@ -6,10 +6,6 @@ if PORTMIDI
 CPPFLAGS += -I../midi/portmidi/pm_common -I../midi/portmidi/porttime 
 endif
 
-if PORTAUDIO
-CPPFLAGS += -I../portaudio/include
-endif
-
 noinst_LIBRARIES = libeditmidi.a
 
 libeditmidi_a_SOURCES =			\
