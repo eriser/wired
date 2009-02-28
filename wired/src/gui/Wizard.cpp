@@ -88,6 +88,10 @@ Wizard::Wizard()
 	  wxPoint(WIZ_MARGIN, WIZ_RECENT_TITLE_POS_Y + WIZ_MARGIN),
 	  wxSize(WIZ_WIN_WIDTH / 2, WIZ_BTN_HEIGHT));
 
+  b_OK			= new wxButton(this, Wizard_OK, _("&OK"),
+	  wxPoint(WIZ_WIN_WIDTH - WIZ_BTN_WIDTH * 3 - WIZ_MARGIN * 3, WIZ_BOTTOM_Y),
+	  WIZ_BTN_SIZE);
+
   b_Remove			= new wxButton(this, Wizard_Remove, _("&Remove"),
 	  wxPoint(WIZ_WIN_WIDTH - WIZ_BTN_WIDTH * 2 - WIZ_MARGIN * 2, WIZ_BOTTOM_Y),
 	  WIZ_BTN_SIZE);
@@ -338,6 +342,11 @@ void	Wizard::LoadProject()
   }
 }
 
+void	Wizard::OnOkClick(wxCommandEvent &event)
+{
+  LoadProject();
+}
+
 void	Wizard::OnExitClick(wxCommandEvent &event)
 {
     /*
@@ -370,6 +379,7 @@ BEGIN_EVENT_TABLE(Wizard, wxDialog)
   EVT_LIST_ITEM_SELECTED(Wizard_RecentList, Wizard::OnListClick)
   EVT_BUTTON(Wizard_Remove, Wizard::OnRemove)
   EVT_BUTTON(Wizard_Exit, Wizard::OnExitClick)
+EVT_BUTTON(Wizard_OK, Wizard::OnOkClick)
   EVT_TEXT(Wizard_Path, Wizard::OnTextChange)
   EVT_TEXT(Wizard_ProjectName, Wizard::OnTextChange)
 END_EVENT_TABLE()
