@@ -38,6 +38,12 @@ class	Wizard : public wxDialog
 	void				OnRemove(wxCommandEvent &event);
 
 	/**
+	 * Launch or create the selected project
+	 * \return Nothing
+	 */
+
+	void			       OnOkClick(wxCommandEvent &event);
+	/**
 	 * closes the audio stream
 	 * and deletes the settings before exit(0)
 	 * \return Nothing
@@ -108,6 +114,7 @@ class	Wizard : public wxDialog
 	wxStaticText		*st_Recent;
 	wxButton			*b_Remove;
 	wxButton			*b_Exit;
+	wxButton			*b_OK;
 
 	DECLARE_EVENT_TABLE()
 };
@@ -123,7 +130,8 @@ enum
   Wizard_Browse,
   Wizard_RecentList,
   Wizard_Remove,
-  Wizard_Exit
+  Wizard_Exit,
+  Wizard_OK
 };
 
 #endif  /*__WIZARD_H__*/
