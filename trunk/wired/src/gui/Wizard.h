@@ -83,6 +83,12 @@ class	Wizard : public wxDialog
 	void				LoadProject();
 
 	/**
+	 * Makes the user choose a directory, creates a project
+	 * \return Nothing
+	 */
+	void				NewProject();
+
+	/**
 	 * refresh the list of recent project
 	 * \return Nothing
 	 */

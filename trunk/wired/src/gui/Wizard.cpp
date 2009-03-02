@@ -185,6 +185,11 @@ bool	Wizard::MakeMyDirs(wxString fullDir)
 
 void	Wizard::OnNewClick(wxCommandEvent &event)
 {
+  NewProject();
+}
+
+void	Wizard::NewProject()
+{
   wxMessageDialog	*dlg;
 
   chosenDir.Clear();
@@ -344,7 +349,18 @@ void	Wizard::LoadProject()
 
 void	Wizard::OnOkClick(wxCommandEvent &event)
 {
-  LoadProject();
+  //lc_Recent is initialized at null (not to display)
+  //if there is no recent project, let's do as if we are creating a new one
+  if(!lc_Recent)
+  {
+    NewProject();
+  }
+  else
+  {
+    LoadProject();
+  }
+  
+  std::cout << "ChosenDir : " << chosenDir << std::endl;
 }
 
 void	Wizard::OnExitClick(wxCommandEvent &event)
