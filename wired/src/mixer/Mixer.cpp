@@ -28,8 +28,6 @@ Mixer::Mixer(WiredDocument* docParent) : WiredDocument(wxT("Mixer"), docParent)
 
   InitBuffers();
   cout << "[MIXER] Mixer initialized" << endl;
-
-  cout << "[MIXER] Mixer initialized" << endl;
 }
 
 Mixer::~Mixer()
@@ -170,8 +168,10 @@ bool				Mixer::InitBuffers(void)
 
   try
     {
-      OutputLeft = new float[Audio->SamplesPerBuffer];
-      OutputRight = new float[Audio->SamplesPerBuffer];
+      cout << "[MIXER] Mixer Left initialized " << Audio->SamplesPerBuffer << endl;
+      cout << "[MIXER] Mixer Right initialized " << Audio->SamplesPerBuffer << endl;  
+      OutputLeft = new float[4096];
+      OutputRight = new float[4096];
       if (!Input)
 	Input = new float*[PREBUF_NUM];
       for (int i = 0; i < PREBUF_NUM; i++)
