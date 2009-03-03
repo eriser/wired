@@ -33,7 +33,7 @@ XMLLIBS    := $(shell xml2-config --libs)
 XMLCFLAGS  := $(shell xml2-config --cflags)
 PLATLIBS   :=
 RESFILE    :=
-PLUGINSDEP := $(OBJPATH)/libWiredWidgets.so
+PLUGINSDEP := $(BINPATH)/libWiredWidgets.so
 CONFPATH   := $(SRCPATH)/conf
 endif
 
