@@ -106,8 +106,8 @@ bool		WiredMplayer::DisplayVideoFrame(const wxString& videoFilePath)
 
   launchString = MPLAYER_LAUNCH_STRING + videoFilePath;
   char *argv[4];
-  argv[0] = SHELL;
-  argv[1] = SHELL_PARAM;
+  argv[0] = (char*)SHELL;
+  argv[1] = (char*)SHELL_PARAM;
   argv[2] = strdup(launchString.mb_str(*wxConvCurrent));
   argv[3] = 0;
   cpid = fork();

@@ -1,0 +1,21 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen(
+        features = 'cxx cstaticlib',
+        source = '''
+            Visitor.cpp
+            cAction.cpp
+            cActionManager.cpp
+            cImportMidiAction.cpp
+            ''',
+        includes = '../plugins ../midi ../sequencer ../gui ../save ../audio ../engine ../plugins ../redist ../dssi',
+        export_incdirs = '.',
+        uselib_local = 'WiredWidgets WiredAkai wiredxml',
+        uselib = 'WX',
+        target = 'undo')

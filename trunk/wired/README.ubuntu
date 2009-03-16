@@ -1,0 +1,8 @@
+Before to build Wired on Ubuntu 8.10, please install the following pacakges:
+
+libwxgtk2.8-dev
+portaudio19-dev
+libportmidi-dev
+libsndfile1-dev
+libsamplerate0-dev
+libsoundtouch1-dev

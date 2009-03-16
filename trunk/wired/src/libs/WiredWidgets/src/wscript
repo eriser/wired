@@ -1,0 +1,30 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen(
+        features = 'cxx cshlib',
+        source = '''
+            ChoiceButton.cpp
+            DownButton.cpp
+            FaderCtrl.cpp
+            HoldButton.cpp
+            IdButton.cpp
+            KnobCtrl.cpp
+            StaticBitmap.cpp
+            VUMCtrl.cpp
+            Hint.cpp
+            HintedKnob.cpp
+            StaticPosKnob.cpp
+            CycleKnob.cpp
+            TransparentStaticText.cpp
+            ''',
+        includes = '../../../engine',
+        target = 'WiredWidgets',
+        export_incdirs = '.',
+        uselib = 'WX',
+        install_path = '${PREFIX}/lib')

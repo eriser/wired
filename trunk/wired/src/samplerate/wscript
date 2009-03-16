@@ -1,0 +1,19 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen(
+        features = 'cxx cstaticlib',
+        source = '''
+            WiredSampleRate.cpp
+            WiredSampleRateTypes.cpp
+            ''',
+        includes = '../save',
+        export_incdirs = '.', 
+        uselib = 'WX',
+        uselib_local = 'wiredxml',
+        target = 'wiredsamplerate')

@@ -1,0 +1,9 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    conf.sub_config('src')
+
+def build(bld):
+    bld.add_subdirs('src')

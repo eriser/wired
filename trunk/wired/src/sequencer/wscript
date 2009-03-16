@@ -1,0 +1,20 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen(
+        features = 'cxx cstaticlib',
+        source = '''
+            Sequencer.cpp
+            Track.cpp
+            SeqTrackPattern.cpp
+            ''',
+        includes = '. ../gui ../save ../wiredvideo ../engine ../redist ../midi ../audio ../mixer ../samplerate',
+        export_incdirs = '.', 
+        uselib = 'WX',
+        uselib_local = 'WiredWidgets WiredAkai wiredxml',
+        target = 'sequencer')

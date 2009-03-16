@@ -60,7 +60,7 @@ void	Key::OnLeftDown(wxMouseEvent &event)
       selected = true;
       wxSize s = GetSize();
       wxRect rect(0, 0, s.GetWidth(), s.GetHeight());
-      printf("click on %s\n", note.c_str());
+      printf("click on %s\n", (char*)note.c_str());
       printf("MIDINOTE: 0x%02X\n", code);
       Refresh(&rect);
 

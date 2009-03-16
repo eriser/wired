@@ -60,7 +60,7 @@
 typedef struct 	s_akaiType
 {
   int		typeVal;
-  char		*typeName;
+  const char		*typeName;
 } 		t_akaiType;
 
 typedef struct	s_akaiDirent 
@@ -121,9 +121,9 @@ typedef struct	s_akaiKeygrp
   int		zone_pan[4];
 }		t_akaiKeygrp;
 
-t_list		*akaiReadDir(int, char *);
+t_list		*akaiReadDir(int, const char *);
 int		akaiSelectPart(int, int);
-char		*akaiGetType(int);
+const char		*akaiGetType(int);
 t_akaiSample	*akaiGetSampleByName(char *, int , char *, char *);
 int		akaiSample2WAV(t_akaiSample *, char *);
 t_akaiProgram	*akaiLoadProgram(char *dev, int partition, char *subdir, char *name);

@@ -1,0 +1,22 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    top_bld = bld.srcnode.abspath(bld.env)
+    bld.new_task_gen(
+        features = 'cxx cstaticlib',
+        source = '''
+            AudioCenter.cpp
+            AudioEngine.cpp
+            Device.cpp
+            Settings.cpp
+            ''',
+        includes = top_bld + ' . ../gui ../audio ../redist ../save ../wiredvideo ../samplerate ../codec',
+        export_incdirs = '.',
+        uselib = 'WX',
+        uselib_local = 'wiredxml',
+        target = 'engine')

@@ -1,0 +1,21 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen(
+        features = 'cxx cstaticlib',
+        source = '''
+            MidiDevice.cpp
+            MidiFile.cpp
+            MidiInDevice.cpp
+            MidiThread.cpp
+            MidiController.cpp
+            ''',
+        includes = '../sequencer ../engine ../save ../gui',
+        export_incdirs = '.',
+        uselib = 'WX',
+        target = 'midi')
