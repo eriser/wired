@@ -1,0 +1,29 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen(
+        features = 'cxx cshlib',
+        source = '''
+            AkaiSampler.cpp
+            ASClavier.cpp
+            ASPlugin.cpp
+            ASEnvel.cpp
+            ASWaveView.cpp
+            ASKey.cpp
+            ASList.cpp
+            ASPlugPanel.cpp
+            ASSampleList.cpp
+            ASKeygroupEditor.cpp
+            ASKeygroupList.cpp
+            ASLoop.cpp
+            ''',
+        includes = '../../libs/WiredAkai/include ../../audio ../../redist ../../save ../../midi ../../engine ../../gui',
+        target = 'WiredSampler',
+        uselib_local = 'WiredWidgets wiredxml',
+        uselib = 'WX',
+        install_path = '${PREFIX}/lib/plugins')

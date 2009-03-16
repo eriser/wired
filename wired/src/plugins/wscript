@@ -1,0 +1,34 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+children = [
+    'beatbox',
+    'chorus',
+    'crusher',
+    'delay',
+    'loop_sampler',
+    'akai_sampler',
+    'reverb',
+    'wahwah'
+    ]
+
+def configure(conf):
+    for i in children:
+        conf.sub_config(i)
+    pass
+
+def build(bld):
+    top_bld = bld.srcnode.abspath(bld.env)
+    bld.new_task_gen(
+        features = 'cxx cstaticlib',
+        source = '''
+            HostCallback.cpp
+            PluginLoader.cpp
+            ''',
+        includes = top_bld + ' ../redist ../gui ../save ../sequencer ../engine ../xml ../midi ../dssi ../wiredvideo',
+        uselib_local = 'WiredWidgets wiredxml',
+        uselib = 'WX',
+        target = 'plugins')
+    for i in children:
+        bld.add_subdirs(i)

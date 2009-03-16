@@ -1,0 +1,25 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen(
+        features = 'cxx cshlib',
+        source = '''
+            LoopSampler.cpp
+            LoopSamplerView.cpp
+            WaveLoop.cpp
+            RulerLoop.cpp
+            Slice.cpp
+            SliceGui.cpp
+            BeatDialog.cpp
+            LoopCursor.cpp
+            ''',
+        includes = '../../redist ../../save ../../gui ../../midi ../../audio',
+        target = 'WiredLoopSampler',
+        uselib_local = 'WiredWidgets wiredxml',
+        uselib = 'WX',
+        install_path = '${PREFIX}/lib/plugins')

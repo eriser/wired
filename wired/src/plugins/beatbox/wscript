@@ -1,0 +1,22 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen(
+        features = 'cxx cshlib',
+        source = '''
+            BeatBox.cpp
+            BeatButton.cpp
+            BeatBoxChannel.cpp
+            BeatBoxView.cpp
+            BeatNote.cpp
+            ''',
+        includes = '../../redist ../../save ../../midi ../../engine ../../audio',
+        target = 'WiredBeatBox',
+        uselib_local = 'WiredWidgets wiredxml',
+        uselib = 'WX',
+        install_path = '${PREFIX}/lib/plugins')

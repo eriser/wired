@@ -128,7 +128,7 @@ t_list		*akaiReadAllEntries(int fd, int block)
   return (entries);
 }
 
-t_akaiDirent	*akaiFindRecord(t_list *list, char *name)
+t_akaiDirent	*akaiFindRecord(t_list *list, const char *name)
 {
   for (; list; list = list->next)
     if (!strcmp(name, elt(list, t_akaiDirent *)->name))
@@ -136,7 +136,7 @@ t_akaiDirent	*akaiFindRecord(t_list *list, char *name)
   return (0);
 }
 
-t_list		*akaiReadDir(int fd, char *dir)
+t_list		*akaiReadDir(int fd, const char *dir)
 {
   t_list	*list;
   t_akaiDirent	*rec;
@@ -150,7 +150,7 @@ t_list		*akaiReadDir(int fd, char *dir)
   return (0);
 }
 
-char		*akaiGetType(int type)
+const char		*akaiGetType(int type)
 {
   char		*s;
   int		i;

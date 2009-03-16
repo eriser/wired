@@ -1,0 +1,53 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    top_bld = bld.srcnode.abspath(bld.env)
+    bld.new_task_gen(
+        features = 'cxx cstaticlib',
+        source = '''
+            AccelCenter.cpp
+            AudioPattern.cpp
+            ChannelGui.cpp
+            ColoredLine.cpp
+            ColoredBox.cpp
+            Cursor.cpp
+            HelpCtrl.cpp
+            HelpPanel.cpp
+            MainWindow.cpp
+            MediaLibrary.cpp
+            MLTraverser.cpp
+            MLTree.cpp
+            MLTreeInfos.cpp
+            MidiPattern.cpp
+            MixerGui.cpp
+            OptionPanel.cpp
+            Pattern.cpp
+            Rack.cpp
+            Ruler.cpp
+            SeqTrack.cpp
+            SequencerView.cpp
+            SequencerGui.cpp
+            SelectionZone.cpp
+            SettingWindow.cpp
+            StaticLabel.cpp
+            Transport.cpp
+            WaveEditor.cpp
+            WaveView.cpp
+            WaveDrawer.cpp
+            WaveEditorDrawer.cpp
+            WavePanel.cpp
+            Wizard.cpp
+            PluginEffect.cpp
+            FileConversion.cpp
+            FloatingFrame.cpp
+            ''',
+        includes = top_bld + ' . .. ../mixer ../engine ../redist ../plugins ../midi ../undo ../dssi ../samplerate ../codec ../fileloader ../editmidi ../sequencer ../save ../audio ../wiredvideo',
+        export_incdirs = '.',
+        uselib = 'WX',
+        uselib_local = 'WiredWidgets wiredxml',
+        target = 'gui')

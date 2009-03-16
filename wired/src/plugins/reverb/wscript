@@ -1,0 +1,25 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Daniel Moura, 2009 <oxe at oxesoft.com>
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen(
+        features = 'cxx cshlib',
+        source = '''
+            Stk.cpp
+            Effect.cpp
+            Filter.cpp
+            PRCRev.cpp
+            NRev.cpp
+            JCRev.cpp
+            Delay.cpp
+            ReverbPlug.cpp
+            ''',
+        includes = '../../redist ../../save ../../midi',
+        target = 'WiredReverb',
+        uselib_local = 'WiredWidgets wiredxml',
+        uselib = 'WX',
+        install_path = '${PREFIX}/lib/plugins')
