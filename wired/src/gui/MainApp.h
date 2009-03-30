@@ -5,12 +5,9 @@
 #define __MAINAPP_H__
 
 #include <wx/app.h>
-#include <wx/snglinst.h>
-#include <wx/debugrpt.h>
 #include <wx/thread.h>
 #include <wx/dynarray.h>
-#include  <wx/cmdline.h>
-#include "version.h"
+#include <wx/cmdline.h>
 
 WX_DEFINE_ARRAY_PTR(wxThread *, wxArrayThread);
 
@@ -24,21 +21,36 @@ public:
   virtual void	OnInitCmdLine(wxCmdLineParser& parser);
   virtual bool	OnCmdLineParsed(wxCmdLineParser& parser);
 
+  // these popup should be called from every class
+  void AlertDialog(const wxString& from, const wxString& msg);
+
   wxArrayThread m_threads;
   wxMutex       m_mutex;
   wxCondition*  m_condAllDone;
 
 private:
-  wxString				SessionDir;
-  bool					nosplash;
+  wxString	          SessionDir;
+  bool			  nosplash;
   MainWindow              *Frame;
-  wxSingleInstanceChecker *Checker;
 
 #if wxUSE_ON_FATAL_EXCEPTION
   void OnFatalException     ();
 #endif
   void OnUnhandledException ();
-  void ShowWelcome          ();
+
+  // 
+  bool wxInitialization();
+
+  // popup related
+  void ShowWelcome();
+  void ShowWizard();
+  void ShowSplash(bool show = true);
+
+  // wizard related
+  wxString ChooseSessionDir();
+  void WiredStartSession(wxString sessionDir);
+  // return true if another instance is running
+  bool checkDoubleStart();
 };
 
 static const wxCmdLineEntryDesc g_cmdLineDesc [] =

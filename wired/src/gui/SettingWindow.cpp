@@ -6,6 +6,7 @@
 #include <wx/imaglist.h>
 #include <wx/image.h>
 
+#include "MainApp.h"
 #include "MainWindow.h"
 #include "SettingWindow.h"
 #include "AudioEngine.h"
@@ -331,9 +332,9 @@ void SettingWindow::OnCancelClick(wxCommandEvent &event)
 
 void SettingWindow::OnApplyClick(wxCommandEvent &event)
 {
-  if (MainWin->InitAudio(true) < 0)
-    MainWin->AlertDialog(_("audio engine"),
-			 _("Could not open audio device : check that the device is not busy (used by another application) and that your audio settings are correct."));
+    if (MainWin->InitAudio(true) < 0)
+	wxGetApp().AlertDialog(_("audio engine"),
+			       _("Could not open audio device : check that the device is not busy (used by another application) and that your audio settings are correct."));
   AudioLoaded = false;
   MidiLoaded = false;
 }
