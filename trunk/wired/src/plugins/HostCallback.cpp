@@ -14,6 +14,8 @@
 #include "Plugin.h"
 #include "HelpCtrl.h"
 
+#include "version.h"
+
 extern Rack *RackPanel;
 
 using namespace std;

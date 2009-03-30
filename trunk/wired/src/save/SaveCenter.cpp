@@ -24,7 +24,7 @@ SaveCenter::~SaveCenter()
   std::cerr << "SaveCenter destroyed" << std::endl;
 }
 
-//Implemetation of WiredDocument
+//Implementation of WiredDocument
 void	SaveCenter::Save()
 {
   //return project specific infos ?
@@ -760,19 +760,13 @@ void		SaveCenter::DumpWiredDocumentSubTree(WiredDocument *currentNode,
 
 }
 
+// return true if the "path" contain a wired.xml
 bool		SaveCenter::IsProject(wxFileName path)
 {
-  wxFileName	test;
+  path.SetName(wxT("wired"));
+  path.SetExt(wxT("xml"));
 
-  test = path;
-
-  test.SetName(wxT("wired"));
-  test.SetExt(wxT("xml"));
-
-  if(test.FileExists())
-    return true;
-  else
-    return false;
+  return (path.FileExists());
 }
 
 bool		SaveCenter::getSaved()
