@@ -22,7 +22,8 @@ SUBDIRS =				\
 
 
 
-DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so libs/WiredAkai/src/.libs/libWiredAkai.so
+DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so \
+	    libs/WiredAkai/src/.libs/libWiredAkai.so
 
 wired_LDFLAGS = $(shell wx-config --libs) \
 		$(shell pkg-config portaudio-2.0 --libs) \
@@ -35,7 +36,8 @@ wired_LDFLAGS = $(shell wx-config --libs) \
 wired_CPPFLAGS = $(shell wx-config --cflags) \
 		 $(shell xml2-config --cflags) \
 		@SAMPLERATE_CFLAGS@ \
-		-Igui -Iplugins -Ifileloader -Isequencer -Iredist -Iaudio -Iengine -Imixer -Iundo \
+		-Igui -Iplugins -Ifileloader -Isequencer -Iredist \
+		-Iaudio -Iengine -Imixer -Iundo \
 		-Imidi -Ieditmidi
 
 
