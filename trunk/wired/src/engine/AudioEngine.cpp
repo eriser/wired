@@ -3,8 +3,12 @@
 
 #include	<sndfile.h>
 #include	"AudioEngine.h"
+#include	"MainApp.h"
 #include	"MainWindow.h"
 #include	"EngineError.h"
+
+#define NDEBUG
+#include <assert.h>
 
 const unsigned long standardSampleFormats[] =
 {
@@ -29,6 +33,7 @@ const double standardSampleRates[] =
 
 AudioEngine::AudioEngine()
 {
+  cout << "[AUDIO] AudioEngine construct" << endl;
   IsOk = false;
   StreamIsOpened = false;
   StreamIsStarted = false;
@@ -45,7 +50,38 @@ AudioEngine::AudioEngine()
 
   GetAudioSystems();
   GetDevices();
-  SetDefaultSettings();
+
+  try
+    {
+      GetDeviceSettings();
+    }
+  catch (Error::InvalidDeviceSettings)
+    {
+      cout << "[MAINWIN] Invalid Device Settings" << endl;
+    }
+  // from SetChannels
+  catch (Error::ChannelsNotSet)
+    {
+      cout << "[MAINWIN] Channels Not Set" << endl;
+    }
+  // from OpenStream
+  catch (Error::StreamNotOpen)
+    {
+      cout << "[MAINWIN] Stream Not Opened" << endl;
+    }
+  catch (std::bad_alloc)
+    {
+      cout << "[MAINWIN] out of memory" << endl;
+    }
+  catch (std::exception &e)
+    {
+      cout << "[MAINWIN] Stdlib failure (" << e.what() <<
+	") during AudioEngine init, check your code" << endl;
+    }
+  catch (...)
+    {
+      cout << "[MAINWIN] Unknown AudioEngine error" << endl;
+    }
 
   cout << "[AUDIO] AudioEngine initialized" << endl;
 }
@@ -167,6 +203,8 @@ void AudioEngine::SetInputDevice(void)
 
 void AudioEngine::GetDeviceSettings()
 {
+  assert( WiredSettings );
+
   UserData->Sets = WiredSettings;
 
   // assimile a la latence possible
@@ -419,11 +457,9 @@ bool AudioEngine::StopStream()
 
 void AudioEngine::AlertDialog(const wxString& from, const wxString& msg)
 {
-
-  //wxMutexGuiEnter();
-  MainWin->AlertDialog(from, msg);
-  //wxMutexGuiLeave();
-
+    wxMutexGuiEnter();
+    wxGetApp().AlertDialog(from, msg);
+    wxMutexGuiLeave();
 }
 
 void AudioEngine::SetChannels(int in, int out)

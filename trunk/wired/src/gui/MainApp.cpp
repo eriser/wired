@@ -10,13 +10,17 @@
 #include <wx/dirdlg.h>
 #include <wx/filename.h>
 #include <wx/image.h>
+#include <wx/snglinst.h>
+#include <wx/debugrpt.h>
 
 #include "MainApp.h"
 #include "MainWindow.h"
 #include "Settings.h"
 #include "SaveCenter.h"
+#include "Wizard.h"
 
 #include <config.h>
+#include "version.h"
 
 #ifdef DEBUG_MAINAPP
 #define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : " << __LINE__ << " : " << __FUNCTION__ << endl; }
@@ -26,7 +30,7 @@
 
 void	AllocationErrorHandler(void)
 {
-	cout << "[MAINAPP] Allocation error or not enough memory, aborting" << endl;
+ 	cout << "[MAINAPP] Allocation error or not enough memory, aborting" << endl;
 	exit(-1);
 }
 
@@ -57,85 +61,194 @@ bool	MainApp::OnCmdLineParsed(wxCmdLineParser& parser)
 	nosplash = false;
   return (true);
 }
-  
-bool MainApp::OnInit()
+
+// check if Wired is already launched
+bool		MainApp::checkDoubleStart()
 {
-  LOG;
-#if wxUSE_ON_FATAL_EXCEPTION
-  wxHandleFatalExceptions();
-#endif
-  wxBitmap        bitmap;
-  wxSplashScreen* splash = NULL;
-#if wxUSE_LIBPNG
-  wxImage::AddHandler(new wxPNGHandler);
-#endif
-  wxImage::AddHandler(new wxGIFHandler);
-  SetAppName(wxT("wired"));
-  // allow use of command line process provided by wxWidgets
-  if (!wxApp::OnInit())
-    return false;
-  // used in error dialog
-  MainWin = (MainWindow *) NULL;
-  // init some conditions variables
-  m_condAllDone = new wxCondition(m_mutex);
-  // splash screen
-  if (!nosplash)
-  {
-	if (bitmap.LoadFile(wxString(DATA_DIR, *wxConvCurrent) + wxString(wxT("/wired/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
-	{
-	  // we keep time-out very high for low cpu
-	  splash = new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
-		  120000, NULL, -1, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER);
-	  splash->Update();
-	  splash->Refresh();
-	  // alert dialog can use it before frame loading
-	  wxYield();
-	}
-  }
-#if 0
   const wxString name = wxString::Format(wxT("wired-%s"), wxGetUserId().c_str());
+  wxSingleInstanceChecker *Checker;
+
   Checker = new wxSingleInstanceChecker(name);
   if (Checker->IsAnotherRunning())
   {
     cout << "Another instance of Wired is already running, aborting." << endl;
-    return (false);
+    delete Checker;
+    return (true);
   }
   delete Checker;
+  return (false);
+}
+
+// force user to select a directory
+wxString	MainApp::ChooseSessionDir()
+{
+  LOG;
+
+  wxDirDialog	dirDialog(NULL, _("Select a project folder"), wxGetCwd());
+
+  while(dirDialog.ShowModal() != wxID_OK)
+    AlertDialog(_("Warning"),
+			 _("You have to select a project folder."));
+
+  return (dirDialog.GetPath());
+}
+
+void		MainApp::WiredStartSession(wxString sessionDir)
+{
+  wxFileName	path;
+
+  WiredSettings->AddDirToRecent(sessionDir);
+  path.AssignDir(sessionDir);
+  path.MakeAbsolute();
+  wxFileName::SetCwd(path.GetPath());
+
+  saveCenter->setProjectPath(path);
+
+  // if we're loading a project from an existing saving directory
+  if (saveCenter->IsProject(path))
+     saveCenter->LoadProject();
+}
+
+// open a wizard window
+void		MainApp::ShowWizard()
+{
+  LOG;
+
+  Wizard	wiz;
+
+  wiz.ShowModal();
+  if (wxFileName::DirExists(wiz.GetDir()))
+	WiredStartSession(wiz.GetDir());
+  else
+	WiredStartSession(ChooseSessionDir());
+}
+
+// show/hide splash
+void MainApp::ShowSplash(bool show)
+{
+  static wxSplashScreen* splash = NULL;
+
+  if (nosplash)
+    return;
+
+  if ( show )
+    {
+      wxBitmap        bitmap;
+
+      if (bitmap.LoadFile(wxString(DATA_DIR, *wxConvCurrent) + wxString(wxT("/wired/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
+	{
+	  // we keep time-out very high for low cpu
+	  splash = new wxSplashScreen(bitmap,
+				      wxSPLASH_CENTRE_ON_SCREEN
+				      | wxSPLASH_TIMEOUT,
+				      120000,
+				      NULL,
+				      -1,
+				      wxDefaultPosition,
+				      wxDefaultSize,
+				      wxSIMPLE_BORDER);
+	  splash->Update();
+	  splash->Refresh();
+	  // alert dialog can use it before frame loading
+	  wxYield();
+        }
+    }
+  else
+    {
+      // Wired crash if loading time of main frame is longer than splash timeout
+      if (splash)
+	splash->Hide();
+    }
+}
+
+bool MainApp::wxInitialization()
+{
+  LOG;
+
+#if wxUSE_ON_FATAL_EXCEPTION
+  wxHandleFatalExceptions();
 #endif
+
+  // load image handlers
+#if wxUSE_LIBPNG
+  wxImage::AddHandler(new wxPNGHandler);
+#endif
+  wxImage::AddHandler(new wxGIFHandler);
+
+  // set static stuff
+  SetAppName(wxT("wired"));
   SetUseBestVisual(true);
   SetVendorName(wxT("Wired Team"));
-  //  Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxGetDisplaySize());
+
+  // allow use of command line process provided by wxWidgets
+  if (!wxApp::OnInit())
+      return false;
+  return true;
+}
+
+// start point of Wired  
+bool MainApp::OnInit()
+{
+  cout << "[MAINAPP] Wired initialization..." << endl;
+
+  // begin with wxWidgets initialization
+  if (!wxInitialization())
+    return false;
+
+  // this var is used in error dialog
+  MainWin = (MainWindow *) NULL;
+
+  // splash screen
+  ShowSplash();
+
+  // avoid two Wired's launch
+  if (checkDoubleStart())
+    return false;
+
+  // load save/session stuff
   saveCenter = new SaveCenter();
+  WiredSettings = new Settings(); // load settings
+
+  // load wizard
+  if (wxFileName::DirExists(SessionDir))
+    WiredStartSession(SessionDir);
+  else
+    ShowWizard();
+
+  // init cond mutex to do a clean stop
+  m_condAllDone = new wxCondition(m_mutex);
+
+  // open the main wired window
   Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxSize(800,600), saveCenter);
+
+  // hide splash screen
+  ShowSplash(false);
+
+  // .. and show main windows
   Frame->Show(true);
   SetTopWindow(Frame);
-  // Wired crash if loading main frame is more than splash timeout
-  if (!nosplash && splash)
-    splash->Hide();
-  // now error dialog are based on mainframe
+
+  // now error dialog could be based on mainframe
   MainWin = Frame;
-  // its obvious that user can't have deprecated conf with a fresh install
-  if (WiredSettings->ConfIsDeprecated() && !WiredSettings->IsFirstLaunch())
+
+  // welcome new users!
+  if (WiredSettings->IsFirstLaunch())
+    ShowWelcome();
+  else if (WiredSettings->ConfIsDeprecated())
     {
       wxCommandEvent evt;
 
-      MainWin->AlertDialog(_("Warning"), _("Your configuration file is deprecated or empty, settings need to be set."));
+      AlertDialog(_("Warning"), _("Your configuration file is deprecated or empty, settings need to be set."));
     }
-  else if (WiredSettings->IsFirstLaunch())
-    ShowWelcome();
 
   // open stream, start fileconverter and co
   if (Frame->Init() != 0)
   {
     cerr << "[WIRED] Critical error, initialisation failed" << endl;
-    // returning false segfault.. so we exit !
-    exit(-1);
+    // returning here segfault or what?
+    return (false);
   }
 
-  if (wxFileName::DirExists(SessionDir))
-    MainWin->WiredStartSession(SessionDir);
-  else
-    MainWin->OpenWizard();
   return (true);
 }
 
@@ -150,6 +263,19 @@ void MainApp::ShowWelcome()
   welcome.Replace(wxT("WIRED_FORUMS"), WIRED_FORUMS);
   wxMessageDialog msg(MainWin, welcome, WIRED_NAME, wxOK | wxICON_INFORMATION | wxCENTRE);
   msg.ShowModal();
+}
+
+void MainApp::AlertDialog(const wxString& from, const wxString& msg)
+{
+  LOG;
+
+  // print on stdout
+  cout << "[MAINAPP] Error :" << from.mb_str() << " msg: " << msg.mb_str() << endl;
+
+  // alert user with a dialog popup
+  wxMessageDialog mdialog(MainWin, msg, from,
+			  wxICON_INFORMATION, wxDefaultPosition);
+  mdialog.ShowModal();
 }
 
 #if wxUSE_ON_FATAL_EXCEPTION
@@ -172,15 +298,13 @@ void MainApp::OnUnhandledException()
 {
   LOG;
   cout << "UnhandledException" << endl;
-  Frame->AlertDialog(_("Critical error"), _("An unhandled exception has occurred, aborting"));
+  AlertDialog(_("Critical error"), _("An unhandled exception has occurred, aborting"));
 }
 
 int MainApp::OnExit()
 {
   LOG;
-#if 0
-  delete Checker;
-#endif
+
   Frame->Destroy();
   return (wxApp::OnExit());
 }

@@ -17,6 +17,7 @@ wxMutex				MixMutex(wxMUTEX_RECURSIVE);
 
 Mixer::Mixer(WiredDocument* docParent) : WiredDocument(wxT("Mixer"), docParent)
 {
+  cout << "[MIXER] Mixer initialization" << endl;
   VolumeLeft = 1.f;
   VolumeRight = 1.f;
   MuteL = false;
@@ -170,8 +171,8 @@ bool				Mixer::InitBuffers(void)
     {
       cout << "[MIXER] Mixer Left initialized " << Audio->SamplesPerBuffer << endl;
       cout << "[MIXER] Mixer Right initialized " << Audio->SamplesPerBuffer << endl;  
-      OutputLeft = new float[4096];
-      OutputRight = new float[4096];
+      OutputLeft = new float[Audio->SamplesPerBuffer];
+      OutputRight = new float[Audio->SamplesPerBuffer];
       if (!Input)
 	Input = new float*[PREBUF_NUM];
       for (int i = 0; i < PREBUF_NUM; i++)

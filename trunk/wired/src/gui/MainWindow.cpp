@@ -3,12 +3,10 @@
 
 #include "MainWindow.h"
 
-#ifdef __LINUX__
-# include  <unistd.h>
-#endif
-#include <wx/splitter.h>
 #include <wx/progdlg.h>
 #include <wx/utils.h>
+#include <wx/splash.h>
+
 #include <algorithm>
 #include "SequencerGui.h"
 #include "HostCallback.h"
@@ -40,13 +38,14 @@
 #include "PluginLoader.h"
 #include "WiredExternalPluginMgr.h"
 #include "FileConversion.h"
-#include <config.h>
 #include "Threads.h"
 #include "MediaLibrary.h"
 #include "MLTree.h"
 #include "SaveCenter.h"
+
+#include <config.h>
 #include "debug.h"
-#include "Wizard.h"
+#include "version.h"
 
 #ifdef DEBUG_MAINWINDOW
 #define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : "  << __LINE__ << " : " << __FUNCTION__  << endl; }
@@ -69,8 +68,6 @@ AudioCenter		WaveCenter;
 Transport		*TransportPanel = NULL;
 PlugStartInfo		StartInfo;
 vector<PluginLoader *>	LoadedPluginsList;
-//SaveCenter		*saveCenter;
-//SaveCenter		*saveCenter = NULL;
 WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
 MediaLibrary		*MediaLibraryPanel = NULL;
 FileConversion		*FileConverter = NULL;
@@ -94,9 +91,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 #if wxUSE_STATUSBAR
   CreateStatusBar(2);
 #endif
-  WiredSettings = new Settings();
-
-  //saveCenter = new SaveCenter(wxGetCwd());
   LoadedExternalPlugins = new WiredExternalPluginMgr();
   LogWin = new wxLogWindow(this, wxT("Wired log"), false);
 
@@ -343,7 +337,7 @@ int			MainWindow::Init()
     {
       // avoid to flood user, he already knows he has a deprecated config!
       if (!WiredSettings->ConfIsDeprecated())
-	AlertDialog(_("audio engine"),
+	wxGetApp().AlertDialog(_("audio engine"),
 		    _("Could not open audio device : check that the device is not busy (used by another application) and that your audio settings are correct."));
     }
   InitFileConverter();
@@ -490,11 +484,6 @@ int			MainWindow::InitAudio(bool restart)
   catch (Error::StreamNotOpen)
     {
       cout << "[MAINWIN] Stream Not Opened" << endl;
-    }
-  // from nowhere
-  catch (Error::AudioEngineError)
-    {
-      cout << "[MAINWIN] General AudioEngine Error" << endl;
     }
   catch (std::bad_alloc)
     {
@@ -1618,18 +1607,10 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 	{
 	  // avoid to flood user, he already knows he has a deprecated config!
 	  if (!WiredSettings->ConfIsDeprecated())
-	    AlertDialog(_("audio engine"),
+	    wxGetApp().AlertDialog(_("audio engine"),
 			_("Could not open audio device : check that the device is not busy (used by another application) and that your audio settings are correct."));
 	}
     }
-}
-
-void					MainWindow::AlertDialog(const wxString& from, const wxString& msg)
-{
-  LOG;
-  wxMessageDialog			mdialog(MainWin, msg, from, wxICON_INFORMATION, wxDefaultPosition);
-
-  mdialog.ShowModal();
 }
 
 void					MainWindow::OnOpenVideo(wxCommandEvent &event)
@@ -2210,47 +2191,6 @@ void MainWindow::OnSaveML(wxCommandEvent &WXUNUSED(event))
     wxFileDialog dlg(this, _("Save Media Library"), wxT(""), wxT(""), _("Media Library file (*.xml)|*.xml"), wxSAVE);
     if (dlg.ShowModal() == wxID_OK)
         MediaLibraryPanel->MLTreeView->OnSave(dlg.GetPath());
-}
-
-void		MainWindow::OpenWizard()
-{
-  LOG;
-
-
-  Wizard	wiz;
-
-  wiz.ShowModal();
-  if (wxFileName::DirExists(wiz.GetDir()))
-	WiredStartSession(wiz.GetDir());
-  else
-	WiredStartSession(ChooseSessionDir());
-}
-
-wxString		MainWindow::ChooseSessionDir()
-{
-  LOG;
-
-  wxDirDialog	dirDialog(NULL, _("Select a project folder"), wxGetCwd());
-
-  while(dirDialog.ShowModal() != wxID_OK)
-    AlertDialog(_("Warning"),
-			 _("You have to select a project folder."));
-
-  return (dirDialog.GetPath());
-}
-
-void		MainWindow::WiredStartSession(wxString sessionDir)
-{
-  wxFileName	path;
-
-  WiredSettings->AddDirToRecent(sessionDir);
-  path.AssignDir(sessionDir);
-  path.MakeAbsolute();
-  wxFileName::SetCwd(path.GetPath());
-  saveCenter->setProjectPath(path);
-
-  if (saveCenter->IsProject(path))
-     saveCenter->LoadProject();
 }
 
 BEGIN_DECLARE_EVENT_TYPES()

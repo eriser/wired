@@ -4,25 +4,14 @@
 #ifndef __MAINWINDOW_H__
 #define __MAINWINDOW_H__
 
-using namespace std;
-
-#include <iostream>
 #include <vector>
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
    #include <wx/wx.h>
 #endif
-#include <wx/colour.h>
 #include <wx/textfile.h>
-#include <wx/timer.h>
-#include <wx/splash.h>
 #include <wx/splitter.h>
-#include <wx/log.h>
-#include <wx/filename.h>
-#include  <wx/cmdline.h>
-
-#include "version.h"
 
 #define PLUG_MENU_INDEX_START		(50000)
 #define INDEX_MENUITEM_UNDO		0
@@ -42,7 +31,7 @@ class					PluginLoader;
 class					MainWindow;
 
 extern MainWindow		*MainWin;
-extern vector<PluginLoader *>	LoadedPluginsList;
+extern std::vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo		StartInfo;
 extern wxMutex		        AudioMutex;
 extern wxCondition*	        SeqStopped;
@@ -89,7 +78,6 @@ class					MainWindow: public wxFrame, public WiredDocument
 
   bool					NewSession();
   void					LoadPlugins();
-  void					AlertDialog(const wxString& from, const wxString& msg);
   void					StartStream(wxCommandEvent &event);
   void					StopStream(wxCommandEvent &event);
 
@@ -137,11 +125,6 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					CreatePluginFromUniqueId(wxString UniqueId,
 								 wxString name);
 
-  /* Shows a wxDirDialog to select a project folder */
-  wxString				ChooseSessionDir();
-  void					OpenWizard();
-
-  void					WiredStartSession(wxString sessionDir);
   wxString				m_FrameTitle;
  protected:
   friend class				MediaLibrary;

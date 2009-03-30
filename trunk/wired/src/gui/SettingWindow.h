@@ -1,9 +1,6 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
-// Copyright (C) 2004-2006 by Wired Team
-// Under the GNU General Public License
-
 #ifndef __SETTINGWINDOW_H__
 #define __SETTINGWINDOW_H__
 
