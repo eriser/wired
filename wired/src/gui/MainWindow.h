@@ -157,10 +157,6 @@ class					MainWindow: public wxFrame, public WiredDocument
    */
   void					ShowMediaLibrary(panelState show);
 
-    /* Locale */
-  wxLocale				*mLocale;
-  void					InitLocale();
-
   /* DSSI & LADSPA Plugins Menus */
   void					LoadExternalPlugins();
   int					AddPluginMenuItem(int Type, bool IsEffect, const wxString& MenuName);

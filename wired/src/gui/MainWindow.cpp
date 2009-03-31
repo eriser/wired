@@ -86,7 +86,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   m_FrameTitle = wxT("wired");
   SeqTimer = NULL;
-  InitLocale();
 
 #if wxUSE_STATUSBAR
   CreateStatusBar(2);
@@ -539,29 +538,6 @@ int			MainWindow::InitAudio(bool restart)
   SettingsWin->AudioLoaded = false;
   SettingsWin->MidiLoaded = false;
   return (0);
-}
-
-void                MainWindow::InitLocale()
-{
-  LOG;
-  // disable extra output of wx
-  wxLog		log(wxLogNull);
-  wxString	prefix = wxT(PACKAGE_LOCALE_DIR);
-
-  mLocale = new wxLocale();
-  mLocale->AddCatalogLookupPathPrefix(prefix);
-
-  //try to set default language (is it really useful ? it seems to never work)
-  if (mLocale->Init(wxLANGUAGE_DEFAULT) == true)
-    cout << "[MAINWIN][InitLocale] locale initialized to wxLANGUAGE_DEFAULT" << endl;;
-
-  // add wx basic translation (File, Window, About, ..) (It seems to never return true ...)
-  if(mLocale->AddCatalog(wxT("wxstd")))
-    cout << "[MAINWIN][Initlocale] wxstd catalog added" << endl;;
-
-  // add our translations
-  if(mLocale->AddCatalog(wxT("wired")))
-    cout << "[MAINWIN][InitLocale] wired catalog added" << endl;;
 }
 
 void					MainWindow::InitFileConverter()

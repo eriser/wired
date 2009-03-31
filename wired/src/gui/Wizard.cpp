@@ -360,7 +360,7 @@ void	Wizard::OnOkClick(wxCommandEvent &event)
     LoadProject();
   }
   
-  std::cout << "ChosenDir : " << chosenDir << std::endl;
+  std::cout << "[WIZARD] ChosenDir : " << chosenDir.mb_str() << std::endl;
 }
 
 void	Wizard::OnExitClick(wxCommandEvent &event)
