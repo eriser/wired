@@ -30,8 +30,8 @@
 
 void	AllocationErrorHandler(void)
 {
- 	cout << "[MAINAPP] Allocation error or not enough memory, aborting" << endl;
-	exit(-1);
+  cout << "[MAINAPP] Allocation error or not enough memory, aborting" << endl;
+  exit(-1);
 }
 
 IMPLEMENT_APP(MainApp)
@@ -88,7 +88,7 @@ wxString	MainApp::ChooseSessionDir()
 
   while(dirDialog.ShowModal() != wxID_OK)
     AlertDialog(_("Warning"),
-			 _("You have to select a project folder."));
+		_("You have to select a project folder."));
 
   return (dirDialog.GetPath());
 }
@@ -137,16 +137,19 @@ void MainApp::ShowSplash(bool show)
 
       if (bitmap.LoadFile(wxString(DATA_DIR, *wxConvCurrent) + wxString(wxT("/wired/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
 	{
-	  // we keep time-out very high for low cpu
-	  splash = new wxSplashScreen(bitmap,
-				      wxSPLASH_CENTRE_ON_SCREEN
-				      | wxSPLASH_TIMEOUT,
-				      120000,
-				      NULL,
-				      -1,
-				      wxDefaultPosition,
-				      wxDefaultSize,
-				      wxSIMPLE_BORDER);
+	  if ( ! splash )
+	    {
+	      // we keep time-out very high for low cpu
+	      splash = new wxSplashScreen(bitmap,
+					  wxSPLASH_CENTRE_ON_SCREEN
+					  | wxSPLASH_TIMEOUT,
+					  120000,
+					  NULL,
+					  -1,
+					  wxDefaultPosition,
+					  wxDefaultSize,
+					  wxSIMPLE_BORDER);
+	    }
 	  splash->Update();
 	  splash->Refresh();
 	  // alert dialog can use it before frame loading
@@ -214,6 +217,7 @@ bool MainApp::OnInit()
     WiredStartSession(SessionDir);
   else
     ShowWizard();
+  ShowSplash();
 
   // init cond mutex to do a clean stop
   m_condAllDone = new wxCondition(m_mutex);
