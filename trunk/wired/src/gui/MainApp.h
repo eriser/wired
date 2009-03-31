@@ -41,6 +41,9 @@ private:
   // 
   bool wxInitialization();
 
+  // wx related
+  void InitLocale();
+
   // popup related
   void ShowWelcome();
   void ShowWizard();

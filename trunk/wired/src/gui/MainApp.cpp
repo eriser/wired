@@ -79,6 +79,30 @@ bool		MainApp::checkDoubleStart()
   return (false);
 }
 
+// locale initialization
+void                MainApp::InitLocale()
+{
+  LOG;
+  // disable extra output of wx
+  wxLog		log(wxLogNull);
+  wxString	prefix = wxT(PACKAGE_LOCALE_DIR);
+  wxLocale	wLocale;
+
+  wLocale.AddCatalogLookupPathPrefix(prefix);
+
+  //try to set default language (is it really useful ? it seems to never work)
+  if (wLocale.Init(wxLANGUAGE_DEFAULT) == true)
+    cout << "[MAINWIN][InitLocale] locale initialized to wxLANGUAGE_DEFAULT" << endl;;
+
+  // add wx basic translation (File, Window, About, ..) (It seems to never return true ...)
+  if (wLocale.AddCatalog(wxT("wxstd")) == true)
+    cout << "[MAINWIN][Initlocale] wxstd catalog added" << endl;;
+
+  // add our translations
+  if (wLocale.AddCatalog(wxT("wired")) == true)
+    cout << "[MAINWIN][InitLocale] wired catalog added" << endl;;
+}
+
 // force user to select a directory
 wxString	MainApp::ChooseSessionDir()
 {
@@ -103,10 +127,6 @@ void		MainApp::WiredStartSession(wxString sessionDir)
   wxFileName::SetCwd(path.GetPath());
 
   saveCenter->setProjectPath(path);
-
-  // if we're loading a project from an existing saving directory
-  if (saveCenter->IsProject(path))
-     saveCenter->LoadProject();
 }
 
 // open a wizard window
@@ -183,6 +203,8 @@ bool MainApp::wxInitialization()
   SetUseBestVisual(true);
   SetVendorName(wxT("Wired Team"));
 
+  InitLocale();
+
   // allow use of command line process provided by wxWidgets
   if (!wxApp::OnInit())
       return false;
@@ -225,15 +247,18 @@ bool MainApp::OnInit()
   // open the main wired window
   Frame = new MainWindow(WIRED_TITLE, wxDefaultPosition, wxSize(800,600), saveCenter);
 
+  // now error dialog could be based on mainframe
+  MainWin = Frame;
+
+  // if we're loading a project from an existing saving directory
+  saveCenter->LoadProject();
+
   // hide splash screen
   ShowSplash(false);
 
   // .. and show main windows
   Frame->Show(true);
   SetTopWindow(Frame);
-
-  // now error dialog could be based on mainframe
-  MainWin = Frame;
 
   // welcome new users!
   if (WiredSettings->IsFirstLaunch())
