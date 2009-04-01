@@ -165,6 +165,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 #endif
   FileMenu->Append(MainWin_Quit, _("&Quit\tCtrl-Q"));
 
+  // add undo/redo before others menuitem
+  InitUndoRedoMenuItems();
   EditMenu->Append(MainWin_Cut, _("C&ut\tCtrl+X"));
   EditMenu->Append(MainWin_Copy, _("&Copy\tCtrl+C"));
   EditMenu->Append(MainWin_Paste, _("&Paste\tCtrl+V"));
@@ -190,6 +192,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MediaLibraryMenu->Append(MainWin_SaveML, _("&Save Media Library"));
   MediaLibraryMenu->Append(MainWin_LoadML, _("&Load Media Library"));
 
+  InitVideoMenuItems();
+
   WindowMenu->Append(MainWin_SwitchRack, _("Switch &Rack/Optional view"));
   WindowMenu->Append(MainWin_SwitchSeq, _("Switch &Sequencer/Optional view"));
   WindowMenu->AppendSeparator();
@@ -211,9 +215,8 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar->Append(RacksMenu, _("&Racks"));
   MenuBar->Append(CreateInstrMenu, _("&Instruments"));
   MenuBar->Append(CreateEffectMenu, _("Effec&ts"));
-  // Video menu is empty... and not finished
-  //  MenuBar->Append(VideoMenu, _("&Video"));
   MenuBar->Append(MediaLibraryMenu, _("&MediaLibrary"));
+  MenuBar->Append(VideoMenu, _("&Video"));
   MenuBar->Append(WindowMenu, _("&Window"));
   MenuBar->Append(HelpMenu, _("&Help"));
 
@@ -353,9 +356,6 @@ int			MainWindow::Init()
   else
     wxGetApp().m_threads.Add(Seq);
 
-  //InitUndoRedoMenuItems();
-  //  InitVideoMenuItems();
-
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
   SeqTimer->Start(40);
 
@@ -373,8 +373,7 @@ int			MainWindow::InitAudio(bool restart)
     RackTrack			*rt;
     list<Plugin*>::iterator	pit;
     Plugin			*p;
-    int				i;
-    int				j;
+    size_t			i;
     vector<RackTrack*>		vrt;
     vector<Plugin*>		vp;
     vrt.clear();
@@ -571,8 +570,15 @@ void					MainWindow::InitFileConverter()
 void					MainWindow::InitUndoRedoMenuItems()
 {
   LOG;
+
+  EditMenu->Append(MainWin_UndoRedoBeta, _("Cancelling action is currently in alpha stage"));
+  EditMenu->Enable(MainWin_UndoRedoBeta, false);
+  EditMenu->AppendSeparator();
   EditMenu->Insert(INDEX_MENUITEM_UNDO, MainWin_Undo, _("U&ndo"), UndoMenu);
   EditMenu->Insert(INDEX_MENUITEM_REDO, MainWin_Redo, _("&Redo"), RedoMenu);
+  EditMenu->AppendSeparator();
+
+  // undo/redo has no action saved at initialization
   EditMenu->Enable(MainWin_Undo, false);
   EditMenu->Enable(MainWin_Redo, false);
 }
@@ -580,10 +586,13 @@ void					MainWindow::InitUndoRedoMenuItems()
 void					MainWindow::InitVideoMenuItems()
 {
   LOG;
+
+  VideoMenu->Append(MainWin_VideoBeta, _("This feature is currently in alpha stage"));
+  VideoMenu->Enable(MainWin_VideoBeta, false);
   VideoMenu->Append(MainWin_OpenVideo, _("&Open video"));
   VideoMenu->Append(MainWin_CloseVideo, _("&Close video"));
   VideoMenu->AppendCheckItem(MainWin_SeekVideo, _("&Seek with video playing"));
-  cout << "new wiredvideo"<< endl;
+
   WiredVideoObject = new WiredVideo();
   VideoMenu->Enable(MainWin_OpenVideo, true);
   VideoMenu->Enable(MainWin_CloseVideo, false);
@@ -624,7 +633,6 @@ void					MainWindow::OnClose(wxCloseEvent &event)
   Disconnect(wxEVT_IDLE, (wxObjectEventFunction) &MainWindow::OnIdle);
 #endif
   cout << "[MAINWIN] Stopping threads..."<< endl;
-  wxThread *thread;
 
   wxGetApp().m_mutex.Lock();
   const wxArrayThread& threads = wxGetApp().m_threads;
@@ -1184,7 +1192,7 @@ void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
     {
       cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name.mb_str() << endl;
       cActionManager::Global().AddEffectAction(&StartInfo, p, true);
-      //CreateUndoRedoMenus(EditMenu);
+      CreateUndoRedoMenus(EditMenu);
     }
 }
 
@@ -1203,7 +1211,7 @@ void					MainWindow::OnAddTrackAudio(wxCommandEvent &event)
 void					MainWindow::OnAddTrackMidi(wxCommandEvent &event)
 {
   LOG;
-  Track *newTrack = SeqPanel->CreateTrack(eMidiTrack);
+  SeqPanel->CreateTrack(eMidiTrack);
 }
 
 void					MainWindow::OnFloatTransport(wxCommandEvent &event)
@@ -1428,18 +1436,12 @@ void					MainWindow::OnFloatMediaLibrary(wxCommandEvent &event)
 void					MainWindow::MediaLibraryShow(wxCommandEvent &event)
 {
   LOG;
-  //  if (MediaLibraryMenu->IsChecked(MainWin_MediaLibraryShow))
+
   if (!MediaLibraryPanel->IsVisible())
     ShowMediaLibrary(panelShow);
   else
     ShowMediaLibrary(panelHide);
 }
-
-// must be called only when medialibrary is docked
-//void					MainWindow::MediaLibraryHide(wxCommandEvent &event)
-//{
-//  ShowMediaLibrary(panelHide);
-//}
 
 void					MainWindow::OnSwitchRackOptViewEvent(wxCommandEvent &event)
 {
@@ -1606,7 +1608,8 @@ void					MainWindow::OnCloseVideo(wxCommandEvent &event)
 void					MainWindow::OnSeekVideo(wxCommandEvent &event)
 {
   LOG;
-  //  WiredVideoObject->SetSeek(VideoMenu->IsChecked(MainWin_SeekVideo));
+
+  WiredVideoObject->SetSeek(VideoMenu->IsChecked(MainWin_SeekVideo));
 }
 
 void					MainWindow::SetSelectedSolo(wxCommandEvent &event)
@@ -1620,7 +1623,7 @@ void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
   LOG;
   SeqPanel->DeleteSelectedTrack();
   /* Needs path in AudioPattern */
-  //cActionManager::Global().AddImportWaveAction(selfile, true, false);
+//   cActionManager::Global().AddImportWaveAction(selfile, true, false);
 }
 
 void					MainWindow::OnUndo(wxCommandEvent &event)
@@ -1762,12 +1765,13 @@ void					MainWindow::OnAbout(wxCommandEvent &event)
 				 wxString(wxT("ihm/splash/about.png"))),
 			wxBITMAP_TYPE_PNG))
     {
-      wxSplashScreen* splash = new wxSplashScreen(aboutbtm,
-						  wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT,
-						  6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
-						  wxSIMPLE_BORDER|wxSTAY_ON_TOP);
+      // splash screen delete itself at timeout
+      new wxSplashScreen(aboutbtm,
+			 wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT,
+			 6000, NULL, -1, wxDefaultPosition, wxDefaultSize,
+			 wxSIMPLE_BORDER|wxSTAY_ON_TOP);
     }
-  //wxYield();
+  wxYield();
 }
 
 void					MainWindow::OnSpaceKey()
@@ -1889,22 +1893,30 @@ void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
   wxLogNull NoLog;
   if (SeqTimer)
     {
-      wxString			LeftSpace(_("Left space on drive : "));
+      int			pos;
+      wxString			label;
       wxLongLong		Total, Free;
+      wxLongLong		Size;
 
-/*    Does not work everywhere : kernel version problem
- *    wxString			LeftMemory(_("Free memory : "));
- *    wxLongLong Size = wxGetFreeMemory();
- *    if (Size > 0)
- *      LeftMemory += Size.ToString();
- *    else
- *      LeftMemory += _("Unknown");
-*/
-      wxGetDiskSpace(saveCenter->getAudioDir(), &Total, &Free);
+      pos = 0;
+      // print free memory if it's available
+      if ((Size = wxGetFreeMemory()) > 0)
+	{
+	  Size = Size.GetValue() / 1024 / 1024;
 
-//      LeftSpace += FileLoader::FormatSize((off_t) Free.GetValue()) + wxT("/") + FileLoader::FormatSize((off_t)Total.GetValue());
-      SetStatusText(LeftSpace, 0);
-      //SetStatusText(LeftMemory, 1);
+	  label = _("Free memory : ") + Size.ToString() + wxT("MB");
+	  SetStatusText(label, pos++);
+	}
+
+      // print disk space if it's available
+      if ( wxGetDiskSpace(saveCenter->getAudioDir(), &Total, &Free) == true )
+	{
+	  Total = Total.GetValue() / 1024 / 1024;
+	  Free = Free.GetValue() / 1024 / 1024;
+
+	  label = _("Left space on drive : ") + Free.ToString() + wxT("/") + Total.ToString() + wxT("MB");
+	  SetStatusText(label, pos++);
+	}
     }
 #endif
 }
@@ -2032,7 +2044,7 @@ void		MainWindow::SwitchDockedFloat(bool isCurrentlyFloating, int mustBeFloating
 void		MainWindow::Load(SaveElementArray data)
 {
   LOG;
-   int			i;
+  unsigned int	i;
    wxSize		size;
    wxPoint		pos;
    bool			isFloating;
@@ -2216,9 +2228,9 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
   EVT_BUTTON(FileLoader_Stop, MainWindow::OnFileLoaderStop)
 */
-  //  EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)
-  //  EVT_MENU(MainWin_CloseVideo, MainWindow::OnCloseVideo)
-  //  EVT_MENU(MainWin_SeekVideo, MainWindow::OnSeekVideo)
+   EVT_MENU(MainWin_OpenVideo, MainWindow::OnOpenVideo)
+   EVT_MENU(MainWin_CloseVideo, MainWindow::OnCloseVideo)
+   EVT_MENU(MainWin_SeekVideo, MainWindow::OnSeekVideo)
   //EVT_TEXT_MAXLEN(101010, MainWindow::OnSetPosition)
   //EVT_PLAYPOSITION(313131, MainWindow::OnSetPosition)
 END_EVENT_TABLE()
