@@ -134,6 +134,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   CreateEffectMenu = new wxMenu;
   HelpMenu = new wxMenu;
   WindowMenu = new wxMenu;
+  MediaLibraryMenu = new wxMenu;
 
   //calls exec... will *not* work on windows
 #ifdef __LINUX__
@@ -164,7 +165,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 #endif
   FileMenu->Append(MainWin_Quit, _("&Quit\tCtrl-Q"));
 
-  //EditMenu->AppendSeparator();
   EditMenu->Append(MainWin_Cut, _("C&ut\tCtrl+X"));
   EditMenu->Append(MainWin_Copy, _("&Copy\tCtrl+C"));
   EditMenu->Append(MainWin_Paste, _("&Paste\tCtrl+V"));
@@ -176,35 +176,29 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   SequencerMenu->Append(MainWin_AddTrackAudio, _("&Add Audio Track"));
   SequencerMenu->Append(MainWin_AddTrackMidi, _("Add &MIDI Track"));
-  SequencerMenu->Append(MainWin_SoloTrack, _("&Toggle solo (Enter)"));
   SequencerMenu->Append(MainWin_DeleteTrack, _("&Delete Track (Backspace)"));
+  SequencerMenu->AppendSeparator();
+  SequencerMenu->Append(MainWin_SoloTrack, _("&Toggle solo (Enter)"));
 
   RacksMenu->Append(MainWin_DeleteRack, _("D&elete Rack"));
 
   HelpMenu->Append(MainWin_IntHelp, _("&Show Integrated Help"));
   HelpMenu->Append(MainWin_About, _("&About..."));
 
-  /* XXX
-  MediaLibraryMenu->Append(MainWin_MediaLibraryBeta, _("This feature is currently in alpha stage"))->Enable(false);
-  MediaLibraryMenu->Append(MainWin_SaveML, _("Save Media Library"));
-  MediaLibraryMenu->Append(MainWin_LoadML, _("Load Media Library"));
-  MediaLibraryMenu->AppendSeparator();
+  MediaLibraryMenu->Append(MainWin_MediaLibraryBeta, _("This feature is currently in alpha stage"));
+  MediaLibraryMenu->Enable(MainWin_MediaLibraryBeta, false);
+  MediaLibraryMenu->Append(MainWin_SaveML, _("&Save Media Library"));
+  MediaLibraryMenu->Append(MainWin_LoadML, _("&Load Media Library"));
 
-  ItemShowMediaLibrary = MediaLibraryMenu->AppendCheckItem(MainWin_MediaLibraryShow, _("&Show/Hide\tCtrl-M"));
-  ItemFloatingMediaLibrary = MediaLibraryMenu->AppendCheckItem(MainWin_FloatMediaLibrary, _("&Floating"));
-  */
-
-  WindowMenu->Append(MainWin_SwitchRack, _("Switch &Rack/Optional view\tTAB"));
-  WindowMenu->Append(MainWin_SwitchSeq, _("Switch &Sequencer/Optional view\tCtrl+TAB"));
+  WindowMenu->Append(MainWin_SwitchRack, _("Switch &Rack/Optional view"));
+  WindowMenu->Append(MainWin_SwitchSeq, _("Switch &Sequencer/Optional view"));
   WindowMenu->AppendSeparator();
-  ItemFloatingTrans = WindowMenu->AppendCheckItem(MainWin_FloatTransport, _("Floating &Transport"));
   ItemShowMediaLibrary = WindowMenu->AppendCheckItem(MainWin_MediaLibraryShow, _("Show/&Hide MediaLibrary\tCtrl-M"));
   WindowMenu->AppendSeparator();
   ItemFloatingMediaLibrary = WindowMenu->AppendCheckItem(MainWin_FloatMediaLibrary, _("Floating &MediaLibrary"));
   ItemFloatingTrans = WindowMenu->AppendCheckItem(MainWin_FloatTransport, _("Floating &Transport"));
   ItemFloatingSeq = WindowMenu->AppendCheckItem(MainWin_FloatSequencer,_("Floating S&equencer"));
   ItemFloatingRacks = WindowMenu->AppendCheckItem(MainWin_FloatRacks, _("Floating R&acks"));
-  //   ItemFloatingOptView = WindowMenu->AppendCheckItem(MainWin_FloatView, _("Floating Optional View"));
   WindowMenu->AppendSeparator();
   ItemFullscreenToggle = WindowMenu->AppendCheckItem(MainWin_FullScreen,
 						     _("&Fullscreen"));
@@ -219,6 +213,7 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar->Append(CreateEffectMenu, _("Effec&ts"));
   // Video menu is empty... and not finished
   //  MenuBar->Append(VideoMenu, _("&Video"));
+  MenuBar->Append(MediaLibraryMenu, _("&MediaLibrary"));
   MenuBar->Append(WindowMenu, _("&Window"));
   MenuBar->Append(HelpMenu, _("&Help"));
 
@@ -1917,15 +1912,9 @@ void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
 void		MainWindow::OnKey(wxKeyEvent& event)
 {
   LOG;
+
   if (event.GetKeyCode() == WXK_SPACE)
     OnSpaceKey();
-  else if (event.GetKeyCode() == WXK_TAB)
-    {
-      if (event.ShiftDown())
-	SwitchSeqOptView();
-      else
-	SwitchRackOptView();
-    }
   else
     event.Skip();
 }

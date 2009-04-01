@@ -201,7 +201,6 @@ class					MainWindow: public wxFrame, public WiredDocument
   wxMenuItem				*ItemFloatingTrans;
   wxMenuItem				*ItemFloatingSeq;
   wxMenuItem				*ItemFloatingRacks;
-  wxMenuItem				*ItemFloatingOptView;
   wxMenuItem				*ItemFloatingMediaLibrary;
   wxMenuItem				*ItemShowMediaLibrary;
   wxMenuItem				*ItemHideMediaLibrary;
