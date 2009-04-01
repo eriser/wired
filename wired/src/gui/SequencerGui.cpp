@@ -245,20 +245,23 @@ Track					*SequencerGui::CreateTrack(trackType type)
 
 void					SequencerGui::DeleteTrack(Track* track)
 {
-  // We need to keep SeqMutex locked until re-indexation is done
-  wxMutexLocker				locker(SeqMutex);
 
   if (track)
     {
-      // we should stop recording or something else instead return
-      if (track->GetTrackOpt()->Record && Seq->Recording)
-	return;
+      // We need to keep SeqMutex locked until re-indexation is done
+      {
+	wxMutexLocker				locker(SeqMutex);
 
-      delete track;
-      ReindexTrackArray();
+	// we should stop recording or something else instead return
+	if (track->GetTrackOpt()->Record && Seq->Recording)
+	  return;
 
-      // Refresh things
-      UpdateTracks();
+	delete track;
+	ReindexTrackArray();
+
+	// Refresh things
+	UpdateTracks();
+      }
       SetScrolling();
       AdjustVScrolling();
     }
@@ -626,22 +629,24 @@ void					SequencerGui::RefreshConnectMenu()
 
 void					SequencerGui::DeleteAllTracks()
 {
-  wxMutexLocker				locker(SeqMutex);
-  vector<Track *>::iterator		i;
-  vector<Track *>::iterator		next;
+  {
+    wxMutexLocker				locker(SeqMutex);
+    vector<Track *>::iterator		i;
+    vector<Track *>::iterator		next;
 
-  i = Seq->Tracks.begin();
-  while (i != Seq->Tracks.end())
-    {
-      next = i + 1;
-      delete (*i);
-      i = next;
-    }
+    i = Seq->Tracks.begin();
+    while (i != Seq->Tracks.end())
+      {
+	next = i + 1;
+	delete (*i);
+	i = next;
+      }
 
-  // should be unnecessary
-  Seq->Tracks.clear();
+    // should be unnecessary
+    Seq->Tracks.clear();
 
-  UpdateTracks();
+    UpdateTracks();
+  }
   SetScrolling();
 }
 
@@ -1124,10 +1129,12 @@ void					SequencerGui::Save()
 
 void					SequencerGui::Load(SaveElementArray data)
 {
-  wxMutexLocker				m(SeqMutex);
   int					i;
+  {
+    wxMutexLocker			m(SeqMutex);
 
-  SetCurrentPos(Seq->CurrentPos);
+    SetCurrentPos(Seq->CurrentPos);
+  }
   for (i = 0; i < data.GetCount(); i++)
     {
       if (data[i]->getKey() == wxT("HoriZoomFactor"))		HoriZoomFactor = data[i]->getValueFloat();

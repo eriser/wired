@@ -26,9 +26,7 @@
 
 #ifdef DEBUG_SEQUENCER
 #include <wx/filename.h>
-#endif
 
-#ifdef DEBUG_SEQUENCER
 #define LOG { wxFileName __filename__(__FILE__); cout << __filename__.GetFullName() << " : "  << __LINE__ << " : " << __FUNCTION__  << endl; }
 #else
 #define LOG
@@ -117,6 +115,7 @@ void					*Sequencer::Entry()
   while (!TestDestroy())
     {
       // to prevent playing without a valid config
+      Yield();
       AudioMutex.Lock();
       if (!Audio->IsOk)
 	{
@@ -129,6 +128,7 @@ void					*Sequencer::Entry()
 	  continue;
 	}
       AudioMutex.Unlock();
+      Yield();
 
       /* - gotten MIDI messages analyze */
       MidiMutex.Lock();
@@ -139,12 +139,14 @@ void					*Sequencer::Entry()
 	    {
 	      SeqMutex.Unlock();
 	      Play();
+	      Yield();
 	      SeqMutex.Lock();
 	    }
 	  else if ((*MidiMsg)->Msg[0] == M_STOP)
 	    {
 	      SeqMutex.Unlock();
 	      Stop();
+	      Yield();
 	      SeqMutex.Lock();
 	    }
 	  else
@@ -168,17 +170,18 @@ void					*Sequencer::Entry()
 		  delete *MidiMsg;
 	}
       SeqMutex.Unlock();
-      Yield();
       MidiEvents.clear();
       MidiMutex.Unlock();
+      Yield();
       SeqMutex.Lock();
       if (Playing)
 	{
-	  /* moved to end of loop
-	    SeqMutex.Unlock();
-	  SetCurrentPos();
-	  SeqMutex.Lock();
-	  */
+	  // moved to end of loop
+// 	  SeqMutex.Unlock();
+// 	  SetCurrentPos();
+// 	  Yield();
+// 	  SeqMutex.Lock();
+
 	  /* Looping */
 	  if (!Exporting && Loop && (CurrentPos >= EndLoopPos))
 	    SetCurrentPos(BeginLoopPos);
@@ -282,8 +285,9 @@ void					*Sequencer::Entry()
 	  SetCurrentPos();
 	}
 
-//       SeqMutex.Unlock();
-//       SeqMutex.Lock();
+       SeqMutex.Unlock();
+       Yield();
+       SeqMutex.Lock();
       /* - Calls each rack track plug-in's Process function */
       for (RacksTrack = RackPanel->RackTracks.begin(); RacksTrack != RackPanel->RackTracks.end();
 	   RacksTrack++)
@@ -364,7 +368,6 @@ void					*Sequencer::Entry()
 	    (*B)->Chan->PushBuffer((*B)->Buffer);
 	}
       /* Mix->MixOutput() function call */
-      //SeqMutex.Lock();
       if (Exporting)
 	{
 	  if (CurrentPos >= EndLoopPos)
@@ -400,15 +403,19 @@ void					Sequencer::Play()
   list<Plugin *>::iterator		Plug;
 
   // don't forget to lock mutex:
-  wxMutexLocker				locker(SeqMutex);
+  {
+    wxMutexLocker				locker(SeqMutex);
 
-  for (RacksTrack = RackPanel->RackTracks.begin();
-       RacksTrack != RackPanel->RackTracks.end(); RacksTrack++)
-    for (Plug = (*RacksTrack)->Racks.begin(); Plug != (*RacksTrack)->Racks.end();
-	 Plug++)
-      (*Plug)->Play();
+    for (RacksTrack = RackPanel->RackTracks.begin();
+	 RacksTrack != RackPanel->RackTracks.end(); RacksTrack++)
+      for (Plug = (*RacksTrack)->Racks.begin(); Plug != (*RacksTrack)->Racks.end();
+	   Plug++)
+	(*Plug)->Play();
+  }
+
   Playing = true;
   StartAudioPos = Audio->GetTime();
+
   /* CurAudioPos = 0;
      CurrentPos = 0.f; */
   if (Recording)
@@ -423,38 +430,34 @@ void					Sequencer::Stop()
   vector<Track *>::iterator		T;
 
   // don't forget to lock mutex:
-  wxMutexLocker				locker(SeqMutex);
+  {
+    wxMutexLocker			locker(SeqMutex);
 
-  for (RacksTrack = RackPanel->RackTracks.begin();
-       RacksTrack != RackPanel->RackTracks.end(); RacksTrack++)
-    for (Plug = (*RacksTrack)->Racks.begin(); Plug != (*RacksTrack)->Racks.end();
-	 Plug++)
-      (*Plug)->Stop();
+    for (RacksTrack = RackPanel->RackTracks.begin();
+	 RacksTrack != RackPanel->RackTracks.end(); RacksTrack++)
+      for (Plug = (*RacksTrack)->Racks.begin(); Plug != (*RacksTrack)->Racks.end();
+	   Plug++)
+	(*Plug)->Stop();
 
-  for (T = Tracks.begin(); T != Tracks.end(); T++)
-    if ((*T)->IsMidiTrack())
-      {
-	(*T)->GetTrackOpt()->VuValue = 0;
-	TracksToRefresh.push_back(*T);
-      }
+    for (T = Tracks.begin(); T != Tracks.end(); T++)
+      if ((*T)->IsMidiTrack())
+	{
+	  (*T)->GetTrackOpt()->VuValue = 0;
+	  TracksToRefresh.push_back(*T);
+	}
+  }
 
   Playing = false;
+  Yield();
   //if (WiredVideoObject->asFile == true) WiredVideoObject->StopFile();
+
   if (Recording)
-    {
-      SeqMutex.Unlock();
-
-      FinishRecording();
-
-      SeqMutex.Lock();
-    }
+    FinishRecording();
   Recording = false;
 }
 
 void					Sequencer::Record(bool bRecording)
 {
-  wxMutexLocker				locker(SeqMutex);
-
   Recording = bRecording;
   if (Recording)
     {
@@ -477,17 +480,8 @@ void					Sequencer::RegisterTrack(Track *t)
 
 void					Sequencer::UnregisterTrack(Track *track)
 {
-/*<<<<<<< .working
-  SeqMutex.Lock();
-  t->SetIndex(Tracks.size());
-  Tracks.push_back(t);
-  SeqMutex.Unlock();
-}
-=======
-*/
   wxMutexLocker				locker(SeqMutex);
   vector<Track *>::iterator		iterTrack;
-//>>>>>>> .merge-right.r1376
 
   for (iterTrack = Tracks.begin(); iterTrack != Tracks.end(); iterTrack++)
     if (*iterTrack == track)
@@ -500,6 +494,7 @@ void					Sequencer::UnregisterTrack(Track *track)
 void					Sequencer::PrepareRecording()
 {
   vector<Track *>::iterator		T;
+  wxMutexLocker				locker(SeqMutex);
 
   for (T = Tracks.begin(); T != Tracks.end(); T++)
     {
@@ -557,6 +552,7 @@ void					Sequencer::PrepareTrackForRecording(Track *T)
 void					Sequencer::FinishRecording()
 {
   vector<Track *>::iterator		T;
+  wxMutexLocker				locker(SeqMutex);
 
   for (T = Tracks.begin(); T != Tracks.end(); T++)
     {
@@ -566,20 +562,12 @@ void					Sequencer::FinishRecording()
 	    {
 	      if ((*T)->GetAudioPattern())
 		(*T)->GetAudioPattern()->StopRecord();
-	      SeqMutex.Lock();
 
 	      (*T)->SetAudioPattern(NULL);
-
-	      SeqMutex.Unlock();
-
 	    }
 	  else if ((*T)->IsMidiTrack())
 	    {
-	      SeqMutex.Lock();
-
 	      (*T)->SetMidiPattern(NULL);
-
-	      SeqMutex.Unlock();
 	    }
 	}
     }
@@ -912,53 +900,39 @@ bool					Sequencer::ExportToWave(wxString &filename)
   SampleRateConverter->Init(&Info);
   if (SampleRateConverter->SaveFile(filename, 2, Audio->SamplesPerBuffer, true))
     {
-      SeqMutex.Lock();
-      AllocBuffer(ExportBuf);
-      SetCurrentPos(BeginLoopPos);
+      {
+	wxMutexLocker			locker(SeqMutex);
+
+	AllocBuffer(ExportBuf);
+	SetCurrentPos(BeginLoopPos);
+      }
       Exporting = true;
       Loop = false;
-      SeqMutex.Unlock();
+
       Play();
       return true;
     }
   else
     {
-      wxMutexGuiLeave();
       return false;
     }
-
-//  try
-//    {
-//      ExportWave = new WriteWaveFile(filename, (int)Audio->SampleRate, 2,
-//				     SF_FORMAT_PCM_16);
-//      SetCurrentPos(BeginLoopPos);
-//
-//      SeqMutex.Lock();
-//      Exporting = true;
-//      SeqMutex.Unlock();
-//
-//      Play();
-//    }
-//  catch (...)
-//    {
-//      cout << "[SEQUENCER] Could not create export file" << endl; // FIXME error dialog box
-//    }
-//    return false;
 }
 
 void					Sequencer::StopExport()
 {
   Stop();
-  SeqMutex.Lock();
-  Exporting = false;
-  if (SampleRateConverter)
   {
+    wxMutexLocker				locker(SeqMutex);
+
+    Exporting = false;
+    if (SampleRateConverter)
+      {
   	SampleRateConverter->EndSaveFile(2);
   	delete SampleRateConverter;
   	SampleRateConverter = NULL;
-    DeleteBuffer(ExportBuf);
+	DeleteBuffer(ExportBuf);
+      }
   }
-  SeqMutex.Unlock();
   return;
 }
 
@@ -1021,36 +995,39 @@ void					Sequencer::PlayFile(wxString filename, bool isakai)
 	    }
     //delete img;
 
-	  SeqMutex.Lock();
+	  {
+	    wxMutexLocker		locker(SeqMutex);
 
-	  PlayWavePos = 0;
-	  PlayWave = w;
-
-	  SeqMutex.Unlock();
+	    PlayWavePos = 0;
+	    PlayWave = w;
+	  }
 	}
       else
 	{
 	  WaveFile *w = new WaveFile(filename, false);
-	  SeqMutex.Lock();
-	  PlayWavePos = 0;
-	  PlayWave = w;
-	  SeqMutex.Unlock();
+
+	  {
+	    wxMutexLocker		locker(SeqMutex);
+
+	    PlayWavePos = 0;
+	    PlayWave = w;
+	  }
 	}
     }
   catch (...)
     {
-      SeqMutex.Lock();
-      PlayWave = 0;
-      SeqMutex.Unlock();
+      wxMutexLocker			locker(SeqMutex);
+
+      PlayWave = NULL;
     }
 }
 
 void					Sequencer::StopFile()
 {
-  wxMutexLocker				locker(SeqMutex);
-
   if (PlayWave)
     {
+      wxMutexLocker			locker(SeqMutex);
+
       delete PlayWave;
       PlayWave = 0x0;
     }

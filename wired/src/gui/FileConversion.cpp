@@ -101,9 +101,7 @@ void				*FileConversion::Entry()
 					break;
 				case AImportFile :
 					cout << "[FILECONVERT] Thread working ! import file" << endl;
-					SeqMutex.Lock();
 					ImportWavePattern(Action->SrcFileName);
-					SeqMutex.Unlock();
 					cout << "[FILECONVERT] Thread working ! import file ended" << endl;
 					break;
 				default :
@@ -302,9 +300,7 @@ bool				FileConversion::ImportFile(wxString &FileName)
 
 void				FileConversion::ImportWaveFile(wxString &FileName)
 {
-	SeqMutex.Lock();
 	ImportWavePattern(FileName);
-	SeqMutex.Unlock();
 //	EnqueueAction(AImportFile, FileName, wxString(wxT("")));
 	FileConversionMutex.Unlock();
 }

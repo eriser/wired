@@ -120,13 +120,15 @@ void					AudioPattern::Update()
 
 void					AudioPattern::OnBpmChange()
 {
-  wxMutexLocker				m(SeqMutex);
+  {
+    wxMutexLocker			m(SeqMutex);
 
 #ifdef __DEBUG__
-  printf("\tAudioPattern : MeasurePerSample %f , Frames %d\n",
-	 Seq->MeasurePerSample, Wave->GetNumberOfFrames());
+    printf("\tAudioPattern : MeasurePerSample %f , Frames %d\n",
+	   Seq->MeasurePerSample, Wave->GetNumberOfFrames());
 #endif
-  Length = Seq->MeasurePerSample * (EndWavePos - StartWavePos);
+    Length = Seq->MeasurePerSample * (EndWavePos - StartWavePos);
+  }
   EndPosition = Position + Length;
   Update();
 }
@@ -140,8 +142,6 @@ void					AudioPattern::SetWave(WaveFile *w)
   if (w)
     {
       FileName = w->Filename;
-      wxMutexLocker  m(SeqMutex);
-
       OnBpmChange();
     }
 }
