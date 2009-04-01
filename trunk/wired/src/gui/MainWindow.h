@@ -14,8 +14,8 @@
 #include <wx/splitter.h>
 
 #define PLUG_MENU_INDEX_START		(50000)
-#define INDEX_MENUITEM_UNDO		0
-#define INDEX_MENUITEM_REDO		1
+#define INDEX_MENUITEM_UNDO	        2
+#define INDEX_MENUITEM_REDO		3
 // TODO : this should be created regarding to $PREFIX/etc/wired/wired_exts.conf
 #define WIRED_SUPPORTED_SNDFILES	wxT("Microsoft WAV format (*.wav)|*.wav|Apple/SGI AIFF format (*.aif)|*.aif|Sun/NeXT AU format (*.au; *.snd)|*.au;*.snd|Amiga IFF / SVX8 / SV16 format (*.svx)|*.svx|Ensoniq PARIS format (*.paf; *.fap)|*.paf;*.fap|Sphere NIST format (*.nist)|*.nist|Berkeley/IRCAM/CARL format (*.ircam; *.sf)|*.ircam;*.sf|Creative Labs VOC format (*.voc)|*.voc|Sonic Foundry's 64 bit RIFF/WAV format (*.w64)|*.w64|RAW PCM data format (*.raw)|*.raw|Matlab (tm) V4.2 / GNU Octave 2.0 format (*.mat4; *.mat)|*.mat4;*.mat|Matlab (tm) V5 / GNU Octave 2.1 format (*.mat5)|*.mat5|Portable Voice Format (*.pvf)|*.pvf|Fastracker 2 format (*.xi)|*.xi|All supported files|*.wav;*.aif;*.au;*.snd;*.svx;*.paf;*.fap;*.nist;*.ircam;*.sf;*.voc;*.w64;*.raw;*.mat;*.mat4;*.mat5;*.pvf;*.xi")
 
@@ -91,7 +91,6 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					OnSelectAll(wxCommandEvent &event);
 
   void					MediaLibraryShow(wxCommandEvent &event);
-  void					MediaLibraryHide(wxCommandEvent &event);
   void					OnSaveML(wxCommandEvent &e);
   void					OnLoadML(wxCommandEvent &e);
 
@@ -265,6 +264,7 @@ enum
   MainWin_FloatRacks,
   MainWin_FloatView,
   MainWin_FloatMediaLibrary,
+  MainWin_UndoRedoBeta,
   MainWin_Undo,
   MainWin_Redo,
   MainWin_History,
@@ -277,14 +277,15 @@ enum
   MainWin_IntHelp,
   MainWin_SwitchRack,
   MainWin_SwitchSeq,
+  MainWin_VideoBeta,
   MainWin_OpenVideo,
   MainWin_CloseVideo,
+  MainWin_SeekVideo,
   MainWin_MediaLibraryBeta,
   MainWin_MediaLibraryShow,
   MainWin_MediaLibraryHide,
   MainWin_SaveML,
   MainWin_LoadML,
-  MainWin_SeekVideo,
   MainWin_ShowLog
 };
 
