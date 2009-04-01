@@ -207,13 +207,13 @@ void					Pattern::OnMotion(wxMouseEvent &e)
   double				z;
   int					trackto;
   double				mes;
-
+  // can we reduce our critical section ?
+  wxMutexLocker				m(SeqMutex);
 
   if (IsSelected() && (SeqPanel->Tool == ID_TOOL_MOVE_SEQUENCER) && e.Dragging() && (Seq->Tracks[TrackIndex]->GetAudioPattern() != this))
     {
       if (m_click.x != -1)
 	StateMask |= (unsigned char) PATTERN_MASK_DRAGGED;
-      SeqMutex.Lock();
       if ((x = (e.GetPosition().x - m_click.x)) > (max = (long) floor(PATTERN_DRAG_SCROLL_UNIT * SeqPanel->HoriZoomFactor)))
 	  x = max;
       else if (x < -max)
@@ -237,7 +237,6 @@ void					Pattern::OnMotion(wxMouseEvent &e)
 	      else
 		{
 		  SeqPanel->ChangeMouseCursor(wxCursor(wxCURSOR_NO_ENTRY));
-		  SeqMutex.Unlock();
 		  return;
 		}
 	    }
@@ -257,7 +256,6 @@ void					Pattern::OnMotion(wxMouseEvent &e)
 	    else
 	      SeqPanel->SeqView->AutoXScrollReset();
 	}
-      SeqMutex.Unlock();
     }
 
 //   else

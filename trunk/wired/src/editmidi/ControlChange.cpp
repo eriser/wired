@@ -16,7 +16,7 @@ ControlChange::ControlChange(MidiPattern *p, unsigned int num)
 
 void				ControlChange::SetChannel(int channel)
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   if (channel > 15)
     channel = 15;
@@ -24,13 +24,11 @@ void				ControlChange::SetChannel(int channel)
     channel = 0;
   p->SetToWrite();
   e->Msg[0] = ME_CODE(e->Msg[0]) | channel;
-
-  SeqMutex.Unlock();
 }
 
 void				ControlChange::SetController(int controller)
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   if (controller > 127)
     controller = 127;
@@ -38,24 +36,20 @@ void				ControlChange::SetController(int controller)
     controller = 0;
   p->SetToWrite();
   e->Msg[1] = controller;
-
-  SeqMutex.Unlock();
 }
 
 void				ControlChange::SetPos(double pos)
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   p->SetToWrite();
   e->EndPosition = pos;
   e->Position = pos;
-
-  SeqMutex.Unlock();
 }
 
 void				ControlChange::SetValue(int value)
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   if (value > 127)
     value = 127;
@@ -64,7 +58,6 @@ void				ControlChange::SetValue(int value)
   p->SetToWrite();
   e->Msg[2] = value;
 
-  SeqMutex.Unlock();
 }
 
 int				ControlChange::GetChannel()
@@ -89,7 +82,7 @@ int				ControlChange::GetValue()
 
 void			ControlChange::Erase()
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   p->SetToWrite();
   for (vector<MidiEvent *>::iterator i = p->Events.begin(); i != p->Events.end(); i++)
@@ -100,7 +93,5 @@ void			ControlChange::Erase()
       break;
     }//p->Events.begin() + num);
   }
-
-  SeqMutex.Unlock();
 }
 

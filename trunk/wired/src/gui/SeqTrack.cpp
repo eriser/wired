@@ -370,7 +370,6 @@ void					SeqTrack::OnMotion(wxMouseEvent &e)
 
   if (Selected && e.Dragging())
     {
-      SeqMutex.Lock();
       z = ((e.m_y - m_click.y) / (h = (long) (TRACK_HEIGHT * SeqPanel->VertZoomFactor)));
       if (z < 0)
 	if (GetPosition().y < 0)
@@ -389,7 +388,6 @@ void					SeqTrack::OnMotion(wxMouseEvent &e)
 	    }
 	  else
 	    SeqPanel->ChangeSelectedTrackIndex(z);
-      SeqMutex.Unlock();
     }
 }
 
@@ -449,9 +447,9 @@ void					SeqTrack::OnRecordClick(wxCommandEvent &WXUNUSED(event))
       Record = true;
       if (Seq->Playing && Seq->Recording)
 	{
-	  SeqMutex.Lock();
+	  wxMutexLocker			m(SeqMutex);
+
 	  Seq->PrepareTrackForRecording(Seq->Tracks[Index - 1]);
-	  SeqMutex.Unlock();
 	}
     }
   else

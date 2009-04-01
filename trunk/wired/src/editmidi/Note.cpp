@@ -16,11 +16,10 @@ Note::Note(MidiPattern *p, unsigned int num)
 
 void				Note::SetDuration(double duration)
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   p->SetToWrite();
   e->EndPosition = duration + e->Position;
-  SeqMutex.Unlock();
 }
 
 double				Note::GetDuration()
@@ -30,7 +29,7 @@ double				Note::GetDuration()
 
 void				Note::SetNote(int note)
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   if (note > 127)
 	note = 127;
@@ -38,7 +37,6 @@ void				Note::SetNote(int note)
 	note = 0;
   p->SetToWrite();
   e->Msg[1] = note;
-  SeqMutex.Unlock();
 }
 
 int				Note::GetNote()
@@ -48,12 +46,11 @@ int				Note::GetNote()
 
 void				Note::SetPos(double pos)
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   p->SetToWrite();
   e->EndPosition = e->EndPosition - e->Position + pos;
   e->Position = pos;
-  SeqMutex.Unlock();
 }
 
 double				Note::GetPos()
@@ -68,7 +65,7 @@ int				Note::GetChannel()
 
 void				Note::SetChannel(int channel)
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   if (channel > 15)
 	channel = 15;
@@ -76,12 +73,11 @@ void				Note::SetChannel(int channel)
 	channel = 0;
   p->SetToWrite();
   e->Msg[0] = ME_CODE(e->Msg[0]) | channel;
-  SeqMutex.Unlock();
 }
 
 void				Note::SetVelocity(int velocity)
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   if (velocity > 127)
 	velocity = 127;
@@ -89,7 +85,6 @@ void				Note::SetVelocity(int velocity)
 	velocity = 0;
   p->SetToWrite();
   e->Msg[2] = velocity;
-  SeqMutex.Unlock();
 }
 
 int				Note::GetVelocity()
@@ -99,7 +94,7 @@ int				Note::GetVelocity()
 
 void				Note::Erase()
 {
-  SeqMutex.Lock();
+  wxMutexLocker			m(SeqMutex);
 
   p->SetToWrite();
   for (vector<MidiEvent *>::iterator i = p->Events.begin(); i != p->Events.end(); i++)
@@ -110,5 +105,4 @@ void				Note::Erase()
 	  break;
 	}//p->Events.begin() + num);
     }
-  SeqMutex.Unlock();
 }

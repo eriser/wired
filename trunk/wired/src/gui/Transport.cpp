@@ -194,8 +194,8 @@ void				Transport::OnPlay(wxCommandEvent &WXUNUSED(event))
 
 void				Transport::OnStop(wxCommandEvent &WXUNUSED(event))
 {
-  Seq->Stop();
   PlayBtn->SetOff();;
+  Seq->Stop();
   if (RecordBtn->GetOn())
     RecordBtn->SetOff();
 }
@@ -228,11 +228,12 @@ void				Transport::OnRecord(wxCommandEvent &WXUNUSED(event))
 
 void				Transport::OnLoop(wxCommandEvent &WXUNUSED(event))
 {
-  wxMutexLocker m(SeqMutex);
+  {
+    wxMutexLocker m(SeqMutex);
 
-  Seq->Loop = LoopBtn->GetOn();
+    Seq->Loop = LoopBtn->GetOn();
+  }
   Refresh();
-
 }
 
 void				Transport::OnMetronome(wxCommandEvent &WXUNUSED(event))
@@ -244,9 +245,11 @@ void				Transport::OnMetronome(wxCommandEvent &WXUNUSED(event))
 
 void				Transport::OnBackward(wxCommandEvent &WXUNUSED(event))
 {
-  wxMutexLocker m(SeqMutex);
-  Seq->SetCurrentPos(0.0);
-  SeqPanel->SetCurrentPos(Seq->CurrentPos);
+  {
+    wxMutexLocker m(SeqMutex);
+    Seq->SetCurrentPos(0.0);
+  }
+  SeqPanel->SetCurrentPos(0.0);
 }
 
 void				Transport::OnForward(wxCommandEvent &WXUNUSED(event))
@@ -323,11 +326,12 @@ void				Transport::OnSigNumUp(wxCommandEvent &WXUNUSED(event))
 {
   if (Seq->SigNumerator < 9)
     {
-      wxMutexLocker m(SeqMutex);
       wxString s;
+      {
+	wxMutexLocker m(SeqMutex);
 
-      Seq->SetSigNumerator(Seq->SigNumerator + 1);
-
+	Seq->SetSigNumerator(Seq->SigNumerator + 1);
+      }
       s.Printf(wxT("%d"), Seq->SigNumerator);
       SigNumLabel->SetLabel(s);
       SeqPanel->AdjustHScrolling();
@@ -338,11 +342,12 @@ void				Transport::OnSigNumDown(wxCommandEvent &WXUNUSED(event))
 {
   if (Seq->SigNumerator > 1)
     {
-      wxMutexLocker m(SeqMutex);
       wxString s;
+      {
+	wxMutexLocker m(SeqMutex);
 
-      Seq->SetSigNumerator(Seq->SigNumerator - 1);
-
+	Seq->SetSigNumerator(Seq->SigNumerator - 1);
+      }
       s.Printf(wxT("%d"), Seq->SigNumerator);
       SigNumLabel->SetLabel(s);
       SeqPanel->AdjustHScrolling();
@@ -353,11 +358,12 @@ void				Transport::OnSigDenUp(wxCommandEvent &WXUNUSED(event))
 {
   if (Seq->SigDenominator < 9)
     {
-      wxMutexLocker m(SeqMutex);
       wxString s;
+      {
+	wxMutexLocker m(SeqMutex);
 
-      Seq->SetSigDenominator(Seq->SigDenominator + 1);
-
+	Seq->SetSigDenominator(Seq->SigDenominator + 1);
+      }
       s.Printf(wxT("%d"), Seq->SigDenominator);
       SigDenLabel->SetLabel(s);
       SeqPanel->AdjustHScrolling();
@@ -368,11 +374,12 @@ void				Transport::OnSigDenDown(wxCommandEvent &WXUNUSED(event))
 {
   if (Seq->SigDenominator > 1)
     {
-      wxMutexLocker m(SeqMutex);
       wxString s;
+      {
+	wxMutexLocker m(SeqMutex);
 
-      Seq->SetSigDenominator(Seq->SigDenominator - 1);
-
+	Seq->SetSigDenominator(Seq->SigDenominator - 1);
+      }
       s.Printf(wxT("%d"), Seq->SigDenominator);
       SigDenLabel->SetLabel(s);
       SeqPanel->AdjustHScrolling();
@@ -401,9 +408,11 @@ void				Transport::OnBpmEnter(wxCommandEvent &WXUNUSED(event))
 
       if (s.ToDouble(&d))
 	{
-	  SeqMutex.Lock();
-	  Seq->SetBPM(d);
-	  SeqMutex.Unlock();
+	  {
+	    wxMutexLocker m(SeqMutex);
+
+	    Seq->SetBPM(d);
+	  }
 	  SetBpm(d);
 	}
       Disconnect(Transport_BpmEnter, wxEVT_COMMAND_TEXT_ENTER, (wxObjectEventFunction)(wxEventFunction)
@@ -463,8 +472,6 @@ void				Transport::Save()
 
 void				Transport::Load(SaveElementArray data)
 {
-  wxMutexLocker			m(SeqMutex);
-
   SetBpm(Seq->BPM);
   SetSigNumerator(Seq->SigNumerator);
   SetSigDenominator(Seq->SigDenominator);
