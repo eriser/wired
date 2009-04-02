@@ -4,10 +4,22 @@
 #ifndef __WIREDXML_H__
 #define __WIREDXML_H__
 
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+   #include <wx/wx.h>
+#endif
+#include <wx/filename.h>
+#include <wx/file.h>
+
 #include <stdlib.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+// TODO: delete this line after using next wx release (> 2009/03/11)
+// it avoid >=libxml2-2.7.3 name conflict
+#undef ATTRIBUTE_PRINTF
+
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <libxml/valid.h>
@@ -15,12 +27,6 @@
 #include <libxml/xmlwriter.h>
 #include <libxml/xmlreader.h>
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-   #include <wx/wx.h>
-#endif
-#include <wx/filename.h>
-#include <wx/file.h>
 /*
 #ifdef WIN32
 #include <io.h>
