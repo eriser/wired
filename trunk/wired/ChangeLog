@@ -1,3 +1,94 @@
+WIRED 0.7.0 (revisions : 1482 - 1542)
+------------------------------------------------------------------------
+
+- [COMPILE] fixed Video, Codecs and MediaLibrary saving feature
+- [COMPILE] change compilation policy: all bugged features should be on
+- [RELEASE] updated text files
+- [i18n] updated translation files
+- [Release] Cleaner xsl stylesheet, included svn2cl stylesheet
+- [COMPAT] Fixed compilation problem with >=libxml2-2.7.3
+- [GUI] Enabled some hidden-features: including Undo/Redo,Video,ML Saving
+- [GUI] done some cleaness in menubar and deleted annoying TAB keybinding
+- [GUI] Added GPL icons and removed old, unused and ugly bmp
+- [Engine] reduced latency between actions
+- Added script to auto-update the ChangeLog file
+- fixed regression when loading session 
+- fixed refresh of splash screen after wizard window
+- fixed bug 2658801 "Audio initialisation played twice"
+- moved Wizard in MainApp instead MainWindow
+- re-added One-instance check
+- Initial waf building system support (see http://code.google.com/p/waf/).
+
+What is working:
+    The entire project is being built.
+
+What is not working yet:
+    Local execution (without installation) for fast development;
+    Installation;
+    Internationalization;
+    Project specific build parameters.
+
+Main motivation:
+    Replace autotools (try yourself to understand why).
+    
+How to use:
+    run ./waf
+- Little fix in libWiredBeatBox section of alternative Makefile
+- initialize Mixer with the highest value. bug id: 2658801 pending
+- Fix of alternative Makefile for Linux building
+- Fixed a segfault. When the list of recent items is not filled (no recent project), the user is asked for a new project.
+- Add ok button in wizard
+- URRAH: removed portaudio built-in package
+- fixed include errors appearing with GCC >= 4.3
+- added mandatory include for debian 
+- fixed segfault when file .wired/wired.conf is badly written.
+- just added a little precision about packages installation
+- fixed problem with wx2.8 and LoadLocalTree method of MLTree
+- Corrected single click for new note with magnetism in midi editor
+- Made automation changes only affect the current ControlChange.
+- Made use of move/edit/delete buttons on automation graph.
+- Fixed win32 Makefile
+- Reset PPQN to 92.
+Made midi editor display lines (stairs) in automation.
+Added magnetism of automation drawing.
+- Fix Makefile.am (old file deleted)
+- Fixed bug with automation.
+(No hardware midi controller needed).
+Removed old code for automation track.
+- Made it compile on linux ;)
+- Add the wonderful Automation feature !!!
+(We still need a midi controller)
+- The grid in midi editor is now more accurate
+Notes don't disapear anymore when (quickly) added in midi editor
+- Fixed sash position on midi editor window resize.
+Fixed some warnings.
+Removed some useless includes.
+- Some code cleanup : abusive use of static
+- Corrected max and min values of channel, note and velocity in Note
+- Bug corrected in midi editor on sash separator movement.
+MidiAttr is now well resized.
+- Redraw on resize of velocity in midi editor corrected
+- Added some automation stuff in midi editor.
+- Better managment of data directory (without SetCwd).
+- Updated saving of changes in velocity in midi editor :)
+- Added the change velocity of a note in midi editor.
+- Updated multiclick for select and delete in midi editor
+- Changed default of vertical magnet in midi editor from false to true
+Made some changes in mouse click behavior in midi editor
+- Added vertical and horizontal magnetism to midi editor
+Corrected some source file encodings...
+- Making win32 compatible with linux
+- Bug Fix on Win32.
+Optimize in Settings.cpp.
+see SetCwd() in Wizard.cpp, ...
+- Added new feature : possibility to draw a MidiPattern in a track :-D
+- Fixed magnetism in midi editor
+- Added magnetism to the edit tool in midi editor
+- Corrected refresh of zoom on x coord in midi editor
+Also removed (deprecated) feature of 'multi-note'
+- sharing
+- Corrected midi editor's mouse behavior : taking into account of note duration and possibility to draw different notes with one click ; also, saving works :)
+- Fixed saving of midipattern edited using the midi editor
 
 WIRED 0.4 (rev 13xx)
 ------------------------------------------------------------------------
