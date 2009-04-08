@@ -141,11 +141,6 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->Append(MainWin_New, _("&Open Wizard\tCtrl-N"));
   FileMenu->AppendSeparator();
 #endif
-#ifndef DEBUG_DISABLE_CLEAN_MENUS
-  FileMenu->Append(MainWin_New, _("&New\tCtrl-N"));
-  FileMenu->Append(MainWin_Open, _("&Open...\tCtrl-O"));
-  FileMenu->AppendSeparator();
-#endif
   FileMenu->Append(MainWin_ImportDir, _("&Import directory..."));
   FileMenu->Append(MainWin_ImportWave, _("&Import Wave file..."));
   FileMenu->Append(MainWin_ImportMIDI, _("Import &MIDI file..."));
@@ -157,12 +152,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   FileMenu->Append(MainWin_ExportWave, _("E&xport Wave file..."));
   FileMenu->Append(MainWin_ExportMIDI, _("Ex&port MIDI file..."));
   FileMenu->AppendSeparator();
-#ifndef FEATURE_DISABLE_SAVE_ML
   FileMenu->AppendSeparator();
   FileMenu->Append(MainWin_SaveML, _("Save Media Library"));
   FileMenu->Append(MainWin_LoadML, _("Load Media Library"));
   FileMenu->AppendSeparator();
-#endif
   FileMenu->Append(MainWin_Quit, _("&Quit\tCtrl-Q"));
 
   // add undo/redo before others menuitem
@@ -1589,8 +1582,7 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 void					MainWindow::OnOpenVideo(wxCommandEvent &event)
 {
   LOG;
-  WiredVideoObject->OpenFile();
-  if (WiredVideoObject->asFile)
+  if ( WiredVideoObject->OpenFile() == true )
     {
       VideoMenu->Enable(MainWin_OpenVideo, false);
       VideoMenu->Enable(MainWin_CloseVideo, true);
@@ -1608,8 +1600,12 @@ void					MainWindow::OnCloseVideo(wxCommandEvent &event)
 void					MainWindow::OnSeekVideo(wxCommandEvent &event)
 {
   LOG;
+  static bool started = false;
 
-  WiredVideoObject->SetSeek(VideoMenu->IsChecked(MainWin_SeekVideo));
+  if ( started == false )
+    WiredVideoObject->Play();
+  else
+    WiredVideoObject->Stop();
 }
 
 void					MainWindow::SetSelectedSolo(wxCommandEvent &event)
@@ -1635,8 +1631,8 @@ void					MainWindow::OnUndo(wxCommandEvent &event)
   listItems = UndoMenu->GetMenuItems();
   for (iter = listItems.begin(); iter != listItems.end(); iter++)
     {
+      cout << "[MAINWIN] Undo action" << endl;
       cActionManager::Global().Undo();
-      cout << "Undo" << endl;
       if ((*iter)->GetId() == event.GetId())
 	break;
     }
@@ -2157,6 +2153,7 @@ void		MainWindow::Load(SaveElementArray data)
 void MainWindow::OnLoadML(wxCommandEvent &WXUNUSED(event))
 {
   LOG;
+
     wxFileDialog dlg(this, _("Load Media Library"), wxT(""), wxT(""), _("Media Library file (*.xml)|*.xml"));
     if (dlg.ShowModal() == wxID_OK)
         MediaLibraryPanel->MLTreeView->LoadPatch(dlg.GetPath());
@@ -2200,10 +2197,8 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_MENU(MainWin_FloatRacks, MainWindow::OnFloatRack)
   EVT_MENU(MainWin_FloatMediaLibrary, MainWindow::OnFloatMediaLibrary)
   EVT_MENU(MainWin_MediaLibraryShow, MainWindow::MediaLibraryShow)
-#ifndef FEATURE_DISABLE_SAVE_ML
   EVT_MENU(MainWin_SaveML, MainWindow::OnSaveML)
   EVT_MENU(MainWin_LoadML, MainWindow::OnLoadML)
-#endif
   EVT_MENU(MainWin_Undo, MainWindow::OnUndo)
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
   //EVT_MENU(MainWin_History, MainWindow::OnHistory)

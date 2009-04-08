@@ -60,9 +60,9 @@ AM_CONDITIONAL(PLUGINS, test x$enable_plugins = xyes)
 
 # can enable or disable Wired codecs
 AC_ARG_ENABLE(codecs,
-	[  --enable-codecs Enable or disable Wired codecs (default disabled)],
+	[  --enable-codecs Enable or disable Wired codecs (default enabled)],
 	[enable_codecs="$enableval"],
-	[enable_codecs="no"])
+	[enable_codecs="yes"])
 AM_CONDITIONAL(CODECS, test x$enable_codecs = xyes)
 
 AC_ARG_ENABLE(optimize,
@@ -97,12 +97,11 @@ fi
 
 # libs used in codecs
 if test x"$enable_codecs" = xyes; then
-   AC_CHECK_LIB([FLAC++], [FLAC__file_decoder_init], [FLAC='yes'], AC_MSG_ERROR([Couldn't find libflac++]))
+   AC_CHECK_LIB([FLAC++], [FLAC__stream_decoder_init_file], [FLAC='yes'], AC_MSG_ERROR([Couldn't find libflac++]))
    AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find libvorbis]))
 fi
 
 #Checking for wxWidgets
-WXWIDGET_VERSION=`wx-config --version`
 AM_OPTIONS_WXCONFIG
 reqwx=2.6.0
 AM_PATH_WXCONFIG($reqwx, wxWin=1)
@@ -119,6 +118,8 @@ if test "$wxWin" != 1; then
 		])
 else
 	AC_PATH_PROG(WX_CONFIG, wx-config, no)
+	WXWIDGET_VERSION=`wx-config --version`
+	LIBS="$LIBS $(wx-config --libs media,core)"
 fi
 
 if test "$PORTAUDIO_VERSION" != 19; then
@@ -244,7 +245,7 @@ AC_MSG_CHECKING([for enable-debug])
 if test x"$enable_debug" = xyes;
 then
  CFGDEBUG=Yes
- CXXFLAGS="${CXXFLAGS} -g"
+ CXXFLAGS="${CXXFLAGS} -g -Wall"
 else
  CFGDEBUG=No
 fi

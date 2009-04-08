@@ -224,54 +224,6 @@ class				MediaLibrary : public wxPanel
 #endif
 
 /**
- * The OnFilterAudio function is called by launching the Filter Audio action
- * using the dedicated button. It will browse all existing nodes in the Tree
- * and show or hide the audio files.
- * \param event an unused wxCommandEvent because it is the normal wx event
- * handling
- * \return void
-*/
-#ifndef DEBUG_DISABLE_FILTERS
-  void				OnFilterAudio(wxCommandEvent &WXUNUSED(event));
-#endif
-
-/**
- * The OnFilterMIDI function is called by launching the Filter MIDI action
- * using the dedicated button. It will browse all existing nodes in the Tree
- * and show or hide the MIDI files.
- * \param event an unused wxCommandEvent because it is the normal wx event
- * handling
- * \return void
-*/
-#ifndef DEBUG_DISABLE_FILTERS
-  void				OnFilterMIDI(wxCommandEvent &WXUNUSED(event));
-#endif
-
-/**
- * The OnFilterVideo function is called by launching the Filter Video action
- * using the dedicated button. It will browse all existing nodes in the Tree
- * and show or hide the video files.
- * \param event an unused wxCommandEvent because it is the normal wx event
- * handling
- * \return void
-*/
-#ifndef DEBUG_DISABLE_FILTERS
-  void				OnFilterVideo(wxCommandEvent &WXUNUSED(event));
-#endif
-
-/**
- * The OnFilterEffects function is called by launching the Filter Effects 
- * action using the dedicated button. It will browse all existing nodes in 
- * the Tree and show or hide the Effects files.
- * \param event an unused wxCommandEvent because it is the normal wx event
- * handling
- * \return void
-*/
-#ifndef DEBUG_DISABLE_FILTERS
-  void				OnFilterEffects(wxCommandEvent &WXUNUSED(event));
-#endif
-
-/**
  * The OnRightClick function is called by using the mouse right click on a
  * MLTree node. It displays a menu with possibles actions depending on the
  * kind of item selected.
@@ -362,18 +314,13 @@ enum
 {
    MediaLibrary_Add = 1,
    MediaLibrary_Remove,
+   MediaLibrary_Edit,
    MediaLibrary_TreeCollapse,
    MediaLibrary_Insert,
    MediaLibrary_Start_Preview,
    MediaLibrary_Stop_Preview,
 #ifndef DEBUG_1647295
    MediaLibrary_SortSelect,
-#endif
-#ifndef DEBUG_DISABLE_FILTERS
-   MediaLibrary_FilterAudio,
-   MediaLibrary_FilterMIDI,
-   MediaLibrary_FilterVideo,
-   MediaLibrary_FilterEffects
 #endif
 };
 

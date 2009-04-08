@@ -30,11 +30,12 @@ those dependancies problems.
     http://xmlsoft.org/
     * or you can install it with 1 package: libxml2-dev
 
-  - wxGTK 2.6.x 
+  - wxGTK 2.6.x or 2.8.x 
       http://www.wxwidgets.org
 	* When compiling wxWidgets, be sure you are using GTK2 support by 
 	passing the "--enable-gtk2" argument to the configure script
-	* or you can install it with 2 packages: libwxgtk2.6-dev, wx-common
+	* or you can install it with 2 packages: libwxgtk2.8-dev, wx-common
+	* you also need these wxWidgets modules: core, media
 
   - libsndfile 
       http://www.mega-nerd.com/libsndfile/
@@ -55,17 +56,17 @@ those dependancies problems.
 	  - find line "#define FLOAT_SAMPLES" and UNCOMMENT it
 	  - now you can compile and install SoundTouch
 	* or you can install it with 1 package: libsoundtouch1-dev
-        * OPTIONAL: can be disabled with --disable-plugins (discouraged)
+        * TIPS : can be disabled with --disable-plugins (discouraged)
 
   - FLAC++
 	http://flac.sourceforge.net/
 	* You can install it with 1 package: libflac++-dev
-	* OPTIONAL: get rid of this package with --disable-codecs (default option)
+	* TIPS : get rid of this package with --disable-codecs
 
   - Vorbis
 	http://www.vorbis.com/
 	* You can install it with 1 package: libvorbis-dev
-	* OPTIONAL: get rid of this package with --disable-codecs (default option)
+	* TIPS : get rid of this package with --disable-codecs
 
 ==ADDITIONNAL PACKAGES==
 The following packages are commonly installed on a Linux system when a 

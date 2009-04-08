@@ -4,39 +4,47 @@
 #ifndef		_WIREDVIDEO_
 #define		_WIREDVIDEO_
 
-#include	<iostream>
-#include	<string>
-#include	<vector>
-#include	<stdlib.h>
-#include	"WiredMplayer.h"
 #include <wx/wx.h>
+#include <wx/mediactrl.h>
 
-#define		VIDEO_FILE_FILTER		wxT("AVI files (*.avi)|*.avi|MPEG files (*.mpg)|*.mpg")
+#if wxUSE_MEDIACTRL
 
-class			WiredVideo
+// wxMediaCtrl implementation
+
+#define	WIRED_VIDEO_NAME _("Wired Video")
+#define	VIDEO_FILE_FILTER _("AVI files (*.avi)|*.avi|MPEG files (*.mpg)|*.mpg")
+
+class		WiredVideo : public wxMediaCtrl
 {
-public:
-	WiredVideo();
-	~WiredVideo();
+ private:
+  bool		_created;
+  wxString	_fileName;
 
-	bool	asFile;
-	bool	isDisplayed;
-	
-	int		OpenFile(const wxString& path = wxT(""));
-	int		PlayFile();
-	int		PauseFile();
-	int		StopFile();
-	int		CloseFile();
-	int		SeekFile(eSeekMethod seekMethod, double position);
-	int		SetSeek(bool SeekBool);
+ public:
+  WiredVideo();
+  ~WiredVideo();
 
-private:
-	wxString	videoFilePath;
-	
-	bool	DisplayVideoFrame();
-	int		InitMplayer();
-	WiredMplayer	*mplayer;
+  bool		OpenFile();
+  int		CloseFile();
 };
+
+#else
+// we use a dummy class if wxMediaCtrl is disabled
+
+class		WiredVideo
+{
+ private:
+ public:
+  WiredVideo(){};
+  ~WiredVideo(){};
+
+  inline bool		OpenFile(){ return false; };
+  inline int		CloseFile(){ return 0; };
+  inline bool		Play(){ return false; };
+  inline bool		Stop(){ return false; };
+};
+
+#endif
 
 extern WiredVideo			*WiredVideoObject;
 

@@ -517,6 +517,8 @@ void	SaveCenter::LoadProject()
   filename << wxT("wired.xml");
   xmlFile->OpenDocument(filename);
 
+  std::cout << "[SaveCenter] Project file " << filename.mb_str() << std::endl;
+
   while (xmlFile->Read())
     {
       nodeType = xmlFile->GetNodeType();

@@ -1,6 +1,6 @@
 LDFLAGS =  $(shell wx-config --libs)
 
-CPPFLAGS =  $(shell wx-config --cflags)
+CPPFLAGS =  $(shell wx-config --cflags) -I../
 
 pkglib_LTLIBRARIES = libWiredVorbis.la
 
