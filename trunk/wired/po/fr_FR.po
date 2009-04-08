@@ -2779,76 +2779,69 @@ msgstr ""
 
 #: ../src/gui/Wizard.cpp:74
 msgid "Path :"
-msgstr ""
+msgstr "Chemin :"
 
 #: ../src/gui/Wizard.cpp:81 ../src/gui/Wizard.cpp:257
-#, fuzzy
 msgid "New &Project"
-msgstr "Nouveau répertoire"
+msgstr "Nouveau &Projet"
 
 #: ../src/gui/Wizard.cpp:84
 msgid "&Browse"
-msgstr ""
+msgstr "&Parcourir"
 
 #: ../src/gui/Wizard.cpp:87
-#, fuzzy
 msgid "Recent sessions :"
 msgstr "Enregistrer la session ?"
 
 #: ../src/gui/Wizard.cpp:91
-#, fuzzy
 msgid "&OK"
-msgstr "OK"
+msgstr "&OK"
 
 #: ../src/gui/Wizard.cpp:95
-#, fuzzy
 msgid "&Remove"
-msgstr "Supprimer"
+msgstr "&Supprimer"
 
 #: ../src/gui/Wizard.cpp:101
-#, fuzzy
 msgid "E&xit"
-msgstr "Modifier"
+msgstr "Quitter"
 
 #: ../src/gui/Wizard.cpp:151
-#, fuzzy
 msgid "No recent sessions"
-msgstr "Ouvrir une session"
+msgstr "Pas de session récente"
 
 #: ../src/gui/Wizard.cpp:205
 msgid ""
 "Directory does not exist.\n"
 "Create new one ?"
 msgstr ""
+"Le répertoire n'existe pas.\n"
+"Créer un nouveau répertoire ?"
 
 #: ../src/gui/Wizard.cpp:206
-#, fuzzy
 msgid "No such directory"
-msgstr "Nouveau répertoire"
+msgstr "Répertoire introuvable"
 
 #: ../src/gui/Wizard.cpp:217
 msgid "Unable to create directory"
-msgstr ""
+msgstr "Impossible de créer le répertoire"
 
 #: ../src/gui/Wizard.cpp:217 ../src/gui/Wizard.cpp:226
 msgid "Sorry"
-msgstr ""
+msgstr "Désolé"
 
 #: ../src/gui/Wizard.cpp:226
 msgid "Access denied"
-msgstr ""
+msgstr "Accès refusé"
 
 #: ../src/gui/Wizard.cpp:255
-#, fuzzy
 msgid "Load &Project"
-msgstr "Charger l'échantillon"
+msgstr "Charger le &projet"
 
 #: ../src/gui/Wizard.cpp:345
 msgid "No session selected"
-msgstr ""
+msgstr "Pas de session sélectionnée"
 
 #: ../src/gui/MLTree.h:19
-#, fuzzy
 msgid "Project"
 msgstr "Nom du projet"
 
