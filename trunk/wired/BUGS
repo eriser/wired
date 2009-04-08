@@ -17,7 +17,7 @@ the foolowing steps.
 ==COMMON USAGE PROBLEMS==
 1- "Could not open audio device ..."
 
-First, you should check you audio settings... ;-)
+First, you should check your audio settings... ;-)
 To do so, in the menu 'Edit', choose 'Settings...'. Then go to the Audio section.
 In the Output subsection, choose a sound card, make sure two outputs are checked.
 Then go back to the main audio section and select a samplerate and a latency. 
