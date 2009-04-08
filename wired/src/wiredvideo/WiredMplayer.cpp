@@ -132,7 +132,7 @@ bool		WiredMplayer::DisplayVideoFrame(const wxString& videoFilePath)
   //  SetPlayBool(false);
   return 1;
 #else
-  cout << "[WIREDMPLAYER] not implemented yet" << endl;
+  cout << "[WIREDMPLAYER] not implemented yet for your operating system" << endl;
   return 0;
 #endif
 }

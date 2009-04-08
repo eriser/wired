@@ -970,9 +970,7 @@ void MLTree::OnRightClick(wxMouseEvent& event)
     myMenu.Append(ML_ID_MENU_INFOS, _("Infos"), _("Infos"));
     myMenu.Append(ML_ID_MENU_PREVIEW, _("Preview"), _("Preview"));
     myMenu.Append(ML_ID_MENU_INSERT, _("Insert"), _("Insert"));
-#ifndef FEATURE_DISABLE_WAVE_EDITOR
     myMenu.Append(ML_ID_MENU_EDIT, _("Edit"), _("Edit"));
-#endif
     myMenu.AppendSeparator();
   }
   else

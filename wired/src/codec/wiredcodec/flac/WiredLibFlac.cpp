@@ -292,14 +292,14 @@ int WiredLibFlac::decode(const char *path, t_Pcm *pcm, unsigned long length)
 //       return 0;
 //     }
 
-  if (FileDecoderInit(decoder)  != FLAC__FILE_DECODER_OK)
+  if (FileDecoderInit(decoder)  != FLAC__STREAM_DECODER_INIT_STATUS_OK)
     {
       cout << "[WIRED_FLAC_CODEC] Can t init decoder" <<endl;
       return 0;
     }
 
 
-  if (FileDecoderFinish(decoder) != FLAC__FILE_DECODER_UNINITIALIZED)
+  if (FileDecoderFinish(decoder) != FLAC__STREAM_DECODER_UNINITIALIZED)
     {
       cout << "[WIRED_FLAC_CODEC] can t uninit decoder" <<endl;
       return 0;

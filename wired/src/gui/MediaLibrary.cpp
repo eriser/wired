@@ -59,9 +59,6 @@ const struct s_combo_choice		SortSelectChoices[NB_SORTSELECT_CHOICES + 1] =
 MediaLibrary::MediaLibrary(wxWindow *parent, const wxPoint &pos, const wxSize &size, long style)
   : wxPanel(parent, wxID_ANY, pos, size, style)
 {
-  wxString	sortselect_choices[NB_SORTSELECT_CHOICES];
-  long		c;
-
   Parent = parent;
   preview = false;
 
@@ -431,8 +428,7 @@ BEGIN_EVENT_TABLE(MediaLibrary, wxPanel)
   EVT_SIZE(MediaLibrary::OnSize)
   EVT_TOOL(MediaLibrary_Add, MediaLibrary::OnAdd)
   EVT_TOOL(MediaLibrary_Remove, MediaLibrary::OnRemove)
-  // Commented for FORUM PURPOSE
-  //  EVT_TOOL(MediaLibrary_Edit, MediaLibrary::OnEdit)
+  EVT_TOOL(MediaLibrary_Edit, MediaLibrary::OnEdit)
   EVT_TOOL(MediaLibrary_Insert, MediaLibrary::OnInsert)
   EVT_TOOL(MediaLibrary_Start_Preview, MediaLibrary::OnPreview)
   EVT_TOOL(MediaLibrary_Stop_Preview, MediaLibrary::OnPreview)

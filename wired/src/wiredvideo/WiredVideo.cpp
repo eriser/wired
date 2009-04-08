@@ -1,92 +1,66 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#include	"MainApp.h"
+#include	"MainWindow.h"
 #include	"WiredVideo.h"
-#include	"wx/wx.h"
-#include	<unistd.h>
+
+#if wxUSE_MEDIACTRL
 
 WiredVideo::WiredVideo()
+  : wxMediaCtrl( )
 {
-	videoFilePath = wxT("");
-	asFile = false;
-	isDisplayed = false;
-    mplayer = NULL;
+  _created = false;
 }
 
 WiredVideo::~WiredVideo()
 {
-	if (mplayer)
-	  delete mplayer;
+  
 }
 
-int		WiredVideo::InitMplayer()
+bool		WiredVideo::OpenFile()
 {
-//    if (mplayer)
-//        delete mplayer;
-    mplayer = new WiredMplayer();
-}
+  wxFileDialog	*dlg;
+  wxString	fileFormat;
+  wxString	filePath;
 
-int WiredVideo::OpenFile(const wxString& path)
-{
-    wxFileDialog	*dlg = new wxFileDialog(0, wxString(wxT("[WIREDVIDEO] Loading video file"), *wxConvCurrent), path, wxString(wxT(""), *wxConvCurrent), VIDEO_FILE_FILTER, wxOPEN);
-    if (dlg->ShowModal() == wxID_OK)
+  fileFormat = wxString(VIDEO_FILE_FILTER) + wxT("|All Files (*.*)|*.*");
+  dlg = new wxFileDialog(MainWin,
+			 wxString(wxT("[WIREDVIDEO] Loading video file"), *wxConvCurrent),
+			 filePath,
+			 wxString(wxT(""), *wxConvCurrent),
+			 fileFormat,
+			 wxOPEN);
+
+  if (dlg->ShowModal() == wxID_OK)
     {
-        if (videoFilePath != wxT(""))
-            CloseFile();
-        videoFilePath = dlg->GetPath();
-        InitMplayer();
-        asFile = true;
+      // load the video player
+      if ( ! _created )
+	{
+	  if ( Create( MainWin, wxID_ANY ) == false )
+	    {
+	      wxGetApp().AlertDialog(_("Wired Video"),
+				     _("Can't load the video player"));
+	      return false;
+	    }
+	  _created = true;
+	}
+      // load the video file
+      if ( Load( filePath ) == false )
+	{
+	  wxGetApp().AlertDialog(_("Wired Video"),
+				 _("Can't open the video file"));
+	  return false;
+	}
+      _fileName = filePath;
     }
-    DisplayVideoFrame();
-}
-
-int		WiredVideo::SetSeek(bool SeekBool)
-{
-
-}
-
-int		WiredVideo::PlayFile()
-{
-	if (asFile == false || !mplayer) return 0;
-	std::cout << "[WIREDVIDEO] Playing video file" << std::endl;
-	return mplayer->PlayFile();
-}
-
-int		WiredVideo::StopFile()
-{
-	if (asFile == false || !mplayer) return 0;
-	std::cout << "[WIREDVIDEO] Video file stopped" << std::endl;
-	return mplayer->StopFile();
-}
-
-int		WiredVideo::PauseFile()
-{
-	if (asFile == false || !mplayer) return 0;
-	std::cout << "[WIREDVIDEO] Video file paused" << std::endl;
-	return mplayer->PauseFile();
+  return true;
 }
 
 int		WiredVideo::CloseFile()
 {
-	if (asFile == false || !mplayer) return 0;
-	isDisplayed = false;
-	std::cout << "[WIREDVIDEO] Closing video file" << std::endl;
-	videoFilePath = wxT("");
-	asFile = false;
-	return mplayer->CloseFile();
+  Stop();
+  return 0;
 }
 
-int		WiredVideo::SeekFile(eSeekMethod seekMethod, double position)
-{
-	if (asFile == false || !mplayer) return 0;
-	std::cout << "[WIREDVIDEO] Seeking video file with method " << seekMethod << " at " << position << std::endl;
-	  return mplayer->SeekFile(seekMethod, position);
-}
-
-bool	WiredVideo::DisplayVideoFrame()
-{
-	if (asFile == false || !mplayer) return 0;
-	isDisplayed = mplayer->DisplayVideoFrame(videoFilePath);
-	std::cout << "[WIREDVIDEO] Displaying video file" << std::endl;
-	return isDisplayed;
-}
+#endif
