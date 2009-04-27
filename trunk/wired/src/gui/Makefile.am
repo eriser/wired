@@ -1,8 +1,29 @@
 LDFLAGS = $(shell wx-config --libs) `xml2-config --libs`
 
-# CPPFLAGS = $(shell wx-config --cflags) -I../xml -I../save -I../audio -I../libs/WiredAkai/include -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../asm -I../editmidi -I../undo -I../libs/WiredWidgets/src -I/usr/pkg/include/libxml2/ -I/usr/pkg/include `xml2-config --cflags `
-# XXX merge conflict...
-CPPFLAGS = $(shell wx-config --cflags) -I../samplerate -I../xml -I../save -I../audio -I../libs/WiredAkai/include -I../plugins -I../fileloader -I/opt/gnome/include -I../sequencer -I../redist -I../engine -I../mixer -I../midi -I../midi/portmidi/pm_common -I../midi/portmidi/porttime -I../asm -I../editmidi -I../undo -I../libs/WiredWidgets/src -I../wiredvideo -I../codec -I../dssi `xml2-config --cflags ` -I../
+CPPFLAGS = $(shell wx-config --cflags) \
+	-I../xml \
+	-I../save \
+	-I../audio \
+	-I../libs/WiredAkai/include \
+	-I../plugins \
+	-I../fileloader \
+	-I../sequencer \
+	-I../redist \
+	-I../engine \
+	-I../mixer \
+	-I../midi \
+	-I../midi/portmidi/pm_common \
+	-I../midi/portmidi/porttime \
+	-I../asm \
+	-I../editmidi \
+	-I../undo \
+	-I../libs/WiredWidgets/src \
+	-I../wiredvideo \
+	-I../dssi \
+	-I../codec \
+	-I../samplerate \
+	`xml2-config --cflags ` \
+	-I../
 
 noinst_LIBRARIES = libgui.a
 
@@ -73,8 +94,6 @@ libgui_a_SOURCES = 			\
 		WavePanel.h		\
 		PluginEffect.cpp	\
 		PluginEffect.h		\
-		FileConversion.h	\
-		FileConversion.cpp	\
 		FloatingFrame.h		\
 		FloatingFrame.cpp	\
 		../save/WiredDocument.cpp	\
