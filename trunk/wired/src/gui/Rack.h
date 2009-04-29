@@ -6,8 +6,11 @@
 
 #include <wx/wx.h>
 #include <wx/file.h>
+#include <wx/cmdproc.h>
 #include <list>
 #include "WiredDocument.h"
+
+#define	HISTORY_LABEL_CREATE_RACK_ACTION _("creating rack")
 
 #define		UNIT_W		(200)
 #define 	UNIT_H		(100)
@@ -26,6 +29,22 @@ class		Channel;
 typedef struct s_PlugStartInfo			PlugStartInfo;
 typedef	std::list<RackTrack *>			t_ListRackTrack;
 typedef	std::list<Plugin *>::const_iterator	t_ListPluginIterator;
+
+/********************   class CreateRackAction   ********************/
+class				CreateRackAction : public wxCommand
+{
+private:
+  PluginLoader			*mPluginLoader;
+  PlugStartInfo			*mStartInfo;
+  Plugin*			_created;
+
+public:
+  CreateRackAction (PlugStartInfo*, PluginLoader*);
+  ~CreateRackAction () {};
+  bool				Do ();
+  bool				Undo ();
+  wxString			GetName() {return HISTORY_LABEL_CREATE_RACK_ACTION;};
+};
 
 class RackTrack : public WiredDocument
 {

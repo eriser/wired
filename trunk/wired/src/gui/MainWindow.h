@@ -81,6 +81,8 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					StartStream(wxCommandEvent &event);
   void					StopStream(wxCommandEvent &event);
 
+  void					OnEditUndo(wxCommandEvent &event);
+  void					OnEditRedo(wxCommandEvent &event);
   void					OnUndo(wxCommandEvent &event);
   void					OnRedo(wxCommandEvent &event);
   void					OnHistory(wxCommandEvent &event);
@@ -267,6 +269,7 @@ enum
   MainWin_UndoRedoBeta,
   MainWin_Undo,
   MainWin_Redo,
+  MainWin_UndoRedo,
   MainWin_History,
   MainWin_Delete,
   MainWin_SelectAll,
