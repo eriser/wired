@@ -15,7 +15,6 @@
 #define	HISTORY_LABEL_IMPORT_WAVE_ACTION			_("importing wave")
 #define	HISTORY_LABEL_IMPORT_MIDI_ACTION			_("importing midi")
 #define	HISTORY_LABEL_IMPORT_AKAI_ACTION			_("importing AKAI")
-#define	HISTORY_LABEL_CREATE_RACK_ACTION			_("creating rack")
 #define	HISTORY_LABEL_CHANGE_PARAM_EFFECT_ACTION	_("changing rack effect parameters")
 
 #define	INVALID_VALUE								-42
@@ -160,28 +159,6 @@ public:
 };
 
 
-/********************   class cCreateRackAction   ********************/
-
-class					cCreateRackAction : public cAction 
-{
-private:
-  PluginLoader				*mPluginLoader;
-  PlugStartInfo				*mStartInfo;
-  
-public:
-  cCreateRackAction (PlugStartInfo* startInfo, PluginLoader* plugLoader);
-  cCreateRackAction (const cCreateRackAction& copy){*this = copy;};
-  ~cCreateRackAction () {};
-  virtual void				Do ();
-  virtual void				Redo ();
-  virtual void				Undo ();
-  virtual void				Accept (cActionVisitor& visitor)
-  { visitor.Visit (*this); };
-  virtual const wxString		getHistoryLabel()		// Returns History label wstring
-  							{return HISTORY_LABEL_CREATE_RACK_ACTION;};
-  					
-  cCreateRackAction		operator=(const cCreateRackAction& right);
-};
 
 #endif
 

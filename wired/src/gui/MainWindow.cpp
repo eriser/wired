@@ -6,6 +6,7 @@
 #include <wx/progdlg.h>
 #include <wx/utils.h>
 #include <wx/splash.h>
+#include <wx/cmdproc.h>
 
 #include <algorithm>
 #include "SequencerGui.h"
@@ -72,6 +73,7 @@ WiredExternalPluginMgr	*LoadedExternalPlugins = NULL;
 MediaLibrary		*MediaLibraryPanel = NULL;
 FileConversion		*FileConverter = NULL;
 SettingWindow		*SettingsWin = NULL;
+wxCommandProcessor	*UndoRedo = NULL;
 
 wxMutex			AudioMutex(wxMUTEX_RECURSIVE);
 wxCondition		*SeqStopped = NULL;
@@ -93,6 +95,10 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   LoadedExternalPlugins = new WiredExternalPluginMgr();
   LogWin = new wxLogWindow(this, wxT("Wired log"), false);
 
+  // initialize non-audio related stuff:
+  UndoRedo = new wxCommandProcessor(WiredSettings->maxUndoRedoDepth);
+
+  // initialize audio classes:
   try
     {
       Audio = new AudioEngine();
@@ -160,6 +166,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
 
   // add undo/redo before others menuitem
   InitUndoRedoMenuItems();
+  UndoRedo->SetEditMenu(EditMenu);
+  EditMenu->Append(wxID_UNDO, _("Undo\tCtrl+Z"))->Enable(false);
+  EditMenu->Append(wxID_REDO, _("Redo"))->Enable(false);
   EditMenu->Append(MainWin_Cut, _("C&ut\tCtrl+X"));
   EditMenu->Append(MainWin_Copy, _("&Copy\tCtrl+C"));
   EditMenu->Append(MainWin_Paste, _("&Paste\tCtrl+V"));
@@ -1163,8 +1172,9 @@ void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
   if (p)
     {
       cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name.mb_str() << endl;
-      cCreateRackAction* action = new cCreateRackAction(&StartInfo,  p);
-      action->Do();
+ 
+      CreateRackAction* action = new CreateRackAction(&StartInfo,  p);
+      UndoRedo->Submit(action);
     }
 }
 
@@ -1620,6 +1630,16 @@ void					MainWindow::OnDeleteTrack(wxCommandEvent &event)
   SeqPanel->DeleteSelectedTrack();
   /* Needs path in AudioPattern */
 //   cActionManager::Global().AddImportWaveAction(selfile, true, false);
+}
+
+void					MainWindow::OnEditUndo(wxCommandEvent &event)
+{
+  UndoRedo->Undo();
+}
+
+void					MainWindow::OnEditRedo(wxCommandEvent &event)
+{
+  UndoRedo->Redo();
 }
 
 void					MainWindow::OnUndo(wxCommandEvent &event)
@@ -2199,6 +2219,8 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_MENU(MainWin_MediaLibraryShow, MainWindow::MediaLibraryShow)
   EVT_MENU(MainWin_SaveML, MainWindow::OnSaveML)
   EVT_MENU(MainWin_LoadML, MainWindow::OnLoadML)
+  EVT_MENU(wxID_UNDO, MainWindow::OnEditUndo)
+  EVT_MENU(wxID_REDO, MainWindow::OnEditRedo)
   EVT_MENU(MainWin_Undo, MainWindow::OnUndo)
   EVT_MENU(MainWin_Redo, MainWindow::OnRedo)
   //EVT_MENU(MainWin_History, MainWindow::OnHistory)
@@ -2213,7 +2235,6 @@ BEGIN_DECLARE_EVENT_TYPES()
   EVT_MENU(MainWin_About, MainWindow::OnAbout)
   EVT_MENU(MainWin_IntHelp, MainWindow::OnIntegratedHelp)
   EVT_MENU(MainWin_ShowLog, MainWindow::OnShowDebug)
-
   // event
   EVT_CLOSE(MainWindow::OnClose)
   EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)

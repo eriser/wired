@@ -918,7 +918,7 @@ void				Rack::Load(SaveElementArray data)
       for (; i > 0; i--)
 	CreateRackTrack();
   for (i = 0; i < data.GetCount(); i++)
-  {
+    {
     if (data[i]->getKey() == wxT("RackPlugin"))
       {
 #ifdef __DEBUG__
@@ -958,3 +958,28 @@ BEGIN_EVENT_TABLE(Rack, wxScrolledWindow)
 //  EVT_RIGHT_DOWN(Rack::OnClick)
 //  EVT_LEFT_UP(Rack::OnClick)
 END_EVENT_TABLE()
+
+/********************   class CreateRackAction   ********************/
+
+CreateRackAction::CreateRackAction (PlugStartInfo* startInfo, PluginLoader* plugLoader)
+: wxCommand(true, HISTORY_LABEL_CREATE_RACK_ACTION)
+{
+  mPluginLoader = plugLoader;
+  mStartInfo = startInfo;
+}
+
+bool CreateRackAction::Do ()
+{
+  if (mPluginLoader)
+    {
+      _created = RackPanel->AddNewRack(*mStartInfo, mPluginLoader);
+      return true;
+    }
+  return false;
+}
+
+bool CreateRackAction::Undo ()
+{
+  RackPanel->DeleteRack( _created, true );
+  return true;
+}
