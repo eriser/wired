@@ -12,6 +12,7 @@
 #endif
 #include <wx/textfile.h>
 #include <wx/splitter.h>
+#include <wx/cmdproc.h>
 
 #define PLUG_MENU_INDEX_START		(50000)
 #define INDEX_MENUITEM_UNDO	        2
@@ -35,6 +36,7 @@ extern std::vector<PluginLoader *>	LoadedPluginsList;
 extern PlugStartInfo		StartInfo;
 extern wxMutex		        AudioMutex;
 extern wxCondition*	        SeqStopped;
+extern wxCommandProcessor	*UndoRedo;
 
 class					MainWindow: public wxFrame, public WiredDocument
 {

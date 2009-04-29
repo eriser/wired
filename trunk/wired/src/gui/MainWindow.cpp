@@ -6,7 +6,6 @@
 #include <wx/progdlg.h>
 #include <wx/utils.h>
 #include <wx/splash.h>
-#include <wx/cmdproc.h>
 
 #include <algorithm>
 #include "SequencerGui.h"
@@ -1171,9 +1170,11 @@ void					MainWindow::OnCreateRackClick(wxCommandEvent &event)
       }
   if (p)
     {
+      wxString				label = _("creating ");
       cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name.mb_str() << endl;
  
-      CreateRackAction* action = new CreateRackAction(&StartInfo,  p);
+      label += p->InitInfo.Name;
+      CreateRackAction* action = new CreateRackAction(label, &StartInfo, p);
       UndoRedo->Submit(action);
     }
 }
