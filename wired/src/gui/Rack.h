@@ -10,8 +10,6 @@
 #include <list>
 #include "WiredDocument.h"
 
-#define	HISTORY_LABEL_CREATE_RACK_ACTION _("creating rack")
-
 #define		UNIT_W		(200)
 #define 	UNIT_H		(100)
 #define 	UNIT_S		(2)
@@ -39,11 +37,23 @@ private:
   Plugin*			_created;
 
 public:
-  CreateRackAction (PlugStartInfo*, PluginLoader*);
-  ~CreateRackAction () {};
-  bool				Do ();
-  bool				Undo ();
-  wxString			GetName() {return HISTORY_LABEL_CREATE_RACK_ACTION;};
+  CreateRackAction(wxString&, PlugStartInfo*, PluginLoader*);
+  ~CreateRackAction() {};
+  bool				Do();
+  bool				Undo();
+};
+
+/********************   class DeleteRackAction   ********************/
+class				DeleteRackAction : public wxCommand
+{
+private:
+  Plugin*			_deleted;
+
+public:
+  DeleteRackAction(wxString, Plugin*);
+  ~DeleteRackAction();
+  bool				Do();
+  bool				Undo();
 };
 
 class RackTrack : public WiredDocument
@@ -99,11 +109,11 @@ class		Rack: public wxScrolledWindow, WiredDocument
   void			CleanChildren();
 
   Plugin*		AddNewRack(PlugStartInfo &startinfo, PluginLoader *p);
-  void			AddLoadedRack(Plugin *p);
+  bool			AddLoadedRack(Plugin *p);
   Plugin*		AddToSelectedTrack(PlugStartInfo &startinfo,
 					   PluginLoader *p);
 
-  void			DeleteRack(Plugin *plug, bool eraseit = true);
+  bool			DeleteRack(Plugin *plug, bool eraseit = true);
   void			DeleteSelectedRack();
   void			DeleteAllTracks();
 
@@ -134,7 +144,7 @@ class		Rack: public wxScrolledWindow, WiredDocument
   void			RemoveLastRackTrack();
 
   // Removes a rack from its index
-  bool			RemoveRackTrack(int index);
+  bool			RemoveRackTrack(unsigned int index);
 
   // Removes a rack from its ptr
   bool			RemoveRackTrack(const RackTrack* rackTrack);

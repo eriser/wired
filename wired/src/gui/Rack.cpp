@@ -26,11 +26,12 @@ Plugin*		gl_lastDeletedPlug = 0;
 /********************   Class RackTrack   ********************/
 
 RackTrack::RackTrack(Rack *parent, int index)
-  : Parent(parent), Index(index) ,
-    WiredDocument(wxT("RackTrack"), (WiredDocument*)parent)
+  : WiredDocument(wxT("RackTrack"), (WiredDocument*)parent)
 {
   wxString s;
 
+  Parent = parent;
+  Index = index;
   Units = 0;
   CurrentBuffer = 0x0;
   s.Printf(_("Rack %d"), index + 1);
@@ -189,9 +190,10 @@ void				RackTrack::Load(SaveElementArray data)
 
 Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	   const wxSize& size) :
-  wxScrolledWindow(parent, id, pos, size, wxSUNKEN_BORDER), WasDragging(false),
+  wxScrolledWindow(parent, id, pos, size, wxSUNKEN_BORDER),
   WiredDocument(wxT("Rack"), NULL)
 {
+  WasDragging = false;
   SetScrollRate(10, 10);
   SetVirtualSize(760, 180);
   InitContextMenu();
@@ -293,10 +295,10 @@ bool				Rack::RemoveRackTrack(const RackTrack* rackTrack)
   return false;
 }
 
-bool				Rack::RemoveRackTrack(int index)
+bool				Rack::RemoveRackTrack(unsigned int index)
 {
-  t_ListRackTrack::const_iterator		iter;
-  int						cptRacks;
+  t_ListRackTrack::const_iterator	iter;
+  unsigned int				cptRacks;
 
   if (index > (RackTracks.size() - 1) || index < 0)
     return false;
@@ -366,7 +368,7 @@ void				Rack::DeleteAllTracks()
   selectedPlugin = NULL;
 }
 
-void				Rack::DeleteRack(Plugin *plug, bool eraseit)
+bool				Rack::DeleteRack(Plugin *plug, bool eraseit)
 {
   t_ListRackTrack::iterator i;
   list<Plugin *>::iterator j, k;
@@ -377,8 +379,7 @@ void				Rack::DeleteRack(Plugin *plug, bool eraseit)
 	{
 	  OptPanel->ClosePlug(plug);
 	  (*i)->Racks.erase(j);
-	  if (eraseit)
-	    plug->Hide();
+	  plug->Hide();
 	  (*i)->Units = 0;
 	  for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
 	    {
@@ -412,9 +413,10 @@ void				Rack::DeleteRack(Plugin *plug, bool eraseit)
 #ifdef __DEBUG__
 	  gl_lastDeletedPlug = plug;
 #endif
-	  return;
+	  return true;
 	}
   cerr << "[RACK] did not find plugin to delete" << endl;
+  return false;
 }
 
 void				Rack::SetSelected(Plugin *p)
@@ -451,9 +453,6 @@ void				Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
   new_y = 0;
   int tmp_x = 0;
   int tmp_y = 0;
-  int x , y = 0;
-  int xx, yy = 0;
-
 
   if (event->GetEventType() == wxEVT_MOUSEWHEEL)
   {
@@ -620,7 +619,10 @@ void				Rack::DeleteSelectedRack()
 
 inline void			Rack::OnDeleteClick()
 {
-  DeleteSelectedRack();
+  wxCommand*			cmd;
+
+  cmd = new DeleteRackAction(_("deleted rack"), selectedPlugin);
+  UndoRedo->Submit(cmd);
 }
 
 inline void			Rack::OnCutClick()
@@ -833,14 +835,20 @@ Plugin*				Rack::AddToSelectedTrack(PlugStartInfo &startinfo, PluginLoader *p)
   return tmp;
 }
 
-void 				Rack::AddLoadedRack(Plugin *plug)
+bool 				Rack::AddLoadedRack(Plugin *plug)
 {
   RackTrack			*track;
 
-  track = CreateRackTrack();
-  track->Units = plug->InitInfo->UnitsX;
-  track->AddRack(plug);
-  ResizeTracks();
+  if ( plug )
+    {
+      track = CreateRackTrack();
+      track->Units = plug->InitInfo->UnitsX;
+      track->AddRack(plug);
+      ResizeTracks();
+      plug->Show();
+      return true;
+    }
+  return false;
 }
 
 RackTrack*			Rack::CreateRackTrack()
@@ -911,7 +919,7 @@ void				Rack::Load(SaveElementArray data)
 {
   // load racktracks
   vector<PluginLoader*>::iterator	it;
-  int					i;
+  unsigned int				i;
 
   for (i = 0; i < data.GetCount(); i++)
     if (data[i]->getKey() == wxT("RackTrackNumber"))
@@ -961,8 +969,8 @@ END_EVENT_TABLE()
 
 /********************   class CreateRackAction   ********************/
 
-CreateRackAction::CreateRackAction (PlugStartInfo* startInfo, PluginLoader* plugLoader)
-: wxCommand(true, HISTORY_LABEL_CREATE_RACK_ACTION)
+CreateRackAction::CreateRackAction(wxString& label, PlugStartInfo* startInfo, PluginLoader* plugLoader)
+: wxCommand(true, label)
 {
   mPluginLoader = plugLoader;
   mStartInfo = startInfo;
@@ -981,5 +989,31 @@ bool CreateRackAction::Do ()
 bool CreateRackAction::Undo ()
 {
   RackPanel->DeleteRack( _created, true );
+  return true;
+}
+
+/********************   class DeleteRackAction   ********************/
+
+DeleteRackAction::DeleteRackAction(wxString label, Plugin* plug)
+  : wxCommand(true, label)
+{
+  _deleted = plug;
+}
+
+DeleteRackAction::~DeleteRackAction()
+{
+  RackPanel->DeleteRack( _deleted, true );  
+}
+
+bool DeleteRackAction::Do ()
+{
+  return RackPanel->DeleteRack( _deleted, false );  
+}
+
+bool DeleteRackAction::Undo ()
+{
+  if ( RackPanel->AddLoadedRack( _deleted ) == false )
+    return false;
+  RackPanel->SetSelected( _deleted );
   return true;
 }
