@@ -20,6 +20,7 @@
 #include "Transport.h"
 #include "OptionPanel.h"
 #include "Rack.h"
+#include "RackTrack.h"
 #include "SeqTrack.h"
 #include "MixerGui.h"
 #include "DownButton.h"

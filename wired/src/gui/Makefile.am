@@ -66,6 +66,8 @@ libgui_a_SOURCES = 			\
 		Pattern.h		\
 		Rack.cpp		\
 		Rack.h			\
+		RackTrack.cpp		\
+		RackTrack.h		\
 		Ruler.cpp		\
 		Ruler.h			\
 		SeqTrack.cpp		\
