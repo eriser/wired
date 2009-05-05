@@ -9,6 +9,7 @@
    #include <wx/wx.h>
 #endif
 
+#include "RackTrack.h"
 #include "Track.h"
 #include "WiredDocument.h"
 

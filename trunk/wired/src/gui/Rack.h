@@ -9,6 +9,7 @@
 #include <wx/cmdproc.h>
 #include <list>
 #include "WiredDocument.h"
+#include "RackTrack.h"
 
 #define		UNIT_W		(200)
 #define 	UNIT_H		(100)
@@ -56,44 +57,6 @@ public:
   bool				Undo();
 };
 
-class RackTrack : public WiredDocument
-{
- private:
-  void				RemoveChannel();
-  void				DeleteAllRacks();
-
-public:
-    RackTrack(Rack *parent, int index);
-    virtual ~RackTrack();
-
-  // WiredDocument implementation
-  void				Save();
-  void				Load(SaveElementArray data);
-
-  void				AddRack(Plugin* plug);
-  Plugin*			CreateRack(PlugStartInfo &startinfo, PluginLoader *p);
-  void				DeleteRack(Plugin *plug);
-  int				GetYPos();
-  void				RemoveSelectedRack();
-  void				SetSelected(Plugin *plugin);
-  int				NbRacks(){return Racks.size();};
-  RackTrack			operator=(const RackTrack& right);
-	//void				SetSelected(Plugin *plugin);
-	//int				NbRacks(){return Racks.size();};
-  // Debug - Shows member variables
-  // Pas du tout objet, mais plus simple pour l'instant (ca permet de ne pas changer
-  // l'API du plugin qui va de tte maniere l'etre pour les DSSI)
-  void				Dump();
-  void				DumpPlugins();
-  Plugin*			SelectedPlugin;
-  int				Units;
-  Rack*				Parent;
-  int				Index;
-  std::list<Plugin *>		Racks;
-  Channel*			Output;
-  ChannelGui*			ChanGui;
-  float**			CurrentBuffer;
-};
 
 class		Rack: public wxScrolledWindow, WiredDocument
 {
