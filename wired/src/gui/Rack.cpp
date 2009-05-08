@@ -18,6 +18,7 @@
 #include	"PluginLoader.h"
 #include	"debug.h"
 int		RackCount = 0;
+
 #ifdef __DEBUG__
 Plugin*		gl_lastDeletedPlug = 0;
 #endif
@@ -216,18 +217,19 @@ bool				Rack::DeleteRack(Plugin *plug, bool eraseit)
 	{
 	  OptPanel->ClosePlug(plug);
 	  (*i)->Racks.erase(j);
-	  plug->Hide();
+	  if (eraseit)
+	    plug->Hide();
 	  (*i)->Units = 0;
 	  for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
 	    {
 	      if ((*j)->InitInfo->UnitsX > (*i)->Units)
 		(*i)->Units = (*j)->InitInfo->UnitsX;
 	    }
+	  // if we removed the last rack of the RackTrack
 	  if ((*i)->Racks.size() == 0)
 	    {
 	      delete (*i);
 	      RackTracks.erase(i);
-	      selectedTrack = 0x0;
 	    }
 	  selectedPlugin = 0x0;
 	  ResizeTracks();
@@ -342,6 +344,7 @@ void				Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
   {
 	new_x = (event->GetPosition().x + plug->GetPosition().x);
 	new_y = (event->GetPosition().y + plug->GetPosition().y);
+	// if IsAudio() is false (plugins can't receive audio): we don't allow chaining
 	if(plug->IsAudio() && !DndGetDest(k, l, new_x, new_y, plug))
 	{
 	  DeleteRack(plug, false);
@@ -390,7 +393,12 @@ void				Rack::HandlePaintEvent(Plugin *plug, wxPaintEvent *event)
     }
 }
 
-bool				Rack::DndGetDest(t_ListRackTrack::iterator &k,  list<Plugin *>::iterator &l, int &new_x, int &new_y, Plugin *plug)
+// we got new_x and new_y which are mouse dropped positions
+bool				Rack::DndGetDest(t_ListRackTrack::iterator &k,
+						 list<Plugin *>::iterator &l,
+						 int &new_x,
+						 int &new_y,
+						 Plugin *plug)
 {
   int pos_x = 0;
   int pos_y = 0;
@@ -398,11 +406,15 @@ bool				Rack::DndGetDest(t_ListRackTrack::iterator &k,  list<Plugin *>::iterator
 
   CalcScrolledPosition(0, 0, &xx, &yy);
 
-  for (k= RackTracks.begin(); k != RackTracks.end(); k++){
+  for (k = RackTracks.begin(); k != RackTracks.end(); k++)
+    {
+      // for each RackTrack, we look x coord and width of the Rack
     pos_x = (pos_x + (*k)->Units * UNIT_W);
     if((((pos_x + xx)- ((*k)->Units * UNIT_W)) < new_x) && (new_x < (pos_x + xx)) )
       {
-	for(l = (*k)->Racks.begin(); l != (*k)->Racks.end(); l++){
+	// for each Rack linked to the RackTrack, we look y coord and height of the Rack
+	for(l = (*k)->Racks.begin(); l != (*k)->Racks.end(); l++)
+	  {
 	  pos_y = pos_y + (*l)->InitInfo->UnitsY * UNIT_H;
 	  if((((pos_y + yy) - ((*l)->InitInfo->UnitsY * UNIT_H)) < new_y) && (new_y < (pos_y + yy)))
 	    {
@@ -421,7 +433,9 @@ bool				Rack::DndGetDest(t_ListRackTrack::iterator &k,  list<Plugin *>::iterator
    return false;
 }
 
-inline void			Rack::DndInsert(t_ListRackTrack::iterator &k,  list<Plugin *>::iterator &l, Plugin *plug)
+inline void			Rack::DndInsert(t_ListRackTrack::iterator &k,
+						list<Plugin *>::iterator &l,
+						Plugin *plug)
 {
   list<Plugin *>::iterator debug;
 
