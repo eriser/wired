@@ -11,7 +11,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../xml -I../../save	   \
 
 pkglib_LTLIBRARIES = libWiredSampler.la
 
-libWiredSampler_la_LDFLAGS = -avoid-version
+libWiredSampler_la_LDFLAGS = -version-info @LIB_WIREDPLUGIN_VERSION@
 libWiredSampler_la_SOURCES =				\
 			AkaiSampler.cpp			\
 			ASClavier.cpp    		\

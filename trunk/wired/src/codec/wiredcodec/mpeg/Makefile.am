@@ -4,6 +4,7 @@ CPPFLAGS =  $(shell wx-config --cflags) -I../ #-fmessage-length=0 -funroll-all-l
 
 pkglib_LTLIBRARIES = libWiredMpeg.la
 
+libWiredMpeg_la_LDFLAGS = -version-info @LIB_WIREDCODECS_VERSION@
 libWiredMpeg_la_SOURCES =		\
 			WiredLibMpeg.cpp	
 
