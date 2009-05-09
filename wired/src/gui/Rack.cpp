@@ -858,6 +858,7 @@ DeleteRackAction::~DeleteRackAction()
 
 bool DeleteRackAction::Do ()
 {
+  _deleted->Hide();
   return RackPanel->DeleteRack( _deleted, false );  
 }
 
