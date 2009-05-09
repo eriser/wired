@@ -4,7 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 pkglib_LTLIBRARIES = libWiredLoopSampler.la
 
-libWiredLoopSampler_la_LDFLAGS = -avoid-version
+libWiredLoopSampler_la_LDFLAGS = -version-info @LIB_WIREDPLUGIN_VERSION@
 libWiredLoopSampler_la_SOURCES =			\
 			LoopSampler.cpp			\
 			LoopSamplerView.cpp		\

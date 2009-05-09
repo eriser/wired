@@ -4,6 +4,7 @@ CPPFLAGS =  $(shell wx-config --cflags) -I../
 
 pkglib_LTLIBRARIES = libWiredFlac.la
 
+libWiredFlac_la_LDFLAGS = -version-info @LIB_WIREDCODECS_VERSION@
 libWiredFlac_la_SOURCES =		\
 			WiredLibFlac.cpp	
 

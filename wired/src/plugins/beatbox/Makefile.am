@@ -9,7 +9,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../xml -I../../save -I../../gui   \
 
 pkglib_LTLIBRARIES = libWiredBeatBox.la
 
-libWiredBeatBox_la_LDFLAGS = -avoid-version
+libWiredBeatBox_la_LDFLAGS = -version-info @LIB_WIREDPLUGIN_VERSION@
 libWiredBeatBox_la_SOURCES =				\
 			../../redist/Polyphony.cpp	\
 			BeatBox.cpp			\

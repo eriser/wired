@@ -2,8 +2,27 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([Wired], [0.6.1], [wired@bloodshed.net])
+AC_INIT([Wired], [0.7.0], [wired@bloodshed.net])
 
+LIB_WIREDCODECS_VERSION=1:0:0
+LIB_WIREDPLUGIN_VERSION=1:0:0
+LIB_WIREDAKAI_VERSION=1:0:0
+LIB_WIREDWIDGETS_VERSION=1:0:0
+#                     | | |
+#              +------+ | +---+
+#              |        |     |
+#            current:revision:age
+#              |        |     |
+#              |        |     +- increment if interfaces have been added
+#              |        |        set to zero if interfaces have been removed
+#              |        |        or changed
+#              |        +- increment if source code has changed
+#              |           set to zero if current is incremented
+#              +- increment if interfaces have been added, removed or changed
+AC_SUBST(LIB_WIREDWIDGETS_VERSION)
+AC_SUBST(LIB_WIREDAKAI_VERSION)
+AC_SUBST(LIB_WIREDPLUGIN_VERSION)
+AC_SUBST(LIB_WIREDCODECS_VERSION)
 
 # Auxiliary files.
 AC_CONFIG_AUX_DIR([config])

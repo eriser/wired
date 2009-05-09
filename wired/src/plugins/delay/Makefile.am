@@ -4,7 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../gui -I../../plugins -I../../filel
 
 pkglib_LTLIBRARIES = libWiredDelay.la
 
-libWiredDelay_la_LDFLAGS = -avoid-version
+libWiredDelay_la_LDFLAGS = -version-info @LIB_WIREDPLUGIN_VERSION@
 libWiredDelay_la_SOURCES =				\
 			DelayPlug.cpp		\
 			../../redist/Plugin.cpp
