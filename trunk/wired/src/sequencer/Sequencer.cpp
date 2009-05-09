@@ -137,17 +137,13 @@ void					*Sequencer::Entry()
 	{
 	  if (((*MidiMsg)->Msg[0] == M_START) || ((*MidiMsg)->Msg[0] == M_CONT))
 	    {
-	      SeqMutex.Unlock();
 	      Play();
 	      Yield();
-	      SeqMutex.Lock();
 	    }
 	  else if ((*MidiMsg)->Msg[0] == M_STOP)
 	    {
-	      SeqMutex.Unlock();
 	      Stop();
 	      Yield();
-	      SeqMutex.Lock();
 	    }
 	  else
 	    for (T = Tracks.begin(); T != Tracks.end(); T++)

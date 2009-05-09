@@ -359,7 +359,7 @@ int			MainWindow::Init()
     wxGetApp().m_threads.Add(Seq);
 
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
-  SeqTimer->Start(40);
+  SeqTimer->Start(3000);
 
   WindowSize = MainWin->GetSize();
   WindowPos = MainWin->GetPosition();

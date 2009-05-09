@@ -31,6 +31,7 @@ wired_LDFLAGS = $(shell wx-config --libs) \
 		@SAMPLERATE_LIBS@ \
 		-lsndfile \
 		-Lfileloader -lfileloader \
+		-rpath ${libdir}/wired \
 		$(DEPS_LIBS)
 
 wired_CPPFLAGS = $(shell wx-config --cflags) \

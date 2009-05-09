@@ -4,7 +4,7 @@ CPPFLAGS = $(shell wx-config --cflags) -I../../../gui -I../../../plugins -I../..
 
 pkglib_LTLIBRARIES = libWiredWidgets.la
 
-libWiredWidgets_la_LDFLAGS = -version-info @LIB_WIREDWIDGETS_VERSION@
+libWiredWidgets_la_LDFLAGS = -rpath ${libdir}/wired -version-info @LIB_WIREDWIDGETS_VERSION@
 libWiredWidgets_la_SOURCES = 			\
 		ChoiceButton.cpp	\
 		ChoiceButton.h		\
