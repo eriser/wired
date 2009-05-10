@@ -6,52 +6,65 @@
 MidiController *Controller = 0x0;
 
 BEGIN_EVENT_TABLE(MidiController, wxDialog)
-  EVT_BUTTON(ID_OK, MidiController::OnOkBtnClick)
-  EVT_BUTTON(ID_CANCEL, MidiController::OnCancelBtnClick)
+  EVT_BUTTON(wxID_OK, MidiController::OnOkBtnClick)
+  EVT_BUTTON(wxID_CANCEL, MidiController::OnCancelBtnClick)
 END_EVENT_TABLE()
 
 #define MIDIWIDTH 206
 
 MidiController::MidiController(wxWindow *parent) :
-  wxDialog(parent, -1, _("Assign Midi Controller"), wxDefaultPosition, wxSize(206, MIDIWIDTH))
+  wxDialog(parent, -1, _("Assign Midi Controller"))
 {
   Centre();
-  sb = new wxStaticBox(this, -1, _("Assign to controller number :"), wxPoint(6, 4), wxSize(192, 160));
-  OkBtn = new wxButton(this, ID_OK, _("OK"), wxPoint(20, 170));
-  CancelBtn = new wxButton(this, ID_CANCEL, _("Cancel"), wxPoint(110, 170));
 
-  ChannelText = new wxStaticText(this, -1, _("Channel:"), wxPoint(52, 26));
-  ChannelCtrl = new wxSpinCtrl(this, -1, wxT("1"), wxPoint(52, 44));
+  // sizer default flag:
+  wxSizerFlags	flagsExpand;
+  flagsExpand.Expand().Border(wxALL, 3);
 
-  ControllerText = new wxStaticText(this, -1, _("Control:"), wxPoint(52, 70));
-  ControllerCtrl = new wxSpinCtrl(this, -1, wxT("0"), wxPoint(52, 88));
+  // create a grid with 2 columns and 5 pixels of space between cells
+  wxGridSizer* valuesSizer = new wxGridSizer(2, 3, 3);
 
-  ValueText = new wxStaticText(this, -1, _("Value:"), wxPoint(52, 114));
-  ValueCtrl = new wxSpinCtrl(this, -1, wxT("0"), wxPoint(52, 130));
+  ChannelCtrl = new wxSpinCtrl(this, -1, wxT("1"));
+  ControllerCtrl = new wxSpinCtrl(this, -1, wxT("0"));
+  ValueCtrl = new wxSpinCtrl(this, -1, wxT("0"));
 
+  valuesSizer->Add(new wxStaticText(this, -1, _("Channel:")), flagsExpand);
+  valuesSizer->Add(ChannelCtrl, flagsExpand);
+
+  valuesSizer->Add(new wxStaticText(this, -1, _("Control:")), flagsExpand);
+  valuesSizer->Add(ControllerCtrl, flagsExpand);
+
+  valuesSizer->Add(new wxStaticText(this, -1, _("Value:")), flagsExpand);
+  valuesSizer->Add(ValueCtrl, flagsExpand);
+
+  // create the main static box
+  wxStaticBoxSizer* sbSizer = new wxStaticBoxSizer(new wxStaticBox(this,
+								   -1,
+								   _("Assign to controller number :")),
+						   wxVERTICAL);
+  sbSizer->Add(valuesSizer, flagsExpand);
+
+  // create the button
+  wxStdDialogButtonSizer* buttonSizer = this->CreateStdDialogButtonSizer(wxOK | wxCANCEL);
+  buttonSizer->Realize(); // This cmd is warned by wxWidgets debug mode. I think it's a wx bug!
+
+  // .. and attach static, and buttons to the main sizer
+  wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+  mainSizer->Add(sbSizer, flagsExpand);
+  mainSizer->Add(buttonSizer, flagsExpand);
+
+  // attach the sizer to the dialog
+  SetSizer( mainSizer );
+  mainSizer->SetSizeHints( this );
+
+  // default type of midi event
   Type = 0;
 }
 
 MidiController::~MidiController()
 {
-	if(sb)
-	  delete sb;
-	if (OkBtn)
-	  delete OkBtn;
-	if (CancelBtn)
-     delete CancelBtn;
-	if (ChannelCtrl)
-	 delete ChannelCtrl;
-	if(ControllerCtrl)
-	 delete ControllerCtrl;
-	if (ValueCtrl)
-	 delete ValueCtrl;
-	if (ChannelText)
-	 delete ChannelText;
-	if (ControllerText)
-	 delete ControllerText;
-	if (ValueText)
-	 delete ValueText;
+  // we don't need to delete anything!
+  // main sizer do his job
 }
 
 void MidiController::ProcessMidi(int midi_msg[3])
