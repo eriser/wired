@@ -76,7 +76,6 @@ class					MainWindow: public wxFrame, public WiredDocument
   void					OnAbout(wxCommandEvent &event);
   void					OnIntegratedHelp(wxCommandEvent &event);
   void					OnTimer(wxTimerEvent &event);
-  void					OnKillTimer(wxTimerEvent &event);
 
   bool					NewSession();
   void					LoadPlugins();
@@ -277,7 +276,6 @@ enum
   MainWin_SelectAll,
   MainWin_FullScreen,
   MainWin_SeqTimer,
-  MainWin_KillTimer,
   MainWin_FileLoader,
   MainWin_IntHelp,
   MainWin_SwitchRack,
