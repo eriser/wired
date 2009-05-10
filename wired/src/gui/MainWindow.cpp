@@ -358,8 +358,9 @@ int			MainWindow::Init()
   else
     wxGetApp().m_threads.Add(Seq);
 
+  // graphical timer (timeline moves, etc..)
   SeqTimer = new wxTimer(this, MainWin_SeqTimer);
-  SeqTimer->Start(3000);
+  SeqTimer->Start(40);
 
   WindowSize = MainWin->GetSize();
   WindowPos = MainWin->GetPosition();
@@ -1817,36 +1818,43 @@ void					MainWindow::OnTimer(wxTimerEvent &event)
   list<MidiPattern *>::iterator		midiPatternIt;
   list<Plugin *>::iterator		pluginIt;
   list<Track *>::iterator		trackIt;
-  wxMutexLocker				locker(SeqMutex);
 
   if (MixerPanel != NULL)
-      MixerPanel->OnMasterChange(commandEvt);
-  if (Seq->Playing)
     {
-      SeqPanel->OnSetPosition(cursorEvt);
-
-      if (Seq->Recording)
-	{
-	  for (patternIt = Seq->PatternsToResize.begin(); patternIt != Seq->PatternsToResize.end(); patternIt++)
-	    {
-	      commandEvt.SetEventObject((wxObject *)*patternIt);
-	      SeqPanel->OnResizePattern(commandEvt);
-	    }
-	  Seq->PatternsToResize.clear();
-	  for (midiPatternIt = Seq->PatternsToRefresh.begin(); midiPatternIt != Seq->PatternsToRefresh.end(); midiPatternIt++)
-	    {
-	      commandEvt.SetEventObject((wxObject *)*midiPatternIt);
-	      SeqPanel->OnDrawMidi(commandEvt);
-	    }
-	  Seq->PatternsToRefresh.clear();
-	}
+      MixerPanel->OnMasterChange(commandEvt);
     }
 
-  UpdatePlugins.clear();
+  // lock seqmutex
+  {
+    wxMutexLocker			locker(SeqMutex);
+    if (Seq->Playing)
+      {
 
-  for (trackIt = Seq->TracksToRefresh.begin(); trackIt != Seq->TracksToRefresh.end(); trackIt++)
-    (*trackIt)->GetTrackOpt()->SetVuValue();
-  Seq->TracksToRefresh.clear();
+	SeqPanel->OnSetPosition(cursorEvt);
+
+	if (Seq->Recording)
+	  {
+	    for (patternIt = Seq->PatternsToResize.begin(); patternIt != Seq->PatternsToResize.end(); patternIt++)
+	      {
+		commandEvt.SetEventObject((wxObject *)*patternIt);
+		SeqPanel->OnResizePattern(commandEvt);
+	      }
+	    Seq->PatternsToResize.clear();
+	    for (midiPatternIt = Seq->PatternsToRefresh.begin(); midiPatternIt != Seq->PatternsToRefresh.end(); midiPatternIt++)
+	      {
+		commandEvt.SetEventObject((wxObject *)*midiPatternIt);
+		SeqPanel->OnDrawMidi(commandEvt);
+	      }
+	    Seq->PatternsToRefresh.clear();
+	  }
+      }
+
+    UpdatePlugins.clear();
+
+    for (trackIt = Seq->TracksToRefresh.begin(); trackIt != Seq->TracksToRefresh.end(); trackIt++)
+      (*trackIt)->GetTrackOpt()->SetVuValue();
+    Seq->TracksToRefresh.clear();
+  }
 }
 
 void					MainWindow::AddUpdatePlugin(Plugin *p)
@@ -1895,13 +1903,6 @@ void                  MainWindow::OnShowDebug(wxCommandEvent &event)
     {
       LogWin->Show(false);
     }
-}
-
-void					MainWindow::OnKillTimer(wxTimerEvent &WXUNUSED(event))
-{
-  LOG;
-  cout << "[MAINWIN] Killing Threads" << endl;
-  exit (0);
 }
 
 void					MainWindow::OnIdle(wxIdleEvent &WXUNUSED(event))
@@ -2240,7 +2241,6 @@ BEGIN_DECLARE_EVENT_TYPES()
   // event
   EVT_CLOSE(MainWindow::OnClose)
   EVT_TIMER(MainWin_SeqTimer, MainWindow::OnTimer)
-  EVT_TIMER(MainWin_KillTimer, MainWindow::OnKillTimer)
 /*
   // button
   EVT_BUTTON(FileLoader_Start, MainWindow::OnFileLoaderStart)
