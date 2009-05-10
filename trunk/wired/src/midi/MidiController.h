@@ -9,9 +9,6 @@
 #include <wx/stattext.h>
 #include "midi.h"
 
-#define ID_OK     100
-#define ID_CANCEL 101
-
 class MidiController : public wxDialog
 {
  public:
@@ -30,16 +27,9 @@ class MidiController : public wxDialog
   bool Note;
   
  private:
-  wxStaticBox *sb;
-  wxButton    *OkBtn;
-  wxButton    *CancelBtn;  
-  
   wxSpinCtrl  *ChannelCtrl;
   wxSpinCtrl  *ControllerCtrl;
   wxSpinCtrl  *ValueCtrl;
-  wxStaticText *ChannelText;
-  wxStaticText *ControllerText;
-  wxStaticText *ValueText;
  
   DECLARE_EVENT_TABLE()
 };
