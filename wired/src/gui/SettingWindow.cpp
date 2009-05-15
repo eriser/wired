@@ -25,23 +25,7 @@
 
 #define	CATEGORY_ID	25001
 
-
-#define	WIN_WIDTH	650
-#define WIN_HEIGHT	520
-#define WIN_SIZE	wxSize(WIN_WIDTH, WIN_HEIGHT)
-
-#define WIN_MARGIN	12
-
-#define	BTN_WIDTH	88
-#define BTN_HEIGHT	32
-#define	BTN_SIZE	wxSize(BTN_WIDTH, BTN_HEIGHT)
-#define	BTN_POS_Y	(WIN_HEIGHT - WIN_MARGIN - BTN_HEIGHT)
-#define BTN_CANCEL_POS	wxPoint(WIN_WIDTH - 3 * (BTN_WIDTH + 6) + 6 - WIN_MARGIN, BTN_POS_Y)
-#define BTN_OK_POS	wxPoint(WIN_WIDTH - BTN_WIDTH - WIN_MARGIN, BTN_POS_Y)
-#define BTN_APPLY_POS	wxPoint(WIN_WIDTH - 2 * BTN_WIDTH - 6 - WIN_MARGIN, BTN_POS_Y)
-
-#define PAN_SIZE	wxSize(584, 436)
-#define PAN_POS		wxPoint(222, WIN_MARGIN)
+#define WIN_SIZE	wxSize(650, 520)
 
 #define MENUICON_SIZE   (20)
 #ifndef RESIZE_ICON
@@ -51,21 +35,25 @@
 using namespace std;
 
 SettingWindow::SettingWindow()
-  : wxDialog(0x0, -1, _("Wired Settings"), wxDefaultPosition, WIN_SIZE)
+  : wxDialog(NULL, -1, _("Wired Settings"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
   wxTreeItemId	root;
   wxTreeItemId	AudioItem;
+  wxBoxSizer*	mainSizer = new wxBoxSizer(wxVERTICAL);
+  wxBoxSizer*	horiSizer = new wxBoxSizer(wxHORIZONTAL);
+
+  // set a minimal size to the window
+  mainSizer->SetMinSize(WIN_SIZE);
 
   MidiLoaded = false;
   AudioLoaded = false;
-  Center();
 
-  SettingsTree = new wxTreeCtrl(this, CATEGORY_ID, wxPoint(WIN_MARGIN, WIN_MARGIN),
-				wxSize(206, 400), wxSUNKEN_BORDER | wxTR_NO_LINES |
+  SettingsTree = new wxTreeCtrl(this, CATEGORY_ID, wxDefaultPosition, wxDefaultSize,
+				wxSUNKEN_BORDER | wxTR_NO_LINES |
 				wxTR_HAS_BUTTONS | wxTR_SINGLE | wxTR_HIDE_ROOT |
-				wxTR_FULL_ROW_HIGHLIGHT);
+				wxTR_FULL_ROW_HIGHLIGHT | wxTR_EXTENDED);
 
-  wxImageList   *imagelist = new wxImageList(MENUICON_SIZE, MENUICON_SIZE, TRUE);
+  wxImageList   *imagelist = new wxImageList(MENUICON_SIZE, MENUICON_SIZE, true);
 
   imagelist->Add(RESIZE_ICON(wxIcon(general_xpm), MENUICON_SIZE, MENUICON_SIZE));
   imagelist->Add(RESIZE_ICON(wxIcon(audio_xpm), MENUICON_SIZE, MENUICON_SIZE));
@@ -77,9 +65,9 @@ SettingWindow::SettingWindow()
   // flags assigned to all sizer in all right panel
   BoxFlags.Left();
   BoxFlags.Expand();
-  BoxFlags.Border(wxALL, 8);
+  BoxFlags.Border();
 
-  //SettingsTree->SetIndent(20);
+  // initialize all view/panel
   GeneralPanelView();
   AudioPanelView();
   AudioInputPanelView();
@@ -97,6 +85,7 @@ SettingWindow::SettingWindow()
   // start with audio item already expanded
   SettingsTree->Expand(AudioItem);
 
+  // show only the current "general" panel
   AudioPanel->Show(false);
   MidiPanel->Show(false);
   AudioInputPanel->Show(false);
@@ -104,9 +93,29 @@ SettingWindow::SettingWindow()
   GeneralPanel->Show(true);
   CurrentPanel = GeneralPanel;
 
-  OkBtn = new wxButton(this, wxID_OK, _("OK"), BTN_OK_POS, BTN_SIZE);
-  ApplyBtn = new wxButton(this, wxID_APPLY, _("Apply"), BTN_APPLY_POS, BTN_SIZE);
-  CancelBtn = new wxButton(this, wxID_CANCEL, _("Cancel"), BTN_CANCEL_POS, BTN_SIZE);
+  // add colomns of the first "line" to the sizer
+  horiSizer->Add(SettingsTree, wxSizerFlags().Proportion(40).Expand().Right().Border());
+  horiSizer->Add(CurrentPanel, wxSizerFlags().Proportion(100).Expand().Align(wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL).Border());
+
+  // create the standardized way to create dialog buttons
+  wxStdDialogButtonSizer* buttonSizer = new wxStdDialogButtonSizer();
+
+  buttonSizer->AddButton(new wxButton(this, wxID_OK, _("OK")));
+  buttonSizer->AddButton(new wxButton(this, wxID_APPLY, _("Apply")));
+  buttonSizer->AddButton(new wxButton(this, wxID_CANCEL, _("Cancel")));
+  // re-order buttons accordling to the theme and/or system
+  buttonSizer->Realize();
+
+  // add first and second line to the main sizer
+  mainSizer->Add(horiSizer, wxSizerFlags().Proportion(100).Expand().Border());
+  mainSizer->Add(buttonSizer, wxSizerFlags().Align(wxALIGN_RIGHT | wxALIGN_BOTTOM).Border());
+
+  // resize items and window
+  SetSizer(mainSizer);
+  mainSizer->SetSizeHints(this);
+
+  // center the window on the screen
+  Center();
 
   Load();
 }
@@ -123,18 +132,34 @@ SettingWindow::~SettingWindow()
 
 void				SettingWindow::GeneralPanelView()
 {
-   GeneralPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
-   QuickWaveBox = new wxCheckBox(GeneralPanel, -1, _("Quickly render waveforms"), wxPoint(8, 8));
-   dBWaveBox = new wxCheckBox(GeneralPanel, -1, _("Render waveforms in dB mode"), wxPoint(8, 28));
-   undoRedoMaxDepthTextCtrl = new wxTextCtrl(GeneralPanel, -1, wxT(""), wxPoint(218, 50), wxSize(45, 25));
-   undoRedoMaxDepthStaticText = new wxStaticText(GeneralPanel, -1, _("Undo redo maximum depth"), wxPoint(10, 50));
+  wxBoxSizer* panelSizer = new wxBoxSizer(wxVERTICAL);
+  wxBoxSizer* undoSizer = new wxBoxSizer(wxHORIZONTAL);
+
+  GeneralPanel = new wxPanel(this, -1, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
+
+  QuickWaveBox = new wxCheckBox(GeneralPanel, -1, _("Quickly render waveforms"));
+  dBWaveBox = new wxCheckBox(GeneralPanel, -1, _("Render waveforms in dB mode"));
+
+  undoRedoMaxDepthStaticText = new wxStaticText(GeneralPanel, -1, _("Undo redo maximum depth :"));
+  undoRedoMaxDepthTextCtrl = new wxTextCtrl(GeneralPanel, -1);
+
+  undoSizer->Add(undoRedoMaxDepthStaticText, BoxFlags);
+  undoSizer->Add(undoRedoMaxDepthTextCtrl, BoxFlags);
+
+  panelSizer->Add(QuickWaveBox, BoxFlags);
+  panelSizer->Add(dBWaveBox, BoxFlags);
+  panelSizer->AddSpacer( 5 );
+  panelSizer->Add(undoSizer, BoxFlags);
+
+  GeneralPanel->SetSizer(panelSizer);
+  panelSizer->SetSizeHints(this);
 }
 
 // Creates the panel for global audio settings
 
 void				SettingWindow::AudioPanelView()
 {
-  AudioPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
+  AudioPanel = new wxPanel(this, -1, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
 }
 
 //
@@ -144,7 +169,7 @@ void				SettingWindow::AudioPanelView()
 void				SettingWindow::AudioInputPanelView()
 {
   // right panel
-  AudioInputPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
+  AudioInputPanel = new wxPanel(this, -1, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
 
   // list of audio system
   InputSystemChoice = new wxChoice(AudioInputPanel, Setting_InputSystem);
@@ -172,7 +197,7 @@ void				SettingWindow::AudioInputPanelView()
   InputBox->Add(InputChannelList, BoxFlags);
 
   AudioInputPanel->SetSizer(InputBox);
-  InputBox->SetSizeHints(AudioInputPanel);
+  InputBox->SetSizeHints(this);
 }
 
 //
@@ -182,10 +207,10 @@ void				SettingWindow::AudioInputPanelView()
 void				SettingWindow::AudioOutputPanelView()
 {
   // right panel
-  AudioOutputPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
+  AudioOutputPanel = new wxPanel(this, -1, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
 
   //samplerate and bitrate choice
-  BitRateText = new wxStaticText(AudioOutputPanel, -1, _("Sample format:"), wxPoint(8, 10));
+  BitRateText = new wxStaticText(AudioOutputPanel, -1, _("Sample format:"));
   BitsChoice = new wxChoice(AudioOutputPanel, Setting_Bits);
   SampleRateText = new wxStaticText(AudioOutputPanel, -1, _("Sample rate:"));
   RateChoice = new wxChoice(AudioOutputPanel, Setting_Rate);
@@ -208,7 +233,7 @@ void				SettingWindow::AudioOutputPanelView()
 		 Audio->GetDefaultOutputDevice());
 
   // list of channels
-  OutputChannelList = new wxCheckListBox(AudioOutputPanel, Setting_OutputChan, wxPoint(0, 0), wxSize(45, 60));
+  OutputChannelList = new wxCheckListBox(AudioOutputPanel, Setting_OutputChan);
   RefreshChannels(OutputChannelList,
 		  OutputSystemChoice->GetSelection(),
 		  OutputDeviceChoice->GetSelection(), false);
@@ -238,18 +263,27 @@ void				SettingWindow::AudioOutputPanelView()
   OutputBox->Add(LatencySlider, BoxFlags);
 
   AudioOutputPanel->SetSizer(OutputBox);
-  OutputBox->SetSizeHints(AudioOutputPanel);
+  OutputBox->SetSizeHints(this);
 }
 
 // Creates the panel for midi settings
 
 void				SettingWindow::MidiPanelView()
 {
-  MidiPanel = new wxPanel(this, -1, PAN_POS, PAN_SIZE, wxSUNKEN_BORDER);
-  new wxStaticText(MidiPanel, -1, _("Select MIDI In devices to use:"),
-		   wxPoint(8, 8));
-  MidiInList = new wxCheckListBox(MidiPanel, Setting_MidiIn, wxPoint(8, 30), wxSize(368, 200), 0);
+  MidiPanel = new wxPanel(this, -1, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
+
+  // fill midi devices
+  MidiInList = new wxCheckListBox(MidiPanel, Setting_MidiIn);
   PopulateMidiIn(MidiInList);
+
+  // add panel sizer
+  wxBoxSizer*	midiSizer = new wxBoxSizer(wxVERTICAL);
+  midiSizer->Add(new wxStaticText(MidiPanel, -1, _("Select MIDI In devices to use:")),
+		 BoxFlags);
+  midiSizer->Add(MidiInList, BoxFlags);
+
+  MidiPanel->SetSizer(midiSizer);
+  midiSizer->SetSizeHints(this);
 }
 
 
@@ -283,14 +317,21 @@ void SettingWindow::PopulateMidiIn(wxCheckListBox* list)
 void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
 {
   wxTreeItemId		item = e.GetItem();
-  wxPanel		*tmp = (wxPanel *)SettingsTree->GetItemData(item);
+  wxPanel		*newPanel = (wxPanel *)SettingsTree->GetItemData(item);
 
 
   //Hide old panel
-  if (tmp)
+  if (newPanel)
     {
       CurrentPanel->Show(false);
-      CurrentPanel = tmp;
+
+      // resize dialog if necessary
+      if ( GetSizer()->Replace(CurrentPanel, newPanel, true) == false )
+	{
+	  cout << "[SETTINGWINDOW] Spank developers: panel not found" << endl;
+	}
+
+      CurrentPanel = newPanel;
     }
 
   //Refresh panel content
@@ -299,8 +340,8 @@ void			SettingWindow::OnSelPrefCategory(wxTreeEvent &e)
 
   //Show new panel
   CurrentPanel->Show(true);
-
-
+  GetSizer()->Layout();
+  GetSizer()->SetSizeHints(this);
 }
 
 //
