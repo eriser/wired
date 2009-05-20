@@ -84,6 +84,14 @@ AC_ARG_ENABLE(codecs,
 	[enable_codecs="yes"])
 AM_CONDITIONAL(CODECS, test x$enable_codecs = xyes)
 
+# can enable or disable Wired video
+AC_ARG_ENABLE(video,
+	[  --enable-video Enable or disable Wired video (default enabled)],
+	[enable_video="$enableval"],
+	[enable_video="yes"])
+AM_CONDITIONAL(VIDEO, test x$enable_video = xyes)
+
+# can enable or disable optimization
 AC_ARG_ENABLE(optimize,
 	[  --enable-optimize Enable or disable compilation optimizations (default enabled)],
 	[enable_optimize="$enableval"],
@@ -118,6 +126,11 @@ fi
 if test x"$enable_codecs" = xyes; then
    AC_CHECK_LIB([FLAC++], [FLAC__stream_decoder_init_file], [FLAC='yes'], AC_MSG_ERROR([Couldn't find libflac++]))
    AC_CHECK_LIB([vorbis], [vorbis_info_init], [VORBIS='yes'], AC_MSG_ERROR([Couldn't find libvorbis]))
+fi
+
+# libs used in wired video
+if test x"$enable_video" = xyes; then
+   AC_DEFINE_UNQUOTED(VIDEO, "1", [define if video enabled])
 fi
 
 #Checking for wxWidgets
@@ -395,10 +408,15 @@ AC_MSG_RESULT([  Installation directories :
     Wired conf directory   : .............. ${SYSCONF_DIR}
 ])
 
-if test "$enable_codecs" = yes; then
+AC_MSG_RESULT([  Wired features :
+    Wired codecs : .............. $enable_codecs
+    Wired plugins : .............. $enable_plugins
+    Wired video : .............. $enable_video
+])
+
 AC_MSG_RESULT([
     Wired codecs : MPEG, FLAC, Vorbis
         WARNING : Codecs support are in a TESTING stage.
 		  Wired could be UNSTABLE.
+    Wired video : me too.
 ])
-fi
