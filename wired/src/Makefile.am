@@ -17,10 +17,12 @@ SUBDIRS =				\
 	xml				\
 	samplerate			\
 	codec				\
-	wiredvideo			\
 	dssi
 
-
+if VIDEO
+SUBDIRS+=\
+	wiredvideo
+endif
 
 DEPS_LIBS = libs/WiredWidgets/src/.libs/libWiredWidgets.so \
 	    libs/WiredAkai/src/.libs/libWiredAkai.so
@@ -69,8 +71,11 @@ wired_LDADD =					\
 	xml/libwiredxml.a			\
 	samplerate/libwiredsamplerate.a		\
 	codec/libwiredCodec.a			\
-	wiredvideo/libwiredvideo.a		\
 	dssi/libwireddssi.a
+if VIDEO
+wired_LDADD +=\
+	wiredvideo/libwiredvideo.a
+endif
 
 if PORTMIDI
 wired_LDADD +=\

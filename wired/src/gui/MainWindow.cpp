@@ -62,7 +62,9 @@
 Rack			*RackPanel = NULL;
 SequencerGui		*SeqPanel = NULL;
 Sequencer		*Seq = NULL;
+#ifdef VIDEO
 WiredVideo		*WiredVideoObject = NULL;
+#endif
 AudioEngine		*Audio = NULL;
 Mixer			*Mix = NULL;
 AudioCenter		WaveCenter;
@@ -131,7 +133,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar = new wxMenuBar;
   FileMenu = new wxMenu;
   EditMenu = new wxMenu;
+#ifdef VIDEO
   VideoMenu = new wxMenu;
+#endif
   UndoMenu = new wxMenu;
   RedoMenu = new wxMenu;
   SequencerMenu = new wxMenu;
@@ -218,7 +222,9 @@ MainWindow::MainWindow(const wxString &title, const wxPoint &pos, const wxSize &
   MenuBar->Append(CreateInstrMenu, _("&Instruments"));
   MenuBar->Append(CreateEffectMenu, _("Effec&ts"));
   MenuBar->Append(MediaLibraryMenu, _("&MediaLibrary"));
+#ifdef VIDEO
   MenuBar->Append(VideoMenu, _("&Video"));
+#endif
   MenuBar->Append(WindowMenu, _("&Window"));
   MenuBar->Append(HelpMenu, _("&Help"));
 
@@ -588,6 +594,7 @@ void					MainWindow::InitUndoRedoMenuItems()
 
 void					MainWindow::InitVideoMenuItems()
 {
+#ifdef VIDEO
   LOG;
 
   VideoMenu->Append(MainWin_VideoBeta, _("This feature is currently in alpha stage"));
@@ -599,6 +606,7 @@ void					MainWindow::InitVideoMenuItems()
   WiredVideoObject = new WiredVideo();
   VideoMenu->Enable(MainWin_OpenVideo, true);
   VideoMenu->Enable(MainWin_CloseVideo, false);
+#endif
 }
 
 void					MainWindow::OnClose(wxCloseEvent &event)
@@ -1594,24 +1602,29 @@ void					MainWindow::OnSettings(wxCommandEvent &event)
 
 void					MainWindow::OnOpenVideo(wxCommandEvent &event)
 {
+#ifdef VIDEO
   LOG;
   if ( WiredVideoObject->OpenFile() == true )
     {
       VideoMenu->Enable(MainWin_OpenVideo, false);
       VideoMenu->Enable(MainWin_CloseVideo, true);
     }
+#endif
 }
 
 void					MainWindow::OnCloseVideo(wxCommandEvent &event)
 {
+#ifdef VIDEO
   LOG;
   WiredVideoObject->CloseFile();
   VideoMenu->Enable(MainWin_OpenVideo, true);
   VideoMenu->Enable(MainWin_CloseVideo, false);
+#endif
 }
 
 void					MainWindow::OnSeekVideo(wxCommandEvent &event)
 {
+#ifdef VIDEO
   LOG;
   static bool started = false;
 
@@ -1619,6 +1632,7 @@ void					MainWindow::OnSeekVideo(wxCommandEvent &event)
     WiredVideoObject->Play();
   else
     WiredVideoObject->Stop();
+#endif
 }
 
 void					MainWindow::SetSelectedSolo(wxCommandEvent &event)
