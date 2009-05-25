@@ -30,12 +30,6 @@ cActionManager& cActionManager::Global()
 	return *spSingleton;
 }
 
-void	cActionManager::AddEffectAction(PlugStartInfo* startInfo, PluginLoader* plugLoader, bool shouldAdd)
-{
-	cCreateEffectAction* action = new cCreateEffectAction(startInfo, plugLoader, shouldAdd);
-	action->Do();
-}
-
 void	cActionManager::AddImportWaveAction(const wxString& path, trackType kind, bool selectFromIndex)
 {
 	cImportWaveAction* action = new cImportWaveAction(path, kind, selectFromIndex);

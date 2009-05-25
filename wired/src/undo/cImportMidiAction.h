@@ -129,36 +129,5 @@ public:
 	cChangeParamsEffectAction		operator=(const cChangeParamsEffectAction& right);
 };
 
-
-/********************   class cCreateEffectAction   ********************/
-
-class						cCreateEffectAction : public cAction 
-{
-private:
-	PluginLoader			*mPluginLoader;			// Contexte
-	PlugStartInfo			*mStartInfo;			// Contexte
-	bool					mShouldAdd;				// True if should add in Do()
-	int						mRackIndex;				// Index du rack dans le RackPanel - Abandonne car remove casse les index dsna RackTracks
-	//RackTrack				*mRackTrack;			// Effect instance
-  
-public:
-	cCreateEffectAction (PlugStartInfo* startInfo, PluginLoader * plugin, bool shouldAdd);
-	cCreateEffectAction (const cCreateEffectAction& copy){*this = copy;};
-	~cCreateEffectAction () {};
-	virtual void			Do ();					// Does action
-	virtual void			Redo ();				// Does redo action
-	virtual void			Undo ();				// Does undo action
-	virtual void			Accept					// Don't known
-							(cActionVisitor& visitor) { visitor.Visit (*this); };
-	virtual const wxString		getHistoryLabel();		// Returns History label wstring
-	void					AddRackEffect ();		// Adds a rack effect
-	void					RemoveRackEffect ();	// Removes a rack effect
-  	void					Dump();					// Debug - Draws member variables
-  	
-	cCreateEffectAction		operator=(const cCreateEffectAction& right);
-};
-
-
-
 #endif
 

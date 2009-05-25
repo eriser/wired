@@ -75,9 +75,6 @@ public:
 	bool		Redo(int id);										// Refait la derniere action annulee
 	bool		Undo(int id);										// Annule la derniere action effectuee
 	void		Dump();												// Debug - Dump les donnees membres
-	void		AddEffectAction(PlugStartInfo* startInfo, 			// Adds a cEffectAction in cActionManager
-								PluginLoader* plugLoader, 
-								bool shouldAdd);
 	void		AddChangeParamsEffectAction(Plugin* plugin, bool shouldSave);	// Adds a cChangeParamsEffectAction in cActionManager
 	void		AddImportWaveAction(const wxString& path, trackType kind, 
 									bool selectFromIndex);				// Adds a cImportWaveAction in cActionManager
