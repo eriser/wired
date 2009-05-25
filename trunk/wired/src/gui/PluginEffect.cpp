@@ -8,9 +8,12 @@
 #include <math.h>
 #include "PluginEffect.h"
 
+#include "Rack.h"
+
 using namespace				std;
 
 /* DO NOT MODIFY THIS FILE FOR MAKING A PLUGIN. JUST DERIVE FROM THAT CLASS */
+
 
 PluginEffect::PluginEffect() 
 { 
@@ -79,3 +82,30 @@ void					PluginEffect::Normalize(WaveFile &input, WaveFile &output, float norma,
 
 }
 
+/********************   class cCreateEffectAction   ********************/
+
+CreateEffectAction::CreateEffectAction (wxString& label, PlugStartInfo* startInfo, PluginLoader* plugLoader)
+  : wxCommand(true, label)
+{
+  mPluginLoader = plugLoader;
+  mStartInfo = startInfo;
+}
+
+bool CreateEffectAction::Do ()
+{
+  bool	ret = false;
+
+  if (mPluginLoader)
+    {
+      _created = RackPanel->AddNewRack(*mStartInfo, mPluginLoader);
+      ret = true;
+    }
+  
+  return ret;
+}
+
+bool CreateEffectAction::Undo ()
+{
+  RackPanel->DeleteRack(_created, true);
+  return true;
+}

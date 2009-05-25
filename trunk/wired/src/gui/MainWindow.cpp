@@ -21,6 +21,7 @@
 #include "OptionPanel.h"
 #include "Rack.h"
 #include "RackTrack.h"
+#include "PluginEffect.h"
 #include "SeqTrack.h"
 #include "MixerGui.h"
 #include "DownButton.h"
@@ -1157,11 +1158,17 @@ void					MainWindow::OnCreateExternalPlugin(wxCommandEvent &event)
   LOG;
   if (LoadedExternalPlugins)
     {
+      wxString		label = _("creating ");
       cout << "[MAINWIN] Creating rack for plugin id :" << event.GetId() << endl;
       PluginLoader 	*NewPlugin = new PluginLoader(LoadedExternalPlugins, event.GetId(), StartInfo);
+      label += NewPlugin->InitInfo.Name;
 
-      LoadedPluginsList.push_back(NewPlugin);
-      cActionManager::Global().AddEffectAction(&StartInfo, NewPlugin, true);
+      if(NewPlugin)
+	{
+	  LoadedPluginsList.push_back(NewPlugin);
+	  CreateEffectAction *action = new CreateEffectAction(label, &StartInfo, NewPlugin);
+	  UndoRedo->Submit(action);
+	}
     }
 }
 
@@ -1204,9 +1211,12 @@ void					MainWindow::OnCreateEffectClick(wxCommandEvent &event)
       }
   if (p)
     {
+      wxString		label = _("creating ");
       cout << "[MAINWIN] Creating rack for plugin: " << p->InitInfo.Name.mb_str() << endl;
-      cActionManager::Global().AddEffectAction(&StartInfo, p, true);
-      CreateUndoRedoMenus(EditMenu);
+
+      label += p->InitInfo.Name;
+      CreateEffectAction* action = new CreateEffectAction(label, &StartInfo, p);
+      UndoRedo->Submit(action);
     }
 }
 

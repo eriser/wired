@@ -7,7 +7,32 @@
 #include "WaveFile.h"
 #include <wx/wx.h>
 #include <wx/textdlg.h>
+#include <wx/cmdproc.h>
 
+class		PluginLoader;
+class		Plugin;
+typedef struct s_PlugStartInfo			PlugStartInfo;
+
+/********************   class CreateEffectAction   ********************/
+
+class		CreateEffectAction : public wxCommand
+{
+private:
+	PluginLoader			*mPluginLoader;			// Contexte
+	PlugStartInfo			*mStartInfo;			// Contexte
+
+	Plugin*				_created;
+  
+public:
+	CreateEffectAction (wxString& label, PlugStartInfo* startInfo, PluginLoader * plugin);
+	~CreateEffectAction () {};
+
+	bool			Do ();
+	bool			Undo ();
+};
+
+
+/********************   class PluginEffect   ********************/
 
 class PluginEffect 
 {
