@@ -2,6 +2,7 @@
 // Under the GNU General Public License Version 2, June 1991
 
 #include <new>
+#include <iostream>
 
 #include <wx/bitmap.h>
 #include <wx/event.h>
@@ -211,7 +212,7 @@ bool MainApp::wxInitialization()
   return true;
 }
 
-// start point of Wired  
+// start point of Wired
 bool MainApp::OnInit()
 {
   cout << "[MAINAPP] Wired initialization..." << endl;

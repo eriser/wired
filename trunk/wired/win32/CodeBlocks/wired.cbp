@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output=".\bin\wired.exe" prefix_auto="1" extension_auto="1" />
+				<Option output=".\bin\wired" prefix_auto="1" extension_auto="1" />
 				<Option working_dir=".\bin\" />
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
@@ -26,7 +26,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output=".\bin\wired.exe" prefix_auto="1" extension_auto="1" />
+				<Option output=".\bin\wired" prefix_auto="1" extension_auto="1" />
 				<Option working_dir=".\bin\" />
 				<Option object_output="obj\Release\" />
 				<Option type="1" />
@@ -143,6 +143,7 @@
 		<Unit filename="..\..\src\engine\Settings.h" />
 		<Unit filename="..\..\src\engine\version.h" />
 		<Unit filename="..\..\src\error.hh" />
+		<Unit filename="..\..\src\fileloader\FileConversion.cpp" />
 		<Unit filename="..\..\src\fileloader\FileStat.cpp" />
 		<Unit filename="..\..\src\fileloader\FileStat.h" />
 		<Unit filename="..\..\src\fileloader\TreeItemData.cpp" />
@@ -160,7 +161,6 @@
 		<Unit filename="..\..\src\gui\Colour.h" />
 		<Unit filename="..\..\src\gui\Cursor.cpp" />
 		<Unit filename="..\..\src\gui\Cursor.h" />
-		<Unit filename="..\..\src\gui\FileConversion.cpp" />
 		<Unit filename="..\..\src\gui\FileConversion.h" />
 		<Unit filename="..\..\src\gui\FloatingFrame.cpp" />
 		<Unit filename="..\..\src\gui\FloatingFrame.h" />
@@ -193,6 +193,7 @@
 		<Unit filename="..\..\src\gui\PluginEffect.h" />
 		<Unit filename="..\..\src\gui\Rack.cpp" />
 		<Unit filename="..\..\src\gui\Rack.h" />
+		<Unit filename="..\..\src\gui\RackTrack.cpp" />
 		<Unit filename="..\..\src\gui\Ruler.cpp" />
 		<Unit filename="..\..\src\gui\Ruler.h" />
 		<Unit filename="..\..\src\gui\SelectionZone.cpp" />
@@ -280,6 +281,7 @@
 		</Unit>
 		<Extensions>
 			<code_completion />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
