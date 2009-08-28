@@ -156,7 +156,7 @@ void MainApp::ShowSplash(bool show)
     {
       wxBitmap        bitmap;
 
-      if (bitmap.LoadFile(wxString(DATA_DIR, *wxConvCurrent) + wxString(wxT("/wired/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
+      if (bitmap.LoadFile(WiredSettings->DataDir + wxString(wxT("/ihm/splash/splash.png")), wxBITMAP_TYPE_PNG))
 	{
 	  if ( ! splash )
 	    {
@@ -224,9 +224,6 @@ bool MainApp::OnInit()
   // this var is used in error dialog
   MainWin = (MainWindow *) NULL;
 
-  // splash screen
-  ShowSplash();
-
   // avoid two Wired's launch
   if (checkDoubleStart())
     return false;
@@ -234,6 +231,9 @@ bool MainApp::OnInit()
   // load save/session stuff
   saveCenter = new SaveCenter();
   WiredSettings = new Settings(); // load settings
+
+  // splash screen
+  ShowSplash();
 
   // load wizard
   if (wxFileName::DirExists(SessionDir))

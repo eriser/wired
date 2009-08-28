@@ -22,9 +22,14 @@ Settings::Settings()
 
   SetDefault();
 
-  ConfDir = wxString(wxT(SYSCONF_DIR)) + wxT("/");
+#ifdef _WIN32
+  // exemple : C:\\path\\wired_exe_install_dir\\conf
+  ConfDir = wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator() + wxT("conf\\");
+#else
+  // exemple : /usr/etc/wired/
+  ConfDir = wxString(wxT(SYSCONF_DIR)) + wxFileName::GetPathSeparator();
+#endif
   PlugConfFile = ConfDir + PLUG_CONF_FILE;
-
   f.Assign(PlugConfFile);
   if (!f.FileExists())
     {
@@ -32,9 +37,12 @@ Settings::Settings()
       ConfDir = wxT("./");
       PlugConfFile = ConfDir + PLUG_CONF_FILE;
     }
+
 #ifdef _WIN32
-  DataDir = wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator() + wxT(DATA_DIR) + wxT("\\wired\\");
+  // exemple : C:\\path\\wired_exe_install_dir\\data
+  DataDir = wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator() + wxT(DATA_DIR) + wxFileName::GetPathSeparator();
 #else
+  // exemple : /usr/share/wired/
   DataDir = wxString(wxT(DATA_DIR)) + wxT("/wired/");
 #endif
   f.Assign(DataDir);
@@ -42,11 +50,11 @@ Settings::Settings()
   if (!f.DirExists())
     {
       // if not found let hope it belongs the current directory
-      DataDir = wxT("./");
+      DataDir = wxT("");
       f.Assign(DataDir);
     }
 
-  f.AssignDir(f.GetHomeDir() + wxString(wxT("/")) + wxString(WIRED_DIRECTORY));
+  f.AssignDir(f.GetHomeDir() + wxFileName::GetPathSeparator() + wxString(WIRED_DIRECTORY));
 
   HomeDir = wxString(f.GetFullPath());
 
