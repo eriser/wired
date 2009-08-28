@@ -160,6 +160,11 @@ class Settings
   wxString	DataDir;
 
   /**
+   * Setting a directory of plugins.
+   */
+  wxString	PlugDir;
+
+  /**
    * Setting a working directory.
    */
   wxString	WorkingDir;
