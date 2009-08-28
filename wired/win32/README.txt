@@ -21,9 +21,6 @@ Inside MSYS prompt, change the direcory to "win32" and type "make".
 Using Code::Blocks IDE:
 Open the file "win32/CodeBlocks/Wired.workspace" and run "Build > Build workspace" to compile everything.
 More details at http://www.codeblocks.org/
-Run "copydata.bat" to copy src/data content to bin directory.
-
-For both cases the required DLLs need to be on PATH or at the same directory where wired.exe is.
 
 --------------------------------------------------------------------------------
 
@@ -34,3 +31,10 @@ You need to:
 
 Open the file "win32/installer.iss" using Inno Setup and press Ctrl+F9.
 Take a look at "win32/Output" and enjoy!
+
+--------------------------------------------------------------------------------
+
+How to run a fresh build
+
+Run "copydata.bat" to copy data (logo, icon, ...) content to bin directory.
+The required DLLs need to be on PATH or at the same directory where wired.exe is.
