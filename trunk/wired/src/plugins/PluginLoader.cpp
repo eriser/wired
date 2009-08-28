@@ -34,7 +34,7 @@ void	PluginLoader::Init(WiredExternalPluginMgr *PlugMgr)
     cerr << "[PLUGINLOADER] Can't create Plugin" << endl;
 }
 
-PluginLoader::PluginLoader(wxString filename) : 
+PluginLoader::PluginLoader(wxString filename) :
   FileName(filename), handle(wxString(wxT(LIB_DIR)) + wxT("/") + filename)
 {
   External = false;
@@ -44,7 +44,7 @@ PluginLoader::PluginLoader(wxString filename) :
   if (!handle.IsLoaded())
     {
       cout << "[PLUGLOADER] Warning : " <<
-	wxString(wxString(wxT(LIB_DIR)) + wxT("/") + filename).mb_str()
+	wxString(WiredSettings->PlugDir + filename).mb_str()
 	   << " can't be loaded" << endl;
       handle.Load(filename);
     }
@@ -58,26 +58,26 @@ PluginLoader::PluginLoader(wxString filename) :
 #endif
 
       init = (init_t) handle.GetSymbol(PLUG_INIT);
-      if (!init) 
+      if (!init)
 	{
 	  cerr << "[PLUGLOADER] Error: Cannot load symbol : " << PLUG_INIT << endl;
 	  handle.Unload();
 	  return ;
 	}
       destroy = (destroy_t) handle.GetSymbol(PLUG_DESTROY);
-      if (!destroy) 
+      if (!destroy)
 	{
 	  cerr << "[PLUGLOADER] Error: Cannot load symbol : " << PLUG_DESTROY << endl;
 	  handle.Unload();
 	  return ;
-	}  
+	}
       create = (create_t) handle.GetSymbol(PLUG_CREATE);
-      if (!create) 
+      if (!create)
 	{
 	  cerr << "[PLUGLOADER] Error: Cannot load symbol : " << PLUG_CREATE << endl;
 	  handle.Unload();
 	  return ;
-	}  
+	}
 
       // get unique info from plugin (id, name, version, size, ..)
       InitInfo = init();
@@ -85,7 +85,7 @@ PluginLoader::PluginLoader(wxString filename) :
       // check version of API
       if (InitInfo.Version != WIRED_CURRENT_VERSION_API)
 	{
-	  cerr << "[PLUGLOADER] Error: Cannot load plugin " << filename.mb_str() 
+	  cerr << "[PLUGLOADER] Error: Cannot load plugin " << filename.mb_str()
 	       << ", it has deprecated version of API " << endl;
 	  handle.Unload();
 	  return ;
@@ -112,7 +112,7 @@ Plugin *PluginLoader::CreateRack(PlugStartInfo &info)
 
 	if (ExternalPlug)
 	  ExternalPlug->SetInfo(&info);
-	
+
 	return (Plugin*) ExternalPlug;
 }
 
