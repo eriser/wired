@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="libWiredReverb" />
+		<Option title="libWiredFilter" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output=".\bin\plugins\libWiredReverb" prefix_auto="1" extension_auto="1" />
+				<Option output=".\bin\plugins\libWiredFilter.dll" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Debug\" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -16,7 +16,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output=".\bin\plugins\libWiredReverb" prefix_auto="1" extension_auto="1" />
+				<Option output=".\bin\plugins\libWiredFilter.dll" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Release\" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -43,27 +43,14 @@
 			<Add library="WiredWidgets" />
 			<Add directory="bin" />
 		</Linker>
-		<Unit filename="..\..\src\plugins\reverb\Delay.cpp" />
-		<Unit filename="..\..\src\plugins\reverb\Delay.h" />
-		<Unit filename="..\..\src\plugins\reverb\Effect.cpp" />
-		<Unit filename="..\..\src\plugins\reverb\Effect.h" />
-		<Unit filename="..\..\src\plugins\reverb\Filter.cpp" />
-		<Unit filename="..\..\src\plugins\reverb\Filter.h" />
-		<Unit filename="..\..\src\plugins\reverb\JCRev.cpp" />
-		<Unit filename="..\..\src\plugins\reverb\JCRev.h" />
-		<Unit filename="..\..\src\plugins\reverb\NRev.cpp" />
-		<Unit filename="..\..\src\plugins\reverb\NRev.h" />
-		<Unit filename="..\..\src\plugins\reverb\PRCRev.cpp" />
-		<Unit filename="..\..\src\plugins\reverb\PRCRev.h" />
-		<Unit filename="..\..\src\plugins\reverb\ReverbPlug.cpp" />
-		<Unit filename="..\..\src\plugins\reverb\ReverbPlug.h" />
-		<Unit filename="..\..\src\plugins\reverb\Stk.cpp" />
-		<Unit filename="..\..\src\plugins\reverb\Stk.h" />
+		<Unit filename="..\..\src\plugins\filter\filter.c" />
+		<Unit filename="..\..\src\plugins\filter\filter.h" />
+		<Unit filename="..\..\src\plugins\filter\FilterPlug.cpp" />
+		<Unit filename="..\..\src\plugins\filter\FilterPlug.h" />
 		<Unit filename="..\..\src\redist\Plugin.cpp" />
 		<Unit filename="..\..\src\redist\Plugin.h" />
 		<Extensions>
 			<code_completion />
-			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

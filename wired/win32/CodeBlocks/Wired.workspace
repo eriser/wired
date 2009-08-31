@@ -15,5 +15,8 @@
 			<Depends filename="libWiredAkai.cbp" />
 		</Project>
 		<Project filename="libWiredAkai.cbp" />
+		<Project filename="libWiredCompressor.cbp" />
+		<Project filename="libWiredFilter.cbp" />
+		<Project filename="libWiredSynth.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
