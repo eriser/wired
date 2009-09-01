@@ -119,8 +119,8 @@ class		Rack: public wxScrolledWindow, WiredDocument
   void			AddPlugToMenu();
 
   //  bool ProcessEvent(wxEvent& event);
-
   // Handles all mouse events
+  void          OnMotion(wxMouseEvent &event);
   void			HandleMouseEvent(Plugin *plug, wxMouseEvent *event);
   // Handles key events
   void			HandleKeyEvent(Plugin *plug, wxKeyEvent *event);
