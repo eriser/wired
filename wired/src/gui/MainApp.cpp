@@ -1,6 +1,7 @@
 // Copyright (C) 2004-2007 by Wired Team
 // Under the GNU General Public License Version 2, June 1991
 
+#include <iostream>
 #include <new>
 #include <iostream>
 
@@ -28,6 +29,8 @@
 #else
 #define LOG
 #endif
+
+using namespace std;
 
 void	AllocationErrorHandler(void)
 {
