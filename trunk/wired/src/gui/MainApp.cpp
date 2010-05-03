@@ -179,6 +179,17 @@ void MainApp::ShowSplash(bool show)
 	  // alert dialog can use it before frame loading
 	  wxYield();
         }
+        else
+        {
+            wxString errorText;
+            errorText = wxT("No images found. Have you correctly installed shared data ?\n"
+                            "Please launch \"make install\" if you are on Linux or \"copydata.bat\""
+                            " if you are on Windows.\n"
+                            "If failed, try to install with Wired Installer or submit issue to developers.\n"
+                            "WIRED_URL_BUGS");
+            errorText.Replace(wxT("WIRED_URL_BUGS"), WIRED_URL_BUGS);
+            AlertDialog(wxT("MainApp"), errorText);
+        }
     }
   else
     {
@@ -289,11 +300,11 @@ void MainApp::ShowWelcome()
 {
   LOG;
   wxString welcome;
-  welcome = wxT("Welcome to WIRED_NAME vWIRED_VERSION !\nPlease note that WIRED_NAME is still under heavy development and that some of its features may not work fully and/or correctly yet.\n\nYour first step will be to configure your soundcard settings in the Edit/Settings dialog. Select your device, a 32 bits float sample format (as it is the only working option right now) and any sample rate and latency that your sound card supports. Please note that the smaller the latency value is set, the more real time WIRED_NAME will perform but setting it too low will cause drops and glitches. You can try different values and see which one is the best for your soundcard (2048 samples per buffer will be ok in most cases).\n\nYou will find a contextual Help at the bottom right corner of the WIRED_NAME window. If you move your mouse over a control, it will show you the help associated with this item. You can replace it by the WIRED_NAME Mixer by clicking on the tool icon in the top right corner of this area.\n\nIf you find any bug, please make a bug report at :\nWIRED_BUGS\n\nIf you need help or want to discuss about WIRED_NAME, pleast visit our web site and our forum :\nWIRED_FORUMS\nAny feedback is also appreciated.\n\nEnjoy the free music experience !");
+  welcome = wxT("Welcome to WIRED_NAME vWIRED_VERSION !\nPlease note that WIRED_NAME is still under heavy development and that some of its features may not work fully and/or correctly yet.\n\nYour first step will be to configure your soundcard settings in the Edit/Settings dialog. Select your device, a 32 bits float sample format (as it is the only working option right now) and any sample rate and latency that your sound card supports. Please note that the smaller the latency value is set, the more real time WIRED_NAME will perform but setting it too low will cause drops and glitches. You can try different values and see which one is the best for your soundcard (2048 samples per buffer will be ok in most cases).\n\nYou will find a contextual Help at the bottom right corner of the WIRED_NAME window. If you move your mouse over a control, it will show you the help associated with this item. You can replace it by the WIRED_NAME Mixer by clicking on the tool icon in the top right corner of this area.\n\nIf you find any bug, please make a bug report at :\nWIRED_URL_BUGS\n\nIf you need help or want to discuss about WIRED_NAME, pleast visit our web site and our forum :\nWIRED_URL_FORUMS\nAny feedback is also appreciated.\n\nEnjoy the free music experience !");
   welcome.Replace(wxT("WIRED_VERSION"), WIRED_VERSION);
   welcome.Replace(wxT("WIRED_NAME"), WIRED_NAME);
-  welcome.Replace(wxT("WIRED_BUGS"), WIRED_BUGS);
-  welcome.Replace(wxT("WIRED_FORUMS"), WIRED_FORUMS);
+  welcome.Replace(wxT("WIRED_URL_BUGS"), WIRED_URL_BUGS);
+  welcome.Replace(wxT("WIRED_URL_FORUMS"), WIRED_URL_FORUMS);
   wxMessageDialog msg(MainWin, welcome, WIRED_NAME, wxOK | wxICON_INFORMATION | wxCENTRE);
   msg.ShowModal();
 }
