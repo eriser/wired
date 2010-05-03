@@ -12,8 +12,8 @@ END_EVENT_TABLE()
 
 #define MIDIWIDTH 206
 
-MidiController::MidiController(wxWindow *parent) :
-  wxDialog(parent, (wxWindowID)-1, (const wxString&)_("Assign Midi Controller"))
+MidiController::MidiController(wxWindow *parent)
+  : wxDialog(parent, -1, wxString(_("Assign Midi Controller")))
 {
   Centre();
 

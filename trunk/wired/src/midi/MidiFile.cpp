@@ -46,7 +46,7 @@ Event::~Event()
 /*** Classe MidiFileEvent                                                              ***/
 /*************************************************************************************/
 
-MidiFileEvent::MidiFileEvent(unsigned long pos, unsigned char ID, unsigned char channel, 
+MidiFileEvent::MidiFileEvent(unsigned long pos, unsigned char ID, unsigned char channel,
                      unsigned char p1, unsigned char p2) : Event(pos, ID)
 {
   this->Channel = channel;
@@ -60,10 +60,10 @@ MidiFileEvent::MidiFileEvent(unsigned long pos, unsigned char ID, unsigned char 
 /*** Classe SysExEvent                                                             ***/
 /*************************************************************************************/
 
-SysExEvent::SysExEvent(unsigned long pos, unsigned char ID, unsigned long len, 
+SysExEvent::SysExEvent(unsigned long pos, unsigned char ID, unsigned long len,
                        unsigned char *data) : Event(pos, ID)
 {
-  this->len = len; 
+  this->len = len;
   this->Type = SYSEX_EVENT_TYPE;
   this->data = (unsigned char *)malloc(len);
   this->Pos = pos;
@@ -94,16 +94,16 @@ size_t	SysExEvent::WriteData(wxFile &midiFileHandle)
   bytesWritten += midiFileHandle.Write(data, len);
   return (bytesWritten);
 }
- 
+
 
 /*************************************************************************************/
 /*** Classe NonMidiEvent                                                           ***/
 /*************************************************************************************/
 
-NonMidiEvent::NonMidiEvent(unsigned long pos, unsigned char ID, unsigned long len, 
-                           unsigned char *data) : Event(pos, ID) 
+NonMidiEvent::NonMidiEvent(unsigned long pos, unsigned char ID, unsigned long len,
+                           unsigned char *data) : Event(pos, ID)
 {
-  this->len = len; 
+  this->len = len;
   this->Type = NONMIDI_EVENT_TYPE;
   this->data = (unsigned char *)malloc(len);
   this->Pos = pos;
@@ -124,7 +124,7 @@ size_t	NonMidiEvent::WriteData(wxFile &midiFileHandle)
   bytesWritten += midiFileHandle.Write(data, len);
   return (bytesWritten);
 }
- 
+
 
 /*************************************************************************************/
 /*** Classe MidiTrack                                                              ***/
@@ -172,7 +172,7 @@ MidiTrack::MidiTrack(unsigned long len, unsigned short PPQN)
   _filename = wxT("");
   vector<MidiEvent *> evts;
   MaxPos = len;
-  
+
   MidiTrack(evts, PPQN, _filename, Seq->Tracks.size());
 }
 
@@ -236,7 +236,7 @@ MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PP
 #ifdef __DEBUG__
 	    cout << " is midi 1" << endl;
 #endif
-	    Events.push_back(new MidiFileEvent(abs, ME_CODE(evttype), ME_CHANNEL(evttype), 
+	    Events.push_back(new MidiFileEvent(abs, ME_CODE(evttype), ME_CHANNEL(evttype),
                                            p1, buffer[ofs++]));
             break;
           case ME_PRGMCHANGE:
@@ -244,7 +244,7 @@ MidiTrack::MidiTrack(unsigned long len, unsigned char *buffer, unsigned short PP
 #ifdef __DEBUG__
 	    cout << " is midi 2" << endl;
 #endif
-	    Events.push_back(new MidiFileEvent(abs, ME_CODE(evttype), ME_CHANNEL(evttype), 
+	    Events.push_back(new MidiFileEvent(abs, ME_CODE(evttype), ME_CHANNEL(evttype),
                                            p1, 0));
             break;
         }
@@ -435,7 +435,7 @@ MidiTrack::~MidiTrack()
 /*** Classe MidiFile                                                               ***/
 /*************************************************************************************/
 
-MidiFile::MidiFile(wxString filename, unsigned long long seqTrackIndex)
+MidiFile::MidiFile(wxString filename, long long seqTrackIndex)
 {
   NbTracks = 0;
   Division = 0;
@@ -586,7 +586,7 @@ void	MidiFile::ReadMidiFile()
       {
         perror("[MidiFile] read");
         MIDIFile.Close();
-        return; 
+        return;
       }
       Type = htons(Type);
       NbTracks = htons(NbTracks);

@@ -69,7 +69,7 @@ public:
     wxString     GetFile          () { return (_Selfile); }
 
     wxTreeItemId AddFileInProject (wxString FileToAdd, bool expand);
-    wxTreeItemId DelFileInProject (wxString FileToAdd, bool expand);
+    void DelFileInProject (wxString FileToAdd, bool expand);
 
     void         LoadPatch        (wxString filename);
     void         OnSave           (wxString filename);
