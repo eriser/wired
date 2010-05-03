@@ -18,5 +18,6 @@
 		<Project filename="libWiredCompressor.cbp" />
 		<Project filename="libWiredFilter.cbp" />
 		<Project filename="libWiredSynth.cbp" />
+		<Project filename="..\..\tests\audio\testAudio.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
