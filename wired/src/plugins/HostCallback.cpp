@@ -50,11 +50,26 @@ long HostCallback(Plugin *plug, long param, void *value)
 
     switch (param)
     {
-        case wiredSendMouseEvent :
-            RackPanel->HandleMouseEvent(plug, (wxMouseEvent *)value);
+        case wiredSendMotionEvent :
+            RackPanel->HandleMotionEvent(plug, *(wxMouseEvent *)value);
+            break;
+        case wiredSendWheelEvent :
+            RackPanel->HandleWheelEvent(plug, *(wxMouseEvent *)value);
+            break;
+        case wiredSendLeftUpEvent :
+            RackPanel->HandleLeftUpEvent(plug, *(wxMouseEvent *)value);
+            break;
+        case wiredSendLeftDownEvent :
+            RackPanel->HandleLeftDownEvent(plug, *(wxMouseEvent *)value);
+            break;
+        case wiredSendRightDownEvent :
+            RackPanel->HandleRightDownEvent(plug, *(wxMouseEvent *)value);
+            break;
+        case wiredSendKeyEvent :
+            RackPanel->HandleKeyEvent(plug, *(wxKeyEvent *)value);
             break;
         case wiredSendPaintEvent :
-            RackPanel->HandlePaintEvent(plug, (wxPaintEvent *)value);
+            RackPanel->HandlePaintEvent(plug, *(wxPaintEvent *)value);
             break;
         case wiredAskUpdateGui :
             MainWin->AddUpdatePlugin(plug);
@@ -84,9 +99,6 @@ long HostCallback(Plugin *plug, long param, void *value)
                 HelpWin->Help->Load_Text((*(wxString *)value));
             break;
         }
-        case wiredSendKeyEvent :
-            RackPanel->HandleKeyEvent(plug, (wxKeyEvent *)value);
-            break;
         case wiredGetBpm :
             *(float *)value = Seq->BPM;
             break;
