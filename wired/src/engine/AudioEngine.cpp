@@ -31,6 +31,69 @@ const double standardSampleRates[] =
   /* negative terminated  list */
 };
 
+// AudioCallback
+int	AudioCallback(const void *input,
+			      void *output,
+			      unsigned long frameCount,
+			      const PaStreamCallbackTimeInfo* timeInfo,
+			      PaStreamCallbackFlags statusFlags,
+			      void *userData)
+{
+  if (!userData)
+    return (0);
+
+  callback_t *data = (callback_t*)userData;
+  unsigned long bytes = frameCount, processed = 0;
+  float **outputs = (float**)output;
+  float **inputs  =(float**)input;
+
+
+  int nchan = 0;
+  vector<int>::iterator chan;
+
+  if (data->SampleFormat & paFloat32)
+    {
+    if (data->OutFIFOVector.size() > 0)
+    {
+	      for (processed = 0, chan = data->Sets->OutputChannels.begin();
+		   chan != data->Sets->OutputChannels.end();
+		   chan++, nchan++)
+		{
+		  processed = data->OutFIFOVector[nchan]->Read(outputs[*chan], bytes);
+		  if (processed < bytes)
+		    for (; processed < bytes; processed++)
+		      outputs[*chan][processed] = 0.f;
+		}
+    }
+	if (data->InFIFOVector.size() > 0)
+	{
+	      nchan = 0;
+	      for (processed = 0, chan = data->Sets->InputChannels.begin();
+		   chan != data->Sets->InputChannels.end();
+		   chan++, nchan++)
+		{
+		  processed = data->InFIFOVector[nchan]->Write(inputs[*chan], bytes);
+		  /*if (processed != bytes)
+		    cout << "[AUDIO] Frame drop while recording" << endl;
+		  */
+		}
+	}
+    }
+  else if ( data->SampleFormat & paInt32 )
+    {
+      ;
+    }
+  else if ( data->SampleFormat & paInt24 )
+    ;
+  else if ( data->SampleFormat & paInt16 )
+    ;
+  else if ( data->SampleFormat & paUInt8 )
+    ;
+  else if ( data->SampleFormat & paInt8 )
+    ;
+  return (0);
+}
+
 AudioEngine::AudioEngine()
 {
   cout << "[AUDIO] AudioEngine construct" << endl;
