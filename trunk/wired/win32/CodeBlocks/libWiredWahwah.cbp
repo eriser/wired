@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output=".\bin\plugins\libWiredWahwah.dll" prefix_auto="1" extension_auto="1" />
+				<Option output=".\bin\plugins\libWiredWahwah" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Debug\" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -16,7 +16,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output=".\bin\plugins\libWiredWahwah.dll" prefix_auto="1" extension_auto="1" />
+				<Option output=".\bin\plugins\libWiredWahwah" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Release\" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -35,6 +35,8 @@
 			<Add directory="..\..\src\redist" />
 			<Add directory="..\..\src\libs\WiredWidgets\src" />
 			<Add directory="..\..\src\midi" />
+			<Add directory="..\..\src\save" />
+			<Add directory="..\..\src\xml" />
 		</Compiler>
 		<Linker>
 			<Add library="wx_msw-2.8" />
@@ -47,6 +49,7 @@
 		<Unit filename="..\..\src\redist\Plugin.h" />
 		<Extensions>
 			<code_completion />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
