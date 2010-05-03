@@ -88,7 +88,7 @@ Transport::Transport(wxWindow *parent, const wxPoint &pos, const wxSize &size, l
 			    down_up, down_down);
   wxString s;
 
-  s.Printf(wxT("%d"), Seq->BPM);
+  s.Printf(wxT("%f"), Seq->BPM);
 
   BpmLabel = new TransparentStaticText(this, Transport_BpmClick, s, wxPoint(49, 20), wxSize(-1, 12));
   BpmLabel->SetFont(wxFont(11, wxDEFAULT, wxNORMAL, wxNORMAL));

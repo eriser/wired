@@ -17,20 +17,20 @@ class MidiController : public wxDialog
 
   void OnOkBtnClick(wxCommandEvent &event);
   void OnCancelBtnClick(wxCommandEvent &event);
-  
+
   void ProcessMidi(int midi_msg[3]);
- 
-  int Type; 
+
+  int Type;
   int Controller;
   int Value;
-  
+
   bool Note;
-  
+
  private:
   wxSpinCtrl  *ChannelCtrl;
   wxSpinCtrl  *ControllerCtrl;
   wxSpinCtrl  *ValueCtrl;
- 
+
   DECLARE_EVENT_TABLE()
 };
 

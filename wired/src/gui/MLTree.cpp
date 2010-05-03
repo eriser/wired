@@ -577,7 +577,7 @@ wxTreeItemId MLTree::AddFileInProject(wxString FileToAdd, bool expand)
   return (itemToAdd);
 }
 
-wxTreeItemId MLTree::DelFileInProject(wxString FileToDel, bool expand)
+void MLTree::DelFileInProject(wxString FileToDel, bool expand)
 {
   LOG;
   wxFileName fileName(FileToDel);
@@ -1032,10 +1032,6 @@ wxTreeItemId                    MLTree::Copy(wxTreeItemId item)
   wxTreeItemId		itemAdded;
   int			slashPos;
 
-
-  wxFileName	        *File = new wxFileName(selfile);
-
-
   infos = GetTreeItemStructFromId(item_to_drag);
   if (infos._label != wxT(""))
     {
@@ -1054,6 +1050,7 @@ wxTreeItemId                    MLTree::Copy(wxTreeItemId item)
 	  return itemAdded;
 	}
     }
+  return NULL;
 }
 
 void MLTree::DragAndDrop(wxTreeItemId item)

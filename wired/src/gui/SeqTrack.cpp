@@ -57,6 +57,9 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
     case eMidiTrack:
         str.Printf(wxT("MIDI %d"), ++MidiTrackCount);
         break;
+    default:
+        str.Printf(wxT("Unknown %d"), ++MidiTrackCount);
+        break;
   }
   Text = new wxTextCtrl(this, SeqTrack_OnNameChange, str, wxPoint(6, 8),
 			wxSize(TRACK_WIDTH - 68, 18), wxTE_PROCESS_ENTER);
@@ -73,12 +76,20 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
     case eMidiTrack:
         trackTypeImage = new wxImage(wxString(WiredSettings->DataDir + _("ihm/seqtrack/tracktype-midi.png")), wxBITMAP_TYPE_PNG);
         break;
+    default:
+        trackTypeImage = NULL;
+        break;
   }
 
-  wxBitmap*		trackTypeBitmap = new wxBitmap(*trackTypeImage);
-  delete trackTypeImage;
+  if(trackTypeImage)
+    {
+      wxBitmap*		trackTypeBitmap = new wxBitmap(*trackTypeImage);
+      delete trackTypeImage;
 
-  trackTypeStatic = new wxStaticBitmap(this, -1, *trackTypeBitmap, wxPoint(62, 8));
+      trackTypeStatic = new wxStaticBitmap(this, -1, *trackTypeBitmap, wxPoint(62, 8));
+    }
+  else
+    trackTypeStatic = NULL;
 
   // record and mute button
   wxImage *rec_up = new wxImage(wxString(WiredSettings->DataDir + wxString(REC_UP)), wxBITMAP_TYPE_PNG);
@@ -136,7 +147,8 @@ SeqTrack::SeqTrack(long index, wxWindow *winParent,
 
   // we overwrite LEFT_DOWN event of these class, but we propagate it on each
   // parent, recursivly (until any catch has not .Skip() call).
-  trackTypeStatic->Connect(wxEVT_LEFT_DOWN, wxObjectEventFunction(&SeqTrack::PropagateEvent));
+  if(trackTypeStatic)
+    trackTypeStatic->Connect(wxEVT_LEFT_DOWN, wxObjectEventFunction(&SeqTrack::PropagateEvent));
   Vu->Connect(wxEVT_LEFT_DOWN, wxObjectEventFunction(&SeqTrack::PropagateEvent));
 
   //

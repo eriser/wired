@@ -362,7 +362,8 @@ bool Settings::AddDirToRecent(wxString pathstr)
 	  recent << wxT("Recent") << i;
 	  conf->Write(recent, pathList[i].GetFullPath());
 	}
+    return true;
   }
-  else
-	cout << "[SETTINGS] AddDirToRecent() : Can't access conf" << endl;
+  cout << "[SETTINGS] AddDirToRecent() : Can't access conf" << endl;
+  return false;
 }
