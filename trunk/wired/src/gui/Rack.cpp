@@ -38,6 +38,8 @@ Rack::Rack(wxWindow* parent, wxWindowID id, const wxPoint& pos,
   copy_plug = NULL;
   filePath.Printf(wxT("/tmp/.tmpccp"));
   CleanChildren();
+  OldX = 0;
+  OldY = 0;
 }
 
 Rack::~Rack()
@@ -258,141 +260,130 @@ bool				Rack::DeleteRack(Plugin *plug, bool eraseit)
   return false;
 }
 
-void				Rack::SetSelected(Plugin *p)
+void				Rack::SetSelected(Plugin *newSelected)
 {
-  t_ListRackTrack::iterator i;
-  list<Plugin *>::iterator j;
+  if(selectedPlugin != newSelected)
+    {
+      t_ListRackTrack::iterator i;
+      list<Plugin *>::iterator j;
 
-  if (!p)
-    {
-      selectedPlugin = 0x0;
-      selectedTrack = 0x0;
-    }
-  else if (selectedPlugin != p)
-    {
-      selectedPlugin = p;
-      for (i = RackTracks.begin(); i != RackTracks.end(); i++)
-	for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
-	  if (*j == p)
-	    {
-	      selectedTrack = *i;
-	      selectedTrack->SetSelected(selectedPlugin);
-	      return;
-	    }
+      // refresh previously selected plugin to delete red borders.
+      Plugin* oldPlug = selectedPlugin;
+      selectedPlugin = newSelected;
+      if(!selectedPlugin)
+        {
+          selectedTrack = 0x0;
+          WasDragging = false;
+        }
+      else
+        {
+          for (i = RackTracks.begin(); i != RackTracks.end(); i++)
+            for (j = (*i)->Racks.begin(); j != (*i)->Racks.end(); j++)
+              if (*j == newSelected)
+                {
+                  selectedTrack = *i;
+                  selectedTrack->SetSelected(selectedPlugin);
+                  selectedPlugin->Refresh();
+                  return;
+                }
+        }
+        // refresh once plugin is deselected
+        if (oldPlug)
+          oldPlug->Refresh();
     }
 }
 
-void                Rack::OnMotion(wxMouseEvent &event)
+void Rack::OnMotion(wxMouseEvent &event)
 {
-  if (selectedPlugin && WasDragging && event.Dragging() && event.LeftIsDown())
-  {
-    int tmp_x = 0;
-    int tmp_y = 0;
+    // we have to compute destination values
+    // considering event having absolute coords (rack window)
+  if (WasDragging && event.Dragging())
+    {
+        int tmp_x = event.GetPosition().x - OldX;
+        int tmp_y = event.GetPosition().y - OldY;
 
-	tmp_x = event.GetPosition().x;
-	tmp_y = event.GetPosition().y;
-	if(tmp_x < 0)
-	  tmp_x = 0;
-	if(tmp_y < 0)
-	  tmp_y = 0;
-	selectedPlugin->Move(wxPoint(tmp_x, tmp_y));
-  }
-  else if (event.LeftUp() && WasDragging)
-  {
-  t_ListRackTrack::iterator k;
-  list<Plugin *>::iterator l;
+        if(tmp_x < 0)
+          tmp_x = 0;
+        if(tmp_y < 0)
+          tmp_y = 0;
+        selectedPlugin->Move(wxPoint(tmp_x, tmp_y));
+    }
+}
 
-	new_x = (event.GetPosition().x + selectedPlugin->GetPosition().x);
-	new_y = (event.GetPosition().y + selectedPlugin->GetPosition().y);
-	// if IsAudio() is false (plugins can't receive audio): we don't allow chaining
-	if(selectedPlugin->IsAudio() && !DndGetDest(k, l, new_x, new_y, selectedPlugin))
-	{
-	  DeleteRack(selectedPlugin, false);
-	  AddLoadedRack(selectedPlugin);
-	}
-	ResizeTracks();
-	WasDragging = false;
+void Rack::HandleMotionEvent(Plugin *plug, wxMouseEvent& event)
+{
+    // we have to compute destination values
+    // considering event having relative coords (plugin window)
+  if (event.Dragging())
+    {
+      int tmp_x = 0;
+      int tmp_y = 0;
+
+      // event coords are relative to the window that drag occurs
+      tmp_x = event.GetPosition().x + plug->GetPosition().x - OldX;
+      tmp_y = event.GetPosition().y + plug->GetPosition().y - OldY;
+      if(tmp_x < 0)
+        tmp_x = 0;
+      if(tmp_y < 0)
+        tmp_y = 0;
+      selectedPlugin->Move(wxPoint(tmp_x, tmp_y));
+      WasDragging = true;
   }
 }
 
-void				Rack::HandleMouseEvent(Plugin *plug, wxMouseEvent *event)
+void Rack::HandleWheelEvent(Plugin *plug, wxMouseEvent& event)
 {
-  t_ListRackTrack::iterator i;
-  t_ListRackTrack::iterator k;
-  list<Plugin *>::iterator j;
-  list<Plugin *>::iterator l;
-  new_x = 0;
-  new_y = 0;
-  int tmp_x = 0;
-  int tmp_y = 0;
-
   // manage vertical mousewheel
-  if (event->GetEventType() == wxEVT_MOUSEWHEEL)
-  {
-	int x, y, y1, y2, y3;
+  int x, y, y1, y2, y3;
 
-	GetVirtualSize(0x0, &y1);
-	GetSize(0x0, &y2);
-	GetViewStart(&x, &y3);
-	if (y1 > y2)
-	{
-	  if (event->GetWheelRotation() > 0)
-		y = -1;
-	  else
-		y = 1;
-	  Scroll(x, y3 + y);
+  GetVirtualSize(0x0, &y1);
+  GetSize(0x0, &y2);
+  GetViewStart(&x, &y3);
+  if (y1 > y2)
+    {
+      if (event.GetWheelRotation() > 0)
+       	y = -1;
+      else
+        y = 1;
+      Scroll(x, y3 + y);
 	}
-  }
+}
 
-  if (event->Button(wxMOUSE_BTN_ANY))
-  {
-    SetSelected(plug);
-  }
+void Rack::HandleLeftUpEvent(Plugin *plug, wxMouseEvent& event)
+{
+  SetSelected(plug);
+  if(WasDragging)
+    {
+      t_ListRackTrack::iterator k;
+      list<Plugin *>::iterator l;
 
-  if(event->LeftDown())
-  {
-	OldX = event->GetPosition().x;
-	OldY = event->GetPosition().y;
+      int new_x = (event.GetPosition().x + plug->GetPosition().x);
+      int new_y = (event.GetPosition().y + plug->GetPosition().y);
+      // if IsAudio() is false (plugins can't receive audio): we don't allow chaining
+      if(plug->IsAudio() && !DndGetDest(k, l, new_x, new_y, plug))
+        {
+          DeleteRack(plug, false);
+          AddLoadedRack(plug);
+        }
+      ResizeTracks();
+      WasDragging = false;
+   }
 
-	Plugin *oldplug = selectedPlugin;
-	SetSelected(plug);
-	if (oldplug)
-	  oldplug->Refresh();
+}
 
-	new_x = (event->GetPosition().x + plug->GetPosition().x);
-	new_y = (event->GetPosition().y + plug->GetPosition().y);
-  }
-  else if (event->Dragging() && event->LeftIsDown())
-  {
-	tmp_x = event->GetPosition().x + plug->GetPosition().x - OldX;
-	tmp_y = event->GetPosition().y + plug->GetPosition().y - OldY;
-	if(tmp_x < 0)
-	  tmp_x = 0;
-	if(tmp_y < 0)
-	  tmp_y = 0;
-	plug->Move(wxPoint(tmp_x, tmp_y));
-	WasDragging = true;
-  }
+void Rack::HandleLeftDownEvent(Plugin *plug, wxMouseEvent& event)
+{
+  SetSelected(plug);
 
-  if(event->RightDown())
-  {
-	SetSelected(plug);
-	wxPoint p(event->GetPosition().x + plug->GetPosition().x, event->GetPosition().y + plug->GetPosition().y);
-	PopupMenu(menu, p.x, p.y);
-  }
-  else if(event->LeftUp() && WasDragging)
-  {
-	new_x = (event->GetPosition().x + plug->GetPosition().x);
-	new_y = (event->GetPosition().y + plug->GetPosition().y);
-	// if IsAudio() is false (plugins can't receive audio): we don't allow chaining
-	if(plug->IsAudio() && !DndGetDest(k, l, new_x, new_y, plug))
-	{
-	  DeleteRack(plug, false);
-	  AddLoadedRack(plug);
-	}
-	ResizeTracks();
-	WasDragging = false;
-  }
+  OldX = event.GetPosition().x;
+  OldY = event.GetPosition().y;
+}
+
+void Rack::HandleRightDownEvent(Plugin *plug, wxMouseEvent& event)
+{
+  wxPoint p(event.GetPosition().x + plug->GetPosition().x, event.GetPosition().y + plug->GetPosition().y);
+  SetSelected(plug);
+  PopupMenu(menu, p.x, p.y);
 }
 
 void				Rack::AddPlugToMenu()
@@ -416,28 +407,27 @@ void				Rack::AddPlugToMenu()
 }
 
 // called from OnPaint()'s plugins (via HostCallback)
-void				Rack::HandlePaintEvent(Plugin *plug, wxPaintEvent *event)
+void Rack::HandlePaintEvent(Plugin *plug, wxPaintEvent& event)
 {
-  int xx, yy;
-
-  CalcScrolledPosition(0, 0, &xx, &yy);
-  if (selectedPlugin == 0x0)
-    return;
+  // we add the red border only on selectedPlugin
   if (selectedPlugin == plug)
     {
-      wxPaintDC dc(selectedPlugin);
+      int xx, yy;
+      wxPaintDC dc(plug);
+
       PrepareDC(dc);
       dc.SetPen(wxPen(wxColour(255,0,0), 3, wxSOLID));
       dc.SetBrush(*wxTRANSPARENT_BRUSH);
-      dc.DrawRectangle(0 - xx, 0 - yy, selectedPlugin->GetSize().x, selectedPlugin->GetSize().y);
+      CalcScrolledPosition(0, 0, &xx, &yy);
+      dc.DrawRectangle(0 - xx, 0 - yy, plug->GetSize().x, plug->GetSize().y);
     }
 }
 
 // we got new_x and new_y which are mouse dropped positions
 bool				Rack::DndGetDest(t_ListRackTrack::iterator &k,
 						 list<Plugin *>::iterator &l,
-						 int &new_x,
-						 int &new_y,
+						 int &dest_x,
+						 int &dest_y,
 						 Plugin *plug)
 {
   int pos_x = 0;
@@ -450,13 +440,13 @@ bool				Rack::DndGetDest(t_ListRackTrack::iterator &k,
     {
       // for each RackTrack, we look x coord and width of the Rack
     pos_x = (pos_x + (*k)->Units * UNIT_W);
-    if((((pos_x + xx)- ((*k)->Units * UNIT_W)) < new_x) && (new_x < (pos_x + xx)) )
+    if((((pos_x + xx)- ((*k)->Units * UNIT_W)) < dest_x) && (dest_x < (pos_x + xx)) )
       {
 	// for each Rack linked to the RackTrack, we look y coord and height of the Rack
 	for(l = (*k)->Racks.begin(); l != (*k)->Racks.end(); l++)
 	  {
 	  pos_y = pos_y + (*l)->InitInfo->UnitsY * UNIT_H;
-	  if((((pos_y + yy) - ((*l)->InitInfo->UnitsY * UNIT_H)) < new_y) && (new_y < (pos_y + yy)))
+	  if((((pos_y + yy) - ((*l)->InitInfo->UnitsY * UNIT_H)) < dest_y) && (dest_y < (pos_y + yy)))
 	    {
 	      if((*l) == plug)
 		return true;
@@ -604,9 +594,9 @@ inline void			Rack::OnPasteClick()
 
 }
 
-void				Rack::HandleKeyEvent(Plugin *plug, wxKeyEvent *event)
+void Rack::HandleKeyEvent(Plugin *plug, wxKeyEvent& event)
 {
-  if (event->GetKeyCode() == WXK_DOWN)
+  if (event.GetKeyCode() == WXK_DOWN)
     {
       //cout << "[RACKPANEL] key received: down arrow" << endl;
     }

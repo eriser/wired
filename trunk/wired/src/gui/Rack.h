@@ -119,13 +119,19 @@ class		Rack: public wxScrolledWindow, WiredDocument
   void			AddPlugToMenu();
 
   //  bool ProcessEvent(wxEvent& event);
-  // Handles all mouse events
   void          OnMotion(wxMouseEvent &event);
-  void			HandleMouseEvent(Plugin *plug, wxMouseEvent *event);
+
+  // Handles all mouse events from plugins
+  void			HandleMotionEvent(Plugin *plug, wxMouseEvent& event);
+  void			HandleWheelEvent(Plugin *plug, wxMouseEvent& event);
+  void			HandleLeftUpEvent(Plugin *plug, wxMouseEvent& event);
+  void			HandleLeftDownEvent(Plugin *plug, wxMouseEvent& event);
+  void			HandleRightDownEvent(Plugin *plug, wxMouseEvent& event);
+
   // Handles key events
-  void			HandleKeyEvent(Plugin *plug, wxKeyEvent *event);
+  void			HandleKeyEvent(Plugin *plug, wxKeyEvent& event);
   // Handles all paint events like onPaint ???
-  void			HandlePaintEvent(Plugin *plug, wxPaintEvent *event);
+  void			HandlePaintEvent(Plugin *plug, wxPaintEvent& event);
   // Draws the selection rectangle
 
   void			SetAudioConfig(long bufferSize, double samplingRate);
@@ -139,8 +145,6 @@ class		Rack: public wxScrolledWindow, WiredDocument
 
   int			OldX;
   int			OldY;
-  int			new_x;
-  int			new_y;
   int			fd_size;
 
   bool			is_cut;

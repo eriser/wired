@@ -8,49 +8,69 @@ using namespace std;
 
 /* DO NOT MODIFY THIS FILE FOR MAKING A PLUGIN. JUST DERIVE FROM THAT CLASS */
 
-Plugin::Plugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo) 
+Plugin::Plugin(PlugStartInfo &startinfo, PlugInitInfo *initinfo)
   : wxWindow(startinfo.Rack, -1, startinfo.Pos, startinfo.Size)
-{ 
+{
   InitInfo = initinfo;
   StartInfo = startinfo;
-  if (InitInfo) 
+  if (InitInfo)
   	InitInfo->UniqueExternalId = 0;
   Connect(wxID_ANY, wxEVT_KEY_DOWN, (wxObjectEventFunction)(wxEventFunction)
           &Plugin::OnKeyEvent);
   Connect(wxID_ANY, wxEVT_MOUSEWHEEL, (wxObjectEventFunction)(wxEventFunction)
-          &Plugin::OnMouseEvent);
+          &Plugin::OnWheelEvent);
   Connect(wxID_ANY, wxEVT_LEFT_DOWN, (wxObjectEventFunction)(wxEventFunction)
-          &Plugin::OnMouseEvent);
+          &Plugin::OnLeftDownEvent);
   Connect(wxID_ANY, wxEVT_LEFT_UP, (wxObjectEventFunction)(wxEventFunction)
-          &Plugin::OnMouseEvent);
+          &Plugin::OnLeftUpEvent);
   Connect(wxID_ANY, wxEVT_MOTION, (wxObjectEventFunction)(wxEventFunction)
-	 &Plugin::OnMouseEvent);
+          &Plugin::OnMotionEvent);
   Connect(wxID_ANY, wxEVT_RIGHT_DOWN, (wxObjectEventFunction)(wxEventFunction)
-	 &Plugin::OnMouseEvent);
+          &Plugin::OnRightDownEvent);
   //  Connect(wxID_ANY, wxEVT_PAINT, (wxObjectEventFunction)(wxEventFunction)
   //	 &Plugin::OnPaintEvent);
 }
 
-Plugin::~Plugin() 
-{ 
+Plugin::~Plugin()
+{
   if (!Disconnect())
     cerr << "[PLUGIN] error disconnecting interface" << endl;
   CloseOptionalView();
 }
 
-void Plugin::OnMouseEvent(wxMouseEvent &event)
+void Plugin::OnMotionEvent(wxMouseEvent &event)
 {
-  SendMouseEvent(event);
+  StartInfo.HostCallback(this, wiredSendMotionEvent, (void*)&event);
+}
+
+void Plugin::OnWheelEvent(wxMouseEvent &event)
+{
+  StartInfo.HostCallback(this, wiredSendWheelEvent, (void*)&event);
+}
+
+void Plugin::OnLeftUpEvent(wxMouseEvent &event)
+{
+  StartInfo.HostCallback(this, wiredSendLeftUpEvent, (void*)&event);
+}
+
+void Plugin::OnLeftDownEvent(wxMouseEvent &event)
+{
+  StartInfo.HostCallback(this, wiredSendLeftDownEvent, (void*)&event);
+}
+
+void Plugin::OnRightDownEvent(wxMouseEvent &event)
+{
+  StartInfo.HostCallback(this, wiredSendRightDownEvent, (void*)&event);
 }
 
 void Plugin::OnKeyEvent(wxKeyEvent &event)
 {
-  SendKeyEvent(event);
+  StartInfo.HostCallback(this, wiredSendKeyEvent, (void *)&event);
 }
 
 void Plugin::OnPaintEvent(wxPaintEvent &event)
 {
-  SendPaintEvent(event);
+  StartInfo.HostCallback(this, wiredSendPaintEvent, (void *)&event);
 }
 
 // Time events
@@ -115,29 +135,9 @@ void Plugin::SendHelp(wxString str)
   StartInfo.HostCallback(this, wiredSendHelp, (void *)&str);
 }
 
-void Plugin::SendMouseEvent(wxMouseEvent &event)
-{
-  StartInfo.HostCallback(this, wiredSendMouseEvent, (void *)&event);
-}
-
-void Plugin::SendKeyEvent(wxKeyEvent &event)
-{
-  StartInfo.HostCallback(this, wiredSendKeyEvent, (void *)&event);
-}
-
-void Plugin::SendClickEvent(wxMouseEvent &event)
-{
-  StartInfo.HostCallback(this, wiredSendClickEvent, (void *)&event);  
-}
-
-void Plugin::SendPaintEvent(wxPaintEvent &event)
-{
-  StartInfo.HostCallback(this, wiredSendPaintEvent, (void *)&event);  
-}
-
 bool Plugin::ShowMidiController(int *MidiData[3])
 {
-  StartInfo.HostCallback(this, wiredShowMidiController, (void *)MidiData);  
+  StartInfo.HostCallback(this, wiredShowMidiController, (void *)MidiData);
   if (*MidiData[0] == -1)
     return (false);
   return (true);
@@ -153,7 +153,7 @@ void Plugin::CloseOptionalView()
   StartInfo.HostCallback(this, wiredCloseOptionalView, 0x0);
 }
 
-wxString Plugin::OpenFileLoader(wxString title, 
+wxString Plugin::OpenFileLoader(wxString title,
 				   std::vector<wxString> *exts,
 				   bool akai)
 {
@@ -164,7 +164,7 @@ wxString Plugin::OpenFileLoader(wxString title,
     bool ak;
     wxString result;
   } w_filel;
- 
+
   w_filel.t = title;
   w_filel.e = exts;
   w_filel.ak = akai;
@@ -172,7 +172,7 @@ wxString Plugin::OpenFileLoader(wxString title,
   return (w_filel.result);
 }
 
-wxString Plugin::SaveFileLoader(wxString title, 
+wxString Plugin::SaveFileLoader(wxString title,
 				   std::vector<wxString> *exts)
 {
   struct
@@ -181,7 +181,7 @@ wxString Plugin::SaveFileLoader(wxString title,
     std::vector<wxString> *e;
     wxString result;
   } w_filel;
- 
+
   w_filel.t = title;
   w_filel.e = exts;
   StartInfo.HostCallback(this, wiredSaveFileLoader, (void *)&w_filel);
@@ -193,7 +193,7 @@ wxString Plugin::GetHostProductName()
 {
   wxString s;
 
-  StartInfo.HostCallback(0x0, wiredHostProductName, (void *)&s); 
+  StartInfo.HostCallback(0x0, wiredHostProductName, (void *)&s);
   return (s);
 }
 
@@ -209,16 +209,16 @@ wxString Plugin::GetHostVendorName()
 {
   wxString s;
 
-  StartInfo.HostCallback(0x0, wiredHostVendorName, (void *)&s); 
+  StartInfo.HostCallback(0x0, wiredHostVendorName, (void *)&s);
   return (s);
 }
 
 wxString Plugin::GetDataDir()
 {
   wxString s;
-  
-  StartInfo.HostCallback(0x0, wiredGetDataDir, (void *)&s); 
-  return (s); 
+
+  StartInfo.HostCallback(0x0, wiredGetDataDir, (void *)&s);
+  return (s);
 }
 
 bool Plugin::CreateMidiPattern(std::list<SeqCreateEvent *> *l)
@@ -257,7 +257,7 @@ bool			WiredPluginData::SaveValue(const wxString& Name, wxString Value)
 		_Data[Name] = Value;
 		return true;
 	}
-	return false;	
+	return false;
 }
 
 const char			*WiredPluginData::LoadValue(const wxString& Name)
