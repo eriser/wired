@@ -144,6 +144,7 @@
 		<Unit filename="..\..\src\engine\version.h" />
 		<Unit filename="..\..\src\error.hh" />
 		<Unit filename="..\..\src\fileloader\FileConversion.cpp" />
+		<Unit filename="..\..\src\fileloader\FileConversion.h" />
 		<Unit filename="..\..\src\fileloader\FileStat.cpp" />
 		<Unit filename="..\..\src\fileloader\FileStat.h" />
 		<Unit filename="..\..\src\fileloader\TreeItemData.cpp" />
@@ -161,7 +162,6 @@
 		<Unit filename="..\..\src\gui\Colour.h" />
 		<Unit filename="..\..\src\gui\Cursor.cpp" />
 		<Unit filename="..\..\src\gui\Cursor.h" />
-		<Unit filename="..\..\src\gui\FileConversion.h" />
 		<Unit filename="..\..\src\gui\FloatingFrame.cpp" />
 		<Unit filename="..\..\src\gui\FloatingFrame.h" />
 		<Unit filename="..\..\src\gui\HelpCtrl.cpp" />
@@ -194,6 +194,7 @@
 		<Unit filename="..\..\src\gui\Rack.cpp" />
 		<Unit filename="..\..\src\gui\Rack.h" />
 		<Unit filename="..\..\src\gui\RackTrack.cpp" />
+		<Unit filename="..\..\src\gui\RackTrack.h" />
 		<Unit filename="..\..\src\gui\Ruler.cpp" />
 		<Unit filename="..\..\src\gui\Ruler.h" />
 		<Unit filename="..\..\src\gui\SelectionZone.cpp" />
