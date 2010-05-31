@@ -17,32 +17,7 @@ extern	MediaLibrary		*MediaLibraryPanel;
 #define  WIZ_WIN_WIDTH		600
 #define  WIZ_WIN_HEIGHT		400
 #define  WIZ_WIN_SIZE		wxSize(WIZ_WIN_WIDTH, WIZ_WIN_HEIGHT)
-#define  WIZ_BTN_HEIGHT		22
-#define  WIZ_BTN_WIDTH		80
-#define  WIZ_BTN_SIZE		wxSize(WIZ_BTN_WIDTH, WIZ_BTN_HEIGHT)
-#define  WIZ_NEW_BTN_WIDTH	80
-#define  WIZ_NEW_BTN_SIZE	wxSize(WIZ_NEW_BTN_WIDTH, WIZ_BTN_HEIGHT)
-#define  WIZ_MARGIN			10
-#define  WIZ_TOP_MARGIN		1
-#define  WIZ_LABEL_WIDTH	120
-#define  WIZ_TC_HEIGHT		32
-#define  WIZ_TC_PATH_WIDTH	(WIZ_WIN_WIDTH - WIZ_NEW_BTN_WIDTH - WIZ_MARGIN * 4 - WIZ_LABEL_WIDTH)
-#define  WIZ_TC_PATH_HEIGHT	-1
-#define  WIZ_TC_PATH_SIZE	wxSize(WIZ_TC_PATH_WIDTH, WIZ_TC_PATH_HEIGHT)
-#define  WIZ_BROWSE_POS		wxPoint(WIZ_WIN_WIDTH - WIZ_MARGIN - WIZ_BTN_WIDTH, WIZ_MARGIN + WIZ_TOP_MARGIN + WIZ_TC_HEIGHT)
-#define  WIZ_NEW_BTN_POS	wxPoint(WIZ_WIN_WIDTH - WIZ_MARGIN - WIZ_BTN_WIDTH, WIZ_MARGIN * 2 + WIZ_TOP_MARGIN)
-#define  WIZ_RECENT_TITLE_POS_Y	(WIZ_BTN_HEIGHT + WIZ_MARGIN * 3)
-#define  WIZ_BOTTOM_Y		(WIZ_WIN_HEIGHT - WIZ_BTN_HEIGHT - WIZ_MARGIN)
-#define  WIZ_LC_RECENT_HEIGHT	(WIZ_WIN_HEIGHT - WIZ_BTN_HEIGHT - WIZ_BTN_HEIGHT * 2 - WIZ_MARGIN * 6)
-#define  WIZ_LC_RECENT_Y	(WIZ_RECENT_TITLE_POS_Y + WIZ_MARGIN * 3)
 #define  WIZ_ICON_SIZE		32
-#define  WIZ_TC_PATH_POS	wxPoint(WIZ_MARGIN * 2 + WIZ_LABEL_WIDTH, WIZ_MARGIN + WIZ_TOP_MARGIN + WIZ_TC_HEIGHT)
-#define  WIZ_ST_NAME_SIZE	wxSize(WIZ_LABEL_WIDTH, WIZ_TC_HEIGHT)
-#define  WIZ_ST_NAME_POS	wxPoint(WIZ_MARGIN, WIZ_MARGIN * 2 + WIZ_TOP_MARGIN)
-#define  WIZ_TC_NAME_POS	wxPoint(WIZ_MARGIN * 2 + WIZ_LABEL_WIDTH, WIZ_MARGIN * 2 + WIZ_TOP_MARGIN)
-#define  WIZ_ST_PATH_POS	wxPoint(WIZ_MARGIN, WIZ_MARGIN + WIZ_TOP_MARGIN + WIZ_TC_HEIGHT)
-#define  WIZ_ST_PATH_SIZE	WIZ_ST_NAME_SIZE
-
 
 #ifndef RESIZE_ICON
 # define RESIZE_ICON(ico, w, h)	(wxBitmap(ico).ConvertToImage().Rescale(w, h))
@@ -55,7 +30,7 @@ extern	MediaLibrary		*MediaLibraryPanel;
 #endif
 
 Wizard::Wizard()
-  : wxDialog(0x0, -1, _("Wired Wizard"), wxDefaultPosition, WIZ_WIN_SIZE,
+  : wxDialog(NULL, -1, _("Wired Wizard"), wxDefaultPosition, wxDefaultSize,
 	  wxDEFAULT_DIALOG_STYLE, _("Wired Wizard")),
 	  b_NewProject(NULL),
 	  tc_ProjectName(NULL),
@@ -64,45 +39,54 @@ Wizard::Wizard()
   LOG;
   chosenDir = wxT("");
 
-  st_ProjectName	= new wxStaticText(this, -1, _("Project name :"),
-	  WIZ_ST_NAME_POS, WIZ_ST_NAME_SIZE,
-	  wxALIGN_RIGHT);
+  st_ProjectName	= new wxStaticText(this, -1, _("Project name :"));
+  st_NewPath		= new wxStaticText(this, -1, _("Path :"));
+  st_RecentTitle	= new wxStaticText(this, -1, _("Recent sessions :"));
 
   tc_ProjectName	= new wxTextCtrl(this, Wizard_ProjectName, _("WiredProject"),
-	  WIZ_TC_NAME_POS, WIZ_TC_PATH_SIZE, wxTE_PROCESS_ENTER);
-
-  st_NewPath		= new wxStaticText(this, -1, _("Path :"),
-	  WIZ_ST_PATH_POS, WIZ_ST_PATH_SIZE,
-	  wxALIGN_RIGHT);
-
+	  wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
   tc_NewPath		= new wxTextCtrl(this, Wizard_Path, wxGetCwd() + wxFileName::GetPathSeparator() + wxT("my_wired_projects"),
-	  WIZ_TC_PATH_POS, WIZ_TC_PATH_SIZE, wxTE_PROCESS_ENTER);
+	  wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 
-  b_NewProject		= new wxButton(this, Wizard_NewBtn, _("New &Project"),
-	  WIZ_NEW_BTN_POS, WIZ_NEW_BTN_SIZE);
+  b_NewProject		= new wxButton(this, wxID_NEW, _("New &Project"));
+  b_BrowseNew		= new wxButton(this, wxID_FIND, _("&Browse"));
 
-  b_BrowseNew		= new wxButton(this, Wizard_Browse, _("&Browse"),
-	  WIZ_BROWSE_POS, WIZ_BTN_SIZE);
+  // Recent projects
+  lc_Recent	= new wxListCtrl(this, Wizard_RecentList, wxDefaultPosition, wxDefaultSize, wxLC_ICON | wxLC_SINGLE_SEL);
+  st_Recent = new wxStaticText(this, -1, _("No recent sessions"));
 
-  st_RecentTitle	= new wxStaticText(this, -1, _("Recent sessions :"),
-	  wxPoint(WIZ_MARGIN, WIZ_RECENT_TITLE_POS_Y + WIZ_MARGIN),
-	  wxSize(WIZ_WIN_WIDTH / 2, WIZ_BTN_HEIGHT));
-
-  b_OK			= new wxButton(this, Wizard_OK, _("&OK"),
-	  wxPoint(WIZ_WIN_WIDTH - WIZ_BTN_WIDTH * 3 - WIZ_MARGIN * 3, WIZ_BOTTOM_Y),
-	  WIZ_BTN_SIZE);
-
-  b_Remove			= new wxButton(this, Wizard_Remove, _("&Remove"),
-	  wxPoint(WIZ_WIN_WIDTH - WIZ_BTN_WIDTH * 2 - WIZ_MARGIN * 2, WIZ_BOTTOM_Y),
-	  WIZ_BTN_SIZE);
-
+  // PROCESSING BUTTONS
+  b_OK = new wxButton(this, wxID_OK, _("&OK"));
+  b_Remove = new wxButton(this, wxID_DELETE, _("&Remove"));
   b_Remove->Enable(false);
+  b_Exit = new wxButton(this, wxID_EXIT, _("E&xit"));
 
-  b_Exit			= new wxButton(this, Wizard_Exit, _("E&xit"),
-	  wxPoint(WIZ_WIN_WIDTH - WIZ_BTN_WIDTH - WIZ_MARGIN, WIZ_BOTTOM_Y), WIZ_BTN_SIZE);
+  // Sizers
+  wxBoxSizer*	nameSizer = new wxBoxSizer(wxHORIZONTAL);
+  wxBoxSizer*	pathSizer = new wxBoxSizer(wxHORIZONTAL);
+  wxStdDialogButtonSizer* buttonSizer = new wxStdDialogButtonSizer();
 
-  lc_Recent = 0x0;
-  st_Recent = 0x0;
+  wxBoxSizer*	mainSizer = new wxBoxSizer(wxVERTICAL);
+
+  nameSizer->Add(st_ProjectName, wxSizerFlags().Border().Align(wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL).Proportion(15));
+  nameSizer->Add(tc_ProjectName, wxSizerFlags().Border().Center().Expand().Proportion(70));
+  nameSizer->Add(b_NewProject, wxSizerFlags().Border().Align(wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL).Proportion(15));
+
+  pathSizer->Add(st_NewPath, wxSizerFlags().Border().Align(wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL).Proportion(15));
+  pathSizer->Add(tc_NewPath, wxSizerFlags().Border().Center().Expand().Proportion(70));
+  pathSizer->Add(b_BrowseNew, wxSizerFlags().Border().Align(wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL).Proportion(15));
+
+  buttonSizer->Add(b_OK, wxSizerFlags().Border());
+  buttonSizer->Add(b_Remove, wxSizerFlags().Border());
+  buttonSizer->Add(b_Exit, wxSizerFlags().Border());
+
+  // main layout
+  mainSizer->Add(nameSizer);
+  mainSizer->Add(pathSizer);
+  mainSizer->Add(st_RecentTitle, wxSizerFlags().Border());
+  mainSizer->Add(lc_Recent, wxSizerFlags().Border().Center().Expand().Proportion(100));
+  mainSizer->Add(st_Recent, wxSizerFlags().Border().Center().Expand().Proportion(100));
+  mainSizer->Add(buttonSizer, wxSizerFlags().Border().Bottom());
 
   vector<wxFileName>	pathList = WiredSettings->GetRecentDirs();
   if (pathList.size())
@@ -116,6 +100,18 @@ Wizard::Wizard()
 #endif
   }
   UpdateList();
+
+
+  // set a minimal size to the window
+  mainSizer->SetMinSize(WIZ_WIN_SIZE);
+  buttonSizer->Realize();
+
+  // center the window on the screen
+  Center();
+  // resize items and window
+  SetSizer(mainSizer);
+  mainSizer->SetSizeHints(this);
+
   tc_ProjectName->SetFocus();
 }
 
@@ -123,15 +119,10 @@ void	Wizard::UpdateList()
 {
   vector<wxFileName>	pathList = WiredSettings->GetRecentDirs();
 
-  delete lc_Recent;
-  delete st_Recent;
   if (pathList.size())
   {
-	st_Recent = 0x0;
-	lc_Recent			= new wxListCtrl(this, Wizard_RecentList,
-		wxPoint(WIZ_MARGIN, WIZ_LC_RECENT_Y),
-		wxSize(WIZ_WIN_WIDTH - (WIZ_MARGIN*2), WIZ_LC_RECENT_HEIGHT),
-		wxLC_ICON | wxLC_SINGLE_SEL);
+    lc_Recent->Show();
+	st_Recent->Hide();
 	wxString				thispath;
 
 	wxImage				folder_icon(wired_session_folder_xpm);
@@ -147,11 +138,8 @@ void	Wizard::UpdateList()
   }
   else
   {
-	lc_Recent = 0x0;
-	st_Recent = new wxStaticText(this, -1, _("No recent sessions"),
-		wxPoint(WIZ_MARGIN, WIZ_LC_RECENT_Y + (WIZ_LC_RECENT_HEIGHT) / 2),
-		wxSize(WIZ_WIN_WIDTH - (WIZ_MARGIN*2), WIZ_LC_RECENT_HEIGHT),
-		wxALIGN_CENTER);
+	lc_Recent->Hide();
+	st_Recent->Show();
   }
 }
 
@@ -298,7 +286,7 @@ void	Wizard::OnRemove(wxCommandEvent &event)
   int					item = -1;
 
   item = lc_Recent->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-  if (item >= 0 && item < pathList.size())
+  if (item >= 0 && (unsigned int)item < pathList.size())
 	WiredSettings->RemoveRecentDir(item);
   UpdateList();
   b_Remove->Enable(false);
@@ -315,7 +303,7 @@ void	Wizard::OnListClick(wxListEvent &event)
   vector<wxFileName>	pathList = WiredSettings->GetRecentDirs();
 
   item = lc_Recent->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-  if (item >= 0 && item < pathList.size())
+  if (item >= 0 && (unsigned int)item < pathList.size())
   {
 #if wxCHECK_VERSION (2,8,0)
 	tc_ProjectName->ChangeValue(pathList[item].GetName());
@@ -359,7 +347,7 @@ void	Wizard::OnOkClick(wxCommandEvent &event)
   {
     LoadProject();
   }
-  
+
   std::cout << "[WIZARD] ChosenDir : " << chosenDir.mb_str() << std::endl;
 }
 
@@ -387,15 +375,15 @@ void	Wizard::OnExitClick(wxCommandEvent &event)
 
 
 BEGIN_EVENT_TABLE(Wizard, wxDialog)
-  EVT_BUTTON(Wizard_NewBtn, Wizard::OnNewClick)
+  EVT_BUTTON(wxID_NEW, Wizard::OnNewClick)
+  EVT_BUTTON(wxID_FIND, Wizard::OnBrowseClick)
+  EVT_BUTTON(wxID_OK, Wizard::OnOkClick)
+  EVT_BUTTON(wxID_DELETE, Wizard::OnRemove)
+  EVT_BUTTON(wxID_EXIT, Wizard::OnExitClick)
   EVT_TEXT_ENTER(Wizard_Path, Wizard::OnNewClick)
   EVT_TEXT_ENTER(Wizard_ProjectName, Wizard::OnNewClick)
-  EVT_BUTTON(Wizard_Browse, Wizard::OnBrowseClick)
   EVT_LIST_ITEM_ACTIVATED(Wizard_RecentList, Wizard::OnListDClick)
   EVT_LIST_ITEM_SELECTED(Wizard_RecentList, Wizard::OnListClick)
-  EVT_BUTTON(Wizard_Remove, Wizard::OnRemove)
-  EVT_BUTTON(Wizard_Exit, Wizard::OnExitClick)
-EVT_BUTTON(Wizard_OK, Wizard::OnOkClick)
   EVT_TEXT(Wizard_Path, Wizard::OnTextChange)
   EVT_TEXT(Wizard_ProjectName, Wizard::OnTextChange)
 END_EVENT_TABLE()
