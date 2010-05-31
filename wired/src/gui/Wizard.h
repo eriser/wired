@@ -130,14 +130,9 @@ class	Wizard : public wxDialog
 */
 enum
 {
-  Wizard_NewBtn = 633,
-  Wizard_ProjectName,
+  Wizard_ProjectName = 633,
   Wizard_Path,
-  Wizard_Browse,
-  Wizard_RecentList,
-  Wizard_Remove,
-  Wizard_Exit,
-  Wizard_OK
+  Wizard_RecentList
 };
 
 #endif  /*__WIZARD_H__*/
