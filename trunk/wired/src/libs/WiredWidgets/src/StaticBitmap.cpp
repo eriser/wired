@@ -4,7 +4,7 @@
 
 #include "StaticBitmap.h"
 
-BEGIN_EVENT_TABLE(StaticBitmap, wxStaticText)
+BEGIN_EVENT_TABLE(StaticBitmap, wxStaticBitmap)
   EVT_MOUSE_EVENTS(StaticBitmap::OnMouseEvent) 
 END_EVENT_TABLE()
 
