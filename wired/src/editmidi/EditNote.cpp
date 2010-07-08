@@ -92,7 +92,7 @@ void				EditNote::OnMouseMove(wxMouseEvent &e)
     }
 }
 
-BEGIN_EVENT_TABLE(EditNote, wxControl)
+BEGIN_EVENT_TABLE(EditNote, wxPanel)
   EVT_PAINT(EditNote::OnPaint)
   EVT_MOTION(EditNote::OnMouseMove)
   EVT_LEFT_UP(EditNote::OnLeftUp)
